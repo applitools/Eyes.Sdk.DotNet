@@ -47,8 +47,8 @@
             ArgumentGuard.NotNull(image, nameof(image));
             ArgumentGuard.GreaterOrEqual(scaleRatio, 0, nameof(scaleRatio));
 
-            int targetWidth = (int)Math.Ceiling(image.Width * scaleRatio);
-            int targetHeight = (int)Math.Ceiling(image.Height * scaleRatio);
+            int targetWidth = (int)Math.Round(image.Width * scaleRatio);
+            int targetHeight = (int)Math.Round(image.Height * scaleRatio);
 
             if (targetWidth == image.Width && targetHeight == image.Height)
             {
@@ -114,8 +114,8 @@
             int hM = (int)Math.Max(1, Math.Floor(hSrc / (double)targetHeight));
             int hDst2 = targetHeight * hM;
 
-            double wRatio = (double)wSrc / wDst2;// The '(wSrc - 1)' is wrong. it should be 'wSrc', but then it causes array index overflow.
-            double hRatio = (double)hSrc / hDst2;// The '(hSrc - 1)' is wrong. it should be 'hSrc', but then it causes array index overflow.
+            double wRatio = (double)wSrc / wDst2;
+            double hRatio = (double)hSrc / hDst2;
 
             int i, j, k, xPos, yPos, kPos, buf1Pos, buf2Pos, srcPos;
             double x, y, t;
