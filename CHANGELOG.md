@@ -321,7 +321,7 @@
 - Coded Regions not getting sent to server in all packages. [Trello 1823](https://trello.com/c/FT5xdO9O)
 - Closed open connections. [Trello 1863](https://trello.com/c/WwqfGgfS)
 - Unsubscribe an event upon destruction of `VisualGridRunner`. [Trello 1863](https://trello.com/c/WwqfGgfS)
-- Fixed bicubic image resize algorithm.
+- Fixed bicubic image resize algorithm. [Trello 848](https://trello.com/c/aQATeAI2)
 
 ## [Eyes.Sdk.Core 2.24] - 2020-05-18
 ### Added
