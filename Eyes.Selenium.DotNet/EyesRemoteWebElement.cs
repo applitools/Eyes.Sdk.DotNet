@@ -98,7 +98,7 @@ namespace Applitools.Selenium
 
         //private readonly string JS_GET_OFFSET_POSITON = "return arguments[0].offsetLeft+','+arguments[0].offsetTop;";
 
-        private readonly string JS_GET_VISIBLE_ELEMENT_RECT = @"function getVisibleElementRect(el) {
+        private static readonly string JS_GET_VISIBLE_ELEMENT_RECT = @"function getVisibleElementRect(el) {
   var intersected = el.getBoundingClientRect()
   el = el.parentElement;
   if (el != null && el.tagName === 'HTML'){
@@ -107,14 +107,14 @@ namespace Applitools.Selenium
   while (el != null) {
     var bcr = el.getBoundingClientRect()
     var cr = {
-      x: el.clientLeft + el.offsetLeft,
-      y: el.clientTop + el.offsetTop,
+      x: bcr.left + el.clientLeft,
+      y: bcr.top + el.clientTop,
       width: el.clientWidth,
       height: el.clientHeight,
     }
     if (el.tagName === 'IFRAME'){
-      intersected.x += el.clientLeft + el.offsetLeft
-      intersected.y += el.clientTop + el.offsetTop
+      intersected.x += cr.x
+      intersected.y += cr.y
     } 
     
     if (el.tagName !== 'BODY') { // The body element behavior is special... so to say, so we don't want to account it.
@@ -495,10 +495,12 @@ return getVisibleElementRect(arguments[0])";
                 (int)Math.Round(Convert.ToSingle(data[1], NumberFormatInfo.InvariantInfo)));
         }
 
-        public Rectangle GetVisibleElementRect()
+        public Rectangle GetVisibleElementRect() => GetVisibleElementRect(webElement_, eyesDriver_, Logger);
+        
+        public static Rectangle GetVisibleElementRect(IWebElement webElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
         {
-            string result = (string)eyesDriver_.ExecuteScript(JS_GET_VISIBLE_ELEMENT_RECT, webElement_);
-            Logger.Verbose(result);
+            string result = (string)jsExecutor.ExecuteScript(JS_GET_VISIBLE_ELEMENT_RECT, webElement);
+            logger?.Verbose(result);
             string[] data = result.Split(';');
             Rectangle rect = new Rectangle(
                 (int)Math.Round(Convert.ToSingle(data[0], NumberFormatInfo.InvariantInfo)), (int)Math.Round(Convert.ToSingle(data[1], NumberFormatInfo.InvariantInfo)),

@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
+
 ## [Eyes.Appium 4.12] - 2020-09-03
 ### Updated
 - Match to latest Eyes.Sdk.Core
