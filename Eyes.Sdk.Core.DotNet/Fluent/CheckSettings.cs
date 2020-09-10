@@ -608,7 +608,7 @@ namespace Applitools
             }
             else /* if (selector != null) */
             {
-                return SizeMode.Selector;
+                return stitchContent ? SizeMode.FullSelector : SizeMode.Selector;
             }
         }
 
