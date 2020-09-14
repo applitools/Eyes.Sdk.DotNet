@@ -38,7 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Appium.DotNet", "Eyes.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Appium.DotNet", "Tests\Test.Eyes.Appium.DotNet\Test.Eyes.Appium.DotNet.csproj", "{86401849-E3F7-4DF8-9BE8-24BC2C62089C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "sdk.coverage.tests\dotNet\test\Tests.Eyes.Selenium.Generated.csproj", "{182D5566-9009-47AA-A3E2-B3FA6BF1B930}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "sdk.coverage.tests\dotNet\test\Selenium\Tests.Eyes.Selenium.Generated.csproj", "{182D5566-9009-47AA-A3E2-B3FA6BF1B930}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "sdk.coverage.tests\dotNet\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{0C0307A7-E06E-468B-95AD-3A74375802DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +88,10 @@ Global
 		{182D5566-9009-47AA-A3E2-B3FA6BF1B930}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{182D5566-9009-47AA-A3E2-B3FA6BF1B930}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{182D5566-9009-47AA-A3E2-B3FA6BF1B930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +102,7 @@ Global
 		{88070681-5E9E-429E-A599-DECFFAE3F66F} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
 		{86401849-E3F7-4DF8-9BE8-24BC2C62089C} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
 		{182D5566-9009-47AA-A3E2-B3FA6BF1B930} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
+		{0C0307A7-E06E-468B-95AD-3A74375802DF} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2D3A563-3BF6-42B1-B7A9-7A7DCD842A2E}
