@@ -1,4 +1,4 @@
 [submodule "sdk.coverage.tests"]
 	path = sdk.coverage.tests
-	url = git@github.com:applitools/sdk.coverage.tests.git
+	url = https://github.com/applitools/sdk.coverage.tests.git
 	branch = DotNet_POC
