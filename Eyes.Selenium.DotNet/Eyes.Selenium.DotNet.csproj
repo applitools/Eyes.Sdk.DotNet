@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Applitools Eyes adds automated visual validation to your automated tests.
+With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
+To learn more, visit https://applitools.com/ .</Description>
+    <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
+    <Copyright>Applitools 2013</Copyright>
+    <Version>2.34</Version>
+    <Authors>Applitools</Authors>
+    <Company>Applitools</Company>
+    <Product>Eyes SDK</Product>
+    <PackageTags>applitools eyes selenium</PackageTags>
+    <PackageReleaseNotes>### Updated
+- Match to latest Eyes.Sdk.Core
+</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageId>Eyes.Selenium</PackageId>
+    <PackageLicenseExpression />
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>applitools_nuget_icon.png</PackageIcon>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\Resources\captureDomAndPoll.js" />
+    <None Remove="Properties\Resources\captureDomAndPollForIE.js" />
+    <None Remove="Properties\Resources\processPageAndSerializePoll.js" />
+    <None Remove="Properties\Resources\processPageAndSerializePollForIE.js" />
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources\captureDomAndPoll.js" />
+    <EmbeddedResource Include="Properties\Resources\captureDomAndPollForIE.js" />
+    <EmbeddedResource Include="Properties\Resources\processPageAndSerializePoll.js" />
+    <EmbeddedResource Include="Properties\Resources\processPageAndSerializePollForIE.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CssParser\CssParser.csproj">
+		  <PrivateAssets>all</PrivateAssets>
+	  </ProjectReference>
+    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+  
+  <Target Name="GetMyPackageFiles">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(OutputPath)CssParser.dll">
+      </BuildOutputInPackage>
+    </ItemGroup>
+  </Target>
+    
+</Project>

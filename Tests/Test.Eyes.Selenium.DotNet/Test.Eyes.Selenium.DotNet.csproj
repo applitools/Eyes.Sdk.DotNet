@@ -1,0 +1,262 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="VisualGridTests\TestRenderingTask.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\ExcludedTests.txt" />
+    <None Remove="Resources\ExpectedDom_CorsTestPage.json" />
+    <None Remove="Resources\expected_dom1.json" />
+    <None Remove="Resources\IncludedTests.txt" />
+    <None Remove="Resources\IOSImages\Expected\iPad %285th generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 11.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 12.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Pro %2810.5 inch%29 Simulator 11.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Pro %2810.5 inch%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 11 Pro Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 11 Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 6 Plus Simulator 11.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 6 Plus Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 7 Plus Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 7 Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 7 Simulator 10.3 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone XR Simulator 12.2 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone XR Simulator 12.2 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone XS Max Simulator 12.2 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone XS Max Simulator 12.2 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad %285th generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 11.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 12.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Pro %2810.5 inch%29 Simulator 11.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Pro %2810.5 inch%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 11 Pro Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 11 Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 6 Plus Simulator 11.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 6 Plus Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 7 Plus Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 7 Simulator 10.3 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 7 Simulator 10.3 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone XR Simulator 12.2 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone XR Simulator 12.2 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone XS Max Simulator 12.2 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone XS Max Simulator 12.2 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone XS Simulator 12.2 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone XS Simulator 12.2 Portrait.png" />
+    <None Remove="Resources\Misc\TestUFGVisualViewport_Input.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckFrame.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckRegion2.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckRegionInFrame.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindow.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowAfterScroll.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowFully.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowViewport.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestDoubleCheckWindow.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestAccessibilityRegions.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementFully_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementWithIgnoreRegionBySameElement_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckOverflowingRegionByCoordinates_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckRegionByCoordinates_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckRegionBySelectorAfterManualScroll_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckRegionWithIgnoreRegion_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckScrollableModal.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithFloatingByRegion_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithFloatingBySelector_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreBySelector_Centered_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreBySelector_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreBySelector_Stretched_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreRegion_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindow_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestIgnoreDisplacements_False_.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestIgnoreDisplacements_True_.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestSimpleRegion.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrameInFrame_Fully_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrameInFrame_Fully_Fluent2.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrame_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrame_Fully_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrameFully_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrame_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame2_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame3_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrameInFrame_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame_Fluent.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Region.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Region_Fully.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Window.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Window_Fully.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElementInCenter_Chrome_VG_TestCheckScrollRootElement.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElementOnSimplePage_Chrome_VG_TestCheckWindow_Simple_Html.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElement_Chrome_VG_TestCheckWindow_Body.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElement_Chrome_VG_TestCheckWindow_Html.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestSimpleCases_Chrome_VG_TestCheckDivOverflowingThePage.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestSpecialCases_Chrome_VG_TestCheckRegionInAVeryBigFrame.json" />
+    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestSpecialCases_Chrome_VG_TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NunitLogHandler.common.cs" Link="Utils\NunitLogHandler.common.cs" />
+    <Compile Include="..\ReportingTestSuite.common.cs" Link="Utils\ReportingTestSuite.common.cs" />
+    <Compile Include="..\TestResult.common.cs" Link="Utils\TestResult.common.cs" />
+    <Compile Include="..\TestResultReportSummary.common.cs" Link="Utils\TestResultReportSummary.common.cs" />
+    <Compile Include="..\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExpectedDom_CorsTestPage.json" />
+    <EmbeddedResource Include="Resources\expected_dom1.json" />
+    <EmbeddedResource Include="Resources\IncludedTests.txt" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (5th generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 11.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 12.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (10.5 inch) Simulator 11.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (10.5 inch) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Pro Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 6 Plus Simulator 11.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 6 Plus Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 7 Plus Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 7 Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 7 Simulator 10.3 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XR Simulator 12.2 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XR Simulator 12.2 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XS Max Simulator 12.2 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XS Max Simulator 12.2 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad (5th generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 11.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 12.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (10.5 inch) Simulator 11.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (10.5 inch) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Pro Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 6 Plus Simulator 11.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 6 Plus Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 7 Plus Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 7 Simulator 10.3 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 7 Simulator 10.3 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone XR Simulator 12.2 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone XR Simulator 12.2 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone XS Max Simulator 12.2 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone XS Max Simulator 12.2 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone XS Simulator 12.2 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone XS Simulator 12.2 Portrait.png" />
+    <EmbeddedResource Include="Resources\Misc\TestUFGVisualViewport_Input.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckFrame.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckRegion.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckRegion2.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckRegionInFrame.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindow.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowAfterScroll.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowFully.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowViewport.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestDoubleCheckWindow.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestAccessibilityRegions.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementFully_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementWithIgnoreRegionBySameElement_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckOverflowingRegionByCoordinates_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckRegionByCoordinates_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckRegionBySelectorAfterManualScroll_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckRegionWithIgnoreRegion_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckScrollableModal.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithFloatingByRegion_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithFloatingBySelector_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreBySelector_Centered_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreBySelector_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreBySelector_Stretched_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindowWithIgnoreRegion_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckWindow_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestIgnoreDisplacements_False_.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestIgnoreDisplacements_True_.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestSimpleRegion.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrameInFrame_Fully_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrameInFrame_Fully_Fluent2.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrame_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrame_Fully_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrameFully_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrame_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame2_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame3_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrameInFrame_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame_Fluent.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Region.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Region_Fully.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Window.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestPageWithHeader_Chrome_VG_TestCheckPageWithHeader_Window_Fully.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElementInCenter_Chrome_VG_TestCheckScrollRootElement.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElementOnSimplePage_Chrome_VG_TestCheckWindow_Simple_Html.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElement_Chrome_VG_TestCheckWindow_Body.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestScrollRootElement_Chrome_VG_TestCheckWindow_Html.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestSimpleCases_Chrome_VG_TestCheckDivOverflowingThePage.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestSpecialCases_Chrome_VG_TestCheckRegionInAVeryBigFrame.json" />
+    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestSpecialCases_Chrome_VG_TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Appium.WebDriver" Version="4.1.1" />
+    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExcludedTests.txt" />
+  </ItemGroup>
+
+</Project>

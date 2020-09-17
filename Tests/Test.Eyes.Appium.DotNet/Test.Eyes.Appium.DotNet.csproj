@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+    <NoWarn>1701;1702;1705;NU1701</NoWarn>
+    <WarningsAsErrors>NU1605</WarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\NunitLogHandler.common.cs" Link="Utils\NunitLogHandler.common.cs" />
+    <Compile Include="..\ReportingTestSuite.common.cs" Link="Utils\ReportingTestSuite.common.cs" />
+    <Compile Include="..\TestResult.common.cs" Link="Utils\TestResult.common.cs" />
+    <Compile Include="..\TestResultReportSummary.common.cs" Link="Utils\TestResultReportSummary.common.cs" />
+    <Compile Include="..\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\IncludedTests.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AppiumHelloWorldTest.cs" />
+    <Compile Remove="AppiumTest.cs" />
+    <None Remove="Resources\IncludedTests.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Eyes.Appium.DotNet\Eyes.Appium.DotNet.csproj" />
+  </ItemGroup>
+  
+</Project>

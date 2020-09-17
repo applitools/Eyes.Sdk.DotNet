@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <StartupObject>Applitools.VisualGrid.Demo.ApplitoolsTutorial</StartupObject>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\gre_research_validity_data.pdf" />
+    <None Remove="VisualGrid\4.7.2b.txt" />
+    <None Remove="VisualGrid\4.7.2b_short.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\gre_research_validity_data.pdf" />
+    <EmbeddedResource Include="VisualGrid\4.7.2b_short.txt" />
+    <EmbeddedResource Include="VisualGrid\4.7.2b.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Include="Selenium.Support" Version="3.141.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
+    <ProjectReference Include="..\Tests\Test.Eyes.Images.DotNet\Test.Eyes.Images.DotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Apitron.PDF.Rasterizer">
+      <HintPath>Apitron.PDF.Rasterizer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

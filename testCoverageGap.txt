@@ -1,0 +1,12 @@
+mobile native (full screen)
+tutorials
+sauce labs (web)
+sauce labs (mobile native)
+browser stack (mobile native)
+browser stack (mobile web)
+perfecto mobile (mobile web)
+perfecto mobile (mobile native)
+all supported browser versions
+batch completion
+visual locators
+Default configuration validation

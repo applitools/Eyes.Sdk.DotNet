@@ -1,0 +1,415 @@
+Applitools.Selenium.Tests.ApiTests.TestAbort(False).TestAbortIfNotClosed
+Applitools.Selenium.Tests.ApiTests.TestAbort(True).TestAbortIfNotClosed
+Applitools.Selenium.Tests.ApiTests.TestAbort2(False).Test_GetAllResults
+Applitools.Selenium.Tests.ApiTests.TestAbort2(True).Test_GetAllResults
+Applitools.Selenium.Tests.ApiTests.TestApiMethods.TestCloseAsync(False)
+Applitools.Selenium.Tests.ApiTests.TestApiMethods.TestCloseAsync(True)
+Applitools.Selenium.Tests.TestAcme(Chrome, CSS).TestAcmeLogin
+Applitools.Selenium.Tests.TestAcme(Chrome, Scroll).TestAcmeLogin
+Applitools.Selenium.Tests.TestAcme(Chrome, VG).TestAcmeLogin
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckRegion
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckRegion2
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckRegionInFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckWindowAfterScroll
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckWindowFully
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckWindowViewport
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestDoubleCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckRegion
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckRegionInFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckWindowAfterScroll
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckWindowFully
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckWindowViewport
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestDoubleCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckInnerFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckRegion
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckRegion2
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckRegionInFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckWindowAfterScroll
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckWindowFully
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckWindowViewport
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestDoubleCheckWindow
+Applitools.Selenium.Tests.TestCounts.Test_VGTestsCount_1
+Applitools.Selenium.Tests.TestCounts.Test_VGTestsCount_2
+Applitools.Selenium.Tests.TestCounts.Test_VGTestsCount_3
+Applitools.Selenium.Tests.TestCounts.Test_VGTestsCount_4
+Applitools.Selenium.Tests.TestCounts.Test_VGTestsCount_5
+Applitools.Selenium.Tests.TestDuplicates(Chrome, CSS).TestDuplicatedIFrames
+Applitools.Selenium.Tests.TestDuplicates(Chrome, Scroll).TestDuplicatedIFrames
+Applitools.Selenium.Tests.TestDuplicates(Chrome, VG).TestDuplicatedIFrames
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrame_Fully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrameInFrame_Fully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrameInFrame_Fully_Fluent2
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckLongIFrameModal
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckLongOutOfBoundsIFrameModal
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionByCoordinateInFrameFully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFrame2_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFrame3_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFrameInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrame_Fully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrameInFrame_Fully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrameInFrame_Fully_Fluent2
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckLongIFrameModal
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckLongOutOfBoundsIFrameModal
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionByCoordinateInFrameFully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionInFrame2_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionInFrame3_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrameInFrame_Fully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrameInFrame_Fully_Fluent2
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckLongIFrameModal
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckLongOutOfBoundsIFrameModal
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckRegionByCoordinateInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckRegionByCoordinateInFrameFully_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckRegionInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckRegionInFrame2_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckRegionInFrame3_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckRegionInFrameInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestAccessibilityRegions
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckElementFully_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckElementFullyAfterScroll
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckElementWithIgnoreRegionBySameElement_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckMany
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckOverflowingRegionByCoordinates_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckRegionByCoordinates_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckRegionBySelectorAfterManualScroll_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckRegionWithIgnoreRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckScrollableModal
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindow_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithFloatingByRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithFloatingBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithIgnoreBySelector_Centered_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithIgnoreBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithIgnoreBySelector_Stretched_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithIgnoreRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestIgnoreDisplacements(False)
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestIgnoreDisplacements(True)
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestSimpleRegion
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestAccessibilityRegions
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckElementWithIgnoreRegionBySameElement_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckMany
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckOverflowingRegionByCoordinates_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckRegionByCoordinates_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckRegionWithIgnoreRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckScrollableModal
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindow_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowWithFloatingByRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowWithFloatingBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowWithIgnoreBySelector_Centered_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowWithIgnoreBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowWithIgnoreBySelector_Stretched_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowWithIgnoreRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestIgnoreDisplacements(False)
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestIgnoreDisplacements(True)
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestScrollbarsHiddenAndReturned_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestSimpleRegion
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestAccessibilityRegions
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckElementFully_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckElementFullyAfterScroll
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckElementWithIgnoreRegionBySameElement_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckMany
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckOverflowingRegionByCoordinates_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckRegionByCoordinates_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckRegionBySelectorAfterManualScroll_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckRegionWithIgnoreRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckScrollableModal
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindow_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowWithFloatingByRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowWithFloatingBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowWithIgnoreBySelector_Centered_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowWithIgnoreBySelector_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowWithIgnoreBySelector_Stretched_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowWithIgnoreRegion_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestIgnoreDisplacements(False)
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestIgnoreDisplacements(True)
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestScrollbarsHiddenAndReturned_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestSimpleRegion
+Applitools.Selenium.Tests.TestHelloWorld.HelloWorldTest(False)
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, CSS).TestCheckPageWithHeader_Region
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, CSS).TestCheckPageWithHeader_Region_Fully
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, CSS).TestCheckPageWithHeader_Window
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, CSS).TestCheckPageWithHeader_Window_Fully
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, Scroll).TestCheckPageWithHeader_Region
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, Scroll).TestCheckPageWithHeader_Window
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, Scroll).TestCheckPageWithHeader_Window_Fully
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, VG).TestCheckPageWithHeader_Region
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, VG).TestCheckPageWithHeader_Region_Fully
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, VG).TestCheckPageWithHeader_Window
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, VG).TestCheckPageWithHeader_Window_Fully
+Applitools.Selenium.Tests.TestRendersMatch.TestFailure
+Applitools.Selenium.Tests.TestRendersMatch.TestSuccess
+Applitools.Selenium.Tests.TestScrolling.TestWebAppScrolling2(ChromeEmulation)
+Applitools.Selenium.Tests.TestScrolling.TestWebAppScrolling3(ChromeEmulation)
+Applitools.Selenium.Tests.TestScrollRootElement(Chrome, CSS).TestCheckWindow_Html
+Applitools.Selenium.Tests.TestScrollRootElement(Chrome, Scroll).TestCheckWindow_Body
+Applitools.Selenium.Tests.TestScrollRootElement(Chrome, Scroll).TestCheckWindow_Html
+Applitools.Selenium.Tests.TestScrollRootElement(Chrome, VG).TestCheckWindow_Body
+Applitools.Selenium.Tests.TestScrollRootElementOnSimplePage(Chrome, CSS).TestCheckWindow_Simple_Html
+Applitools.Selenium.Tests.TestScrollRootElementOnSimplePage(Chrome, Scroll).TestCheckWindow_Simple_Html
+Applitools.Selenium.Tests.TestScrollRootElementOnSimplePage(Chrome, VG).TestCheckWindow_Simple_Html
+Applitools.Selenium.Tests.TestSendDom.TestNotSendDOM
+Applitools.Selenium.Tests.TestSendDom.TestSendDOM_1
+Applitools.Selenium.Tests.TestSendDom.TestSendDOM_2
+Applitools.Selenium.Tests.TestSendDom.TestSendDOM_FullWindow
+Applitools.Selenium.Tests.TestSendDom.TestSendDOM_Selector
+Applitools.Selenium.Tests.TestSimpleCases(Chrome, CSS).TestCheckDivOverflowingThePage
+Applitools.Selenium.Tests.TestSimpleCases(Chrome, VG).TestCheckDivOverflowingThePage
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckRegionInAVeryBigFrame
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCheckRegionInAVeryBigFrame
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleCheckDontGetAllResults(True)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckClose(False)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckClose(True)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckCloseAsync(False)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckCloseAsyncWithDifferentInstances(False)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesSelenium.TestEyesDifferentRunners("https://instagram.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesSelenium.TestEyesDifferentRunners("https://twitter.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesSelenium.TestEyesDifferentRunners("https://wikipedia.org",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesSelenium.TestEyesDifferentRunners("https://www.target.com/c/blankets-throws/-/N-d6wsb?lnk=ThrowsBlankets%E2%80%9C,tc",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesSelenium.TestEyesDifferentRunners("https://youtube.com",Layout)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://amazon.com",Layout)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://applitools.com/docs/topics/overview.html",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://applitools.com/features/frontend-development",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://docs.microsoft.com/en-us/",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://ebay.com",Layout)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://facebook.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://google.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://instagram.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://twitter.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://wikipedia.org",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://www.target.com/c/blankets-throws/-/N-d6wsb?lnk=ThrowsBlankets%E2%80%9C,tc",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG.TestEyesDifferentRunners("https://youtube.com",Layout)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG2.TestEyesDifferentRunners("https://amazon.com",Layout)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVGWithWebhook.TestEyesDifferentRunners("https://instagram.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVGWithWebhook.TestEyesDifferentRunners("https://twitter.com",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVGWithWebhook.TestEyesDifferentRunners("https://wikipedia.org",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVGWithWebhook.TestEyesDifferentRunners("https://www.target.com/c/blankets-throws/-/N-d6wsb?lnk=ThrowsBlankets%E2%80%9C,tc",Strict)
+Applitools.Selenium.Tests.VisualGridTests.TestIEyesVGWithWebhook.TestEyesDifferentRunners("https://youtube.com",Layout)
+Applitools.Selenium.Tests.VisualGridTests.TestVGServerConfigs.TestVGDoubleCloseNoCheck
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.TestMobileOnly
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.TestSpecialRendering
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(False,"Test Sequence","Test Sequence Name Env Var")
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(False,"Test Sequence",null)
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(False,null,"Test Sequence Name Env Var")
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(False,null,null)
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(True,"Test Sequence","Test Sequence Name Env Var")
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(True,"Test Sequence",null)
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(True,null,"Test Sequence Name Env Var")
+Applitools.Selenium.Tests.ApiTests.TestConfigurationSentCorrectlyToServer.TestEyesConfiguration(True,null,null)
+Applitools.Selenium.Tests.TestScrollRootElementInCenter(Chrome, Scroll).TestCheckScrollRootElement
+Applitools.Selenium.Tests.TestScrollRootElementInCenter(Chrome, CSS).TestCheckScrollRootElement
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckInnerFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckRegion2
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckInnerFrame
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckRegionInAVeryBigFrame
+Applitools.Selenium.Tests.TestSimpleCases(Chrome, Scroll).TestCheckDivOverflowingThePage
+Applitools.Selenium.Tests.TestScrollRootElement(Chrome, CSS).TestCheckWindow_Body
+Applitools.Selenium.Tests.TestPageWithHeader(Chrome, Scroll).TestCheckPageWithHeader_Region_Fully
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckElementFully_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckElementFullyAfterScroll
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestScrollbarsHiddenAndReturned_Fluent
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckRegionBySelectorAfterManualScroll_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionByCoordinateInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionInFrameInFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionByCoordinateInFrame_Fluent
+Applitools.Selenium.Tests.VisualGridTests.TestSpecialCharacters.TestRenderSpecialCharacters
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestAndroidStitch("Android Emulator","8.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Air 2 Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Air 2 Simulator","12.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Air 2 Simulator","11.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Pro (10.5 inch) Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad (5th generation) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Air 2 Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Air 2 Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPad Pro (10.5 inch) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone XS Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 11 Pro Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone XS Max Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 11 Pro Max Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone XR Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 11 Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 6 Plus Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 7 Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 5s Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone XS Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone XS Max Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone XR Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 6 Plus Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 7 Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 5s Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestAndroidStitch("Android Emulator","8.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Air 2 Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Air 2 Simulator","12.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Air 2 Simulator","11.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Pro (10.5 inch) Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad (5th generation) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Air 2 Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Air 2 Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPad Pro (10.5 inch) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone XS Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 11 Pro Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone XS Max Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 11 Pro Max Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone XR Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 11 Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 6 Plus Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 7 Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 5s Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone XS Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone XS Max Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone XR Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 6 Plus Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 7 Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 5s Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestAndroidStitch("Android Emulator","8.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Air 2 Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Air 2 Simulator","12.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Air 2 Simulator","11.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Pro (10.5 inch) Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad (5th generation) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Air 2 Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Air 2 Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPad Pro (10.5 inch) Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone XS Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 11 Pro Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone XS Max Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 11 Pro Max Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone XR Simulator","12.2",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 11 Simulator","13.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 6 Plus Simulator","11.0",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 7 Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 5s Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone XS Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone XS Max Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone XR Simulator","12.2",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 6 Plus Simulator","11.0",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 7 Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 5s Simulator","10.3",Portrait)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","10.3",Landscape,2048,1408)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","12.0",Landscape,2048,1396)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","11.3",Landscape,2048,1331)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Landscape,2732,1908)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (10.5 inch) Simulator","11.0",Landscape,2224,1528)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad (5th generation) Simulator","11.0",Portrait,1536,1843)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","10.3",Portrait,1536,1920)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","11.0",Portrait,1536,1908)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Portrait,2048,2592)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (10.5 inch) Simulator","11.0",Portrait,1668,2084)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone XS Simulator","12.2",Landscape,2172,912)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 11 Pro Simulator","13.0",Landscape,2172,813)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone XS Max Simulator","12.2",Landscape,2424,1030)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 11 Pro Max Simulator","13.0",Landscape,2424,922)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone XR Simulator","12.2",Landscape,1616,686)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 11 Simulator","13.0",Landscape,1616,620)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 6 Plus Simulator","11.0",Landscape,2208,1092)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 7 Simulator","10.3",Landscape,1334,662)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 5s Simulator","10.3",Landscape,1136,464)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone XS Simulator","12.2",Portrait,1125,1905)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone XS Max Simulator","12.2",Portrait,1242,2157)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone XR Simulator","12.2",Portrait,828,1438)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 6 Plus Simulator","11.0",Portrait,1242,1866)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 7 Simulator","10.3",Portrait,750,1118)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 7 Simulator","10.3",Landscape,2208,1110)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 5s Simulator","10.3",Portrait,640,920)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPhone 7 Plus Simulator","10.3",Landscape,2208,1110)
+Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariStitch("iPhone 7 Plus Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariStitch("iPhone 7 Plus Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileDevices("scrolled_mobile").TestIOSSafariStitch("iPhone 7 Plus Simulator","10.3",Landscape)
+Applitools.Selenium.Tests.TestMobileEmulation.TestCheckRegion_LoadPageAfterOpen
+Applitools.Selenium.Tests.TestAPI.TestIsDisabled
+Applitools.Selenium.Tests.VisualGridTests.TestVGNoMissingSteps.TestNoMissingSteps_UT
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckWindow_ForceFullPageScreenshot
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckWindow_ForceFullPageScreenshot
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckWindow_ForceFullPageScreenshot
+Applitools.Selenium.Tests.VisualGridTests.TestVGServerConfigs.TestChangeConfigAfterOpen(True)
+Applitools.Selenium.Tests.VisualGridTests.TestVGServerConfigs.TestChangeConfigAfterOpen(False)
+Applitools.Selenium.Tests.TestAPI.TestAccessibility(True)
+Applitools.Selenium.Tests.TestAPI.TestAccessibility(False)
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.IOSSimulatorUfgTest
+Applitools.Selenium.Tests.TestAPI.TestReplaceMatchedStep
+Applitools.Selenium.Tests.TestAPI.TestNoReplaceMatchedStep
+Applitools.Selenium.Tests.TestAPI.TestReplaceMatchedStep
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.IOSSimulatorUfgTest
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckCloseAsync(True)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckCloseAsyncWithDifferentInstances(True)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckCloseWithDifferentInstances(False)
+Applitools.Selenium.Tests.VisualGridTests.TestDoubleOpenClose.TestDoubleOpenCheckCloseWithDifferentInstances(True)
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.TestSpecialRendering("https://applitools.github.io/demo/TestPages/DomTest/shadow_dom.html","Shadow DOM Test")
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.TestSpecialRendering("https://applitools.github.io/demo/TestPages/VisualGridTestPage/canvastest.html","Canvas Test")
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrame_Fully_Fluent
+Applitools.Selenium.Tests.TestHelloWorld.HelloWorldTest(True)
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.ViewportsTest
+Applitools.Selenium.Tests.VisualGridTests.TestVGCloseAsync.TestCloseAsync
+Applitools.Selenium.Tests.TestScrollRootElement(Chrome, VG).TestCheckWindow_Html
+Applitools.Selenium.Tests.TestScrollRootElementInCenter(Chrome, VG).TestCheckScrollRootElement
+Applitools.Selenium.Tests.ApiTests.TestBatchApi.TestCloseBatch(True)
+Applitools.Selenium.Tests.ApiTests.TestBatchApi.TestCloseBatch(False)
+Applitools.Selenium.Tests.TestBrowserResize.BrowserSizeTest
+Applitools.Selenium.Tests.TestAPI.TestEyesConstructor_PassServerUrl
+Applitools.Selenium.Tests.TestServerStatus.TestSessionSummary_Status_Failed
+Applitools.Selenium.Tests.TestServerStatus.TestSessionSummary_Status_New
+Applitools.Selenium.Tests.TestServerConnector.TestDelete
+Applitools.Selenium.Tests.TestClassicRunnerExceptions.TestExceptionInGetAllTestResults
+Applitools.Selenium.Tests.TestsUsingMockServerConnector.TestFullWindowInCorrectLocationAfterRetry
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCheckElementBiggerThanHTML
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckElementBiggerThanHTML
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckElementBiggerThanHTML
+Applitools.Selenium.Tests.TestDefaultRootElement.TestCheckDefaultElementBiggerBody
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridVisualViewport.TestUFGVisualViewport
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLongImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLongImage
+# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLargeImage
+# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLongImage
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckElementFullyOnBottomAfterScroll
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckElementFullyOnBottomAfterScroll
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCheckElementFullyOnBottomAfterScroll
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckFixedRegion_Fully
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckFixedRegion_Fully
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestSimpleModal
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestSimpleModal
+Applitools.Selenium.Tests.VisualGridTests.TestMobileDevices.TestIosDeviceReportedResolutionOnFailure
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestVisualGridOptions
+
+Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelectorBeforeValidCheck(False)
+Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelector(False)
+Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelectorBeforeValidCheck(True)
+Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelector(True)
+Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadIgnoreSelector(True)
+Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadIgnoreSelector(False)
+Applitools.Selenium.Tests.VisualGridTests.TestDefaultRendering.TestDefaultRenderingOfMultipleTargets
+Applitools.Selenium.Tests.VisualGridTests.TestTimeouts.TestTimeout
+Applitools.Selenium.Tests.VisualGridTests.TestTimeouts.TestTimeout2
+Applitools.Selenium.Tests.VisualGridTests.TestVGWithBadWebhook.Test
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRCA.Test_VG_RCA_Config
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRCA.Test_VG_RCA_Fluent
+Applitools.Selenium.Tests.TestAPI.EnsureFluentApiCoversEverything
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestVisualGridSkipList
+Applitools.Selenium.Tests.TestAPI.TestFullAgentId_1
+Applitools.Selenium.Tests.TestAPI.TestFullAgentId_2
+Applitools.Selenium.Tests.TestAPI.TestFullAgentId_3
+Applitools.Selenium.Tests.TestAPI.TestFullAgentId_VG

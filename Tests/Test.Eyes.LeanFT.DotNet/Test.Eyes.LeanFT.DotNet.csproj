@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="HelloWorldTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NunitLogHandler.common.cs" Link="Utils\NunitLogHandler.common.cs" />
+    <Compile Include="..\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Eyes.LeanFt.DotNet\Eyes.LeanFT.DotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="HP.LFT.Report">
+      <HintPath>..\..\bin\deps\LFT\HP.LFT.Report.dll</HintPath>
+    </Reference>
+    <Reference Include="HP.LFT.SDK">
+      <HintPath>..\..\bin\deps\LFT\HP.LFT.SDK.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

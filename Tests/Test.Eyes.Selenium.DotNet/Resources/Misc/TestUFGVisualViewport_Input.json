@@ -1,0 +1,17 @@
+﻿{
+  "imageLocation": "https://eyesapi.applitools.com/api/images/stitching/se%7e14f026a3-d3bf-40aa-8a07-f6877dc97070?accessKey=tYQeKMthv2eKV1kgGpEZtbxUVM108BjmjHaNvm9IBykbk110",
+  "status": "rendered",
+  "os": "linux",
+  "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1",
+  "visualViewport": {
+    "width": 980,
+    "height": 1659
+  },
+  "deviceSize": {
+    "height": 812,
+    "width": 375
+  },
+  "retryCount": 0,
+  "domLocation": "https://eyespublicwusi0.blob.core.windows.net/a10598-se/f4114bf7-ef9e-4cb6-9444-7627efe89dfb?sv=2017-04-17&sr=c&sig=GXn6dvH0%2B%2FYe9LeeMKC7roaaqFxNi3rsQEEB8HkF%2BZk%3D&se=2020-07-30T12%3A24%3A33Z&sp=w&accessKey=tYQeKMthv2eKV1kgGpEZtbxUVM108BjmjHaNvm9IBykbk110",
+  "renderId": "b8886899-6306-45af-80ac-0a351261beff"
+}

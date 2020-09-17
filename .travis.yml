@@ -1,0 +1,54 @@
+language: csharp
+solution: Eyes.Sdk.DotNet_Travis.sln
+mono: none
+dotnet: 3.1.401
+
+node_js:
+  - "14"
+
+os: linux
+dist: xenial
+
+services:
+  - docker
+
+branches:
+  except:
+  - /^[a-zA-Z]+_\d+(\.\d+)+$/
+
+addons:
+  chrome: stable
+
+git:
+  depth: 3
+  submodules: false
+
+before_install:
+    - git submodule update --init --remote --recursive
+    - nvm install node
+
+# env variables
+# $RELEASE_BRANCH
+# $GITHUB_TOKEN
+# $ALLOWED_RELEASE_COMMITERS
+# $SDK
+script:
+  - python --version
+  - latestChromeDriverURL=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -q -O -)
+  - wget "http://chromedriver.storage.googleapis.com/${latestChromeDriverURL}/chromedriver_linux64.zip"
+  - unzip chromedriver_linux64.zip -d /home/travis/build/
+  - export CHROME_BIN=chromium-browser
+  - export DRIVER_PATH=/home/travis/build/
+  - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
+  - sudo apt-get install -y libgdiplus
+  - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
+    python updateChangelogAndProjectFiles.py;
+    fi
+  - chmod +x ./buildProjects.sh
+  - ./buildProjects.sh
+  - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
+    chmod +x ./deploy.sh;
+    ./deploy.sh;
+    chmod +x ./sendMail.sh;
+    ./sendMail.sh;
+    fi

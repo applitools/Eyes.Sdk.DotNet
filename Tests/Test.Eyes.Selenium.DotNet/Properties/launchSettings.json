@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Test.Eyes.Selenium.DotNet": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "SELENIUM_SERVER_URL": "!"
+      }
+    }
+  }
+}

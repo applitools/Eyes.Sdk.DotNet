@@ -1,0 +1,248 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\1-2_orig.png" />
+    <None Remove="Resources\1-2_scaled.png" />
+    <None Remove="Resources\1-3_orig.png" />
+    <None Remove="Resources\1-3_scaled.png" />
+    <None Remove="Resources\1-4_orig.png" />
+    <None Remove="Resources\1-4_scaled.png" />
+    <None Remove="Resources\2-3_orig.png" />
+    <None Remove="Resources\2-3_scaled.png" />
+    <None Remove="Resources\applitools_logo_combined.svg" />
+    <None Remove="Resources\BrotliTestData\10x10y" />
+    <None Remove="Resources\BrotliTestData\10x10y.compressed" />
+    <None Remove="Resources\BrotliTestData\64x" />
+    <None Remove="Resources\BrotliTestData\64x.compressed" />
+    <None Remove="Resources\BrotliTestData\alice29.txt" />
+    <None Remove="Resources\BrotliTestData\alice29.txt.compressed" />
+    <None Remove="Resources\BrotliTestData\asyoulik.txt" />
+    <None Remove="Resources\BrotliTestData\asyoulik.txt.compressed" />
+    <None Remove="Resources\BrotliTestData\backward65536" />
+    <None Remove="Resources\BrotliTestData\backward65536.compressed" />
+    <None Remove="Resources\BrotliTestData\bb.binast" />
+    <None Remove="Resources\BrotliTestData\compressed_file" />
+    <None Remove="Resources\BrotliTestData\compressed_file.compressed" />
+    <None Remove="Resources\BrotliTestData\compressed_repeated" />
+    <None Remove="Resources\BrotliTestData\compressed_repeated.compressed" />
+    <None Remove="Resources\BrotliTestData\empty" />
+    <None Remove="Resources\BrotliTestData\empty.compressed" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.00" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.01" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.02" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.03" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.04" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.05" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.06" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.07" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.08" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.09" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.10" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.11" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.12" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.13" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.14" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.15" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.16" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.17" />
+    <None Remove="Resources\BrotliTestData\empty.compressed.18" />
+    <None Remove="Resources\BrotliTestData\lcet10.txt" />
+    <None Remove="Resources\BrotliTestData\lcet10.txt.compressed" />
+    <None Remove="Resources\BrotliTestData\mapsdatazrh" />
+    <None Remove="Resources\BrotliTestData\mapsdatazrh.compressed" />
+    <None Remove="Resources\BrotliTestData\monkey" />
+    <None Remove="Resources\BrotliTestData\monkey.compressed" />
+    <None Remove="Resources\BrotliTestData\plrabn12.txt" />
+    <None Remove="Resources\BrotliTestData\plrabn12.txt.compressed" />
+    <None Remove="Resources\BrotliTestData\quickfox" />
+    <None Remove="Resources\BrotliTestData\quickfox.compressed" />
+    <None Remove="Resources\BrotliTestData\quickfox_repeated" />
+    <None Remove="Resources\BrotliTestData\quickfox_repeated.compressed" />
+    <None Remove="Resources\BrotliTestData\random_chunks" />
+    <None Remove="Resources\BrotliTestData\ukkonooa" />
+    <None Remove="Resources\BrotliTestData\ukkonooa.compressed" />
+    <None Remove="Resources\BrotliTestData\x" />
+    <None Remove="Resources\BrotliTestData\x.compressed" />
+    <None Remove="Resources\BrotliTestData\x.compressed.00" />
+    <None Remove="Resources\BrotliTestData\x.compressed.01" />
+    <None Remove="Resources\BrotliTestData\x.compressed.02" />
+    <None Remove="Resources\BrotliTestData\x.compressed.03" />
+    <None Remove="Resources\BrotliTestData\xyzzy" />
+    <None Remove="Resources\BrotliTestData\xyzzy.compressed" />
+    <None Remove="Resources\BrotliTestData\zeros" />
+    <None Remove="Resources\BrotliTestData\zeros.compressed" />
+    <None Remove="Resources\chevron.svg" />
+    <None Remove="Resources\fa-regular-400.svg" />
+    <None Remove="Resources\IncludedTests.txt" />
+    <None Remove="Resources\ios.svg" />
+    <None Remove="Resources\ScaledDownImage.png" />
+    <None Remove="Resources\ScaledDownTo540x768Image.png" />
+    <None Remove="Resources\ScaledUpImage.png" />
+    <None Remove="Resources\scale_bug_to_540x768.png" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_False_False_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_False_False_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_False_True_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_False_True_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_False_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_False_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_True_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_True_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_False_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_False_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_True_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_True_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_True_False_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_True_False_True.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_True_True_False.json" />
+    <None Remove="Resources\SessionStartInfo_FluentApiSerialization_True_True_True.json" />
+    <None Remove="Resources\SessionStartInfo_Serialization.json" />
+    <None Remove="Resources\SrcImage.png" />
+    <None Remove="Resources\TestRenderRequestSerialization.json" />
+    <None Remove="Resources\TestRenderRequestSerializationIosDevice.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NunitLogHandler.common.cs" Link="Utils\NunitLogHandler.common.cs" />
+    <Compile Include="..\ReportingTestSuite.common.cs" Link="Utils\ReportingTestSuite.common.cs" />
+    <Compile Include="..\TestResult.common.cs" Link="Utils\TestResult.common.cs" />
+    <Compile Include="..\TestResultReportSummary.common.cs" Link="Utils\TestResultReportSummary.common.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\1-2_orig.png" />
+    <EmbeddedResource Include="Resources\1-2_scaled.png" />
+    <EmbeddedResource Include="Resources\1-3_orig.png" />
+    <EmbeddedResource Include="Resources\1-3_scaled.png" />
+    <EmbeddedResource Include="Resources\1-4_orig.png" />
+    <EmbeddedResource Include="Resources\1-4_scaled.png" />
+    <EmbeddedResource Include="Resources\2-3_orig.png" />
+    <EmbeddedResource Include="Resources\2-3_scaled.png" />
+    <EmbeddedResource Include="Resources\applitools_logo_combined.svg" />
+    <EmbeddedResource Include="Resources\BrotliTestData\10x10y" />
+    <EmbeddedResource Include="Resources\BrotliTestData\10x10y.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\64x" />
+    <EmbeddedResource Include="Resources\BrotliTestData\64x.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\alice29.txt" />
+    <EmbeddedResource Include="Resources\BrotliTestData\alice29.txt.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\asyoulik.txt" />
+    <EmbeddedResource Include="Resources\BrotliTestData\asyoulik.txt.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\backward65536" />
+    <EmbeddedResource Include="Resources\BrotliTestData\backward65536.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\bb.binast" />
+    <EmbeddedResource Include="Resources\BrotliTestData\compressed_file" />
+    <EmbeddedResource Include="Resources\BrotliTestData\compressed_file.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\compressed_repeated" />
+    <EmbeddedResource Include="Resources\BrotliTestData\compressed_repeated.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.00" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.01" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.02" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.03" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.04" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.05" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.06" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.07" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.08" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.09" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.10" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.11" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.12" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.13" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.14" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.15" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.16" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.17" />
+    <EmbeddedResource Include="Resources\BrotliTestData\empty.compressed.18" />
+    <EmbeddedResource Include="Resources\BrotliTestData\lcet10.txt" />
+    <EmbeddedResource Include="Resources\BrotliTestData\lcet10.txt.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\mapsdatazrh" />
+    <EmbeddedResource Include="Resources\BrotliTestData\mapsdatazrh.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\monkey" />
+    <EmbeddedResource Include="Resources\BrotliTestData\monkey.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\plrabn12.txt" />
+    <EmbeddedResource Include="Resources\BrotliTestData\plrabn12.txt.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\quickfox" />
+    <EmbeddedResource Include="Resources\BrotliTestData\quickfox.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\quickfox_repeated" />
+    <EmbeddedResource Include="Resources\BrotliTestData\quickfox_repeated.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\random_chunks" />
+    <EmbeddedResource Include="Resources\BrotliTestData\ukkonooa" />
+    <EmbeddedResource Include="Resources\BrotliTestData\ukkonooa.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\x" />
+    <EmbeddedResource Include="Resources\BrotliTestData\x.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\x.compressed.00" />
+    <EmbeddedResource Include="Resources\BrotliTestData\x.compressed.01" />
+    <EmbeddedResource Include="Resources\BrotliTestData\x.compressed.02" />
+    <EmbeddedResource Include="Resources\BrotliTestData\x.compressed.03" />
+    <EmbeddedResource Include="Resources\BrotliTestData\xyzzy" />
+    <EmbeddedResource Include="Resources\BrotliTestData\xyzzy.compressed" />
+    <EmbeddedResource Include="Resources\BrotliTestData\zeros" />
+    <EmbeddedResource Include="Resources\BrotliTestData\zeros.compressed" />
+    <EmbeddedResource Include="Resources\chevron.svg" />
+    <EmbeddedResource Include="Resources\fa-regular-400.svg" />
+    <EmbeddedResource Include="Resources\IncludedTests.txt" />
+    <EmbeddedResource Include="Resources\ios.svg" />
+    <EmbeddedResource Include="Resources\ScaledDownImage.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ScaledDownTo540x768Image.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ScaledUpImage.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\scale_bug_to_540x768.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_False_False_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_False_False_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_False_True_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_False_True_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_False_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_True_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_True_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_False_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_True_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_True_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_True_False_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_NonDefaultIMS_False_False_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_True_False_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_True_False_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_True_True_False.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_FluentApiSerialization_True_True_True.json" />
+    <EmbeddedResource Include="Resources\SessionStartInfo_Serialization.json" />
+    <EmbeddedResource Include="Resources\SrcImage.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestRenderRequestSerialization.json" />
+    <EmbeddedResource Include="Resources\TestRenderRequestSerializationIosDevice.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="NSubstitute" Version="4.2.1" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+  </ItemGroup>
+
+</Project>

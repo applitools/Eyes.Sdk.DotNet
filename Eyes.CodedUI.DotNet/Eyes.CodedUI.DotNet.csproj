@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net452;net462;net472;net48</TargetFrameworks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Applitools Eyes adds automated visual validation to your automated tests.
+With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
+To learn more, visit https://applitools.com/ .</Description>
+    <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
+    <Copyright>Applitools 2013</Copyright>
+    <Version>2.16</Version>
+    <Authors>Applitools</Authors>
+    <Company>Applitools</Company>
+    <Product>Eyes SDK</Product>
+    <PackageTags>applitools eyes codedui</PackageTags>
+    <PackageReleaseNotes>### Updated
+- Match to latest Eyes.Sdk.Core
+</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageLicenseExpression />
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>applitools_nuget_icon.png</PackageIcon>
+    <PackageId>Eyes.CodedUI</PackageId>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Windows.DotNet\Eyes.Windows.DotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common">
+      <HintPath>..\bin\deps\CodedUI\Microsoft.VisualStudio.TestTools.UITest.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension">
+      <HintPath>..\bin\deps\CodedUI\Microsoft.VisualStudio.TestTools.UITest.Extension.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestTools.UITesting">
+      <HintPath>..\bin\deps\CodedUI\Microsoft.VisualStudio.TestTools.UITesting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
