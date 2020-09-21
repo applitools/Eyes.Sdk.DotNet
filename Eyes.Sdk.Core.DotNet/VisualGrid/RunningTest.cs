@@ -308,11 +308,12 @@ namespace Applitools.VisualGrid
                 }
 
                 chosenTask = TaskList[0];
-                if (chosenTask.TaskType != taskType || chosenTask.IsSent || (taskType == TaskType.Open && !chosenTask.IsTaskReadyToCheck))
+                if (chosenTask.TaskType != taskType || chosenTask.IsSent)
                 {
                     Logger.Verbose("No relevant tasks in list. List content: {0}", TaskList.Concat(" ; "));
                     return null;
                 }
+                chosenTask.IsSent = true;
             }
             Logger.Verbose("creating a new ScoreTask with score {0} and Task: {1}", score, chosenTask);
             return new ScoreTask(chosenTask, score);

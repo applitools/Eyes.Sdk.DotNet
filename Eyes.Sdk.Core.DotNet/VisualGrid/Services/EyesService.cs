@@ -12,7 +12,7 @@ namespace Applitools.VisualGrid
         private readonly AutoResetEvent outerDebugLock_;
         protected Tasker tasker_;
         protected bool isServiceOn_ = true;
-        protected readonly int threadPoolSize_;
+        protected readonly int testsPoolSize_;
 
         protected Logger Logger { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Applitools.VisualGrid
             }
         }
 
-        public EyesService(string serviceName, Logger logger, int threadPoolSize, 
+        public EyesService(string serviceName, Logger logger, int testsPoolSize, 
             AutoResetEvent innerDebugLock, AutoResetEvent outerDebugLock, 
             EyesServiceListener listener, Tasker tasker)
         {
@@ -44,7 +44,7 @@ namespace Applitools.VisualGrid
             thread_.IsBackground = true;
             thread_.Name = serviceName;
 
-            threadPoolSize_ = threadPoolSize;
+            testsPoolSize_ = testsPoolSize;
             listener_ = listener;
             Logger = logger;
             innerDebugLock_ = innerDebugLock;

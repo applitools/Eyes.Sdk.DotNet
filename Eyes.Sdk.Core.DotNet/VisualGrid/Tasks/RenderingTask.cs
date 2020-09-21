@@ -30,8 +30,7 @@ namespace Applitools.VisualGrid
         private readonly FrameData result_;
         private readonly IList<VisualGridSelector[]> regionSelectors_;
         private readonly ICheckSettings settings_;
-        private readonly List<VisualGridTask> taskList_;
-        private readonly List<VisualGridTask> openTasks_;
+        private readonly List<VisualGridTask> checkTasks_;
         private readonly VisualGridRunner visualGridManager_;
         private readonly UserAgent userAgent_;
         private readonly IDebugResourceWriter debugResourceWriter_ = NullDebugResourceWriter.Instance;
@@ -55,15 +54,14 @@ namespace Applitools.VisualGrid
         public bool IsTaskComplete { get; set; }
 
         public RenderingTask(IEyesConnector connector, FrameData scriptResult, IList<VisualGridSelector[]> regionSelectors,
-            ICheckSettings settings, List<VisualGridTask> taskList, List<VisualGridTask> openTasks,
+            ICheckSettings settings, List<VisualGridTask> checkTasks,
             VisualGridRunner visualGridManager, UserAgent userAgent, IDebugResourceWriter debugResourceWriter, RenderTaskListener listener)
         {
             connector_ = connector;
             result_ = scriptResult;
             regionSelectors_ = regionSelectors;
             settings_ = settings;
-            taskList_ = taskList;
-            openTasks_ = openTasks;
+            checkTasks_ = checkTasks;
             renderingInfo_ = visualGridManager.RenderingInfo;
             visualGridManager_ = visualGridManager;
             userAgent_ = userAgent;
@@ -133,8 +131,6 @@ namespace Applitools.VisualGrid
             try
             {
                 logger_.Verbose("step 1");
-
-                AddRenderingTaskToOpenTasks_();
 
                 bool isSecondRequestAlreadyHappened = false;
 
@@ -237,10 +233,11 @@ namespace Applitools.VisualGrid
             {
                 isTaskInException = true; // FOR DEBUGGING
                 logger_.Log("Error (2): " + e);
-                foreach (VisualGridTask visualGridTask in taskList_)
+                foreach (VisualGridTask visualGridTask in checkTasks_)
                 {
                     visualGridTask.SetExceptionAndAbort(e);
                 }
+                NotifyFailAllListeners_(new EyesException("Failed rendering", e));
             }
 
             IsTaskComplete = true;
@@ -313,9 +310,9 @@ namespace Applitools.VisualGrid
                     RenderRequest renderRequest = kvp.Value;
                     if (renderedRender.RenderId.Equals(id, StringComparison.OrdinalIgnoreCase))
                     {
-                        VisualGridTask task = runningRenders[renderedRender].Task;
+                        VisualGridTask task = renderRequest.Task;
                         logger_.Verbose("removing failed render id: {0}", id);
-                        task.SetRenderError(id, "too long rendering(rendering exceeded 150 sec)", renderRequest);
+                        task.SetRenderError(id, "too long rendering(rendering exceeded 150 sec)");
                         break;
                     }
                 }
@@ -353,30 +350,18 @@ namespace Applitools.VisualGrid
                     {
                         RunningRender renderedRender = kvp.Key;
                         RenderRequest renderRequest = kvp.Value;
+                        string renderId = renderedRender.RenderId;
                         if (renderedRender.RenderId.Equals(removedId, StringComparison.OrdinalIgnoreCase))
                         {
-                            VisualGridTask task = runningRenders[renderedRender].Task;
-
-                            for (int k = openTasks_.Count - 1; k >= 0; k--)
-                            {
-                                VisualGridTask openTask = openTasks_[k];
-                                if (openTask.RunningTest == task.RunningTest)
-                                {
-                                    if (isRenderedStatus)
-                                    {
-                                        logger_.Verbose("setting openTask {0} render result: {1} to url {2}", openTask, renderStatusResults, result_.Url);
-                                        openTask.SetRenderResult(renderStatusResults);
-                                    }
-                                    else
-                                    {
-                                        logger_.Verbose("setting openTask {0} render error: {1} to url {2}", openTask, removedId, result_.Url);
-                                        openTask.SetRenderError(removedId, renderStatusResults.Error, renderRequest);
-                                    }
-                                    openTasks_.RemoveAt(k);
-                                }
-                            }
+                            VisualGridTask task = renderRequest.Task;
 
                             logger_.Verbose("setting task {0} render result: {1} to url {2}", task, renderStatusResults, result_.Url);
+                            string error = renderStatusResults.Error;
+                            if (error != null)
+                            {
+                                logger_.Log("Error: {0}", error);
+                                task.SetRenderError(renderId, error);
+                            }
                             task.SetRenderResult(renderStatusResults);
                             break;
                         }
@@ -384,6 +369,11 @@ namespace Applitools.VisualGrid
                 }
             }
             logger_.Verbose("exit");
+        }
+
+        public bool IsReady()
+        {
+            return checkTasks_[0].RunningTest.IsTestOpen;
         }
 
         private List<string> GetRenderIds_(ICollection<RunningRender> runningRenders)
@@ -395,18 +385,12 @@ namespace Applitools.VisualGrid
             }
             return ids;
         }
+
         private void SetRenderErrorToTasks_(RenderRequest[] requests)
         {
             foreach (RenderRequest renderRequest in requests)
             {
-                foreach (VisualGridTask openTask in openTasks_)
-                {
-                    if (openTask.RunningTest == renderRequest.Task.RunningTest)
-                    {
-                        openTask.SetRenderError(null, "Invalid response for render request", renderRequest);
-                    }
-                }
-                renderRequest.Task.SetRenderError(null, "Invalid response for render request", renderRequest);
+                renderRequest.Task.SetRenderError(null, "Invalid response for render request");
             }
         }
 
@@ -415,6 +399,14 @@ namespace Applitools.VisualGrid
             foreach (RenderTaskListener listener in listeners_)
             {
                 listener.OnRenderSuccess();
+            }
+        }
+
+        private void NotifyFailAllListeners_(Exception e)
+        {
+            foreach (RenderTaskListener listener in listeners_)
+            {
+                listener.OnRenderFailed(e);
             }
         }
 
@@ -908,7 +900,7 @@ namespace Applitools.VisualGrid
             List<RenderRequest> allRequestsForRG = new List<RenderRequest>();
             ICheckSettingsInternal csInternal = (ICheckSettingsInternal)settings_;
 
-            foreach (VisualGridTask task in taskList_)
+            foreach (VisualGridTask task in checkTasks_)
             {
                 RenderBrowserInfo browserInfo = task.BrowserInfo;
                 RenderInfo renderInfo = new RenderInfo(browserInfo.Width, browserInfo.Height,
@@ -1101,7 +1093,7 @@ namespace Applitools.VisualGrid
         {
             logger_.Verbose("Downloading data from {0}", url);
             // If resource is not being fetched yet (limited guarantee)
-            IEyesConnector eyesConnector = taskList_?[0].EyesConnector;
+            IEyesConnector eyesConnector = checkTasks_?[0].EyesConnector;
             HttpWebRequest request = WebRequest.CreateHttp(url);
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Proxy = eyesConnector?.Proxy;
@@ -1116,17 +1108,6 @@ namespace Applitools.VisualGrid
             int hashIndex = url.LastIndexOf('#');
             string sanitizedUrl = (hashIndex >= 0 ? url.Substring(0, hashIndex) : url).TrimEnd('?');
             return sanitizedUrl;
-        }
-
-        private void AddRenderingTaskToOpenTasks_()
-        {
-            if (openTasks_ != null)
-            {
-                foreach (VisualGridTask task in openTasks_)
-                {
-                    task.SetRenderingTask(this);
-                }
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Applitools.Selenium;
+using Applitools.Utils.Geometry;
 
 namespace Applitools.VisualGrid
 {
@@ -38,6 +39,7 @@ namespace Applitools.VisualGrid
 
         public int Width { get; }
         public int Height { get; }
+        public RectangleSize ViewportSize => new RectangleSize(Width, Height);
 
         public string Platform
         {

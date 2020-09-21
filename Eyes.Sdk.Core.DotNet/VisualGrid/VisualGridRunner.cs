@@ -275,7 +275,7 @@ namespace Applitools.VisualGrid
                         Logger.Log("Error: " + e);
                     }
                     return nextTestToRender;
-                }), renderingServiceLock_);
+                }));
 
             eyesCheckerService_ = new EyesService("eyesCheckerService", Logger, concurrentOpenSessions_,
                 checkerServiceInnerDebugLock_, checkerServiceOuterDebugLock_,
@@ -367,23 +367,25 @@ namespace Applitools.VisualGrid
         private RenderingTask GetNextRenderingTask_()
         {
             Logger.Verbose("enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
-            RenderingTask renderingTask = null;
-            if (renderingTaskList_.Count > 0)
+            if (renderingTaskList_.Count == 0)
             {
-                Logger.Verbose("locking renderingTaskList_");
-                lock (renderingTaskList_)
-                {
-                    if (renderingTaskList_.Count > 0)
-                    {
-                        renderingTask = renderingTaskList_[0];
-                        renderingTaskList_.RemoveAt(0);
-                        Logger.Verbose("rendering task: {0}", renderingTask);
-                    }
-                }
-                Logger.Verbose("releasing renderingTaskList_");
+                return null;
             }
-            Logger.Verbose("exit");
-            return renderingTask;
+            lock (renderingTaskList_)
+            {
+                if (renderingTaskList_.Count == 0)
+                {
+                    return null;
+                }
+                RenderingTask renderingTask = renderingTaskList_[0];
+                if (!renderingTask.IsReady())
+                {
+                    return null;
+                }
+                renderingTaskList_.RemoveAt(0);
+                Logger.Verbose("rendering task: {0}", renderingTask);
+                return renderingTask;
+            }
         }
 
         private Task<TestResultContainer> GetNextTestToClose_()
@@ -558,12 +560,12 @@ namespace Applitools.VisualGrid
 
         public void Check(ICheckSettings settings, IDebugResourceWriter debugResourceWriter, FrameData frameData,
                           IList<VisualGridSelector[]> regionSelectors, IEyesConnector connector, UserAgent userAgent,
-                          List<VisualGridTask> taskList, List<VisualGridTask> openTasks, RenderListener listener)
+                          List<VisualGridTask> taskList, RenderListener listener)
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
 
             RenderingTask renderingTask = new RenderingTask(connector, frameData, regionSelectors, settings,
-                taskList, openTasks, this, userAgent, debugResourceWriter,
+                taskList, this, userAgent, debugResourceWriter,
                 new RenderingTask.RenderTaskListener(
                     () =>
                     {

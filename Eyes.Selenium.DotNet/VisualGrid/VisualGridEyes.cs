@@ -412,7 +412,7 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.Verbose("enter (#{0})", GetHashCode());
 
-            List<VisualGridTask> openTasks = AddOpenTaskToAllRunningTest_();
+            AddOpenTaskToAllRunningTest_();
             List<VisualGridTask> taskList = new List<VisualGridTask>();
 
             ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
@@ -485,7 +485,7 @@ namespace Applitools.Selenium.VisualGrid
                 }
 
                 visualGridRunner_.Check(checkSettings, debugResourceWriter_, captureStatus.Value, regionSelectors,
-                        eyesConnector_, userAgent_, taskList, openTasks,
+                        eyesConnector_, userAgent_, taskList,
                         new VisualGridRunner.RenderListener());
 
                 switchTo.Frames(originalFC);
@@ -900,20 +900,17 @@ namespace Applitools.Selenium.VisualGrid
             return currentBest;
         }
 
-        private List<VisualGridTask> AddOpenTaskToAllRunningTest_()
+        private void AddOpenTaskToAllRunningTest_()
         {
             Logger.Verbose("enter");
-            List<VisualGridTask> tasks = new List<VisualGridTask>();
             foreach (RunningTest runningTest in testList_)
             {
                 if (!runningTest.IsOpenTaskIssued)
                 {
-                    VisualGridTask task = runningTest.Open((Configuration)configAtOpen_);
-                    tasks.Add(task);
+                    runningTest.Open((Configuration)configAtOpen_);
                 }
             }
             Logger.Verbose("exit");
-            return tasks;
         }
 
         public ICollection<RunningTest> GetAllRunningTests()

@@ -6,30 +6,30 @@ namespace Applitools.VisualGrid
     class OpenerService : EyesService
     {
         private readonly AutoResetEvent concurrencyLock_;
-        private int concurrentSessions_;
+        private int currentTestsAmount_;
 
-        public OpenerService(string serviceName, Logger logger, int threadPoolSize, AutoResetEvent openerServiceLock, EyesServiceListener listener, 
+        public OpenerService(string serviceName, Logger logger, int testsPoolSize, AutoResetEvent openerServiceLock, EyesServiceListener listener, 
             AutoResetEvent innerDebugLock, AutoResetEvent outerDebugLock, Tasker tasker)
-            : base(serviceName, logger, threadPoolSize, innerDebugLock, outerDebugLock, listener, tasker)
+            : base(serviceName, logger, testsPoolSize, innerDebugLock, outerDebugLock, listener, tasker)
         {
             concurrencyLock_ = openerServiceLock;
         }
 
         public int DecrementConcurrency()
         {
-            return Interlocked.Decrement(ref concurrentSessions_);
+            return Interlocked.Decrement(ref currentTestsAmount_);
         }
 
         protected override void RunNextTask()
         {
             if (!isServiceOn_) return;
             //Logger.Verbose("threadPoolSize_: {0} ; concurrentSessions_: {1}", threadPoolSize_, concurrentSessions_);
-            if (threadPoolSize_ > concurrentSessions_)
+            if (testsPoolSize_ > currentTestsAmount_)
             {
                 Task<TestResultContainer> task = listener_.GetNextTask(tasker_);
                 if (task != null)
                 {
-                    Interlocked.Increment(ref concurrentSessions_);
+                    Interlocked.Increment(ref currentTestsAmount_);
                     PauseIfNeeded();
                     task.Start();
                 }

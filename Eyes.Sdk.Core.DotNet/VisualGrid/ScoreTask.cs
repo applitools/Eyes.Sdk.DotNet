@@ -2,22 +2,13 @@
 {
     public class ScoreTask
     {
-        private readonly VisualGridTask task_;
-
         public ScoreTask(VisualGridTask task, int score)
         {
-            task_ = task;
+            Task = task;
             Score = score;
         }
 
-        public VisualGridTask Task
-        {
-            get
-            {
-                task_.IsSent = true;
-                return task_;
-            }
-        }
+        public VisualGridTask Task { get; }
 
         public int Score { get; }
     }

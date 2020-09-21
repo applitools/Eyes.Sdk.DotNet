@@ -7,17 +7,13 @@ namespace Applitools.VisualGrid
 {
     internal class RenderingGridService
     {
-        private const int FACTOR = 5;
         private readonly string serviceName_;
         private readonly Logger logger_;
-        private readonly int maximumPoolSize_;
-        private int concurrentSessions_ = 0;
         private readonly AutoResetEvent innerDebugLock_;
         private readonly AutoResetEvent outerDebugLock_;
         private readonly RGServiceListener listener_;
         private readonly Thread thread_;
         private bool isServiceOn_ = true;
-        private readonly object concurrencyLock_;
         private readonly List<Task<RenderStatusResults>> activeRenderTasks_ = new List<Task<RenderStatusResults>>();
 
         public class RGServiceListener
@@ -30,15 +26,13 @@ namespace Applitools.VisualGrid
             }
         }
 
-        public RenderingGridService(string serviceName, Logger logger, int threadPoolSize, AutoResetEvent innerDebugLock, AutoResetEvent outerDebugLock, RGServiceListener listener, object concurrencyLock)
+        public RenderingGridService(string serviceName, Logger logger, int threadPoolSize, AutoResetEvent innerDebugLock, AutoResetEvent outerDebugLock, RGServiceListener listener)
         {
             serviceName_ = serviceName;
             logger_ = logger;
-            maximumPoolSize_ = threadPoolSize * FACTOR;
             innerDebugLock_ = innerDebugLock;
             outerDebugLock_ = outerDebugLock;
             listener_ = listener;
-            concurrencyLock_ = concurrencyLock;
             thread_ = new Thread(Run);
             thread_.IsBackground = true;
             thread_.Name = serviceName;
@@ -64,65 +58,36 @@ namespace Applitools.VisualGrid
         private void RunNextTask_()
         {
             if (!isServiceOn_) return;
-            if (maximumPoolSize_ > concurrentSessions_)
+            logger_.Verbose("enter");
+            RenderingTask task = listener_.GetNextTask();
+            if (task == null || !task.IsReady())
             {
-                logger_.Verbose("enter");
-                RenderingTask task = listener_.GetNextTask();
-                if (task != null)
-                {
-                    logger_.Verbose("adding listener to task");
-                    task.AddListener(new RenderingTask.RenderTaskListener(() =>
-                    {
-                        DebugNotify_();
-                        OnRenderFinish_();
-                    }, (e) =>
-                    {
-                        DebugNotify_();
-                        OnRenderFinish_();
-                    }));
-                    try
-                    {
-                        Interlocked.Increment(ref concurrentSessions_);
-                        Task<RenderStatusResults> resultTask = Task.Run(task.CallAsync);
-                        //activeRenderTasks_.Add(resultTask); // TODO - ITAI
-                    }
-                    catch (Exception e)
-                    {
-                        logger_.Verbose("Exception in - this.executor.submit(task);");
-                        if (e.Message.Contains("Read timed out"))
-                        {
-                            logger_.Log("Read timed out");
-                        }
-                        logger_.Log("Error: " + e);
-                    }
-                }
+                return;
             }
-            else
-            {
-                lock (concurrencyLock_)
+
+            logger_.Verbose("adding listener to task");
+            task.AddListener(new RenderingTask.RenderTaskListener(() =>
                 {
-                    try
-                    {
-                        logger_.Verbose("Waiting for concurrency to be free");
-                        Monitor.Wait(concurrencyLock_);
-                        logger_.Verbose("concurrency free");
-                    }
-                    catch (Exception e)
-                    {
-                        logger_.Log("Error: " + e);
-                    }
+                    DebugNotify_();
+                }, (e) =>
+                {
+                    DebugNotify_();
+                }));
+
+            try
+            {
+                Task<RenderStatusResults> resultTask = Task.Run(task.CallAsync);
+            }
+            catch (Exception e)
+            {
+                logger_.Verbose("Exception in - this.executor.submit(task);");
+                if (e.Message.Contains("Read timed out"))
+                {
+                    logger_.Log("Read timed out");
                 }
+                logger_.Log("Error: " + e);
             }
             logger_.Verbose("exit");
-        }
-
-        private void OnRenderFinish_()
-        {
-            lock (concurrencyLock_)
-            {
-                Interlocked.Decrement(ref concurrentSessions_);
-                Monitor.Pulse(concurrencyLock_);
-            }
         }
 
         internal void Start()

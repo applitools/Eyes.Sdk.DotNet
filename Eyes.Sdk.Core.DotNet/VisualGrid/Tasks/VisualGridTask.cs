@@ -91,20 +91,12 @@ namespace Applitools.VisualGrid
                 {
                     case TaskType.Open:
                         logger_.Log("Task.run opening task");
-                        if (renderResult_ != null)
-                        {
-                            string userAgent = renderResult_.UserAgent;
-                            RectangleSize deviceSize = renderResult_.DeviceSize;
-                            logger_.Verbose("setting device size: {0}", deviceSize);
+                        string userAgent = renderResult_.UserAgent;
+                        RectangleSize deviceSize = GetCorrectDeviceSize_();
+                        deviceSize = deviceSize.IsEmpty() ? BrowserInfo.ViewportSize : deviceSize;
+                        logger_.Verbose("setting device size: {0}", deviceSize);
                             EyesConnector.SetUserAgent(userAgent);
                             EyesConnector.SetDeviceSize(deviceSize);
-                        }
-                        else
-                        {
-                            // We are in exception mode - trying to do eyes.open() without first render
-                            RenderBrowserInfo browserInfo = RunningTest.BrowserInfo;
-                            EyesConnector.SetDeviceSize(new Size(browserInfo.Width, browserInfo.Height));
-                        }
                         EyesConnector.Open(configuration_);
                         break;
 
@@ -202,26 +194,6 @@ namespace Applitools.VisualGrid
             return null;
         }
 
-        //private string CraftUserAgent(RenderBrowserInfo browserInfo)
-        //{
-        //    BrowserType browserType = browserInfo.BrowserType;
-        //    string platform = StringUtils.ToPascalCase(browserInfo.Platform);
-        //    switch (browserType)
-        //    {
-        //        case BrowserType.CHROME: return "Mozilla/5.0 (" + platform + ") Chrome/0.0";
-        //        case BrowserType.FIREFOX: return "Mozilla/5.0 (" + platform + ") Firefox/0.0";
-        //        case BrowserType.IE_10: return "Mozilla/5.0 (" + platform + "; MSIE 10.0)";
-        //        case BrowserType.IE_11: return "Mozilla/5.0 (" + platform + "; MSIE 11.0)";
-        //        case BrowserType.EDGE: return "Mozilla/5.0 (" + platform + ") Edge/0.0";
-        //    }
-        //    return "Mozilla/5.0 (" + platform + "; Unknown)";
-        //}
-
-        internal void SetRenderingTask(RenderingTask renderingTask)
-        {
-            RenderingTask = renderingTask;
-        }
-
         private void NotifySuccessAllListeners()
         {
             listener_.OnTaskComplete(this);
@@ -232,16 +204,16 @@ namespace Applitools.VisualGrid
             listener_.OnTaskFailed(e, this);
         }
 
-        internal void SetRenderError(string renderId, string error, RenderRequest renderRequest)
+        internal void SetRenderError(string renderId, string error)
         {
             logger_.Verbose("enter - renderId: {0}", renderId);
             RenderStatusResults renderResult = new RenderStatusResults();
-            string userAgent = GetUserAgent_(renderRequest);
+            string userAgent = GetUserAgent_();
             if (userAgent != null)
             {
                 renderResult.UserAgent = userAgent;
             }
-            Size deviceSize = GetCorrectDeviceSize_(renderRequest);
+            Size deviceSize = GetCorrectDeviceSize_();
             renderResult.DeviceSize = deviceSize;
             renderResult_ = renderResult;
             logger_.Verbose("device size: " + deviceSize);
@@ -249,13 +221,13 @@ namespace Applitools.VisualGrid
             logger_.Verbose("exit - renderId: {0}", renderId);
         }
 
-        private Size GetCorrectDeviceSize_(RenderRequest renderRequest)
+        private Size GetCorrectDeviceSize_()
         {
             Size deviceSize = configuration_.ViewportSize;
             if (deviceSize.IsEmpty)
             {
-                IosDeviceInfo iosDeviceInfo = renderRequest.RenderInfo.IosDeviceInfo;
-                ChromeEmulationInfo emulationInfo = renderRequest.RenderInfo.EmulationInfo as ChromeEmulationInfo;
+                IosDeviceInfo iosDeviceInfo = BrowserInfo.IosDeviceInfo;
+                ChromeEmulationInfo emulationInfo = BrowserInfo.EmulationInfo as ChromeEmulationInfo;
                 if (iosDeviceInfo != null)
                 {
                     IosDeviceName deviceName = iosDeviceInfo.DeviceName;
@@ -287,14 +259,14 @@ namespace Applitools.VisualGrid
             return deviceSize;
         }
 
-        private string GetUserAgent_(RenderRequest renderRequest)
+        private string GetUserAgent_()
         {
-            if (renderRequest.RenderInfo.EmulationInfo != null || renderRequest.RenderInfo.IosDeviceInfo != null)
+            if (BrowserInfo.EmulationInfo != null || BrowserInfo.IosDeviceInfo != null)
             {
                 return null;
             }
 
-            BrowserType browser = renderRequest.BrowserName;
+            BrowserType browser = BrowserInfo.BrowserType;
             Dictionary<BrowserType, string> userAgents = EyesConnector.GetUserAgents();
             if (!userAgents.TryGetValue(browser, out string userAgent))
             {
