@@ -149,6 +149,7 @@ namespace Applitools.Selenium
 
         public TestResults Abort()
         {
+            Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
             return activeEyes_.Abort();
         }
 
@@ -159,6 +160,7 @@ namespace Applitools.Selenium
 
         public void AbortAsync()
         {
+            Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
             activeEyes_.AbortAsync();
         }
 
@@ -571,6 +573,7 @@ namespace Applitools.Selenium
                 Logger.Log("Ignored");
                 return;
             }
+            Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
             if (isVisualGridEyes_)
             {
                 CloseAsync_();
@@ -583,6 +586,7 @@ namespace Applitools.Selenium
 
         internal virtual ICollection<Task<TestResultContainer>> CloseAsync_()
         {
+            Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
             if (isVisualGridEyes_)
             {
                 return visualGridEyes_.CloseAsync(false);

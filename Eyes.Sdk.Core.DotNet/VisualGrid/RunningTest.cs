@@ -29,10 +29,12 @@ namespace Applitools.VisualGrid
 
         public Task<TestResultContainer> Abort(Exception exception)
         {
+            Logger.Verbose("enter");
             RemoveAllCheckTasks_();
             openTask_?.SetException(exception);
             if (closeTask_ != null)
             {
+                Logger.Verbose("closeTask_ isn't null. Its type is {0}", closeTask_.TaskType);
                 if (closeTask_.TaskType == TaskType.Close)
                 {
                     closeTask_.SetExceptionAndAbort(exception);
@@ -40,6 +42,7 @@ namespace Applitools.VisualGrid
             }
             else
             {
+                Logger.Verbose("closeTask_ is null. Setting it to be a new Abort task.");
                 VisualGridTask abortTask = new VisualGridTask(null, null, eyes_, TaskType.Abort, taskListener_, null, null, this, null);
                 lock (TaskList)
                 {
@@ -50,6 +53,7 @@ namespace Applitools.VisualGrid
                 taskToFutureMapping_[abortTask] = futureTask;
                 isCloseTaskIssued_ = true;
             }
+            Logger.Verbose("exit");
             return taskToFutureMapping_[closeTask_];
         }
 

@@ -303,18 +303,21 @@ namespace Applitools.Selenium.VisualGrid
 
         public void AbortAsync()
         {
+            Logger.Verbose("enter");
             AbortAndCollectTasks_();
+            Logger.Verbose("exit");
         }
 
         private List<Task<TestResultContainer>> AbortAndCollectTasks_()
         {
+            Logger.Verbose("enter");
             List<Task<TestResultContainer>> tasks = new List<Task<TestResultContainer>>();
             foreach (RunningTest runningTest in testList_)
             {
                 Task<TestResultContainer> task = runningTest.AbortIfNotClosed();
                 tasks.Add(task);
             }
-
+            Logger.Verbose("exit");
             return tasks;
         }
 
