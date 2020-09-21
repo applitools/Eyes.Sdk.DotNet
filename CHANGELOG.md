@@ -1,4 +1,10 @@
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Added log prints.
+
 ## [Eyes.Selenium vNext]
+### Updated
+- Added log prints.
 ### Fixed
 - Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
 
