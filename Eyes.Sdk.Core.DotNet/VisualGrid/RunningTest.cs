@@ -118,10 +118,10 @@ namespace Applitools.VisualGrid
         public Logger Logger { get; set; }
 
         private RenderBrowserInfo browserInfo_;
-        public RenderBrowserInfo BrowserInfo 
-        { 
+        public RenderBrowserInfo BrowserInfo
+        {
             get => browserInfo_;
-            set 
+            set
             {
                 ObsoleteAttribute obsoleteAttr = value?.BrowserType.GetAttribute<ObsoleteAttribute>();
                 if (obsoleteAttr != null)
@@ -235,6 +235,7 @@ namespace Applitools.VisualGrid
             SetTestInExceptionMode(e);
             listener_.OnTaskComplete(task, this);
         }
+
         public void OnRenderComplete()
         {
             Logger.Verbose("enter");
@@ -289,34 +290,36 @@ namespace Applitools.VisualGrid
 
         public ScoreTask GetScoreTaskObjectByType(TaskType taskType)
         {
+            if (!IsTestOpen && (taskType == TaskType.Check))
+            {
+                return null;
+            }
+
             int score = 0;
-            VisualGridTask chosenTask;
             lock (TaskList)
             {
+                if (TaskList.Count == 0)
+                {
+                    return null;
+                }
+
                 foreach (VisualGridTask task in TaskList)
                 {
-                    if (task.IsTaskReadyToCheck && task.TaskType == TaskType.Check)
+                    if (task.IsTaskReadyForRender && task.TaskType == TaskType.Check)
                     {
                         score++;
                     }
                 }
 
-                if (TaskList.Count == 0)
-                {
-                    //Logger.Verbose("task list empty.");
-                    return null;
-                }
-
-                chosenTask = TaskList[0];
+                VisualGridTask chosenTask = TaskList[0];
                 if (chosenTask.TaskType != taskType || chosenTask.IsSent)
                 {
                     Logger.Verbose("No relevant tasks in list. List content: {0}", TaskList.Concat(" ; "));
                     return null;
                 }
-                chosenTask.IsSent = true;
+                Logger.Verbose("creating a new ScoreTask with score {0} and Task: {1}", score, chosenTask);
+                return new ScoreTask(chosenTask, score);
             }
-            Logger.Verbose("creating a new ScoreTask with score {0} and Task: {1}", score, chosenTask);
-            return new ScoreTask(chosenTask, score);
         }
 
         public Task<TestResultContainer> AbortIfNotClosed()

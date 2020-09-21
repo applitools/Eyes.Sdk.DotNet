@@ -25,14 +25,13 @@ namespace Applitools.VisualGrid
         private const int FETCH_TIMEOUT_SECONDS = 60;
         private const int MAX_ITERATIONS = 30;
 
-        private readonly List<RenderTaskListener> listeners_ = new List<RenderTaskListener>();
+        private readonly RenderTaskListener listener_;
+        private readonly List<RenderRequest> renderRequests_ = new List<RenderRequest>();
+        private readonly List<VisualGridTask> checkTasks_ = new List<VisualGridTask>();
         private readonly IEyesConnector connector_;
         private readonly FrameData result_;
         private readonly IList<VisualGridSelector[]> regionSelectors_;
         private readonly ICheckSettings settings_;
-        private readonly List<VisualGridTask> checkTasks_;
-        private readonly VisualGridRunner visualGridManager_;
-        private readonly UserAgent userAgent_;
         private readonly IDebugResourceWriter debugResourceWriter_ = NullDebugResourceWriter.Instance;
         private readonly Logger logger_;
 
@@ -53,33 +52,21 @@ namespace Applitools.VisualGrid
 
         public bool IsTaskComplete { get; set; }
 
-        public RenderingTask(IEyesConnector connector, FrameData scriptResult, IList<VisualGridSelector[]> regionSelectors,
-            ICheckSettings settings, List<VisualGridTask> checkTasks,
-            VisualGridRunner visualGridManager, UserAgent userAgent, IDebugResourceWriter debugResourceWriter, RenderTaskListener listener)
+        public RenderingTask(IEyesConnector connector, RenderRequest renderRequest, VisualGridTask checkTask,
+            VisualGridRunner runner, RenderTaskListener listener, IDebugResourceWriter debugResourceWriter)
         {
             connector_ = connector;
-            result_ = scriptResult;
-            regionSelectors_ = regionSelectors;
-            settings_ = settings;
-            checkTasks_ = checkTasks;
-            renderingInfo_ = visualGridManager.RenderingInfo;
-            visualGridManager_ = visualGridManager;
-            userAgent_ = userAgent;
+            renderRequests_.Add(renderRequest);
+            checkTasks_.Add(checkTask);
+            fetchedCacheMap_ = runner.CachedResources;
+            logger_ = runner.Logger;
+            listener_ = listener;
             debugResourceWriter_ = debugResourceWriter;
+        }
 
-            fetchedCacheMap_ = visualGridManager.CachedResources;
-            putResourceCache_ = visualGridManager.PutResourceCache;
-            cachedBlobsUrls_ = visualGridManager.CachedBlobsURLs;
-            cachedResourceMapping_ = visualGridManager.CachedResourceMapping;
-
-            CollectBlobsFromFrameData_(scriptResult);
-
-            logger_ = visualGridManager_.Logger;
-
-            listeners_.Add(listener);
-
-            string renderingGridForcePut = Environment.GetEnvironmentVariable("APPLITOOLS_RENDERING_GRID_FORCE_PUT");
-            isForcePutNeeded_ = "true".Equals(renderingGridForcePut, StringComparison.OrdinalIgnoreCase);
+        public void Merge(RenderingTask renderingTask)
+        {
+            renderRequests_.AddRange(renderingTask.renderRequests_);
         }
 
         private void CollectBlobsFromFrameData_(FrameData frameData)
@@ -114,134 +101,72 @@ namespace Applitools.VisualGrid
             }
         }
 
-        public void AddListener(RenderTaskListener listener)
-        {
-            listeners_.Add(listener);
-        }
-
         public async Task<RenderStatusResults> CallAsync()
         {
-            logger_.Verbose("enter");
-
-            List<RunningRender> runningRenders = null;
-            isTaskStarted_ = true;
-
-            RenderRequest[] requests = new RenderRequest[0];
-
             try
             {
-                logger_.Verbose("step 1");
+                logger_.Verbose("enter");
+                logger_.Verbose("start rendering");
 
-                bool isSecondRequestAlreadyHappened = false;
-
-                //Parse to Map
-                logger_.Verbose("step 2");
-                //Build RenderRequests
-                requests = PrepareDataForRG_(result_);
-
-                logger_.Verbose("step 3");
-                bool stillRunning = true;
-                bool isForcePutAlreadyDone = false;
-                Stopwatch timeoutTimer = Stopwatch.StartNew();
-                do
+                List<RunningRender> runningRenders = null;
+                RenderRequest[] requests = renderRequests_.ToArray();
+                try
                 {
+                    runningRenders = connector_.Render(requests);
+                }
+                catch (Exception e)
+                {
+                    logger_.Log("Error: " + e);
+                    logger_.Verbose("/render throws exception. sleeping for 1.5s");
+                    Thread.Sleep(1500);
                     try
                     {
-                        runningRenders = await connector_.RenderAsync(requests);
+                        runningRenders = connector_.Render(requests);
                     }
-                    catch (Exception e)
+                    catch (Exception e1)
                     {
-                        var settings = JsonUtils.CreateSerializerSettings();
-                        string j = JsonConvert.SerializeObject(requests, settings);
-
-                        string responseBodyStr = string.Empty;
-                        if (e is WebException we && we.Response != null)
-                        {
-                            Stream stream = we.Response.GetResponseStream();
-                            byte[] responseBodyBytes = CommonUtils.ReadToEnd(stream);
-                            responseBodyStr = Encoding.UTF8.GetString(responseBodyBytes);
-                        }
-
-                        logger_.Verbose("/render throws exception. sleeping for 1.5s");
-                        Thread.Sleep(1500);
-
-                        if (responseBodyStr.Contains("Second request, yet still some resources were not PUT in renderId"))
-                        {
-                            if (isSecondRequestAlreadyHappened)
-                            {
-                                logger_.Verbose("Second request already happened");
-                            }
-                            isSecondRequestAlreadyHappened = true;
-                        }
-                        logger_.Verbose("Error (1): " + e);
-                        logger_.Verbose("Error Response Body: " + responseBodyStr);
+                        SetRenderErrorToTasks_();
+                        throw new EyesException("Invalid response for render request", e1);
                     }
-                    logger_.Verbose("step 4.1");
-                    if (runningRenders == null)
+                }
+                logger_.Verbose("Validation render result");
+                if (runningRenders == null || runningRenders.Count == 0)
+                {
+                    SetRenderErrorToTasks_();
+                    throw new EyesException("Invalid response for render request");
+                }
+
+                for (int i = 0; i < renderRequests_.Count; i++)
+                {
+                    RenderRequest request = renderRequests_[i];
+                    request.RenderId = runningRenders[i].RenderId;
+                    logger_.Verbose("RunningRender: {0}", runningRenders[i]);
+                }
+
+                foreach (RunningRender runningRender in runningRenders)
+                {
+                    RenderStatus renderStatus = runningRender.RenderStatus;
+                    if (renderStatus != RenderStatus.Rendered && renderStatus != RenderStatus.Rendering)
                     {
-                        logger_.Verbose("ERROR - runningRenders is null.");
-                        SetRenderErrorToTasks_(requests);
-                        continue;
+                        SetRenderErrorToTasks_();
+                        throw new EyesException("Invalid response for render request. Status: " + renderStatus);
                     }
+                }
 
-                    for (int i = 0; i < requests.Length; i++)
-                    {
-                        RenderRequest request = requests[i];
-                        request.RenderId = runningRenders[i].RenderId;
-                    }
-                    logger_.Verbose("step 4.2");
-
-                    RunningRender runningRender = runningRenders[0];
-                    RenderStatus worstStatus = runningRender.RenderStatus;
-
-                    worstStatus = CalcWorstStatus_(runningRenders, worstStatus);
-
-                    bool isNeedMoreDom = runningRender.NeedMoreDom;
-
-                    if (isForcePutNeeded_ && !isForcePutAlreadyDone)
-                    {
-                        ForcePutAllResources_(requests[0].Resources, runningRender);
-                        isForcePutAlreadyDone = true;
-                    }
-
-                    logger_.Verbose("step 4.3");
-                    stillRunning = (worstStatus == RenderStatus.NeedMoreResources || isNeedMoreDom) && (timeoutTimer.Elapsed.TotalSeconds < FETCH_TIMEOUT_SECONDS);
-                    if (stillRunning)
-                    {
-                        SendMissingResources_(runningRenders, requests[0].Dom, requests[0].Resources, isNeedMoreDom);
-                    }
-
-                    logger_.Verbose("step 4.4");
-
-                } while (stillRunning);
-
-            }
-            catch (Exception e)
-            {
-                logger_.Log("Error: " + e);
-                SetRenderErrorToTasks_(requests);
-            }
-
-            Dictionary<RunningRender, RenderRequest> mapping = MapRequestToRunningRender_(runningRenders, requests);
-
-            logger_.Verbose("step 5");
-            try
-            {
+                logger_.Verbose("Poll rendering status");
+                Dictionary<RunningRender, RenderRequest> mapping = MapRequestToRunningRender_(runningRenders);
                 PollRenderingStatus_(mapping);
             }
             catch (Exception e)
             {
-                isTaskInException = true; // FOR DEBUGGING
-                logger_.Log("Error (2): " + e);
-                foreach (VisualGridTask visualGridTask in checkTasks_)
+                logger_.Log("Error: " + e);
+                foreach (VisualGridTask checkTask in checkTasks_)
                 {
-                    visualGridTask.SetExceptionAndAbort(e);
+                    checkTask.SetExceptionAndAbort(e);
                 }
-                NotifyFailAllListeners_(new EyesException("Failed rendering", e));
+                listener_.OnRenderFailed(new EyesException("Failed rendering", e));
             }
-
-            IsTaskComplete = true;
-            logger_.Verbose("exit");
+            logger_.Verbose("Finished rendering task - exit");
             return null;
         }
 
@@ -386,9 +311,9 @@ namespace Applitools.VisualGrid
             return ids;
         }
 
-        private void SetRenderErrorToTasks_(RenderRequest[] requests)
+        private void SetRenderErrorToTasks_()
         {
-            foreach (RenderRequest renderRequest in requests)
+            foreach (RenderRequest renderRequest in renderRequests_)
             {
                 renderRequest.Task.SetRenderError(null, "Invalid response for render request");
             }
@@ -396,7 +321,7 @@ namespace Applitools.VisualGrid
 
         private void NotifySuccessAllListeners_()
         {
-            foreach (RenderTaskListener listener in listeners_)
+            foreach (RenderTaskListener listener in listener_)
             {
                 listener.OnRenderSuccess();
             }
@@ -404,7 +329,7 @@ namespace Applitools.VisualGrid
 
         private void NotifyFailAllListeners_(Exception e)
         {
-            foreach (RenderTaskListener listener in listeners_)
+            foreach (RenderTaskListener listener in listener_)
             {
                 listener.OnRenderFailed(e);
             }
@@ -504,7 +429,7 @@ namespace Applitools.VisualGrid
             }
         }
 
-        private Dictionary<RunningRender, RenderRequest> MapRequestToRunningRender_(List<RunningRender> runningRenders, RenderRequest[] requests)
+        private Dictionary<RunningRender, RenderRequest> MapRequestToRunningRender_(List<RunningRender> runningRenders)
         {
             Dictionary<RunningRender, RenderRequest> mapping = new Dictionary<RunningRender, RenderRequest>();
             if (runningRenders != null && requests != null && runningRenders.Count >= requests.Length)
@@ -889,43 +814,6 @@ namespace Applitools.VisualGrid
             int? errorStatusCode = blob.ErrorStatusCode;
             RGridResource resource = new RGridResource(url, blob.Type, content, logger_, "parseBlobToGridResource", errorStatusCode);
             return resource;
-        }
-
-        private List<RenderRequest> BuildRenderRequests_(FrameData currentFrame, IDictionary<string, RGridResource> resourceMapping)
-        {
-            Uri url = currentFrame.Url;
-            RGridDom dom = new RGridDom(currentFrame.Cdt, resourceMapping, url, logger_, "buildRenderRequests");
-
-            //Create RG requests
-            List<RenderRequest> allRequestsForRG = new List<RenderRequest>();
-            ICheckSettingsInternal csInternal = (ICheckSettingsInternal)settings_;
-
-            foreach (VisualGridTask task in checkTasks_)
-            {
-                RenderBrowserInfo browserInfo = task.BrowserInfo;
-                RenderInfo renderInfo = new RenderInfo(browserInfo.Width, browserInfo.Height,
-                    csInternal.GetSizeMode(), csInternal.GetTargetSelector(),
-                    csInternal.GetTargetRegion(), browserInfo.EmulationInfo, browserInfo.IosDeviceInfo);
-
-                List<VisualGridSelector> regionSelectors = new List<VisualGridSelector>();
-                if (regionSelectors_ != null)
-                {
-                    foreach (VisualGridSelector[] vgs in regionSelectors_)
-                    {
-                        regionSelectors.AddRange(vgs);
-                    }
-                }
-
-                RenderRequest request = new RenderRequest(renderingInfo_.ResultsUrl, url,
-                        renderingInfo_.StitchingServiceUrl, dom,
-                        resourceMapping, renderInfo, browserInfo.Platform,
-                        browserInfo.BrowserType, csInternal.GetScriptHooks(),
-                        regionSelectors.ToArray(), csInternal.GetSendDom() ?? false, task,
-                        csInternal.GetVisualGridOptions());
-
-                allRequestsForRG.Add(request);
-            }
-            return allRequestsForRG;
         }
 
         private IDictionary<string, RGridResource> BuildAllRGDoms_(IDictionary<string, RGridResource> resourceMapping, FrameData currentFrame)

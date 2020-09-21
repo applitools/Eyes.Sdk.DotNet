@@ -12,7 +12,7 @@ namespace Applitools.VisualGrid
 {
     public enum TaskType { Open, Check, Close, Abort }
 
-    public class VisualGridTask : ICompletableTask
+    public class VisualGridTask
     {
         private readonly TaskListener listener_;
         private readonly Logger logger_;
@@ -71,8 +71,8 @@ namespace Applitools.VisualGrid
 
         internal bool IsSent { get; set; }
         public Exception Exception { get; internal set; }
-        public bool IsTaskComplete { get; private set; }
         public bool IsTaskReadyToCheck => renderResult_ != null || Exception != null;
+        public bool IsTaskReadyForRender { get; set; }
 
         public RenderingTask RenderingTask { get; private set; }
         public RunningTest RunningTest { get; }
@@ -92,8 +92,8 @@ namespace Applitools.VisualGrid
                     case TaskType.Open:
                         logger_.Log("Task.run opening task");
                         string userAgent = renderResult_.UserAgent;
-                        RectangleSize deviceSize = GetCorrectDeviceSize_();
-                        deviceSize = deviceSize.IsEmpty() ? BrowserInfo.ViewportSize : deviceSize;
+                        Size deviceSize = GetCorrectDeviceSize_();
+                        deviceSize = deviceSize.IsEmpty ? BrowserInfo.ViewportSize : deviceSize;
                         logger_.Verbose("setting device size: {0}", deviceSize);
                             EyesConnector.SetUserAgent(userAgent);
                             EyesConnector.SetDeviceSize(deviceSize);
@@ -188,7 +188,6 @@ namespace Applitools.VisualGrid
             finally
             {
                 logger_.Verbose("marking {0} task as complete: {1}", TaskType, RunningTest.TestName);
-                IsTaskComplete = true;
                 //call the callback
             }
             return null;

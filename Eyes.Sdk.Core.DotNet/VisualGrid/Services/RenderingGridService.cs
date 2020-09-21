@@ -65,15 +65,6 @@ namespace Applitools.VisualGrid
                 return;
             }
 
-            logger_.Verbose("adding listener to task");
-            task.AddListener(new RenderingTask.RenderTaskListener(() =>
-                {
-                    DebugNotify_();
-                }, (e) =>
-                {
-                    DebugNotify_();
-                }));
-
             try
             {
                 Task<RenderStatusResults> resultTask = Task.Run(task.CallAsync);
