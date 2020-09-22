@@ -394,7 +394,6 @@ Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestSimpleModal
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestSimpleModal
 Applitools.Selenium.Tests.VisualGridTests.TestMobileDevices.TestIosDeviceReportedResolutionOnFailure
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestVisualGridOptions
-
 Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelectorBeforeValidCheck(False)
 Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelector(False)
 Applitools.Selenium.Tests.VisualGridTests.TestBadSelectors.TestCheckRegionWithBadSelectorBeforeValidCheck(True)
@@ -414,3 +413,4 @@ Applitools.Selenium.Tests.TestAPI.TestFullAgentId_2
 Applitools.Selenium.Tests.TestAPI.TestFullAgentId_3
 Applitools.Selenium.Tests.TestAPI.TestFullAgentId_VG
 Applitools.Selenium.Tests.TestCodedRegions.TestSimpleCodedRegions
+Applitools.Selenium.Tests.TestDom.TestDomSerialization

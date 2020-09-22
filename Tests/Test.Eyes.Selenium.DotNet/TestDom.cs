@@ -5,18 +5,17 @@ using Applitools.Utils;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using System.Threading;
 
 namespace Applitools.Selenium.Tests
 {
     [TestFixture]
     [Parallelizable(ParallelScope.All)]
-    public class TestDom
+    public class TestDom : ReportingTestSuite
     {
-        //[Test]
+        [Test]
         public void TestDomSerialization()
         {
-            string expectedDomJson = CommonUtils.ReadResourceFile("Applitools.Selenium.Tests.Resources.ExpectedDom_CorsTestPage.json");
+            string expectedDomJson = CommonUtils.ReadResourceFile("Test.Eyes.Selenium.DotNet.Resources.ExpectedDom_CorsCssTestPage.json");
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             Eyes eyes = new Eyes();
             Configuration conf = new Configuration();
@@ -28,8 +27,7 @@ namespace Applitools.Selenium.Tests
             eyes.SetConfiguration(conf);
             eyes.SetLogHandler(TestUtils.InitLogHandler(nameof(TestDom)));
             EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(driver);
-            driver.Url = "https://applitools.github.io/demo/TestPages/CorsTestPage/";
-            Thread.Sleep(4000);
+            driver.Url = "https://applitools.github.io/demo/TestPages/CorsCssTestPage/";
             try
             {
                 DomCapture domCapture = new DomCapture(eyes.Logger, eyesWebDriver);

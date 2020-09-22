@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <None Remove="Properties\ExcludedTests.txt" />
-    <None Remove="Resources\ExpectedDom_CorsTestPage.json" />
+    <None Remove="Resources\ExpectedDom_CorsCssTestPage.json" />
     <None Remove="Resources\expected_dom1.json" />
     <None Remove="Resources\IncludedTests.txt" />
     <None Remove="Resources\IOSImages\Expected\iPad %285th generation%29 Simulator 11.0 Portrait.png" />
@@ -136,7 +136,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ExpectedDom_CorsTestPage.json" />
+    <EmbeddedResource Include="Resources\ExpectedDom_CorsCssTestPage.json" />
     <EmbeddedResource Include="Resources\expected_dom1.json" />
     <EmbeddedResource Include="Resources\IncludedTests.txt" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (5th generation) Simulator 11.0 Portrait.png" />
