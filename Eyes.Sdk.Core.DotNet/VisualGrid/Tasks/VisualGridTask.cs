@@ -320,13 +320,13 @@ namespace Applitools.VisualGrid
 
         internal void SetException(Exception exception)
         {
-            logger_.Verbose("setting exception: {0}", exception.ToString());
+            logger_.Verbose("setting exception: {0}", exception?.ToString());
             Exception = exception;
         }
 
         internal void SetExceptionAndAbort(Exception exception)
         {
-            logger_.Verbose("aborting task with exception: {0}", exception.ToString());
+            logger_.Verbose("aborting task with exception: {0}", exception?.ToString());
             Exception = exception;
             if (TaskType == TaskType.Close)
             {

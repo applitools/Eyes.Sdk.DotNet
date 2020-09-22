@@ -11,6 +11,6 @@ namespace Applitools.VisualGrid
         Rendering,
         Rendered,
         Error,
-        NeedModeDom
+        NeedMoreDom
     }
 }
