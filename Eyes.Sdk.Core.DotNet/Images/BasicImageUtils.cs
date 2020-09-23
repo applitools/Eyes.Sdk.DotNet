@@ -47,8 +47,8 @@
             ArgumentGuard.NotNull(image, nameof(image));
             ArgumentGuard.GreaterOrEqual(scaleRatio, 0, nameof(scaleRatio));
 
-            int targetWidth = (int)Math.Ceiling(image.Width * scaleRatio);
-            int targetHeight = (int)Math.Ceiling(image.Height * scaleRatio);
+            int targetWidth = (int)Math.Round(image.Width * scaleRatio);
+            int targetHeight = (int)Math.Round(image.Height * scaleRatio);
 
             if (targetWidth == image.Width && targetHeight == image.Height)
             {
@@ -72,19 +72,19 @@
             #endregion
 
             #region I don't remember why we try to scale down incrementally, or what's wrong with just scaling down.
-            //Bitmap resizedImage = ScaleImageBicubic_((Bitmap)image, targetWidth, targetHeight);
+            Bitmap resizedImage = ScaleImageBicubic_((Bitmap)image, targetWidth, targetHeight);
             #endregion
 
             #region current implementation
-            Bitmap resizedImage;
-            if (targetWidth > image.Width || targetHeight > image.Height)
-            {
-                resizedImage = ScaleImageBicubic_((Bitmap)image, targetWidth, targetHeight);
-            }
-            else
-            {
-                resizedImage = ScaleImageIncrementally_((Bitmap)image, targetWidth, targetHeight);
-            }
+            //Bitmap resizedImage;
+            //if (targetWidth > image.Width || targetHeight > image.Height)
+            //{
+            //    resizedImage = ScaleImageBicubic_((Bitmap)image, targetWidth, targetHeight);
+            //}
+            //else
+            //{
+            //    resizedImage = ScaleImageIncrementally_((Bitmap)image, targetWidth, targetHeight);
+            //}
             #endregion
 
             return resizedImage;
@@ -114,6 +114,9 @@
             int hM = (int)Math.Max(1, Math.Floor(hSrc / (double)targetHeight));
             int hDst2 = targetHeight * hM;
 
+            double wRatio = (double)wSrc / wDst2;
+            double hRatio = (double)hSrc / hDst2;
+
             int i, j, k, xPos, yPos, kPos, buf1Pos, buf2Pos, srcPos;
             double x, y, t;
 
@@ -127,28 +130,68 @@
                     // Pass 1 - interpolate rows
                     // buf1 has width of dst2 and height of src
                     byte[] buf1 = new byte[wDst2 * hSrc * 4];
-                    //byte* bufSrc = (byte*)srcData.Scan0.ToPointer();
-                    buf1Pos = 0;
                     for (i = 0; i < hSrc; i++)
                     {
                         byte* strideSrc = (byte*)srcData.Scan0 + srcData.Stride * i;
-                        srcPos = 0;
-                        for (j = 0; j < wDst2; j++)
+                        buf1Pos = i * wDst2 * 4;
+                        // handle column in index 0 (zero)
+                        for (k = 0; k < 4; k++)
                         {
-                            x = (double)j * (wSrc - 1) / wDst2; // The '(wSrc - 1)' is wrong. it should be 'wSrc', but then it causes array index overflow.
+                            int x0 = strideSrc[k];
+                            int x1 = strideSrc[k];
+                            int x2 = strideSrc[k + 4]; // x + 1
+                            int x3 = strideSrc[k + 8]; // x + 2
+                            buf1[buf1Pos + k] = InterpolateCubic_(x0, x1, x2, x3, 0);
+                        }
+                        
+                        // handle most columns (indices 1 to n-2)
+                        for (j = 1; j < wDst2 - 2; j++)
+                        {
+                            x = j * wRatio;
                             xPos = (int)Math.Floor(x);
                             t = x - xPos;
                             srcPos = (i * wSrc + xPos) << 2;
+                            buf1Pos = (i * wDst2 + j) * 4;
                             for (k = 0; k < 4; k++)
                             {
                                 kPos = (xPos << 2) + k;
-                                int x0 = (xPos > 0) ? strideSrc[kPos - 4] : (strideSrc[kPos] << 1) - strideSrc[kPos + 4];
-                                int x1 = strideSrc[kPos];
-                                int x2 = strideSrc[kPos + 4];
-                                int x3 = (xPos < wSrc - 2) ? strideSrc[kPos + 8] : (strideSrc[kPos + 4] << 1) - strideSrc[kPos];
+                                int x0 = strideSrc[kPos - 4]; // x - 1
+                                int x1 = strideSrc[kPos];     // x
+                                int x2 = strideSrc[kPos + 4]; // x + 1
+                                int x3 = strideSrc[kPos + 8]; // x + 2
                                 buf1[buf1Pos + k] = InterpolateCubic_(x0, x1, x2, x3, t);
                             }
-                            buf1Pos += 4;
+                        }
+
+                        // handle column in index n-2
+                        buf1Pos = (i * wDst2 + (wDst2 - 2)) * 4;
+                        x = (wDst2 - 2) * wRatio;
+                        xPos = (int)Math.Floor(x);
+                        t = x - xPos;
+                        for (k = 0; k < 4; k++)
+                        {
+
+                            kPos = (xPos << 2) + k;
+                            int x0 = strideSrc[kPos - 4];
+                            int x1 = strideSrc[kPos];
+                            int x2 = strideSrc[kPos + 4];
+                            int x3 = (strideSrc[kPos + 4] << 2) - x1;
+                            buf1[buf1Pos + k] = InterpolateCubic_(x0, x1, x2, x3, t);
+                        }
+
+                        // handle column in index n-1 (last one)
+                        buf1Pos = (i * wDst2 + (wDst2 - 1)) * 4;
+                        x = (wDst2 - 1) * wRatio;
+                        xPos = (int)Math.Floor(x);
+                        t = x - xPos;
+                        for (k = 0; k < 4; k++)
+                        {
+                            kPos = (xPos << 2) + k;
+                            int x0 = strideSrc[kPos - 4];
+                            int x1 = strideSrc[kPos];
+                            int x2 = (strideSrc[kPos] << 2) - x1;
+                            int x3 = (strideSrc[kPos] << 2) - x1;
+                            buf1[buf1Pos + k] = InterpolateCubic_(x0, x1, x2, x3, t);
                         }
                     }
 
@@ -156,30 +199,74 @@
                     // buf2 has width and height of dst2
                     byte[] buf2 = new byte[wDst2 * (hDst2 << 2)];
                     byte* bufDst = (byte*)destData.Scan0.ToPointer();
-                    for (i = 0; i < hDst2; i++)
+                    for (j = 0; j < wDst2; j++)
+                    {
+                        buf1Pos = j << 2;
+                        buf2Pos = j << 2;
+                        for (k = 0; k < 4; k++)
+                        {
+                            kPos = buf1Pos + k;
+                            int y0 = buf1[kPos];                // y
+                            int y1 = buf1[kPos];                // y
+                            int y2 = buf1[kPos + (wDst2 << 2)]; // y + 1
+                            int y3 = buf1[kPos + (wDst2 << 3)]; // y + 2
+                            buf2[buf2Pos + k] = InterpolateCubic_(y0, y1, y2, y3, 0);
+                        }
+                    }
+                    for (i = 1; i < hDst2 - 2; i++)
                     {
                         buf1Pos = 0;
                         buf2Pos = 0;
+                        y = i * hRatio;
+                        yPos = (int)Math.Floor(y);
+                        t = y - yPos;
                         for (j = 0; j < wDst2; j++)
                         {
-                            y = (double)i * (hSrc - 1) / hDst2; // The '(hSrc - 1)' is wrong. it should be 'hSrc', but then it causes array index overflow.
-                            yPos = (int)Math.Floor(y);
-                            t = y - yPos;
                             buf1Pos = (yPos * wDst2 + j) << 2;
                             buf2Pos = (i * wDst2 + j) << 2;
                             for (k = 0; k < 4; k++)
                             {
                                 kPos = buf1Pos + k;
-                                int y0 = (yPos > 0) ? buf1[kPos - (wDst2 << 2)] : (buf1[kPos] << 1) - buf1[kPos + (wDst2 << 2)];
-                                int y1 = buf1[kPos];
-                                int y2 = buf1[kPos + (wDst2 << 2)];
-                                int y3 = (yPos < hSrc - 2) ? buf1[kPos + (wDst2 << 3)] : (buf1[kPos + (wDst2 << 2)] << 1) - buf1[kPos];
-                                //noinspection SuspiciousNameCombination
+                                int y0 = buf1[kPos - (wDst2 << 2)]; // y - 1
+                                int y1 = buf1[kPos];                // y
+                                int y2 = buf1[kPos + (wDst2 << 2)]; // y + 1
+                                int y3 = buf1[kPos + (wDst2 << 3)]; // y + 2
                                 buf2[buf2Pos + k] = InterpolateCubic_(y0, y1, y2, y3, t);
                             }
                         }
                     }
-
+                    y = (hDst2 - 2) * hRatio;
+                    yPos = (int)Math.Floor(y);
+                    for (j = 0; j < wDst2; j++)
+                    {
+                        buf1Pos = (yPos * wDst2 + j) << 2;
+                        buf2Pos = ((hDst2 - 2) * wDst2 + j) << 2;
+                        for (k = 0; k < 4; k++)
+                        {
+                            kPos = buf1Pos + k;
+                            int y0 = buf1[kPos - (wDst2 << 2)]; // y - 1
+                            int y1 = buf1[kPos];                // y
+                            int y2 = buf1[kPos + (wDst2 << 2)]; // y + 1
+                            int y3 = buf1[kPos + (wDst2 << 2)]; // y + 1
+                            buf2[buf2Pos + k] = InterpolateCubic_(y0, y1, y2, y3, 0);
+                        }
+                    }
+                    y = (hDst2 - 1) * hRatio;
+                    yPos = (int)Math.Floor(y);
+                    for (j = 0; j < wDst2; j++)
+                    {
+                        buf1Pos = (yPos * wDst2 + j) << 2;
+                        buf2Pos = ((hDst2 - 1) * wDst2 + j) << 2;
+                        for (k = 0; k < 4; k++)
+                        {
+                            kPos = buf1Pos + k;
+                            int y0 = buf1[kPos - (wDst2 << 2)];
+                            int y1 = buf1[kPos];
+                            int y2 = (buf1[kPos] << 1) - y1;
+                            int y3 = (buf1[kPos] << 2) - y1;
+                            buf2[buf2Pos + k] = InterpolateCubic_(y0, y1, y2, y3, 0);
+                        }
+                    }
                     // Pass 3 - scale to dst
                     double m = wM * hM;
                     if (m > 1)
