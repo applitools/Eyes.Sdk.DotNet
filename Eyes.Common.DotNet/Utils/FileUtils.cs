@@ -1,13 +1,13 @@
-﻿namespace Applitools.Utils
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Net;
-    using System.Reflection;
-    using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Text;
 
+namespace Applitools.Utils
+{
     /// <summary>
     /// File / folder related utilities.
     /// </summary>

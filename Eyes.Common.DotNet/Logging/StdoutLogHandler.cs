@@ -1,8 +1,8 @@
-﻿namespace Applitools
-{
-    using System;
-    using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
+namespace Applitools
+{
     /// <summary>
     /// Writes log messages to the standard output stream.
     /// </summary>

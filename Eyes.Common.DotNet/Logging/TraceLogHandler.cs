@@ -1,9 +1,8 @@
-﻿namespace Applitools
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using Applitools.Utils;
+﻿using System;
+using System.Runtime.InteropServices;
 
+namespace Applitools
+{
     /// <summary>
     /// Writes log messages to <see cref="System.Diagnostics.Trace"/>.
     /// </summary>
@@ -37,7 +36,7 @@
                 {
                     message = string.Format(message, args);
                 }
-                System.Diagnostics.Trace.WriteLine("{0} - Eyes: {1}".Fmt(DateTimeOffset.Now, message));
+                System.Diagnostics.Trace.WriteLine($"{DateTimeOffset.Now} - Eyes: {message}");
             }
         }
 

@@ -1,8 +1,8 @@
-﻿namespace Applitools
-{
-    using System;
-    using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
+namespace Applitools
+{
     /// <summary>
     /// Handles log messages produces by the Eyes API.
     /// </summary>

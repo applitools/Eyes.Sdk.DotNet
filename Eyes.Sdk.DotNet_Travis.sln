@@ -42,6 +42,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "sdk.coverage.tests\dotNet\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{0C0307A7-E06E-468B-95AD-3A74375802DF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.Common.DotNet\Eyes.Common.DotNet.csproj", "{809D3F18-D837-4E19-8E1C-546B017035A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

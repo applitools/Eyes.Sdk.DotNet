@@ -1,12 +1,12 @@
-﻿namespace Applitools
-{
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Reflection;
-    using System.Threading;
-    using Utils;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using Applitools.Utils;
 
+namespace Applitools
+{
     /// <summary>
     /// Logs trace messages.
     /// </summary>

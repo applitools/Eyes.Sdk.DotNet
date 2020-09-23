@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+
 namespace Applitools.Utils
 {
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
     /// Utilities for validating method arguments.
     /// </summary>
@@ -15,7 +16,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Throws an <see cref="ArgumentNullException"/> if the input parameter is <c>null</c>.
         /// </summary>
-        public static T NotNull<T>([ValidatedNotNull]T param, string paramName)
+        public static T NotNull<T>(T param, string paramName)
         {
             if (param == null)
             {
@@ -28,7 +29,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Throws an <see cref="ArgumentException"/> if the input parameter is not <c>null</c>.
         /// </summary>
-        public static void Null<T>([ValidatedNotNull]T param, string paramName)
+        public static void Null<T>(T param, string paramName)
             where T : class
         {
             if (param != null)
@@ -42,16 +43,16 @@ namespace Applitools.Utils
         /// <c>null</c> and otherwise evaluates the input <c>guard</c> on each of its elements.
         /// </summary>
         public static void ForEach<T>(
-            [ValidatedNotNull]IEnumerable<T> param,
+            IEnumerable<T> param,
             string paramName,
-            [ValidatedNotNull]Action<T, string> guard)
+            Action<T, string> guard)
         {
             ArgumentGuard.NotNull(param, nameof(param));
             ArgumentGuard.NotNull(guard, nameof(guard));
             int i = 0;
             foreach (var val in param)
             {
-                guard(val, "{0}[{1}]".Fmt(paramName, i++));
+                guard(val, $"{paramName}[{i++}]");
             }
         }
 
@@ -109,7 +110,7 @@ namespace Applitools.Utils
                 return;
             }
 
-            throw new ArgumentException(messageFormat.Fmt(args));
+            throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, messageFormat, args));
         }
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace Applitools.Utils
         {
             if (object.Equals(param, value))
             {
-                throw new ArgumentException("'{0}' is '{1}'".Fmt(paramName, value), paramName);
+                throw new ArgumentException($"'{paramName}' is '{value}'", paramName);
             }
         }
 
@@ -134,7 +135,7 @@ namespace Applitools.Utils
             if (param.CompareTo(bound) > 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    paramName, "'{0}' is greater than {1}".Fmt(paramName, bound));
+                    paramName, $"'{paramName}' is greater than {bound}");
             }
         }
 
@@ -148,7 +149,7 @@ namespace Applitools.Utils
             if (param.CompareTo(bound) < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    paramName, "'{0}' is lower than {1}".Fmt(paramName, bound));
+                    paramName, $"'{paramName}' is lower than {bound}");
             }
         }
 
@@ -162,7 +163,7 @@ namespace Applitools.Utils
             if (param.CompareTo(bound) <= 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    paramName, "'{0}' is not greater than {1}".Fmt(paramName, bound));
+                    paramName, $"'{paramName}' is not greater than {bound}");
             }
         }
 
@@ -174,13 +175,13 @@ namespace Applitools.Utils
         /// <summary>
         /// Throws an <see cref="ArgumentException"/> if the input parameter is empty.
         /// </summary>
-        public static void NotEmpty([ValidatedNotNull]string param, string paramName)
+        public static void NotEmpty(string param, string paramName)
         {
             ArgumentGuard.NotNull(param, paramName);
 
             if (param.Length == 0)
             {
-                throw new ArgumentException("'{0}' is empty".Fmt(paramName), paramName);
+                throw new ArgumentException($"'{paramName}' is empty", paramName);
             }
         }
 
@@ -193,7 +194,7 @@ namespace Applitools.Utils
             if (string.IsNullOrWhiteSpace(param))
             {
                 ArgumentGuard.NotNull(param, paramName);
-                throw new ArgumentException("'{0}' is whitespace".Fmt(paramName), paramName);
+                throw new ArgumentException($"'{paramName}' is whitespace", paramName);
             }
         }
 
@@ -204,7 +205,7 @@ namespace Applitools.Utils
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1045:DoNotPassTypesByReference", MessageId = "0#",
             Justification = "Required in this case")]
-        public static void TrimNotNull([ValidatedNotNull]ref string param, string paramName)
+        public static void TrimNotNull(ref string param, string paramName)
         {
             ArgumentGuard.NotNull(param, paramName);
             param = param.Trim();
@@ -218,7 +219,7 @@ namespace Applitools.Utils
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1045:DoNotPassTypesByReference", MessageId = "0#",
             Justification = "Required in this case")]
-        public static void TrimNotEmpty([ValidatedNotNull]ref string param, string paramName)
+        public static void TrimNotEmpty(ref string param, string paramName)
         {
             ArgumentGuard.NotNull(param, paramName);
             param = param.Trim();
@@ -262,9 +263,9 @@ namespace Applitools.Utils
         public static void EndsWith(string param, string suffix, string paramName)
         {
             NotNull(param, paramName);
-            if (!param.EndsWithOrdinal(suffix))
+            if (!param.EndsWith(suffix, StringComparison.Ordinal))
             {
-                throw new ArgumentException("Does not end with '{0}'".Fmt(suffix), paramName);
+                throw new ArgumentException($"Does not end with '{suffix}'", paramName);
             }
         }
 
