@@ -1,10 +1,10 @@
-﻿namespace Applitools
-{
-    using Applitools.VisualGrid;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
+﻿using Applitools.VisualGrid;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
+namespace Applitools
+{
     /// <summary>
     /// The interface of the match settings object.
     /// </summary>

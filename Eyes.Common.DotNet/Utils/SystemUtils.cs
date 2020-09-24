@@ -1,9 +1,10 @@
-﻿namespace Applitools.Utils
-{
-#if NET45
-    using System.IO;
-    using System.Management;
+﻿#if NET45
+using System.IO;
+using System.Management;
 #endif
+
+namespace Applitools.Utils
+{
 
     /// <summary>
     /// Operating system utilities.

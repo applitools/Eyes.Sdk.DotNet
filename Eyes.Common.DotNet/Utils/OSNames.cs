@@ -1,7 +1,7 @@
-﻿namespace Applitools.Utils
-{
-    using System;
+﻿using System;
 
+namespace Applitools.Utils
+{
     /// <summary>
     /// Operating system names.
     /// </summary>

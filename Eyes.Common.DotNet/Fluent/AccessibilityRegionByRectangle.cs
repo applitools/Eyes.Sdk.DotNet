@@ -49,7 +49,7 @@ namespace Applitools
         [JsonConverter(typeof(StringEnumConverter))]
         public AccessibilityRegionType Type { get; set; }
 
-        public IList<AccessibilityRegionByRectangle> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             return new AccessibilityRegionByRectangle[] { this };
         }

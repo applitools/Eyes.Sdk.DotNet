@@ -1,10 +1,10 @@
-﻿namespace Applitools.Utils.Geometry
-{
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
+namespace Applitools.Utils.Geometry
+{
     /// <summary>
     /// A rectangular region.
     /// </summary>

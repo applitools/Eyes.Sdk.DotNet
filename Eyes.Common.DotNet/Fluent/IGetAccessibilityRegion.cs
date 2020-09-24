@@ -4,6 +4,6 @@ namespace Applitools
 {
     public interface IGetAccessibilityRegion
     {
-        IList<AccessibilityRegionByRectangle> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot);
+        IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot);
     }
 }

@@ -16,7 +16,7 @@ namespace Applitools
 
         public SimpleRegionByRectangle(Point location, Size size) : this(new Rectangle(location, size)) { }
 
-        public IList<IMutableRegion> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             return new IMutableRegion[] { region };
         }

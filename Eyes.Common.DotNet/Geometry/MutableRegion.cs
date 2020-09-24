@@ -1,9 +1,9 @@
-﻿namespace Applitools.Utils.Geometry
-{
-    using Newtonsoft.Json;
-    using System;
-    using System.Drawing;
+﻿using Newtonsoft.Json;
+using System;
+using System.Drawing;
 
+namespace Applitools.Utils.Geometry
+{
     /// <summary>
     /// A basic mutable region implementation.
     /// </summary>

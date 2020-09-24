@@ -1,6 +1,7 @@
 ## [Eyes.Sdk.Core vNext]
 ### Updated
 - Added log prints.
+- Updated [HtmlAgilityPack](https://www.nuget.org/packages/HtmlAgilityPack/1.11.24) dependency.
 
 ## [Eyes.Selenium vNext]
 ### Updated

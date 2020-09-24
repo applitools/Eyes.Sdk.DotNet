@@ -1,8 +1,8 @@
-﻿namespace Applitools.Utils.Geometry
-{
-    using System;
-    using System.Drawing;
+﻿using System;
+using System.Drawing;
 
+namespace Applitools.Utils.Geometry
+{
     /// <summary>
     /// A location in a 2D plane.
     /// </summary>

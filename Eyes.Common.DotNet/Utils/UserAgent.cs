@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Text.RegularExpressions;
+
 namespace Applitools.Utils
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-
     /// <summary>
     /// Represents a parsed User Agent string, and exposes its different component.
     /// </summary>

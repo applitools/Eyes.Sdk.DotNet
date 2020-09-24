@@ -14,10 +14,11 @@ using Applitools.Selenium.Fluent;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
-using Applitools.VisualGrid.Model;
+using Applitools.Ufg.Model;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
+using Applitools.Ufg;
 
 namespace Applitools.Selenium.VisualGrid
 {

@@ -1,7 +1,8 @@
-﻿namespace Applitools.Utils.Geometry
-{
-    using System.Drawing;
+﻿using System.Drawing;
+using Region = Applitools.Utils.Geometry.Region;
 
+namespace Applitools.Utils.Geometry
+{
     /// <summary>
     /// A geometrical region.
     /// </summary>
