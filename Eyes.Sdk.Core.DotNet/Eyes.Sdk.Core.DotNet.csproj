@@ -37,6 +37,11 @@ To learn more, visit https://applitools.com/ .</Description>
   <PropertyGroup>
     <NoWarn>1701;1702;1705;CS1591</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="VisualGrid\IEyesConnector.cs" />
+    <Compile Remove="VisualGrid\RunningRender.cs" />
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\CssParser\CssParser.csproj">
@@ -79,10 +84,15 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+    <None Include="VisualGrid\RunningRender.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Utils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="VisualGrid\IEyesConnector.cs" />
   </ItemGroup>
 
 </Project>
