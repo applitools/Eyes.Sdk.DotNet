@@ -4,6 +4,6 @@ namespace Applitools
 {
     public interface IGetFloatingRegion
     {
-        IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot);
+        IList<FloatingMatchSettings> GetRegions(Common.IEyesBase eyesBase, IEyesScreenshot screenshot);
     }
 }
