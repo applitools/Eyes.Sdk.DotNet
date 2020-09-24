@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.Common.DotNet\Eyes.Common.DotNet.csproj", "{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Ufg.DotNet", "Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj", "{A4DA651E-5D95-4C3D-BE46-82A495B6673E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +157,10 @@ Global
 		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,4 +16,8 @@
     <Product>Eyes SDK</Product>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CssParser\CssParser.csproj" />
+  </ItemGroup>
+
 </Project>
