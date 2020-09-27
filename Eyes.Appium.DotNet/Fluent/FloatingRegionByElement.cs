@@ -33,7 +33,7 @@ namespace Applitools.Appium.Fluent
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
 
-        public IList<FloatingMatchSettings> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
             Region r = new Region(element_.Location, element_.Size);

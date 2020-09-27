@@ -112,16 +112,6 @@ namespace Applitools
         /// </summary>
         protected Logger Logger { get; private set; }
 
-        public ResourceFuture CreateResourceFuture(RGridResource rg)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ResourceFuture DownloadResource(Uri url, bool isSecondRetry, DownloadListener<byte[]> listener)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Methods

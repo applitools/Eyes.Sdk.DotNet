@@ -32,7 +32,7 @@ namespace Applitools.Selenium.Fluent
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
 
-        public IList<FloatingMatchSettings> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(element_);
             Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);

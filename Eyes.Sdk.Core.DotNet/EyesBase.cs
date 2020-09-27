@@ -41,7 +41,7 @@ namespace Applitools
         "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
         Justification = "Cleanup performed by Close or AbortIfNotClosed")]
     [ComVisible(true)]
-    public abstract class EyesBase : EyesBaseConfig, IBatchCloser
+    public abstract class EyesBase : EyesBaseConfig, IEyesBase, IBatchCloser
     {
 
         #region Fields
@@ -942,7 +942,7 @@ namespace Applitools
 
         /// <summary>
         /// Returns a URL from which the application screenshot can be obtained. 
-        /// Invoked only if a previous call to <see cref="GetScreenshot(ICheckSettingsInternal, ImageMatchSettings)"/> returned <c>null</c>.
+        /// Invoked only if a previous call to <see cref="GetScreenshot(Rectangle?, ICheckSettingsInternal, ImageMatchSettings)"/> returned <c>null</c>.
         /// </summary>
         protected virtual string GetScreenshotUrl()
         {
@@ -1191,7 +1191,7 @@ namespace Applitools
             {
                 return iosDevicesSizes_;
             }
-            iosDevicesSizes_ = ServerConnector.GetIosDevicesSizes();
+            iosDevicesSizes_ = ((ServerConnector)ServerConnector).GetIosDevicesSizes();
             return iosDevicesSizes_;
         }
 
@@ -1201,7 +1201,7 @@ namespace Applitools
             {
                 return emulatedDevicesSizes_;
             }
-            emulatedDevicesSizes_ = ServerConnector.GetEmulatedDevicesSizes();
+            emulatedDevicesSizes_ = ((ServerConnector)ServerConnector).GetEmulatedDevicesSizes();
             return emulatedDevicesSizes_;
         }
 
@@ -1211,7 +1211,7 @@ namespace Applitools
             {
                 return userAgents_;
             }
-            userAgents_ = ServerConnector.GetUserAgents();
+            userAgents_ = ((ServerConnector)ServerConnector).GetUserAgents();
             return userAgents_;
         }
 

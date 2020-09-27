@@ -20,7 +20,7 @@ namespace Applitools.Appium.Fluent
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
 
-        public IList<AccessibilityRegionByRectangle> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             ReadOnlyCollection<IWebElement> elements = ((Eyes)eyesBase).GetDriver().FindElements(selector_);
             IList<AccessibilityRegionByRectangle> retVal = new List<AccessibilityRegionByRectangle>();

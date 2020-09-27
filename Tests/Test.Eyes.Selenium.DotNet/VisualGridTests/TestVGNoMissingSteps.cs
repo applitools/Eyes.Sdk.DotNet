@@ -1,5 +1,6 @@
 ﻿using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using System.Collections.Generic;

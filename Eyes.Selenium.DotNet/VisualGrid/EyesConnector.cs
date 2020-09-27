@@ -274,11 +274,6 @@ namespace Applitools.Selenium.VisualGrid
             return new PutFuture(task, resource, runningRender, this, Logger);
         }
 
-        public ResourceFuture CreateResourceFuture(RGridResource rg)
-        {
-            return ServerConnector.CreateResourceFuture(rg);
-        }
-
         public ResourceFuture GetResource(Uri url)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);

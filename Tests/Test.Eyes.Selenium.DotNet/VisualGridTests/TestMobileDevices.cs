@@ -2,6 +2,7 @@
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
@@ -99,9 +100,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
     class LocalEyesConnectorFactory : IEyesConnectorFactory
     {
-        public IEyesConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
+        public IUfgConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
-            IEyesConnector eyesConnector = new LocalEyesConnector(browserInfo, config);
+            IUfgConnector eyesConnector = new LocalEyesConnector(browserInfo, config);
             return eyesConnector;
         }
     }

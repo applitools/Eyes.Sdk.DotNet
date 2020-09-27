@@ -1,4 +1,5 @@
 ﻿using Applitools.Fluent;
+using Applitools.Ufg;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using System;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.Mock
 {
-    class MockEyesConnector : EyesBase, IEyesConnector
+    class MockEyesConnector : EyesBase, IUfgConnector
     {
         private RenderBrowserInfo browserInfo_;
         private Applitools.Configuration config_;
-        public IEyesConnector WrappedConnector { get; set; }
+        public IUfgConnector WrappedConnector { get; set; }
 
         public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
@@ -28,11 +29,6 @@ namespace Applitools.Selenium.Tests.Mock
         public TestResults Close(bool throwEx, Applitools.IConfiguration config)
         {
             return new TestResults() { Status = TestResultsStatus.Passed };
-        }
-
-        public ResourceFuture CreateResourceFuture(RGridResource blob)
-        {
-            throw new NotImplementedException();
         }
 
         public RenderingInfo GetRenderingInfo()

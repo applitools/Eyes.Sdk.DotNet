@@ -428,7 +428,7 @@
         }
 
         private static void CollectAccessibilityRegions_(ICheckSettingsInternal checkSettingsInternal,
-                                       ImageMatchSettings imageMatchSettings, EyesBase eyes,
+                                       ImageMatchSettings imageMatchSettings, IEyesBase eyes,
                                        EyesScreenshot screenshot)
         {
             eyes.Logger.Verbose("enter");

@@ -1,6 +1,7 @@
 using Applitools.Metadata;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -48,7 +49,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             eyes.IsDisabled = isDisabled2 ?? eyes.IsDisabled;
             DesktopBrowserInfo desktopBrowserInfo = new DesktopBrowserInfo(100, 100, BrowserType.FIREFOX, null);
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(desktopBrowserInfo);
-            IEyesConnector eyesConnector = eyes.CreateEyesConnector_(browserInfo, eyes.ApiKey);
+            IUfgConnector eyesConnector = eyes.CreateEyesConnector_(browserInfo, eyes.ApiKey);
             Assert.AreEqual(expectedServer, eyesConnector.ServerUrl);
             Assert.AreEqual(expectedKey, eyesConnector.ApiKey);
             Assert.AreEqual(expectedDisabled, eyesConnector.IsDisabled);
