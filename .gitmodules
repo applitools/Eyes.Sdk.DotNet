@@ -4,5 +4,5 @@
 	branch = DotNet_POC
 [submodule "Eyes.Ufg.DotNet"]
 	path = Eyes.Ufg.DotNet
-	url = git@github.com:applitools/Eyes.Ufg.DotNet.git
+	url = https://github.com/applitools/Eyes.Ufg.DotNet.git
 	branch = develop
