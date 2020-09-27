@@ -30,7 +30,7 @@ namespace Applitools
             maxRightOffset_ = maxRightOffset;
         }
 
-        public IList<FloatingMatchSettings> GetRegions(Common.IEyesBase eyesBase, IEyesScreenshot screenshot)
+        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             return new FloatingMatchSettings[] {
                 new FloatingMatchSettings() {

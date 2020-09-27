@@ -1,12 +1,12 @@
-﻿namespace Applitools.Utils
-{
-    using System;
-    using System.IO;
-    using System.Reflection;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using Newtonsoft.Json.Serialization;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
+namespace Applitools.Utils
+{
     /// <summary>
     /// Json formatting utilities.
     /// </summary>

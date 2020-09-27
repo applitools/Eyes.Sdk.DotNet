@@ -19,8 +19,6 @@ namespace Applitools
             Url = string.Empty;
         }
 
-        internal IServerConnector ServerConnector { private get; set; }
-
         public string SecretToken { get; set; }
 
         public string Id { get; set; }
@@ -139,6 +137,8 @@ namespace Applitools
         public ImageMatchSettings DefaultMatchSettings { get; set; }
 
         public SessionAccessibilityStatus AccessibilityStatus { get; set; }
+
+        internal IDeleteSession ServerConnector { private get; set; }
 
         public void Delete()
         {

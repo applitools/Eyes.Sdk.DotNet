@@ -1,10 +1,15 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
-namespace Applitools.Common
+namespace Applitools
 {
     public interface IEyesBase
     {
+        BatchInfo Batch { get; set; }
+
+        TestResults Abort();
+
+        TestResults AbortIfNotClosed();
+        
         void SetLogHandler(ILogHandler logHandler);
 
         string ServerUrl { get; set; }

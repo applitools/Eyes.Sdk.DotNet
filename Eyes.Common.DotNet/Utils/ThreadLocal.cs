@@ -1,8 +1,8 @@
-﻿namespace Applitools.Utils
-{
-    using System;
-    using System.Threading;
+﻿using System;
+using System.Threading;
 
+namespace Applitools.Utils
+{
     /// <summary>
     /// A legacy replacement for .NET 4.0's <c>ThreadLocal&lt;T&gt;</c> class.
     /// </summary>

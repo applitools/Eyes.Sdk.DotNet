@@ -1,9 +1,9 @@
+using System;
+using System.Diagnostics;
+using System.Globalization;
+
 namespace Applitools.Utils
 {
-    using System;
-    using System.Diagnostics;
-    using System.Globalization;
-
     /// <summary>
     /// Standard <see cref="DateTime"/> formats.
     /// </summary>

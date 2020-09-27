@@ -27,5 +27,9 @@
   <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore')) AND !$(TargetFramework.StartsWith('netstandard'))">
     <Reference Include="System.Management" />
   </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore')) OR $(TargetFramework.StartsWith('netstandard'))">
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
   
 </Project>

@@ -53,7 +53,7 @@ namespace Applitools.Selenium.VisualGrid
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private RenderingInfo renderingInfo_;
-        internal IEyesConnector eyesConnector_;
+        internal IUfgConnector eyesConnector_;
         private IJavaScriptExecutor jsExecutor_;
         private string url_;
         private EyesListener listener_;
@@ -240,10 +240,10 @@ namespace Applitools.Selenium.VisualGrid
             return driver_ ?? webDriver;
         }
 
-        internal IEyesConnector CreateEyesConnector_(RenderBrowserInfo browserInfo, string apiKey)
+        internal IUfgConnector CreateEyesConnector_(RenderBrowserInfo browserInfo, string apiKey)
         {
             Logger.Verbose("creating eyes server connector");
-            IEyesConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(browserInfo, (Applitools.Configuration)configAtOpen_);
+            IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(browserInfo, (Applitools.Configuration)configAtOpen_);
 
             eyesConnector.SetLogHandler(Logger.GetILogHandler());
             eyesConnector.Proxy = Proxy;

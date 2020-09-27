@@ -1,10 +1,10 @@
-﻿namespace Applitools
-{
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using System;
-    using Utils.Geometry;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using Applitools.Utils.Geometry;
 
+namespace Applitools
+{
     /// <summary>
     /// Encapsulates match settings for the a session.
     /// </summary>

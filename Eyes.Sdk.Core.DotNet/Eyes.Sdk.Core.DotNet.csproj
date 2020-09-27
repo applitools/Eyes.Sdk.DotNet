@@ -40,7 +40,6 @@ To learn more, visit https://applitools.com/ .</Description>
 
   <ItemGroup>
     <Compile Remove="VisualGrid\IEyesConnector.cs" />
-    <Compile Remove="VisualGrid\RunningRender.cs" />
   </ItemGroup>
   
   <ItemGroup>
@@ -48,6 +47,7 @@ To learn more, visit https://applitools.com/ .</Description>
 		  <PrivateAssets>all</PrivateAssets>
 	  </ProjectReference>
     <ProjectReference Include="..\Eyes.Common.DotNet\Eyes.Common.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,7 +84,6 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
-    <None Include="VisualGrid\RunningRender.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Applitools.Fluent;
+using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
@@ -13,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class EyesConnector : EyesBase, IEyesConnector
+    public class EyesConnector : EyesBase, IUfgConnector
     {
         private RenderBrowserInfo browserInfo_;
         private string userAgent_;
