@@ -193,7 +193,7 @@ namespace Applitools.Selenium.VisualGrid
                 using (WebResponse response = request.GetResponse())
                 {
                     Stream s = response.GetResponseStream();
-                    string json = new StreamReader(s).ReadToEnd();
+                    json = new StreamReader(s).ReadToEnd();
                     List<RenderStatusResults> renderStatusResults = serializer_.Deserialize<List<RenderStatusResults>>(json);
 
                     Logger.Verbose("request succeeded");
