@@ -24,6 +24,7 @@ git:
   submodules: false
 
 before_install:
+    - echo -e "\n\nmachine github.com\n  $GITHUB_TOKEN\n" >~/.netrc
     - git submodule update --init --remote --recursive
     - nvm install node
 
