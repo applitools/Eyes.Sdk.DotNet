@@ -184,6 +184,7 @@ namespace Applitools.Selenium.VisualGrid
             string idsAsString = string.Join(",", renderIds);
             Logger.Verbose("requesting visual grid server for render status of the following render ids: {0}", idsAsString);
 
+            string json = null;
             try
             {
                 HttpWebRequest request = CreateHttpWebRequest_("render-status");
@@ -205,7 +206,7 @@ namespace Applitools.Selenium.VisualGrid
             }
             catch (JsonException e)
             {
-                Logger.Log("exception in render status: " + e);
+                Logger.Log("error in JSON: {0}. exception in render status: {1}", json, e);
             }
             return null;
         }
