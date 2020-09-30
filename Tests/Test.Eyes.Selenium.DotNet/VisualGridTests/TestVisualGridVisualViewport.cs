@@ -1,6 +1,7 @@
 ﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;

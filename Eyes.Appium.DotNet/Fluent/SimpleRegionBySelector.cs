@@ -22,7 +22,7 @@ namespace Applitools.Appium.Fluent
             return elements;
         }
 
-        public IList<IMutableRegion> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             IWebDriver driver = ((Eyes)eyesBase).GetDriver();
             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector_);

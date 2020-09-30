@@ -33,7 +33,7 @@ namespace Applitools.Selenium.Fluent
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
 
-        public IList<FloatingMatchSettings> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             ReadOnlyCollection<IWebElement> elements = ((SeleniumEyes)eyesBase).GetDriver().FindElements(selector_);
             IList<FloatingMatchSettings> retVal = new List<FloatingMatchSettings>();

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>
+      Applitools Eyes adds automated visual validation to your automated tests.
+      With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
+      To learn more, visit https://applitools.com/ .
+    </Description>
+    <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
+    <Copyright>Applitools 2013</Copyright>
+    <Version>1.0.0</Version>
+    <Authors>Applitools</Authors>
+    <Company>Applitools</Company>
+    <Product>Eyes SDK</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CssParser\CssParser.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore')) AND !$(TargetFramework.StartsWith('netstandard'))">
+    <Reference Include="System.Management" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore')) OR $(TargetFramework.StartsWith('netstandard'))">
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+  
+</Project>

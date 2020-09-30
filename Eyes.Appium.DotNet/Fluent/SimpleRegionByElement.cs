@@ -21,7 +21,7 @@ namespace Applitools.Appium.Fluent
             return new List<IWebElement>() { element_ };
         }
 
-        public IList<IMutableRegion> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             IWebElement element = element_;
             double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();

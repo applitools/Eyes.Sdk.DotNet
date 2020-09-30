@@ -1,6 +1,7 @@
 ﻿using Applitools.Metadata;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;

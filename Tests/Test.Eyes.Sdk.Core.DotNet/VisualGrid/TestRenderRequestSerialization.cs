@@ -1,4 +1,5 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Ufg;
+using Applitools.Utils;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;

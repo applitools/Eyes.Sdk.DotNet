@@ -1,4 +1,5 @@
 # Eyes.Sdk.DotNet
+
 Applitools Eyes .NET SDKs repository
 
 ## Installation
@@ -7,21 +8,21 @@ Applitools Eyes .NET SDKs repository
 
 See specific folders for installation explanations, but in general (***demonstrated on Eyes.Selenium.DotNet SDK***):
 
-### Package Manager CLI:
+### Package Manager CLI
 
 For latest stable version:
 
     Install-Package Eyes.Selenium
-    
+
 For latest pre-release:
 
     Install-Package Eyes.Selenium -prerelease
-    
+
 For specific version (stable or pre-release):
 
-    Install-Package Eyes.Selenium -version 2.20.7
-    
-### Using Visual Studio UI:
+    Install-Package Eyes.Selenium -version 2.34
+
+### Using Visual Studio UI
 
 1. Open NuGet Package Manager (right click on the project > *Manage NuGet Packages...*)
 2. Select *Browse* tab

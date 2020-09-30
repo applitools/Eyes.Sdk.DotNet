@@ -1,5 +1,6 @@
 ﻿using Applitools;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.VisualGrid;
 using NUnit.Framework;

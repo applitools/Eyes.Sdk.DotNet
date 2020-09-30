@@ -1,11 +1,11 @@
-﻿namespace Applitools
-{
-    using System.Drawing;
-    using Region = Utils.Geometry.Region;
-    using Utils;
-    using Utils.Geometry;
+﻿using System.Drawing;
+using Region = Applitools.Utils.Geometry.Region;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
-    public abstract class EyesScreenshot
+namespace Applitools
+{
+    public abstract class EyesScreenshot : IEyesScreenshot
     {
         public EyesScreenshot(Bitmap image)
         {

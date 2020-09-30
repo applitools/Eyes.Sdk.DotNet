@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Applitools.Fluent;
+using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
@@ -13,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class EyesConnector : EyesBase, IEyesConnector
+    public class EyesConnector : EyesBase, IUfgConnector
     {
         private RenderBrowserInfo browserInfo_;
         private string userAgent_;
@@ -183,6 +184,7 @@ namespace Applitools.Selenium.VisualGrid
             string idsAsString = string.Join(",", renderIds);
             Logger.Verbose("requesting visual grid server for render status of the following render ids: {0}", idsAsString);
 
+            string json = null;
             try
             {
                 HttpWebRequest request = CreateHttpWebRequest_("render-status");
@@ -191,7 +193,7 @@ namespace Applitools.Selenium.VisualGrid
                 using (WebResponse response = request.GetResponse())
                 {
                     Stream s = response.GetResponseStream();
-                    string json = new StreamReader(s).ReadToEnd();
+                    json = new StreamReader(s).ReadToEnd();
                     List<RenderStatusResults> renderStatusResults = serializer_.Deserialize<List<RenderStatusResults>>(json);
 
                     Logger.Verbose("request succeeded");
@@ -204,7 +206,7 @@ namespace Applitools.Selenium.VisualGrid
             }
             catch (JsonException e)
             {
-                Logger.Log("exception in render status: " + e);
+                Logger.Log("error in JSON: {0}. exception in render status: {1}", json, e);
             }
             return null;
         }
@@ -271,11 +273,6 @@ namespace Applitools.Selenium.VisualGrid
             Logger.Verbose("future created.");
 
             return new PutFuture(task, resource, runningRender, this, Logger);
-        }
-
-        public ResourceFuture CreateResourceFuture(RGridResource rg)
-        {
-            return ServerConnector.CreateResourceFuture(rg);
         }
 
         public ResourceFuture GetResource(Uri url)

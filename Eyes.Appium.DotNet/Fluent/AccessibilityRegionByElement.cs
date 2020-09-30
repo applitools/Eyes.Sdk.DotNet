@@ -19,7 +19,7 @@ namespace Applitools.Appium.Fluent
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
 
-        public IList<AccessibilityRegionByRectangle> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
             Region r = new Region(element_.Location, element_.Size);

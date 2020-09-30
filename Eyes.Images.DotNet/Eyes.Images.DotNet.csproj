@@ -26,6 +26,7 @@ To learn more, visit https://applitools.com/ .</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Eyes.Common.DotNet\Eyes.Common.DotNet.csproj" />
     <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
   </ItemGroup>
 

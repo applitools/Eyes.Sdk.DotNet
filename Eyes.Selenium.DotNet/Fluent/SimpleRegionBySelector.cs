@@ -21,7 +21,7 @@
             return elements;
         }
 
-        public IList<IMutableRegion> GetRegions(EyesBase eyesBase, EyesScreenshot screenshot)
+        public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             EyesWebDriver driver = ((SeleniumEyes)eyesBase).GetDriver();
             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector_);

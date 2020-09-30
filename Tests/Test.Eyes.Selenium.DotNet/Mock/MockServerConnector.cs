@@ -42,11 +42,6 @@ namespace Applitools.Selenium.Tests.Mock
         {
         }
 
-        public ResourceFuture CreateResourceFuture(RGridResource resource)
-        {
-            throw new NotImplementedException();
-        }
-
         public void DeleteSession(TestResults testResults)
         {
             logger_.Log("deleting session: {0}", testResults.Id);
