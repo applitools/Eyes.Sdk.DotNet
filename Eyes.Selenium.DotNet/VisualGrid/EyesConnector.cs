@@ -243,15 +243,13 @@ namespace Applitools.Selenium.VisualGrid
             OpenBase();
         }
 
-        public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
+        public PutFuture RenderPutResource(string renderId, RGridResource resource)
         {
-            ArgumentGuard.NotNull(runningRender, nameof(runningRender));
             ArgumentGuard.NotNull(resource, nameof(resource));
             byte[] content = resource.Content;
             ArgumentGuard.NotNull(content, nameof(resource.Content));
 
             string hash = resource.Sha256;
-            string renderId = runningRender.RenderId;
             string contentType = resource.ContentType;
 
             Logger.Verbose("resource hash: {0} ; url: {1} ; render id: {2}", hash, resource.Url, renderId);
