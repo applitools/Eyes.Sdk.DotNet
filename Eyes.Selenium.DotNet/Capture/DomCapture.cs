@@ -91,10 +91,11 @@ namespace Applitools.Selenium.Capture
         internal CaptureStatus GetDomCaptureAndPollingScriptResult_()
         {
             CaptureStatus captureStatus;
+            string cptureScript = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
             string captureStatusStr = null;
             try
             {
-                captureStatusStr = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
+                captureStatusStr = (string)webDriver_.ExecuteScript(cptureScript);
                 captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
             }
             catch (JsonReaderException jsonException)
