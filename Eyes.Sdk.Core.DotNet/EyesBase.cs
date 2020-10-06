@@ -1,22 +1,21 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Cropping;
+using Applitools.Exceptions;
+using Applitools.Fluent;
+using Applitools.Utils;
+using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
+using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Region = Applitools.Utils.Geometry.Region;
-using System.Diagnostics;
-using Applitools.Fluent;
-using Applitools.Exceptions;
-using Applitools.Utils.Cropping;
-using Applitools.Cropping;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Applitools.VisualGrid.Model;
-using Applitools.VisualGrid;
 
 namespace Applitools
 {
@@ -51,7 +50,6 @@ namespace Applitools
         private SessionStartInfo sessionStartInfo_;
         private bool shouldMatchWindowRunOnceOnTimeout_;
         private IScaleProvider scaleProvider_;
-        private SetScaleProviderHandler setScaleProvider_;
         private ICutProvider cutProvider_;
         private Assembly actualAssembly_;
         private PropertiesCollection properties_;
@@ -100,7 +98,7 @@ namespace Applitools
 
             properties_ = new PropertiesCollection();
 
-            setScaleProvider_ = provider => { scaleProvider_ = provider; };
+            SetScaleProvider = provider => { scaleProvider_ = provider; };
             scaleProvider_ = NullScaleProvider.Instance;
             cutProvider_ = NullCutProvider.Instance;
 
@@ -204,19 +202,16 @@ namespace Applitools
             set { ServerConnector.Proxy = value; }
         }
 
-        protected SetScaleProviderHandler SetScaleProvider
-        {
-            get { return setScaleProvider_; }
-        }
+        protected SetScaleProviderHandler SetScaleProvider { get; private set; }
 
         /// <summary>
-        /// Sets the current scale provider (assuming <see cref="setScaleProvider_"/> is not 
+        /// Sets the current scale provider (assuming <see cref="SetScaleProvider"/> is not 
         /// in read-only mode).
         /// </summary>
         public IScaleProvider ScaleProvider
         {
             get { return scaleProvider_; }
-            set { setScaleProvider_(value); }
+            set { SetScaleProvider(value); }
         }
 
         /// <summary>
@@ -231,12 +226,12 @@ namespace Applitools
                 if (value > 0)
                 {
                     // Scale ratio will no longer be automatically determined (as it was set by the user).
-                    setScaleProvider_ = provider => { return; };
+                    SetScaleProvider = provider => { return; };
                     scaleProvider_ = new FixedScaleProvider(value);
                 }
                 else // Switch back to automatically identifying scale ratio.
                 {
-                    setScaleProvider_ = provider => { scaleProvider_ = provider; };
+                    SetScaleProvider = provider => { scaleProvider_ = provider; };
                     scaleProvider_ = new FixedScaleProvider(1);
                 }
             }

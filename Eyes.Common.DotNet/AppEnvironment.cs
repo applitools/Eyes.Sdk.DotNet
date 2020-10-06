@@ -1,7 +1,7 @@
-﻿namespace Applitools
-{
-    using Applitools.Utils.Geometry;
+﻿using Applitools.Utils.Geometry;
 
+namespace Applitools
+{
     /// <summary>
     /// The environment in which the AUT is executing.
     /// </summary>

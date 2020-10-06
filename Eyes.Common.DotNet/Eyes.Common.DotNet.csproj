@@ -26,6 +26,7 @@
   
   <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore')) AND !$(TargetFramework.StartsWith('netstandard'))">
     <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('netcore')) OR $(TargetFramework.StartsWith('netstandard'))">

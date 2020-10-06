@@ -14,9 +14,9 @@ using Newtonsoft.Json;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class EyesConnector : EyesBase, IUfgConnector
+    public class EyesConnector : EyesBase
     {
-        private RenderBrowserInfo browserInfo_;
+        private readonly RenderBrowserInfo browserInfo_;
         private string userAgent_;
         private RenderingInfo renderInfo_;
         private HttpRestClient httpClient_;
@@ -241,36 +241,6 @@ namespace Applitools.Selenium.VisualGrid
             //config_.SetBaselineEnvName(browserInfo_.BaselineEnvName);
             //Logger.Verbose("validating: {0} ({1})", Configuration.GetViewportSize(), GetHashCode());
             OpenBase();
-        }
-
-        public PutFuture RenderPutResource(string renderId, RGridResource resource)
-        {
-            ArgumentGuard.NotNull(resource, nameof(resource));
-            byte[] content = resource.Content;
-            ArgumentGuard.NotNull(content, nameof(resource.Content));
-
-            string hash = resource.Sha256;
-            string contentType = resource.ContentType;
-
-            Logger.Verbose("resource hash: {0} ; url: {1} ; render id: {2}", hash, resource.Url, renderId);
-
-            RenderingInfo renderingInfo = GetRenderingInfo();
-            Uri url = new Uri(renderingInfo.ServiceUrl, $"/resources/sha256/{hash}?render-id={renderId}");
-            HttpWebRequest request = WebRequest.CreateHttp(url);
-            if (Proxy != null) request.Proxy = Proxy;
-            request.ContentType = contentType;
-            request.ContentLength = content.Length;
-            request.MediaType = contentType ?? "application/octet-stream";
-            request.Method = "PUT";
-            request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(content, 0, content.Length);
-            dataStream.Close();
-
-            Task<WebResponse> task = request.GetResponseAsync();
-            Logger.Verbose("future created.");
-
-            return new PutFuture(task, resource, runningRender, this, Logger);
         }
 
         public ResourceFuture GetResource(Uri url)

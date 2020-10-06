@@ -1,5 +1,4 @@
-﻿using Applitools.Ufg;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
