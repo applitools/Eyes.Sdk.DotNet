@@ -125,7 +125,8 @@ namespace Applitools.Selenium.Tests
                 EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Test DomCapture method", new Size(1200, 1000));
                 Logger logger = new Logger();
                 logger.SetLogHandler(TestUtils.InitLogHandler());
-                DomCapture domCapture = new DomCapture(logger, eyesWebDriver);
+                UserAgent ua = eyes.seleniumEyes_.userAgent_;
+                DomCapture domCapture = new DomCapture(logger, eyesWebDriver, ua);
                 string actualDomJsonString = domCapture.GetFullWindowDom();
                 string actualDomJson = JsonUtility.NormalizeJsonString(actualDomJsonString);
                 string expectedDomJson = GetExpectedDomFromUrl_("https://applitools-dom-capture-origin-1.surge.sh/test.dom.json");
