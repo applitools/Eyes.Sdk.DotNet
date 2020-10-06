@@ -30,7 +30,8 @@ namespace Applitools.Selenium.Tests
             driver.Url = "https://applitools.github.io/demo/TestPages/CorsCssTestPage/";
             try
             {
-                DomCapture domCapture = new DomCapture(eyes.Logger, eyesWebDriver);
+                UserAgent ua = eyes.seleniumEyes_.userAgent_;
+                DomCapture domCapture = new DomCapture(eyes.Logger, eyesWebDriver, ua);
                 string json = domCapture.GetFullWindowDom();
 
                 object expectedJsonObj = JsonConvert.DeserializeObject(expectedDomJson);

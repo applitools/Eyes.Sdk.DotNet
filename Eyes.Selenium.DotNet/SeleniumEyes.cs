@@ -243,7 +243,7 @@ namespace Applitools.Selenium
 
             IWebElement scrollRootElement = fc.Peek()?.ScrollRootElement ?? EyesSeleniumUtils.GetDefaultRootElement(driver_);
             IPositionProvider positionProvider = SeleniumPositionProviderFactory.GetPositionProvider(Logger, StitchModes.Scroll, jsExecutor_, scrollRootElement, userAgent_);
-            DomCapture domCapture = new DomCapture(Logger, driver_);
+            DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
             string domJson = domCapture.GetFullWindowDom(positionProvider);
             Logger.Verbose("exit. DOM JSON length: {0}", domJson.Length);
             return domJson;
