@@ -120,7 +120,34 @@ namespace CssParser.Model.Values
                 
                 return true;
             }
-            
+
+            if (color.Length == 4)
+            {
+                if (!color[0].IsHex() || !color[1].IsHex() || !color[2].IsHex() || !color[3].IsHex())
+                {
+                    return false;
+                }
+
+                var r = color[0].FromHex();
+                r += r * 16;
+
+                var g = color[1].FromHex();
+                g += g * 16;
+
+                var b = color[2].FromHex();
+                b += b * 16;
+
+                var a = color[3].FromHex();
+                a += a * 16;
+
+                htmlColor.R = (byte)r;
+                htmlColor.G = (byte)g;
+                htmlColor.B = (byte)b;
+                htmlColor.A = (byte)a;
+
+                return true;
+            }
+
             if (color.Length == 6)
             {
                 if (!color[0].IsHex() || !color[1].IsHex() || !color[2].IsHex() ||
@@ -141,6 +168,31 @@ namespace CssParser.Model.Values
                 htmlColor.G = (byte)g;
                 htmlColor.B = (byte)b;
                 
+                return true;
+            }
+
+            if (color.Length == 8)
+            {
+                foreach (char c in color)
+                {
+                    if (!c.IsHex()) return false;
+                }
+
+                var r = 16 * color[0].FromHex();
+                var g = 16 * color[2].FromHex();
+                var b = 16 * color[4].FromHex();
+                var a = 16 * color[6].FromHex();
+
+                r += color[1].FromHex();
+                g += color[3].FromHex();
+                b += color[5].FromHex();
+                a += color[7].FromHex();
+
+                htmlColor.R = (byte)r;
+                htmlColor.G = (byte)g;
+                htmlColor.B = (byte)b;
+                htmlColor.A = (byte)a;
+
                 return true;
             }
 
