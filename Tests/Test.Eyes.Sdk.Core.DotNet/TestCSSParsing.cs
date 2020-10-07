@@ -13,7 +13,7 @@ namespace Applitools
         public void TestBadCss()
         {
             string badCss = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.clientlibs_all.default.css");
-            DomAnalyzer.TextualDataResource data = new DomAnalyzer.TextualDataResource()
+            RenderingTask.TextualDataResource data = new RenderingTask.TextualDataResource()
             {
                 Data = badCss,
                 Uri = new System.Uri("https://a.co/path/")
@@ -63,7 +63,7 @@ namespace Applitools
             ILogHandler logHandler = TestUtils.InitLogHandler();
             logger.SetLogHandler(logHandler);
 
-            DomAnalyzer.ParseCSS_(data, extraResources, logger);
+            RenderingTask.ParseCSS_(data, extraResources, logger);
             logger.Log("expected:");
             foreach (string url in expectedResources)
             {
