@@ -10,24 +10,25 @@ namespace CssParser
 {
     public sealed class StyleSheet
     {
-        private readonly List<RuleSet> _rules;
-
-        public StyleSheet()
+        public StyleSheet(List<RuleSet> rules)
         {
-            _rules = new List<RuleSet>();
+            Rules = rules;
             Errors = new List<StylesheetParseError>();
         }
 
-        public List<RuleSet> Rules
+        public StyleSheet()
         {
-            get { return _rules; }
+            Rules = new List<RuleSet>();
+            Errors = new List<StylesheetParseError>();
         }
+
+        public List<RuleSet> Rules { get; private set; }
 
         public StyleSheet RemoveRule(int index)
         {
-            if (index >= 0 && index < _rules.Count)
+            if (index >= 0 && index < Rules.Count)
             {
-                _rules.RemoveAt(index);
+                Rules.RemoveAt(index);
             }
 
             return this;
@@ -35,13 +36,13 @@ namespace CssParser
 
         public StyleSheet InsertRule(string rule, int index)
         {
-            if (index < 0 || index > _rules.Count)
+            if (index < 0 || index > Rules.Count)
             {
                 return this;
             }
 
             var value = Parser.ParseRule(rule);
-            _rules.Insert(index, value);
+            Rules.Insert(index, value);
 
             return this;
         }
@@ -52,7 +53,7 @@ namespace CssParser
             {
                 return Rules.Where(r => r is StyleRule).Cast<StyleRule>().ToList();
             }
-        } 
+        }
 
         public IList<CharacterSetRule> CharsetDirectives
         {
@@ -136,7 +137,7 @@ namespace CssParser
         {
             var builder = new StringBuilder();
 
-            foreach (var rule in _rules)
+            foreach (var rule in Rules)
             {
                 builder.Append(rule.ToString(friendlyFormat, indentation).TrimStart() + (friendlyFormat ? Environment.NewLine : ""));
             }

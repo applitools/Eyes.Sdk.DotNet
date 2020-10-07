@@ -84,6 +84,7 @@
     <None Remove="Resources\BrotliTestData\zeros" />
     <None Remove="Resources\BrotliTestData\zeros.compressed" />
     <None Remove="Resources\chevron.svg" />
+    <None Remove="Resources\clientlibs_all.default.css" />
     <None Remove="Resources\fa-regular-400.svg" />
     <None Remove="Resources\IncludedTests.txt" />
     <None Remove="Resources\ios.svg" />
@@ -192,6 +193,7 @@
     <EmbeddedResource Include="Resources\BrotliTestData\zeros" />
     <EmbeddedResource Include="Resources\BrotliTestData\zeros.compressed" />
     <EmbeddedResource Include="Resources\chevron.svg" />
+    <EmbeddedResource Include="Resources\clientlibs_all.default.css" />
     <EmbeddedResource Include="Resources\fa-regular-400.svg" />
     <EmbeddedResource Include="Resources\IncludedTests.txt" />
     <EmbeddedResource Include="Resources\ios.svg" />
