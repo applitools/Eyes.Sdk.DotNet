@@ -244,6 +244,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Eyes.Common.DotNet\Eyes.Common.DotNet.csproj" />
     <ProjectReference Include="..\..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+    <ProjectReference Include="..\..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj" />
   </ItemGroup>
 
 </Project>
