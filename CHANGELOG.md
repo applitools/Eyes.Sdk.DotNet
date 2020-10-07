@@ -6,6 +6,7 @@
 - Support for `IosVersion` in `IosDeviceInfo`. [Trello 2187](https://trello.com/c/25AjSV6V)
 ### Fixed
 - Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
+- Fixed collection of resources from CSS files. [Trello 2156](https://trello.com/c/mSS6mLxP)
 
 ## [Eyes.Selenium vNext]
 ### Updated
