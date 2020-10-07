@@ -4,12 +4,15 @@
 - Updated [HtmlAgilityPack](https://www.nuget.org/packages/HtmlAgilityPack/1.11.24) dependency.
 ### Added
 - Support for `IosVersion` in `IosDeviceInfo`. [Trello 2187](https://trello.com/c/25AjSV6V)
+### Fixed
+- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
 
 ## [Eyes.Selenium vNext]
 ### Updated
 - Added log prints.
 ### Fixed
 - Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
+- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
 
 ## [Eyes.Appium 4.12] - 2020-09-03
 ### Updated

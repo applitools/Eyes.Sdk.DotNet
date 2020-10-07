@@ -615,11 +615,7 @@ namespace Applitools.Selenium.VisualGrid
             string captureStatusStr = null;
             try
             {
-                string script = domCaptureAndPollingScript_;
-                if ("internet explorer".Equals(((IHasCapabilities)webDriver_).Capabilities.GetCapability("browserName")))
-                {
-                    script = domCaptureAndPollingScriptForIE_;
-                }
+                string script = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
 
                 object skipListObj = new { skipResources = visualGridRunner_.CachedBlobsURLs.Keys };
 

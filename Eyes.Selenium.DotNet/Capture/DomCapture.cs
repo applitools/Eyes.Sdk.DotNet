@@ -27,15 +27,17 @@ namespace Applitools.Selenium.Capture
         private readonly Logger logger_;
         private readonly EyesWebDriver webDriver_;
         private readonly object lockObject_ = new object();
-        private Dictionary<CssTreeNode, AutoResetEvent> waitHandles_ = new Dictionary<CssTreeNode, AutoResetEvent>();
-        private Dictionary<string, string> cssData_ = new Dictionary<string, string>();
+        private readonly Dictionary<CssTreeNode, AutoResetEvent> waitHandles_ = new Dictionary<CssTreeNode, AutoResetEvent>();
+        private readonly Dictionary<string, string> cssData_ = new Dictionary<string, string>();
         private string cssStartToken_;
         private string cssEndToken_;
+        private readonly UserAgent userAgent_;
 
-        public DomCapture(Logger logger, EyesWebDriver webDriver)
+        public DomCapture(Logger logger, EyesWebDriver webDriver, UserAgent userAgent)
         {
             logger_ = logger;
             webDriver_ = webDriver;
+            userAgent_ = userAgent;
         }
 
         public string GetFullWindowDom()
@@ -89,17 +91,11 @@ namespace Applitools.Selenium.Capture
         internal CaptureStatus GetDomCaptureAndPollingScriptResult_()
         {
             CaptureStatus captureStatus;
+            string cptureScript = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
             string captureStatusStr = null;
             try
             {
-                if ("internet explorer".Equals(webDriver_.RemoteWebDriver.Capabilities.GetCapability("browserName")))
-                {
-                    captureStatusStr = (string)webDriver_.ExecuteScript(domCaptureAndPollingScriptForIE_);
-                }
-                else
-                {
-                    captureStatusStr = (string)webDriver_.ExecuteScript(domCaptureAndPollingScript_);
-                }
+                captureStatusStr = (string)webDriver_.ExecuteScript(cptureScript);
                 captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
             }
             catch (JsonReaderException jsonException)

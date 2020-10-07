@@ -55,6 +55,10 @@ namespace Applitools.Utils
         public string BrowserMajorVersion { get; private set; }
         public string BrowserMinorVersion { get; private set; }
 
+        public bool IsInernetExplorer =>
+            Browser.Equals(BrowserNames.IE, StringComparison.OrdinalIgnoreCase) ||
+            (Browser.Equals(BrowserNames.Edge, StringComparison.OrdinalIgnoreCase) && Convert.ToInt32(BrowserMajorVersion) <= 18);
+
         /// <summary>
         /// Parses the input user-agent string.
         /// </summary>

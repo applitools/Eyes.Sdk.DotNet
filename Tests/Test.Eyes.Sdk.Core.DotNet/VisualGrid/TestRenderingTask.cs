@@ -1,14 +1,11 @@
-﻿using Applitools;
-using Applitools.Tests.Utils;
+﻿using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.Utils;
-using Applitools.VisualGrid;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Test.Eyes.Sdk.DotNet.Core.VisualGrid
+namespace Applitools.VisualGrid
 {
     [Parallelizable(ParallelScope.All)]
     public class TestRenderingTask
