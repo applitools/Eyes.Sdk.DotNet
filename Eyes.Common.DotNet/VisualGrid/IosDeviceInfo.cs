@@ -10,10 +10,12 @@ namespace Applitools.VisualGrid
     {
         public IosDeviceInfo
             (IosDeviceName deviceName,
-            ScreenOrientation screenOrientation = Applitools.VisualGrid.ScreenOrientation.Portrait)
+            ScreenOrientation screenOrientation = Applitools.VisualGrid.ScreenOrientation.Portrait,
+            IosVersion? iosVersion = null)
         {
             DeviceName = deviceName;
             ScreenOrientation = screenOrientation;
+            Version = iosVersion;
         }
 
         [JsonProperty("name")]
@@ -29,8 +31,11 @@ namespace Applitools.VisualGrid
             }
         }
 
+        [JsonProperty("screenOrientation")]
         public ScreenOrientation ScreenOrientation { get; }
-        public string BaselineEnvName { get; }
+        
+        [JsonProperty("version")]
+        public IosVersion? Version { get; }
 
         public bool Equals(IosDeviceInfo other)
         {
@@ -52,7 +57,7 @@ namespace Applitools.VisualGrid
 
         public override string ToString()
         {
-            return $"{nameof(IosDeviceInfo)} {{{DeviceName} {ScreenOrientation}}}";
+            return $"{nameof(IosDeviceInfo)} {{{DeviceName} {Version} {ScreenOrientation}}}";
         }
     }
 }
