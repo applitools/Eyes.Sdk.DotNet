@@ -18,7 +18,8 @@
     "target": "full-page",
     "iosDeviceInfo": {
       "name": "iPhone XR",
-      "screenOrientation": "landscape"
+      "screenOrientation": "landscape",
+      "version": "latest-1"
     }
   },
   "selectorsToFindRegionsFor": [],

@@ -59,7 +59,7 @@ namespace Applitools.VisualGrid
             SizeMode target = SizeMode.FullPage;
             VisualGridSelector selector = null;
             System.Drawing.Rectangle region = new System.Drawing.Rectangle(40, 50, 60, 70);
-            IosDeviceInfo deviceInfo = new IosDeviceInfo(IosDeviceName.iPhone_XR, ScreenOrientation.Landscape);
+            IosDeviceInfo deviceInfo = new IosDeviceInfo(IosDeviceName.iPhone_XR, ScreenOrientation.Landscape, IosVersion.ONE_VERSION_BACK);
             RenderInfo renderInfo = new RenderInfo(0, 0, target, selector, region, null, deviceInfo);
             VisualGridSelector[] selectorsToFindRegionsFor = new VisualGridSelector[0];
             bool sendDom = true;

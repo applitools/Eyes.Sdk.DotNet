@@ -2,6 +2,8 @@
 ### Updated
 - Added log prints.
 - Updated [HtmlAgilityPack](https://www.nuget.org/packages/HtmlAgilityPack/1.11.24) dependency.
+### Added
+- Support for `IosVersion` in `IosDeviceInfo`. [Trello 2187](https://trello.com/c/25AjSV6V)
 
 ## [Eyes.Selenium vNext]
 ### Updated
