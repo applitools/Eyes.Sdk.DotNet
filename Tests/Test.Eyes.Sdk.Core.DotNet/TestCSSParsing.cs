@@ -5,9 +5,9 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Applitools
+namespace Applitools.Tests
 {
-    public class TestCSSParsing
+    public class TestCSSParsing : ReportingTestSuite
     {
         [Test]
         public void TestBadCss()

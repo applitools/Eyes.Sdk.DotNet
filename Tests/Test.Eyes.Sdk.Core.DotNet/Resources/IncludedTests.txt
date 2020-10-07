@@ -61,3 +61,4 @@ Applitools.Tests.TestBrotli.TestBrotliDecompression("Test.Eyes.Sdk.Core.DotNet.R
 Applitools.Tests.TestBrotli.TestBrotliDecompression("Test.Eyes.Sdk.Core.DotNet.Resources.BrotliTestData.lcet10.txt","Test.Eyes.Sdk.Core.DotNet.Resources.BrotliTestData.lcet10.txt.compressed")
 Applitools.Tests.TestBrotli.TestBrotliDecompression("Test.Eyes.Sdk.Core.DotNet.Resources.BrotliTestData.plrabn12.txt","Test.Eyes.Sdk.Core.DotNet.Resources.BrotliTestData.plrabn12.txt.compressed")
 Applitools.Tests.TestAPI.TestBrowserNames
+Applitools.Tests.TestCSSParsing.TestBadCss
