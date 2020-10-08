@@ -14,6 +14,7 @@
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
