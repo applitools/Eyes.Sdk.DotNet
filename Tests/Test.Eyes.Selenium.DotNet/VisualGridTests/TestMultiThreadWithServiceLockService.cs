@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Applitools.Selenium.Tests.Utils;
+﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -15,15 +15,6 @@ namespace Applitools.Selenium.Tests.VisualGridTests
     {
         private VisualGridRunner renderingManager;
         private IWebDriver webDriver;
-        private readonly AutoResetEvent  openerThreadLock = new AutoResetEvent(false);
-        private readonly AutoResetEvent checkerThreadLock = new AutoResetEvent(false);
-        private readonly AutoResetEvent  closerThreadLock = new AutoResetEvent(false);
-        private readonly AutoResetEvent  renderThreadLock = new AutoResetEvent(false);
-
-        private readonly AutoResetEvent  openerTestLock = new AutoResetEvent(false);
-        private readonly AutoResetEvent checkerTestLock = new AutoResetEvent(false);
-        private readonly AutoResetEvent  closerTestLock = new AutoResetEvent(false);
-        private readonly AutoResetEvent  renderTestLock = new AutoResetEvent(false);
 
         private readonly AutoResetEvent threadALock = new AutoResetEvent(false);
         private readonly AutoResetEvent threadBLock = new AutoResetEvent(false);
@@ -33,9 +24,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         public void Before()
         {
             concurrentOpenSessions = 3;
-            renderingManager = new VisualGridRunner(concurrentOpenSessions,
-                openerThreadLock, checkerThreadLock, closerThreadLock, renderThreadLock,
-                openerTestLock, checkerTestLock, closerTestLock, renderTestLock);
+            renderingManager = new VisualGridRunner(concurrentOpenSessions);
 
             ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestMultiThreadWithServiceLockService));
             renderingManager.SetLogHandler(logHandler);
@@ -45,11 +34,6 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             //webDriver.get("http://applitools-vg-test.surge.sh/test.html");
 
             //        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-        }
-
-        private void PauseAllServices_()
-        {
-            renderingManager.PauseServices();
         }
 
         private int StartServiceAndCountCompletedTasks_(IEnumerable<ICompletableTask> allOpenTasks, AutoResetEvent threadDebugLock, AutoResetEvent testDebugLock)
