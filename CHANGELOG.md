@@ -1,4 +1,31 @@
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Appium 4.13] - 2020-10-08
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.17] - 2020-10-08
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.17] - 2020-10-08
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Selenium 2.35] - 2020-10-08
+### Updated
+- Added log prints.
+### Fixed
+- Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
+- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
+
+## [Eyes.LeanFT 2.19] - 2020-10-08
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.18] - 2020-10-08
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.35] - 2020-10-08
 ### Updated
 - Added log prints.
 - Updated [HtmlAgilityPack](https://www.nuget.org/packages/HtmlAgilityPack/1.11.24) dependency.
@@ -7,13 +34,6 @@
 ### Fixed
 - Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
 - Fixed collection of resources from CSS files. [Trello 2156](https://trello.com/c/mSS6mLxP)
-
-## [Eyes.Selenium vNext]
-### Updated
-- Added log prints.
-### Fixed
-- Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
-- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
 
 ## [Eyes.Appium 4.12] - 2020-09-03
 ### Updated

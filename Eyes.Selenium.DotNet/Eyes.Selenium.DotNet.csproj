@@ -8,7 +8,7 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.34.1</Version>
+    <Version>2.35</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
@@ -17,6 +17,7 @@ To learn more, visit https://applitools.com/ .</Description>
 - Added log prints.
 ### Fixed
 - Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
+- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

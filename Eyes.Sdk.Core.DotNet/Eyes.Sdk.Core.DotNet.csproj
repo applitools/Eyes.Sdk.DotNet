@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
@@ -8,13 +8,20 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.34.1</Version>
+    <Version>2.35</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
     <PackageReleaseNotes>### Updated
-- Added log prints.</PackageReleaseNotes>
+- Added log prints.
+- Updated [HtmlAgilityPack](https://www.nuget.org/packages/HtmlAgilityPack/1.11.24) dependency.
+### Added
+- Support for `IosVersion` in `IosDeviceInfo`. [Trello 2187](https://trello.com/c/25AjSV6V)
+### Fixed
+- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
+- Fixed collection of resources from CSS files. [Trello 2156](https://trello.com/c/mSS6mLxP)
+</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Sdk.Core</PackageId>
     <PackageLicenseExpression />
