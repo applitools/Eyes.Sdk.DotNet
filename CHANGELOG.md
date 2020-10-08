@@ -26,8 +26,8 @@
 ### Fixed
 - NuGets that depends on this one were unable to install.
 
-## [Eyes.Common vNext patch]
-### Fixed
+## [Eyes.Common 1.0]
+### Added
 - NuGets that depends on this one were unable to install.
 
 ## [Eyes.Appium 4.13.1] - 2020-10-08
