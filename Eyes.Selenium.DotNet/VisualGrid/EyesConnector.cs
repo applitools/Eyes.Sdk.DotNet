@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class EyesConnector : EyesBase
+    public class EyesConnector : EyesBase, IEyesConnector
     {
         private readonly RenderBrowserInfo browserInfo_;
         private string userAgent_;

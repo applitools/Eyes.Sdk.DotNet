@@ -49,7 +49,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             eyes.IsDisabled = isDisabled2 ?? eyes.IsDisabled;
             DesktopBrowserInfo desktopBrowserInfo = new DesktopBrowserInfo(100, 100, BrowserType.FIREFOX, null);
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(desktopBrowserInfo);
-            IUfgConnector eyesConnector = eyes.CreateEyesConnector_(browserInfo, eyes.ApiKey);
+            IEyesConnector eyesConnector = eyes.CreateEyesConnector_(browserInfo, eyes.ApiKey);
             Assert.AreEqual(expectedServer, eyesConnector.ServerUrl);
             Assert.AreEqual(expectedKey, eyesConnector.ApiKey);
             Assert.AreEqual(expectedDisabled, eyesConnector.IsDisabled);

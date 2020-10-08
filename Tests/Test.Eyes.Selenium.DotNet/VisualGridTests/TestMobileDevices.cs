@@ -100,9 +100,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
     class LocalEyesConnectorFactory : IEyesConnectorFactory
     {
-        public IUfgConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
+        public IEyesConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
-            IUfgConnector eyesConnector = new LocalEyesConnector(browserInfo, config);
+            IEyesConnector eyesConnector = new LocalEyesConnector(browserInfo, config);
             return eyesConnector;
         }
     }

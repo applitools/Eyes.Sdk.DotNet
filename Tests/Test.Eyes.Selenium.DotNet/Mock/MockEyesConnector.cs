@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.Mock
 {
-    class MockEyesConnector : EyesBase, IUfgConnector
+    class MockEyesConnector : EyesBase, IEyesConnector
     {
         private RenderBrowserInfo browserInfo_;
         private Applitools.Configuration config_;
-        public IUfgConnector WrappedConnector { get; set; }
+        public IEyesConnector WrappedConnector { get; set; }
 
         public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
