@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
@@ -13,8 +13,8 @@ To learn more, visit https://applitools.com/ .</Description>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes images</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Match to latest Eyes.Sdk.Core
+    <PackageReleaseNotes>### Fixed
+- NuGet was unable to install.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Windows</PackageId>

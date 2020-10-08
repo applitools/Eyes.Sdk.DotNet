@@ -13,8 +13,8 @@ To learn more, visit https://applitools.com/ .</Description>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes codedui</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Match to latest Eyes.Sdk.Core
+    <PackageReleaseNotes>### Fixed
+- NuGet was unable to install.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression />

@@ -1,30 +1,30 @@
-## [Eyes.Sdk.Core vNext patch]
+## [Eyes.Appium 4.13.1] - 2020-10-08
+### Fixed
+- NuGet was unable to install.
+
+## [Eyes.Images 2.17.1] - 2020-10-08
+### Fixed
+- NuGet was unable to install.
+
+## [Eyes.CodedUI 2.17.1] - 2020-10-08
+### Fixed
+- NuGet was unable to install.
+
+## [Eyes.Selenium 2.35.1] - 2020-10-08
+### Fixed
+- NuGet was unable to install.
+
+## [Eyes.LeanFT 2.19.1] - 2020-10-08
+### Fixed
+- NuGet was unable to install.
+
+## [Eyes.Windows 2.18.1] - 2020-10-08
+### Fixed
+- NuGet was unable to install.
+
+## [Eyes.Sdk.Core 2.35.1] - 2020-10-08
 ### Fixed
 - NuGets that depends on this one were unable to install.
-
-## [Eyes.Appium vNext patch]
-### Fixed
-- NuGet was unable to install.
-
-## [Eyes.Images vNext patch]
-### Fixed
-- NuGet was unable to install.
-
-## [Eyes.CodedUI vNext patch]
-### Fixed
-- NuGet was unable to install.
-
-## [Eyes.Selenium vNext patch]
-### Fixed
-- NuGet was unable to install.
-
-## [Eyes.LeanFT vNext patch]
-### Fixed
-- NuGet was unable to install.
-
-## [Eyes.Windows vNext patch]
-### Fixed
-- NuGet was unable to install.
 
 ## [Eyes.Appium 4.13] - 2020-10-08
 ### Updated

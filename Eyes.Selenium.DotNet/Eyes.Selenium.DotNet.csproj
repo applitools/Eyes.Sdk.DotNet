@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
@@ -13,11 +13,8 @@ To learn more, visit https://applitools.com/ .</Description>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Added log prints.
-### Fixed
-- Fixed Simple Coded Regions visible element rectangle computation. [Trello 2143](https://trello.com/c/Xl2uQTyh)
-- Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
+    <PackageReleaseNotes>### Fixed
+- NuGet was unable to install.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
@@ -68,7 +65,7 @@ To learn more, visit https://applitools.com/ .</Description>
   
   <Target Name="GetMyPackageFiles">
     <ItemGroup>
-      <BuildOutputInPackage Include="$(OutputPath)CssParser.dll"/>
+      <BuildOutputInPackage Include="$(OutputPath)CssParser.dll" />
       <BuildOutputInPackage Include="$(OutputPath)Eyes.Common.DotNet.dll" />
       <BuildOutputInPackage Include="$(OutputPath)Eyes.Ufg.DotNet.dll" />
     </ItemGroup>
