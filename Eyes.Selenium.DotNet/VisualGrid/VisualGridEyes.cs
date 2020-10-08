@@ -61,7 +61,7 @@ namespace Applitools.Selenium.VisualGrid
 #pragma warning disable CS0414
         private bool hasEyesIssuedOpenTasks_;  // for debugging
 #pragma warning restore CS0414
-        internal IDebugResourceWriter debugResourceWriter_;
+        internal Ufg.IDebugResourceWriter debugResourceWriter_;
         private bool? isDisabled_;
         private ISeleniumConfigurationProvider configProvider_;
         private IConfiguration configAtOpen_;
@@ -79,7 +79,7 @@ namespace Applitools.Selenium.VisualGrid
             configProvider_ = configurationProvider;
             Logger = visualGridRunner.Logger;
             visualGridRunner_ = visualGridRunner;
-            debugResourceWriter_ = visualGridRunner_.DebugResourceWriter ?? NullDebugResourceWriter.Instance;
+            debugResourceWriter_ = (Ufg.IDebugResourceWriter)visualGridRunner_.DebugResourceWriter ?? NullDebugResourceWriter.Instance;
             testListener_ = new RunningTest.RunningTestListener(
                 (task, test) =>
                 {
@@ -617,7 +617,7 @@ namespace Applitools.Selenium.VisualGrid
             {
                 string script = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
 
-                object skipListObj = new { skipResources = visualGridRunner_.CachedBlobsURLs.Keys };
+                object skipListObj = new { skipResources = ((IVisualGridRunner)visualGridRunner_).CachedBlobsURLs.Keys };
 
                 string skipListJson = JsonConvert.SerializeObject(skipListObj);
                 string arguments = string.Format("(document, {0})", skipListJson);

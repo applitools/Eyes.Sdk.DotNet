@@ -105,7 +105,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     "https://applitools.github.io/demo/DomSnapshot/test.html",
                     "https://applitools.github.io/demo/DomSnapshot/iframes/inner/test.html", 
                     "https://applitools.github.io/demo/DomSnapshot/iframes/frame.html"};
-                CollectionAssert.AreEquivalent(expectedUrls, runner.CachedBlobsURLs.Keys);
+                CollectionAssert.AreEquivalent(expectedUrls, ((IVisualGridRunner)runner).CachedBlobsURLs.Keys);
                 eyes.Check(Target.Window());
                 eyes.Close();
 

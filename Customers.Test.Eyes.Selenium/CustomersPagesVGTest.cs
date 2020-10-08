@@ -12,7 +12,6 @@ using OpenQA.Selenium.Interactions;
 using System.Collections.Generic;
 using OpenQA.Selenium.Chrome;
 using Applitools.Tests.Utils;
-using Applitools.Ufg;
 
 namespace Applitools.Selenium.Tests
 {
