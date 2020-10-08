@@ -43,4 +43,9 @@
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
   
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
 </Project>
