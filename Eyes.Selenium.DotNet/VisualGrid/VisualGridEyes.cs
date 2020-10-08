@@ -79,7 +79,14 @@ namespace Applitools.Selenium.VisualGrid
             configProvider_ = configurationProvider;
             Logger = visualGridRunner.Logger;
             visualGridRunner_ = visualGridRunner;
-            debugResourceWriter_ = (Ufg.IDebugResourceWriter)visualGridRunner_.DebugResourceWriter ?? NullDebugResourceWriter.Instance;
+
+            IDebugResourceWriter drw = visualGridRunner_.DebugResourceWriter;
+            if (drw is FileDebugResourceWriter fileDRW)
+            {
+                debugResourceWriter_ = new Ufg.FileDebugResourceWriter(fileDRW.TargetFolder);
+            }
+            debugResourceWriter_ = debugResourceWriter_ ?? NullDebugResourceWriter.Instance;
+
             testListener_ = new RunningTest.RunningTestListener(
                 (task, test) =>
                 {
