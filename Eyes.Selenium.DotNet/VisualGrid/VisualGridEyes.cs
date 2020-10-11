@@ -250,7 +250,8 @@ namespace Applitools.Selenium.VisualGrid
         internal IUfgConnector CreateEyesConnector_(RenderBrowserInfo browserInfo, string apiKey)
         {
             Logger.Verbose("creating eyes server connector");
-            IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(browserInfo, (Applitools.Configuration)configAtOpen_);
+            IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(
+                browserInfo, (Applitools.Configuration)configAtOpen_);
 
             eyesConnector.SetLogHandler(Logger.GetILogHandler());
             eyesConnector.Proxy = Proxy;
@@ -423,8 +424,7 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.Verbose("enter (#{0})", GetHashCode());
 
-            List<VisualGridTask> openTasks = AddOpenTaskToAllRunningTest_();
-            List<VisualGridTask> taskList = new List<VisualGridTask>();
+            List<VisualGridTask> checkTasks = new List<VisualGridTask>();
 
             ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
             ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
@@ -492,11 +492,11 @@ namespace Applitools.Selenium.VisualGrid
                 foreach (RunningTest test in filteredTests)
                 {
                     VisualGridTask checkTask = test.Check(configClone, checkSettings, regionSelectors, source);
-                    taskList.Add(checkTask);
+                    checkTasks.Add(checkTask);
                 }
 
                 visualGridRunner_.Check(checkSettings, debugResourceWriter_, captureStatus.Value, regionSelectors,
-                        eyesConnector_, userAgent_, taskList, openTasks,
+                        eyesConnector_, userAgent_, checkTasks,
                         new VisualGridRunner.RenderListener());
 
                 switchTo.Frames(originalFC);
