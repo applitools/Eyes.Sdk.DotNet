@@ -1,5 +1,4 @@
 ﻿using Applitools.Selenium.VisualGrid;
-using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.Utils.Cropping;
 using Applitools.VisualGrid;
