@@ -1,17 +1,17 @@
-﻿namespace Applitools.Utils
-{
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Net;
-    using System.Security.Cryptography;
-    using System.Text;
-    using System.Reflection;
-    using System.Threading;
-    using System.Runtime.Versioning;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Reflection;
+using System.Threading;
+using System.Runtime.Versioning;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace Applitools.Utils
+{
     /// <summary>
     /// Common utilities
     /// </summary>
@@ -290,5 +290,13 @@
         {
             return Environment.GetEnvironmentVariable(envVarName) ?? Environment.GetEnvironmentVariable("bamboo_" + envVarName);
         }
+
+        public static string SanitizeUrl(string url)
+        {
+            int hashIndex = url.LastIndexOf('#');
+            string sanitizedUrl = (hashIndex >= 0 ? url.Substring(0, hashIndex) : url).TrimEnd('?');
+            return sanitizedUrl;
+        }
+
     }
 }
