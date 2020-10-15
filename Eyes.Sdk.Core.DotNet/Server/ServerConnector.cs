@@ -536,7 +536,7 @@ namespace Applitools
             {
                 return;
             }
-
+            Logger.Log("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
             HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, json_);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);

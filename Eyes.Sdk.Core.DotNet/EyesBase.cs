@@ -94,6 +94,7 @@ namespace Applitools
 
             //EnsureConfiguration_();
 
+            UpdateActualAssembly_();
             ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
             runningSession_ = null;
             UserInputs = new List<Trigger>();
@@ -103,7 +104,10 @@ namespace Applitools
             setScaleProvider_ = provider => { scaleProvider_ = provider; };
             scaleProvider_ = NullScaleProvider.Instance;
             cutProvider_ = NullCutProvider.Instance;
+        }
 
+        private void UpdateActualAssembly_()
+        {
             StackTrace stackTrace = new StackTrace();
             StackFrame[] stackFrames = stackTrace.GetFrames();
             foreach (StackFrame stackFrame in stackFrames)

@@ -298,6 +298,10 @@ namespace Applitools.VisualGrid
                 Logger.Verbose("looking for best test in a list of {0} eyes.", allEyes_.Count);
                 foreach (IVisualGridEyes eyes in allEyes_)
                 {
+                    if (eyes.IsServerConcurrencyLimitReached())
+                    {
+                        return null;
+                    }
                     ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
                     if (currentTestMark == null) continue;
                     int currentScore = currentTestMark.Score;

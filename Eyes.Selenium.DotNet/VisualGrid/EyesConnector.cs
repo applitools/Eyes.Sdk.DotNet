@@ -345,5 +345,7 @@ namespace Applitools.Selenium.VisualGrid
             config_ = (Applitools.Configuration)config;
             return Close(throwEx);
         }
+
+        public bool IsServerConcurrencyLimitReached { get; private set; }
     }
 }

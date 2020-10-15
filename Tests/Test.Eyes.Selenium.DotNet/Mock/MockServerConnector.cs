@@ -9,7 +9,7 @@ namespace Applitools.Selenium.Tests.Mock
 {
     class MockServerConnector : IServerConnector
     {
-        private Logger logger_;
+        private readonly Logger logger_;
 
         public MockServerConnector(Logger logger, Uri serverUrl)
         {

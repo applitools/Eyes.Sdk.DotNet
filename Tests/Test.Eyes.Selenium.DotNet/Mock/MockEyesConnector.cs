@@ -11,14 +11,18 @@ namespace Applitools.Selenium.Tests.Mock
 {
     class MockEyesConnector : EyesBase, IUfgConnector
     {
-        private RenderBrowserInfo browserInfo_;
-        private Applitools.Configuration config_;
+        private readonly RenderBrowserInfo browserInfo_;
+        private readonly Applitools.Configuration config_;
         public IUfgConnector WrappedConnector { get; set; }
 
         public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
             browserInfo_ = browserInfo;
             config_ = config;
+            Uri serverUrl = new Uri(config.ServerUrl);
+            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, serverUrl);
+            ServerConnector.ApiKey = ApiKey;
+            ServerConnector.Proxy = Proxy;
             ServerConnectorFactory = new MockServerConnectorFactory();
         }
 
@@ -33,7 +37,7 @@ namespace Applitools.Selenium.Tests.Mock
 
         public RenderingInfo GetRenderingInfo()
         {
-            return new RenderingInfo();
+            return ServerConnector.GetRenderingInfo();
         }
 
         public ResourceFuture GetResource(Uri url)
@@ -68,6 +72,8 @@ namespace Applitools.Selenium.Tests.Mock
         public string RenderId { get; set; } = "47A4C2BD-0349-4232-B588-C9B9DA77498B";
         public string JobId { get; set; } = "A72E234C-58AA-4406-B8FD-8899FACEA147";
         public RectangleSize DeviceSize { get; private set; }
+
+        public bool IsServerConcurrencyLimitReached => false;
 
         public async Task<List<RunningRender>> RenderAsync(RenderRequest[] requests)
         {

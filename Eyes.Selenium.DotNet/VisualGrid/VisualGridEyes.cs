@@ -423,7 +423,9 @@ namespace Applitools.Selenium.VisualGrid
             if (!ValidateEyes_()) return;
 
             Logger.Verbose("enter (#{0})", GetHashCode());
-
+            
+            AddOpenTaskToAllRunningTest_();
+            
             List<VisualGridTask> checkTasks = new List<VisualGridTask>();
 
             ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
@@ -991,6 +993,11 @@ namespace Applitools.Selenium.VisualGrid
         public IBatchCloser GetBatchCloser()
         {
             return testList_[0].GetBatchCloser();
+        }
+
+        public bool IsServerConcurrencyLimitReached()
+        {
+            return testList_.Any(t => t.IsServerConcurrencyLimitReached);
         }
     }
 }
