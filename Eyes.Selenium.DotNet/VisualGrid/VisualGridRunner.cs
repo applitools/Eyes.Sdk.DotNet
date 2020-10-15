@@ -341,6 +341,7 @@ namespace Applitools.VisualGrid
                     if (renderingTaskList_.Count > 0)
                     {
                         renderingTask = renderingTaskList_[0];
+                        if (!renderingTask.IsReady) return null;
                         renderingTaskList_.RemoveAt(0);
                         Logger.Verbose("rendering task: {0}", renderingTask);
                     }
