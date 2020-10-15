@@ -61,9 +61,9 @@ namespace Applitools
         protected RectangleSize viewportSize_;
         public static string DefaultServerUrl = "https://eyesapi.applitools.com/";
         private IServerConnector serverConnector_;
-        private Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
-        private Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
-        private Dictionary<BrowserType, string> userAgents_;
+        internal Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
+        internal Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
+        internal Dictionary<BrowserType, string> userAgents_;
 
         #endregion
 

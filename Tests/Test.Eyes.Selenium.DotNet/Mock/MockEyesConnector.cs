@@ -19,11 +19,15 @@ namespace Applitools.Selenium.Tests.Mock
         {
             browserInfo_ = browserInfo;
             config_ = config;
-            Uri serverUrl = new Uri(config.ServerUrl);
-            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, serverUrl);
-            ServerConnector.ApiKey = ApiKey;
-            ServerConnector.Proxy = Proxy;
             ServerConnectorFactory = new MockServerConnectorFactory();
+            userAgents_ = new Dictionary<BrowserType, string>() {
+                { BrowserType.CHROME, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/86.0.4240.75 Safari/537.36" },
+                { BrowserType.CHROME_ONE_VERSION_BACK, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/85.0.4183.83 Safari/537.36" },
+                { BrowserType.CHROME_TWO_VERSIONS_BACK, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/84.0.4147.89 Safari/537.36" },
+                { BrowserType.FIREFOX, "Mozilla/5.0 (X11; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0" },
+                { BrowserType.FIREFOX_ONE_VERSION_BACK, "Mozilla/5.0 (X11; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0" },
+                { BrowserType.FIREFOX_TWO_VERSIONS_BACK, "Mozilla/5.0 (X11; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0" },
+            };
         }
 
         public RenderRequest[] LastRenderRequests { get; set; }
@@ -37,21 +41,21 @@ namespace Applitools.Selenium.Tests.Mock
 
         public RenderingInfo GetRenderingInfo()
         {
-            return ServerConnector.GetRenderingInfo();
+            return new RenderingInfo();
         }
 
         public ResourceFuture GetResource(Uri url)
         {
             throw new NotImplementedException();
         }
-        
-        public MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation, 
-            ICheckSettings checkSettings, IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors, Location location, 
+
+        public MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation,
+            ICheckSettings checkSettings, IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors, Location location,
             RenderStatusResults results, string source)
         {
-            MatchResult matchResult = WrappedConnector?.MatchWindow(config, resultImageURL, domLocation, checkSettings, 
+            MatchResult matchResult = WrappedConnector?.MatchWindow(config, resultImageURL, domLocation, checkSettings,
                 regions, regionSelectors, location, results, source);
-            
+
             return matchResult ?? new MatchResult() { AsExpected = true };
         }
 
