@@ -17,7 +17,7 @@ namespace Applitools.VisualGrid
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         private readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
-        private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
+        private readonly List<ResourceCollectionTask> resourceCollectionTaskList_ = new List<ResourceCollectionTask>();
 
         private readonly AutoResetEvent openerServiceConcurrencyLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent openerServiceLock_ = new AutoResetEvent(true);
@@ -47,6 +47,25 @@ namespace Applitools.VisualGrid
             }
         }
 
+        //public class RenderingTaskListListener : ITaskListener<List<RenderingTask>>
+        //{
+        //    public void OnComplete(List<RenderingTask> renderingTasks)
+        //    {
+        //        logger_.verbose("locking renderingTaskList");
+        //        synchronized(renderingTaskList) {
+        //            renderingTaskList.addAll(renderingTasks);
+        //        }
+
+        //        logger.verbose("releasing renderingTaskList");
+        //        notifyAllServices();
+        //    }
+
+        //    public void OnFail()
+        //    {
+        //        notifyAllServices();
+        //    }
+        //};
+
         private OpenerService eyesOpenerService_;
         private EyesService eyesCloserService_;
         private RenderingGridService renderingGridService_;
@@ -66,8 +85,7 @@ namespace Applitools.VisualGrid
         {
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions,
-                           ILogHandler logHandler = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
         {
             runnerOptions_ = runnerOptions;
 
@@ -87,7 +105,7 @@ namespace Applitools.VisualGrid
 
         internal List<RenderingTask> GetAllRenderingTasks()
         {
-            return renderingTaskList_;
+            return resourceCollectionTaskList_;
         }
 
         internal List<VisualGridTask> GetAllTasksByType(TaskType type)
@@ -331,18 +349,18 @@ namespace Applitools.VisualGrid
         }
         private RenderingTask GetNextRenderingTask_()
         {
-            Logger.Verbose("enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
+            Logger.Verbose("enter - renderingTaskList_.Count: {0}", resourceCollectionTaskList_.Count);
             RenderingTask renderingTask = null;
-            if (renderingTaskList_.Count > 0)
+            if (resourceCollectionTaskList_.Count > 0)
             {
                 Logger.Verbose("locking renderingTaskList_");
-                lock (renderingTaskList_)
+                lock (resourceCollectionTaskList_)
                 {
-                    if (renderingTaskList_.Count > 0)
+                    if (resourceCollectionTaskList_.Count > 0)
                     {
-                        renderingTask = renderingTaskList_[0];
+                        renderingTask = resourceCollectionTaskList_[0];
                         if (!renderingTask.IsReady) return null;
-                        renderingTaskList_.RemoveAt(0);
+                        resourceCollectionTaskList_.RemoveAt(0);
                         Logger.Verbose("rendering task: {0}", renderingTask);
                     }
                 }
@@ -527,8 +545,8 @@ namespace Applitools.VisualGrid
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
 
-            RenderingTask renderingTask = new RenderingTask(connector, frameData, regionSelectors, settings,
-                checkTasks, this, userAgent, debugResourceWriter,
+            ResourceCollectionTask resourceCollectionTask = new ResourceCollectionTask(this, connector, domData,
+                userAgent, selectors, settings, checkVisualGridTasks, debugResourceWriter, listener,
                 new RenderingTask.RenderTaskListener(
                     () =>
                     {
@@ -539,13 +557,14 @@ namespace Applitools.VisualGrid
                     {
                         NotifyAllServices();
                         listener.OnRenderFailed(e);
-                    })
+                    }));
+
             );
 
             Logger.Verbose("locking renderingTaskList");
-            lock (renderingTaskList_)
+            lock (resourceCollectionTaskList_)
             {
-                renderingTaskList_.Add(renderingTask);
+                resourceCollectionTaskList_.Add(resourceCollectionTask);
             }
             Logger.Verbose("releasing renderingTaskList");
             NotifyAllServices();

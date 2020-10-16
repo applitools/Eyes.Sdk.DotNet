@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Applitools.Fluent;
 using Applitools.Ufg;
+using Applitools.Ufg.Model;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
@@ -344,6 +345,11 @@ namespace Applitools.Selenium.VisualGrid
         {
             config_ = (Applitools.Configuration)config;
             return Close(throwEx);
+        }
+
+        public Task<bool?[]> CheckResourceStatus(HashObject[] hashes)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsServerConcurrencyLimitReached { get; private set; }

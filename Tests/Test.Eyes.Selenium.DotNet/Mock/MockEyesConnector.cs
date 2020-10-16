@@ -1,5 +1,6 @@
 ﻿using Applitools.Fluent;
 using Applitools.Ufg;
+using Applitools.Ufg.Model;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using System;
@@ -157,6 +158,11 @@ namespace Applitools.Selenium.Tests.Mock
         }
 
         protected override Size GetViewportSize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool?[]> CheckResourceStatus(HashObject[] hashes)
         {
             throw new NotImplementedException();
         }
