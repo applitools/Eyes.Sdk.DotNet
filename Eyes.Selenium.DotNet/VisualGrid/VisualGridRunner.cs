@@ -17,7 +17,8 @@ namespace Applitools.VisualGrid
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         private readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
-        private readonly List<ResourceCollectionTask> resourceCollectionTaskList_ = new List<ResourceCollectionTask>();
+        private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
+        private readonly List<RenderRequestCollectionTasks> resourceCollectionTaskList_ = new List<RenderRequestCollectionTasks>();
 
         private readonly AutoResetEvent openerServiceConcurrencyLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent openerServiceLock_ = new AutoResetEvent(true);
@@ -46,25 +47,6 @@ namespace Applitools.VisualGrid
                 OnRenderFailed = onRenderFailed;
             }
         }
-
-        //public class RenderingTaskListListener : ITaskListener<List<RenderingTask>>
-        //{
-        //    public void OnComplete(List<RenderingTask> renderingTasks)
-        //    {
-        //        logger_.verbose("locking renderingTaskList");
-        //        synchronized(renderingTaskList) {
-        //            renderingTaskList.addAll(renderingTasks);
-        //        }
-
-        //        logger.verbose("releasing renderingTaskList");
-        //        notifyAllServices();
-        //    }
-
-        //    public void OnFail()
-        //    {
-        //        notifyAllServices();
-        //    }
-        //};
 
         private OpenerService eyesOpenerService_;
         private EyesService eyesCloserService_;
@@ -101,11 +83,6 @@ namespace Applitools.VisualGrid
         ~VisualGridRunner()
         {
             TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
-        }
-
-        internal List<RenderingTask> GetAllRenderingTasks()
-        {
-            return resourceCollectionTaskList_;
         }
 
         internal List<VisualGridTask> GetAllTasksByType(TaskType type)
@@ -349,18 +326,18 @@ namespace Applitools.VisualGrid
         }
         private RenderingTask GetNextRenderingTask_()
         {
-            Logger.Verbose("enter - renderingTaskList_.Count: {0}", resourceCollectionTaskList_.Count);
+            Logger.Verbose("enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
             RenderingTask renderingTask = null;
-            if (resourceCollectionTaskList_.Count > 0)
+            if (renderingTaskList_.Count > 0)
             {
                 Logger.Verbose("locking renderingTaskList_");
-                lock (resourceCollectionTaskList_)
+                lock (renderingTaskList_)
                 {
-                    if (resourceCollectionTaskList_.Count > 0)
+                    if (renderingTaskList_.Count > 0)
                     {
-                        renderingTask = resourceCollectionTaskList_[0];
+                        renderingTask = renderingTaskList_[0];
                         if (!renderingTask.IsReady) return null;
-                        resourceCollectionTaskList_.RemoveAt(0);
+                        renderingTaskList_.RemoveAt(0);
                         Logger.Verbose("rendering task: {0}", renderingTask);
                     }
                 }
@@ -539,14 +516,14 @@ namespace Applitools.VisualGrid
             Logger.Log("exit");
         }
 
-        public void Check(ICheckSettings settings, IDebugResourceWriter debugResourceWriter, FrameData frameData,
+        public void Check(ICheckSettings settings, IDebugResourceWriter debugResourceWriter, FrameData domData,
                           IList<VisualGridSelector[]> regionSelectors, IUfgConnector connector, UserAgent userAgent,
                           List<VisualGridTask> checkTasks, RenderListener listener)
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
 
-            ResourceCollectionTask resourceCollectionTask = new ResourceCollectionTask(this, connector, domData,
-                userAgent, selectors, settings, checkVisualGridTasks, debugResourceWriter, listener,
+            RenderRequestCollectionTasks resourceCollectionTask = new RenderRequestCollectionTasks(this, domData, connector,
+                userAgent, regionSelectors, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
                 new RenderingTask.RenderTaskListener(
                     () =>
                     {
@@ -557,7 +534,7 @@ namespace Applitools.VisualGrid
                     {
                         NotifyAllServices();
                         listener.OnRenderFailed(e);
-                    }));
+                    })
 
             );
 

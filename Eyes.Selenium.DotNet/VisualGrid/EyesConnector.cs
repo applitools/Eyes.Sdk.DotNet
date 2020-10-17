@@ -17,7 +17,7 @@ namespace Applitools.Selenium.VisualGrid
 {
     public class EyesConnector : EyesBase, IUfgConnector
     {
-        private RenderBrowserInfo browserInfo_;
+        private readonly RenderBrowserInfo browserInfo_;
         private string userAgent_;
         private RenderingInfo renderInfo_;
         private HttpRestClient httpClient_;
@@ -244,7 +244,7 @@ namespace Applitools.Selenium.VisualGrid
             OpenBase();
         }
 
-        public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
+        public Task<WebResponse> RenderPutResourceAsTask(RunningRender runningRender, RGridResource resource)
         {
             ArgumentGuard.NotNull(runningRender, nameof(runningRender));
             ArgumentGuard.NotNull(resource, nameof(resource));
@@ -272,7 +272,12 @@ namespace Applitools.Selenium.VisualGrid
 
             Task<WebResponse> task = request.GetResponseAsync();
             Logger.Verbose("future created.");
+            return task;
+        }
 
+        public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
+        {
+            Task<WebResponse> task = RenderPutResourceAsTask(runningRender, resource);
             return new PutFuture(task, resource, runningRender, this, Logger);
         }
 
@@ -347,9 +352,12 @@ namespace Applitools.Selenium.VisualGrid
             return Close(throwEx);
         }
 
-        public Task<bool?[]> CheckResourceStatus(HashObject[] hashes)
+        public bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
         {
-            throw new NotImplementedException();
+            using (HttpWebResponse response = httpClient_.PostJson($"/query/resources-exist?rg_render-id={renderId}", hashes))
+            {
+                return response.DeserializeBody<bool?[]>(true);
+            }
         }
 
         public bool IsServerConcurrencyLimitReached { get; private set; }

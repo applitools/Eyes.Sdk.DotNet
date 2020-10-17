@@ -6,6 +6,7 @@ using Applitools.VisualGrid;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.Mock
@@ -92,6 +93,10 @@ namespace Applitools.Selenium.Tests.Mock
             await Task.Delay(10);
             return runningRenders;
         }
+        public Task<WebResponse> RenderPutResourceAsTask(RunningRender runningRender, RGridResource rGridResource)
+        {
+            throw new NotImplementedException();
+        }
 
         public PutFuture RenderPutResource(RunningRender runningRender, RGridResource rGridResource)
         {
@@ -162,9 +167,11 @@ namespace Applitools.Selenium.Tests.Mock
             throw new NotImplementedException();
         }
 
-        public Task<bool?[]> CheckResourceStatus(HashObject[] hashes)
+        public bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
         {
-            throw new NotImplementedException();
+            bool?[] arr = new bool?[hashes.Length];
+            Array.Fill(arr, true);
+            return arr;
         }
 
         protected override void SetViewportSize(RectangleSize size)
