@@ -18,13 +18,14 @@ namespace Applitools.VisualGrid
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         private readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
         private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
-        private readonly List<RenderRequestCollectionTasks> resourceCollectionTaskList_ = new List<RenderRequestCollectionTasks>();
+        private readonly List<RenderRequestCollectionTask> renderRequestCollectionTaskList_ = new List<RenderRequestCollectionTask>();
 
         private readonly AutoResetEvent openerServiceConcurrencyLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent openerServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent closerServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent checkerServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent renderingServiceLock_ = new AutoResetEvent(true);
+        private readonly AutoResetEvent renderRequestCollectionServiceLock_ = new AutoResetEvent(true);
 
         private readonly EyesListener eyesListener_;
 
@@ -50,6 +51,7 @@ namespace Applitools.VisualGrid
 
         private OpenerService eyesOpenerService_;
         private EyesService eyesCloserService_;
+        private EyesService renderRequestCollectionService_;
         private RenderingGridService renderingGridService_;
         private EyesService eyesCheckerService_;
         private RenderingInfo renderingInfo_;
@@ -153,6 +155,7 @@ namespace Applitools.VisualGrid
             Logger.Verbose("enter");
             eyesOpenerService_.Start();
             eyesCloserService_.Start();
+            renderRequestCollectionService_.Start();
             renderingGridService_.Start();
             eyesCheckerService_.Start();
             IsServicesOn = true;
@@ -165,6 +168,7 @@ namespace Applitools.VisualGrid
             IsServicesOn = false;
             eyesOpenerService_.Stop();
             eyesCloserService_.Stop();
+            renderRequestCollectionService_.Stop();
             renderingGridService_.Stop();
             eyesCheckerService_.Stop();
             Logger.Verbose("exit");
@@ -174,32 +178,39 @@ namespace Applitools.VisualGrid
         {
             NotifyOpenerService();
             NotifyCloserService();
+            NotifyRenderRequestCollectionService();
             NotifyCheckerService();
             NotifyRenderingService();
         }
 
         private void NotifyRenderingService()
         {
-            Logger.Verbose("releasing renderingServiceLock_.");
+            Logger.Verbose($"releasing {nameof(renderingServiceLock_)}.");
             renderingServiceLock_.Set();
         }
 
         private void NotifyCheckerService()
         {
-            Logger.Verbose("releasing checkerServiceLock_.");
+            Logger.Verbose($"releasing {nameof(checkerServiceLock_)}.");
             checkerServiceLock_.Set();
         }
 
         private void NotifyCloserService()
         {
-            Logger.Verbose("releasing closerServiceLock_.");
+            Logger.Verbose($"releasing {nameof(closerServiceLock_)}.");
             closerServiceLock_.Set();
         }
 
         private void NotifyOpenerService()
         {
-            Logger.Verbose("releasing openerServiceLock_.");
+            Logger.Verbose($"releasing {nameof(openerServiceLock_)}.");
             openerServiceLock_.Set();
+        }
+
+        private void NotifyRenderRequestCollectionService()
+        {
+            Logger.Verbose($"releasing {nameof(renderRequestCollectionServiceLock_)}.");
+            renderRequestCollectionServiceLock_.Set();
         }
 
         private void Init()
@@ -213,6 +224,11 @@ namespace Applitools.VisualGrid
             eyesCloserService_ = new EyesService("eyesCloserService", Logger, concurrentOpenSessions,
                 new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(closerServiceLock_, tasker, "eyesCloserService")),
                 new EyesService.Tasker(() => GetNextTestToClose_()));
+
+            renderRequestCollectionService_ = new EyesService("renderRequestCollectionService", Logger, concurrentOpenSessions,
+                new EyesService.EyesServiceListener(
+                    (tasker) => GetOrWaitForTask_(renderRequestCollectionServiceLock_, tasker, "renderRequestCollectionService")),
+                new EyesService.Tasker(() => GetNextRenderRequestCollectionTask_()));
 
             renderingGridService_ = new RenderingGridService("renderingGridService", Logger, concurrentOpenSessions,
                 new RenderingGridService.RGServiceListener(() =>
@@ -345,6 +361,22 @@ namespace Applitools.VisualGrid
             }
             Logger.Verbose("exit");
             return renderingTask;
+        }
+
+        private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
+        {
+            lock (renderRequestCollectionTaskList_)
+            {
+                if (renderRequestCollectionTaskList_.Count == 0)
+                {
+                    return null;
+                }
+
+                RenderRequestCollectionTask renderRequestCollectionTask = renderRequestCollectionTaskList_[0];
+                renderRequestCollectionTaskList_.RemoveAt(0);
+                Task<TestResultContainer> task = new Task<TestResultContainer>(renderRequestCollectionTask.Call);
+                return task;
+            }
         }
 
         private Task<TestResultContainer> GetNextTestToClose_()
@@ -522,8 +554,24 @@ namespace Applitools.VisualGrid
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
 
-            RenderRequestCollectionTasks resourceCollectionTask = new RenderRequestCollectionTasks(this, domData, connector,
+            RenderRequestCollectionTask resourceCollectionTask = new RenderRequestCollectionTask(this, domData, connector,
                 userAgent, regionSelectors, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
+                new RenderingTask.TaskListener<List<RenderingTask>>(
+                    (renderingTasks) =>
+                    {
+                        Logger.Verbose("locking renderingTaskList_");
+                        lock (renderingTaskList_)
+                        {
+                            renderingTaskList_.AddRange(renderingTasks);
+                        }
+                        Logger.Verbose("releasing renderingTaskList_");
+                        NotifyAllServices();
+                    },
+                    (e) =>
+                    {
+                        NotifyAllServices();
+                    }
+                    ),
                 new RenderingTask.RenderTaskListener(
                     () =>
                     {
@@ -535,15 +583,15 @@ namespace Applitools.VisualGrid
                         NotifyAllServices();
                         listener.OnRenderFailed(e);
                     })
-
             );
 
-            Logger.Verbose("locking renderingTaskList");
-            lock (resourceCollectionTaskList_)
+            Logger.Verbose("locking resourceCollectionTaskList_");
+            lock (renderRequestCollectionTaskList_)
             {
-                resourceCollectionTaskList_.Add(resourceCollectionTask);
+                renderRequestCollectionTaskList_.Add(resourceCollectionTask);
             }
-            Logger.Verbose("releasing renderingTaskList");
+            Logger.Verbose("releasing resourceCollectionTaskList_");
+
             NotifyAllServices();
             //Logger.Verbose("exit");
         }
