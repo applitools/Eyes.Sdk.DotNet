@@ -140,13 +140,21 @@ namespace Applitools
                     // response.DeserializeBody disposes the response object's stream, 
                     // rendering all of its properties unusable, including StatusCode.
                     HttpStatusCode responseStatusCode = response.StatusCode;
-                    RunningSession runningSession = response.DeserializeBody<RunningSession>(
-                        true, json_, HttpStatusCode.OK, HttpStatusCode.Created);
-                    if (runningSession.isNewSession_ == null)
+                    RunningSession runningSession;
+                    if (responseStatusCode == HttpStatusCode.ServiceUnavailable)
                     {
-                        runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
+                        runningSession = new RunningSession();
+                        runningSession.ConcurrencyFull = true;
                     }
-
+                    else
+                    {
+                        runningSession = response.DeserializeBody<RunningSession>(
+                            true, json_, HttpStatusCode.OK, HttpStatusCode.Created);
+                        if (runningSession.isNewSession_ == null)
+                        {
+                            runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
+                        }
+                    }
                     return runningSession;
                 }
             }

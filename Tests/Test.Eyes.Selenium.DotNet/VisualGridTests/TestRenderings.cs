@@ -94,7 +94,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 string browser = env.HostingAppInfo;
                 if (browser == null)
                 {
-                    eyes.Log("Error: HostingAppInfo (browser) is null. {0}", testResultContainer);
+                    eyes.Logger.Log("Error: HostingAppInfo (browser) is null. {0}", testResultContainer);
                     continue;
                 }
                 if (!results.TryGetValue(browser, out HashSet<Size> sizesList))

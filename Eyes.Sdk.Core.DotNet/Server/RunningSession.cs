@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace Applitools
 {
@@ -28,6 +29,8 @@ namespace Applitools
         public string Url { get; set; }
 
         public RenderingInfo RenderingInfo { get; set; }
+     
+        public bool ConcurrencyFull { get; set; }
 
         /// <inheritdoc />
         public override string ToString()

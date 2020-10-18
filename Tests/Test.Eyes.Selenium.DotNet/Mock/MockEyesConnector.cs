@@ -3,6 +3,7 @@ using Applitools.Ufg;
 using Applitools.Ufg.Model;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,13 +23,37 @@ namespace Applitools.Selenium.Tests.Mock
             browserInfo_ = browserInfo;
             config_ = config;
             ServerConnectorFactory = new MockServerConnectorFactory();
-            userAgents_ = new Dictionary<BrowserType, string>() {
+
+            userAgents_ = new Dictionary<BrowserType, string>()
+            {
                 { BrowserType.CHROME, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/86.0.4240.75 Safari/537.36" },
                 { BrowserType.CHROME_ONE_VERSION_BACK, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/85.0.4183.83 Safari/537.36" },
                 { BrowserType.CHROME_TWO_VERSIONS_BACK, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/84.0.4147.89 Safari/537.36" },
                 { BrowserType.FIREFOX, "Mozilla/5.0 (X11; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0" },
                 { BrowserType.FIREFOX_ONE_VERSION_BACK, "Mozilla/5.0 (X11; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0" },
                 { BrowserType.FIREFOX_TWO_VERSIONS_BACK, "Mozilla/5.0 (X11; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0" },
+            };
+
+            emulatedDevicesSizes_ = new Dictionary<DeviceName, DeviceSize>()
+            {
+                { DeviceName.iPhone_4, new DeviceSize(480, 320) },
+                { DeviceName.iPhone_5SE, new DeviceSize(568, 320) },
+                { DeviceName.Galaxy_S5, new DeviceSize(640, 360) }
+            };
+
+            iosDevicesSizes_ = new Dictionary<IosDeviceName, DeviceSize>()
+            {
+                { IosDeviceName.iPhone_11, new DeviceSize(896, 414) },
+                { IosDeviceName.iPhone_11_Pro, new DeviceSize(812, 375) },
+                { IosDeviceName.iPhone_11_Pro_Max, new DeviceSize(896, 414) },
+                { IosDeviceName.iPhone_XS, new DeviceSize(812, 375) },
+                { IosDeviceName.iPhone_X, new DeviceSize(812, 375) },
+                { IosDeviceName.iPhone_XR, new DeviceSize(896, 414) },
+                { IosDeviceName.iPhone_8, new DeviceSize(667, 375) },
+                { IosDeviceName.iPhone_7, new DeviceSize(667, 375) },
+                { IosDeviceName.iPad_Air_2, new DeviceSize(1024, 768) },
+                { IosDeviceName.iPad_Pro_3, new DeviceSize(1366, 1024) },
+                { IosDeviceName.iPad_7, new DeviceSize(1080, 810) },
             };
         }
 

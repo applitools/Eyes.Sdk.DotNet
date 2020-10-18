@@ -13,7 +13,7 @@ namespace Applitools.Selenium
         {
             if (shouldThrowException && Exception != null)
             {
-                throw new Exception("An error had occured", Exception);
+                throw Exception;
             }
             List<TestResultContainer> result = new List<TestResultContainer>();
             foreach (TestResults testResults in allTestResult_)
