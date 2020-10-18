@@ -712,7 +712,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     if (throwEx)
                     {
-                        throw errorResult.Exception;
+                        throw new Exception("An error had occured", errorResult.Exception);
                     }
                     return errorResult.TestResults;
                 }
@@ -773,7 +773,7 @@ namespace Applitools.Selenium.VisualGrid
 
             if (throwEx)
             {
-                throw exception;
+                throw new Exception("An error had occured", exception);
             }
             return closeFutures_;
         }

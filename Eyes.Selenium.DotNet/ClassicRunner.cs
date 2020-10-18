@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Applitools.Selenium
 {
@@ -12,7 +13,7 @@ namespace Applitools.Selenium
         {
             if (shouldThrowException && Exception != null)
             {
-                throw Exception;
+                throw new Exception("An error had occured", Exception);
             }
             List<TestResultContainer> result = new List<TestResultContainer>();
             foreach (TestResults testResults in allTestResult_)

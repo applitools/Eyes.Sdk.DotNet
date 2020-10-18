@@ -499,7 +499,7 @@ namespace Applitools.VisualGrid
             if (shouldThrowException && exception != null)
             {
                 Logger.Log("Error: " + exception);
-                throw exception;
+                throw new Exception("An error had occured", exception);
             }
             Logger.Verbose("exit");
             TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;

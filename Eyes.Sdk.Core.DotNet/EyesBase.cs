@@ -844,7 +844,7 @@ namespace Applitools
             }
         }
 
-        internal void UpdateServerConnector_()
+        protected internal void UpdateServerConnector_()
         {
             ServerConnector.ApiKey = ApiKey;
             ServerConnector.ServerUrl = new Uri(ServerUrl);

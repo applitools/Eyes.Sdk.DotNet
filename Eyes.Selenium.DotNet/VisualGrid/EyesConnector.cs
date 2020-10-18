@@ -32,6 +32,7 @@ namespace Applitools.Selenium.VisualGrid
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
+            UpdateServerConnector_();
         }
 
         #region Properties
