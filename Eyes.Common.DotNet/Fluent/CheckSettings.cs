@@ -573,6 +573,11 @@ namespace Applitools
             return replaceLast_;
         }
 
+        bool ICheckSettingsInternal.IsCheckWindow()
+        {
+            return targetRegion_ == null && GetTargetSelector() == null;
+        }
+
         bool? ICheckSettingsInternal.GetEnablePatterns()
         {
             return enablePatterns_;

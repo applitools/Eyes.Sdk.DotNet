@@ -57,7 +57,6 @@ namespace Applitools.Selenium
                 seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner);
                 activeEyes_ = seleniumEyes_;
             }
-            configuration_.SetForceFullPageScreenshot(isVisualGridEyes_);
         }
 
         internal Eyes(IServerConnectorFactory serverConnectorFactory)
@@ -78,10 +77,7 @@ namespace Applitools.Selenium
         public void SetConfiguration(IConfiguration configuration)
         {
             configuration_ = new Configuration(configuration);
-            if (configuration_.IsForceFullPageScreenshot == null)
-            {
-                configuration_.SetForceFullPageScreenshot(isVisualGridEyes_);
-            }
+    
             string serverUrl = configuration_.ServerUrl;
             if (serverUrl != null)
             {

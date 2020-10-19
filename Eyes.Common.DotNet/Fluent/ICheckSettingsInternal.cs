@@ -25,6 +25,7 @@ namespace Applitools.Fluent
         bool? GetEnablePatterns();
         bool? GetIgnoreDisplacements();
         bool GetReplaceLast();
+        bool IsCheckWindow();
 
         IDictionary<string, string> GetScriptHooks();
         SizeMode GetSizeMode();

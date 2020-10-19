@@ -581,7 +581,7 @@ namespace Applitools.Selenium.VisualGrid
 
             if (fully == null)
             {
-                checkSettings = checkSettings.Fully(Config_.IsForceFullPageScreenshot ?? true);
+                checkSettings = checkSettings.Fully(Config_.IsForceFullPageScreenshot ?? checkSettingsInternal.IsCheckWindow());
             }
 
             if (sendDom == null)
