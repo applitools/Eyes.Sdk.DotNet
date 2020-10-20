@@ -301,15 +301,25 @@ namespace Applitools.Selenium.VisualGrid
         protected override RectangleSize GetViewportSizeForOpen()
         {
             RectangleSize result;
-            if (deviceSize_ != null && !deviceSize_.IsEmpty())
+            if (browserInfo_?.EmulationInfo != null)
             {
-                Logger.Verbose("using deviceSize");
-                result = deviceSize_;
+                Logger.Verbose("using emulationInfo");
+                result = browserInfo_.ViewportSize;
+            }
+            else if (browserInfo_?.IosDeviceInfo != null)
+            {
+                Logger.Verbose("using iosDeviceInfo");
+                result = browserInfo_.ViewportSize;
             }
             else if (browserInfo_.DesktopBrowserInfo?.ViewportSize != null)
             {
                 Logger.Verbose("using browserInfo_.ViewportSize");
                 result = browserInfo_.DesktopBrowserInfo.ViewportSize;
+            }
+            else if (deviceSize_ != null && !deviceSize_.IsEmpty())
+            {
+                Logger.Verbose("using deviceSize");
+                result = deviceSize_;
             }
             else
             {

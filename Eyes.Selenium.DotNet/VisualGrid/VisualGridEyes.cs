@@ -543,21 +543,24 @@ namespace Applitools.Selenium.VisualGrid
         private void EnsureViewportSize_()
         {
             RectangleSize viewportSize = Config_.ViewportSize;
-            List<RenderBrowserInfo> browsersInfo = Config_.GetBrowsersInfo();
-            if ((viewportSize == null || viewportSize.IsEmpty()) && browsersInfo.Count > 0)
+
+            if (viewportSize == null)
             {
-                foreach (RenderBrowserInfo browserInfo in browsersInfo)
+                List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
+                if (browserInfoList != null && browserInfoList.Count > 0)
                 {
-                    if (browserInfo.EmulationInfo != null) continue;
-                    viewportSize = browserInfo.DesktopBrowserInfo?.ViewportSize;
-                    break;
+                    foreach (RenderBrowserInfo deviceInfo in browserInfoList)
+                    {
+                        if (deviceInfo.EmulationInfo != null)
+                        {
+                            continue;
+                        }
+                        viewportSize = new RectangleSize(deviceInfo.Width, deviceInfo.Height);
+                    }
                 }
             }
-            if (viewportSize == null || viewportSize.IsEmpty())
-            {
-                viewportSize = EyesSeleniumUtils.GetViewportSize(Logger, driver_);
-            }
-            else
+
+            if (viewportSize == null)
             {
                 EyesSeleniumUtils.SetViewportSize(Logger, driver_, viewportSize);
             }
