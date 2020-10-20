@@ -64,6 +64,11 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, PutFuture> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, PutFuture>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
+        public VisualGridRunner(ILogHandler logHandler = null)
+                 : this(new RunnerOptions().TestConcurrency(FACTOR), logHandler)
+        {
+        }
+
         public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
             : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler)
         {
