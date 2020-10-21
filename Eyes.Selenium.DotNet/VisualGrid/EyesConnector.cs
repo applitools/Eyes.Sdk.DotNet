@@ -304,12 +304,12 @@ namespace Applitools.Selenium.VisualGrid
             if (browserInfo_?.EmulationInfo != null)
             {
                 Logger.Verbose("using emulationInfo");
-                result = browserInfo_.ViewportSize;
+                result = deviceSize_;
             }
             else if (browserInfo_?.IosDeviceInfo != null)
             {
                 Logger.Verbose("using iosDeviceInfo");
-                result = browserInfo_.ViewportSize;
+                result = deviceSize_;
             }
             else if (browserInfo_.DesktopBrowserInfo?.ViewportSize != null)
             {

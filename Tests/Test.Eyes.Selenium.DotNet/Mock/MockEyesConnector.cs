@@ -38,6 +38,7 @@ namespace Applitools.Selenium.Tests.Mock
             {
                 { DeviceName.iPhone_4, new DeviceSize(480, 320) },
                 { DeviceName.iPhone_5SE, new DeviceSize(568, 320) },
+                { DeviceName.Galaxy_S3, new DeviceSize(640, 360) },
                 { DeviceName.Galaxy_S5, new DeviceSize(640, 360) }
             };
 
