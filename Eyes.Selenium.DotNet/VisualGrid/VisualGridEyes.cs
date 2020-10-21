@@ -423,9 +423,9 @@ namespace Applitools.Selenium.VisualGrid
             if (!ValidateEyes_()) return;
 
             Logger.Verbose("enter (#{0})", GetHashCode());
-            
+
             AddOpenTaskToAllRunningTest_();
-            
+
             List<VisualGridTask> checkTasks = new List<VisualGridTask>();
 
             ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
@@ -544,7 +544,7 @@ namespace Applitools.Selenium.VisualGrid
         {
             RectangleSize viewportSize = Config_.ViewportSize;
 
-            if (viewportSize == null)
+            if (viewportSize == null || viewportSize.IsEmpty())
             {
                 List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
                 if (browserInfoList != null && browserInfoList.Count > 0)
@@ -560,7 +560,11 @@ namespace Applitools.Selenium.VisualGrid
                 }
             }
 
-            if (viewportSize == null)
+            if (viewportSize == null || viewportSize.IsEmpty())
+            {
+                viewportSize = EyesSeleniumUtils.GetViewportSize(Logger, driver_);
+            }
+            else
             {
                 EyesSeleniumUtils.SetViewportSize(Logger, driver_, viewportSize);
             }
