@@ -6,10 +6,10 @@ using OpenQA.Selenium;
 
 namespace Applitools.Selenium.Tests
 {
-    [Parallelizable(ParallelScope.All)]
+    //[Parallelizable(ParallelScope.All)]
     public class TestHelloWorld : ReportingTestSuite
     {
-        [TestCase(true), TestCase(false)]
+        //[TestCase(true), TestCase(false)]
         public void HelloWorldTest(bool useVisualGrid)
         {
             IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();
