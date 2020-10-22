@@ -91,10 +91,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     continue;
                 }
                 BaselineEnv env = sessionResults.Env;
-                string browser = env.HostingApp + " - " + env.HostingAppInfo;
-                if (env.HostingApp == null && env.HostingAppInfo == null)
+                string browser = env.HostingAppInfo;
+                if (browser == null)
                 {
-                    eyes.Logger.Log("Error: HostingApp (browser) is null. {0}", testResultContainer);
+                    eyes.Logger.Log("Error: HostingAppInfo (browser) is null. {0}", testResultContainer);
                     continue;
                 }
                 if (!results.TryGetValue(browser, out HashSet<Size> sizesList))
