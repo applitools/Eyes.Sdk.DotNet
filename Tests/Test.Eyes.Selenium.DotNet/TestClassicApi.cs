@@ -49,13 +49,13 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckRegion()
         {
-            GetEyes().CheckRegion(By.Id("overflowing-div"), "Region", true);
+            GetEyes().CheckRegion(By.Id("overflowing-div"), "Region", false);
         }
 
         [Test]
         public void TestCheckRegion2()
         {
-            GetEyes().CheckRegion(By.Id("overflowing-div-image"), "minions", true);
+            GetEyes().CheckRegion(By.Id("overflowing-div-image"), "minions", false);
         }
 
         [Test]

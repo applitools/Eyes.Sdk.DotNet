@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckFrame_Fluent()
         {
-            GetEyes().Check("Fluent - Frame", Target.Frame("frame1"));
+            GetEyes().Check("Fluent - Frame", Target.Frame("frame1").Ignore(By.CssSelector("#inner-frame-div")));
         }
 
         [Test]
