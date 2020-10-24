@@ -10,6 +10,9 @@ Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckRegionInAVer
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame
 Applitools.Selenium.Tests.TestSpecialCases(IE, Scroll).TestCheckRegionInAVeryBigFrame
 Applitools.Selenium.Tests.TestSpecialCases(IE, Scroll).TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame
+Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckWindow
+Applitools.Selenium.Tests.TestClassicApi(Chrome, VG).TestCheckWindow
 Applitools.Selenium.Tests.TestClassicApi(Chrome, CSS).TestCheckInnerFrame
 Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckRegion2
 Applitools.Selenium.Tests.TestClassicApi(Chrome, Scroll).TestCheckInnerFrame
@@ -68,4 +71,10 @@ Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariCrop_SauceLa
 Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariCrop_SauceLabs("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Portrait,True)
 Applitools.Selenium.Tests.TestMobileDevices("desktop").TestIOSSafariCrop_SauceLabs("iPad Pro (12.9 inch) (2nd generation) Simulator","12.0",Portrait,True)
 Applitools.Selenium.Tests.TestMobileDevices("mobile").TestIOSSafariCrop_SauceLabs("iPhone XR Simulator","12.2",Landscape,True)
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLongImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLongImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLongImage
 Applitools.Selenium.Tests.VisualGridTests.TestIEyesVG2.Test("https://youtube.com",Layout)
