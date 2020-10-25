@@ -417,3 +417,4 @@ Applitools.Selenium.Tests.TestDom.TestDomSerialization
 Applitools.Selenium.Tests.VisualGridTests.TestDeviceInfo.TestIosDeviceInfo
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestRunnerOptions
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestOpenBeforeRender
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestRunnerConcurrency
