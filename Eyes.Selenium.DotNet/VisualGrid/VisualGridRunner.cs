@@ -16,7 +16,7 @@ namespace Applitools.VisualGrid
         internal readonly RunnerOptions runnerOptions_;
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
-        private readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
+        internal readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
         private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
         private readonly List<RenderRequestCollectionTask> renderRequestCollectionTaskList_ = new List<RenderRequestCollectionTask>();
 

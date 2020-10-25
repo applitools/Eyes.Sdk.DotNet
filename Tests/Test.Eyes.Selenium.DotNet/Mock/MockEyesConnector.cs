@@ -107,18 +107,31 @@ namespace Applitools.Selenium.Tests.Mock
 
         public bool IsServerConcurrencyLimitReached => false;
 
+        public delegate (bool, List<RunningRender>) OnRenderEventHandler(RenderRequest[] requests);
+        public event OnRenderEventHandler OnRender = null;
+
         public async Task<List<RunningRender>> RenderAsync(RenderRequest[] requests)
         {
             LastRenderRequests = requests;
-            List<RunningRender> runningRenders = new List<RunningRender>();
-            foreach (RenderRequest request in requests)
+            List<RunningRender> runningRenders = null;
+            bool continueInvocation = true;
+            if (OnRender != null)
             {
-                RunningRender render = new RunningRender(RenderId, JobId, RenderStatus.Rendered, null, false);
-                runningRenders.Add(render);
+                (continueInvocation, runningRenders) = OnRender(requests);
+            }
+            if (continueInvocation)
+            {
+                runningRenders = new List<RunningRender>();
+                foreach (RenderRequest request in requests)
+                {
+                    RunningRender render = new RunningRender(RenderId, JobId, RenderStatus.Rendered, null, false);
+                    runningRenders.Add(render);
+                }
             }
             await Task.Delay(10);
             return runningRenders;
         }
+
         public Task<WebResponse> RenderPutResourceAsTask(RunningRender runningRender, RGridResource rGridResource)
         {
             throw new NotImplementedException();

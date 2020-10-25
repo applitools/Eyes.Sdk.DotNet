@@ -2,11 +2,13 @@
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -20,7 +22,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
+            eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
 
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
@@ -122,7 +124,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         public void TestRunnerOptions()
         {
             RunnerOptions runnerOptions = new RunnerOptions().TestConcurrency(5);
-            
+
             VisualGridRunner runner1 = new VisualGridRunner();
             Assert.AreEqual(VisualGridRunner.FACTOR, ((IRunnerOptionsInternal)runner1.runnerOptions_).GetConcurrency());
             runner1.GetAllTestResults();
@@ -136,12 +138,55 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             runner3.GetAllTestResults();
         }
 
+        [Test]
+        public void TestOpenBeforeRender()
+        {
+            VisualGridRunner runner = new VisualGridRunner(10);
+            Eyes eyes = new Eyes(runner);
+            TestUtils.SetupLogging(eyes);
+            eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
+
+            Configuration config = eyes.GetConfiguration();
+            config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_7));
+            eyes.SetConfiguration(config);
+
+            MockEyesConnector mockEyesConnector;
+            string errorMessage = null;
+
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            driver.Url = "http://applitools.github.io/demo";
+            try
+            {
+                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                mockEyesConnector.OnRender += (renderRequests) =>
+                {
+                    IVisualGridEyes eyes = runner.allEyes_.First();
+                    if (!eyes.GetAllRunningTests().First().IsTestOpen)
+                    {
+                        errorMessage = "Render called before open";
+                    }
+
+                    return (true, null);
+                };
+                eyes.CheckWindow();
+                eyes.CloseAsync();
+            }
+            finally
+            {
+                eyes.AbortAsync();
+                driver.Quit();
+                runner.GetAllTestResults(false);
+            }
+
+            Assert.IsNull(errorMessage);
+        }
+
         private static MockEyesConnector OpenEyesAndGetConnector_(Eyes eyes, Configuration config, IWebDriver driver)
         {
             eyes.Open(driver, "Mock app", "Mock Test");
 
-            Mock.MockEyesConnector mockEyesConnector = (Mock.MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
-            Mock.MockServerConnector mockServerConnector = new Mock.MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
+            MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
+            MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
             EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
             {
                 runningSession_ = new RunningSession(),
