@@ -74,7 +74,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 driver.Close();
             }
         }
-        
+
         [Test]
         public void TestVisualGridSkipList()
         {
@@ -82,28 +82,28 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
             eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
-         
+
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(1050, 600, BrowserType.CHROME);
             config.SetBatch(TestDataProvider.BatchInfo);
             eyes.SetConfiguration(config);
 
             MockEyesConnector mockEyesConnector;
-         
+
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.github.io/demo/DomSnapshot/test-iframe.html";
             try
             {
                 mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
-               
+
                 eyes.Check(Target.Window());
-                string[] expectedUrls = new string[] { 
-                    "https://applitools.github.io/demo/DomSnapshot/test.css", 
-                    "https://applitools.github.io/demo/DomSnapshot/smurfs.jpg", 
-                    "https://applitools.github.io/blabla", 
+                string[] expectedUrls = new string[] {
+                    "https://applitools.github.io/demo/DomSnapshot/test.css",
+                    "https://applitools.github.io/demo/DomSnapshot/smurfs.jpg",
+                    "https://applitools.github.io/blabla",
                     "https://applitools.github.io/demo/DomSnapshot/iframes/inner/smurfs.jpg",
                     "https://applitools.github.io/demo/DomSnapshot/test.html",
-                    "https://applitools.github.io/demo/DomSnapshot/iframes/inner/test.html", 
+                    "https://applitools.github.io/demo/DomSnapshot/iframes/inner/test.html",
                     "https://applitools.github.io/demo/DomSnapshot/iframes/frame.html"};
                 CollectionAssert.AreEquivalent(expectedUrls, ((IVisualGridRunner)runner).CachedBlobsURLs.Keys);
                 eyes.Check(Target.Window());
@@ -116,6 +116,24 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.AbortIfNotClosed();
                 driver.Close();
             }
+        }
+
+        [Test]
+        public void TestRunnerOptions()
+        {
+            RunnerOptions runnerOptions = new RunnerOptions().TestConcurrency(5);
+            
+            VisualGridRunner runner1 = new VisualGridRunner();
+            Assert.AreEqual(VisualGridRunner.FACTOR, ((IRunnerOptionsInternal)runner1.runnerOptions_).GetConcurrency());
+            runner1.GetAllTestResults();
+
+            VisualGridRunner runner2 = new VisualGridRunner(runnerOptions);
+            Assert.AreEqual(5, ((IRunnerOptionsInternal)runner2.runnerOptions_).GetConcurrency());
+            runner2.GetAllTestResults();
+
+            VisualGridRunner runner3 = new VisualGridRunner(5);
+            Assert.AreEqual(VisualGridRunner.FACTOR * 5, ((IRunnerOptionsInternal)runner3.runnerOptions_).GetConcurrency());
+            runner3.GetAllTestResults();
         }
 
         private static MockEyesConnector OpenEyesAndGetConnector_(Eyes eyes, Configuration config, IWebDriver driver)

@@ -12,8 +12,8 @@ namespace Applitools.VisualGrid
 {
     public class VisualGridRunner : EyesRunner, IVisualGridRunner
     {
-        private const int FACTOR = 5;
-        private readonly RunnerOptions runnerOptions_;
+        internal const int FACTOR = 5;
+        internal readonly RunnerOptions runnerOptions_;
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         private readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
@@ -65,7 +65,7 @@ namespace Applitools.VisualGrid
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
         public VisualGridRunner(ILogHandler logHandler = null)
-                 : this(new RunnerOptions().TestConcurrency(FACTOR), logHandler)
+            : this(new RunnerOptions().TestConcurrency(FACTOR), logHandler)
         {
         }
 
