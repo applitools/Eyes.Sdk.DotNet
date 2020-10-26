@@ -13,10 +13,10 @@ namespace Applitools.Tests.Utils
 {
     public abstract class ReportingTestSuite
     {
-        private readonly TestResultReportSummary reportSummary_ = new TestResultReportSummary();
+        private static readonly TestResultReportSummary reportSummary_ = new TestResultReportSummary();
         protected readonly Dictionary<string, object> suiteArgs_ = new Dictionary<string, object>();
-        private static IList<string> includedTestsList = null;
-        private static string includedTestsListFilename;
+        private static readonly IList<string> includedTestsList = null;
+        private static readonly string includedTestsListFilename;
         public static readonly bool IS_FULL_COVERAGE = Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("FULL_COVERAGE") ?? false;
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
@@ -39,6 +39,16 @@ namespace Applitools.Tests.Utils
                 {
                     TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Reading regression list from file: {includedTestsListFilename}");
                     includedTestsList = File.ReadAllLines(includedTestsListFilename);
+                }
+
+                string reportSummaryFilePath = string.Format("Test_Results_{0}{1}.json",
+                    reportSummary_.Group, reportSummary_.IsGenerated ? "_Generated" : string.Empty);
+
+                string reportSummaryJsonStr;
+                if (File.Exists(reportSummaryFilePath))
+                {
+                    reportSummaryJsonStr = File.ReadAllText(reportSummaryFilePath);
+                    reportSummary_ = JsonConvert.DeserializeObject<TestResultReportSummary>(reportSummaryJsonStr);
                 }
             }
         }
@@ -75,12 +85,7 @@ namespace Applitools.Tests.Utils
                 while (attemptsLeft-- > 0 && !WriteFailedTestsToFile_(tc, status)) { Thread.Sleep(100); }
             }
             TestResult testResult = GetTestResult();
-            if (!reportSummary_.AddResult(testResult))
-            {
-                string s = $"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test Report already exists for {TestContext.CurrentContext.Test.FullName}\n" +
-                    JsonConvert.SerializeObject(testResult);
-                TestContext.Progress.WriteLine(s);
-            }
+            reportSummary_.AddResult(testResult);
         }
 
         private static bool WriteFailedTestsToFile_(TestContext tc, TestStatus status)
@@ -155,8 +160,13 @@ namespace Applitools.Tests.Utils
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            HttpRestClient client = new HttpRestClient(new Uri("http://sdk-test-results.herokuapp.com"));
-            client.PostJson("/result", reportSummary_);
+            //HttpRestClient client = new HttpRestClient(new Uri("http://sdk-test-results.herokuapp.com"));
+            //client.PostJson("/result", reportSummary_);
+            string reportSummaryFilePath = string.Format("Test_Results_{0}{1}.json",
+                reportSummary_.Group, reportSummary_.IsGenerated ? "_Generated" : string.Empty);
+
+            string reportSummaryJsonStr = JsonConvert.SerializeObject(reportSummary_);
+            File.WriteAllText(reportSummaryFilePath, reportSummaryJsonStr);
         }
     }
 }

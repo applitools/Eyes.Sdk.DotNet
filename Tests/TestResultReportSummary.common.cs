@@ -9,24 +9,28 @@ namespace Applitools.Tests.Utils
         [JsonProperty("sdk")]
         public string SdkName => "dotnet";
 
- 
         [JsonProperty("id")]
         public string Id { get; set; } = Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_ID") ?? "0000-0000";
 
         [JsonProperty("sandbox")]
-        public bool Sandbox { get; set; } = 
+        public bool Sandbox { get; set; } =
             "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase) ||
             Environment.GetEnvironmentVariable("TRAVIS_TAG") == null ||
             !Environment.GetEnvironmentVariable("TRAVIS_TAG").Contains("RELEASE_CANDIDATE");
 
         [JsonProperty("results")]
-        public List<TestResult> Results { get; } = new List<TestResult>();
+        public HashSet<TestResult> Results { get; } = new HashSet<TestResult>();
 
-        public bool AddResult(TestResult result)
+        public void AddResult(TestResult result)
         {
-            bool newResult = !Results.Contains(result);
-            Results.Add(result);
-            return newResult;
+            if (!Results.TryGetValue(result, out TestResult testResult))
+            {
+                Results.Add(result);
+            }
+            else
+            {
+                testResult.Passed = result.Passed;
+            }
         }
     }
 }
