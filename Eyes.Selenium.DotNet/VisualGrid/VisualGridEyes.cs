@@ -1002,9 +1002,14 @@ namespace Applitools.Selenium.VisualGrid
             return testList_[0].GetBatchCloser();
         }
 
+        internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
+        internal event AfterServerConcurrencyLimitReachedQueriedDelegate AfterServerConcurrencyLimitReachedQueried;
+
         public bool IsServerConcurrencyLimitReached()
         {
-            return testList_.Any(t => t.IsServerConcurrencyLimitReached);
+            bool result = testList_.Any(t => t.IsServerConcurrencyLimitReached);
+            AfterServerConcurrencyLimitReachedQueried?.Invoke(result);
+            return result;
         }
     }
 }

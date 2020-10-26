@@ -121,6 +121,11 @@ namespace Applitools
         /// </summary>
         public RunningSession StartSession(SessionStartInfo startInfo)
         {
+            return StartSessionInternal(startInfo);
+        }
+
+        protected virtual RunningSession StartSessionInternal(SessionStartInfo startInfo)
+        {
             ArgumentGuard.NotNull(startInfo, nameof(startInfo));
 
             var body = new
@@ -154,6 +159,7 @@ namespace Applitools
                         {
                             runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
                         }
+                        runningSession.ConcurrencyFull = false;
                     }
                     return runningSession;
                 }
@@ -187,6 +193,11 @@ namespace Applitools
         /// Ends the input running session.
         /// </summary>
         public TestResults EndSession(RunningSession runningSession, bool isAborted, bool save)
+        {
+            return EndSessionInternal(runningSession, isAborted, save);
+        }
+
+        protected virtual TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
         {
             ArgumentGuard.NotNull(runningSession, nameof(runningSession));
 

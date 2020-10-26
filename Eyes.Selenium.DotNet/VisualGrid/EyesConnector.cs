@@ -28,6 +28,14 @@ namespace Applitools.Selenium.VisualGrid
         private string appName_;
         private Applitools.Configuration config_;
 
+        internal EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
+            : base(serverConnectorFactory)
+        {
+            browserInfo_ = browserInfo;
+            config_ = configuration;
+            UpdateServerConnector_();
+        }
+
         public EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
         {
             browserInfo_ = browserInfo;
@@ -371,6 +379,6 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        public bool IsServerConcurrencyLimitReached { get; private set; }
+        public bool IsServerConcurrencyLimitReached => runningSession_ != null && runningSession_.ConcurrencyFull;
     }
 }

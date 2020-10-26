@@ -87,7 +87,7 @@ namespace Applitools.Selenium.Tests.Mock
         }
 
         public delegate (bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
-        public event OnStartSessionDelegate OnStartSession = null;
+        public event OnStartSessionDelegate OnStartSession;
 
         public RunningSession StartSession(SessionStartInfo sessionStartInfo)
         {

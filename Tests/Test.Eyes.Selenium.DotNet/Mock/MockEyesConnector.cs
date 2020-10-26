@@ -105,7 +105,7 @@ namespace Applitools.Selenium.Tests.Mock
         public string JobId { get; set; } = "A72E234C-58AA-4406-B8FD-8899FACEA147";
         public RectangleSize DeviceSize { get; private set; }
 
-        public bool IsServerConcurrencyLimitReached => false;
+        public bool IsServerConcurrencyLimitReached => WrappedConnector?.IsServerConcurrencyLimitReached ?? false;
 
         public delegate (bool, List<RunningRender>) OnRenderEventHandler(RenderRequest[] requests);
         public event OnRenderEventHandler OnRender = null;
