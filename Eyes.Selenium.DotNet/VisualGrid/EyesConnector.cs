@@ -379,6 +379,5 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        public bool IsServerConcurrencyLimitReached => runningSession_ != null && runningSession_.ConcurrencyFull;
     }
 }

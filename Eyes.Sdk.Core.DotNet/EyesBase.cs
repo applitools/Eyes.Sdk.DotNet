@@ -918,7 +918,7 @@ namespace Applitools
                         sleepDuration = TimeSpan.FromSeconds(10);
                     }
                     Thread.Sleep(sleepDuration);
-                    ServerConcurrencyLimitReached = false;
+                    IsServerConcurrencyLimitReached = false;
                 }
             }
             if (!startSessionResult)
@@ -1011,7 +1011,7 @@ namespace Applitools
         protected virtual bool ViewportSizeRequired => true;
 
         public IServerConnectorFactory ServerConnectorFactory { get; protected internal set; } = new ServerConnectorFactory();
-        public bool ServerConcurrencyLimitReached { get; private set; }
+        public bool IsServerConcurrencyLimitReached { get; private set; }
         #endregion
 
         #region Private
@@ -1093,11 +1093,11 @@ namespace Applitools
 
             if (runningSession_.ConcurrencyFull)
             {
-                ServerConcurrencyLimitReached = true;
+                IsServerConcurrencyLimitReached = true;
                 Logger.Verbose("Failed starting test {0}, concurrency is fully used. Trying again.", Configuration.TestName);
                 return false;
             }
-            ServerConcurrencyLimitReached = false;
+            IsServerConcurrencyLimitReached = false;
             //Logger.Verbose("getting rendering info...");
             //runningSession_.RenderingInfo = serverConnector_.GetRenderingInfo();
 
