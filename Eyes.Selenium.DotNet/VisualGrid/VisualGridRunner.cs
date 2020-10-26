@@ -61,7 +61,7 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, byte> IVisualGridRunner.CachedBlobsURLs { get; } = new ConcurrentDictionary<string, byte>();
         ConcurrentDictionary<string, IEnumerable<string>> IVisualGridRunner.CachedResourceMapping { get; } = new ConcurrentDictionary<string, IEnumerable<string>>();
         ConcurrentDictionary<string, ResourceFuture> IVisualGridRunner.CachedResources { get; } = new ConcurrentDictionary<string, ResourceFuture>();
-        ConcurrentDictionary<string, PutFuture> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, PutFuture>();
+        ConcurrentDictionary<string, byte> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, byte>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
         public VisualGridRunner(ILogHandler logHandler = null)
