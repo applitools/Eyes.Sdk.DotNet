@@ -34,7 +34,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
         private class Events
         {
-            public Action BeforeStartSession { get; internal set; }
+            public Func<RunningSession> BeforeStartSession { get; internal set; }
             public Action AfterEndSession { get; internal set; }
         }
 
@@ -42,22 +42,25 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             public MockServerConnector(Logger logger, Uri serverUrl = null, Events events = null) : base(logger, serverUrl)
             {
-                BeforeStartSession = events?.BeforeStartSession;
-                AfterEndSession = events?.AfterEndSession;
+                events_ = events;
             }
-            public Action BeforeStartSession { get; internal set; }
-            public Action AfterEndSession { get; internal set; }
+
+            private readonly Events events_;
 
             protected override RunningSession StartSessionInternal(SessionStartInfo startInfo)
             {
-                BeforeStartSession?.Invoke();
-                return base.StartSessionInternal(startInfo);
+                RunningSession result = events_?.BeforeStartSession?.Invoke();
+                if (result == null)
+                {
+                    result = base.StartSessionInternal(startInfo);
+                }
+                return result;
             }
 
             protected override TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
             {
                 TestResults result = base.EndSessionInternal(runningSession, isAborted, save);
-                AfterEndSession?.Invoke();
+                events_?.AfterEndSession?.Invoke();
                 return result;
             }
         }
@@ -178,6 +181,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                         {
                             isFail = true;
                         }
+                        return null;
                     },
                     AfterEndSession = () =>
                     {
@@ -204,54 +208,53 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             Assert.IsFalse(isFail, "Number of open tests was higher than the concurrency limit");
         }
 
-        /*[Test]
+        [Test]
         public void TestRetryWhenServerConcurrencyLimitReached()
         {
-            VisualGridRunner runner = new VisualGridRunner(5);
-            Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
+            Configuration config = new Configuration();
 
-            Configuration config = eyes.GetConfiguration();
             config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_7));
-            eyes.SetConfiguration(config);
 
-            MockEyesConnector mockEyesConnector;
+            ConfigurationProvider configurationProvider = new ConfigurationProvider(config);
+            VisualGridRunner runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(3));
+            VisualGridEyes eyes = new VisualGridEyes(configurationProvider, runner);
+            eyes.SetLogHandler(TestUtils.InitLogHandler());
 
             int counter = 0;
             bool wasConcurrencyFull = false;
+
+            eyes.EyesConnectorFactory = new MockEyesConnectorFactory()
+            {
+                Events = new Events()
+                {
+                    BeforeStartSession = () =>
+                    {
+                        if (Interlocked.Increment(ref counter) < 4)
+                        {
+                            RunningSession newSession = new RunningSession();
+                            newSession.ConcurrencyFull = true;
+                            return newSession;
+                        }
+                        return null;
+                    }
+                }
+            };
+            
+            eyes.AfterServerConcurrencyLimitReachedQueried += (concurrecnyReached) =>
+            {
+                if (concurrecnyReached)
+                {
+                    wasConcurrencyFull = true;
+                }
+            };
 
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "http://applitools.github.io/demo";
             try
             {
-                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
-                EyesConnector eyesConnector = (EyesConnector)mockEyesConnector.WrappedConnector;
-                MockServerConnector mockServerConnector = (MockServerConnector)eyesConnector.ServerConnector;
-
-                mockServerConnector.OnStartSession += (sessionStartInfo) =>
-                {
-                    int counterBeforeInc = counter;
-                    Interlocked.Increment(ref counter);
-                    if (counterBeforeInc < 3)
-                    {
-                        RunningSession newSession = new RunningSession();
-                        newSession.ConcurrencyFull = true;
-                        return (false, null);
-                    }
-                    return (true, null);
-                };
-
-                eyes.visualGridEyes_.AfterServerConcurrencyLimitReachedQueried += (concurrecnyReached) =>
-                {
-                    if (concurrecnyReached)
-                    {
-                        wasConcurrencyFull = true;
-                    }
-                };
-
+                eyes.Open(driver, "Eyes SDK", "UFG Runner Concurrency", new Size(800, 800));
                 eyes.Check(Target.Window().Fully());
-                eyes.CloseAsync();
+                eyes.CloseAsync(true);
             }
             finally
             {
@@ -261,23 +264,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             }
 
             Assert.IsTrue(wasConcurrencyFull);
-            Assert.IsFalse(eyes.visualGridEyes_.IsServerConcurrencyLimitReached());
+            Assert.IsFalse(eyes.IsServerConcurrencyLimitReached());
             Assert.AreEqual(4, counter);
         }
-        */
-        private static MockEyesConnector OpenEyesAndGetConnector_(Eyes eyes, Configuration config, IWebDriver driver)
-        {
-            eyes.Open(driver, "Mock app", "Mock Test");
-
-            MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
-            //MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
-            //EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
-            //{
-            //    runningSession_ = new RunningSession(),
-            //    ServerConnector = mockServerConnector
-            //};
-            //mockEyesConnector.WrappedConnector = eyesConnector;
-            return mockEyesConnector;
-        }
+        
     }
 }
