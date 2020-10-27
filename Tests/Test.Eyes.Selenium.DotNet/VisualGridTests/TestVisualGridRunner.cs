@@ -1,5 +1,4 @@
-﻿using Applitools.Selenium.Tests.Mock;
-using Applitools.Selenium.Tests.Utils;
+﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
@@ -239,7 +238,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     }
                 }
             };
-            
+
             eyes.AfterServerConcurrencyLimitReachedQueried += (concurrecnyReached) =>
             {
                 if (concurrecnyReached)
@@ -267,6 +266,39 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             Assert.IsFalse(eyes.IsServerConcurrencyLimitReached());
             Assert.AreEqual(4, counter);
         }
-        
+
+        [Test]
+        public void TestResetContent()
+        {
+            Configuration config = new Configuration();
+
+            config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_7));
+            ConfigurationProvider configurationProvider = new ConfigurationProvider(config);
+            VisualGridRunner runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(3));
+            VisualGridEyes eyes = new VisualGridEyes(configurationProvider, runner);
+            eyes.SetLogHandler(TestUtils.InitLogHandler());
+
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            driver.Url = "http://applitools.github.io/demo";
+            try
+            {
+                eyes.Open(driver, "Eyes SDK", "UFG Runner Concurrency", new Size(800, 800));
+                eyes.Check(Target.Window().Fully());
+                eyes.CloseAsync(true);
+            }
+            finally
+            {
+                eyes.AbortAsync();
+                driver.Quit();
+                runner.GetAllTestResults(false);
+            }
+
+            foreach (ResourceFuture resourceFuture in ((IVisualGridRunner)runner).CachedResources.Values)
+            {
+                RGridResource resource = resourceFuture.GetResource();
+                Assert.IsNotNull(resource);
+                Assert.IsNull(resource.Content);
+            }
+        }
     }
 }
