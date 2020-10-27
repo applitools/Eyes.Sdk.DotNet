@@ -45,12 +45,9 @@ script:
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
     python updateChangelogAndProjectFiles.py;
     fi
-  - chmod +x ./buildProjects.sh
-  - ./buildProjects.sh
-  - find . -name Test_Results_*.json | xargs -n 1 curl -v -X POST -H "Content-Type: application/json" http://sdk-test-results.herokuapp.com/result -T
+  - chmod +x ./buildProjects.sh && ./buildProjects.sh
+  - chmod +x ./reportTestResults.sh && ./reportTestResults.sh
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
-    chmod +x ./deploy.sh;
-    ./deploy.sh;
-    chmod +x ./sendMail.sh;
-    ./sendMail.sh;
+    chmod +x ./deploy.sh && ./deploy.sh;
+    chmod +x ./sendMail.sh && ./sendMail.sh;
     fi
