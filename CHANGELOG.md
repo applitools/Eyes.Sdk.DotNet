@@ -1,3 +1,21 @@
+## [Eyes.Common vNext]
+### Added
+- Ultrafast Grid: Added support for `Full-Selector`. [Trello 2145](https://trello.com/c/8tPAnz66)
+### Fixed
+- Fixed Internet Explorer 11 enum value.
+
+## [Eyes.Sdk.Core vNext]
+### Added
+- Ultrafast Grid: Obey server concurrency limitations. [Trello 2152](https://trello.com/c/yNzhBkBh)
+
+## [Eyes.Selenium vNext]
+### Added
+- Ultrafast Grid: Make sure `Open` is called before `Render`. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Separated resource collection from the rendering task. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Remove resource contents after uploading to the server. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Check resources status and upload missing resources before rendering. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Added `RunnerOptions`. [Trello 2152](https://trello.com/c/yNzhBkBh)
+
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed
 - NuGet was unable to install.
@@ -25,7 +43,8 @@
 ## [Eyes.Sdk.Core 2.35.2] - 2020-10-08
 ### Fixed
 - NuGets that depends on this one were unable to install.
-## [Eyes.Common 1.0]
+
+## [Eyes.Common 1.0] - 2020-10-08
 ### Added
 - NuGets that depends on this one were unable to install.
 
