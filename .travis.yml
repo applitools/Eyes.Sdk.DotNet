@@ -46,7 +46,7 @@ script:
     python updateChangelogAndProjectFiles.py;
     fi
   - chmod +x ./buildProjects.sh && ./buildProjects.sh
-  - chmod +x ./reportTestResults.sh && ./reportTestResults.sh
+  - chmod +x ./reportTestResult.sh && ./reportTestResult.sh
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
     chmod +x ./deploy.sh && ./deploy.sh;
     chmod +x ./sendMail.sh && ./sendMail.sh;
