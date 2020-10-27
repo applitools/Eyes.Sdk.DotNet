@@ -13,6 +13,7 @@ namespace Applitools.VisualGrid
     public class VisualGridRunner : EyesRunner, IVisualGridRunner
     {
         internal const int FACTOR = 5;
+        internal const int DEFAULT_CONCURRENCY = 5;
         internal readonly RunnerOptions runnerOptions_;
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
@@ -65,7 +66,7 @@ namespace Applitools.VisualGrid
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
         public VisualGridRunner(ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(FACTOR), logHandler)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler)
         {
         }
 
