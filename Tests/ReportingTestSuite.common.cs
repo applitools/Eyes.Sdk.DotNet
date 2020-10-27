@@ -20,7 +20,8 @@ namespace Applitools.Tests.Utils
         public static readonly bool IS_FULL_COVERAGE = Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("FULL_COVERAGE") ?? false;
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
-
+        public static readonly string reportSummaryFilePath_ = string.Format("Test_Results_{0}{1}.json",
+           reportSummary_.Group, reportSummary_.IsGenerated ? "_Generated" : string.Empty);
         static ReportingTestSuite()
         {
             TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: TRAVIS_TAG: '{Environment.GetEnvironmentVariable("TRAVIS_TAG")}'");
@@ -41,13 +42,10 @@ namespace Applitools.Tests.Utils
                     includedTestsList = File.ReadAllLines(includedTestsListFilename);
                 }
 
-                string reportSummaryFilePath = string.Format("Test_Results_{0}{1}.json",
-                    reportSummary_.Group, reportSummary_.IsGenerated ? "_Generated" : string.Empty);
-
                 string reportSummaryJsonStr;
-                if (File.Exists(reportSummaryFilePath))
+                if (File.Exists(reportSummaryFilePath_))
                 {
-                    reportSummaryJsonStr = File.ReadAllText(reportSummaryFilePath);
+                    reportSummaryJsonStr = File.ReadAllText(reportSummaryFilePath_);
                     reportSummary_ = JsonConvert.DeserializeObject<TestResultReportSummary>(reportSummaryJsonStr);
                 }
             }
@@ -162,11 +160,9 @@ namespace Applitools.Tests.Utils
         {
             //HttpRestClient client = new HttpRestClient(new Uri("http://sdk-test-results.herokuapp.com"));
             //client.PostJson("/result", reportSummary_);
-            string reportSummaryFilePath = string.Format("Test_Results_{0}{1}.json",
-                reportSummary_.Group, reportSummary_.IsGenerated ? "_Generated" : string.Empty);
-
+       
             string reportSummaryJsonStr = JsonConvert.SerializeObject(reportSummary_);
-            File.WriteAllText(reportSummaryFilePath, reportSummaryJsonStr);
+            File.WriteAllText(reportSummaryFilePath_, reportSummaryJsonStr);
         }
     }
 }
