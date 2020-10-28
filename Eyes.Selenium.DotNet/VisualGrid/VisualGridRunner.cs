@@ -21,6 +21,8 @@ namespace Applitools.VisualGrid
         private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
         private readonly List<RenderRequestCollectionTask> renderRequestCollectionTaskList_ = new List<RenderRequestCollectionTask>();
 
+        internal AutoResetEvent debugLock_ = null;
+
         private readonly AutoResetEvent openerServiceConcurrencyLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent openerServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent closerServiceLock_ = new AutoResetEvent(true);
@@ -60,7 +62,7 @@ namespace Applitools.VisualGrid
         RenderingInfo IVisualGridRunner.RenderingInfo => renderingInfo_;
 
         ConcurrentDictionary<string, byte> IVisualGridRunner.CachedBlobsURLs { get; } = new ConcurrentDictionary<string, byte>();
-        ConcurrentDictionary<string, IEnumerable<string>> IVisualGridRunner.CachedResourceMapping { get; } = new ConcurrentDictionary<string, IEnumerable<string>>();
+        ConcurrentDictionary<string, HashSet<string>> IVisualGridRunner.CachedResourceMapping { get; } = new ConcurrentDictionary<string, HashSet<string>>();
         ConcurrentDictionary<string, ResourceFuture> IVisualGridRunner.CachedResources { get; } = new ConcurrentDictionary<string, ResourceFuture>();
         ConcurrentDictionary<string, byte> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, byte>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
@@ -572,6 +574,7 @@ namespace Applitools.VisualGrid
                         }
                         Logger.Verbose("releasing renderingTaskList_");
                         NotifyAllServices();
+                        debugLock_?.Set();
                     },
                     (e) =>
                     {
