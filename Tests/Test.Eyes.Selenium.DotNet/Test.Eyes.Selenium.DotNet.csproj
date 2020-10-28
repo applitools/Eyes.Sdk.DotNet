@@ -84,7 +84,6 @@
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowAfterScroll.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowFully.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowViewport.json" />
-    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestDoubleCheckWindow.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestAccessibilityRegions.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementFully_Fluent.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent.json" />
@@ -110,7 +109,6 @@
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrame_Fully_Fluent.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrameFully_Fluent.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrame_Fluent.json" />
-    <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame2_Fluent.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame3_Fluent.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrameInFrame_Fluent.json" />
     <None Remove="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame_Fluent.json" />
@@ -200,7 +198,6 @@
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowAfterScroll.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowFully.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestCheckWindowViewport.json" />
-    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestClassicApi_Chrome_VG_TestDoubleCheckWindow.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestAccessibilityRegions.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementFully_Fluent.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Chrome_VG_TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent.json" />
@@ -226,7 +223,6 @@
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckFrame_Fully_Fluent.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrameFully_Fluent.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionByCoordinateInFrame_Fluent.json" />
-    <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame2_Fluent.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame3_Fluent.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrameInFrame_Fluent.json" />
     <EmbeddedResource Include="Resources\VGTests\Applitools_Selenium_Tests_TestFluentApi_Frames_Chrome_VG_TestCheckRegionInFrame_Fluent.json" />
