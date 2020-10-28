@@ -320,19 +320,20 @@
         internal static void InitEyes(bool useVisualGrid, out IWebDriver driver, out EyesRunner runner, out Eyes eyes, [CallerMemberName] string testName = null)
         {
             driver = CreateChromeDriver();
+            string logPath;
             if (useVisualGrid)
             {
                 testName += "_VG";
+                logPath = TestUtils.InitLogPath(testName);
                 VisualGridRunner visualGridRunner = new VisualGridRunner(10);
                 //visualGridRunner.DebugResourceWriter = new FileDebugResourceWriter(logPath);
                 runner = visualGridRunner;
             }
             else
             {
+                logPath = TestUtils.InitLogPath(testName);
                 runner = new ClassicRunner();
             }
-
-            string logPath = TestUtils.InitLogPath(testName);
             eyes = new Eyes(runner);
             eyes.SetLogHandler(TestUtils.InitLogHandler(testName, logPath));
             eyes.Batch = TestDataProvider.BatchInfo;

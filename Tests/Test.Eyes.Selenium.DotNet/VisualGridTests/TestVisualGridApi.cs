@@ -142,7 +142,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.woff",
                     "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.woff2"};
 
-                waitHandle.WaitOne();
+                waitHandle.WaitOne(TimeSpan.FromSeconds(5));
 
                 CollectionAssert.AreEquivalent(expectedUrls, ((IVisualGridRunner)runner).CachedBlobsURLs.Keys);
 
