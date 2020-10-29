@@ -105,7 +105,7 @@ namespace Applitools.Selenium.Tests.Mock
         public string JobId { get; set; } = "A72E234C-58AA-4406-B8FD-8899FACEA147";
         public RectangleSize DeviceSize { get; private set; }
 
-        public bool IsServerConcurrencyLimitReached => WrappedConnector?.IsServerConcurrencyLimitReached ?? false;
+        public override bool IsServerConcurrencyLimitReached => WrappedConnector?.IsServerConcurrencyLimitReached ?? false;
 
         public delegate (bool, List<RunningRender>) OnRenderEventHandler(RenderRequest[] requests);
         public event OnRenderEventHandler OnRender = null;
@@ -177,10 +177,6 @@ namespace Applitools.Selenium.Tests.Mock
         {
         }
 
-        public void SetUserAgent(string userAgent)
-        {
-        }
-
         protected override string GetInferredEnvironment()
         {
             return nameof(MockEyesConnector);
@@ -215,6 +211,16 @@ namespace Applitools.Selenium.Tests.Mock
 
         protected override void SetViewportSize(RectangleSize size)
         {
+        }
+
+        public JobInfo GetJobInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetRenderer()
+        {
+            throw new NotImplementedException();
         }
     }
 }

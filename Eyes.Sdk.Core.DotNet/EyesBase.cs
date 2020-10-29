@@ -1011,7 +1011,7 @@ namespace Applitools
         protected virtual bool ViewportSizeRequired => true;
 
         public IServerConnectorFactory ServerConnectorFactory { get; protected internal set; } = new ServerConnectorFactory();
-        public bool IsServerConcurrencyLimitReached { get; private set; }
+        public virtual bool IsServerConcurrencyLimitReached { get; private set; }
         #endregion
 
         #region Private
@@ -1026,7 +1026,7 @@ namespace Applitools
             return screenshot;
         }
 
-        protected internal virtual AppEnvironment GetEnvironment_()
+        protected internal virtual object GetEnvironment_()
         {
             AppEnvironment appEnv = new AppEnvironment();
 
@@ -1067,7 +1067,7 @@ namespace Applitools
                 testBatch = Configuration.Batch;
             }
 
-            AppEnvironment appEnv = GetEnvironment_();
+            object appEnv = GetEnvironment_();
             Logger.Verbose("Application environment is {0}", appEnv);
 
             sessionStartInfo_ = new SessionStartInfo(

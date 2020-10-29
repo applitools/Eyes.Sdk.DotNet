@@ -27,6 +27,7 @@ namespace Applitools.Selenium.VisualGrid
         private string testName_;
         private string appName_;
         private Applitools.Configuration config_;
+        private JobInfo jobInfo_;
 
         internal EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
             : base(serverConnectorFactory)
@@ -56,22 +57,10 @@ namespace Applitools.Selenium.VisualGrid
             return "useragent: " + userAgent_;
         }
 
-        protected override AppEnvironment GetEnvironment_()
+        protected override object GetEnvironment_()
         {
-            AppEnvironment environment = base.GetEnvironment_();
-            if (browserInfo_?.EmulationInfo is ChromeEmulationInfo cei)
-            {
-                environment.DeviceInfo = cei.SerializedDeviceName + " (Chrome emulation)";
-            }
-            else if (browserInfo_?.IosDeviceInfo != null)
-            {
-                environment.DeviceInfo = browserInfo_.IosDeviceInfo.SerializedDeviceName;
-            }
-            else
-            {
-                environment.DeviceInfo = "Desktop";
-            }
-
+            AppEnvironment environment = (AppEnvironment)base.GetEnvironment_();
+           
             if (string.IsNullOrEmpty(userAgent_))
             {
                 if (environment.HostingApp == null) environment.HostingApp = BrowserNames.GetBrowserName(browserInfo_.BrowserType);
@@ -128,6 +117,32 @@ namespace Applitools.Selenium.VisualGrid
         {
             renderInfo_ = renderingInfo;
             UpdateRenderingServiceServerConnector();
+        }
+
+        public async Task<List<JobInfo>> GetJobInfo(RenderRequest[] browserInfos)
+        {
+            ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
+            Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
+            try
+            {
+                HttpWebRequest request = CreateHttpWebRequest_("job-info");
+                Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
+                serializer_.Serialize(browserInfos, request.GetRequestStream());
+
+                using (WebResponse response = await request.GetResponseAsync())
+                {
+                    Stream s = response.GetResponseStream();
+                    string json = new StreamReader(s).ReadToEnd();
+                    List<JobInfo> jobInfos = serializer_.Deserialize<List<JobInfo>>(json);
+                    Logger.Verbose("request succeeded");
+                    return jobInfos;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Error: {0}", e);
+                throw;
+            }
         }
 
         private void UpdateRenderingServiceServerConnector()
@@ -379,5 +394,27 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
+        public JobInfo GetJobInfo()
+        {
+            if (jobInfo_ == null)
+            {
+                RenderInfo renderInfo = new RenderInfo(browserInfo_.Width, browserInfo_.Height, default, null,
+                    null, browserInfo_.EmulationInfo, browserInfo_.IosDeviceInfo);
+                RenderRequest renderRequest = new RenderRequest(renderInfo, browserInfo_.Platform, browserInfo_.BrowserType);
+                Task<List<JobInfo>> jobInfoTask = GetJobInfo(new RenderRequest[] { renderRequest });
+                List<JobInfo> jobInfos = jobInfoTask.Result;
+                if (jobInfos == null || jobInfos.Count == 0)
+                {
+                    throw new EyesException("Failed getting job info");
+                }
+                jobInfo_ = jobInfos[0];
+            }
+            return jobInfo_;
+        }
+
+        public string GetRenderer()
+        {
+            return GetJobInfo().Renderer;
+        }
     }
 }

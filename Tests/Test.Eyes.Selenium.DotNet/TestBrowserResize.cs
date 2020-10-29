@@ -60,10 +60,10 @@ namespace Applitools.Selenium.Tests
             {
                 MockServerConnector server = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
                 Assert.AreEqual(4, server.SessionIds.Count);
-                Assert.AreEqual(new Size(640, 480), server.SessionsStartInfo[server.SessionIds[0]].Environment.DisplaySize.ToSize());
-                Assert.AreEqual(new Size(800, 600), server.SessionsStartInfo[server.SessionIds[1]].Environment.DisplaySize.ToSize());
-                Assert.AreEqual(new Size(1024, 768), server.SessionsStartInfo[server.SessionIds[2]].Environment.DisplaySize.ToSize());
-                Assert.AreEqual(new Size(320, 568), server.SessionsStartInfo[server.SessionIds[3]].Environment.DisplaySize.ToSize());
+                Assert.AreEqual(new Size(640, 480), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[0]].Environment).DisplaySize.ToSize());
+                Assert.AreEqual(new Size(800, 600), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[1]].Environment).DisplaySize.ToSize());
+                Assert.AreEqual(new Size(1024, 768), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[2]].Environment).DisplaySize.ToSize());
+                Assert.AreEqual(new Size(320, 568), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[3]].Environment).DisplaySize.ToSize());
             }
             finally
             {
