@@ -573,6 +573,11 @@ namespace Applitools
             return replaceLast_;
         }
 
+        bool ICheckSettingsInternal.IsCheckWindow()
+        {
+            return targetRegion_ == null && GetTargetSelector() == null;
+        }
+
         bool? ICheckSettingsInternal.GetEnablePatterns()
         {
             return enablePatterns_;
@@ -608,7 +613,7 @@ namespace Applitools
             }
             else /* if (selector != null) */
             {
-                return SizeMode.Selector;
+                return stitchContent ? SizeMode.FullSelector : SizeMode.Selector;
             }
         }
 

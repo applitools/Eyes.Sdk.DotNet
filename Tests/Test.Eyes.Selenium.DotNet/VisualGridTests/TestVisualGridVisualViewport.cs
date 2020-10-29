@@ -21,6 +21,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
+            TestUtils.SetupLogging(eyes);
             eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
             Configuration config = eyes.GetConfiguration();
             IosDeviceInfo iosDeviceInfo = new IosDeviceInfo(IosDeviceName.iPhone_11_Pro);

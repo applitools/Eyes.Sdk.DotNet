@@ -9,7 +9,7 @@ namespace Applitools.Selenium.Tests.Mock
 {
     class MockServerConnector : IServerConnector
     {
-        private Logger logger_;
+        private readonly Logger logger_;
 
         public MockServerConnector(Logger logger, Uri serverUrl)
         {
@@ -47,10 +47,15 @@ namespace Applitools.Selenium.Tests.Mock
             logger_.Log("deleting session: {0}", testResults.Id);
         }
 
+        public delegate void AfterEndSessionDelegate(RunningSession runningSession, bool isAborted, bool save);
+        public event AfterEndSessionDelegate AfterEndSession;
+
         public TestResults EndSession(RunningSession runningSession, bool isAborted, bool save)
         {
             logger_.Log("ending session: {0}", runningSession.SessionId);
-            return new TestResults();
+            TestResults testResults = new TestResults();
+            AfterEndSession?.Invoke(runningSession, isAborted, save);
+            return testResults;
         }
 
         public RenderingInfo GetRenderingInfo()
@@ -81,14 +86,26 @@ namespace Applitools.Selenium.Tests.Mock
             throw new NotImplementedException();
         }
 
+        public delegate (bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
+        public event OnStartSessionDelegate OnStartSession;
+
         public RunningSession StartSession(SessionStartInfo sessionStartInfo)
         {
             logger_.Log("starting session: {0}", sessionStartInfo);
 
-            var newSession = new RunningSession() { isNewSession_ = false, SessionId = Guid.NewGuid().ToString() };
-            SessionIds.Add(newSession.SessionId);
-            Sessions.Add(newSession.SessionId, newSession);
-            SessionsStartInfo.Add(newSession.SessionId, sessionStartInfo);
+            RunningSession newSession = null;
+            bool continueInvocation = true;
+            if (OnStartSession != null)
+            {
+                (continueInvocation, newSession) = OnStartSession(sessionStartInfo);
+            }
+            if (continueInvocation)
+            {
+                newSession = new RunningSession() { isNewSession_ = false, SessionId = Guid.NewGuid().ToString() };
+                SessionIds.Add(newSession.SessionId);
+                Sessions.Add(newSession.SessionId, newSession);
+                SessionsStartInfo.Add(newSession.SessionId, sessionStartInfo);
+            }
             return newSession;
         }
 

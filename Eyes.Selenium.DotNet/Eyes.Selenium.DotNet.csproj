@@ -30,8 +30,6 @@ To learn more, visit https://applitools.com/ .</Description>
     <None Remove="Properties\Resources\captureDomAndPollForIE.js" />
     <None Remove="Properties\Resources\processPageAndSerializePoll.js" />
     <None Remove="Properties\Resources\processPageAndSerializePollForIE.js" />
-    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
-    <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +37,11 @@ To learn more, visit https://applitools.com/ .</Description>
     <EmbeddedResource Include="Properties\Resources\captureDomAndPollForIE.js" />
     <EmbeddedResource Include="Properties\Resources\processPageAndSerializePoll.js" />
     <EmbeddedResource Include="Properties\Resources\processPageAndSerializePollForIE.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

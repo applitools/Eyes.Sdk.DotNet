@@ -94,7 +94,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 string browser = env.HostingAppInfo;
                 if (browser == null)
                 {
-                    eyes.Log("Error: HostingAppInfo (browser) is null. {0}", testResultContainer);
+                    eyes.Logger.Log("Error: HostingAppInfo (browser) is null. {0}", testResultContainer);
                     continue;
                 }
                 if (!results.TryGetValue(browser, out HashSet<Size> sizesList))
@@ -169,7 +169,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.SetConfiguration(config);
 
                 driver.Url = "http://applitools.github.io/demo";
-                eyes.Open(driver, "Eyes SDK", "UFG Mobile Happy Flow", new Size(800,600));
+                eyes.Open(driver, "Eyes SDK", "UFG Mobile Happy Flow", new Size(800, 600));
                 eyes.CheckWindow();
                 eyes.Close();
             }

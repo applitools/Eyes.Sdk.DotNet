@@ -2,11 +2,15 @@
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
+using Applitools.Ufg.Model;
+using Applitools.Utils;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -20,7 +24,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
+            eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
 
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
@@ -74,39 +78,85 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 driver.Close();
             }
         }
-        
+
         [Test]
         public void TestVisualGridSkipList()
         {
             VisualGridRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
-         
+            eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
+
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(1050, 600, BrowserType.CHROME);
             config.SetBatch(TestDataProvider.BatchInfo);
             eyes.SetConfiguration(config);
 
-            MockEyesConnector mockEyesConnector;
-         
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+            runner.debugLock_ = waitHandle;
+
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
-            driver.Url = "https://applitools.github.io/demo/DomSnapshot/test-iframe.html";
+            //driver.Url = "https://applitools.github.io/demo/DomSnapshot/test-iframe.html";
+            driver.Url = "https://applitools.github.io/demo/TestPages/VisualGridTestPage/";
             try
             {
-                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
-               
+                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+
                 eyes.Check(Target.Window());
-                string[] expectedUrls = new string[] { 
-                    "https://applitools.github.io/demo/DomSnapshot/test.css", 
-                    "https://applitools.github.io/demo/DomSnapshot/smurfs.jpg", 
-                    "https://applitools.github.io/blabla", 
-                    "https://applitools.github.io/demo/DomSnapshot/iframes/inner/smurfs.jpg",
-                    "https://applitools.github.io/demo/DomSnapshot/test.html",
-                    "https://applitools.github.io/demo/DomSnapshot/iframes/inner/test.html", 
-                    "https://applitools.github.io/demo/DomSnapshot/iframes/frame.html"};
+                string[] expectedUrls = new string[] {
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/AbrilFatface-Regular.woff2",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/applitools_logo_combined.svg",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/company_name.png",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/frame.html",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/innerstyle0.css",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/innerstyle1.css",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/innerstyle2.css",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/logo.svg",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/minions-800x500_green_sideways.png",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/minions-800x500.jpg",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/slogan.svg",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/style0.css",
+                    "https://applitools.github.io/demo/TestPages/VisualGridTestPage/style1.css",
+                    "https://fonts.googleapis.com/css?family=Raleway",
+                    "https://fonts.googleapis.com/css?family=Unlock",
+                    "https://fonts.gstatic.com/s/raleway/v18/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCFPrEHJA.woff2",
+                    "https://fonts.gstatic.com/s/raleway/v18/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCGPrEHJA.woff2",
+                    "https://fonts.gstatic.com/s/raleway/v18/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCHPrEHJA.woff2",
+                    "https://fonts.gstatic.com/s/raleway/v18/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCIPrE.woff2",
+                    "https://fonts.gstatic.com/s/raleway/v18/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCMPrEHJA.woff2",
+                    "https://fonts.gstatic.com/s/unlock/v10/7Au-p_8ykD-cDl72LwLT.woff2",
+                    "https://use.fontawesome.com/releases/v5.8.2/css/all.css",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-brands-400.eot",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-brands-400.svg",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-brands-400.ttf",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-brands-400.woff",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-brands-400.woff2",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-regular-400.eot",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-regular-400.svg",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-regular-400.ttf",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-regular-400.woff",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-regular-400.woff2",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.eot",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.svg",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.ttf",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.woff",
+                    "https://use.fontawesome.com/releases/v5.8.2/webfonts/fa-solid-900.woff2"};
+
+                waitHandle.WaitOne(TimeSpan.FromSeconds(5));
+
                 CollectionAssert.AreEquivalent(expectedUrls, ((IVisualGridRunner)runner).CachedBlobsURLs.Keys);
-                eyes.Check(Target.Window());
+
+                UserAgent userAgent = eyes.visualGridEyes_.userAgent_;
+                CaptureStatus captureStatus = VisualGridEyes.CollectDom_(eyes.Logger, userAgent, runner, (IJavaScriptExecutor)driver);
+                FrameData domData = captureStatus.Value;
+                DomAnalyzer domAnalyzer = new DomAnalyzer(runner, 
+                    domData, 
+                    eyes.visualGridEyes_.eyesConnector_,
+                    userAgent,
+                    eyes.visualGridEyes_.debugResourceWriter_);
+                IDictionary<string, RGridResource> resourceMap = domAnalyzer.Analyze();
+                CollectionAssert.AreEquivalent(expectedUrls, resourceMap.Keys);
+                //eyes.Check(Target.Window());
                 eyes.Close();
 
                 runner.GetAllTestResults();
@@ -118,12 +168,30 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             }
         }
 
+        [Test]
+        public void TestRunnerOptions()
+        {
+            RunnerOptions runnerOptions = new RunnerOptions().TestConcurrency(5);
+
+            VisualGridRunner runner1 = new VisualGridRunner();
+            Assert.AreEqual(VisualGridRunner.FACTOR, ((IRunnerOptionsInternal)runner1.runnerOptions_).GetConcurrency());
+            runner1.GetAllTestResults();
+
+            VisualGridRunner runner2 = new VisualGridRunner(runnerOptions);
+            Assert.AreEqual(5, ((IRunnerOptionsInternal)runner2.runnerOptions_).GetConcurrency());
+            runner2.GetAllTestResults();
+
+            VisualGridRunner runner3 = new VisualGridRunner(5);
+            Assert.AreEqual(VisualGridRunner.FACTOR * 5, ((IRunnerOptionsInternal)runner3.runnerOptions_).GetConcurrency());
+            runner3.GetAllTestResults();
+        }
+
         private static MockEyesConnector OpenEyesAndGetConnector_(Eyes eyes, Configuration config, IWebDriver driver)
         {
             eyes.Open(driver, "Mock app", "Mock Test");
 
-            Mock.MockEyesConnector mockEyesConnector = (Mock.MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
-            Mock.MockServerConnector mockServerConnector = new Mock.MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
+            MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
+            MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
             EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
             {
                 runningSession_ = new RunningSession(),

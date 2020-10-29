@@ -4,6 +4,7 @@ using Applitools.Ufg;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Applitools.Tests
 {
@@ -13,7 +14,7 @@ namespace Applitools.Tests
         public void TestBadCss()
         {
             string badCss = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.clientlibs_all.default.css");
-            RenderingTask.TextualDataResource data = new RenderingTask.TextualDataResource()
+            DomAnalyzer.TextualDataResource data = new DomAnalyzer.TextualDataResource()
             {
                 Data = badCss,
                 Uri = new System.Uri("https://a.co/path/")
@@ -63,7 +64,8 @@ namespace Applitools.Tests
             ILogHandler logHandler = TestUtils.InitLogHandler();
             logger.SetLogHandler(logHandler);
 
-            RenderingTask.ParseCSS_(data, extraResources, logger);
+            ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
+            DomAnalyzer.ParseCSS_(data, extraResources, logger, cache);
             logger.Log("expected:");
             foreach (string url in expectedResources)
             {

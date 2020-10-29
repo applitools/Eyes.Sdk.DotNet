@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Applitools.Fluent;
 using Applitools.Ufg;
+using Applitools.Ufg.Model;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
@@ -16,7 +17,7 @@ namespace Applitools.Selenium.VisualGrid
 {
     public class EyesConnector : EyesBase, IUfgConnector
     {
-        private RenderBrowserInfo browserInfo_;
+        private readonly RenderBrowserInfo browserInfo_;
         private string userAgent_;
         private RenderingInfo renderInfo_;
         private HttpRestClient httpClient_;
@@ -27,10 +28,19 @@ namespace Applitools.Selenium.VisualGrid
         private string appName_;
         private Applitools.Configuration config_;
 
+        internal EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
+            : base(serverConnectorFactory)
+        {
+            browserInfo_ = browserInfo;
+            config_ = configuration;
+            UpdateServerConnector_();
+        }
+
         public EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
+            UpdateServerConnector_();
         }
 
         #region Properties
@@ -243,7 +253,7 @@ namespace Applitools.Selenium.VisualGrid
             OpenBase();
         }
 
-        public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
+        public Task<WebResponse> RenderPutResourceAsTask(RunningRender runningRender, RGridResource resource)
         {
             ArgumentGuard.NotNull(runningRender, nameof(runningRender));
             ArgumentGuard.NotNull(resource, nameof(resource));
@@ -271,7 +281,12 @@ namespace Applitools.Selenium.VisualGrid
 
             Task<WebResponse> task = request.GetResponseAsync();
             Logger.Verbose("future created.");
+            return task;
+        }
 
+        public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
+        {
+            Task<WebResponse> task = RenderPutResourceAsTask(runningRender, resource);
             return new PutFuture(task, resource, runningRender, this, Logger);
         }
 
@@ -294,15 +309,25 @@ namespace Applitools.Selenium.VisualGrid
         protected override RectangleSize GetViewportSizeForOpen()
         {
             RectangleSize result;
-            if (deviceSize_ != null && !deviceSize_.IsEmpty())
+            if (browserInfo_?.EmulationInfo != null)
             {
-                Logger.Verbose("using deviceSize");
+                Logger.Verbose("using emulationInfo");
+                result = deviceSize_;
+            }
+            else if (browserInfo_?.IosDeviceInfo != null)
+            {
+                Logger.Verbose("using iosDeviceInfo");
                 result = deviceSize_;
             }
             else if (browserInfo_.DesktopBrowserInfo?.ViewportSize != null)
             {
                 Logger.Verbose("using browserInfo_.ViewportSize");
                 result = browserInfo_.DesktopBrowserInfo.ViewportSize;
+            }
+            else if (deviceSize_ != null && !deviceSize_.IsEmpty())
+            {
+                Logger.Verbose("using deviceSize");
+                result = deviceSize_;
             }
             else
             {
@@ -345,5 +370,14 @@ namespace Applitools.Selenium.VisualGrid
             config_ = (Applitools.Configuration)config;
             return Close(throwEx);
         }
+
+        public bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
+        {
+            using (HttpWebResponse response = httpClient_.PostJson($"/query/resources-exist?rg_render-id={renderId}", hashes))
+            {
+                return response.DeserializeBody<bool?[]>(true);
+            }
+        }
+
     }
 }

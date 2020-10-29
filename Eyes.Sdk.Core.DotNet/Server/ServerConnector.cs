@@ -121,6 +121,11 @@ namespace Applitools
         /// </summary>
         public RunningSession StartSession(SessionStartInfo startInfo)
         {
+            return StartSessionInternal(startInfo);
+        }
+
+        protected virtual RunningSession StartSessionInternal(SessionStartInfo startInfo)
+        {
             ArgumentGuard.NotNull(startInfo, nameof(startInfo));
 
             var body = new
@@ -140,13 +145,22 @@ namespace Applitools
                     // response.DeserializeBody disposes the response object's stream, 
                     // rendering all of its properties unusable, including StatusCode.
                     HttpStatusCode responseStatusCode = response.StatusCode;
-                    RunningSession runningSession = response.DeserializeBody<RunningSession>(
-                        true, json_, HttpStatusCode.OK, HttpStatusCode.Created);
-                    if (runningSession.isNewSession_ == null)
+                    RunningSession runningSession;
+                    if (responseStatusCode == HttpStatusCode.ServiceUnavailable)
                     {
-                        runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
+                        runningSession = new RunningSession();
+                        runningSession.ConcurrencyFull = true;
                     }
-
+                    else
+                    {
+                        runningSession = response.DeserializeBody<RunningSession>(
+                            true, json_, HttpStatusCode.OK, HttpStatusCode.Created);
+                        if (runningSession.isNewSession_ == null)
+                        {
+                            runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
+                        }
+                        runningSession.ConcurrencyFull = false;
+                    }
                     return runningSession;
                 }
             }
@@ -179,6 +193,11 @@ namespace Applitools
         /// Ends the input running session.
         /// </summary>
         public TestResults EndSession(RunningSession runningSession, bool isAborted, bool save)
+        {
+            return EndSessionInternal(runningSession, isAborted, save);
+        }
+
+        protected virtual TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
         {
             ArgumentGuard.NotNull(runningSession, nameof(runningSession));
 
@@ -536,7 +555,7 @@ namespace Applitools
             {
                 return;
             }
-
+            Logger.Log("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
             HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, json_);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);

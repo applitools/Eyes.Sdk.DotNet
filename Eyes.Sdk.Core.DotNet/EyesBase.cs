@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Applitools.VisualGrid.Model;
 using Applitools.VisualGrid;
+using System.Threading;
 
 namespace Applitools
 {
@@ -56,14 +57,16 @@ namespace Applitools
         private Assembly actualAssembly_;
         private PropertiesCollection properties_;
         private static readonly object screenshotLock_ = new object();
+        private readonly TimeSpan TIME_TO_WAIT_FOR_OPEN = TimeSpan.FromSeconds(70);
+        private readonly TimeSpan TIME_THRESHOLD = TimeSpan.FromSeconds(20);
         private bool isViewportSizeSet_;
         private IDebugScreenshotProvider debugScreenshotProvider_ = NullDebugScreenshotProvider.Instance;
         protected RectangleSize viewportSize_;
         public static string DefaultServerUrl = "https://eyesapi.applitools.com/";
         private IServerConnector serverConnector_;
-        private Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
-        private Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
-        private Dictionary<BrowserType, string> userAgents_;
+        internal Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
+        internal Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
+        internal Dictionary<BrowserType, string> userAgents_;
 
         #endregion
 
@@ -94,6 +97,7 @@ namespace Applitools
 
             //EnsureConfiguration_();
 
+            UpdateActualAssembly_();
             ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
             runningSession_ = null;
             UserInputs = new List<Trigger>();
@@ -103,7 +107,10 @@ namespace Applitools
             setScaleProvider_ = provider => { scaleProvider_ = provider; };
             scaleProvider_ = NullScaleProvider.Instance;
             cutProvider_ = NullCutProvider.Instance;
+        }
 
+        private void UpdateActualAssembly_()
+        {
             StackTrace stackTrace = new StackTrace();
             StackFrame[] stackFrames = stackTrace.GetFrames();
             foreach (StackFrame stackFrame in stackFrames)
@@ -675,7 +682,7 @@ namespace Applitools
                     Logger.Verbose("Ignored");
                     return new MatchResult() { AsExpected = true };
                 }
-                
+
                 string tag = checkSettingsInternal.GetName() ?? string.Empty;
 
                 ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
@@ -840,7 +847,7 @@ namespace Applitools
             }
         }
 
-        internal void UpdateServerConnector_()
+        protected internal void UpdateServerConnector_()
         {
             ServerConnector.ApiKey = ApiKey;
             ServerConnector.ServerUrl = new Uri(ServerUrl);
@@ -898,7 +905,27 @@ namespace Applitools
             }
 
             Logger.Log("No running session, calling start session...");
-            StartSession_();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            TimeSpan sleepDuration = TimeSpan.FromSeconds(5);
+            bool startSessionResult = false;
+            while (!startSessionResult && stopwatch.Elapsed < TIME_TO_WAIT_FOR_OPEN)
+            {
+                startSessionResult = StartSession_();
+                if (!startSessionResult)
+                {
+                    if (stopwatch.Elapsed > TIME_THRESHOLD)
+                    {
+                        sleepDuration = TimeSpan.FromSeconds(10);
+                    }
+                    Thread.Sleep(sleepDuration);
+                    IsServerConcurrencyLimitReached = false;
+                }
+            }
+            if (!startSessionResult)
+            {
+                Logger.Log("Error: could not start session.");
+                return;
+            }
             Logger.Log("Done!");
 
             matchWindowTask_ = new MatchWindowTask(
@@ -984,6 +1011,7 @@ namespace Applitools
         protected virtual bool ViewportSizeRequired => true;
 
         public IServerConnectorFactory ServerConnectorFactory { get; protected internal set; } = new ServerConnectorFactory();
+        public bool IsServerConcurrencyLimitReached { get; private set; }
         #endregion
 
         #region Private
@@ -1021,7 +1049,7 @@ namespace Applitools
             return appEnv;
         }
 
-        private void StartSession_()
+        private bool StartSession_()
         {
             Logger.Verbose("enter");
 
@@ -1063,6 +1091,13 @@ namespace Applitools
             Logger.Verbose(JsonConvert.SerializeObject(sessionStartInfo_));
             runningSession_ = ServerConnector.StartSession(sessionStartInfo_);
 
+            if (runningSession_.ConcurrencyFull)
+            {
+                IsServerConcurrencyLimitReached = true;
+                Logger.Verbose("Failed starting test {0}, concurrency is fully used. Trying again.", Configuration.TestName);
+                return false;
+            }
+            IsServerConcurrencyLimitReached = false;
             //Logger.Verbose("getting rendering info...");
             //runningSession_.RenderingInfo = serverConnector_.GetRenderingInfo();
 
@@ -1079,6 +1114,8 @@ namespace Applitools
                 Logger.Log("--- Test started - " + testInfo);
                 shouldMatchWindowRunOnceOnTimeout_ = false;
             }
+
+            return true;
         }
 
         protected virtual object GetAgentSetup() { return null; }

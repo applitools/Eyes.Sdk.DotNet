@@ -11,6 +11,6 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "full-page")] FullPage,
         [EnumMember(Value = "selector")] Selector,
         [EnumMember(Value = "region")] Region,
-        //[EnumMember(Value = "full-selector")] FullSelector,
+        [EnumMember(Value = "full-selector")] FullSelector,
     }
 }

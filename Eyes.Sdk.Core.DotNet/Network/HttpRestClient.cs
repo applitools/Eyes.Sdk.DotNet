@@ -319,21 +319,6 @@ namespace Applitools.Utils
                 throw new NullReferenceException("response is null");
             }
 
-            //while (Retry != null && Retry(request, response))
-            //{
-            //    CommonUtils.DontThrow(() => response.Close());
-
-            //    Thread.Sleep(wait);
-            //    wait *= 2;
-            //    wait = Math.Min(10000, wait);
-
-            //    send();
-            //}
-
-            if (response == null)
-            {
-                throw new NullReferenceException("response object is null.");
-            }
             if (AcceptLongRunningTasks)
             {
                 var statusUrl = response.Headers[HttpResponseHeader.Location];

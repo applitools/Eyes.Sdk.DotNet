@@ -67,7 +67,7 @@ namespace Applitools.Selenium.VisualGrid
         private IConfiguration configAtOpen_;
         private IWebDriver webDriver_;
         private EyesWebDriver driver_;
-        private UserAgent userAgent_;
+        internal UserAgent userAgent_;
         private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
         private RectangleSize viewportSize_;
 
@@ -250,7 +250,8 @@ namespace Applitools.Selenium.VisualGrid
         internal IUfgConnector CreateEyesConnector_(RenderBrowserInfo browserInfo, string apiKey)
         {
             Logger.Verbose("creating eyes server connector");
-            IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(browserInfo, (Applitools.Configuration)configAtOpen_);
+            IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(
+                browserInfo, (Applitools.Configuration)configAtOpen_);
 
             eyesConnector.SetLogHandler(Logger.GetILogHandler());
             eyesConnector.Proxy = Proxy;
@@ -423,8 +424,9 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.Verbose("enter (#{0})", GetHashCode());
 
-            List<VisualGridTask> openTasks = AddOpenTaskToAllRunningTest_();
-            List<VisualGridTask> taskList = new List<VisualGridTask>();
+            AddOpenTaskToAllRunningTest_();
+
+            List<VisualGridTask> checkTasks = new List<VisualGridTask>();
 
             ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
             ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
@@ -452,15 +454,7 @@ namespace Applitools.Selenium.VisualGrid
                     switchTo.ParentFrame();
                 }
 
-                Logger.Verbose("Collecting DOM...");
-                CaptureStatus captureStatus = GetDomCaptureAndPollingScriptResult_();
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                while (captureStatus.Status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
-                {
-                    Logger.Verbose("DOM capture status: {0}", captureStatus.Status);
-                    Thread.Sleep(200);
-                    captureStatus = GetDomCaptureAndPollingScriptResult_();
-                }
+                CaptureStatus captureStatus = CollectDom_(Logger, userAgent_, visualGridRunner_, jsExecutor_);
 
                 if (captureStatus.Status == CaptureStatusEnum.ERROR)
                 {
@@ -472,7 +466,6 @@ namespace Applitools.Selenium.VisualGrid
                     switchTo.Frames(originalFC);
                     throw new EyesException("DOM capture timeout.");
                 }
-                Logger.Verbose("DOM collected.");
 
                 //string scriptResult = captureStatus.Value;
                 IList<VisualGridSelector[]> regionSelectors = GetRegionsXPaths_(checkSettings);
@@ -492,11 +485,11 @@ namespace Applitools.Selenium.VisualGrid
                 foreach (RunningTest test in filteredTests)
                 {
                     VisualGridTask checkTask = test.Check(configClone, checkSettings, regionSelectors, source);
-                    taskList.Add(checkTask);
+                    checkTasks.Add(checkTask);
                 }
 
                 visualGridRunner_.Check(checkSettings, debugResourceWriter_, captureStatus.Value, regionSelectors,
-                        eyesConnector_, userAgent_, taskList, openTasks,
+                        eyesConnector_, userAgent_, checkTasks,
                         new VisualGridRunner.RenderListener());
 
                 switchTo.Frames(originalFC);
@@ -510,6 +503,23 @@ namespace Applitools.Selenium.VisualGrid
                 }
                 Logger.Log("Error: " + ex);
             }
+        }
+
+        internal static CaptureStatus CollectDom_(Logger logger, UserAgent userAgent,
+            IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
+        {
+            logger.Verbose("Collecting DOM...");
+            CaptureStatus captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while (captureStatus.Status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
+            {
+                logger.Verbose("DOM capture status: {0}", captureStatus.Status);
+                Thread.Sleep(200);
+                captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
+            }
+
+            logger.Verbose("DOM collected.");
+            return captureStatus;
         }
 
         internal static List<RunningTest> CollectTestsForCheck_(Logger logger, List<RunningTest> tests)
@@ -541,16 +551,23 @@ namespace Applitools.Selenium.VisualGrid
         private void EnsureViewportSize_()
         {
             RectangleSize viewportSize = Config_.ViewportSize;
-            List<RenderBrowserInfo> browsersInfo = Config_.GetBrowsersInfo();
-            if ((viewportSize == null || viewportSize.IsEmpty()) && browsersInfo.Count > 0)
+
+            if (viewportSize == null || viewportSize.IsEmpty())
             {
-                foreach (RenderBrowserInfo browserInfo in browsersInfo)
+                List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
+                if (browserInfoList != null && browserInfoList.Count > 0)
                 {
-                    if (browserInfo.EmulationInfo != null) continue;
-                    viewportSize = browserInfo.DesktopBrowserInfo?.ViewportSize;
-                    break;
+                    foreach (RenderBrowserInfo deviceInfo in browserInfoList)
+                    {
+                        if (deviceInfo.EmulationInfo != null)
+                        {
+                            continue;
+                        }
+                        viewportSize = new RectangleSize(deviceInfo.Width, deviceInfo.Height);
+                    }
                 }
             }
+
             if (viewportSize == null || viewportSize.IsEmpty())
             {
                 viewportSize = EyesSeleniumUtils.GetViewportSize(Logger, driver_);
@@ -579,7 +596,7 @@ namespace Applitools.Selenium.VisualGrid
 
             if (fully == null)
             {
-                checkSettings = checkSettings.Fully(Config_.IsForceFullPageScreenshot ?? true);
+                checkSettings = checkSettings.Fully(Config_.IsForceFullPageScreenshot ?? checkSettingsInternal.IsCheckWindow());
             }
 
             if (sendDom == null)
@@ -616,33 +633,34 @@ namespace Applitools.Selenium.VisualGrid
             checkSettings.SetTargetSelector(vgs);
         }
 
-        internal CaptureStatus GetDomCaptureAndPollingScriptResult_()
+        internal static CaptureStatus GetDomCaptureAndPollingScriptResult_(
+            Logger logger, UserAgent userAgent, IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
         {
             CaptureStatus captureStatus;
             string captureStatusStr = null;
             try
             {
-                string script = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
+                string script = userAgent.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
 
-                object skipListObj = new { skipResources = ((IVisualGridRunner)visualGridRunner_).CachedBlobsURLs.Keys };
+                object skipListObj = new { skipResources = runner.CachedBlobsURLs.Keys };
 
                 string skipListJson = JsonConvert.SerializeObject(skipListObj);
                 string arguments = string.Format("(document, {0})", skipListJson);
-                Logger.Verbose("processPageAndSerializePoll[ForIe] {0}", arguments);
+                logger.Verbose("processPageAndSerializePoll[ForIe] {0}", arguments);
                 script += arguments;
-                captureStatusStr = (string)jsExecutor_.ExecuteScript(script);
+                captureStatusStr = (string)jsExecutor.ExecuteScript(script);
 
                 captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
             }
             catch (JsonReaderException jsonException)
             {
-                Logger.Log("Error: " + jsonException);
-                Logger.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
+                logger.Log("Error: " + jsonException);
+                logger.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
                 captureStatus = null;
             }
             catch (Exception e)
             {
-                Logger.Log("Error: " + e);
+                logger.Log("Error: " + e);
                 captureStatus = null;
             }
             return captureStatus;
@@ -991,6 +1009,16 @@ namespace Applitools.Selenium.VisualGrid
         public IBatchCloser GetBatchCloser()
         {
             return testList_[0].GetBatchCloser();
+        }
+
+        internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
+        internal event AfterServerConcurrencyLimitReachedQueriedDelegate AfterServerConcurrencyLimitReachedQueried;
+
+        public bool IsServerConcurrencyLimitReached()
+        {
+            bool result = testList_.Any(t => t.IsServerConcurrencyLimitReached);
+            AfterServerConcurrencyLimitReachedQueried?.Invoke(result);
+            return result;
         }
     }
 }

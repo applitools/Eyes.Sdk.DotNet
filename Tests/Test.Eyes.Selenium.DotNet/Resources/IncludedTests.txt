@@ -415,3 +415,7 @@ Applitools.Selenium.Tests.TestAPI.TestFullAgentId_VG
 Applitools.Selenium.Tests.TestCodedRegions.TestSimpleCodedRegions
 Applitools.Selenium.Tests.TestDom.TestDomSerialization
 Applitools.Selenium.Tests.VisualGridTests.TestDeviceInfo.TestIosDeviceInfo
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestRunnerOptions
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestOpenBeforeRender
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestRunnerConcurrency
+Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestRetryWhenServerConcurrencyLimitReached
