@@ -14,10 +14,10 @@ namespace Applitools.Selenium.Tests.ApiTests
         [TestCase(false, "Test Sequence", null)]
         [TestCase(false, null, "Test Sequence Name Env Var")]
         [TestCase(false, null, null)]
-        [TestCase(true, "Test Sequence", "Test Sequence Name Env Var")]
-        [TestCase(true, "Test Sequence", null)]
-        [TestCase(true, null, "Test Sequence Name Env Var")]
-        [TestCase(true, null, null)]
+        //[TestCase(true, "Test Sequence", "Test Sequence Name Env Var")]
+        //[TestCase(true, "Test Sequence", null)]
+        //[TestCase(true, null, "Test Sequence Name Env Var")]
+        //[TestCase(true, null, null)]
         public void TestEyesConfiguration(bool useVisualGrid, string sequenceName, string sequenceNameEnvVar)
         {
             EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
