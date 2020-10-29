@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Region = Applitools.Utils.Geometry.Region;
 using System.Diagnostics;
 using Applitools.Fluent;
 using Applitools.Exceptions;
@@ -1220,36 +1219,6 @@ namespace Applitools
             }
 
             return domUrl;
-        }
-
-        public Dictionary<IosDeviceName, DeviceSize> GetIosDevicesSizes()
-        {
-            if (iosDevicesSizes_ != null)
-            {
-                return iosDevicesSizes_;
-            }
-            iosDevicesSizes_ = ((ServerConnector)ServerConnector).GetIosDevicesSizes();
-            return iosDevicesSizes_;
-        }
-
-        public Dictionary<DeviceName, DeviceSize> GetEmulatedDevicesSizes()
-        {
-            if (emulatedDevicesSizes_ != null)
-            {
-                return emulatedDevicesSizes_;
-            }
-            emulatedDevicesSizes_ = ((ServerConnector)ServerConnector).GetEmulatedDevicesSizes();
-            return emulatedDevicesSizes_;
-        }
-
-        public Dictionary<BrowserType, string> GetUserAgents()
-        {
-            if (userAgents_ != null)
-            {
-                return userAgents_;
-            }
-            userAgents_ = ((ServerConnector)ServerConnector).GetUserAgents();
-            return userAgents_;
         }
 
         #endregion

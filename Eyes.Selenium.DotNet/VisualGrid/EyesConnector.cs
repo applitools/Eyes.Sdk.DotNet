@@ -12,17 +12,16 @@ using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Applitools.Selenium.VisualGrid
 {
     public class EyesConnector : EyesBase, IUfgConnector
     {
         private readonly RenderBrowserInfo browserInfo_;
-        private string userAgent_;
         private RenderingInfo renderInfo_;
         private HttpRestClient httpClient_;
         private readonly JsonSerializer serializer_ = JsonUtils.CreateSerializer();
-        private RectangleSize deviceSize_;
         private RenderStatusResults renderStatusResult_;
         private string testName_;
         private string appName_;
@@ -54,24 +53,12 @@ namespace Applitools.Selenium.VisualGrid
 
         protected override string GetInferredEnvironment()
         {
-            return "useragent: " + userAgent_;
+            return null;
         }
 
         protected override object GetEnvironment_()
         {
-            AppEnvironment environment = (AppEnvironment)base.GetEnvironment_();
-           
-            if (string.IsNullOrEmpty(userAgent_))
-            {
-                if (environment.HostingApp == null) environment.HostingApp = BrowserNames.GetBrowserName(browserInfo_.BrowserType);
-                if (environment.OS == null) environment.OS = StringUtils.ToPascalCase(browserInfo_.Platform);
-            }
-            return environment;
-        }
-
-        public void SetUserAgent(string userAgent)
-        {
-            userAgent_ = userAgent;
+            return GetJobInfo().EyesEnvironment;
         }
 
         protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal) { return null; }
@@ -133,7 +120,17 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     Stream s = response.GetResponseStream();
                     string json = new StreamReader(s).ReadToEnd();
-                    List<JobInfo> jobInfos = serializer_.Deserialize<List<JobInfo>>(json);
+                    JObject[] jobInfosUnparsed = JsonConvert.DeserializeObject<JObject[]>(json);
+                    List<JobInfo> jobInfos = new List<JobInfo>();
+                    foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
+                    {
+                        JobInfo jobInfo = new JobInfo
+                        {
+                            Renderer = jobInfoUnparsed.Value<string>("renderer"),
+                            EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
+                        };
+                        jobInfos.Add(jobInfo);
+                    }
                     Logger.Verbose("request succeeded");
                     return jobInfos;
                 }
@@ -312,44 +309,6 @@ namespace Applitools.Selenium.VisualGrid
             Task<WebResponse> task = request.GetResponseAsync();
             Logger?.Verbose("Downloading data from {0}", url);
             ResourceFuture result = new ResourceFuture(task, url, Logger);
-            return result;
-        }
-
-        public void SetDeviceSize(RectangleSize deviceSize)
-        {
-            Logger.Verbose("setting device size: {0} ({1})", deviceSize, GetHashCode());
-            deviceSize_ = deviceSize;
-        }
-
-        protected override RectangleSize GetViewportSizeForOpen()
-        {
-            RectangleSize result;
-            if (browserInfo_?.EmulationInfo != null)
-            {
-                Logger.Verbose("using emulationInfo");
-                result = deviceSize_;
-            }
-            else if (browserInfo_?.IosDeviceInfo != null)
-            {
-                Logger.Verbose("using iosDeviceInfo");
-                result = deviceSize_;
-            }
-            else if (browserInfo_.DesktopBrowserInfo?.ViewportSize != null)
-            {
-                Logger.Verbose("using browserInfo_.ViewportSize");
-                result = browserInfo_.DesktopBrowserInfo.ViewportSize;
-            }
-            else if (deviceSize_ != null && !deviceSize_.IsEmpty())
-            {
-                Logger.Verbose("using deviceSize");
-                result = deviceSize_;
-            }
-            else
-            {
-                Logger.Verbose("using Configuration");
-                result = base.GetViewportSizeForOpen();
-            }
-            Logger.Verbose("Return value: {0} ({1})", result, GetHashCode());
             return result;
         }
 

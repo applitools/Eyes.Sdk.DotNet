@@ -39,8 +39,8 @@ namespace Applitools.VisualGrid
             RunningTest runningTest = null;
             VisualGridTask task = new VisualGridTask(taskType, logger, runningTest);
 
-            RenderRequest request = new RenderRequest(webHook, url, stitchingServiceUrl, dom, resources, renderInfo, platform, browserName, 
-                scriptHooks, selectorsToFindRegionsFor, sendDom, task, null);
+            RenderRequest request = new RenderRequest(webHook, url, stitchingServiceUrl, dom, resources, 
+                renderInfo, platform, browserName, scriptHooks, selectorsToFindRegionsFor, sendDom, task, null);
 
             JsonSerializerSettings settings = JsonUtils.CreateSerializerSettings();
             settings.Formatting = Formatting.Indented;

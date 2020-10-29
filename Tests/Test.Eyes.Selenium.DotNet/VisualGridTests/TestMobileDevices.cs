@@ -1,4 +1,5 @@
 ﻿using Applitools.Metadata;
+using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
@@ -9,7 +10,6 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
@@ -23,7 +23,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new LocalEyesConnectorFactory();
+            //eyes.visualGridEyes_.EyesConnectorFactory = new LocalEyesConnectorFactory();
 
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(new DesktopBrowserInfo(new RectangleSize(700, 460), BrowserType.CHROME));
@@ -88,7 +88,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
             SessionResults chromeSessionResults = TestUtils.GetSessionResults(eyes.ApiKey, testResults[0]);
             string actualUserAgent = chromeSessionResults.StartInfo.Environment.Inferred;
-            Dictionary<BrowserType, string> userAgents = eyes.visualGridEyes_.eyesConnector_.GetUserAgents();
+            Dictionary<BrowserType, string> userAgents = MockEyesConnector.UserAgents;
             Assert.AreEqual("useragent: " + userAgents[BrowserType.CHROME], actualUserAgent);
 
             Assert.AreEqual(new RectangleSize(700, 460), testResults[0].HostDisplaySize);

@@ -18,13 +18,7 @@ namespace Applitools.Selenium.Tests.Mock
         private readonly Applitools.Configuration config_;
         public IUfgConnector WrappedConnector { get; set; }
 
-        public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
-        {
-            browserInfo_ = browserInfo;
-            config_ = config;
-            ServerConnectorFactory = new MockServerConnectorFactory();
-
-            userAgents_ = new Dictionary<BrowserType, string>()
+        public static Dictionary<BrowserType, string> UserAgents = new Dictionary<BrowserType, string>()
             {
                 { BrowserType.CHROME, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/86.0.4240.75 Safari/537.36" },
                 { BrowserType.CHROME_ONE_VERSION_BACK, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/85.0.4183.83 Safari/537.36" },
@@ -34,7 +28,7 @@ namespace Applitools.Selenium.Tests.Mock
                 { BrowserType.FIREFOX_TWO_VERSIONS_BACK, "Mozilla/5.0 (X11; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0" },
             };
 
-            emulatedDevicesSizes_ = new Dictionary<DeviceName, DeviceSize>()
+        public static Dictionary<DeviceName, DeviceSize> EmulatedDevicesSizes = new Dictionary<DeviceName, DeviceSize>()
             {
                 { DeviceName.iPhone_4, new DeviceSize(480, 320) },
                 { DeviceName.iPhone_5SE, new DeviceSize(568, 320) },
@@ -42,7 +36,7 @@ namespace Applitools.Selenium.Tests.Mock
                 { DeviceName.Galaxy_S5, new DeviceSize(640, 360) }
             };
 
-            iosDevicesSizes_ = new Dictionary<IosDeviceName, DeviceSize>()
+        public static Dictionary<IosDeviceName, DeviceSize> IosDevicesSizes = new Dictionary<IosDeviceName, DeviceSize>()
             {
                 { IosDeviceName.iPhone_11, new DeviceSize(896, 414) },
                 { IosDeviceName.iPhone_11_Pro, new DeviceSize(812, 375) },
@@ -56,6 +50,12 @@ namespace Applitools.Selenium.Tests.Mock
                 { IosDeviceName.iPad_Pro_3, new DeviceSize(1366, 1024) },
                 { IosDeviceName.iPad_7, new DeviceSize(1080, 810) },
             };
+        public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
+        {
+            browserInfo_ = browserInfo;
+            config_ = config;
+            ServerConnectorFactory = new MockServerConnectorFactory();
+
         }
 
         public RenderRequest[] LastRenderRequests { get; set; }
@@ -215,12 +215,12 @@ namespace Applitools.Selenium.Tests.Mock
 
         public JobInfo GetJobInfo()
         {
-            throw new NotImplementedException();
+            return WrappedConnector.GetJobInfo();
         }
 
         public string GetRenderer()
         {
-            throw new NotImplementedException();
+            return WrappedConnector.GetRenderer();
         }
     }
 }
