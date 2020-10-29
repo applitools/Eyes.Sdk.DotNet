@@ -3,6 +3,7 @@ using Applitools.Ufg;
 using Applitools.Utils;
 using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Applitools.VisualGrid
@@ -32,7 +33,8 @@ namespace Applitools.VisualGrid
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.chevron.svg"),
                 Uri = null
             };
-            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger);
+            ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
+            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
             Assert.AreEqual(0, allResourceUris.Count);
         }
 
@@ -50,7 +52,8 @@ namespace Applitools.VisualGrid
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.ios.svg"),
                 Uri = null
             };
-            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger);
+            ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
+            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
             Assert.AreEqual(0, allResourceUris.Count);
         }
 
@@ -68,7 +71,8 @@ namespace Applitools.VisualGrid
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.applitools_logo_combined.svg"),
                 Uri = new Uri("https://applitools.github.io/demo/TestPages/VisualGridTestPage/applitools_logo_combined.svg")
             };
-            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger);
+            ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
+            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
             Assert.AreEqual(3, allResourceUris.Count);
         }
 
@@ -86,7 +90,8 @@ namespace Applitools.VisualGrid
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.fa-regular-400.svg"),
                 Uri = null
             };
-            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger);
+            ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
+            DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
             Assert.AreEqual(0, allResourceUris.Count);
         }
     }

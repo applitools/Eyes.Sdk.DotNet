@@ -4,6 +4,7 @@ using Applitools.Ufg;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Applitools.Tests
 {
@@ -63,7 +64,8 @@ namespace Applitools.Tests
             ILogHandler logHandler = TestUtils.InitLogHandler();
             logger.SetLogHandler(logHandler);
 
-            DomAnalyzer.ParseCSS_(data, extraResources, logger);
+            ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
+            DomAnalyzer.ParseCSS_(data, extraResources, logger, cache);
             logger.Log("expected:");
             foreach (string url in expectedResources)
             {
