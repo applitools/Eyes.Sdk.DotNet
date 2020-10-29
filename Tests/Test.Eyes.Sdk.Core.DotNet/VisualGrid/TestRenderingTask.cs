@@ -31,7 +31,7 @@ namespace Applitools.VisualGrid
                 MimeType = "image/svg+xml",
                 OriginalData = CommonUtils.ReadResourceBytes("Test.Eyes.Sdk.Core.DotNet.Resources.chevron.svg"),
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.chevron.svg"),
-                Uri = null
+                Uri = new Uri("https://a.co/chevron.svg")
             };
             ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
             DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
@@ -50,7 +50,7 @@ namespace Applitools.VisualGrid
                 MimeType = "image/svg+xml",
                 OriginalData = CommonUtils.ReadResourceBytes("Test.Eyes.Sdk.Core.DotNet.Resources.ios.svg"),
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.ios.svg"),
-                Uri = null
+                Uri = new Uri("https://a.co/ios.svg")
             };
             ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
             DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
@@ -88,7 +88,7 @@ namespace Applitools.VisualGrid
                 MimeType = "image/svg+xml",
                 OriginalData = CommonUtils.ReadResourceBytes("Test.Eyes.Sdk.Core.DotNet.Resources.fa-regular-400.svg"),
                 Data = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.fa-regular-400.svg"),
-                Uri = null
+                Uri = new Uri("https://a.co/fa-regular-400.svg")
             };
             ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
             DomAnalyzer.ParseSVG_(tdr, allResourceUris, logger, cache);
