@@ -6,5 +6,8 @@ namespace Applitools.Tests.Utils
     {
         [JsonProperty("group")]
         public string Group => "core";
+
+        [JsonIgnore]
+        public bool IsGenerated => false;
     }
 }
