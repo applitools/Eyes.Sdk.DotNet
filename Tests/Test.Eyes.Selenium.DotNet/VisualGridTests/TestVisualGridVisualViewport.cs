@@ -54,7 +54,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 AppOutput appOutput = matchWindowData.AppOutput;
                 Assert.AreEqual(980, appOutput.Viewport.Width);
                 Assert.AreEqual(1659, appOutput.Viewport.Height);
-
+                Assert.IsNotNull(mockEyesConnector.DeviceSize);
                 Assert.AreEqual(375, mockEyesConnector.DeviceSize.Width);
                 Assert.AreEqual(812, mockEyesConnector.DeviceSize.Height);
             }
