@@ -5,12 +5,14 @@ using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.Ufg.Model;
 using Applitools.Utils;
+using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -107,22 +109,26 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             config.SetBatch(TestDataProvider.BatchInfo);
             eyes.SetConfiguration(config);
 
-            MockEyesConnector mockEyesConnector;
-
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.github.io/demo/TestPages/DynamicResolution/desktop.html";
             try
             {
                 // First check - global + fluent config
-                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                eyes.Logger.Verbose("starting first check");
+                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                eyes.Logger.Verbose("calling eyes.Check");
                 eyes.Check(Target.Window().VisualGridOptions(new VisualGridOption("option3", "value3"), new VisualGridOption("option4", 5)));
+                eyes.Logger.Verbose("calling eyes.Close");
                 eyes.Close();
                 var expected1 = new Dictionary<string, object>()
                 {
                     {"option1", "value1"}, {"option2", false}, {"option3", "value3"}, {"option4", 5}
                 };
+                eyes.Logger.Verbose("getting results...");
                 var actual1 = mockEyesConnector.LastRenderRequests[0].Options;
+                eyes.Logger.Verbose("comparing results...");
                 CollectionAssert.AreEquivalent(expected1, actual1);
+                eyes.Logger.Verbose("done first check");
 
 
                 // Second check - only global
@@ -224,8 +230,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 UserAgent userAgent = eyes.visualGridEyes_.userAgent_;
                 CaptureStatus captureStatus = VisualGridEyes.CollectDom_(eyes.Logger, userAgent, runner, (IJavaScriptExecutor)driver);
                 FrameData domData = captureStatus.Value;
-                DomAnalyzer domAnalyzer = new DomAnalyzer(runner, 
-                    domData, 
+                DomAnalyzer domAnalyzer = new DomAnalyzer(runner,
+                    domData,
                     eyes.visualGridEyes_.eyesConnector_,
                     userAgent,
                     eyes.visualGridEyes_.debugResourceWriter_);
@@ -266,13 +272,12 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             eyes.Open(driver, "Mock app", "Mock Test");
 
             MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
-            MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
-            EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
-            {
-                runningSession_ = new RunningSession(),
-                ServerConnector = mockServerConnector
-            };
-            mockEyesConnector.WrappedConnector = eyesConnector;
+            //MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
+            //EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
+            //    runningSession_ = new RunningSession(),
+            //    ServerConnector = mockServerConnector
+            //};
+            //mockEyesConnector.WrappedConnector = eyesConnector;
             return mockEyesConnector;
         }
     }
