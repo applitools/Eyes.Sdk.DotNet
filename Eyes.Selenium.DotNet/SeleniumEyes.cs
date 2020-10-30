@@ -82,7 +82,7 @@ namespace Applitools.Selenium
         }
 
         internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner, IServerConnectorFactory serverConnectorFactory)
-            : base(serverConnectorFactory)
+            : base(serverConnectorFactory, null)
         {
             configProvider_ = configurationProvider;
             runner_ = runner;

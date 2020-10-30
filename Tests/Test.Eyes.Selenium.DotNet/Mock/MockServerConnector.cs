@@ -1,30 +1,18 @@
-﻿using Applitools.VisualGrid;
-using Applitools.VisualGrid.Model;
+﻿using Applitools.Ufg;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Net;
+using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.Mock
 {
-    class MockServerConnector : IServerConnector
+    class MockServerConnector : ServerConnector
     {
-        private readonly Logger logger_;
-
         public MockServerConnector(Logger logger, Uri serverUrl)
+            : base(logger, serverUrl)
         {
-            logger_ = logger;
-            ServerUrl = serverUrl;
+            logger.Verbose("created");
         }
 
-        public WebProxy Proxy { get; set; }
-        public string ApiKey { get; set; }
-        public Uri ServerUrl { get; set; }
-        public TimeSpan Timeout { get; set; }
-        public string SdkName { get; set; }
-        public string AgentId { get; set; }
-
-        public bool DontCloseBatches { get; }
         internal List<MatchWindowData> MatchWindowCalls { get; } = new List<MatchWindowData>();
         internal List<MatchWindowData> ReplaceMatchedStepCalls { get; } = new List<MatchWindowData>();
         internal Dictionary<string, RunningSession> Sessions { get; } = new Dictionary<string, RunningSession>();
@@ -33,65 +21,53 @@ namespace Applitools.Selenium.Tests.Mock
 
         public bool AsExcepted { get; set; } = true;
 
-        public string AddRunningSessionImage(RunningSession runningSession, byte[] imageBytes)
+        public override void CloseBatch(string batchId)
         {
-            throw new NotImplementedException();
+            Logger.Log("closing batch: {0}", batchId);
         }
 
-        public void CloseBatch(string batchId)
+        public override void DeleteSession(TestResults testResults)
         {
-        }
-
-        public void DeleteSession(TestResults testResults)
-        {
-            logger_.Log("deleting session: {0}", testResults.Id);
+            Logger.Log("deleting session: {0}", testResults.Id);
         }
 
         public delegate void AfterEndSessionDelegate(RunningSession runningSession, bool isAborted, bool save);
         public event AfterEndSessionDelegate AfterEndSession;
 
-        public TestResults EndSession(RunningSession runningSession, bool isAborted, bool save)
+        protected override TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
         {
-            logger_.Log("ending session: {0}", runningSession.SessionId);
+            Logger.Log("ending session: {0}", runningSession.SessionId);
             TestResults testResults = new TestResults();
             AfterEndSession?.Invoke(runningSession, isAborted, save);
             return testResults;
         }
 
-        public RenderingInfo GetRenderingInfo()
+        public override RenderingInfo GetRenderingInfo()
         {
             return new RenderingInfo();
         }
 
-        public string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, IList<Rectangle> regions, string language)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MatchResult MatchWindow(RunningSession runningSession, MatchWindowData data)
+        public override MatchResult MatchWindow(RunningSession runningSession, MatchWindowData data)
         {
             if (data.Options.ReplaceLast)
             {
+                Logger.Verbose("replace last step");
                 ReplaceMatchedStepCalls.Add(data);
             }
             else
             {
+                Logger.Verbose("add new step");
                 MatchWindowCalls.Add(data);
             }
             return new MatchResult() { AsExpected = this.AsExcepted };
         }
 
-        public string PostDomCapture(string domJson)
-        {
-            throw new NotImplementedException();
-        }
-
         public delegate (bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
         public event OnStartSessionDelegate OnStartSession;
 
-        public RunningSession StartSession(SessionStartInfo sessionStartInfo)
+        protected override RunningSession StartSessionInternal(SessionStartInfo sessionStartInfo)
         {
-            logger_.Log("starting session: {0}", sessionStartInfo);
+            Logger.Log("starting session: {0}", sessionStartInfo);
 
             RunningSession newSession = null;
             bool continueInvocation = true;
@@ -109,19 +85,11 @@ namespace Applitools.Selenium.Tests.Mock
             return newSession;
         }
 
-        public Dictionary<IosDeviceName, DeviceSize> GetIosDevicesSizes()
+        public async override Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests)
         {
-            return new Dictionary<IosDeviceName, DeviceSize>();
-        }
-
-        public Dictionary<DeviceName, DeviceSize> GetEmulatedDevicesSizes()
-        {
-            return new Dictionary<DeviceName, DeviceSize>();
-        }
-
-        public Dictionary<BrowserType, string> GetUserAgents()
-        {
-            return new Dictionary<BrowserType, string>();
+            Logger.Verbose("getting job info");
+            await Task.Delay(10);
+            return new List<JobInfo>(new JobInfo[] { new JobInfo() });
         }
     }
 }

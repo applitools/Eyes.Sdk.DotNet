@@ -6,6 +6,7 @@ namespace Applitools
     {
         public IServerConnector CreateNewServerConnector(Logger logger, Uri serverUrl = null)
         {
+            logger.Verbose($"creating {nameof(ServerConnector)}");
             return new ServerConnector(logger, serverUrl);
         }
     }

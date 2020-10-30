@@ -4,9 +4,10 @@ namespace Applitools.Selenium.VisualGrid
 {
     class EyesConnectorFactory : IEyesConnectorFactory
     {
-        public Ufg.IUfgConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
+        public Ufg.IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
-            return new EyesConnector(browserInfo, config);
+            logger.Verbose($"creating {nameof(EyesConnector)}");
+            return new EyesConnector(logger, browserInfo, config);
         }
     }
 }

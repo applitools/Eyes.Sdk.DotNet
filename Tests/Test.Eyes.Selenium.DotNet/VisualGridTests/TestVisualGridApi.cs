@@ -17,15 +17,90 @@ namespace Applitools.Selenium.Tests.VisualGridTests
     [Parallelizable(ParallelScope.All)]
     public class TestVisualGridApi : ReportingTestSuite
     {
+        private class MockEyesConnector : EyesConnector
+        {
+            public MockEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+                : base(logger, browserInfo, configuration, new MockServerConnectorFactory())
+            {
+                Logger.Verbose("created");
+            }
+            public RenderRequest[] LastRenderRequests { get; set; }
+            public string RenderId { get; set; } = "47A4C2BD-0349-4232-B588-C9B9DA77498B";
+            public string JobId { get; set; } = "A72E234C-58AA-4406-B8FD-8899FACEA147";
+
+            public override async Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
+            {
+                LastRenderRequests = renderRequests;
+                Logger.Verbose("mock-rendering {0} render requests...", LastRenderRequests.Length);
+                List<RunningRender> runningRenders = new List<RunningRender>();
+                foreach (RenderRequest request in renderRequests)
+                {
+                    RunningRender render = new RunningRender(RenderId, JobId, RenderStatus.Rendered, null, false);
+                    runningRenders.Add(render);
+                }
+                await Task.Delay(10);
+                Logger.Verbose("mock-rendered {0} requests", runningRenders.Count);
+                return runningRenders;
+            }
+
+            public override List<RenderStatusResults> RenderStatusById(string[] renderIds)
+            {
+                List<RenderStatusResults> results = new List<RenderStatusResults>();
+                foreach (string renderId in renderIds)
+                {
+                    RenderStatusResults result = new RenderStatusResults()
+                    {
+                        RenderId = renderId,
+                        Status = RenderStatus.Rendered
+                    };
+                    results.Add(result);
+                }
+                return results;
+            }
+
+            public override RenderingInfo GetRenderingInfo()
+            {
+                return renderInfo_ ?? new RenderingInfo();
+            }
+
+            public override void SetRenderInfo(RenderingInfo renderingInfo)
+            {
+                renderInfo_ = renderingInfo;
+            }
+
+            public override MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, 
+                string domLocation, ICheckSettings checkSettings, IList<IRegion> regions, 
+                IList<VisualGridSelector[]> regionSelectors, Location location, RenderStatusResults results, string source)
+            {
+                return new MatchResult() { AsExpected = true };
+            }
+
+            public override bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
+            {
+                bool?[] arr = new bool?[hashes.Length];
+                Array.Fill(arr, true);
+                return arr;
+            }
+        }
+
+        private class MockEyesConnectorFactory : IEyesConnectorFactory
+        {
+            public IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
+            {
+                logger.Verbose($"creating {nameof(MockEyesConnector)}");
+                return new MockEyesConnector(logger, browserInfo, config);
+            }
+        }
+
         [Test]
         public void TestVisualGridOptions()
         {
             // We want VG mode
             EyesRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            runner.SetLogHandler(logHandler);
             Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes);
             eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
-
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
             config.SetVisualGridOptions(new VisualGridOption("option1", "value1"), new VisualGridOption("option2", false));

@@ -28,15 +28,17 @@ namespace Applitools.Selenium.VisualGrid
         private Applitools.Configuration config_;
         private JobInfo jobInfo_;
 
-        internal EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
-            : base(serverConnectorFactory)
+        internal EyesConnector(Logger logger, RenderBrowserInfo browserInfo,
+            Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
+            : base(serverConnectorFactory, logger)
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
             UpdateServerConnector_();
         }
 
-        public EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+        public EyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+            : base(logger)
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
@@ -58,6 +60,7 @@ namespace Applitools.Selenium.VisualGrid
 
         protected override object GetEnvironment_()
         {
+            Logger.Verbose("enter");
             return GetJobInfo().EyesEnvironment;
         }
 

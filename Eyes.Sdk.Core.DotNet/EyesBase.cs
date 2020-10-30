@@ -86,13 +86,15 @@ namespace Applitools
         /// Creates a new <see cref="EyesBase"/> instance that interacts with the Eyes cloud
         /// service.
         /// </summary>
-        protected EyesBase() : this(new ServerConnectorFactory()) { }
+        protected EyesBase() : this(new ServerConnectorFactory(), null) { }
 
-        protected EyesBase(IServerConnectorFactory serverConnectorFactory)
+        protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), logger) { }
+
+        protected EyesBase(IServerConnectorFactory serverConnectorFactory, Logger logger)
         {
             ServerConnectorFactory = serverConnectorFactory;
 
-            Logger = new Logger();
+            Logger = logger ?? new Logger();
 
             //EnsureConfiguration_();
 
@@ -356,6 +358,7 @@ namespace Applitools
                 LogSessionResultsAndThrowException(Logger, throwEx, results);
 
                 results.ServerConnector = ServerConnector;
+                Logger.Verbose("exit");
                 return results;
             }
             finally
@@ -1027,6 +1030,7 @@ namespace Applitools
 
         protected internal virtual object GetEnvironment_()
         {
+            Logger.Verbose("enter");
             AppEnvironment appEnv = new AppEnvironment();
 
             if (Configuration.HostOS != null)
@@ -1066,6 +1070,7 @@ namespace Applitools
                 testBatch = Configuration.Batch;
             }
 
+            Logger.Verbose("getting environment...");
             object appEnv = GetEnvironment_();
             Logger.Verbose("Application environment is {0}", appEnv);
 

@@ -32,7 +32,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.Open(driver, "Eyes Selenium SDK", "Eyes Selenium SDK - UFG Visual Viewport Test");
                 Mock.MockEyesConnector mockEyesConnector = (Mock.MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
                 Mock.MockServerConnector mockServerConnector = new Mock.MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
-                EyesConnector eyesConnector = new EyesConnector(new RenderBrowserInfo(iosDeviceInfo), config)
+                EyesConnector eyesConnector = new EyesConnector(eyes.Logger, new RenderBrowserInfo(iosDeviceInfo), config)
                 {
                     runningSession_ = new RunningSession(),
                     ServerConnector = mockServerConnector

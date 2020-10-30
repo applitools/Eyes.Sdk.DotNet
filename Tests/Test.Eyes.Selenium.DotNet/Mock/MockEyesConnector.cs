@@ -50,8 +50,9 @@ namespace Applitools.Selenium.Tests.Mock
                 { IosDeviceName.iPad_Pro_3, new DeviceSize(1366, 1024) },
                 { IosDeviceName.iPad_7, new DeviceSize(1080, 810) },
             };
-        public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
+        public MockEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
         {
+            SetLogHandler(logger.GetILogHandler());
             browserInfo_ = browserInfo;
             config_ = config;
             ServerConnectorFactory = new MockServerConnectorFactory();
