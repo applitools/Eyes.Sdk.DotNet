@@ -1,10 +1,10 @@
-﻿namespace Applitools
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using Applitools.Utils;
-    using Newtonsoft.Json;
+﻿using System;
+using System.Runtime.InteropServices;
+using Applitools.Utils;
+using Newtonsoft.Json;
 
+namespace Applitools
+{
     /// <summary>
     /// A batch of tests.
     /// </summary>

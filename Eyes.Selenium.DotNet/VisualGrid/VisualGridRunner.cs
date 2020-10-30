@@ -29,10 +29,10 @@ namespace Applitools.VisualGrid
         private readonly AutoResetEvent checkerServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent renderingServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent renderRequestCollectionServiceLock_ = new AutoResetEvent(true);
-
         private readonly EyesListener eyesListener_;
 
         internal static TimeSpan waitForResultTimeout_ = TimeSpan.FromMinutes(10);
+        internal IServerConnector ServerConnector { get; set; }
 
         public class RenderListener
         {
@@ -67,25 +67,26 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, byte> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, byte>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
-        public VisualGridRunner(ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler)
+        public VisualGridRunner(ILogHandler logHandler = null, string serverUrl = null)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler, serverUrl)
         {
         }
 
-        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler)
+        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null, string serverUrl = null)
+            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler, serverUrl)
         {
-            NetworkLogHandler.SendSingleLog(new ServerConnector(Logger), TraceLevel.Notice, "after factor of: {0}", FACTOR);
+            NetworkLogHandler.SendSingleLog(ServerConnector, TraceLevel.Notice, "after factor of: {0}", FACTOR);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null, string serverUrl = null)
         {
             runnerOptions_ = runnerOptions;
 
             if (logHandler != null) Logger.SetLogHandler(logHandler);
-
+            if (serverUrl != null) ServerUrl = serverUrl;
+            ServerConnector = new ServerConnector(Logger, new Uri(ServerUrl));
             eyesListener_ = new EyesListener(OnTaskComplete, OnRenderComplete);
-            NetworkLogHandler.SendSingleLog(new ServerConnector(Logger), TraceLevel.Notice, 
+            NetworkLogHandler.SendSingleLog(ServerConnector, TraceLevel.Notice, 
                 "testConcurrency: {0}", ((IRunnerOptionsInternal)runnerOptions).GetConcurrency());
             Init();
             Logger.Verbose("rendering grid manager is built");

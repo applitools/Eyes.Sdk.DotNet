@@ -69,7 +69,15 @@ namespace Applitools
         /// </summary>
         public string ApiKey
         {
-            get => apiKey_;
+            get
+            {
+                if (apiKey_ == null)
+                {
+                    apiKey_ = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
+                    apiKeyChanged_ = true;
+                }
+                return apiKey_;
+            }
             set
             {
                 apiKey_ = value;
@@ -542,6 +550,10 @@ namespace Applitools
             if (httpClient_ != null && httpClient_.ServerUrl.Equals(ServerUrl) && !apiKeyChanged_ && !proxyChanged_)
             {
                 return;
+            }
+            if (ApiKey == null)
+            {
+                throw new EyesException("ApiKey is null.");
             }
             Logger.Log("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
