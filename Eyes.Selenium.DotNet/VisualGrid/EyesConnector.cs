@@ -19,7 +19,7 @@ namespace Applitools.Selenium.VisualGrid
     public class EyesConnector : EyesBase, IUfgConnector
     {
         private readonly RenderBrowserInfo browserInfo_;
-        private RenderingInfo renderInfo_;
+        protected RenderingInfo renderInfo_;
         private HttpRestClient httpClient_;
         private readonly JsonSerializer serializer_ = JsonUtils.CreateSerializer();
         private RenderStatusResults renderStatusResult_;
@@ -88,7 +88,7 @@ namespace Applitools.Selenium.VisualGrid
 
         public bool HideCaret { get; set; }
 
-        public RenderingInfo GetRenderingInfo()
+        public virtual RenderingInfo GetRenderingInfo()
         {
             if (renderInfo_ != null)
             {
@@ -103,46 +103,10 @@ namespace Applitools.Selenium.VisualGrid
             return renderInfo_;
         }
 
-        public void SetRenderInfo(RenderingInfo renderingInfo)
+        public virtual void SetRenderInfo(RenderingInfo renderingInfo)
         {
             renderInfo_ = renderingInfo;
             UpdateRenderingServiceServerConnector();
-        }
-
-        public async Task<List<JobInfo>> GetJobInfo(RenderRequest[] browserInfos)
-        {
-            ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
-            Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
-            try
-            {
-                HttpWebRequest request = CreateHttpWebRequest_("job-info");
-                Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
-                serializer_.Serialize(browserInfos, request.GetRequestStream());
-
-                using (WebResponse response = await request.GetResponseAsync())
-                {
-                    Stream s = response.GetResponseStream();
-                    string json = new StreamReader(s).ReadToEnd();
-                    JObject[] jobInfosUnparsed = JsonConvert.DeserializeObject<JObject[]>(json);
-                    List<JobInfo> jobInfos = new List<JobInfo>();
-                    foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
-                    {
-                        JobInfo jobInfo = new JobInfo
-                        {
-                            Renderer = jobInfoUnparsed.Value<string>("renderer"),
-                            EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
-                        };
-                        jobInfos.Add(jobInfo);
-                    }
-                    Logger.Verbose("request succeeded");
-                    return jobInfos;
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error: {0}", e);
-                throw;
-            }
         }
 
         private void UpdateRenderingServiceServerConnector()
@@ -191,19 +155,10 @@ namespace Applitools.Selenium.VisualGrid
 
         private HttpWebRequest CreateHttpWebRequest_(string url)
         {
-            RenderingInfo renderingInfo = GetRenderingInfo();
-            Uri uri = new Uri(renderInfo_.ServiceUrl, url);
-            HttpWebRequest request = WebRequest.CreateHttp(uri);
-            if (Proxy != null) request.Proxy = Proxy;
-            request.ContentType = "application/json";
-            request.MediaType = "application/json";
-            request.Method = "POST";
-            request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.Headers.Add("x-applitools-eyes-client", FullAgentId);
-            return request;
+            return Applitools.ServerConnector.CreateHttpWebRequest_(url, GetRenderingInfo(), Proxy, FullAgentId);
         }
 
-        public List<RenderStatusResults> RenderStatusById(string[] renderIds)
+        public virtual List<RenderStatusResults> RenderStatusById(string[] renderIds)
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
             string idsAsString = string.Join(",", renderIds);
@@ -236,7 +191,7 @@ namespace Applitools.Selenium.VisualGrid
             return null;
         }
 
-        public MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation, ICheckSettings checkSettings,
+        public virtual MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation, ICheckSettings checkSettings,
                                        IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
                                        Location location, RenderStatusResults results, string source)
         {
@@ -348,7 +303,7 @@ namespace Applitools.Selenium.VisualGrid
             return Close(throwEx);
         }
 
-        public bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
+        public virtual bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
         {
             using (HttpWebResponse response = httpClient_.PostJson($"/query/resources-exist?rg_render-id={renderId}", hashes))
             {
@@ -356,19 +311,23 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        public JobInfo GetJobInfo()
+        public virtual JobInfo GetJobInfo()
         {
+            Logger.Verbose("enter");
             if (jobInfo_ == null)
             {
+                Logger.Verbose("getting job info from server using {0}", ServerConnector.GetType().Name);
                 RenderInfo renderInfo = new RenderInfo(browserInfo_.Width, browserInfo_.Height, default, null,
                     null, browserInfo_.EmulationInfo, browserInfo_.IosDeviceInfo);
                 RenderRequest renderRequest = new RenderRequest(renderInfo, browserInfo_.Platform, browserInfo_.BrowserType);
-                Task<List<JobInfo>> jobInfoTask = GetJobInfo(new RenderRequest[] { renderRequest });
+                Task<List<JobInfo>> jobInfoTask = ServerConnector.GetJobInfo(new RenderRequest[] { renderRequest });
+                Logger.Verbose("got task of list of job info objects, waiting for results...");
                 List<JobInfo> jobInfos = jobInfoTask.Result;
                 if (jobInfos == null || jobInfos.Count == 0)
                 {
                     throw new EyesException("Failed getting job info");
                 }
+                Logger.Verbose("jonInfoTask.Result: {0}", jobInfos.Concat(", "));
                 jobInfo_ = jobInfos[0];
             }
             return jobInfo_;

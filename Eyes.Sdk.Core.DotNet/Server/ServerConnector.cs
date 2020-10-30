@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Applitools.Ufg;
+using Applitools.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
-using Applitools.Utils;
-using Applitools.VisualGrid;
-using Applitools.VisualGrid.Model;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools
@@ -30,10 +30,8 @@ namespace Applitools
         private bool proxyChanged_ = false;
         private WebProxy proxy;
         private RenderingInfo renderingInfo_;
-        private Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
-        private Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
-        private Dictionary<BrowserType, string> userAgents_;
-        private readonly JsonSerializer json_;
+        private readonly JsonSerializer serializer_;
+      
         #endregion
 
         #region Constructors
@@ -45,7 +43,7 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
 
-            json_ = JsonUtils.CreateSerializer(false, false);
+            serializer_ = JsonUtils.CreateSerializer(false, false);
             Logger = logger;
 
             if (serverUrl != null)
@@ -54,6 +52,7 @@ namespace Applitools
             }
 
             Timeout = TimeSpan.FromMinutes(5);
+            logger.Verbose("created");
         }
 
         #endregion
@@ -154,7 +153,7 @@ namespace Applitools
                     else
                     {
                         runningSession = response.DeserializeBody<RunningSession>(
-                            true, json_, HttpStatusCode.OK, HttpStatusCode.Created);
+                            true, serializer_, HttpStatusCode.OK, HttpStatusCode.Created);
                         if (runningSession.isNewSession_ == null)
                         {
                             runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
@@ -170,7 +169,7 @@ namespace Applitools
             }
         }
 
-        public void DeleteSession(TestResults testResults)
+        public virtual void DeleteSession(TestResults testResults)
         {
             ArgumentGuard.NotNull(testResults, nameof(testResults));
 
@@ -227,7 +226,7 @@ namespace Applitools
         public bool DontCloseBatches { get; } = "true".Equals(CommonUtils.GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
         internal IHttpRestClientFactory HttpRestClientFactory { get; set; } = new DefaultHttpRestClientFactory();
 
-        public void CloseBatch(string batchId)
+        public virtual void CloseBatch(string batchId)
         {
             if (DontCloseBatches)
             {
@@ -257,7 +256,7 @@ namespace Applitools
         /// </summary>
         /// <param name="data"></param>
         /// <param name="session"></param>
-        public MatchResult MatchWindow(RunningSession session, MatchWindowData data)
+        public virtual MatchResult MatchWindow(RunningSession session, MatchWindowData data)
         {
             ArgumentGuard.NotNull(session, nameof(session));
             ArgumentGuard.NotNull(data, nameof(data));
@@ -421,7 +420,60 @@ namespace Applitools
             }
         }
 
-        public RenderingInfo GetRenderingInfo()
+        public virtual async Task<List<JobInfo>> GetJobInfo(RenderRequest[] browserInfos)
+        {
+            ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
+            Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
+            try
+            {
+                RenderingInfo renderingInfo = GetRenderingInfo();
+
+                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy,  AgentId);
+                Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
+                serializer_.Serialize(browserInfos, request.GetRequestStream());
+
+                using (WebResponse response = await request.GetResponseAsync())
+                {
+                    Stream s = response.GetResponseStream();
+                    string json = new StreamReader(s).ReadToEnd();
+                    JObject[] jobInfosUnparsed = JsonConvert.DeserializeObject<JObject[]>(json);
+                    List<JobInfo> jobInfos = new List<JobInfo>();
+                    foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
+                    {
+                        JobInfo jobInfo = new JobInfo
+                        {
+                            Renderer = jobInfoUnparsed.Value<string>("renderer"),
+                            EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
+                        };
+                        jobInfos.Add(jobInfo);
+                    }
+                    Logger.Verbose("request succeeded");
+                    return jobInfos;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Error: {0}", e);
+                throw;
+            }
+        }
+
+
+        public static HttpWebRequest CreateHttpWebRequest_(string url,
+            RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)
+        {
+            Uri uri = new Uri(renderingInfo.ServiceUrl, url);
+            HttpWebRequest request = WebRequest.CreateHttp(uri);
+            if (proxy != null) request.Proxy = proxy;
+            request.ContentType = "application/json";
+            request.MediaType = "application/json";
+            request.Method = "POST";
+            request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
+            request.Headers.Add("x-applitools-eyes-client", fullAgentId);
+            return request;
+        }
+
+        public virtual RenderingInfo GetRenderingInfo()
         {
             Logger.Verbose("enter");
             if (renderingInfo_ == null)
@@ -430,75 +482,6 @@ namespace Applitools
             }
             Logger.Verbose("exit");
             return renderingInfo_;
-        }
-
-        public Dictionary<IosDeviceName, DeviceSize> GetIosDevicesSizes()
-        {
-            Logger.Verbose("enter");
-            if (iosDevicesSizes_ == null)
-            {
-                RenderingInfo renderingInfo = GetRenderingInfo();
-                Dictionary<string, DeviceSize> iosDevicesSizes = new Dictionary<string, DeviceSize>();
-                iosDevicesSizes = GetFromPath(iosDevicesSizes, renderingInfo.ServiceUrl + "ios-devices-sizes", "iOS Devices Sizes");
-                iosDevicesSizes_ = ConvertDictionary_<IosDeviceName, DeviceSize>(iosDevicesSizes);
-            }
-            Logger.Verbose("exit");
-            return iosDevicesSizes_;
-        }
-
-        public Dictionary<DeviceName, DeviceSize> GetEmulatedDevicesSizes()
-        {
-            Logger.Verbose("enter");
-            if (emulatedDevicesSizes_ == null)
-            {
-                RenderingInfo renderingInfo = GetRenderingInfo();
-                Dictionary<string, DeviceSize> emulatedDevicesSizes = new Dictionary<string, DeviceSize>();
-                emulatedDevicesSizes = GetFromPath(emulatedDevicesSizes, renderingInfo.ServiceUrl + "emulated-devices-sizes", "Emulated Devices Sizes");
-                emulatedDevicesSizes_ = ConvertDictionary_<DeviceName, DeviceSize>(emulatedDevicesSizes);
-            }
-            Logger.Verbose("exit");
-            return emulatedDevicesSizes_;
-        }
-
-        public Dictionary<BrowserType, string> GetUserAgents()
-        {
-            Logger.Verbose("enter");
-            if (userAgents_ == null)
-            {
-                RenderingInfo renderingInfo = GetRenderingInfo();
-                Dictionary<string, string> userAgents = new Dictionary<string, string>();
-                userAgents = GetFromPath(userAgents, renderingInfo.ServiceUrl + "user-agents", "Browser User-Agents");
-                userAgents_ = ConvertDictionary_<BrowserType, string>(userAgents);
-            }
-            Logger.Verbose("exit");
-            return userAgents_;
-        }
-
-        private Dictionary<TTargetKey, TValue> ConvertDictionary_<TTargetKey, TValue>(Dictionary<string, TValue> input) where TTargetKey : Enum
-        {
-            Dictionary<string, TTargetKey> names = GetEnumSerializationNames_<TTargetKey>();
-            Dictionary<TTargetKey, TValue> convertedDictionary = new Dictionary<TTargetKey, TValue>();
-            foreach (KeyValuePair<string, TValue> kvp in input)
-            {
-                if (names.TryGetValue(kvp.Key, out TTargetKey key))
-                {
-                    convertedDictionary.Add(key, kvp.Value);
-                }
-            }
-            return convertedDictionary;
-        }
-
-        private Dictionary<string, TTargetKey> GetEnumSerializationNames_<TTargetKey>() where TTargetKey : Enum
-        {
-            Dictionary<string, TTargetKey> returnValue = new Dictionary<string, TTargetKey>();
-            foreach (TTargetKey key in Enum.GetValues(typeof(TTargetKey)))
-            {
-                string name;
-                try { name = key.GetAttribute<EnumMemberAttribute>().Value; }
-                catch (Exception) { name = key.ToString(); }
-                returnValue.Add(name, key);
-            }
-            return returnValue;
         }
 
         private T GetFromPath<T>(T member, string path, string name)
@@ -515,7 +498,7 @@ namespace Applitools
                     {
                         throw new NullReferenceException($"Getting {name} failed: response is null");
                     }
-                    member = response.DeserializeBody<T>(true, json_, HttpStatusCode.OK, HttpStatusCode.Created);
+                    member = response.DeserializeBody<T>(true, serializer_, HttpStatusCode.OK, HttpStatusCode.Created);
                 }
             }
             catch (Exception ex)
@@ -557,7 +540,7 @@ namespace Applitools
             }
             Logger.Log("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
-            HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, json_);
+            HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, serializer_);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
             httpClient.AcceptLongRunningTasks = true;
             httpClient.Proxy = Proxy;
