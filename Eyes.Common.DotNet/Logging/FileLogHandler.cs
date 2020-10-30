@@ -14,7 +14,8 @@ namespace Applitools
     public class FileLogHandler : ILogHandler
     {
         private Queue<string> queue_ = new Queue<string>(100);
-        private AutoResetEvent waitHandle_ = new AutoResetEvent(false);
+        private AutoResetEvent continueWritingWaitHandle_ = new AutoResetEvent(false);
+        private AutoResetEvent writingDoneWaitHandle_ = new AutoResetEvent(false);
         private Thread fileWriterThread_;
         #region Constructors
 
@@ -77,7 +78,7 @@ namespace Applitools
         {
             while (IsOpen)
             {
-                waitHandle_.WaitOne(2000);
+                continueWritingWaitHandle_.WaitOne(2000);
                 if (FilePath == null) continue;
                 if (queue_.Count > 0)
                 {
@@ -93,6 +94,7 @@ namespace Applitools
                     }
                     Thread.Sleep(1000);
                 }
+                writingDoneWaitHandle_.Set();
             }
         }
 
@@ -109,7 +111,7 @@ namespace Applitools
                     lock (queue_)
                     {
                         queue_.Enqueue(DateTimeOffset.Now + " - Eyes: " + message);
-                        waitHandle_.Set();
+                        continueWritingWaitHandle_.Set();
                     }
                 }
             }
@@ -127,7 +129,7 @@ namespace Applitools
                     lock (queue_)
                     {
                         queue_.Enqueue(messageProvider());
-                        waitHandle_.Set();
+                        continueWritingWaitHandle_.Set();
                     }
                 }
             }
@@ -151,6 +153,7 @@ namespace Applitools
                 }
                 if (fileWriterThread_ == null || !fileWriterThread_.IsAlive)
                 {
+                    OnMessage(false, "FileLogHandler: starting new thread");
                     fileWriterThread_ = new Thread(new ThreadStart(DumpLogToFile_));
                     fileWriterThread_.IsBackground = true;
                     IsOpen = true;
@@ -165,7 +168,10 @@ namespace Applitools
 
         public void Close()
         {
-            waitHandle_.Set();
+            OnMessage(false, "FileLogHandler: closing file");
+            writingDoneWaitHandle_.Reset();
+            continueWritingWaitHandle_.Set();
+            writingDoneWaitHandle_.WaitOne();
             IsOpen = false;
         }
 
