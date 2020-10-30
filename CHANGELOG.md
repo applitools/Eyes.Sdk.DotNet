@@ -15,6 +15,7 @@
 - Ultrafast Grid: Remove resource contents after uploading to the server. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Check resources status and upload missing resources before rendering. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Added `RunnerOptions`. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Send the server logs with concurrency information. [Trello 2152](https://trello.com/c/yNzhBkBh)
 
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed
