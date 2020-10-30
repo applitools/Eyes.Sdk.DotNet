@@ -31,7 +31,7 @@ namespace Applitools
         private WebProxy proxy;
         private RenderingInfo renderingInfo_;
         private readonly JsonSerializer serializer_;
-      
+
         #endregion
 
         #region Constructors
@@ -428,7 +428,7 @@ namespace Applitools
             {
                 RenderingInfo renderingInfo = GetRenderingInfo();
 
-                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy,  AgentId);
+                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy, AgentId);
                 Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
                 serializer_.Serialize(browserInfos, request.GetRequestStream());
 
@@ -458,6 +458,11 @@ namespace Applitools
             }
         }
 
+        public void SendLogs(LogSessionsClientEvents clientEvents)
+        {
+            EnsureHttpClient_();
+            using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
+        }
 
         public static HttpWebRequest CreateHttpWebRequest_(string url,
             RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)

@@ -24,8 +24,8 @@ namespace Applitools
         /// <summary>
         /// Invoked when a log message is emitted.
         /// </summary>
-        void OnMessage(bool verbose, string message, params object[] args);
+        void OnMessage(TraceLevel level, string message, params object[] args);
 
-        void OnMessage(bool verbose, Func<string> messageProvider);
+        void OnMessage(TraceLevel level, Func<string> messageProvider);
     }
 }

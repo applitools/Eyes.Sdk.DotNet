@@ -75,6 +75,7 @@ namespace Applitools.VisualGrid
         public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
             : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler)
         {
+            NetworkLogHandler.SendSingleLog(new ServerConnector(Logger), TraceLevel.Notice, "after factor of: {0}", FACTOR);
         }
 
         public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
@@ -84,7 +85,8 @@ namespace Applitools.VisualGrid
             if (logHandler != null) Logger.SetLogHandler(logHandler);
 
             eyesListener_ = new EyesListener(OnTaskComplete, OnRenderComplete);
-
+            NetworkLogHandler.SendSingleLog(new ServerConnector(Logger), TraceLevel.Notice, 
+                "testConcurrency: {0}", ((IRunnerOptionsInternal)runnerOptions).GetConcurrency());
             Init();
             Logger.Verbose("rendering grid manager is built");
             StartServices();
