@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Applitools.VisualGrid
 {
@@ -318,12 +319,10 @@ namespace Applitools.VisualGrid
             lock (allEyes_)
             {
                 Logger.Verbose("looking for best test in a list of {0} eyes.", allEyes_.Count);
+                if (allEyes_.Any((eyes) => eyes.IsServerConcurrencyLimitReached())) return null;
+
                 foreach (IVisualGridEyes eyes in allEyes_)
-                {
-                    if (eyes.IsServerConcurrencyLimitReached())
-                    {
-                        return null;
-                    }
+                { 
                     ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
                     if (currentTestMark == null) continue;
                     int currentScore = currentTestMark.Score;
