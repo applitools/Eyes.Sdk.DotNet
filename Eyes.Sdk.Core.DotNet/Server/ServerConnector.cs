@@ -555,7 +555,7 @@ namespace Applitools
             {
                 throw new EyesException("ApiKey is null.");
             }
-            Logger.Log("enter");
+            Logger.Verbose("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
             HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, serializer_);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);

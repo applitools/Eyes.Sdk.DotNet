@@ -1110,12 +1110,12 @@ namespace Applitools
             string testInfo = $"'{Configuration.TestName}' of '{Configuration.AppName}' {appEnv}";
             if (runningSession_.IsNewSession)
             {
-                Logger.Log("--- New test started - " + testInfo);
+                Logger.Verbose("--- New test started - " + testInfo);
                 shouldMatchWindowRunOnceOnTimeout_ = true;
             }
             else
             {
-                Logger.Log("--- Test started - " + testInfo);
+                Logger.Verbose("--- Test started - " + testInfo);
                 shouldMatchWindowRunOnceOnTimeout_ = false;
             }
 

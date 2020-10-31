@@ -71,7 +71,7 @@ namespace Applitools
         /// <param name="args">Optional arguments to place inside the message.</param>
         public void Verbose([Localizable(false)] string message, params object[] args)
         {
-            logHandler_.OnMessage(TraceLevel.Notice, () =>
+            logHandler_.OnMessage(TraceLevel.Info, () =>
             {
                 if (args != null && args.Length > 0)
                 {
@@ -88,7 +88,7 @@ namespace Applitools
         /// <param name="args">Optional arguments to place inside the message.</param>
         public void Log(string message, params object[] args)
         {
-            logHandler_.OnMessage(TraceLevel.Info, () =>
+            logHandler_.OnMessage(TraceLevel.Notice, () =>
             {
                 if (args != null && args.Length > 0)
                 {
