@@ -1,56 +1,25 @@
 ﻿using Applitools.Utils;
-using System.Collections;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Applitools
 {
-    public class LogSessionsClientEvents : ICollection<ClientEvent>
+    public class LogSessionsClientEvents
     {
-        private readonly List<ClientEvent> events_ = new List<ClientEvent>();
+        [JsonIgnore]
+        public int Count => Events.Count;
 
-        public int Count => events_.Count;
-
-        public bool IsReadOnly => false;
-
-        public List<ClientEvent> GetEvents()
-        {
-            return events_;
-        }
+        public List<ClientEvent> Events { get; } = new List<ClientEvent>();
 
         public void Add(ClientEvent @event)
         {
             ArgumentGuard.NotNull(@event, nameof(@event));
-            events_.Add(@event);
+            Events.Add(@event);
         }
 
         public void Clear()
         {
-            events_.Clear();
-        }
-
-        public bool Contains(ClientEvent @event)
-        {
-            return events_.Contains(@event);
-        }
-
-        public void CopyTo(ClientEvent[] array, int arrayIndex)
-        {
-            events_.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(ClientEvent item)
-        {
-            return events_.Remove(item);
-        }
-
-        public IEnumerator<ClientEvent> GetEnumerator()
-        {
-            return events_.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return events_.GetEnumerator();
+            Events.Clear();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Applitools
                 {
                     message = string.Format(message, args);
                 }
-                OnMessage(string.Format("[{0}]\t{0}", level, message), level);
+                OnMessage(message, level);
             }
         }
 
