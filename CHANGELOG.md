@@ -1,3 +1,11 @@
+## [Eyes.Common vNext patch]
+### Updated
+- Removed `CssParser` reference.
+
+## [Eyes.Sdk.Core vNext patch]
+### Updated
+- `CssParser` version updated to 1.1.0.
+
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed
 - NuGet was unable to install.
@@ -25,6 +33,7 @@
 ## [Eyes.Sdk.Core 2.35.2] - 2020-10-08
 ### Fixed
 - NuGets that depends on this one were unable to install.
+
 ## [Eyes.Common 1.0]
 ### Added
 - NuGets that depends on this one were unable to install.
