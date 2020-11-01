@@ -6,6 +6,7 @@ using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -299,6 +300,68 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 Assert.IsNotNull(resource);
                 Assert.IsNull(resource.Content);
             }
+        }
+
+        [Test]
+        public void TestConcurrencyAmount()
+        {
+            VisualGridRunner runner = new VisualGridRunner();
+            Assert.AreEqual(VisualGridRunner.DEFAULT_CONCURRENCY, runner.testConcurrency_.ActualConcurrency);
+            Assert.AreEqual(VisualGridRunner.DEFAULT_CONCURRENCY, runner.testConcurrency_.UserConcurrency);
+            Assert.IsTrue(runner.testConcurrency_.IsDefault);
+            Assert.IsFalse(runner.testConcurrency_.IsLegacy);
+
+            runner = new VisualGridRunner(10);
+            Assert.AreEqual(50, runner.testConcurrency_.ActualConcurrency);
+            Assert.AreEqual(10, runner.testConcurrency_.UserConcurrency);
+            Assert.IsFalse(runner.testConcurrency_.IsDefault);
+            Assert.IsTrue(runner.testConcurrency_.IsLegacy);
+
+
+            runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5));
+            Assert.AreEqual(5, runner.testConcurrency_.ActualConcurrency);
+            Assert.AreEqual(5, runner.testConcurrency_.UserConcurrency);
+            Assert.IsFalse(runner.testConcurrency_.IsDefault);
+            Assert.IsFalse(runner.testConcurrency_.IsLegacy);
+
+            runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5).TestConcurrency(7));
+            Assert.AreEqual(7, runner.testConcurrency_.ActualConcurrency);
+            Assert.AreEqual(7, runner.testConcurrency_.UserConcurrency);
+            Assert.IsFalse(runner.testConcurrency_.IsDefault);
+            Assert.IsFalse(runner.testConcurrency_.IsLegacy);
+        }
+
+        [Test]
+        public void TestConcurrencyLogMessage()
+        {
+            VisualGridRunner runner = new VisualGridRunner();
+            CollectionAssert.AreEquivalent(
+                new Dictionary<string, object>
+                {
+                    { "type", "runnerStarted" },
+                    { "defaultConcurrency", VisualGridRunner.DEFAULT_CONCURRENCY }
+                },
+                (IDictionary)runner.GetConcurrencyLog());
+
+            runner = new VisualGridRunner(10);
+            CollectionAssert.AreEquivalent(
+                new Dictionary<string, object>
+                {
+                    { "type", "runnerStarted" },
+                    { "concurrency", 10 }
+                },
+                (IDictionary)runner.GetConcurrencyLog());
+
+            runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(10));
+            CollectionAssert.AreEquivalent(
+              new Dictionary<string, object>
+              {
+                    { "type", "runnerStarted" },
+                    { "testConcurrency", 10 }
+              },
+              (IDictionary)runner.GetConcurrencyLog());
+
+            Assert.IsNull(runner.GetConcurrencyLog());
         }
     }
 }
