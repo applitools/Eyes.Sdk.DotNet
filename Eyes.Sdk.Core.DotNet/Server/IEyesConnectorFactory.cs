@@ -2,6 +2,6 @@
 {
     public interface IEyesConnectorFactory
     {
-        Ufg.IUfgConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Configuration config);
+        Ufg.IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Configuration config);
     }
 }

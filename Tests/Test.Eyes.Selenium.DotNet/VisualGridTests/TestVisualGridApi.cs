@@ -5,49 +5,130 @@ using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.Ufg.Model;
 using Applitools.Utils;
+using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
     [Parallelizable(ParallelScope.All)]
     public class TestVisualGridApi : ReportingTestSuite
     {
+        private class MockEyesConnector : EyesConnector
+        {
+            public MockEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+                : base(logger, browserInfo, configuration, new MockServerConnectorFactory())
+            {
+                Logger.Verbose("created");
+            }
+            public RenderRequest[] LastRenderRequests { get; set; }
+            public string RenderId { get; set; } = "47A4C2BD-0349-4232-B588-C9B9DA77498B";
+            public string JobId { get; set; } = "A72E234C-58AA-4406-B8FD-8899FACEA147";
+
+            public override async Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
+            {
+                LastRenderRequests = renderRequests;
+                Logger.Verbose("mock-rendering {0} render requests...", LastRenderRequests.Length);
+                List<RunningRender> runningRenders = new List<RunningRender>();
+                foreach (RenderRequest request in renderRequests)
+                {
+                    RunningRender render = new RunningRender(RenderId, JobId, RenderStatus.Rendered, null, false);
+                    runningRenders.Add(render);
+                }
+                await Task.Delay(10);
+                Logger.Verbose("mock-rendered {0} requests", runningRenders.Count);
+                return runningRenders;
+            }
+
+            public override List<RenderStatusResults> RenderStatusById(string[] renderIds)
+            {
+                List<RenderStatusResults> results = new List<RenderStatusResults>();
+                foreach (string renderId in renderIds)
+                {
+                    RenderStatusResults result = new RenderStatusResults()
+                    {
+                        RenderId = renderId,
+                        Status = RenderStatus.Rendered
+                    };
+                    results.Add(result);
+                }
+                return results;
+            }
+
+            public override RenderingInfo GetRenderingInfo()
+            {
+                return renderInfo_ ?? new RenderingInfo();
+            }
+
+            public override void SetRenderInfo(RenderingInfo renderingInfo)
+            {
+                renderInfo_ = renderingInfo;
+            }
+
+            public override MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, 
+                string domLocation, ICheckSettings checkSettings, IList<IRegion> regions, 
+                IList<VisualGridSelector[]> regionSelectors, Location location, RenderStatusResults results, string source)
+            {
+                return new MatchResult() { AsExpected = true };
+            }
+
+            public override bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
+            {
+                bool?[] arr = new bool?[hashes.Length];
+                Array.Fill(arr, true);
+                return arr;
+            }
+        }
+
+        private class MockEyesConnectorFactory : IEyesConnectorFactory
+        {
+            public IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
+            {
+                logger.Verbose($"creating {nameof(MockEyesConnector)}");
+                return new MockEyesConnector(logger, browserInfo, config);
+            }
+        }
+
         [Test]
         public void TestVisualGridOptions()
         {
             // We want VG mode
             EyesRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            runner.SetLogHandler(logHandler);
             Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes);
             eyes.visualGridEyes_.EyesConnectorFactory = new MockEyesConnectorFactory();
-
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
             config.SetVisualGridOptions(new VisualGridOption("option1", "value1"), new VisualGridOption("option2", false));
             config.SetBatch(TestDataProvider.BatchInfo);
             eyes.SetConfiguration(config);
 
-            MockEyesConnector mockEyesConnector;
-
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.github.io/demo/TestPages/DynamicResolution/desktop.html";
             try
             {
                 // First check - global + fluent config
-                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                eyes.Logger.Verbose("starting first check");
+                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                eyes.Logger.Verbose("calling eyes.Check");
                 eyes.Check(Target.Window().VisualGridOptions(new VisualGridOption("option3", "value3"), new VisualGridOption("option4", 5)));
+                eyes.Logger.Verbose("calling eyes.Close");
                 eyes.Close();
                 var expected1 = new Dictionary<string, object>()
                 {
                     {"option1", "value1"}, {"option2", false}, {"option3", "value3"}, {"option4", 5}
                 };
+                eyes.Logger.Verbose("getting results...");
                 var actual1 = mockEyesConnector.LastRenderRequests[0].Options;
+                eyes.Logger.Verbose("comparing results...");
                 CollectionAssert.AreEquivalent(expected1, actual1);
+                eyes.Logger.Verbose("done first check");
 
 
                 // Second check - only global
@@ -149,8 +230,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 UserAgent userAgent = eyes.visualGridEyes_.userAgent_;
                 CaptureStatus captureStatus = VisualGridEyes.CollectDom_(eyes.Logger, userAgent, runner, (IJavaScriptExecutor)driver);
                 FrameData domData = captureStatus.Value;
-                DomAnalyzer domAnalyzer = new DomAnalyzer(runner, 
-                    domData, 
+                DomAnalyzer domAnalyzer = new DomAnalyzer(runner,
+                    domData,
                     eyes.visualGridEyes_.eyesConnector_,
                     userAgent,
                     eyes.visualGridEyes_.debugResourceWriter_);
@@ -191,13 +272,12 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             eyes.Open(driver, "Mock app", "Mock Test");
 
             MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
-            MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
-            EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
-            {
-                runningSession_ = new RunningSession(),
-                ServerConnector = mockServerConnector
-            };
-            mockEyesConnector.WrappedConnector = eyesConnector;
+            //MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
+            //EyesConnector eyesConnector = new EyesConnector(config.GetBrowsersInfo()[0], config)
+            //    runningSession_ = new RunningSession(),
+            //    ServerConnector = mockServerConnector
+            //};
+            //mockEyesConnector.WrappedConnector = eyesConnector;
             return mockEyesConnector;
         }
     }

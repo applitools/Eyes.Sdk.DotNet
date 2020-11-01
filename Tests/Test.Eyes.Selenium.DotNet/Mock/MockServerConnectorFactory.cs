@@ -6,6 +6,7 @@ namespace Applitools.Selenium.Tests.Mock
     {
         public IServerConnector CreateNewServerConnector(Logger logger, Uri serverUrl = null)
         {
+            logger.Verbose($"creating {nameof(MockServerConnector)}");
             return new MockServerConnector(logger, serverUrl);
         }
     }

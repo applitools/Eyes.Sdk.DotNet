@@ -75,8 +75,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
         private class MockEyesConnector : EyesConnector
         {
-            public MockEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration, Events events)
-                : base(browserInfo, configuration, new MockServerConnectorFactory() { Events = events })
+            public MockEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration, Events events)
+                : base(logger, browserInfo, configuration, new MockServerConnectorFactory() { Events = events })
             {
             }
 
@@ -94,9 +94,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             public Events Events { get; set; }
 
-            public IUfgConnector CreateNewEyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration config)
+            public IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
             {
-                return new MockEyesConnector(browserInfo, config, Events);
+                return new MockEyesConnector(logger, browserInfo, config, Events);
             }
         }
 

@@ -52,8 +52,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void TestTimeout2()
         {
+            VisualGridEyes.CAPTURE_TIMEOUT = TimeSpan.FromTicks(1);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
-            VisualGridEyes.CAPTURE_TIMEOUT = TimeSpan.FromMilliseconds(1);
             try
             {
                 EyesRunner runner = new VisualGridRunner(10);
@@ -65,12 +65,6 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 Configuration configuration = eyes.GetConfiguration();
                 configuration.SetAppName("Test Timeouts").SetTestName("Test Timeouts").SetBatch(TestDataProvider.BatchInfo);
                 configuration.AddBrowser(800, 600, BrowserType.CHROME);
-                configuration.AddBrowser(700, 500, BrowserType.FIREFOX);
-                configuration.AddBrowser(600, 400, BrowserType.EDGE);
-                configuration.AddBrowser(900, 700, BrowserType.IE_10);
-                configuration.AddBrowser(1000, 800, BrowserType.IE_11);
-                configuration.AddDeviceEmulation(DeviceName.Galaxy_S5);
-                configuration.AddDeviceEmulation(DeviceName.iPhone_6_7_8_Plus);
                 configuration.AddDeviceEmulation(DeviceName.Laptop_with_HiDPI_screen);
                 eyes.SetConfiguration(configuration);
                 eyes.Open(driver);

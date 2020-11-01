@@ -12,6 +12,8 @@ namespace Applitools.Metadata
 
         public RectangleSize Size { get; set; }
 
+        public RectangleSize Viewport { get; set; }
+
         public Rectangle Rectangle { get; set; }
 
         public Location Location { get; set; }

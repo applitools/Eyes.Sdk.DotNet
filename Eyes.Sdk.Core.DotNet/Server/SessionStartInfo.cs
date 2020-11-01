@@ -14,7 +14,7 @@ namespace Applitools
             string scenarioIdOrName,
             BatchInfo batchInfo,
             string baselineEnvName,
-            AppEnvironment environment,
+            object environment,
             string envName,
             ImageMatchSettings defaultMatchSettings,
             string branchName,
@@ -62,7 +62,7 @@ namespace Applitools
 
         public string EnvironmentName { get; private set; }
 
-        public AppEnvironment Environment { get; private set; }
+        public object Environment { get; private set; }
 
         public ImageMatchSettings DefaultMatchSettings { get; private set; }
 

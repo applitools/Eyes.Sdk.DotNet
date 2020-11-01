@@ -337,9 +337,9 @@ namespace Applitools.Appium
             return null;
         }
 
-        protected override AppEnvironment GetEnvironment_()
+        protected override object GetEnvironment_()
         {
-            AppEnvironment appEnv = base.GetEnvironment_();
+            AppEnvironment appEnv = (AppEnvironment)base.GetEnvironment_();
             string deviceName = (string)driver_.Capabilities.GetCapability(MobileCapabilityType.DeviceName);
             appEnv.DeviceInfo = deviceName;
             appEnv.DisplaySize = viewportSize_ ?? driver_.Manage().Window.Size;

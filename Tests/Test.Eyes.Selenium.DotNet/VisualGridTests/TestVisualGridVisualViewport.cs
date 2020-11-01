@@ -1,4 +1,5 @@
-﻿using Applitools.Selenium.Tests.Utils;
+﻿using Applitools.Metadata;
+using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
@@ -22,6 +23,49 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
+            Configuration config = eyes.GetConfiguration();
+            IosDeviceInfo iosDeviceInfo = new IosDeviceInfo(IosDeviceName.iPhone_11_Pro);
+            config.AddBrowser(iosDeviceInfo);
+            eyes.SetConfiguration(config);
+            try
+            {
+                eyes.Open(driver, "Eyes Selenium SDK", "Eyes Selenium SDK - UFG Visual Viewport Test");
+
+                string inputJson = CommonUtils.ReadResourceFile("Test.Eyes.Selenium.DotNet.Resources.Misc.TestUFGVisualViewport_Input.json");
+                RenderStatusResults renderStatusResults = serializer.Deserialize<RenderStatusResults>(inputJson);
+
+                driver.Url = "https://applitools.github.io/demo/TestPages/DynamicResolution/desktop.html";
+                eyes.Check(Target.Window().Fully());
+                eyes.Close(false);
+
+                TestResultsSummary resultsSummary = runner.GetAllTestResults(false);
+                Assert.AreEqual(1, resultsSummary.Count);
+                TestResults results = resultsSummary[0].TestResults;
+                SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
+
+                Assert.AreEqual(1, sessionResults.ActualAppOutput.Length);
+                ActualAppOutput appOutput = sessionResults.ActualAppOutput[0];
+                Assert.AreEqual(980, appOutput.Image.Viewport.Width);
+                Assert.AreEqual(1659, appOutput.Image.Viewport.Height);
+
+                Assert.AreEqual(375, sessionResults.Env.DisplaySize.Width);
+                Assert.AreEqual(812, sessionResults.Env.DisplaySize.Height);
+            }
+            finally
+            {
+                eyes.AbortIfNotClosed();
+                driver.Quit();
+            }
+        }
+
+        //[Test]
+        public void TestUFGVisualViewport_UnitTest()
+        {
+            JsonSerializer serializer = JsonUtils.CreateSerializer();
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            EyesRunner runner = new VisualGridRunner(10);
+            Eyes eyes = new Eyes(runner);
+            TestUtils.SetupLogging(eyes);
             eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
             Configuration config = eyes.GetConfiguration();
             IosDeviceInfo iosDeviceInfo = new IosDeviceInfo(IosDeviceName.iPhone_11_Pro);
@@ -32,7 +76,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.Open(driver, "Eyes Selenium SDK", "Eyes Selenium SDK - UFG Visual Viewport Test");
                 Mock.MockEyesConnector mockEyesConnector = (Mock.MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
                 Mock.MockServerConnector mockServerConnector = new Mock.MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
-                EyesConnector eyesConnector = new EyesConnector(new RenderBrowserInfo(iosDeviceInfo), config)
+                EyesConnector eyesConnector = new EyesConnector(eyes.Logger, new RenderBrowserInfo(iosDeviceInfo), config)
                 {
                     runningSession_ = new RunningSession(),
                     ServerConnector = mockServerConnector
@@ -54,7 +98,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 AppOutput appOutput = matchWindowData.AppOutput;
                 Assert.AreEqual(980, appOutput.Viewport.Width);
                 Assert.AreEqual(1659, appOutput.Viewport.Height);
-
+                Assert.IsNotNull(mockEyesConnector.DeviceSize);
                 Assert.AreEqual(375, mockEyesConnector.DeviceSize.Width);
                 Assert.AreEqual(812, mockEyesConnector.DeviceSize.Height);
             }

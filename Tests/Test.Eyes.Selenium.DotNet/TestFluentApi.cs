@@ -263,6 +263,14 @@ namespace Applitools.Selenium.Tests
                     new AccessibilityRegionByRectangle(10, 284, 285, 165, AccessibilityRegionType.LargeText)
                     );
             }
+            else if (useVisualGrid_)
+            {
+                SetExpectedAccessibilityRegions(
+                    new AccessibilityRegionByRectangle(122, 928, 456, 306, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(8, 1270, 690, 206, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(10, 284, 800, 500, AccessibilityRegionType.LargeText)
+                    );
+            }
             else
             {
                 SetExpectedAccessibilityRegions(

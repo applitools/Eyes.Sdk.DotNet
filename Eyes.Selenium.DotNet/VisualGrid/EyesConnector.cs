@@ -12,31 +12,33 @@ using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Applitools.Selenium.VisualGrid
 {
     public class EyesConnector : EyesBase, IUfgConnector
     {
         private readonly RenderBrowserInfo browserInfo_;
-        private string userAgent_;
-        private RenderingInfo renderInfo_;
+        protected RenderingInfo renderInfo_;
         private HttpRestClient httpClient_;
         private readonly JsonSerializer serializer_ = JsonUtils.CreateSerializer();
-        private RectangleSize deviceSize_;
         private RenderStatusResults renderStatusResult_;
         private string testName_;
         private string appName_;
         private Applitools.Configuration config_;
+        private JobInfo jobInfo_;
 
-        internal EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
-            : base(serverConnectorFactory)
+        internal EyesConnector(Logger logger, RenderBrowserInfo browserInfo,
+            Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
+            : base(serverConnectorFactory, logger)
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
             UpdateServerConnector_();
         }
 
-        public EyesConnector(RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+        public EyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+            : base(logger)
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
@@ -53,36 +55,13 @@ namespace Applitools.Selenium.VisualGrid
 
         protected override string GetInferredEnvironment()
         {
-            return "useragent: " + userAgent_;
+            return null;
         }
 
-        protected override AppEnvironment GetEnvironment_()
+        protected override object GetEnvironment_()
         {
-            AppEnvironment environment = base.GetEnvironment_();
-            if (browserInfo_?.EmulationInfo is ChromeEmulationInfo cei)
-            {
-                environment.DeviceInfo = cei.SerializedDeviceName + " (Chrome emulation)";
-            }
-            else if (browserInfo_?.IosDeviceInfo != null)
-            {
-                environment.DeviceInfo = browserInfo_.IosDeviceInfo.SerializedDeviceName;
-            }
-            else
-            {
-                environment.DeviceInfo = "Desktop";
-            }
-
-            if (string.IsNullOrEmpty(userAgent_))
-            {
-                if (environment.HostingApp == null) environment.HostingApp = BrowserNames.GetBrowserName(browserInfo_.BrowserType);
-                if (environment.OS == null) environment.OS = StringUtils.ToPascalCase(browserInfo_.Platform);
-            }
-            return environment;
-        }
-
-        public void SetUserAgent(string userAgent)
-        {
-            userAgent_ = userAgent;
+            Logger.Verbose("enter");
+            return GetJobInfo().EyesEnvironment;
         }
 
         protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal) { return null; }
@@ -109,7 +88,7 @@ namespace Applitools.Selenium.VisualGrid
 
         public bool HideCaret { get; set; }
 
-        public RenderingInfo GetRenderingInfo()
+        public virtual RenderingInfo GetRenderingInfo()
         {
             if (renderInfo_ != null)
             {
@@ -124,7 +103,7 @@ namespace Applitools.Selenium.VisualGrid
             return renderInfo_;
         }
 
-        public void SetRenderInfo(RenderingInfo renderingInfo)
+        public virtual void SetRenderInfo(RenderingInfo renderingInfo)
         {
             renderInfo_ = renderingInfo;
             UpdateRenderingServiceServerConnector();
@@ -176,19 +155,10 @@ namespace Applitools.Selenium.VisualGrid
 
         private HttpWebRequest CreateHttpWebRequest_(string url)
         {
-            RenderingInfo renderingInfo = GetRenderingInfo();
-            Uri uri = new Uri(renderInfo_.ServiceUrl, url);
-            HttpWebRequest request = WebRequest.CreateHttp(uri);
-            if (Proxy != null) request.Proxy = Proxy;
-            request.ContentType = "application/json";
-            request.MediaType = "application/json";
-            request.Method = "POST";
-            request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.Headers.Add("x-applitools-eyes-client", FullAgentId);
-            return request;
+            return Applitools.ServerConnector.CreateHttpWebRequest_(url, GetRenderingInfo(), Proxy, FullAgentId);
         }
 
-        public List<RenderStatusResults> RenderStatusById(string[] renderIds)
+        public virtual List<RenderStatusResults> RenderStatusById(string[] renderIds)
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
             string idsAsString = string.Join(",", renderIds);
@@ -221,7 +191,7 @@ namespace Applitools.Selenium.VisualGrid
             return null;
         }
 
-        public MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation, ICheckSettings checkSettings,
+        public virtual MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation, ICheckSettings checkSettings,
                                        IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
                                        Location location, RenderStatusResults results, string source)
         {
@@ -300,44 +270,6 @@ namespace Applitools.Selenium.VisualGrid
             return result;
         }
 
-        public void SetDeviceSize(RectangleSize deviceSize)
-        {
-            Logger.Verbose("setting device size: {0} ({1})", deviceSize, GetHashCode());
-            deviceSize_ = deviceSize;
-        }
-
-        protected override RectangleSize GetViewportSizeForOpen()
-        {
-            RectangleSize result;
-            if (browserInfo_?.EmulationInfo != null)
-            {
-                Logger.Verbose("using emulationInfo");
-                result = deviceSize_;
-            }
-            else if (browserInfo_?.IosDeviceInfo != null)
-            {
-                Logger.Verbose("using iosDeviceInfo");
-                result = deviceSize_;
-            }
-            else if (browserInfo_.DesktopBrowserInfo?.ViewportSize != null)
-            {
-                Logger.Verbose("using browserInfo_.ViewportSize");
-                result = browserInfo_.DesktopBrowserInfo.ViewportSize;
-            }
-            else if (deviceSize_ != null && !deviceSize_.IsEmpty())
-            {
-                Logger.Verbose("using deviceSize");
-                result = deviceSize_;
-            }
-            else
-            {
-                Logger.Verbose("using Configuration");
-                result = base.GetViewportSizeForOpen();
-            }
-            Logger.Verbose("Return value: {0} ({1})", result, GetHashCode());
-            return result;
-        }
-
         protected override string BaseAgentId => VisualGridEyes.GetBaseAgentId();
 
         protected override object GetAgentSetup()
@@ -371,7 +303,7 @@ namespace Applitools.Selenium.VisualGrid
             return Close(throwEx);
         }
 
-        public bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
+        public virtual bool?[] CheckResourceStatus(string renderId, HashObject[] hashes)
         {
             using (HttpWebResponse response = httpClient_.PostJson($"/query/resources-exist?rg_render-id={renderId}", hashes))
             {
@@ -379,5 +311,31 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
+        public virtual JobInfo GetJobInfo()
+        {
+            Logger.Verbose("enter");
+            if (jobInfo_ == null)
+            {
+                Logger.Verbose("getting job info from server using {0}", ServerConnector.GetType().Name);
+                RenderInfo renderInfo = new RenderInfo(browserInfo_.Width, browserInfo_.Height, default, null,
+                    null, browserInfo_.EmulationInfo, browserInfo_.IosDeviceInfo);
+                RenderRequest renderRequest = new RenderRequest(renderInfo, browserInfo_.Platform, browserInfo_.BrowserType);
+                Task<List<JobInfo>> jobInfoTask = ServerConnector.GetJobInfo(new RenderRequest[] { renderRequest });
+                Logger.Verbose("got task of list of job info objects, waiting for results...");
+                List<JobInfo> jobInfos = jobInfoTask.Result;
+                if (jobInfos == null || jobInfos.Count == 0)
+                {
+                    throw new EyesException("Failed getting job info");
+                }
+                Logger.Verbose("jonInfoTask.Result: {0}", jobInfos.Concat(", "));
+                jobInfo_ = jobInfos[0];
+            }
+            return jobInfo_;
+        }
+
+        public string GetRenderer()
+        {
+            return GetJobInfo().Renderer;
+        }
     }
 }

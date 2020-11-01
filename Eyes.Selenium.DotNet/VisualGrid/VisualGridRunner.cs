@@ -561,7 +561,8 @@ namespace Applitools.VisualGrid
                           List<VisualGridTask> checkTasks, RenderListener listener)
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
-
+            Logger.Verbose("enter");
+            Logger.Verbose("connector type: {0}", connector.GetType().Name);
             RenderRequestCollectionTask resourceCollectionTask = new RenderRequestCollectionTask(this, domData, connector,
                 userAgent, regionSelectors, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
                 new RenderingTask.TaskListener<List<RenderingTask>>(

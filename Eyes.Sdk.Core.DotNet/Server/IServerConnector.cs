@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Applitools
 {
@@ -25,5 +26,6 @@ namespace Applitools
         string AddRunningSessionImage(RunningSession runningSession, byte[] imageBytes);
         string PostDomCapture(string domJson);
         RunningSession StartSession(SessionStartInfo sessionStartInfo);
+        Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests);
     }
 }

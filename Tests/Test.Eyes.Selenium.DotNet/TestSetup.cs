@@ -189,26 +189,26 @@ namespace Applitools.Selenium.Tests
             SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
             testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
 
-            if ((eyes.runner_ is VisualGridRunner && RUNS_ON_CI) || USE_MOCK_VG)
-            {
-                eyes.Logger.Log("using VG mock eyes connector");
-                string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
-                testContextReqs.TestNameAsFilename = testNameAsFilename;
-                Assembly thisAssembly = Assembly.GetCallingAssembly();
-                Stream expectedOutputJsonStream = thisAssembly.GetManifestResourceStream("Test.Eyes.Selenium.DotNet.Resources.VGTests." + testNameAsFilename + ".json");
-                if (expectedOutputJsonStream != null)
-                {
-                    using (StreamReader reader = new StreamReader(expectedOutputJsonStream))
-                    {
-                        testContextReqs.ExpectedVGOutput = reader.ReadToEnd();
-                    }
-                    eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
-                }
-            }
-            else
-            {
-                eyes.Logger.Log("using regular VG eyes connector");
-            }
+            //if ((eyes.runner_ is VisualGridRunner && RUNS_ON_CI) || USE_MOCK_VG)
+            //{
+            //    eyes.Logger.Log("using VG mock eyes connector");
+            //    string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
+            //    testContextReqs.TestNameAsFilename = testNameAsFilename;
+            //    Assembly thisAssembly = Assembly.GetCallingAssembly();
+            //    Stream expectedOutputJsonStream = thisAssembly.GetManifestResourceStream("Test.Eyes.Selenium.DotNet.Resources.VGTests." + testNameAsFilename + ".json");
+            //    if (expectedOutputJsonStream != null)
+            //    {
+            //        using (StreamReader reader = new StreamReader(expectedOutputJsonStream))
+            //        {
+            //            testContextReqs.ExpectedVGOutput = reader.ReadToEnd();
+            //        }
+            //        eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
+            //    }
+            //}
+            //else
+            //{
+            //    eyes.Logger.Log("using regular VG eyes connector");
+            //}
 
             string seleniumServerUrl = SetupSeleniumServer(testName);
             bool isWellFormedUri = Uri.IsWellFormedUriString(seleniumServerUrl, UriKind.Absolute);

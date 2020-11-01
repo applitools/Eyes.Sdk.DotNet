@@ -249,9 +249,9 @@ namespace Applitools.Selenium.VisualGrid
 
         internal IUfgConnector CreateEyesConnector_(RenderBrowserInfo browserInfo, string apiKey)
         {
-            Logger.Verbose("creating eyes server connector");
+            Logger.Verbose("creating eyes server connector using {0}", EyesConnectorFactory.GetType().Name);
             IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(
-                browserInfo, (Applitools.Configuration)configAtOpen_);
+                Logger, browserInfo, (Applitools.Configuration)configAtOpen_);
 
             eyesConnector.SetLogHandler(Logger.GetILogHandler());
             eyesConnector.Proxy = Proxy;
@@ -481,6 +481,8 @@ namespace Applitools.Selenium.VisualGrid
 
                 Configuration configClone = GetConfigClone_();
 
+                Logger.Verbose("eyesConnector_.Type: {0}", eyesConnector_.GetType().Name);
+
                 string source = driver_.Url;
                 foreach (RunningTest test in filteredTests)
                 {
@@ -687,8 +689,10 @@ namespace Applitools.Selenium.VisualGrid
 
         private TestResults ParseCloseTasks_(ICollection<Task<TestResultContainer>> close, bool throwEx)
         {
+            Logger.Verbose("enter");
             if (close != null && close.Count > 0)
             {
+                Logger.Verbose("closing {0} tasks.", close.Count);
                 TestResultContainer errorResult = null;
                 TestResultContainer firstResult = null;
                 try
@@ -730,16 +734,19 @@ namespace Applitools.Selenium.VisualGrid
                     {
                         throw errorResult.Exception;
                     }
+                    Logger.Verbose("returning errorResult.TestResults: {0}", errorResult.TestResults);
                     return errorResult.TestResults;
                 }
                 else
                 { // returning the first result
                     if (firstResult != null)
                     {
+                        Logger.Verbose("returning firstResult.TestResults: {0}", firstResult.TestResults);
                         return firstResult.TestResults;
                     }
                 }
             }
+            Logger.Verbose("returning null");
             return null;
         }
 
