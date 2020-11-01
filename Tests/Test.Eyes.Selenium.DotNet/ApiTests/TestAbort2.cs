@@ -16,7 +16,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         private readonly int viewPortHeight = 600;
         private readonly string appName = "My application";
         private readonly string batchName = "My batch";
-        private readonly string testedUrl = "https://applitools.com/docs/topics/overview.html";
+        private readonly string testedUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";//"https://applitools.com/docs/topics/overview.html";
         private readonly bool useVisualGrid_;
 
         private EyesRunner runner = null;
@@ -54,7 +54,7 @@ namespace Applitools.Selenium.Tests.ApiTests
                .AddBrowser(900, 600, BrowserType.FIREFOX)
                .AddBrowser(900, 600, BrowserType.IE_10)
                .AddBrowser(900, 600, BrowserType.IE_11)
-               .AddBrowser(900, 600, BrowserType.EDGE)
+               .AddBrowser(900, 600, BrowserType.EDGE_LEGACY)
                .AddDeviceEmulation(DeviceName.iPhone_4, Applitools.VisualGrid.ScreenOrientation.Portrait)
                .AddDeviceEmulation(DeviceName.Galaxy_S5, Applitools.VisualGrid.ScreenOrientation.Landscape)
 
