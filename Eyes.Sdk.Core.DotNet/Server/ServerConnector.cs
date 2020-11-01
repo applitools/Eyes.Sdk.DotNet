@@ -31,7 +31,7 @@ namespace Applitools
         private WebProxy proxy;
         private RenderingInfo renderingInfo_;
         private readonly JsonSerializer serializer_;
-      
+
         #endregion
 
         #region Constructors
@@ -69,7 +69,15 @@ namespace Applitools
         /// </summary>
         public string ApiKey
         {
-            get => apiKey_;
+            get
+            {
+                if (apiKey_ == null)
+                {
+                    apiKey_ = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
+                    apiKeyChanged_ = true;
+                }
+                return apiKey_;
+            }
             set
             {
                 apiKey_ = value;
@@ -428,7 +436,7 @@ namespace Applitools
             {
                 RenderingInfo renderingInfo = GetRenderingInfo();
 
-                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy,  AgentId);
+                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy, AgentId);
                 Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
                 serializer_.Serialize(browserInfos, request.GetRequestStream());
 
@@ -458,6 +466,11 @@ namespace Applitools
             }
         }
 
+        public void SendLogs(LogSessionsClientEvents clientEvents)
+        {
+            EnsureHttpClient_();
+            using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
+        }
 
         public static HttpWebRequest CreateHttpWebRequest_(string url,
             RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)
@@ -538,7 +551,11 @@ namespace Applitools
             {
                 return;
             }
-            Logger.Log("enter");
+            if (ApiKey == null)
+            {
+                throw new EyesException("ApiKey is null.");
+            }
+            Logger.Verbose("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
             HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, serializer_);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);

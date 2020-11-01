@@ -27,5 +27,6 @@ namespace Applitools
         string PostDomCapture(string domJson);
         RunningSession StartSession(SessionStartInfo sessionStartInfo);
         Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests);
+        void SendLogs(LogSessionsClientEvents clientEvents);
     }
 }

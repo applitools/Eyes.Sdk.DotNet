@@ -1,12 +1,16 @@
 ## [Eyes.Common vNext]
 ### Added
 - Ultrafast Grid: Added support for `Full-Selector`. [Trello 2145](https://trello.com/c/8tPAnz66)
+### Updated
+- Removed `CssParser` reference.
 ### Fixed
 - Fixed Internet Explorer 11 enum value.
 
 ## [Eyes.Sdk.Core vNext]
 ### Added
 - Ultrafast Grid: Obey server concurrency limitations. [Trello 2152](https://trello.com/c/yNzhBkBh)
+### Updated
+- `CssParser` version updated to 1.1.0.
 
 ## [Eyes.Selenium vNext]
 ### Added
@@ -15,6 +19,7 @@
 - Ultrafast Grid: Remove resource contents after uploading to the server. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Check resources status and upload missing resources before rendering. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Added `RunnerOptions`. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Send the server logs with concurrency information. [Trello 2152](https://trello.com/c/yNzhBkBh)
 
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed

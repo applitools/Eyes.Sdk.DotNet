@@ -36,7 +36,7 @@ namespace Applitools
         {
             Logger logger = new Logger();
             ServerConnector serverConnector = new ServerConnector(logger);
-            serverConnector.ServerUrl = new Uri(EyesBase.DefaultServerUrl);
+            serverConnector.ServerUrl = new Uri(CommonData.DefaultServerUrl);
             serverConnector.HttpRestClientFactory = new MockHttpRestClientFactory(isNew: isNew);
             serverConnector.ApiKey = "testKey";
             SessionStartInfo startInfo = GetStartInfo();
@@ -81,7 +81,7 @@ namespace Applitools
         {
             Logger logger = new Logger();
             ServerConnector serverConnector = new ServerConnector(logger);
-            serverConnector.ServerUrl = new Uri(EyesBase.DefaultServerUrl);
+            serverConnector.ServerUrl = new Uri(CommonData.DefaultServerUrl);
             serverConnector.HttpRestClientFactory = new MockHttpRestClientFactory(statusCode: statusCode);
             serverConnector.ApiKey = "testKey";
             SessionStartInfo startInfo = GetStartInfo();
@@ -146,7 +146,7 @@ namespace Applitools
                         if (uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
                         {
                             webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
-                            headers.Add("Location", EyesBase.DefaultServerUrl + BASE_LOCATION + "status");
+                            headers.Add("Location", CommonData.DefaultServerUrl + BASE_LOCATION + "status");
                         }
                         else if (uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
                         {
@@ -157,7 +157,7 @@ namespace Applitools
                             else
                             {
                                 webResponse.StatusCode.Returns(HttpStatusCode.Created);
-                                headers.Add("Location", EyesBase.DefaultServerUrl + BASE_LOCATION + "result");
+                                headers.Add("Location", CommonData.DefaultServerUrl + BASE_LOCATION + "result");
                             }
                         }
                         else if (uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "result", StringComparison.OrdinalIgnoreCase))

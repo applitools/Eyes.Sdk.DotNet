@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <StartupObject>Applitools.VisualGrid.Demo.ApplitoolsTutorial</StartupObject>
+    <StartupObject>Applitools.VisualGrid.Demo.MinimalVisualGridDemo</StartupObject>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
   </PropertyGroup>

@@ -23,7 +23,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             return new object[][]{
                 new object[] {server1, server2, key1, key2, false, false, server2, key2, false},
                 new object[] {null, server2, key1, key2, false, false, server2, key2, false},
-                new object[] {null, null, key1, null, false, null, EyesBase.DefaultServerUrl, key1, false},
+                new object[] {null, null, key1, null, false, null, CommonData.DefaultServerUrl, key1, false},
                 new object[] {null, server2, key1, key2, false, null, server2, key2, false},
                 new object[] {null, server2, null, key2, false, null, server2, key2, false},
                 new object[] {null, server2, null, key2, false, true, server2, key2, true},

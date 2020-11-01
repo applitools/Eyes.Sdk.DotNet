@@ -11,11 +11,11 @@ namespace Applitools
     /// Writes log messages to the standard output stream.
     /// </summary>
     [ComVisible(true)]
-    public class FileLogHandler : ILogHandler
+    public class FileLogHandler : LogHandlerBase
     {
-        private Queue<string> queue_ = new Queue<string>(100);
-        private AutoResetEvent continueWritingWaitHandle_ = new AutoResetEvent(false);
-        private AutoResetEvent writingDoneWaitHandle_ = new AutoResetEvent(false);
+        private readonly Queue<string> queue_ = new Queue<string>(100);
+        private readonly AutoResetEvent continueWritingWaitHandle_ = new AutoResetEvent(false);
+        private readonly AutoResetEvent writingDoneWaitHandle_ = new AutoResetEvent(false);
         private Thread fileWriterThread_;
         #region Constructors
 
@@ -26,8 +26,8 @@ namespace Applitools
         /// <param name="isVerbose">Whether to handle or ignore verbose log messages.</param>
         /// <param name="append">Whether to append to the file or create a new one.</param>
         public FileLogHandler(string filename, bool append, bool isVerbose)
+            : base(isVerbose)
         {
-            IsVerbose = isVerbose;
             AppendToFile = append;
             FilePath = filename;
             Open();
@@ -98,21 +98,14 @@ namespace Applitools
             }
         }
 
-        public void OnMessage(bool verbose, string message, params object[] args)
+        public override void OnMessage(string message, TraceLevel level)
         {
             try
             {
-                if (!verbose || IsVerbose)
+                lock (queue_)
                 {
-                    if (args != null && args.Length > 0)
-                    {
-                        message = string.Format(message, args);
-                    }
-                    lock (queue_)
-                    {
-                        queue_.Enqueue(DateTimeOffset.Now + " - Eyes: " + message);
-                        continueWritingWaitHandle_.Set();
-                    }
+                    queue_.Enqueue(message);
+                    continueWritingWaitHandle_.Set();
                 }
             }
             catch
@@ -120,27 +113,8 @@ namespace Applitools
                 // We don't want a trace failure the fail the test
             }
         }
-        public void OnMessage(bool verbose, Func<string> messageProvider)
-        {
-            try
-            {
-                if (!verbose || IsVerbose)
-                {
-                    lock (queue_)
-                    {
-                        queue_.Enqueue(messageProvider());
-                        continueWritingWaitHandle_.Set();
-                    }
-                }
-            }
-            catch
-            {
-                // We don't want a trace failure the fail the test
-            }
-        }
-        public bool IsOpen { get; private set; } = true;
 
-        public void Open()
+        public override void Open()
         {
             try
             {
@@ -153,10 +127,10 @@ namespace Applitools
                 }
                 if (fileWriterThread_ == null || !fileWriterThread_.IsAlive)
                 {
-                    OnMessage(false, "FileLogHandler: starting new thread");
+                    OnMessage("FileLogHandler: starting new thread", TraceLevel.Info);
                     fileWriterThread_ = new Thread(new ThreadStart(DumpLogToFile_));
                     fileWriterThread_.IsBackground = true;
-                    IsOpen = true;
+                    isOpen_ = true;
                 }
                 fileWriterThread_.Start();
             }
@@ -166,13 +140,13 @@ namespace Applitools
             }
         }
 
-        public void Close()
+        public override void Close()
         {
-            OnMessage(false, "FileLogHandler: closing file");
+            OnMessage("FileLogHandler: closing file", TraceLevel.Info);
             writingDoneWaitHandle_.Reset();
             continueWritingWaitHandle_.Set();
             writingDoneWaitHandle_.WaitOne();
-            IsOpen = false;
+            isOpen_ = false;
         }
 
         #endregion

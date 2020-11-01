@@ -54,14 +54,14 @@ namespace Applitools
         private SetScaleProviderHandler setScaleProvider_;
         private ICutProvider cutProvider_;
         private Assembly actualAssembly_;
-        private PropertiesCollection properties_;
+        private readonly PropertiesCollection properties_;
         private static readonly object screenshotLock_ = new object();
         private readonly TimeSpan TIME_TO_WAIT_FOR_OPEN = TimeSpan.FromSeconds(70);
         private readonly TimeSpan TIME_THRESHOLD = TimeSpan.FromSeconds(20);
         private bool isViewportSizeSet_;
         private IDebugScreenshotProvider debugScreenshotProvider_ = NullDebugScreenshotProvider.Instance;
         protected RectangleSize viewportSize_;
-        public static string DefaultServerUrl = "https://eyesapi.applitools.com/";
+        public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         private IServerConnector serverConnector_;
         internal Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
         internal Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
@@ -1110,12 +1110,12 @@ namespace Applitools
             string testInfo = $"'{Configuration.TestName}' of '{Configuration.AppName}' {appEnv}";
             if (runningSession_.IsNewSession)
             {
-                Logger.Log("--- New test started - " + testInfo);
+                Logger.Verbose("--- New test started - " + testInfo);
                 shouldMatchWindowRunOnceOnTimeout_ = true;
             }
             else
             {
-                Logger.Log("--- Test started - " + testInfo);
+                Logger.Verbose("--- Test started - " + testInfo);
                 shouldMatchWindowRunOnceOnTimeout_ = false;
             }
 

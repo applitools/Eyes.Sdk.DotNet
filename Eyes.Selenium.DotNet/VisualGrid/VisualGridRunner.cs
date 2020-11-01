@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Applitools.VisualGrid
 {
@@ -29,10 +30,10 @@ namespace Applitools.VisualGrid
         private readonly AutoResetEvent checkerServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent renderingServiceLock_ = new AutoResetEvent(true);
         private readonly AutoResetEvent renderRequestCollectionServiceLock_ = new AutoResetEvent(true);
-
         private readonly EyesListener eyesListener_;
 
         internal static TimeSpan waitForResultTimeout_ = TimeSpan.FromMinutes(10);
+        internal IServerConnector ServerConnector { get; set; }
 
         public class RenderListener
         {
@@ -67,24 +68,27 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, byte> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, byte>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
-        public VisualGridRunner(ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler)
+        public VisualGridRunner(ILogHandler logHandler = null, string serverUrl = null)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler, serverUrl)
         {
         }
 
-        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler)
+        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null, string serverUrl = null)
+            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler, serverUrl)
         {
+            NetworkLogHandler.SendSingleLog(ServerConnector, TraceLevel.Notice, "after factor of: {0}", FACTOR);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null, string serverUrl = null)
         {
             runnerOptions_ = runnerOptions;
 
             if (logHandler != null) Logger.SetLogHandler(logHandler);
-
+            if (serverUrl != null) ServerUrl = serverUrl;
+            ServerConnector = new ServerConnector(Logger, new Uri(ServerUrl));
             eyesListener_ = new EyesListener(OnTaskComplete, OnRenderComplete);
-
+            NetworkLogHandler.SendSingleLog(ServerConnector, TraceLevel.Notice, 
+                "testConcurrency: {0}", ((IRunnerOptionsInternal)runnerOptions).GetConcurrency());
             Init();
             Logger.Verbose("rendering grid manager is built");
             StartServices();
@@ -315,12 +319,10 @@ namespace Applitools.VisualGrid
             lock (allEyes_)
             {
                 Logger.Verbose("looking for best test in a list of {0} eyes.", allEyes_.Count);
+                if (allEyes_.Any((eyes) => eyes.IsServerConcurrencyLimitReached())) return null;
+
                 foreach (IVisualGridEyes eyes in allEyes_)
-                {
-                    if (eyes.IsServerConcurrencyLimitReached())
-                    {
-                        return null;
-                    }
+                { 
                     ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
                     if (currentTestMark == null) continue;
                     int currentScore = currentTestMark.Score;

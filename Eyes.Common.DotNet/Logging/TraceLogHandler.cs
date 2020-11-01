@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Applitools
 {
@@ -7,58 +6,22 @@ namespace Applitools
     /// Writes log messages to <see cref="System.Diagnostics.Trace"/>.
     /// </summary>
     [ComVisible(true)]
-    public class TraceLogHandler : ILogHandler
+    public class TraceLogHandler : LogHandlerBase
     {
-        private readonly bool isVerbose_;
-
         /// <summary>
         /// Creates a new <see cref="TraceLogHandler"/> instance.
         /// </summary>
         /// <param name="isVerbose">Whether to handle or ignore verbose log messages.</param>
-        public TraceLogHandler(bool isVerbose)
-        {
-            isVerbose_ = isVerbose;
-        }
+        public TraceLogHandler(bool isVerbose) : base(isVerbose) { isOpen_ = true; }
 
         /// <summary>
         /// Creates a new <see cref="TraceLogHandler"/> that ignores verbose log messages.
         /// </summary>
-        public TraceLogHandler()
-            : this(true)
-        {
-        }
+        public TraceLogHandler() : this(true) { }
 
-        public void OnMessage(bool verbose, string message, params object[] args)
+        public override void OnMessage(string message, TraceLevel level)
         {
-            if (!verbose || isVerbose_)
-            {
-                if (args != null && args.Length > 0)
-                {
-                    message = string.Format(message, args);
-                }
-                System.Diagnostics.Trace.WriteLine($"{DateTimeOffset.Now} - Eyes: {message}");
-            }
-        }
-
-        public void OnMessage(bool verbose, Func<string> messageProvider)
-        {
-            if (!verbose || isVerbose_)
-            {
-                System.Diagnostics.Trace.WriteLine(messageProvider());
-            }
-        }
-        public bool IsOpen => true;
-
-        public void Open()
-        {
-        }
-
-        public void Close()
-        {
-        }
-
-        public void Dispose()
-        {
+            System.Diagnostics.Trace.WriteLine(message);
         }
     }
 }

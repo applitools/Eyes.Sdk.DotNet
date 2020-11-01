@@ -1,30 +1,11 @@
-﻿using System;
-
-namespace Applitools
+﻿namespace Applitools
 {
-    public class NullLogHandler : ILogHandler
+    public class NullLogHandler : LogHandlerBase
     {
         public static NullLogHandler Instance = new NullLogHandler();
 
-        public bool IsOpen => true;
+        public NullLogHandler() : base(false) { }
 
-        public void OnMessage(bool verbose, string message, params object[] args)
-        {
-        }
-        public void OnMessage(bool verbose, Func<string> messageProvider)
-        {
-        }
-
-        public void Open()
-        {
-        }
-
-        public void Close()
-        {
-        }
-
-        public void Dispose()
-        {
-        }
+        public override void OnMessage(string message, TraceLevel level) { }
     }
 }

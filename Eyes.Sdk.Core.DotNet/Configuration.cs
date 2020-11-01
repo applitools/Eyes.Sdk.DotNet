@@ -303,7 +303,7 @@ namespace Applitools
         private string serverUrl_;
         public string ServerUrl
         {
-            get => serverUrl_ ?? CommonUtils.GetEnvVar("APPLITOOLS_SERVER_URL") ?? EyesBase.DefaultServerUrl;
+            get => serverUrl_ ?? CommonUtils.GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
             set => serverUrl_ = value;
         }
 
