@@ -364,6 +364,7 @@ namespace Applitools
             return this;
         }
 
+
         public AccessibilitySettings AccessibilityValidation
         {
             get => DefaultMatchSettings.AccessibilitySettings;
@@ -373,6 +374,22 @@ namespace Applitools
         public IConfiguration SetAccessibilityValidation(AccessibilitySettings value)
         {
             DefaultMatchSettings.AccessibilitySettings = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets and gets optional timeout in seconds. 
+        /// </summary>
+        public int? AbortIdleTestTimeout { get; set; } = null;
+
+        /// <summary>
+        /// Set optional server timeout in seconds for handling test.
+        /// </summary>
+        /// <param name="value">Timeout in seconds.</param>
+        /// <returns>This configuration object.</returns>
+        public IConfiguration SetAbortIdleTestTimeout(int? value)
+        {
+            AbortIdleTestTimeout = value;
             return this;
         }
 
