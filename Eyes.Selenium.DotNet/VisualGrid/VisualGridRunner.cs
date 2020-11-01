@@ -13,9 +13,35 @@ namespace Applitools.VisualGrid
 {
     public class VisualGridRunner : EyesRunner, IVisualGridRunner
     {
-        internal const int FACTOR = 5;
+        internal const int CONCURRENCY_FACTOR = 5;
         internal const int DEFAULT_CONCURRENCY = 5;
         internal readonly RunnerOptions runnerOptions_;
+
+        internal class TestConcurrency
+        {
+            public int UserConcurrency { get; }
+            public int ActualConcurrency { get; }
+            public bool IsLegacy { get; }
+            public bool IsDefault { get; }
+
+            public TestConcurrency()
+            {
+                IsDefault = true;
+                IsLegacy = false;
+                UserConcurrency = DEFAULT_CONCURRENCY;
+                ActualConcurrency = DEFAULT_CONCURRENCY;
+            }
+
+            public TestConcurrency(int userConcurrency, bool isLegacy)
+            {
+                UserConcurrency = userConcurrency;
+                ActualConcurrency = isLegacy ? userConcurrency * CONCURRENCY_FACTOR : userConcurrency;
+                IsLegacy = isLegacy;
+                IsDefault = false;
+            }
+        }
+
+        internal readonly TestConcurrency testConcurrency_;
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         internal readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
@@ -33,7 +59,6 @@ namespace Applitools.VisualGrid
         private readonly EyesListener eyesListener_;
 
         internal static TimeSpan waitForResultTimeout_ = TimeSpan.FromMinutes(10);
-        internal IServerConnector ServerConnector { get; set; }
 
         public class RenderListener
         {
@@ -59,6 +84,7 @@ namespace Applitools.VisualGrid
         private RenderingGridService renderingGridService_;
         private EyesService eyesCheckerService_;
         private RenderingInfo renderingInfo_;
+        private bool wasConcurrencyLogSent_;
 
         RenderingInfo IVisualGridRunner.RenderingInfo => renderingInfo_;
 
@@ -68,27 +94,24 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, byte> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, byte>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
-        public VisualGridRunner(ILogHandler logHandler = null, string serverUrl = null)
-            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler, serverUrl)
+        public VisualGridRunner(ILogHandler logHandler = null)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler)
         {
+            testConcurrency_ = new TestConcurrency();
         }
 
-        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null, string serverUrl = null)
-            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * FACTOR), logHandler, serverUrl)
+        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
+            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), logHandler)
         {
-            NetworkLogHandler.SendSingleLog(ServerConnector, TraceLevel.Notice, "after factor of: {0}", FACTOR);
+            testConcurrency_ = new TestConcurrency(concurrentOpenSessions, true);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null, string serverUrl = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
         {
             runnerOptions_ = runnerOptions;
-
+            testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
             if (logHandler != null) Logger.SetLogHandler(logHandler);
-            if (serverUrl != null) ServerUrl = serverUrl;
-            ServerConnector = new ServerConnector(Logger, new Uri(ServerUrl));
             eyesListener_ = new EyesListener(OnTaskComplete, OnRenderComplete);
-            NetworkLogHandler.SendSingleLog(ServerConnector, TraceLevel.Notice, 
-                "testConcurrency: {0}", ((IRunnerOptionsInternal)runnerOptions).GetConcurrency());
             Init();
             Logger.Verbose("rendering grid manager is built");
             StartServices();
@@ -322,7 +345,7 @@ namespace Applitools.VisualGrid
                 if (allEyes_.Any((eyes) => eyes.IsServerConcurrencyLimitReached())) return null;
 
                 foreach (IVisualGridEyes eyes in allEyes_)
-                { 
+                {
                     ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
                     if (currentTestMark == null) continue;
                     int currentScore = currentTestMark.Score;
@@ -622,5 +645,20 @@ namespace Applitools.VisualGrid
         }
 
         public bool IsServicesOn { get; set; }
+
+        public object GetConcurrencyLog()
+        {
+            if (wasConcurrencyLogSent_)
+            {
+                return null;
+            }
+
+            wasConcurrencyLogSent_ = true;
+            string key = testConcurrency_.IsDefault ? "defaultConcurrency" : testConcurrency_.IsLegacy ? "concurrency" : "testConcurrency";
+            return new Dictionary<string, object> {
+                { "type", "runnerStarted" },
+                { key, testConcurrency_.UserConcurrency }
+            };
+        }
     }
 }
