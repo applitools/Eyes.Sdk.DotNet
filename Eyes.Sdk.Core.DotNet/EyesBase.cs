@@ -1089,6 +1089,7 @@ namespace Applitools
                 Configuration.BaselineBranchName,
                 Configuration.SaveDiffs,
                 null,
+                Configuration.AbortIdleTestTimeout,
                 properties_);
 
             Logger.Verbose("Starting server session...");

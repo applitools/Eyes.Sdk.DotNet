@@ -43,6 +43,7 @@ namespace Applitools
                 "baseline branch",
                 saveDiffs: null,
                 render: null,
+                timeout: 10,
                 properties: sessionProperties);
 
             string json = JsonConvert.SerializeObject(sessionStartInfo, Formatting.Indented);

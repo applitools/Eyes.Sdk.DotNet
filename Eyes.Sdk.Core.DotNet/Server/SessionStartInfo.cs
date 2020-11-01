@@ -22,6 +22,7 @@ namespace Applitools
             string baselineBranchName,
             bool? saveDiffs,
             bool? render,
+            int? timeout,
             PropertiesCollection properties)
         {
             ArgumentGuard.NotEmpty(agentId, nameof(agentId));
@@ -45,6 +46,7 @@ namespace Applitools
             BaselineBranchName = baselineBranchName;
             SaveDiffs = saveDiffs;
             Render = render;
+            Timeout = timeout;
             Properties = properties;
         }
 
@@ -76,6 +78,8 @@ namespace Applitools
 
         public bool? Render { get; set; }
 
+        public int? Timeout { get; private set; }
+        
         public PropertiesCollection Properties { get; private set; }
     }
 }

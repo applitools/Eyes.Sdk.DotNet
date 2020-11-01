@@ -9,6 +9,7 @@
 ## [Eyes.Sdk.Core vNext]
 ### Added
 - Ultrafast Grid: Obey server concurrency limitations. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Optional server timeout. [Trello 1539](https://trello.com/c/APlfd1cb)
 ### Updated
 - `CssParser` version updated to 1.1.0.
 
