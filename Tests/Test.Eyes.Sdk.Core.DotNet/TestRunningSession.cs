@@ -70,6 +70,7 @@ namespace Applitools
                 "baseline branch",
                 saveDiffs: null,
                 render: null,
+                timeout: null,
                 properties: sessionProperties);
 
             return sessionStartInfo;
