@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.Tests
 {
@@ -30,7 +31,8 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckFrame_Fluent()
         {
-            GetEyes().Check("Fluent - Frame", Target.Frame("frame1"));
+            GetEyes().Check("Fluent - Frame", Target.Frame("frame1").Strict(By.CssSelector("#inner-frame-div")));
+            SetExpectedStrictRegions(new Region(10, 10, 304, 184));
         }
 
         [Test]

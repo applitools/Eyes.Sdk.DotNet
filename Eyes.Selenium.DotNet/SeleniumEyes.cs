@@ -510,7 +510,7 @@ namespace Applitools.Selenium
                 seleniumCheckTarget.State = state;
                 state.StitchContent = (checkSettingsInternal.GetStitchContent() ?? false) || ForceFullPageScreenshot;
 
-                var clonedCheckSettings = checkSettings.Clone();
+                ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
                 // Ensure frame is not used as a region
                 ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state.StitchContent);
 
@@ -575,7 +575,7 @@ namespace Applitools.Selenium
                     else
                     {
                         // TODO Verify: if element is outside the viewport, we should still capture entire (outer) bounds
-                        CheckElement_(checkSettingsInternal, targetElement, targetRegion, state);
+                        CheckElement_(checkSettingsInternal, targetElement, targetRegion, state, clonedCheckSettings);
                     }
                 }
                 else if (targetRegion != null)
@@ -794,7 +794,7 @@ namespace Applitools.Selenium
         }
 
         private void CheckElement_(ICheckSettingsInternal checkSettingsInternal, IWebElement targetElement,
-            Rectangle? targetRegion, CheckState state)
+            Rectangle? targetRegion, CheckState state, ICheckSettingsInternal originalCheckSettings)
         {
             IList<FrameLocator> frameLocators = ((ISeleniumCheckTarget)checkSettingsInternal).GetFrameChain();
             if (frameLocators.Count > 0)
@@ -842,7 +842,7 @@ namespace Applitools.Selenium
             switchTo.Frames(currentFrameChain);
 
             Rectangle crop = ComputeCropRectangle(bounds, targetRegion) ?? bounds;
-            CheckWindowBase(crop, checkSettingsInternal, source: driver_.Url);
+            CheckWindowBase(crop, originalCheckSettings, source: driver_.Url);
         }
 
         private static Rectangle? ComputeCropRectangle(Rectangle fullRect, Rectangle? cropRect)
