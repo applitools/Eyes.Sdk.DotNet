@@ -995,7 +995,7 @@ namespace Applitools
 
         protected ILastScreenshotBounds LastScreenshotBoundsProvider { get { return matchWindowTask_; } }
 
-        protected internal IServerConnector ServerConnector
+        public IServerConnector ServerConnector
         {
             get
             {

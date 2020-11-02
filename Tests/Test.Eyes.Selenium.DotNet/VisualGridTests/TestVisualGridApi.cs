@@ -255,7 +255,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             RunnerOptions runnerOptions = new RunnerOptions().TestConcurrency(5);
 
             VisualGridRunner runner1 = new VisualGridRunner();
-            Assert.AreEqual(VisualGridRunner.FACTOR, ((IRunnerOptionsInternal)runner1.runnerOptions_).GetConcurrency());
+            Assert.AreEqual(VisualGridRunner.CONCURRENCY_FACTOR, ((IRunnerOptionsInternal)runner1.runnerOptions_).GetConcurrency());
             runner1.GetAllTestResults();
 
             VisualGridRunner runner2 = new VisualGridRunner(runnerOptions);
@@ -263,7 +263,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             runner2.GetAllTestResults();
 
             VisualGridRunner runner3 = new VisualGridRunner(5);
-            Assert.AreEqual(VisualGridRunner.FACTOR * 5, ((IRunnerOptionsInternal)runner3.runnerOptions_).GetConcurrency());
+            Assert.AreEqual(VisualGridRunner.CONCURRENCY_FACTOR * 5, ((IRunnerOptionsInternal)runner3.runnerOptions_).GetConcurrency());
             runner3.GetAllTestResults();
         }
 

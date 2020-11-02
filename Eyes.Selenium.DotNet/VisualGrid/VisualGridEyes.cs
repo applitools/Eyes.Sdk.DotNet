@@ -424,6 +424,19 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.Verbose("enter (#{0})", GetHashCode());
 
+            try
+            {
+                object logMessage = visualGridRunner_.GetConcurrencyLog();
+                if (logMessage != null)
+                {
+                    NetworkLogHandler.SendEvent(((EyesBase)eyesConnector_).ServerConnector, TraceLevel.Notice, logMessage);
+                }
+            }
+            catch (JsonException e)
+            {
+                Logger.Log("Error: {0}", e);
+            }
+
             AddOpenTaskToAllRunningTest_();
 
             List<VisualGridTask> checkTasks = new List<VisualGridTask>();

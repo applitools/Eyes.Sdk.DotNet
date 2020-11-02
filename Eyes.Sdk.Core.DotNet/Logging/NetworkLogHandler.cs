@@ -19,18 +19,23 @@ namespace Applitools
             clientEvents_ = new LogSessionsClientEvents();
         }
 
-        public override void OnMessage(string message, TraceLevel level = default)
+        public void OnEvent(object @event, TraceLevel level = default)
         {
             lock (clientEvents_)
             {
                 string currentTime = TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.ISO8601);
-                ClientEvent clientEvent = new ClientEvent(currentTime, message, level);
+                ClientEvent clientEvent = new ClientEvent(currentTime, @event, level);
                 clientEvents_.Add(clientEvent);
                 if (clientEvents_.Count >= MAX_EVENTS_SIZE)
                 {
                     SendLogs_();
                 }
             }
+        }
+
+        public override void OnMessage(string message, TraceLevel level = default)
+        {
+            OnEvent(message, level);
         }
 
         public override void Close()
@@ -53,10 +58,10 @@ namespace Applitools
             }
         }
 
-        public static void SendSingleLog(IServerConnector serverConnector, TraceLevel level, string message, params object[] args)
+        public static void SendEvent(IServerConnector serverConnector, TraceLevel level, object @event)
         {
             NetworkLogHandler logHandler = new NetworkLogHandler(serverConnector);
-            logHandler.OnMessage(level, message, args);
+            logHandler.OnEvent(@event, level);
             logHandler.Close();
         }
     }
