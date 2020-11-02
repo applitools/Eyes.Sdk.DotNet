@@ -426,7 +426,7 @@ namespace Applitools.Selenium.VisualGrid
 
             try
             {
-                object logMessage = JsonConvert.SerializeObject(visualGridRunner_.GetConcurrencyLog());
+                object logMessage = visualGridRunner_.GetConcurrencyLog();
                 if (logMessage != null)
                 {
                     NetworkLogHandler.SendEvent(((EyesBase)eyesConnector_).ServerConnector, TraceLevel.Notice, logMessage);
