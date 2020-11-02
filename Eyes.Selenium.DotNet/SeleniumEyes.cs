@@ -511,8 +511,9 @@ namespace Applitools.Selenium
                 state.StitchContent = (checkSettingsInternal.GetStitchContent() ?? false) || ForceFullPageScreenshot;
 
                 ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
+
                 // Ensure frame is not used as a region
-                ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state.StitchContent);
+                ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
 
                 Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
 
@@ -575,7 +576,7 @@ namespace Applitools.Selenium
                     else
                     {
                         // TODO Verify: if element is outside the viewport, we should still capture entire (outer) bounds
-                        CheckElement_(checkSettingsInternal, targetElement, targetRegion, state, clonedCheckSettings);
+                        CheckElement_(checkSettingsInternal, targetElement, targetRegion, state);
                     }
                 }
                 else if (targetRegion != null)
@@ -794,7 +795,7 @@ namespace Applitools.Selenium
         }
 
         private void CheckElement_(ICheckSettingsInternal checkSettingsInternal, IWebElement targetElement,
-            Rectangle? targetRegion, CheckState state, ICheckSettingsInternal originalCheckSettings)
+            Rectangle? targetRegion, CheckState state)
         {
             IList<FrameLocator> frameLocators = ((ISeleniumCheckTarget)checkSettingsInternal).GetFrameChain();
             if (frameLocators.Count > 0)
@@ -842,7 +843,7 @@ namespace Applitools.Selenium
             switchTo.Frames(currentFrameChain);
 
             Rectangle crop = ComputeCropRectangle(bounds, targetRegion) ?? bounds;
-            CheckWindowBase(crop, originalCheckSettings, source: driver_.Url);
+            CheckWindowBase(crop, checkSettingsInternal, source: driver_.Url);
         }
 
         private static Rectangle? ComputeCropRectangle(Rectangle fullRect, Rectangle? cropRect)
@@ -1206,6 +1207,10 @@ namespace Applitools.Selenium
             }
 
             result.DomUrl = TryCaptureAndPostDom(checkSettingsInternal);
+            if (state.FrameToSwitchTo != null)
+            {
+                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
+            }
             return result;
         }
 
