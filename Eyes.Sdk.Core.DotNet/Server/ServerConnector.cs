@@ -231,17 +231,10 @@ namespace Applitools
             }
         }
 
-        public bool DontCloseBatches { get; } = "true".Equals(CommonUtils.GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
         internal IHttpRestClientFactory HttpRestClientFactory { get; set; } = new DefaultHttpRestClientFactory();
 
         public virtual void CloseBatch(string batchId)
         {
-            if (DontCloseBatches)
-            {
-                Logger.Log("APPLITOOLS_DONT_CLOSE_BATCHES environment variable set to true. Doing nothing.");
-                return;
-            }
-
             ArgumentGuard.NotNull(batchId, nameof(batchId));
 
             HttpWebResponse response = null;

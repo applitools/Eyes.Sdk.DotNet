@@ -15,7 +15,6 @@ namespace Applitools
 
         TimeSpan Timeout { get; set; }
         string SdkName { get; set; }
-        bool DontCloseBatches { get; }
         string AgentId { get; set; }
 
         void CloseBatch(string batchId);

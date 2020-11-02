@@ -99,20 +99,26 @@ namespace Applitools.Tests
         public void TestDontCloseBatchesEnvironmentVariables()
         {
             Environment.SetEnvironmentVariable("APPLITOOLS_DONT_CLOSE_BATCHES", "true");
-            ServerConnector serverConnector = new ServerConnector(logger_);
-            Assert.AreEqual(true, serverConnector.DontCloseBatches, nameof(serverConnector.DontCloseBatches));
+            EyesRunner runner = new MockEyesRunner();
+            Assert.AreEqual(true, runner.DontCloseBatches, nameof(runner.DontCloseBatches));
 
             Environment.SetEnvironmentVariable("bamboo_APPLITOOLS_DONT_CLOSE_BATCHES", "false");
-            serverConnector = new ServerConnector(logger_);
-            Assert.AreEqual(true, serverConnector.DontCloseBatches, nameof(serverConnector.DontCloseBatches));
+            runner = new MockEyesRunner();
+            Assert.AreEqual(true, runner.DontCloseBatches, nameof(runner.DontCloseBatches));
 
             Environment.SetEnvironmentVariable("APPLITOOLS_DONT_CLOSE_BATCHES", null);
-            serverConnector = new ServerConnector(logger_);
-            Assert.AreEqual(false, serverConnector.DontCloseBatches, nameof(serverConnector.DontCloseBatches));
+            runner = new MockEyesRunner();
+            Assert.AreEqual(false, runner.DontCloseBatches, nameof(runner.DontCloseBatches));
 
             Environment.SetEnvironmentVariable("bamboo_APPLITOOLS_DONT_CLOSE_BATCHES", "true");
-            serverConnector = new ServerConnector(logger_);
-            Assert.AreEqual(true, serverConnector.DontCloseBatches, nameof(serverConnector.DontCloseBatches));
+            runner = new MockEyesRunner();
+            Assert.AreEqual(true, runner.DontCloseBatches, nameof(runner.DontCloseBatches));
+
+            runner.DontCloseBatches = true;
+            Assert.AreEqual(true, runner.DontCloseBatches, nameof(runner.DontCloseBatches));
+
+            runner.DontCloseBatches = false;
+            Assert.AreEqual(false, runner.DontCloseBatches, nameof(runner.DontCloseBatches));
         }
 
         [Test]

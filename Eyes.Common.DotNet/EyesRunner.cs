@@ -1,4 +1,5 @@
 ﻿using Applitools.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace Applitools
@@ -30,6 +31,7 @@ namespace Applitools
 
         private void DeleteAllBatches_()
         {
+            if (DontCloseBatches) return;
             foreach (KeyValuePair<string, IBatchCloser> kvp in batchClosers_)
             {
                 IBatchCloser connector = kvp.Value;
@@ -59,6 +61,6 @@ namespace Applitools
         public string ApiKey { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
         public string ServerUrl { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
         public bool IsDisabled { get; set; }
-
+        public bool DontCloseBatches { get; set; } = "true".Equals(CommonUtils.GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
     }
 }
