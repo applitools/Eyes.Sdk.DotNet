@@ -31,7 +31,7 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckFrame_Fluent()
         {
-            GetEyes().Check("Fluent - Frame", Target.Frame("frame1").Strict(By.CssSelector("#inner-frame-div")));
+            GetEyes().Check("Fluent - Frame", Target.Frame("frame1").Fully(false).Strict(By.CssSelector("#inner-frame-div")));
             SetExpectedStrictRegions(new Region(10, 10, 302, 182));
         }
 

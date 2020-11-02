@@ -441,8 +441,12 @@ namespace Applitools.Selenium.VisualGrid
 
             List<VisualGridTask> checkTasks = new List<VisualGridTask>();
 
-            ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
-            ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
+            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
+            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+
+            CheckState state = new CheckState();
+            state.StitchContent = checkSettingsInternal.GetStitchContent() ?? Config_.IsForceFullPageScreenshot ?? true;
+            ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
 
             try
             {
