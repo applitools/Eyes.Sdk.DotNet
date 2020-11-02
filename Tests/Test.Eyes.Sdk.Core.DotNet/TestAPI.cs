@@ -225,7 +225,7 @@ namespace Applitools.Tests
             {
                 Assert.NotNull(BrowserNames.GetBrowserName(browser), $"{nameof(BrowserType)}.{browser} is not covered by {nameof(BrowserNames)}.{nameof(BrowserNames.GetBrowserName)}");
             }
-            Assert.AreEqual(BrowserNames.Chrome, BrowserNames.GetBrowserName(BrowserType.CHROME)); 
+            Assert.AreEqual(BrowserNames.Chrome, BrowserNames.GetBrowserName(BrowserType.CHROME));
             browsers.Remove(BrowserType.CHROME);
             Assert.AreEqual(BrowserNames.Chrome, BrowserNames.GetBrowserName(BrowserType.CHROME_ONE_VERSION_BACK));
             browsers.Remove(BrowserType.CHROME_ONE_VERSION_BACK);
@@ -303,6 +303,11 @@ namespace Applitools.Tests
             else if (type == typeof(int))
             {
                 modifiedValue = ((int)origValue) + 1;
+            }
+            else if (type == typeof(int?))
+            {
+                int? ov = ((int?)origValue);
+                modifiedValue = ov.HasValue ? ov.Value + 1 : 1;
             }
             else if (type == typeof(RectangleSize))
             {
