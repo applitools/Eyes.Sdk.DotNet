@@ -475,7 +475,10 @@ namespace Applitools
             request.MediaType = "application/json";
             request.Method = "POST";
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.Headers.Add("x-applitools-eyes-client", fullAgentId);
+            if (fullAgentId != null)
+            {
+                request.Headers.Add("x-applitools-eyes-client", fullAgentId);
+            }
             request.Headers.Add("x-applitools-eyes-client-request-id", Guid.NewGuid().ToString());
             return request;
         }

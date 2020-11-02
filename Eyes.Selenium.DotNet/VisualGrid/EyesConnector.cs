@@ -245,6 +245,10 @@ namespace Applitools.Selenium.VisualGrid
             request.MediaType = contentType ?? "application/octet-stream";
             request.Method = "PUT";
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
+            if (FullAgentId != null)
+            {
+                request.Headers.Add("x-applitools-eyes-client", FullAgentId);
+            }
             request.Headers.Add("x-applitools-eyes-client-request-id", Guid.NewGuid().ToString());
             Stream dataStream = request.GetRequestStream();
             dataStream.Write(content, 0, content.Length);
