@@ -38,6 +38,7 @@ namespace Applitools
             StitchOverlap = configuration.StitchOverlap;
             TestName = configuration.TestName;
             ViewportSize = configuration.ViewportSize;
+            AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
         }
 
 
