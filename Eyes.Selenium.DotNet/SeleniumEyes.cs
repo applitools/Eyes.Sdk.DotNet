@@ -287,7 +287,6 @@ namespace Applitools.Selenium
             {
                 ICheckSettings settings = checkSettings[i];
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)settings;
-                string name = checkSettingsInternal.GetName();
 
                 checkSettingsInternalDictionary.Add(i, checkSettingsInternal);
 
@@ -511,6 +510,7 @@ namespace Applitools.Selenium
                 seleniumCheckTarget.State = state;
                 state.StitchContent = (checkSettingsInternal.GetStitchContent() ?? false) || ForceFullPageScreenshot;
 
+                var clonedCheckSettings = checkSettings.Clone();
                 // Ensure frame is not used as a region
                 ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state.StitchContent);
 

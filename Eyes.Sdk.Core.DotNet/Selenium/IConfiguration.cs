@@ -71,6 +71,7 @@ namespace Applitools.Selenium
         new IConfiguration SetIgnoreDisplacements(bool value);
         new IConfiguration SetUseDom(bool value);
         new IConfiguration SetAccessibilityValidation(AccessibilitySettings value);
+        new IConfiguration SetAbortIdleTestTimeout(int? value);
         #endregion
     }
 }

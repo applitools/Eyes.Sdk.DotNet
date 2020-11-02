@@ -163,6 +163,7 @@ namespace Applitools.Selenium
         public new IConfiguration SetEnablePatterns(bool value) => (IConfiguration)base.SetEnablePatterns(value);
         public new IConfiguration SetIgnoreDisplacements(bool value) => (IConfiguration)base.SetIgnoreDisplacements(value);
         public new IConfiguration SetAccessibilityValidation(AccessibilitySettings value) => (IConfiguration)base.SetAccessibilityValidation(value);
+        public new IConfiguration SetAbortIdleTestTimeout(int? value) => (IConfiguration)base.SetAbortIdleTestTimeout(value);
         #endregion
 
 

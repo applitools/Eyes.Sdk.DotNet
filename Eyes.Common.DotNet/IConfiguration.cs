@@ -56,6 +56,7 @@ namespace Applitools
         bool EnablePatterns { get; set; }
 
         AccessibilitySettings AccessibilityValidation { get; set; }
+        int? AbortIdleTestTimeout { get; set; }
 
         IConfiguration SetAgentId(string value);
         IConfiguration SetAppName(string value);
@@ -83,5 +84,6 @@ namespace Applitools
         IConfiguration SetUseDom(bool value);
         IConfiguration SetEnablePatterns(bool value);
         IConfiguration SetAccessibilityValidation(AccessibilitySettings value);
+        IConfiguration SetAbortIdleTestTimeout(int? value);
     }
 }
