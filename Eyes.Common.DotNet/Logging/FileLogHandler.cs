@@ -133,7 +133,6 @@ namespace Applitools
                 }
                 if (fileWriterThread_ == null || !fileWriterThread_.IsAlive)
                 {
-                    //OnMessage("FileLogHandler: starting new thread", TraceLevel.Info);
                     fileWriterThread_ = new Thread(new ThreadStart(DumpLogToFile_));
                     fileWriterThread_.IsBackground = true;
                     isOpen_ = true;
@@ -148,10 +147,9 @@ namespace Applitools
 
         public override void Close()
         {
-            //OnMessage("FileLogHandler: closing file", TraceLevel.Info);
             writingDoneWaitHandle_.Reset();
             continueWritingWaitHandle_.Set();
-            writingDoneWaitHandle_.WaitOne(5000);
+            writingDoneWaitHandle_.WaitOne(3000);
             isOpen_ = false;
         }
 
