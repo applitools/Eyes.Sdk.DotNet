@@ -424,6 +424,8 @@ namespace Applitools.Utils
             {
                 req.Headers["x-applitools-eyes-client"] = AgentId;
             }
+            
+            req.Headers["x-applitools-eyes-client-request-id"] = Guid.NewGuid().ToString();
 
             if (AcceptLongRunningTasks)
             {
