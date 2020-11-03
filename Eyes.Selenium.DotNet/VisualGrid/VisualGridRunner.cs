@@ -376,24 +376,47 @@ namespace Applitools.VisualGrid
         private RenderingTask GetNextRenderingTask_()
         {
             Logger.Verbose("enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
-            RenderingTask renderingTask = null;
-            if (renderingTaskList_.Count > 0)
+            lock (renderingTaskList_)
             {
-                Logger.Verbose("locking renderingTaskList_");
-                lock (renderingTaskList_)
+                if (renderingTaskList_.Count == 0)
                 {
-                    if (renderingTaskList_.Count > 0)
+                    return null;
+                }
+
+                RenderingTask finalRenderingTask = null;
+                List<RenderingTask> chosenTasks = new List<RenderingTask>();
+                foreach (RenderingTask renderingTask in renderingTaskList_)
+                {
+                    if (!renderingTask.IsReady)
                     {
-                        renderingTask = renderingTaskList_[0];
-                        if (!renderingTask.IsReady) return null;
-                        renderingTaskList_.RemoveAt(0);
-                        Logger.Verbose("rendering task: {0}", renderingTask);
+                        continue;
+                    }
+
+                    if (finalRenderingTask == null)
+                    {
+                        finalRenderingTask = renderingTask;
+                    }
+                    else
+                    {
+                        finalRenderingTask.Merge(renderingTask);
+                    }
+
+                    chosenTasks.Add(renderingTask);
+                }
+
+                finalRenderingTask = finalRenderingTask != null && finalRenderingTask.IsReady ? finalRenderingTask : null;
+
+                if (finalRenderingTask != null)
+                {
+                    Logger.Verbose("Next rendering task contains %d render requests", chosenTasks.Count);
+                    foreach (var task in chosenTasks)
+                    {
+                        renderingTaskList_.Remove(task);
                     }
                 }
-                Logger.Verbose("releasing renderingTaskList_");
+
+                return finalRenderingTask;
             }
-            Logger.Verbose("exit");
-            return renderingTask;
         }
 
         private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
