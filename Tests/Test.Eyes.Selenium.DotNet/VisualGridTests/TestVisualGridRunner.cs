@@ -264,7 +264,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             }
 
             Assert.IsTrue(wasConcurrencyFull);
-            Assert.IsFalse(eyes.IsServerConcurrencyLimitReached());
+            Assert.IsFalse(((IVisualGridEyes)eyes).IsServerConcurrencyLimitReached());
             Assert.AreEqual(4, counter);
         }
 

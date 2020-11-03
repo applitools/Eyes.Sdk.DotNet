@@ -850,12 +850,12 @@ namespace Applitools.Selenium.VisualGrid
             return futures;
         }
 
-        public void SetListener(EyesListener listener)
+        void IVisualGridEyes.SetListener(EyesListener listener)
         {
             listener_ = listener;
         }
 
-        public RunningTest GetNextTestToClose()
+        RunningTest IVisualGridEyes.GetNextTestToClose()
         {
             Logger.Verbose("locking 'testsInCloseProcess_'. Count: {0} (object #{1})", testList_.Count, GetHashCode());
             lock (testsInCloseProcess_)
@@ -884,7 +884,7 @@ namespace Applitools.Selenium.VisualGrid
             return null;
         }
 
-        public ScoreTask GetBestScoreTaskForOpen()
+        ScoreTask IVisualGridEyes.GetBestScoreTaskForOpen()
         {
             int bestMark = -1;
             ScoreTask currentBest = null;
@@ -905,7 +905,7 @@ namespace Applitools.Selenium.VisualGrid
             return currentBest;
         }
 
-        public ScoreTask GetBestScoreTaskForCheck()
+        ScoreTask IVisualGridEyes.GetBestScoreTaskForCheck()
         {
             int bestScore = -1;
 
@@ -1034,7 +1034,7 @@ namespace Applitools.Selenium.VisualGrid
         internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
         internal event AfterServerConcurrencyLimitReachedQueriedDelegate AfterServerConcurrencyLimitReachedQueried;
 
-        public bool IsServerConcurrencyLimitReached()
+        bool IVisualGridEyes.IsServerConcurrencyLimitReached()
         {
             bool result = testList_.Any(t => t.IsServerConcurrencyLimitReached);
             AfterServerConcurrencyLimitReachedQueried?.Invoke(result);
