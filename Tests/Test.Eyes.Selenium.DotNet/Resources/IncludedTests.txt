@@ -40,6 +40,7 @@ Applitools.Selenium.Tests.TestDuplicates(Chrome, CSS).TestDuplicatedIFrames
 Applitools.Selenium.Tests.TestDuplicates(Chrome, Scroll).TestDuplicatedIFrames
 Applitools.Selenium.Tests.TestDuplicates(Chrome, VG).TestDuplicatedIFrames
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrame_Viewport_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrameInFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckFrameInFrame_Fully_Fluent2
@@ -51,6 +52,7 @@ Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFra
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFrame3_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckRegionInFrameInFrame_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrame_Viewport_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrameInFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckFrameInFrame_Fully_Fluent2
@@ -61,6 +63,7 @@ Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionIn
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionInFrame2_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckRegionInFrame3_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrame_Fluent
+Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrame_Viewport_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrameInFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckFrameInFrame_Fully_Fluent2
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckLongIFrameModal

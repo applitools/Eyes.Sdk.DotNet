@@ -31,8 +31,15 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckFrame_Fluent()
         {
-            GetEyes().Check("Fluent - Frame", Target.Frame("frame1").Fully(false).Strict(By.CssSelector("#inner-frame-div")));
-            SetExpectedStrictRegions(new Region(10, 10, 302, 182));
+            GetEyes().Check("Fluent - Frame", Target.Frame("frame1"));
+        }
+
+        [Test]
+        public void TestCheckFrame_Viewport_Fluent()
+        {
+            GetEyes().Check("Fluent - Frame - Viewport with ignore region", 
+                Target.Frame("frame1").Fully(false).Ignore(By.CssSelector("#inner-frame-div")));
+            SetExpectedIgnoreRegions(new Region(10, 10, 302, 182));
         }
 
         [Test]
