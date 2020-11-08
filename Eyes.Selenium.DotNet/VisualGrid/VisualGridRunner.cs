@@ -421,16 +421,19 @@ namespace Applitools.VisualGrid
 
         private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
         {
+            Logger.Verbose("locking renderRequestCollectionTaskList_. Count: {0}", renderRequestCollectionTaskList_.Count);
             lock (renderRequestCollectionTaskList_)
             {
                 if (renderRequestCollectionTaskList_.Count == 0)
                 {
+                    Logger.Verbose("releasing renderRequestCollectionTaskList_. returning null.");
                     return null;
                 }
 
                 RenderRequestCollectionTask renderRequestCollectionTask = renderRequestCollectionTaskList_[0];
                 renderRequestCollectionTaskList_.RemoveAt(0);
                 Task<TestResultContainer> task = new Task<TestResultContainer>(renderRequestCollectionTask.Call);
+                Logger.Verbose("releasing renderRequestCollectionTaskList_. returning task.");
                 return task;
             }
         }
