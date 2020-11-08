@@ -40,8 +40,8 @@ namespace Applitools
         private string GetPrefix_()
         {
             // getStackTrace()<-getPrefix()<-log()/verbose()<-"actual caller"
-            StackTrace stackTrace = new StackTrace(4);
-            MethodBase method = stackTrace.GetFrame(0).GetMethod();
+            StackFrame stackFrame = new StackFrame(4);
+            MethodBase method = stackFrame.GetMethod();
             string prefix = method.DeclaringType.Name + "." + method.Name + ": ";
             return prefix;
         }
