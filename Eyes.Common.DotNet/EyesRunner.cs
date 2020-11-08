@@ -40,10 +40,7 @@ namespace Applitools
 
         public void AddBatch(string batchId, IBatchCloser batchCloser)
         {
-            if (!batchClosers_.ContainsKey(batchId))
-            {
-                batchClosers_.Add(batchId, batchCloser);
-            }
+            batchClosers_.TryAdd(batchId, batchCloser);
         }
 
         protected abstract TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException);
