@@ -2,6 +2,7 @@
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
+using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -81,13 +82,18 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
             }
 
-            public delegate void OnRenderEventHandler(RenderRequest[] requests);
-            public event OnRenderEventHandler OnRender = null;
+            public delegate void BeforeRenderEventHandler(RenderRequest[] requests);
+            public event BeforeRenderEventHandler BeforeRender = null;
+
+            public delegate void AfterRenderEventHandler(Task<List<RunningRender>> results, RenderRequest[] requests);
+            public event AfterRenderEventHandler AfterRender = null;
 
             public override Task<List<RunningRender>> RenderAsync(RenderRequest[] requests)
             {
-                OnRender?.Invoke(requests);
-                return base.RenderAsync(requests);
+                BeforeRender?.Invoke(requests);
+                Task<List<RunningRender>> result = base.RenderAsync(requests);
+                AfterRender(result, requests);
+                return result;
             }
         }
 
@@ -123,7 +129,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.Open(driver, "Mock app", "Mock Test");
                 MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
 
-                mockEyesConnector.OnRender += (renderRequests) =>
+                mockEyesConnector.BeforeRender += (renderRequests) =>
                 {
                     IVisualGridEyes eyes = runner.allEyes_.First();
                     if (!eyes.GetAllRunningTests().First().IsTestOpen)
@@ -362,6 +368,65 @@ namespace Applitools.Selenium.Tests.VisualGridTests
               (IDictionary)runner.GetConcurrencyLog());
 
             Assert.IsNull(runner.GetConcurrencyLog());
+        }
+
+        [Test]
+        public void TestParallelStepsLimitOfTest()
+        {
+            bool isOnlyOneRender = true;
+            int runningRendersCount = 0;
+
+            VisualGridRunner runner = new VisualGridRunner();
+            Configuration config = new Configuration();
+            config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_7));
+            ConfigurationProvider configurationProvider = new ConfigurationProvider(config);
+
+            VisualGridEyes eyes = new VisualGridEyes(configurationProvider, runner);
+            eyes.SetLogHandler(TestUtils.InitLogHandler());
+            eyes.EyesConnectorFactory = new MockEyesConnectorFactory();
+
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            try
+            {
+                driver.Url = "http://applitools.github.io/demo";
+                eyes.Open(driver, "Eyes SDK", "UFG Server Concurrency", new RectangleSize(800, 800));
+                MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.eyesConnector_;
+
+                mockEyesConnector.BeforeRender += (renderRequests) =>
+                {
+                    int runningRendersCountBeforeInc = runningRendersCount;
+                    Interlocked.Increment(ref runningRendersCount);
+                    if (runningRendersCountBeforeInc >= RunningTest.PARALLEL_STEPS_LIMIT)
+                    {
+                        isOnlyOneRender = false;
+                    }
+
+                    Thread.Sleep(1000);
+                    if (renderRequests.Length != 1)
+                    {
+                        isOnlyOneRender = false;
+                    }
+                };
+
+                mockEyesConnector.AfterRender += (results, renderRequests) =>
+                {
+                    Interlocked.Decrement(ref runningRendersCount);
+                };
+
+                for (int i = 0; i < 10; i++)
+                {
+                    eyes.Check(Target.Window().Fully());
+                }
+                eyes.CloseAsync(false);
+            }
+            finally
+            {
+                eyes.AbortAsync();
+                driver.Quit();
+                runner.GetAllTestResults(false);
+            }
+
+            Assert.IsTrue(isOnlyOneRender);
         }
     }
 }
