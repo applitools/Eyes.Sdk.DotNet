@@ -18,11 +18,11 @@ namespace Applitools.Selenium
         //private static readonly ILogHandler logHandler = new FileLogHandler("./benchmarks.log", true, true);
         //private static readonly ILogHandler logHandler = new NunitLogHandler(false);
         private static readonly ILogHandler logHandler = NullLogHandler.Instance;
-        private static readonly int browsers = int.Parse(Environment.GetEnvironmentVariable("BROWSERS") ?? "10");
+        private static readonly int browsers = int.Parse(Environment.GetEnvironmentVariable("BROWSERS") ?? "15");
         private static VisualGridRunner runner;
-        private static readonly int concurrency = int.Parse(Environment.GetEnvironmentVariable("CONCURRENCY") ?? "20"); // 10, 20, 30
+        private static readonly int concurrency = int.Parse(Environment.GetEnvironmentVariable("CONCURRENCY") ?? "30"); // 10, 20, 30
         private static readonly string url = Environment.GetEnvironmentVariable("URL") ?? "https://www.booking.com/index.uk.html?aid=376445"; //"https://edition.cnn.com/"; //"https://www.foxnews.com/", "https://www.booking.com/" 
-        private static readonly int steps = int.Parse(Environment.GetEnvironmentVariable("STEPS") ?? "3"); //1, 3, 10
+        private static readonly int steps = int.Parse(Environment.GetEnvironmentVariable("STEPS") ?? "10"); //1, 3, 10
         private static readonly Stopwatch timer = new Stopwatch();
         private static readonly BatchInfo batchInfo = new BatchInfo("UFG Benchmarks - New");
 
@@ -69,7 +69,7 @@ namespace Applitools.Selenium
             //IDictionary envVars = Environment.GetEnvironmentVariables();
             //foreach (object envKey in envVars.Keys)
             //    TestContext.Progress.WriteLine($"{envKey} = {envVars[envKey]}");
-            TestContext.Progress.WriteLine($"URL: {url} ; browsers: {browsers} ; concurrency: {concurrency} ; steps: {steps}");
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss} - URL: {url} ; browsers: {browsers} ; concurrency: {concurrency} ; steps: {steps}");
             runner = new VisualGridRunner(concurrency, logHandler);
             timer.Start();
         }
@@ -79,8 +79,8 @@ namespace Applitools.Selenium
         {
             runner.GetAllTestResults(false);
             timer.Stop();
-            string result = string.Format("browsers: {0} ; concurrency: {1} ; steps: {2} ; total minutes: {3}",
-                browsers, concurrency, steps, timer.Elapsed.TotalMinutes);
+            string result = string.Format("{0:yyyy'-'MM'-'dd HH':'mm':'ss} - browsers: {1} ; concurrency: {2} ; steps: {3} ; total minutes: {3}",
+                DateTimeOffset.Now, browsers, concurrency, steps, timer.Elapsed.TotalMinutes);
             runner.Logger.Log(result);
             TestContext.Progress.WriteLine(result);
         }
