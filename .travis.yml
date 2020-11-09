@@ -25,7 +25,7 @@ git:
 
 before_install:
     - echo -e "\n\nmachine github.com\n  login $GITHUB_TOKEN\n" >~/.netrc
-    - git submodule update --init --remote --recursive
+    - git submodule update --init --recursive
     - nvm install node
 
 # env variables
