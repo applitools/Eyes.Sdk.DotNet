@@ -135,9 +135,9 @@ namespace Applitools
                 {
                     fileWriterThread_ = new Thread(new ThreadStart(DumpLogToFile_));
                     fileWriterThread_.IsBackground = true;
+                    fileWriterThread_.Start();
                     isOpen_ = true;
                 }
-                fileWriterThread_.Start();
             }
             catch
             {

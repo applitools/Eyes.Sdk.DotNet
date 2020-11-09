@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Applitools.VisualGrid
 {
@@ -16,6 +17,18 @@ namespace Applitools.VisualGrid
         internal const int CONCURRENCY_FACTOR = 5;
         internal const int DEFAULT_CONCURRENCY = 5;
         internal readonly RunnerOptions runnerOptions_;
+
+        private object lockObject_ = new object();
+        public object LockObject
+        {
+            get
+            {
+                StackFrame frame = new StackFrame(1);
+                Logger.Verbose("Lock #{0} acquired by: {1}", lockObject_.GetHashCode(), frame.GetMethod().Name);
+                return lockObject_;
+            }
+        }
+
 
         internal class TestConcurrency
         {
@@ -125,18 +138,15 @@ namespace Applitools.VisualGrid
         internal List<VisualGridTask> GetAllTasksByType(TaskType type)
         {
             List<VisualGridTask> allTasks = new List<VisualGridTask>();
-            lock (allEyes_)
+            foreach (IVisualGridEyes eyes in AllEyes)
             {
-                foreach (IVisualGridEyes eyes in allEyes_)
+                foreach (RunningTest runningTest in eyes.GetAllRunningTests())
                 {
-                    foreach (RunningTest runningTest in eyes.GetAllRunningTests())
+                    foreach (VisualGridTask visualGridTask in runningTest.TaskList)
                     {
-                        foreach (VisualGridTask visualGridTask in runningTest.TaskList)
+                        if (visualGridTask.TaskType == type)
                         {
-                            if (visualGridTask.TaskType == type)
-                            {
-                                allTasks.Add(visualGridTask);
-                            }
+                            allTasks.Add(visualGridTask);
                         }
                     }
                 }
@@ -273,7 +283,7 @@ namespace Applitools.VisualGrid
                     {
                         if (nextTestToRender == null)
                         {
-                            Logger.Verbose("nextTestToRender is null. Waiting 300ms on lock object.");
+                            Logger.Verbose("nextTestToRender is null. Waiting 300ms on {0}", nameof(renderingServiceLock_));
                             renderingServiceLock_.WaitOne(300);
                             nextTestToRender = GetNextRenderingTask_();
                         }
@@ -304,24 +314,22 @@ namespace Applitools.VisualGrid
         {
             ScoreTask bestScoreTask = null;
             int bestScore = -1;
-            lock (allEyes_)
-            {
-                Logger.Verbose("looking for best test in a list of {0}", allEyes_.Count);
-                //Logger.Verbose("locking allEyes_");
+            Logger.Verbose("looking for best test in a list of {0}", allEyes_.Count);
 
-                foreach (IVisualGridEyes eyes in allEyes_)
+            foreach (IVisualGridEyes eyes in AllEyes)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                ScoreTask currentScoreTask = eyes.GetBestScoreTaskForCheck();
+                Logger.Verbose("{0} - {1} took {2} seconds. Result null? {3}",
+                    nameof(GetNextCheckTask_), nameof(eyes.GetBestScoreTaskForCheck), sw.Elapsed.TotalSeconds, currentScoreTask == null);
+                if (currentScoreTask == null) continue;
+                int currentTestMark = currentScoreTask.Score;
+                if (bestScore < currentTestMark)
                 {
-                    ScoreTask currentScoreTask = eyes.GetBestScoreTaskForCheck();
-                    if (currentScoreTask == null) continue;
-                    int currentTestMark = currentScoreTask.Score;
-                    if (bestScore < currentTestMark)
-                    {
-                        bestScoreTask = currentScoreTask;
-                        bestScore = currentTestMark;
-                    }
+                    bestScoreTask = currentScoreTask;
+                    bestScore = currentTestMark;
                 }
             }
-            //Logger.Verbose("releasing allEyes_");
 
             if (bestScoreTask == null)
             {
@@ -339,30 +347,25 @@ namespace Applitools.VisualGrid
         {
             ScoreTask bestScoreTask = null;
             int bestMark = -1;
-            lock (allEyes_)
-            {
-                Logger.Verbose("looking for best test in a list of {0} eyes.", allEyes_.Count);
-                if (allEyes_.Any((eyes) => eyes.IsServerConcurrencyLimitReached())) return null;
+            Logger.Verbose("GetNextTestToOpen_ - looking for best test in a list of {0} eyes.", allEyes_.Count);
+            var allEyes = AllEyes;
+            if (allEyes.Any((eyes) => eyes.IsServerConcurrencyLimitReached())) return null;
 
-                foreach (IVisualGridEyes eyes in allEyes_)
+            foreach (IVisualGridEyes eyes in allEyes)
+            {
+                ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
+                if (currentTestMark == null) continue;
+                int currentScore = currentTestMark.Score;
+                if (bestMark < currentScore)
                 {
-                    ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
-                    if (currentTestMark == null) continue;
-                    int currentScore = currentTestMark.Score;
-                    if (bestMark < currentScore)
-                    {
-                        bestMark = currentScore;
-                        bestScoreTask = currentTestMark;
-                    }
+                    bestMark = currentScore;
+                    bestScoreTask = currentTestMark;
                 }
             }
 
             if (bestScoreTask == null)
             {
-                lock (allEyes_)
-                {
-                    Logger.Verbose("no relevant test found in: {0}", allEyes_.Concat(" ; "));
-                }
+                Logger.Verbose("GetNextTestToOpen_ - no relevant test found in: {0}", allEyes.Concat(" ; "));
                 return null;
             }
 
@@ -375,39 +378,65 @@ namespace Applitools.VisualGrid
         }
         private RenderingTask GetNextRenderingTask_()
         {
-            Logger.Verbose("enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
-            RenderingTask renderingTask = null;
-            if (renderingTaskList_.Count > 0)
+            Logger.Verbose("GetNextRenderingTask_ - enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
+            lock (renderingTaskList_)
             {
-                Logger.Verbose("locking renderingTaskList_");
-                lock (renderingTaskList_)
+                if (renderingTaskList_.Count == 0)
                 {
-                    if (renderingTaskList_.Count > 0)
+                    return null;
+                }
+
+                RenderingTask finalRenderingTask = null;
+                List<RenderingTask> chosenTasks = new List<RenderingTask>();
+                foreach (RenderingTask renderingTask in renderingTaskList_)
+                {
+                    if (!renderingTask.IsReady)
                     {
-                        renderingTask = renderingTaskList_[0];
-                        if (!renderingTask.IsReady) return null;
-                        renderingTaskList_.RemoveAt(0);
-                        Logger.Verbose("rendering task: {0}", renderingTask);
+                        continue;
+                    }
+
+                    if (finalRenderingTask == null)
+                    {
+                        finalRenderingTask = renderingTask;
+                    }
+                    else
+                    {
+                        finalRenderingTask.Merge(renderingTask);
+                    }
+
+                    chosenTasks.Add(renderingTask);
+                }
+
+                finalRenderingTask = finalRenderingTask != null && finalRenderingTask.IsReady ? finalRenderingTask : null;
+
+                if (finalRenderingTask != null)
+                {
+                    Logger.Verbose("GetNextRenderingTask_ - Next rendering task contains {0} render requests", chosenTasks.Count);
+                    foreach (var task in chosenTasks)
+                    {
+                        renderingTaskList_.Remove(task);
                     }
                 }
-                Logger.Verbose("releasing renderingTaskList_");
+
+                return finalRenderingTask;
             }
-            Logger.Verbose("exit");
-            return renderingTask;
         }
 
         private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
         {
+            Logger.Verbose("locking renderRequestCollectionTaskList_. Count: {0}", renderRequestCollectionTaskList_.Count);
             lock (renderRequestCollectionTaskList_)
             {
                 if (renderRequestCollectionTaskList_.Count == 0)
                 {
+                    Logger.Verbose("releasing renderRequestCollectionTaskList_. returning null.");
                     return null;
                 }
 
                 RenderRequestCollectionTask renderRequestCollectionTask = renderRequestCollectionTaskList_[0];
                 renderRequestCollectionTaskList_.RemoveAt(0);
                 Task<TestResultContainer> task = new Task<TestResultContainer>(renderRequestCollectionTask.Call);
+                Logger.Verbose("releasing renderRequestCollectionTaskList_. returning task.");
                 return task;
             }
         }
@@ -415,19 +444,14 @@ namespace Applitools.VisualGrid
         private Task<TestResultContainer> GetNextTestToClose_()
         {
             RunningTest runningTest;
-            Logger.Verbose("locking allEyes_. Count: {0}", allEyes_.Count);
-            lock (allEyes_)
+            foreach (IVisualGridEyes eyes in AllEyes)
             {
-                foreach (IVisualGridEyes eyes in allEyes_)
+                runningTest = eyes.GetNextTestToClose();
+                if (runningTest != null)
                 {
-                    runningTest = eyes.GetNextTestToClose();
-                    if (runningTest != null)
-                    {
-                        return runningTest.GetNextCloseTask();
-                    }
+                    return runningTest.GetNextCloseTask();
                 }
             }
-            Logger.Verbose("releasing allEyes_");
             return null;
         }
 
@@ -446,7 +470,7 @@ namespace Applitools.VisualGrid
             {
                 try
                 {
-                    Logger.Verbose("waiting on lockObject #{0}", lockObject.GetHashCode());
+                    Logger.Verbose("VisualGridRunner.GetOrWaitForTask_ - {0} waiting on lockObject #{1}", serviceName, lockObject.GetHashCode());
                     lockObject.WaitOne(500);
                     nextTestToOpen = tasker.GetNextTask();
                 }
@@ -463,13 +487,7 @@ namespace Applitools.VisualGrid
             Logger.Verbose("enter");
             Dictionary<IVisualGridEyes, ICollection<Task<TestResultContainer>>> allFutures = new Dictionary<IVisualGridEyes, ICollection<Task<TestResultContainer>>>();
 
-            List<IVisualGridEyes> allEyes;
-            lock (allEyes_)
-            {
-                allEyes = new List<IVisualGridEyes>(allEyes_);
-            }
-
-            foreach (IVisualGridEyes eyes in allEyes)
+            foreach (IVisualGridEyes eyes in AllEyes)
             {
                 ICollection<Task<TestResultContainer>> futureList = eyes.Close();
                 Logger.Verbose("adding a {0} items list to allFutures.", futureList.Count);
@@ -522,7 +540,7 @@ namespace Applitools.VisualGrid
                 }
             }
 
-            //lock (allEyes_) allEyes_.Clear();
+            //lock (lockObject_) allEyes_.Clear();
             //eyesToOpenList_.Clear();
             //renderingTaskList_.Clear();
 
@@ -554,27 +572,21 @@ namespace Applitools.VisualGrid
             }
             Logger.Verbose("releasing eyesToOpenList_");
 
-            Logger.Verbose("locking allEyes_");
-            lock (allEyes_)
+            if (allEyes_.Add(eyes))
             {
-                if (!allEyes_.Contains(eyes))
+                if (allEyes_.Count == 1 && Logger.GetILogHandler() is NullLogHandler)
                 {
-                    if (allEyes_.Count == 0 && Logger.GetILogHandler() is NullLogHandler)
+                    ILogHandler handler = eyes.Logger.GetILogHandler();
+                    if (handler != null)
                     {
-                        ILogHandler handler = eyes.Logger.GetILogHandler();
-                        if (handler != null)
-                        {
-                            Logger.SetLogHandler(handler);
-                        }
+                        Logger.SetLogHandler(handler);
                     }
-                    allEyes_.Add(eyes);
-                }
-                else
-                {
-                    Logger.Verbose("eyes already in list.");
                 }
             }
-            Logger.Verbose("releasing allEyes");
+            else
+            {
+                Logger.Verbose("eyes already in list.");
+            }
             eyes.SetListener(eyesListener_);
 
             AddBatch(eyes.Batch.Id, eyes.GetBatchCloser());
@@ -634,17 +646,15 @@ namespace Applitools.VisualGrid
         internal string PrintAllEyesFutures()
         {
             StringBuilder sb = new StringBuilder();
-            lock (allEyes_)
+            foreach (IVisualGridEyes eyes in AllEyes)
             {
-                foreach (IVisualGridEyes eyes in allEyes_)
-                {
-                    sb.Append(eyes.PrintAllFutures());
-                }
+                sb.Append(eyes.PrintAllFutures());
             }
             return sb.ToString();
         }
 
         public bool IsServicesOn { get; set; }
+        internal IEnumerable<IVisualGridEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
 
         public object GetConcurrencyLog()
         {

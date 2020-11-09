@@ -23,6 +23,7 @@
 - Ultrafast Grid: Check resources status and upload missing resources before rendering. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Added `RunnerOptions`. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Send the server logs with concurrency information. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Limit amount of renders per session. [Trello 2152](https://trello.com/c/yNzhBkBh)
 ### Fixed
 - Ultrafast Grid: Hidden APIs the user shouldn't use.
 

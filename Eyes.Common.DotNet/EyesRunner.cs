@@ -1,12 +1,13 @@
 ﻿using Applitools.Utils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Applitools
 {
     public abstract class EyesRunner
     {
-        private Dictionary<string, IBatchCloser> batchClosers_ = new Dictionary<string, IBatchCloser>();
+        private readonly ConcurrentDictionary<string, IBatchCloser> batchClosers_ = new ConcurrentDictionary<string, IBatchCloser>();
 
         public Logger Logger { get; } = new Logger();
 
@@ -41,10 +42,7 @@ namespace Applitools
 
         public void AddBatch(string batchId, IBatchCloser batchCloser)
         {
-            if (!batchClosers_.ContainsKey(batchId))
-            {
-                batchClosers_.Add(batchId, batchCloser);
-            }
+            batchClosers_.TryAdd(batchId, batchCloser);
         }
 
         protected abstract TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException);
