@@ -18,4 +18,4 @@ RUN git clone https://github.com/applitools/${REPOSITORY_NAME}.git . \
     && sed -i 's-<PackageReference Include="Eyes.Selenium".*-<ProjectReference Include="/SDK/Eyes.Selenium.DotNet/Eyes.Selenium.DotNet.csproj"/>-g' ./ApplitoolsTutorial/ApplitoolsTutorial.csproj 
 
 COPY . /SDK/
-CMD //chrome_setup.sh > /dev/null 2>&1 && //bootstrap.sh > /dev/null 2>&1 && dotnet test -f netcoreapp2.1 -v n
+CMD //chrome_setup.sh > /dev/null 2>&1 && //bootstrap.sh > /dev/null 2>&1 && dotnet test -f netcoreapp2.1
