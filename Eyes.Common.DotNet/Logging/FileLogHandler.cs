@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using Applitools.Utils;
 
 namespace Applitools
@@ -13,10 +12,9 @@ namespace Applitools
     [ComVisible(true)]
     public class FileLogHandler : LogHandlerBase
     {
-        private readonly Queue<string> queue_ = new Queue<string>(100);
-        private readonly AutoResetEvent continueWritingWaitHandle_ = new AutoResetEvent(false);
-        private readonly AutoResetEvent writingDoneWaitHandle_ = new AutoResetEvent(false);
-        private Thread fileWriterThread_;
+        private const int BUFFER_LENGTH = 100;
+        private readonly Queue<string> queue_ = new Queue<string>(BUFFER_LENGTH + 10);
+
         #region Constructors
 
         /// <summary>
@@ -76,25 +74,15 @@ namespace Applitools
 
         private void DumpLogToFile_()
         {
-            while (IsOpen)
+            if (FilePath == null) return;
+            if (queue_.Count > 0)
             {
-                continueWritingWaitHandle_.WaitOne(2000);
-                if (FilePath == null) continue;
-                if (queue_.Count > 0)
+                try
                 {
-                    string[] logLines;
-                    lock (queue_)
-                    {
-                        logLines = queue_.ToArray();
-                        queue_.Clear();
-                    }
-                    lock (FilePath)
-                    {
-                        FileUtils.AppendToTextFile(FilePath, logLines);
-                    }
-                    Thread.Sleep(1000);
+                    File.AppendAllLines(FilePath, queue_);
+                    queue_.Clear();
                 }
-                writingDoneWaitHandle_.Set();
+                catch { }
             }
         }
 
@@ -102,16 +90,11 @@ namespace Applitools
         {
             try
             {
-                lock (queue_)
-                {
-                    queue_.Enqueue(message);
-                    continueWritingWaitHandle_.Set();
-                }
+                queue_.Enqueue(message);
 
-                if (!isOpen_ && queue_.Count > 0)
+                if (!isOpen_ || queue_.Count >= BUFFER_LENGTH)
                 {
-                    Open();
-                    Close();
+                    DumpLogToFile_();
                 }
             }
             catch
@@ -131,13 +114,7 @@ namespace Applitools
                         FileUtils.WriteTextFile(FilePath, string.Empty, false);
                     }
                 }
-                if (fileWriterThread_ == null || !fileWriterThread_.IsAlive)
-                {
-                    fileWriterThread_ = new Thread(new ThreadStart(DumpLogToFile_));
-                    fileWriterThread_.IsBackground = true;
-                    fileWriterThread_.Start();
-                    isOpen_ = true;
-                }
+                isOpen_ = true;
             }
             catch
             {
@@ -147,9 +124,7 @@ namespace Applitools
 
         public override void Close()
         {
-            writingDoneWaitHandle_.Reset();
-            continueWritingWaitHandle_.Set();
-            writingDoneWaitHandle_.WaitOne(3000);
+            DumpLogToFile_();
             isOpen_ = false;
         }
 
