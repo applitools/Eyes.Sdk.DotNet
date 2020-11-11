@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
@@ -380,21 +381,67 @@ namespace Applitools.Selenium
             return new Point((int)Math.Ceiling(x), (int)Math.Ceiling(y));
         }
 
-        public static IWebElement GetDefaultRootElement(IWebDriver driver)
+        public static IWebElement GetDefaultRootElement(IWebDriver driver, Logger logger = null)
         {
+            IWebElement chosenElement;
             IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)driver;
-            IWebElement html = driver.FindElement(By.TagName("html"));
-            IWebElement body = driver.FindElement(By.TagName("body"));
-            Size htmlSize = EyesRemoteWebElement.GetScrollSize(html, jsExecutor);
-            Size bodySize = EyesRemoteWebElement.GetScrollSize(body, jsExecutor);
-            if (htmlSize.Height > bodySize.Height || htmlSize.Width > bodySize.Width)
+
+            IWebElement scrollingElement;
+            try
             {
-                return html;
+                scrollingElement = (IWebElement)jsExecutor.ExecuteScript("return document.scrollingElement");
+            }
+            catch (Exception e)
+            {
+                logger?.Log("Error: {0}", e);
+                scrollingElement = null;
+            }
+       
+            IWebElement html = driver.FindElement(By.TagName("html"));
+            ReadOnlyCollection<IWebElement> bodies = driver.FindElements(By.TagName("body"));
+
+            if (scrollingElement != null && CanScrollVertically(jsExecutor, scrollingElement))
+            {
+                // If document.scrollingElement exists and can scroll vertically then it's the element we are looking for
+                chosenElement = scrollingElement;
+            }
+            else if (bodies.Count == 0)
+            {
+                chosenElement = html;
             }
             else
             {
-                return body;
+                IWebElement body = bodies[0];
+                bool scrollableHtml = CanScrollVertically(jsExecutor, html);
+                bool scrollableBody = CanScrollVertically(jsExecutor, body);
+
+                // If only one of the elements is scrollable, we return the scrollable one
+                if (scrollableHtml && !scrollableBody)
+                {
+                    chosenElement = html;
+                }
+                else if (!scrollableHtml && scrollableBody)
+                {
+                    chosenElement = body;
+                }
+                else if (scrollingElement != null)
+                {
+                    // If both of the elements are scrollable or both aren't scrollable, we choose document.scrollingElement which is always one of them
+                    chosenElement = scrollingElement;
+                }
+                else
+                {
+                    // If document.scrollingElement, we choose html
+                    chosenElement = html;
+                }
             }
+            logger?.Verbose("Chosen default root element is {0}", chosenElement.TagName);
+            return chosenElement;
+        }
+
+        private static bool CanScrollVertically(IJavaScriptExecutor jsExecutor, IWebElement element)
+        {
+            return (bool)jsExecutor.ExecuteScript("return arguments[0].scrollHeight > arguments[0].clientHeight", element);
         }
 
         public static IWebElement GetCurrentFrameScrollRootElement(EyesWebDriver driver, IWebElement userDefinedSRE)
