@@ -12,9 +12,6 @@ namespace Applitools
     [ComVisible(true)]
     public class FileLogHandler : LogHandlerBase
     {
-        private const int BUFFER_LENGTH = 100;
-        private readonly Queue<string> queue_ = new Queue<string>(BUFFER_LENGTH + 10);
-
         #region Constructors
 
         /// <summary>
@@ -72,30 +69,11 @@ namespace Applitools
 
         #region Methods
 
-        private void DumpLogToFile_()
-        {
-            if (FilePath == null) return;
-            if (queue_.Count > 0)
-            {
-                try
-                {
-                    File.AppendAllLines(FilePath, queue_);
-                    queue_.Clear();
-                }
-                catch { }
-            }
-        }
-
         public override void OnMessage(string message, TraceLevel level)
         {
             try
             {
-                queue_.Enqueue(message);
-
-                if (!isOpen_ || queue_.Count >= BUFFER_LENGTH)
-                {
-                    DumpLogToFile_();
-                }
+                File.AppendAllText(FilePath, message + Environment.NewLine);
             }
             catch
             {
@@ -114,18 +92,11 @@ namespace Applitools
                         FileUtils.WriteTextFile(FilePath, string.Empty, false);
                     }
                 }
-                isOpen_ = true;
             }
             catch
             {
                 // We don't want a trace failure the fail the test
             }
-        }
-
-        public override void Close()
-        {
-            DumpLogToFile_();
-            isOpen_ = false;
         }
 
         #endregion
