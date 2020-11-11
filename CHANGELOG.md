@@ -26,6 +26,7 @@
 - Ultrafast Grid: Limit amount of renders per session. [Trello 2152](https://trello.com/c/yNzhBkBh)
 ### Fixed
 - Ultrafast Grid: Hidden APIs the user shouldn't use.
+- Now checking if the element is scrollable before choosing default root element. [Trello 2308](https://trello.com/c/udDvSy3i)
 
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed
