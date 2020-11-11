@@ -13,21 +13,30 @@ namespace Applitools.Selenium
         //private static readonly string LOG_PATH = Environment.GetEnvironmentVariable("APPLITOOLS_LOGS_PATH") ?? ".";
         //private static readonly string DATE_STRING = DateTime.Now.ToString("yyyy_MM_dd__HH_mm_ss");
         //private static readonly string LOG_FILE = Path.Combine(LOG_PATH, "DotNet", $"benchmarks_{DATE_STRING}", "benchmarks.log");
-        //private static readonly ILogHandler logHandler = new FileLogHandler("./benchmarks.log", true, true);
+        private static readonly ILogHandler logHandler = new FileLogHandler("./benchmarks.log", true, false);
         //private static readonly ILogHandler logHandler = new NunitLogHandler(false);
-        private static readonly ILogHandler logHandler = NullLogHandler.Instance;
-        private static readonly int browsers = int.Parse(Environment.GetEnvironmentVariable("BROWSERS") ?? "15");
+        //private static readonly ILogHandler logHandler = NullLogHandler.Instance;
+        private static readonly int browsers = int.Parse(Environment.GetEnvironmentVariable("BROWSERS") ?? "5");
         private static VisualGridRunner runner;
-        private static readonly int concurrency = int.Parse(Environment.GetEnvironmentVariable("CONCURRENCY") ?? "30"); // 10, 20, 30
+        private static readonly int concurrency = int.Parse(Environment.GetEnvironmentVariable("CONCURRENCY") ?? "5"); // 10, 20, 30
         private static readonly string url = Environment.GetEnvironmentVariable("URL") ?? "https://www.booking.com/index.uk.html?aid=376445"; //"https://edition.cnn.com/"; //"https://www.foxnews.com/", "https://www.booking.com/" 
-        private static readonly int steps = int.Parse(Environment.GetEnvironmentVariable("STEPS") ?? "10"); //1, 3, 10
+        private static readonly int steps = int.Parse(Environment.GetEnvironmentVariable("STEPS") ?? "5"); //1, 3, 10
         private static readonly Stopwatch timer = new Stopwatch();
         private static readonly BatchInfo batchInfo = new BatchInfo("UFG Benchmarks - Current");
+        private static readonly int parallelTests = int.Parse(Environment.GetEnvironmentVariable("TESTS") ?? "25"); //1, 25
 
-        [TestCase("1")]
-        [TestCase("2")]
-        [TestCase("3")]
-        [TestCase("4")]
+        public static IEnumerable DataSource
+        {
+            get
+            {
+                for (int i = 1; i <= parallelTests; ++i)
+                {
+                    yield return i.ToString();
+                }
+            }
+        }
+
+        [TestCaseSource(nameof(DataSource))]
         public void ConcurrencyTest(string testName)
         {
             runner.Logger.Log("starting run {0} with concurrency {1} and {2} steps", testName, concurrency, steps);
