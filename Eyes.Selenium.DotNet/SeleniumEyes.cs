@@ -348,7 +348,7 @@ namespace Applitools.Selenium
             bool hasFrames = driver_.GetFrameChain().Count > 0;
             if (hasFrames)
             {
-                region = new Region(bbox.Location, ((EyesRemoteWebElement)userDefinedSRE_).ClientSize);
+                region = new Region(bbox.Location, EyesRemoteWebElement.GetClientSize(userDefinedSRE_, driver_));
             }
             else
             {
