@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using Applitools.Utils;
 
 namespace Applitools
@@ -13,10 +12,6 @@ namespace Applitools
     [ComVisible(true)]
     public class FileLogHandler : LogHandlerBase
     {
-        private readonly Queue<string> queue_ = new Queue<string>(100);
-        private readonly AutoResetEvent continueWritingWaitHandle_ = new AutoResetEvent(false);
-        private readonly AutoResetEvent writingDoneWaitHandle_ = new AutoResetEvent(false);
-        private Thread fileWriterThread_;
         #region Constructors
 
         /// <summary>
@@ -74,45 +69,11 @@ namespace Applitools
 
         #region Methods
 
-        private void DumpLogToFile_()
-        {
-            while (IsOpen)
-            {
-                continueWritingWaitHandle_.WaitOne(2000);
-                if (FilePath == null) continue;
-                if (queue_.Count > 0)
-                {
-                    string[] logLines;
-                    lock (queue_)
-                    {
-                        logLines = queue_.ToArray();
-                        queue_.Clear();
-                    }
-                    lock (FilePath)
-                    {
-                        FileUtils.AppendToTextFile(FilePath, logLines);
-                    }
-                    Thread.Sleep(1000);
-                }
-                writingDoneWaitHandle_.Set();
-            }
-        }
-
         public override void OnMessage(string message, TraceLevel level)
         {
             try
             {
-                lock (queue_)
-                {
-                    queue_.Enqueue(message);
-                    continueWritingWaitHandle_.Set();
-                }
-
-                if (!isOpen_ && queue_.Count > 0)
-                {
-                    Open();
-                    Close();
-                }
+                File.AppendAllText(FilePath, message + Environment.NewLine);
             }
             catch
             {
@@ -131,26 +92,11 @@ namespace Applitools
                         FileUtils.WriteTextFile(FilePath, string.Empty, false);
                     }
                 }
-                if (fileWriterThread_ == null || !fileWriterThread_.IsAlive)
-                {
-                    fileWriterThread_ = new Thread(new ThreadStart(DumpLogToFile_));
-                    fileWriterThread_.IsBackground = true;
-                    fileWriterThread_.Start();
-                    isOpen_ = true;
-                }
             }
             catch
             {
                 // We don't want a trace failure the fail the test
             }
-        }
-
-        public override void Close()
-        {
-            writingDoneWaitHandle_.Reset();
-            continueWritingWaitHandle_.Set();
-            writingDoneWaitHandle_.WaitOne(3000);
-            isOpen_ = false;
         }
 
         #endregion
