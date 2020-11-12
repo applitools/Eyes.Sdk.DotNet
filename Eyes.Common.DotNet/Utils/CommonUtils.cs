@@ -298,5 +298,6 @@ namespace Applitools.Utils
             return sanitizedUrl;
         }
 
+        public static string ServerUrl => GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
     }
 }

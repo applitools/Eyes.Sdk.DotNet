@@ -57,7 +57,7 @@ namespace Applitools
         }
 
         public string ApiKey { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
-        public string ServerUrl { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
+        public string ServerUrl { get; set; } = CommonUtils.ServerUrl;
         public bool IsDisabled { get; set; }
         public bool DontCloseBatches { get; set; } = "true".Equals(CommonUtils.GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
     }

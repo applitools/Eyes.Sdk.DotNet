@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Applitools.Utils
 {
@@ -24,6 +25,18 @@ namespace Applitools.Utils
             }
 
             return param;
+        }
+
+        internal static void NotContainsNull<T>(IEnumerable<T> enumerable, string paramName)
+        {
+            NotNull(enumerable, paramName);
+            foreach (T element in enumerable)
+            {
+                if (element == null)
+                {
+                    throw new ArgumentException(paramName + " has null elements");
+                }
+            }
         }
 
         /// <summary>
