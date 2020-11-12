@@ -233,14 +233,21 @@ namespace Applitools
 
         internal IHttpRestClientFactory HttpRestClientFactory { get; set; } = new DefaultHttpRestClientFactory();
 
+
         public virtual void CloseBatch(string batchId)
+        {
+            CloseBatch(batchId, false, ServerUrl);
+        }
+
+        public virtual void CloseBatch(string batchId, bool forceClose, Uri url)
         {
             ArgumentGuard.NotNull(batchId, nameof(batchId));
 
+            HttpRestClient httpClient = new HttpRestClient(url, AgentId, serializer_);
             HttpWebResponse response = null;
             try
             {
-                response = httpClient_.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
+                response = httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
             }
             catch (Exception ex)
             {
