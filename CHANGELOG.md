@@ -12,6 +12,7 @@
 - Ultrafast Grid: Obey server concurrency limitations. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Optional server timeout. [Trello 1539](https://trello.com/c/APlfd1cb)
 - Added `runner.DontCloseBatches` API in case the user doesn't want to close the batches in the end of the test. [Trello 1908](https://trello.com/c/8BGfvXKU)
+- A new API for closing batch explicitly: `BatchClose`. [Trello 2189](https://trello.com/c/SlHH9Ssb)
 ### Updated
 - `CssParser` version updated to 1.1.0.
 
