@@ -1207,7 +1207,10 @@ namespace Applitools.Selenium
             }
 
             result.DomUrl = TryCaptureAndPostDom(checkSettingsInternal);
-            if (state.FrameToSwitchTo != null)
+            FrameChain frameChain = driver_.GetFrameChain();
+            if (state.FrameToSwitchTo != null && 
+                (frameChain.Count == 0 ||
+                state.FrameToSwitchTo != frameChain.Last().Reference))
             {
                 driver_.SwitchTo().Frame(state.FrameToSwitchTo);
             }

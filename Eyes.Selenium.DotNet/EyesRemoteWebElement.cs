@@ -120,8 +120,8 @@ namespace Applitools.Selenium
     if (el.tagName !== 'BODY') { // The body element behavior is special... so to say, so we don't want to account it.
       var rightBorder = bcr.width - el.clientLeft - el.clientWidth
       var bottomBorder = bcr.height - el.clientTop - el.clientHeight
-      intersected.width -= rightBorder
-      intersected.height -= bottomBorder
+      //intersected.width -= rightBorder
+      //intersected.height -= bottomBorder
       intersected = intersect(cr, intersected)
     }
 
