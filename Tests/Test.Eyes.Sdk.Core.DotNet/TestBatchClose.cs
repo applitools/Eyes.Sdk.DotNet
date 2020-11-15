@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using NSubstitute;
+using Applitools.Tests.Utils;
 
 namespace Applitools.Tests
 {
     [Parallelizable(ParallelScope.All)]
-    public class TestBatchCloseClass
+    public class TestBatchCloseClass : ReportingTestSuite
     {
         [Test]
         public void TestBatchClose()

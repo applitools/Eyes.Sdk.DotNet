@@ -413,3 +413,4 @@ Applitools.Selenium.Tests.VisualGridTests.TestVisualGridApi.TestRunnerOptions
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestOpenBeforeRender
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestRunnerConcurrency
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestRetryWhenServerConcurrencyLimitReached
+Applitools.Selenium.Tests.VisualGridTests.TestBatchClose.TestBatchCloseFlag
