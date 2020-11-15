@@ -32,7 +32,7 @@ namespace Applitools
         public EnabledBatchClose SetBatchId(IEnumerable<string> batchIds)
         {
             ArgumentGuard.NotContainsNull(batchIds, nameof(batchIds));
-            return new EnabledBatchClose(logger_, serverUrl_, batchIds);
+            return new EnabledBatchClose(logger_, ServerUrl, batchIds);
         }
     }
 }
