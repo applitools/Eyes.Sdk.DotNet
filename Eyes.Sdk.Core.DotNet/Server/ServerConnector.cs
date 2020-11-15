@@ -236,10 +236,10 @@ namespace Applitools
 
         public virtual void CloseBatch(string batchId)
         {
-            CloseBatch(batchId, false, ServerUrl);
+            CloseBatch(batchId, ServerUrl);
         }
 
-        public virtual void CloseBatch(string batchId, bool forceClose, Uri url)
+        public virtual void CloseBatch(string batchId, Uri url)
         {
             ArgumentGuard.NotNull(batchId, nameof(batchId));
 

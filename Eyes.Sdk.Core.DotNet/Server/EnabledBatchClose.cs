@@ -40,7 +40,7 @@ namespace Applitools
             logger_.Verbose("Closing {0} batches", batchIds_.Count());
             foreach (string batchId in batchIds_)
             {
-                serverConnector_.CloseBatch(batchId, true, ServerUrl);
+                serverConnector_.CloseBatch(batchId, ServerUrl);
             }
         }
     }
