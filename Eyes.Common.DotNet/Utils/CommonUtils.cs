@@ -299,5 +299,7 @@ namespace Applitools.Utils
         }
 
         public static string ServerUrl => GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
+
+        public static bool DontCloseBatches { get; internal set; } = "true".Equals(GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
     }
 }
