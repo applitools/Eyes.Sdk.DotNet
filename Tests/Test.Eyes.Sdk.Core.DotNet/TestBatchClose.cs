@@ -1,19 +1,13 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using NSubstitute;
 
 namespace Applitools.Tests
 {
     [Parallelizable(ParallelScope.All)]
     public class TestBatchCloseClass
     {
-        private class MockServerConnector : ServerConnector
-        {
-            public MockServerConnector() : base(new Logger())
-            {
-            }
-        }
-
         [Test]
         public void TestBatchClose()
         {
@@ -31,13 +25,13 @@ namespace Applitools.Tests
             enabledBatchClose.SetUrl(serverUrl2);
             Assert.AreEqual(serverUrl2, enabledBatchClose.ServerUrl);
 
-            ServerConnector serverConnector = new MockServerConnector();
+            ServerConnector serverConnector = Substitute.For<ServerConnector>(new Logger(), null);
             enabledBatchClose.serverConnector_ = serverConnector;
 
             enabledBatchClose.Close();
-            serverConnector.CloseBatch("first", true, serverUrl2);
-            serverConnector.CloseBatch("second", true, serverUrl2);
-            serverConnector.CloseBatch("third", true, serverUrl2);
+            serverConnector.Received().CloseBatch("first", serverUrl2);
+            serverConnector.Received().CloseBatch("second", serverUrl2);
+            serverConnector.Received().CloseBatch("third", serverUrl2);
         }
     }
 }
