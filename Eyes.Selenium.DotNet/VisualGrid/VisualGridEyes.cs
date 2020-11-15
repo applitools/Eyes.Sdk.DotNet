@@ -697,7 +697,7 @@ namespace Applitools.Selenium.VisualGrid
                 object skipListObj = new { skipResources = runner.CachedBlobsURLs.Keys };
 
                 string skipListJson = JsonConvert.SerializeObject(skipListObj);
-                string arguments = string.Format("(document, {0})", skipListJson);
+                string arguments = string.Format("({0})", skipListJson);
                 logger.Verbose("processPageAndSerializePoll[ForIe] {0}", arguments);
                 script += arguments;
                 captureStatusStr = (string)jsExecutor.ExecuteScript(script);
