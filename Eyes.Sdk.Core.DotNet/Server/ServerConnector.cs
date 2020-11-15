@@ -243,7 +243,12 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(batchId, nameof(batchId));
 
-            HttpRestClient httpClient = new HttpRestClient(url, AgentId, serializer_);
+            HttpRestClient httpClient = httpClient_;
+            if (httpClient.ServerUrl != url)
+            {
+                httpClient = httpClient_.Clone();
+                httpClient.ServerUrl = url;
+            }
             HttpWebResponse response = null;
             try
             {

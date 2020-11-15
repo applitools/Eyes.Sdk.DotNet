@@ -50,6 +50,25 @@ namespace Applitools.Utils
             Timeout = TimeSpan.FromMinutes(10);
         }
 
+        private HttpRestClient(HttpRestClient other)
+        {
+            ServerUrl = other.ServerUrl;
+            json_ = other.json_;
+            AgentId = other.AgentId;
+            ConnectionLimit = other.ConnectionLimit;
+            Timeout = other.Timeout;
+            Proxy = other.Proxy;
+            Headers = new NameValueCollection(other.Headers);
+            authUser_ = other.authUser_;
+            authPassword_ = other.authPassword_;
+            Retry = other.Retry;
+            FormatRequestUri = other.FormatRequestUri;
+            ConfigureRequest = other.ConfigureRequest;
+            RequestCompleted = other.RequestCompleted;
+            RequestFailed = other.RequestFailed;
+            AcceptLongRunningTasks = other.AcceptLongRunningTasks;
+            WebRequestCreator = other.WebRequestCreator;
+        }
         #endregion
 
         #region Events
@@ -214,6 +233,11 @@ namespace Applitools.Utils
 
         protected virtual void ConfigureHttpWebRequest(HttpWebRequest request)
         {
+        }
+
+        public HttpRestClient Clone()
+        {
+            return new HttpRestClient(this);
         }
 
         #endregion
