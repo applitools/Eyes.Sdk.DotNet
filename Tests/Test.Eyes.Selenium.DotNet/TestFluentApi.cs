@@ -232,29 +232,21 @@ namespace Applitools.Selenium.Tests
             config.AccessibilityValidation = new AccessibilitySettings(AccessibilityLevel.AAA, AccessibilityGuidelinesVersion.WCAG_2_0);
             GetEyes().SetConfiguration(config);
             GetEyes().Check(Target.Window().Accessibility(By.ClassName("ignore"), AccessibilityRegionType.LargeText));
-
-            if (options_.BrowserName == "internet explorer")
+            
+            if (useVisualGrid_)
             {
                 SetExpectedAccessibilityRegions(
-                    new AccessibilityRegionByRectangle(122, 929, 456, 306, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(8, 1272, 690, 206, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(10, 284, 285, 165, AccessibilityRegionType.LargeText)
-                    );
-            }
-            else if (useVisualGrid_)
-            {
-                SetExpectedAccessibilityRegions(
-                    new AccessibilityRegionByRectangle(122, 928, 456, 306, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(8, 1270, 690, 206, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(10, 284, 800, 500, AccessibilityRegionType.LargeText)
+                    new AccessibilityRegionByRectangle(122, 933, 456, 306, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(10, 286, 800, 500, AccessibilityRegionType.LargeText)
                     );
             }
             else
             {
                 SetExpectedAccessibilityRegions(
-                    new AccessibilityRegionByRectangle(122, 928, 456, 306, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(8, 1270, 690, 206, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(10, 284, 285, 165, AccessibilityRegionType.LargeText)
+                    new AccessibilityRegionByRectangle(122, 933, 456, 306, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(10, 286, 285, 165, AccessibilityRegionType.LargeText)
                     );
             }
 
