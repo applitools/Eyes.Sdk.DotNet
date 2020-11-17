@@ -298,5 +298,13 @@ namespace Applitools.Utils
             return sanitizedUrl;
         }
 
+        public static string ServerUrl => GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
+
+        private static bool? dontCloseBatches_ = null;
+        public static bool DontCloseBatches
+        {
+            get => dontCloseBatches_ ?? "true".Equals(GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
+            internal set => dontCloseBatches_ = value;
+        }
     }
 }
