@@ -510,9 +510,10 @@ namespace Applitools.Selenium
                 seleniumCheckTarget.State = state;
                 state.StitchContent = (checkSettingsInternal.GetStitchContent() ?? false) || ForceFullPageScreenshot;
 
-                var clonedCheckSettings = checkSettings.Clone();
+                ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
+
                 // Ensure frame is not used as a region
-                ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state.StitchContent);
+                ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
 
                 Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
 
@@ -1206,6 +1207,13 @@ namespace Applitools.Selenium
             }
 
             result.DomUrl = TryCaptureAndPostDom(checkSettingsInternal);
+            FrameChain frameChain = driver_.GetFrameChain();
+            if (state.FrameToSwitchTo != null && 
+                (frameChain.Count == 0 ||
+                state.FrameToSwitchTo != frameChain.Last().Reference))
+            {
+                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
+            }
             return result;
         }
 

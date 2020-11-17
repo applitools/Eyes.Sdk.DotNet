@@ -90,6 +90,15 @@ namespace Applitools.Selenium.Tests
                 Assert.IsTrue(hasDom);
                 
                 string actualDomJson = JsonUtility.NormalizeJsonString(actualDomJsonString);
+                if (actualDomJson != expectedDomJson && !TestUtils.RUNS_ON_CI)
+                {
+                    string path = TestUtils.InitLogPath();
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    File.WriteAllText(Path.Combine(path, "actualDom.json"), actualDomJson);
+                }
                 Assert.AreEqual(expectedDomJson, actualDomJson);
 
                 SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
@@ -113,7 +122,7 @@ namespace Applitools.Selenium.Tests
             bool hasDom = actualAppOutputs[0].Image.HasDom;
             return hasDom;
         }
-
+        
         //[Test]
         public void TestSendDOM_Simple_HTML()
         {

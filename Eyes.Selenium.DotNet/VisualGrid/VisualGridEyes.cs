@@ -343,23 +343,50 @@ namespace Applitools.Selenium.VisualGrid
             List<VisualGridSelector[]> result = new List<VisualGridSelector[]>();
             ICheckSettingsInternal csInternal = (ICheckSettingsInternal)checkSettings;
             IList<Tuple<IWebElement, object>>[] elementLists = CollectSeleniumRegions_(csInternal);
-            foreach (IList<Tuple<IWebElement, object>> elementsList in elementLists)
+
+            CheckState state = ((ISeleniumCheckTarget)csInternal).State;
+            if (state.FrameToSwitchTo != null)
             {
-                List<VisualGridSelector> xpaths = new List<VisualGridSelector>();
-                foreach (Tuple<IWebElement, object> element in elementsList)
-                {
-                    if (element.Item1 == null) continue;
-                    string xpath = (string)jsExecutor_.ExecuteScript(GET_ELEMENT_XPATH_JS, element.Item1);
-                    xpaths.Add(new VisualGridSelector(xpath, element.Item2));
-                }
-                result.Add(xpaths.ToArray());
+                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
             }
+
+            int i;
+            for (i = 0; i < elementLists.Length - 1; ++i)
+            {
+                IList<Tuple<IWebElement, object>> elementsList = elementLists[i];
+                GetRegionsXPaths_(result, elementsList);
+            }
+
+            if (state.FrameToSwitchTo != null)
+            {
+                driver_.SwitchTo().ParentFrame();
+            }
+
+            GetRegionsXPaths_(result, elementLists[i]);
 
             return result;
         }
 
+        private void GetRegionsXPaths_(List<VisualGridSelector[]> result, IList<Tuple<IWebElement, object>> elementsList)
+        {
+            List<VisualGridSelector> xpaths = new List<VisualGridSelector>();
+            foreach (Tuple<IWebElement, object> element in elementsList)
+            {
+                if (element.Item1 == null) continue;
+                string xpath = (string)jsExecutor_.ExecuteScript(GET_ELEMENT_XPATH_JS, element.Item1);
+                xpaths.Add(new VisualGridSelector(xpath, element.Item2));
+            }
+            result.Add(xpaths.ToArray());
+        }
+
         private IList<Tuple<IWebElement, object>>[] CollectSeleniumRegions_(ICheckSettingsInternal csInternal)
         {
+            CheckState state = ((ISeleniumCheckTarget)csInternal).State;
+            if (state.FrameToSwitchTo != null)
+            {
+                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
+            }
+
             IGetRegions[] ignoreRegions = csInternal.GetIgnoreRegions();
             IGetRegions[] layoutRegions = csInternal.GetLayoutRegions();
             IGetRegions[] strictRegions = csInternal.GetStrictRegions();
@@ -373,6 +400,11 @@ namespace Applitools.Selenium.VisualGrid
             IList<Tuple<IWebElement, object>> contentElements = GetElementsFromRegions_(contentRegions);
             IList<Tuple<IWebElement, object>> floatingElements = GetElementsFromRegions_(floatingRegions);
             IList<Tuple<IWebElement, object>> accessibilityElements = GetElementsFromRegions_(accessibilityRegions);
+
+            if (state.FrameToSwitchTo != null)
+            {
+                driver_.SwitchTo().ParentFrame();
+            }
 
             IWebElement targetElement = ((ISeleniumCheckTarget)csInternal).GetTargetElement();
             if (targetElement == null)
@@ -441,8 +473,13 @@ namespace Applitools.Selenium.VisualGrid
 
             List<VisualGridTask> checkTasks = new List<VisualGridTask>();
 
-            ISeleniumCheckTarget seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
-            ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
+            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
+            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+
+            CheckState state = new CheckState();
+            state.StitchContent = checkSettingsInternal.GetStitchContent() ?? Config_.IsForceFullPageScreenshot ?? true;
+            seleniumCheckTarget.State = state;
+            ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
 
             try
             {

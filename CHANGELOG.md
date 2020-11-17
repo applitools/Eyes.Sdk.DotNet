@@ -27,6 +27,7 @@
 ### Fixed
 - Ultrafast Grid: Hidden APIs the user shouldn't use.
 - Now checking if the element is scrollable before choosing default root element. [Trello 2308](https://trello.com/c/udDvSy3i)
+- Coded Regions inside frame when no stitching needed were not collected correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
 
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed

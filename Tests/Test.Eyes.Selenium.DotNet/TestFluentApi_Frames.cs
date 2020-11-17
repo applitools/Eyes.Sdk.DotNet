@@ -1,8 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.Tests
 {
@@ -31,6 +33,16 @@ namespace Applitools.Selenium.Tests
         public void TestCheckFrame_Fluent()
         {
             GetEyes().Check("Fluent - Frame", Target.Frame("frame1"));
+        }
+
+        [Test]
+        public void TestCheckFrame_Viewport_Fluent()
+        {
+            IWebElement frame1 = GetWebDriver().FindElement(By.Name("frame1"));
+            GetWebDriver().ExecuteJavaScript("arguments[0].style.borderWidth='3px'", frame1);
+            GetEyes().Check("Fluent - Frame - Viewport with ignore region",
+                Target.Frame("frame1").Fully(false).Ignore(By.CssSelector("#inner-frame-div")));
+            SetExpectedIgnoreRegions(new Region(11, 11, 304, 184));
         }
 
         [Test]

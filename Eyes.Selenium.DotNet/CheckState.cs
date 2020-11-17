@@ -13,5 +13,6 @@ namespace Applitools.Selenium
         public Rectangle FullRegion { get; set; }
         public IPositionProvider OriginPositionProvider { get; internal set; } = new NullPositionProvider();
         public Size StitchOffset { get; internal set; }
+        public IWebElement FrameToSwitchTo { get; set; }
     }
 }

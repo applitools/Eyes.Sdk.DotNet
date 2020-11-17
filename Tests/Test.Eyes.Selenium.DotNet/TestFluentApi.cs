@@ -66,7 +66,7 @@ namespace Applitools.Selenium.Tests
             GetEyes().Check("Fluent - Window with ignore region by selector", Target.Window()
                     .Ignore(By.Id("overflowing-div")));
 
-            SetExpectedIgnoreRegions(new Region(8, 80, 304, 184));
+            SetExpectedIgnoreRegions(new Region(8, 81, 304, 184));
         }
 
         [Test]
@@ -75,14 +75,7 @@ namespace Applitools.Selenium.Tests
             GetEyes().Check("Fluent - Window with ignore region by selector centered", Target.Window()
                     .Ignore(By.Id("centered")));
 
-            if (options_.BrowserName == "internet explorer")
-            {
-                SetExpectedIgnoreRegions(new Region(122, 929, 456, 306));
-            }
-            else
-            {
-                SetExpectedIgnoreRegions(new Region(122, 928, 456, 306));
-            }
+            SetExpectedIgnoreRegions(new Region(122, 933, 456, 306));
         }
 
         [Test]
@@ -91,14 +84,7 @@ namespace Applitools.Selenium.Tests
             GetEyes().Check("Fluent - Window with ignore region by selector stretched", Target.Window()
                     .Ignore(By.Id("stretched")));
 
-            if (options_.BrowserName == "internet explorer")
-            {
-                SetExpectedIgnoreRegions(new Region(8, 1272, 690, 206));
-            }
-            else
-            {
-                SetExpectedIgnoreRegions(new Region(8, 1270, 690, 206));
-            }
+            SetExpectedIgnoreRegions(new Region(8, 1277, 690, 206));
         }
 
         [Test]
@@ -107,7 +93,7 @@ namespace Applitools.Selenium.Tests
             GetEyes().Check("Fluent - Window with ignore region by selector", Target.Window()
                     .Floating(By.Id("overflowing-div"), 3, 3, 20, 30));
 
-            SetExpectedFloatingRegions(new FloatingMatchSettings(8, 80, 304, 184, 3, 3, 20, 30));
+            SetExpectedFloatingRegions(new FloatingMatchSettings(8, 81, 304, 184, 3, 3, 20, 30));
         }
 
         [Test]
@@ -128,7 +114,7 @@ namespace Applitools.Selenium.Tests
             IWebElement element = GetWebDriver().FindElement(By.Id("overflowing-div-image"));
             IWebElement ignoreElement = GetDriver().FindElement(By.Id("overflowing-div"));
             GetEyes().Check("Fluent - Region by element", Target.Region(element).Ignore(ignoreElement));
-            SetExpectedIgnoreRegions(new Region(0, -202, 304, 184));
+            SetExpectedIgnoreRegions(new Region(0, -203, 304, 184));
         }
 
         [Test]
@@ -158,25 +144,17 @@ namespace Applitools.Selenium.Tests
             if (useVisualGrid_)
             {
                 SetExpectedIgnoreRegions(
-                    new Region(122, 928, 456, 306),
-                    new Region(8, 1270, 690, 206),
-                    new Region(10, 284, 800, 500)
-                );
-            }
-            else if (options_.BrowserName == "internet explorer")
-            {
-                SetExpectedIgnoreRegions(
-                    new Region(122, 929, 456, 306),
-                    new Region(8, 1272, 690, 206),
-                    new Region(10, 284, 285, 165)
+                    new Region(122, 933, 456, 306),
+                    new Region(8, 1277, 690, 206),
+                    new Region(10, 286, 800, 500)
                 );
             }
             else
             {
                 SetExpectedIgnoreRegions(
-                    new Region(122, 928, 456, 306),
-                    new Region(8, 1270, 690, 206),
-                    new Region(10, 284, 285, 165)
+                    new Region(122, 933, 456, 306),
+                    new Region(8, 1277, 690, 206),
+                    new Region(10, 286, 285, 165)
                 );
             }
         }
@@ -254,29 +232,21 @@ namespace Applitools.Selenium.Tests
             config.AccessibilityValidation = new AccessibilitySettings(AccessibilityLevel.AAA, AccessibilityGuidelinesVersion.WCAG_2_0);
             GetEyes().SetConfiguration(config);
             GetEyes().Check(Target.Window().Accessibility(By.ClassName("ignore"), AccessibilityRegionType.LargeText));
-
-            if (options_.BrowserName == "internet explorer")
+            
+            if (useVisualGrid_)
             {
                 SetExpectedAccessibilityRegions(
-                    new AccessibilityRegionByRectangle(122, 929, 456, 306, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(8, 1272, 690, 206, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(10, 284, 285, 165, AccessibilityRegionType.LargeText)
-                    );
-            }
-            else if (useVisualGrid_)
-            {
-                SetExpectedAccessibilityRegions(
-                    new AccessibilityRegionByRectangle(122, 928, 456, 306, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(8, 1270, 690, 206, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(10, 284, 800, 500, AccessibilityRegionType.LargeText)
+                    new AccessibilityRegionByRectangle(122, 933, 456, 306, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(10, 286, 800, 500, AccessibilityRegionType.LargeText)
                     );
             }
             else
             {
                 SetExpectedAccessibilityRegions(
-                    new AccessibilityRegionByRectangle(122, 928, 456, 306, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(8, 1270, 690, 206, AccessibilityRegionType.LargeText),
-                    new AccessibilityRegionByRectangle(10, 284, 285, 165, AccessibilityRegionType.LargeText)
+                    new AccessibilityRegionByRectangle(122, 933, 456, 306, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText),
+                    new AccessibilityRegionByRectangle(10, 286, 285, 165, AccessibilityRegionType.LargeText)
                     );
             }
 

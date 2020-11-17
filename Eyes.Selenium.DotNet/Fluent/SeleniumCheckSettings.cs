@@ -89,14 +89,16 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        internal void SanitizeSettings(Logger logger, IWebDriver driver, bool isFully)
+        internal void SanitizeSettings(Logger logger, IWebDriver driver, CheckState state)
         {
+            bool isFully = state.StitchContent;
             if (frameChain_.Count > 0 && targetElement_ == null && targetSelector_ == null && !isFully/* &&
                 ((Applitools.Fluent.ICheckSettingsInternal)this).GetTargetRegion() == null*/)
             {
                 FrameLocator lastFrame = frameChain_[frameChain_.Count - 1];
                 frameChain_.RemoveAt(frameChain_.Count - 1);
                 targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
+                state.FrameToSwitchTo = targetElement_;
                 logger.Log("Using Target.Frame() for the purpose of Target.Region()");
             }
         }
@@ -646,6 +648,7 @@ namespace Applitools.Selenium.Fluent
             clone.scrollRootElement_ = scrollRootElement_;
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
+            ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
             return clone;
         }
     }

@@ -39,10 +39,9 @@ namespace Applitools.Selenium.Tests
             Assert.AreEqual(0, mockServerConnector.ReplaceMatchedStepCalls.Count, "Replacements");
             byte[] screenshotBytes = mockServerConnector.MatchWindowCalls[0].AppOutput.ScreenshotBytes;
             string finalImageHash = screenshotBytes.GetSha256Hash();
-            if (finalImageHash != "1C2E890355934CF44F070D1F8199E0AF390275E9D82ED82A898C8172406555E9" && // Windows
-                finalImageHash != "0DC273FEF58C6E4B2563DF2078347B32EFC702E96E11D782E3664F0690881E6B" && // Windows with different Antialiasing
-                finalImageHash != "1FCC19630668582400BD59119FDF4692707B67A524DEB2F8047D96C9E56CC074" && // Linux, Chrome <85
-                finalImageHash != "FCBE40C10CFD01E9F86084F655708226E53B98508F1696CBAEEF158CA20CDD78") // Linux, Chrome >=85
+            if (finalImageHash != "0EEBFD0FCDE40BA1FB5D4B8C4DA535F3C846B2E1685C84488E43FC6DC6ECD88A" && // Windows
+                finalImageHash != "5E771AB31BA0D3232E370FDA5E630A649E0E03FA704243BBD288303B4D9064B3" && // Windows with different Antialiasing
+                finalImageHash != "CAE9ADB9A45932BF9DEA51972A6B69908D012324E0CB4B2A93368CDD3C8E56D2") // Linux, Chrome >=85
             {
                 Assert.Fail("Different image than expected. Hash: {0}\nBase64:\n{1}\n", finalImageHash,
                     string.Join('\n', Convert.ToBase64String(screenshotBytes).Split(160)));

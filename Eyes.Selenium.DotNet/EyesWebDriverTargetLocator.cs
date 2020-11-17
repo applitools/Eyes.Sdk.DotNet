@@ -1,14 +1,14 @@
-﻿namespace Applitools.Selenium
-{
-    using Applitools.Selenium.Scrolling;
-    using OpenQA.Selenium;
-    using OpenQA.Selenium.Remote;
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Drawing;
-    using Utils;
-    using Utils.Geometry;
+﻿using Applitools.Selenium.Scrolling;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
+using System;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
+namespace Applitools.Selenium
+{
     internal class EyesWebDriverTargetLocator : ITargetLocator
     {
         private readonly Logger logger_;
@@ -122,7 +122,6 @@
                 eyesFrame = new EyesRemoteWebElement(logger_, driver_, targetFrame);
             }
 
-            Point pl = targetFrame.Location;
             Size ds = targetFrame.Size;
 
             SizeAndBorders sizeAndBorders = eyesFrame.SizeAndBorders;
@@ -132,7 +131,6 @@
             Rectangle bounds = eyesFrame.GetClientBounds();
 
             Point contentLocation = new Point(bounds.X + borderWidths.Left, bounds.Y + borderWidths.Top);
-            //Point originalLocation = ScrollPositionProvider.GetCurrentPosition(jsExecutor_, driver_.FindElement(By.TagName("html")));
             Point originalLocation = eyesFrame.ScrollPosition;
 
             Frame frame = new Frame(logger_, targetFrame,
