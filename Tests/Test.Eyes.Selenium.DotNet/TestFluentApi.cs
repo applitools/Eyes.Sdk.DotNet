@@ -144,24 +144,16 @@ namespace Applitools.Selenium.Tests
             if (useVisualGrid_)
             {
                 SetExpectedIgnoreRegions(
-                    new Region(122, 928, 456, 306),
-                    new Region(8, 1270, 690, 206),
+                    new Region(122, 933, 456, 306),
+                    new Region(8, 1277, 690, 206),
                     new Region(10, 286, 800, 500)
-                );
-            }
-            else if (options_.BrowserName == "internet explorer")
-            {
-                SetExpectedIgnoreRegions(
-                    new Region(122, 929, 456, 306),
-                    new Region(8, 1272, 690, 206),
-                    new Region(10, 286, 285, 165)
                 );
             }
             else
             {
                 SetExpectedIgnoreRegions(
-                    new Region(122, 928, 456, 306),
-                    new Region(8, 1270, 690, 206),
+                    new Region(122, 933, 456, 306),
+                    new Region(8, 1277, 690, 206),
                     new Region(10, 286, 285, 165)
                 );
             }
