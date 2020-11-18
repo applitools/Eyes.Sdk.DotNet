@@ -8,13 +8,24 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.35.2</Version>
+    <Version>2.36</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- NuGet was unable to install.
+    <PackageReleaseNotes>### Added
+- Ultrafast Grid: Make sure `Open` is called before `Render`. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Separated resource collection from the rendering task. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Remove resource contents after uploading to the server. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Check resources status and upload missing resources before rendering. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Added `RunnerOptions`. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Send the server logs with concurrency information. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Ultrafast Grid: Limit amount of renders per session. [Trello 2152](https://trello.com/c/yNzhBkBh)
+### Fixed
+- Ultrafast Grid: Hidden APIs the user shouldn't use.
+- Ultrafast Grid: Wrong parameters passed to resource collection script. [Trello 2316](https://trello.com/c/P3wLkH3z)
+- Now checking if the element is scrollable before choosing default root element. [Trello 2308](https://trello.com/c/udDvSy3i)
+- Coded Regions inside frame when no stitching needed were not collected correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

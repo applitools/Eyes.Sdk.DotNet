@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
@@ -10,13 +10,18 @@
     </Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>1.0.0</Version>
+    <Version>1.1</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes common</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- NuGet was unable to install.
+    <PackageReleaseNotes>### Added
+- Ultrafast Grid: Added support for `Full-Selector`. [Trello 2145](https://trello.com/c/8tPAnz66)
+### Updated
+- Removed `CssParser` reference.
+- Fixed `FileLogHandler`.
+### Fixed
+- Fixed Internet Explorer 11 enum value.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Common</PackageId>

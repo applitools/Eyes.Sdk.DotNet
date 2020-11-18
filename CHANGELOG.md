@@ -1,22 +1,12 @@
-## [Eyes.Common vNext]
-### Added
-- Ultrafast Grid: Added support for `Full-Selector`. [Trello 2145](https://trello.com/c/8tPAnz66)
+## [Eyes.Images 2.18] - 2020-11-18
 ### Updated
-- Removed `CssParser` reference.
-- Fixed `FileLogHandler`.
-### Fixed
-- Fixed Internet Explorer 11 enum value.
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Sdk.Core vNext]
-### Added
-- Ultrafast Grid: Obey server concurrency limitations. [Trello 2152](https://trello.com/c/yNzhBkBh)
-- Optional server timeout. [Trello 1539](https://trello.com/c/APlfd1cb)
-- Added `runner.DontCloseBatches` API in case the user doesn't want to close the batches in the end of the test. [Trello 1908](https://trello.com/c/8BGfvXKU)
-- A new API for closing batch explicitly: `BatchClose`. [Trello 2189](https://trello.com/c/SlHH9Ssb)
+## [Eyes.Appium 4.14] - 2020-11-18
 ### Updated
-- `CssParser` version updated to 1.1.0.
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.36] - 2020-11-18
 ### Added
 - Ultrafast Grid: Make sure `Open` is called before `Render`. [Trello 2152](https://trello.com/c/yNzhBkBh)
 - Ultrafast Grid: Separated resource collection from the rendering task. [Trello 2152](https://trello.com/c/yNzhBkBh)
@@ -30,6 +20,32 @@
 - Ultrafast Grid: Wrong parameters passed to resource collection script. [Trello 2316](https://trello.com/c/P3wLkH3z)
 - Now checking if the element is scrollable before choosing default root element. [Trello 2308](https://trello.com/c/udDvSy3i)
 - Coded Regions inside frame when no stitching needed were not collected correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
+
+## [Eyes.LeanFT 2.20] - 2020-11-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.19] - 2020-11-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.36] - 2020-11-18
+### Added
+- Ultrafast Grid: Obey server concurrency limitations. [Trello 2152](https://trello.com/c/yNzhBkBh)
+- Optional server timeout. [Trello 1539](https://trello.com/c/APlfd1cb)
+- Added `runner.DontCloseBatches` API in case the user doesn't want to close the batches in the end of the test. [Trello 1908](https://trello.com/c/8BGfvXKU)
+- A new API for closing batch explicitly: `BatchClose`. [Trello 2189](https://trello.com/c/SlHH9Ssb)
+### Updated
+- `CssParser` version updated to 1.1.0.
+
+## [Eyes.Common 1.1] - 2020-11-18
+### Added
+- Ultrafast Grid: Added support for `Full-Selector`. [Trello 2145](https://trello.com/c/8tPAnz66)
+### Updated
+- Removed `CssParser` reference.
+- Fixed `FileLogHandler`.
+### Fixed
+- Fixed Internet Explorer 11 enum value.
 
 ## [Eyes.CodedUI 2.17.2] - 2020-10-08
 ### Fixed
