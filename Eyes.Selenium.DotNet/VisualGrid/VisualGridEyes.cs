@@ -553,7 +553,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     test.SetTestInExceptionMode(ex);
                 }
-                Logger.Log("Error: " + ex);
+                Logger.Log("Error: {0}", ex);
             }
         }
 
@@ -706,13 +706,13 @@ namespace Applitools.Selenium.VisualGrid
             }
             catch (JsonReaderException jsonException)
             {
-                logger.Log("Error: " + jsonException);
+                logger.Log("Error: {0}", jsonException);
                 logger.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
                 captureStatus = null;
             }
             catch (Exception e)
             {
-                logger.Log("Error: " + e);
+                logger.Log("Error: {0}", e);
                 captureStatus = null;
             }
             return captureStatus;
@@ -775,7 +775,7 @@ namespace Applitools.Selenium.VisualGrid
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Error: " + e);
+                    Logger.Log("Error: {0}", e);
                 }
 
                 if (errorResult != null)
@@ -833,7 +833,7 @@ namespace Applitools.Selenium.VisualGrid
             }
             catch (Exception e)
             {
-                Logger.Log("Error: " + e);
+                Logger.Log("Error: {0}", e);
                 if (exception == null)
                 {
                     exception = e;

@@ -44,7 +44,7 @@ namespace Applitools.Selenium.Tests
             }
             catch (Exception ex)
             {
-                logger.Log("Error: " + ex);
+                logger.Log("Error: {0}", ex);
                 throw;
             }
             finally

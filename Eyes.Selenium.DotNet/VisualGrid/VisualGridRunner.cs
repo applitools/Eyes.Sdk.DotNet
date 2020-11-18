@@ -184,7 +184,7 @@ namespace Applitools.VisualGrid
             }
             catch (Exception e)
             {
-                Logger.Log("Error: " + e);
+                Logger.Log("Error: {0}", e);
             }
 
             NotifyAllServices();
@@ -290,7 +290,7 @@ namespace Applitools.VisualGrid
                     }
                     catch (Exception e)
                     {
-                        Logger.Log("Error: " + e);
+                        Logger.Log("Error: {0}", e);
                     }
                     return nextTestToRender;
                 }), renderingServiceLock_);
@@ -302,7 +302,7 @@ namespace Applitools.VisualGrid
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Logger.Log("Error: " + e);
+            Logger.Log("Error: {0}", e);
         }
 
         public void Close(IVisualGridEyes eyes)
@@ -464,7 +464,7 @@ namespace Applitools.VisualGrid
             }
             catch (Exception e)
             {
-                Logger.Log("Error: " + e);
+                Logger.Log("Error: {0}", e);
             }
             if (nextTestToOpen == null)
             {
@@ -476,7 +476,7 @@ namespace Applitools.VisualGrid
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Error: " + e);
+                    Logger.Log("Error: {0}", e);
                 }
             }
             return nextTestToOpen;
@@ -530,7 +530,7 @@ namespace Applitools.VisualGrid
                     }
                     catch (Exception e)
                     {
-                        Logger.Log("Error: " + e);
+                        Logger.Log("Error: {0}", e);
                         if (exception == null)
                         {
                             exception = e;
@@ -549,7 +549,7 @@ namespace Applitools.VisualGrid
 
             if (shouldThrowException && exception != null)
             {
-                Logger.Log("Error: " + exception);
+                Logger.Log("Error: {0}", exception);
                 throw exception;
             }
             Logger.Verbose("exit");
