@@ -326,7 +326,10 @@
                 testName += "_VG";
                 logPath = TestUtils.InitLogPath(testName);
                 VisualGridRunner visualGridRunner = new VisualGridRunner(10);
-                //visualGridRunner.DebugResourceWriter = new FileDebugResourceWriter(logPath);
+                if (!TestUtils.RUNS_ON_CI)
+                {
+                    visualGridRunner.DebugResourceWriter = new FileDebugResourceWriter(logPath);
+                }
                 runner = visualGridRunner;
             }
             else
