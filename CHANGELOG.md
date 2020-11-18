@@ -27,6 +27,7 @@
 - Ultrafast Grid: Limit amount of renders per session. [Trello 2152](https://trello.com/c/yNzhBkBh)
 ### Fixed
 - Ultrafast Grid: Hidden APIs the user shouldn't use.
+- Ultrafast Grid: Wrong parameters passed to resource collection script. [Trello 2316](https://trello.com/c/P3wLkH3z)
 - Now checking if the element is scrollable before choosing default root element. [Trello 2308](https://trello.com/c/udDvSy3i)
 - Coded Regions inside frame when no stitching needed were not collected correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
 

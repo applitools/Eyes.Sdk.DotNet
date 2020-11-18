@@ -85,6 +85,10 @@ namespace Applitools
         {
             try
             {
+                lock (FilePath)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+                }
                 if (!AppendToFile)
                 {
                     lock (FilePath)

@@ -73,7 +73,7 @@ namespace Applitools.Selenium.Capture
             }
             catch (Exception e)
             {
-                logger_.Log("Error: " + e);
+                logger_.Log("Error: {0}", e);
             }
 
             logger_.Verbose("switching back to original frame");
@@ -100,14 +100,14 @@ namespace Applitools.Selenium.Capture
             }
             catch (JsonReaderException jsonException)
             {
-                logger_.Log("Error: " + jsonException);
+                logger_.Log("Error: {0}", jsonException);
                 logger_.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
                 captureStatus = null;
             }
             catch (Exception e)
             {
                 logger_.Log("Error capturing DOM");
-                logger_.Log("Error: " + e);
+                logger_.Log("Error: {0}", e);
                 captureStatus = null;
             }
             return captureStatus;
@@ -259,7 +259,7 @@ namespace Applitools.Selenium.Capture
                 }
                 catch (Exception e)
                 {
-                    logger_.Log("Error: " + e);
+                    logger_.Log("Error: {0}", e);
                     framesData.Add(missingFrameLine, string.Empty);
                 }
                 finally
@@ -401,7 +401,7 @@ namespace Applitools.Selenium.Capture
                             }
                             catch (Exception e)
                             {
-                                logger_.Log("Error: " + e);
+                                logger_.Log("Error: {0}", e);
                             }
                         });
             }

@@ -1,5 +1,6 @@
 ﻿using Applitools.Tests.Utils;
 using Applitools.Ufg;
+using Applitools.Ufg.Model;
 using Applitools.Utils;
 using NUnit.Framework;
 using System;
@@ -16,7 +17,7 @@ namespace Applitools.VisualGrid
         {
             Logger logger = new Logger();
             logger.SetLogHandler(TestUtils.InitLogHandler());
-            DomAnalyzer.TryGetTextualData_(null, null, logger);
+            //DomAnalyzer.TryGetTextualData_(null, null, logger);
         }
 
         [Test]
@@ -25,7 +26,7 @@ namespace Applitools.VisualGrid
             Logger logger = new Logger();
             logger.SetLogHandler(TestUtils.InitLogHandler());
 
-            HashSet<string> allResourceUris = new HashSet<string>();
+            Dictionary<string, FrameData> allResourceUris = new Dictionary<string, FrameData>();
             DomAnalyzer.TextualDataResource tdr = new DomAnalyzer.TextualDataResource()
             {
                 MimeType = "image/svg+xml",
@@ -44,7 +45,7 @@ namespace Applitools.VisualGrid
             Logger logger = new Logger();
             logger.SetLogHandler(TestUtils.InitLogHandler());
 
-            HashSet<string> allResourceUris = new HashSet<string>();
+            Dictionary<string, FrameData> allResourceUris = new Dictionary<string, FrameData>();
             DomAnalyzer.TextualDataResource tdr = new DomAnalyzer.TextualDataResource()
             {
                 MimeType = "image/svg+xml",
@@ -63,7 +64,7 @@ namespace Applitools.VisualGrid
             Logger logger = new Logger();
             logger.SetLogHandler(TestUtils.InitLogHandler());
 
-            HashSet<string> allResourceUris = new HashSet<string>();
+            Dictionary<string, FrameData> allResourceUris = new Dictionary<string, FrameData>();
             DomAnalyzer.TextualDataResource tdr = new DomAnalyzer.TextualDataResource()
             {
                 MimeType = "image/svg+xml",
@@ -82,7 +83,7 @@ namespace Applitools.VisualGrid
             Logger logger = new Logger();
             logger.SetLogHandler(TestUtils.InitLogHandler());
 
-            HashSet<string> allResourceUris = new HashSet<string>();
+            Dictionary<string, FrameData> allResourceUris = new Dictionary<string, FrameData>();
             DomAnalyzer.TextualDataResource tdr = new DomAnalyzer.TextualDataResource()
             {
                 MimeType = "image/svg+xml",

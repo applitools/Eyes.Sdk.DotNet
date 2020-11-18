@@ -1220,7 +1220,7 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Error: " + ex);
+                    Logger.Log("Error: {0}", ex);
                 }
             }
 

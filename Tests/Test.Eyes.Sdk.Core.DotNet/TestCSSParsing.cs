@@ -1,10 +1,11 @@
 ﻿using Applitools.Tests.Utils;
-using Applitools.Utils;
 using Applitools.Ufg;
+using Applitools.Ufg.Model;
+using Applitools.Utils;
 using NUnit.Framework;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using System.Collections.Concurrent;
 
 namespace Applitools.Tests
 {
@@ -19,7 +20,7 @@ namespace Applitools.Tests
                 Data = badCss,
                 Uri = new System.Uri("https://a.co/path/")
             };
-            HashSet<string> extraResources = new HashSet<string>();
+            Dictionary<string, FrameData> extraResources = new Dictionary<string, FrameData>();
             HashSet<string> expectedResources = new HashSet<string>(new string[]{
                 "https://a.co/content/dam/everything-everywhere/5g/bottom-gradient-desktop.png",
                 "https://a.co/content/dam/everything-everywhere/5g/desktop_top_gradient.png",
@@ -72,7 +73,7 @@ namespace Applitools.Tests
                 logger.Log(url);
             }
             logger.Log("actual:");
-            foreach (string url in extraResources)
+            foreach (string url in extraResources.Keys)
             {
                 logger.Log(url);
             }
@@ -80,7 +81,7 @@ namespace Applitools.Tests
             Thread.Sleep(2000);
             logHandler.Close();
 
-            CollectionAssert.AreEquivalent(expectedResources, extraResources);
+            CollectionAssert.AreEquivalent(expectedResources, extraResources.Keys);
         }
     }
 }
