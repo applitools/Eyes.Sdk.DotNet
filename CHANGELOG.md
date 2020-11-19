@@ -1,3 +1,11 @@
+## [Eyes.Common vNext]
+### Added
+- Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
+
+## [Eyes.Selenium vNext]
+### Added
+- Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
+
 ## [Eyes.Images 2.18] - 2020-11-18
 ### Updated
 - Match to latest Eyes.Sdk.Core
