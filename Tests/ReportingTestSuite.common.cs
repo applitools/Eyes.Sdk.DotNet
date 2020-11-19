@@ -47,6 +47,8 @@ namespace Applitools.Tests.Utils
                 {
                     reportSummaryJsonStr = File.ReadAllText(reportSummaryFilePath_);
                     reportSummary_ = JsonConvert.DeserializeObject<TestResultReportSummary>(reportSummaryJsonStr);
+                    TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Read report summary file: {reportSummaryFilePath_}:");
+                    TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: {JsonConvert.SerializeObject(reportSummary_, Formatting.Indented)}");
                 }
             }
         }
@@ -163,6 +165,8 @@ namespace Applitools.Tests.Utils
        
             string reportSummaryJsonStr = JsonConvert.SerializeObject(reportSummary_);
             File.WriteAllText(reportSummaryFilePath_, reportSummaryJsonStr);
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Written updated report summary file: {reportSummaryFilePath_}:");
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: {JsonConvert.SerializeObject(reportSummary_, Formatting.Indented)}");
         }
     }
 }
