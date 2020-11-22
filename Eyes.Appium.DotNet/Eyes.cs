@@ -1,22 +1,23 @@
-﻿using Applitools.Appium.Fluent;
-using Applitools.Capture;
-using Applitools.Fluent;
-using Applitools.Appium.Capture;
-using Applitools.Cropping;
+﻿using Applitools.Appium.Capture;
 using Applitools.Appium.Exceptions;
+using Applitools.Appium.Fluent;
+using Applitools.Capture;
+using Applitools.Cropping;
+using Applitools.Fluent;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Enums;
 using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Drawing;
-using Applitools.Utils;
-using Applitools.Utils.Geometry;
-using Region = Applitools.Utils.Geometry.Region;
-using OpenQA.Selenium.Appium.Enums;
-using OpenQA.Selenium.Appium;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Reflection;
 using System.Threading;
-using Newtonsoft.Json;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Appium
 {
@@ -24,13 +25,15 @@ namespace Applitools.Appium
     {
         private const string NATIVE_APP = "NATIVE_APP";
 
-        private AppiumDriver<AppiumWebElement> driver_;
+        private RemoteWebDriver driver_;
+        private MethodInfo getPlatformName_;
+        private MethodInfo getSessionDetails_;
 
         public IDictionary<string, object> CachedSessionDetails { get; private set; }
 
         internal double GetScaleRatioForRegions()
         {
-            return driver_.PlatformName == "iOS" ? 1 : ScaleRatio;
+            return getPlatformName_.Invoke(driver_, null).Equals("iOS") ? 1 : ScaleRatio;
         }
 
         public static Func<IWebDriver, bool> IsLandscapeOrientation = IsLandscapeOrientationImpl_;
@@ -91,16 +94,7 @@ namespace Applitools.Appium
 
         internal IWebDriver GetDriver() { return driver_; }
 
-        public AppiumDriver<AppiumWebElement> Open(RemoteWebDriver driver, string appName, string testName)
-        {
-            if (driver is AppiumDriver<AppiumWebElement> appiumDriver)
-            {
-                return Open(appiumDriver, appName, testName);
-            }
-            throw new EyesException("driver is not an AppiumDriver<AppiumWebElement>");
-        }
-
-        public AppiumDriver<AppiumWebElement> Open(AppiumDriver<AppiumWebElement> driver, string appName, string testName)
+        public RemoteWebDriver Open(RemoteWebDriver driver, string appName, string testName)
         {
             Logger.GetILogHandler().Open();
 
@@ -111,6 +105,20 @@ namespace Applitools.Appium
             }
 
             driver_ = driver;
+            Type driverType = driver.GetType();
+            if (driverType.GenericTypeArguments.Length != 1)
+            {
+                throw new EyesException($"driver is not an AppiumDriver<IWebElement>");
+            }
+            Type argType = driverType.GenericTypeArguments[0];
+            Type appiumDriverType = typeof(AppiumDriver<>).MakeGenericType(argType);
+            if (!appiumDriverType.IsAssignableFrom(driverType))
+            {
+                throw new EyesException($"driver is not an AppiumDriver<{argType.Name}>");
+            }
+            getPlatformName_ = appiumDriverType.GetProperty("PlatformName").GetGetMethod();
+            getSessionDetails_ = appiumDriverType.GetProperty("SessionDetails").GetGetMethod();
+
             InitSessionDetails_();
             InitViewportFromSessionDetails_();
 
@@ -148,14 +156,14 @@ namespace Applitools.Appium
             do
             {
                 Thread.Sleep(attempts == 2 ? 0 : 1000);
-                CachedSessionDetails = driver_.SessionDetails;
+                CachedSessionDetails = (IDictionary<string, object>)getSessionDetails_.Invoke(driver_, null);
             } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
 
             if (CachedSessionDetails == null)
             {
                 Logger.Log("WARNING: could not get viewportRect in session details from appium server! " +
                     "Using default device size instead, this might create incorrect images." +
-                    JsonConvert.SerializeObject(driver_.SessionDetails, Formatting.Indented));
+                    JsonConvert.SerializeObject(getSessionDetails_.Invoke(driver_, null), Formatting.Indented));
             }
         }
 
