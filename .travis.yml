@@ -47,5 +47,6 @@ script:
     fi
   - chmod +x ./buildProjects.sh && ./buildProjects.sh
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
+    chmod +x ./deploy.sh && ./deploy.sh;
     chmod +x ./sendMail.sh && ./sendMail.sh;
     fi
