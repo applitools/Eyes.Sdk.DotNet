@@ -1,12 +1,16 @@
-## [Eyes.Appium vNext]
+## [Eyes.Sdk.Core 2.37] - 2020-11-23
+### Updated
+- Match to latest Eyes.Common
+
+## [Eyes.Appium 4.15] - 2020-11-23
 ### Fixed
 - `Eyes.Open` now gets any form of `AppiumDriver<W>` decendants. [Trello 2329](https://trello.com/c/81pvfYUj)
 
-## [Eyes.Common vNext]
+## [Eyes.Common 1.2] - 2020-11-23
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.37] - 2020-11-23
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
 
