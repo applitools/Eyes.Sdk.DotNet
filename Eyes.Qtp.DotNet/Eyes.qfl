@@ -64,8 +64,8 @@ Class Eyes_
 	    defaultRetryTimeout_ = 2
 		width_ = -1
 		height_ = -1
-	    eyes_.AgentId = "eyes.qtp/1.15"
-	    eyes_.InteropMatchTimeout = 0
+		eyes_.AgentId = "eyes.qtp/1.16"
+		eyes_.InteropMatchTimeout = 0
     End Sub
 
     ' === Properties ===
@@ -637,12 +637,30 @@ Class Eyes_
 	End Function
 	
 	Private Function GetInnerDim_(browser, dimension)
+		Dim childHwnd
+		Dim allROProps = browser.GetAllROProperties
 		Dim version: version = browser.GetROProperty("version")
 		If (StringContains_(version, "Chrome")) Then
-			Dim childHwnd: childHwnd = GetChildHwnd_(browser)
-			Dim rootHwnd: rootHwnd = GetRootHwnd_(childHwnd)
-			GetInnerDim_ = GetChromeLegacyWinObj_(rootHwnd).GetROProperty(dimension)
-		elseif (StringContains_(version, "internet explorer 8")) Then
+			Dim children: Set children = browser.ChildObjects()
+			If children.count = 0 Then
+				eyes_.Throw "Browser has no child objects!"
+			End If
+			
+			For i = 0 to children.count - 1
+				hwnd = children(i).GetRoProperty("HWND")
+				If hwnd <> 0 Then
+					childHwnd = hwnd
+					Dim rootHwnd : rootHwnd = GetRootHwnd_(childHwnd)
+					GetInnerDim_ = GetChromeLegacyWinObj_(rootHwnd).GetROProperty(dimension)
+					Exit Function
+				End If
+			Next
+
+			For i = 0 To children.count - 1
+				children(i).GetRoProperty("HWND")
+			Next
+
+		ElseIf (StringContains_(version, "internet explorer 8")) Then
 		 	childHwnd = GetChildHwnd_(browser)
 		 	GetInnerDim_ = Window("hwnd:=" & childHwnd).GetROProperty(dimension)
 		else
