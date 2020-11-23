@@ -112,6 +112,11 @@ def create_send_mail_json(reported_version, recent_changes):
 		"changeLog": recent_changes,
 		"testCoverageGap": testCoverageGap
 	}
+
+    specificRecipient = os.environ.get('SPECIFIC_RECIPIENT')
+    if specificRecipient is not None:
+        sendMailObj["specificRecipient"] = specificRecipient
+
     return json.dumps(sendMailObj)
 
 if __name__ == '__main__':
