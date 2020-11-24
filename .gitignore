@@ -23,3 +23,7 @@ TestResult.xml
 /Eyes.Selenium.DotNet/Properties/Resources/processPageAndSerializePollForIE.js
 /Eyes.Selenium.DotNet/Properties/resBackup
 *.diagsession
+/Eyes.Selenium.DotNet/Properties/Resources/pollResult.js
+/Eyes.Selenium.DotNet/Properties/Resources/pollResultForIE.js
+/Eyes.Selenium.DotNet/Properties/Resources/processPagePoll.js
+/Eyes.Selenium.DotNet/Properties/Resources/processPagePollForIE.js
