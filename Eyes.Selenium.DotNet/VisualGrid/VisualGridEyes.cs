@@ -1,4 +1,14 @@
-﻿using System;
+﻿using Applitools.Fluent;
+using Applitools.Selenium.Fluent;
+using Applitools.Ufg;
+using Applitools.Ufg.Model;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
+using Newtonsoft.Json;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,16 +19,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Applitools.Fluent;
-using Applitools.Selenium.Fluent;
-using Applitools.Utils;
-using Applitools.Utils.Geometry;
-using Applitools.VisualGrid;
-using Applitools.Ufg.Model;
-using Newtonsoft.Json;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
-using Applitools.Ufg;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -72,8 +72,6 @@ namespace Applitools.Selenium.VisualGrid
         internal UserAgent userAgent_;
         private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
         private RectangleSize viewportSize_;
-
-        internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
 
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
         {
@@ -548,23 +546,6 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        //internal static CaptureStatus CollectDom_(Logger logger, UserAgent userAgent,
-        //    IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
-        //{
-        //    logger.Verbose("Collecting DOM...");
-        //    CaptureStatus captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
-        //    Stopwatch stopwatch = Stopwatch.StartNew();
-        //    while (captureStatus.Status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
-        //    {
-        //        logger.Verbose("DOM capture status: {0}", captureStatus.Status);
-        //        Thread.Sleep(200);
-        //        captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
-        //    }
-
-        //    logger.Verbose("DOM collected.");
-        //    return captureStatus;
-        //}
-
         internal static List<RunningTest> CollectTestsForCheck_(Logger logger, List<RunningTest> tests)
         {
             List<RunningTest> filteredTests = new List<RunningTest>();
@@ -676,39 +657,6 @@ namespace Applitools.Selenium.VisualGrid
             checkSettings.SetTargetSelector(vgs);
         }
 
-        //internal static CaptureStatus GetDomCaptureAndPollingScriptResult_(
-        //    Logger logger, UserAgent userAgent, IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
-        //{
-        //    CaptureStatus captureStatus;
-        //    string captureStatusStr = null;
-        //    try
-        //    {
-        //        string script = userAgent.IsInternetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
-
-        //        object skipListObj = new { skipResources = runner.CachedBlobsURLs.Keys };
-
-        //        string skipListJson = JsonConvert.SerializeObject(skipListObj);
-        //        string arguments = string.Format("({0})", skipListJson);
-        //        logger.Verbose("processPageAndSerializePoll[ForIe] {0}", arguments);
-        //        script += arguments;
-        //        captureStatusStr = (string)jsExecutor.ExecuteScript(script);
-
-        //        captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
-        //    }
-        //    catch (JsonReaderException jsonException)
-        //    {
-        //        logger.Log("Error: {0}", jsonException);
-        //        logger.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
-        //        captureStatus = null;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        logger.Log("Error: {0}", e);
-        //        captureStatus = null;
-        //    }
-        //    return captureStatus;
-        //}
-
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo,
             UserAgent userAgent, IVisualGridRunner runner, EyesWebDriver driver, Logger logger)
         {
@@ -725,7 +673,7 @@ namespace Applitools.Selenium.VisualGrid
             };
 
             object pollingArguments = new { chunkByteLength };
-            
+
             string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
             FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
             AnalyzeFrameData_(frameData, userAgent, runner, switchTo, driver, logger);
