@@ -12,7 +12,7 @@
     {
         public CaptureStatusEnum Status { get; set; }
         public string Error { get; set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
         public bool Done { get; set; }
 
         public override string ToString()

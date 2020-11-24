@@ -455,7 +455,7 @@ namespace Applitools.Selenium.Tests
             catch (Exception ex)
             {
                 GetEyes()?.Logger?.GetILogHandler()?.Open();
-                GetEyes()?.Logger?.Log("Exception: " + ex);
+                GetEyes()?.Logger?.Log("Exception: {0}", ex);
                 throw;
             }
             finally

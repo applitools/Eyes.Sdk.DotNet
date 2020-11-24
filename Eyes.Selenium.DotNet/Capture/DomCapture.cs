@@ -134,7 +134,7 @@ namespace Applitools.Selenium.Capture
                 throw new EyesException("DOM capture timeout.");
             }
 
-            string scriptResult = captureStatus.Value;
+            string scriptResult = captureStatus.Value.ToString();
 
             List<string> missingCssList = new List<string>();
             List<string> missingFramesList = new List<string>();

@@ -715,14 +715,18 @@ namespace Applitools.Selenium.VisualGrid
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
+
+            int chunkByteLength = userAgent.IsiOS ? 10 * KB : 256 * KB;
             object arguments = new
             {
                 serializeResources = true,
                 skipResources = runner.CachedBlobsURLs.Keys,
-                chunkByteLength = userAgent.IsiOS ? 10 * KB : 256 * KB
+                chunkByteLength
             };
 
-            string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingScript);
+            object pollingArguments = new { chunkByteLength };
+            
+            string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
             FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
             AnalyzeFrameData_(frameData, userAgent, runner, switchTo, driver, logger);
             return frameData;

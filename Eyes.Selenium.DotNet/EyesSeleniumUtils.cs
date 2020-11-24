@@ -490,7 +490,7 @@ namespace Applitools.Selenium
         }
 
         internal static string RunDomScript(Logger logger, EyesWebDriver driver,
-            string domScript, object domScriptArguments, string pollingScript)
+            string domScript, object domScriptArguments, object pollingScriptArguments, string pollingScript)
         {
             logger.Verbose("Starting dom extraction");
             if (domScriptArguments == null)
@@ -498,7 +498,6 @@ namespace Applitools.Selenium
                 domScriptArguments = new { };
             }
 
-            Dictionary<string, object> pollingScriptArguments = new Dictionary<string, object>();
             string domScriptWrapped = string.Format(DOM_SCRIPTS_WRAPPER, domScript, JsonConvert.SerializeObject(domScriptArguments));
             string pollingScriptWrapped = string.Format(DOM_SCRIPTS_WRAPPER, pollingScript, JsonConvert.SerializeObject(pollingScriptArguments));
 
@@ -529,7 +528,7 @@ namespace Applitools.Selenium
 
                 if (status == CaptureStatusEnum.SUCCESS)
                 {
-                    return scriptResponse.Value;
+                    return scriptResponse.Value.ToString();
                 }
 
                 StringBuilder value = new StringBuilder();
@@ -537,7 +536,7 @@ namespace Applitools.Selenium
                 while (status == CaptureStatusEnum.SUCCESS_CHUNKED && !scriptResponse.Done && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
                     logger.Verbose("Dom script chunks polling...");
-                    chunk = JsonConvert.DeserializeObject<string>(scriptResponse.Value);
+                    chunk = JsonConvert.DeserializeObject<string>(scriptResponse.Value.ToString());
                     value.Append(chunk);
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
@@ -555,7 +554,7 @@ namespace Applitools.Selenium
                     throw new EyesException("Domsnapshot Timed out");
                 }
 
-                chunk = JsonConvert.DeserializeObject<string>(scriptResponse.Value);
+                chunk = JsonConvert.DeserializeObject<string>(scriptResponse.Value.ToString());
                 value.Append(chunk);
                 return value.ToString();
             }
