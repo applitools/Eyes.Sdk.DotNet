@@ -5,10 +5,12 @@
 ## [Eyes.Common vNext]
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
+- Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
 
 ## [Eyes.Selenium vNext]
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
+- Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
 
 ## [Eyes.Images 2.18] - 2020-11-18
 ### Updated
