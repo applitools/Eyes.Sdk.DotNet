@@ -56,6 +56,7 @@ namespace Applitools.VisualGrid
                         case BrowserType.EDGE_LEGACY:
                         case BrowserType.EDGE_CHROMIUM:
                         case BrowserType.EDGE_CHROMIUM_ONE_VERSION_BACK:
+                        case BrowserType.EDGE_CHROMIUM_TWO_VERSIONS_BACK:
                             return "windows";
                     }
                 }
