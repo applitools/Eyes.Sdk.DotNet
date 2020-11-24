@@ -63,9 +63,6 @@ namespace Applitools
         protected RectangleSize viewportSize_;
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         private IServerConnector serverConnector_;
-        internal Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
-        internal Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
-        internal Dictionary<BrowserType, string> userAgents_;
 
         #endregion
 

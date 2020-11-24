@@ -25,5 +25,6 @@ namespace Applitools
         [EnumMember(Value = "edgelegacy")] EDGE_LEGACY,
         [EnumMember(Value="edgechromium")] EDGE_CHROMIUM,
         [EnumMember(Value="edgechromium-1")] EDGE_CHROMIUM_ONE_VERSION_BACK,
+        [EnumMember(Value="edgechromium-2")] EDGE_CHROMIUM_TWO_VERSIONS_BACK,
     }
 }

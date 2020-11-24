@@ -37,7 +37,8 @@
                 case BrowserType.EDGE: return Edge;
 
                 case BrowserType.EDGE_CHROMIUM:
-                case BrowserType.EDGE_CHROMIUM_ONE_VERSION_BACK: return EdgeChromium;
+                case BrowserType.EDGE_CHROMIUM_ONE_VERSION_BACK:
+                case BrowserType.EDGE_CHROMIUM_TWO_VERSIONS_BACK: return EdgeChromium;
             }
             return null;
         }
