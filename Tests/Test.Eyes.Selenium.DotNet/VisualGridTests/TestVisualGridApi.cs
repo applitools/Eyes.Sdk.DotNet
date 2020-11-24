@@ -229,7 +229,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 CollectionAssert.AreEquivalent(expectedUrls, ((IVisualGridRunner)runner).CachedBlobsURLs.Keys);
 
                 UserAgent userAgent = eyes.visualGridEyes_.userAgent_;
-                EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)driver.SwitchTo();
+                EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 FrameData domData = VisualGridEyes.CaptureDomSnapshot_(switchTo, userAgent, runner, (EyesWebDriver)eyesDriver, eyes.Logger);
                 DomAnalyzer domAnalyzer = new DomAnalyzer(runner,
                     domData,

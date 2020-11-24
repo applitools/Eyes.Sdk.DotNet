@@ -17,13 +17,13 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [OneTimeSetUp]
         public void Before()
         {
-            originalTimeout = VisualGridEyes.CAPTURE_TIMEOUT;
+            originalTimeout = EyesSeleniumUtils.CAPTURE_TIMEOUT;
         }
 
         [OneTimeTearDown]
         public void After()
         {
-            VisualGridEyes.CAPTURE_TIMEOUT = originalTimeout;
+            EyesSeleniumUtils.CAPTURE_TIMEOUT = originalTimeout;
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void TestTimeout2()
         {
-            VisualGridEyes.CAPTURE_TIMEOUT = TimeSpan.FromTicks(1);
+            EyesSeleniumUtils.CAPTURE_TIMEOUT = TimeSpan.FromTicks(1);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             try
             {
