@@ -24,10 +24,12 @@ namespace Applitools.Selenium.VisualGrid
 {
     public class VisualGridEyes : IEyes, ISeleniumEyes, IVisualGridEyes
     {
-        private static readonly string processPageAndPoll_ = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.processPageAndSerializePoll.js");
-        private static readonly string domCaptureAndPollingScript_ = processPageAndPoll_ + " return __processPageAndSerializePoll";
-        private static readonly string processPageAndPollForIE_ = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.processPageAndSerializePollForIE.js");
-        private static readonly string domCaptureAndPollingScriptForIE_ = processPageAndPollForIE_ + " return __processPageAndSerializePollForIE";
+        private static readonly string PROCESS_PAGE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.processPagePoll.js");
+        private static readonly string PROCESS_PAGE_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.processPagePollForIE.js");
+        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.pollResult.js");
+        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.pollResultForIE.js");
+
+        private static readonly int KB = 1024 * 1024;
 
         private static readonly string GET_ELEMENT_XPATH_JS =
             "var el = arguments[0];" +
@@ -504,24 +506,13 @@ namespace Applitools.Selenium.VisualGrid
                     switchTo.ParentFrame();
                 }
 
-                CaptureStatus captureStatus = CollectDom_(Logger, userAgent_, visualGridRunner_, jsExecutor_);
-
-                if (captureStatus.Status == CaptureStatusEnum.ERROR)
-                {
-                    switchTo.Frames(originalFC);
-                    throw new EyesException("Failed to capture DOM: " + captureStatus.Error);
-                }
-                else if (captureStatus.Status == CaptureStatusEnum.WIP)
-                {
-                    switchTo.Frames(originalFC);
-                    throw new EyesException("DOM capture timeout.");
-                }
+                FrameData dom = CaptureDomSnapshot_(switchTo, userAgent_, visualGridRunner_, driver_, Logger);
 
                 //string scriptResult = captureStatus.Value;
                 IList<VisualGridSelector[]> regionSelectors = GetRegionsXPaths_(checkSettings);
 
                 //RGridResource gridResource = new RGridResource(new Uri(url_), "application/json", Encoding.UTF8.GetBytes(scriptResult), Logger, "");
-                debugResourceWriter_.Write(captureStatus.Value);
+                debugResourceWriter_.Write(dom);
                 //Logger.Verbose("Done collecting DOM.");
 
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
@@ -540,7 +531,7 @@ namespace Applitools.Selenium.VisualGrid
                     checkTasks.Add(checkTask);
                 }
 
-                visualGridRunner_.Check(checkSettings, debugResourceWriter_, captureStatus.Value, regionSelectors,
+                visualGridRunner_.Check(checkSettings, debugResourceWriter_, dom, regionSelectors,
                         eyesConnector_, userAgent_, checkTasks,
                         new VisualGridRunner.RenderListener());
 
@@ -557,22 +548,22 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        internal static CaptureStatus CollectDom_(Logger logger, UserAgent userAgent,
-            IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
-        {
-            logger.Verbose("Collecting DOM...");
-            CaptureStatus captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            while (captureStatus.Status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
-            {
-                logger.Verbose("DOM capture status: {0}", captureStatus.Status);
-                Thread.Sleep(200);
-                captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
-            }
+        //internal static CaptureStatus CollectDom_(Logger logger, UserAgent userAgent,
+        //    IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
+        //{
+        //    logger.Verbose("Collecting DOM...");
+        //    CaptureStatus captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
+        //    Stopwatch stopwatch = Stopwatch.StartNew();
+        //    while (captureStatus.Status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
+        //    {
+        //        logger.Verbose("DOM capture status: {0}", captureStatus.Status);
+        //        Thread.Sleep(200);
+        //        captureStatus = GetDomCaptureAndPollingScriptResult_(logger, userAgent, runner, jsExecutor);
+        //    }
 
-            logger.Verbose("DOM collected.");
-            return captureStatus;
-        }
+        //    logger.Verbose("DOM collected.");
+        //    return captureStatus;
+        //}
 
         internal static List<RunningTest> CollectTestsForCheck_(Logger logger, List<RunningTest> tests)
         {
@@ -685,37 +676,111 @@ namespace Applitools.Selenium.VisualGrid
             checkSettings.SetTargetSelector(vgs);
         }
 
-        internal static CaptureStatus GetDomCaptureAndPollingScriptResult_(
-            Logger logger, UserAgent userAgent, IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
+        //internal static CaptureStatus GetDomCaptureAndPollingScriptResult_(
+        //    Logger logger, UserAgent userAgent, IVisualGridRunner runner, IJavaScriptExecutor jsExecutor)
+        //{
+        //    CaptureStatus captureStatus;
+        //    string captureStatusStr = null;
+        //    try
+        //    {
+        //        string script = userAgent.IsInternetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
+
+        //        object skipListObj = new { skipResources = runner.CachedBlobsURLs.Keys };
+
+        //        string skipListJson = JsonConvert.SerializeObject(skipListObj);
+        //        string arguments = string.Format("({0})", skipListJson);
+        //        logger.Verbose("processPageAndSerializePoll[ForIe] {0}", arguments);
+        //        script += arguments;
+        //        captureStatusStr = (string)jsExecutor.ExecuteScript(script);
+
+        //        captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
+        //    }
+        //    catch (JsonReaderException jsonException)
+        //    {
+        //        logger.Log("Error: {0}", jsonException);
+        //        logger.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
+        //        captureStatus = null;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        logger.Log("Error: {0}", e);
+        //        captureStatus = null;
+        //    }
+        //    return captureStatus;
+        //}
+
+        internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo,
+            UserAgent userAgent, IVisualGridRunner runner, EyesWebDriver driver, Logger logger)
         {
-            CaptureStatus captureStatus;
-            string captureStatusStr = null;
-            try
-            {
-                string script = userAgent.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
+            string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
+            string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
-                object skipListObj = new { skipResources = runner.CachedBlobsURLs.Keys };
-
-                string skipListJson = JsonConvert.SerializeObject(skipListObj);
-                string arguments = string.Format("({0})", skipListJson);
-                logger.Verbose("processPageAndSerializePoll[ForIe] {0}", arguments);
-                script += arguments;
-                captureStatusStr = (string)jsExecutor.ExecuteScript(script);
-
-                captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
-            }
-            catch (JsonReaderException jsonException)
+            object arguments = new
             {
-                logger.Log("Error: {0}", jsonException);
-                logger.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
-                captureStatus = null;
-            }
-            catch (Exception e)
+                serializeResources = true,
+                skipResources = runner.CachedBlobsURLs.Keys,
+                chunkByteLength = userAgent.IsiOS ? 10 * KB : 256 * KB
+            };
+
+            string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingScript);
+            FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
+            AnalyzeFrameData_(frameData, userAgent, runner, switchTo, driver, logger);
+            return frameData;
+        }
+
+        private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent,
+            IVisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
+        {
+            FrameChain frameChain = driver.GetFrameChain().Clone();
+            foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
             {
-                logger.Log("Error: {0}", e);
-                captureStatus = null;
+                if (crossFrame.Selector == null)
+                {
+                    logger.Verbose("cross frame with null selector");
+                    continue;
+                }
+
+                try
+                {
+                    IWebElement frame = driver.FindElement(By.CssSelector(crossFrame.Selector));
+                    switchTo.Frame(frame);
+                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, runner, driver, logger);
+                    frameData.Frames.Add(result);
+                    frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
+                }
+                catch (Exception e)
+                {
+                    logger.Log("Failed finding cross frame with selector {0}. Reason: {1}", crossFrame.Selector, e);
+                }
+                finally
+                {
+                    switchTo.Frames(frameChain);
+                }
             }
-            return captureStatus;
+
+            foreach (FrameData frame in frameData.Frames)
+            {
+                if (frame.Selector == null)
+                {
+                    logger.Verbose("cross frame with null selector");
+                    continue;
+                }
+
+                try
+                {
+                    IWebElement frameElement = driver.FindElement(By.CssSelector(frame.Selector));
+                    switchTo.Frame(frameElement);
+                    AnalyzeFrameData_(frame, userAgent, runner, switchTo, driver, logger);
+                }
+                catch (Exception e)
+                {
+                    logger.Log("Failed finding cross frame with selector {0}. Reason: {1}", frame.Selector, e);
+                }
+                finally
+                {
+                    switchTo.Frames(frameChain);
+                }
+            }
         }
 
         public void SetLogHandler(ILogHandler logHandler)

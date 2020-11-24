@@ -91,7 +91,7 @@ namespace Applitools.Selenium.Capture
         internal CaptureStatus GetDomCaptureAndPollingScriptResult_()
         {
             CaptureStatus captureStatus;
-            string cptureScript = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
+            string cptureScript = userAgent_.IsInternetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
             string captureStatusStr = null;
             try
             {

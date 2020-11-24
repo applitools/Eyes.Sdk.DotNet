@@ -39,15 +39,19 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <None Remove="Properties\Resources\captureDomAndPoll.js" />
     <None Remove="Properties\Resources\captureDomAndPollForIE.js" />
-    <None Remove="Properties\Resources\processPageAndSerializePoll.js" />
-    <None Remove="Properties\Resources\processPageAndSerializePollForIE.js" />
+    <None Remove="Properties\Resources\pollResult.js" />
+    <None Remove="Properties\Resources\pollResultForIE.js" />
+    <None Remove="Properties\Resources\processPagePoll.js" />
+    <None Remove="Properties\Resources\processPagePollForIE.js" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources\captureDomAndPoll.js" />
     <EmbeddedResource Include="Properties\Resources\captureDomAndPollForIE.js" />
-    <EmbeddedResource Include="Properties\Resources\processPageAndSerializePoll.js" />
-    <EmbeddedResource Include="Properties\Resources\processPageAndSerializePollForIE.js" />
+    <EmbeddedResource Include="Properties\Resources\pollResult.js" />
+    <EmbeddedResource Include="Properties\Resources\pollResultForIE.js" />
+    <EmbeddedResource Include="Properties\Resources\processPagePoll.js" />
+    <EmbeddedResource Include="Properties\Resources\processPagePollForIE.js" />
   </ItemGroup>
 
   <ItemGroup>
