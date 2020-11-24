@@ -623,6 +623,7 @@ Class Eyes_
 	
 	Private Function GetMainWindowHandle_(browser)
 		Dim hwnd, version: version = browser.GetROProperty("version")
+		Dim allROProps: allROProps = browser.GetAllROProperties
 		If (StringContains_(version, "Chrome")) Then
 			hwnd = GetChildHwnd_(browser)
 		else
@@ -638,7 +639,7 @@ Class Eyes_
 	
 	Private Function GetInnerDim_(browser, dimension)
 		Dim childHwnd
-		Dim allROProps = browser.GetAllROProperties
+		Dim allROProps: allROProps = browser.GetAllROProperties
 		Dim version: version = browser.GetROProperty("version")
 		If (StringContains_(version, "Chrome")) Then
 			Dim children: Set children = browser.ChildObjects()
