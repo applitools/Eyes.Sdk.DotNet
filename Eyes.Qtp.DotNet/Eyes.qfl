@@ -222,6 +222,22 @@ Class Eyes_
 	End Sub
 
 	Public Sub SetBaselineInfoFromBrowser(browser, width, height)
+
+		Dim i, j
+		Dim children :  Set children = browser.ChildObjects()
+		Dim props :  set props = browser.GetAllRoProperties()
+		For i = 0 To props.Count - 1
+			SystemUtil.PrintToDebugStream props(i).name & ": " & props(i).Value
+		Next
+
+		For i = 0 To children.Count - 1
+			SystemUtil.PrintToDebugStream "child " & i
+			set props = children(i).GetAllRoProperties()
+			For j = 0 To props.Count - 1
+				SystemUtil.PrintToDebugStream "    " & props(j).name & ": " & props(j).Value
+			Next
+		Next
+
 		If (Not IsBrowserObject_(browser)) Then
 			eyes_.Throw "Not a browser!"
 		End If
@@ -571,33 +587,16 @@ Class Eyes_
 		Dim hInner, wInner, hOuter, wOuter, hTo, wTo
 		Dim wndw, hwnd, size_made_good, interval, full_retries, wait_retries, version
 		Dim viewSize
-
-		Dim i, j
 		Dim children :  Set children = browser.ChildObjects()
-		Dim props :  set props = browser.GetAllRoProperties()
-		For i = 0 To props.Count - 1
-			SystemUtil.PrintToDebugStream props(i).name & ": " & props(i).Value
-		Next
-
-		For i = 0 To children.Count - 1
-			SystemUtil.PrintToDebugStream "child " & i
-			set props = children(i).GetAllRoProperties()
-			For j = 0 To props.Count - 1
-				SystemUtil.PrintToDebugStream props(j).name & ": " & props(j).Value
-			Next
-		Next
 
 		interval = 1 'seconds
 		full_retries = 2
-			
-		Set wndw = GetMainWindow_(browser)
-		
-		wndw.Restore()
-		Call wndw.Move(0, 0)
+
+		browser.Restore()
 
 		Do
-			hOuter = wndw.GetROProperty("height")
-			wOuter = wndw.GetROProperty("width")
+			hOuter = browser.GetROProperty("height")
+			wOuter = browser.GetROProperty("width")
 			hInner = children(0).GetROProperty("height")
 			wInner = children(0).GetROProperty("width")
 
@@ -606,7 +605,7 @@ Class Eyes_
 
 			size_made_good = (height = hInner And width = wInner)
 			If Not size_made_good Then
-				wndw.Resize wTo, hTo
+				browser.Resize wTo, hTo
 
 				' Wait for stabilization
 				wait_retries = 3
@@ -637,16 +636,6 @@ Class Eyes_
 		End If
 	End Sub
 
-	Private Function GetMainWindow_(browser)
-		Dim hwnd, windowSearchTerm, wnd, version : version = browser.GetROProperty("version")
-		If (StringContains_(version, "Chrome")) Then
-        		Set wnd = Window("Text:=" & browser.GetRoProperty("Title") & " - Google Chrome")
-		Else
-			hwnd = browser.getRoProperty("hwnd")
-			Set wnd = Window("hwnd:="&GetRootHwnd_(hwnd))
-		End If
-		set GetMainWindow_ = wnd
-	End Function
 
 	Private Function GetRootHwnd_(hwnd)
 		Const GA_ROOT = 2
