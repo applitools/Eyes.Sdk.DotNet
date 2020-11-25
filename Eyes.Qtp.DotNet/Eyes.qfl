@@ -64,7 +64,7 @@ Class Eyes_
 		defaultRetryTimeout_ = 2
 		width_ = -1
 		height_ = -1
-		eyes_.AgentId = "eyes.qtp/1.15"
+		eyes_.AgentId = "eyes.qtp/1.16 (UFT " & UFTVersionInRegistry() & ")"
 		eyes_.InteropMatchTimeout = 0
 	End Sub
 
@@ -701,6 +701,23 @@ Class Eyes_
 			End If
 		Next
 		eyes_.Throw "Chrome Legacy Window not found!"
+	End Function
+
+	Public Function UFTVersionInRegistry()
+		Dim WSHShell, strValue, major, minor, build
+		On Error Resume Next
+		Set WSHShell = CreateObject("WScript.Shell")
+		major = WSHShell.RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercury Interactive\QuickTest Professional\CurrentVersion\Major")
+		minor = WSHShell.RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercury Interactive\QuickTest Professional\CurrentVersion\Minor")
+		build = WSHShell.RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercury Interactive\QuickTest Professional\CurrentVersion\build")
+
+		If err.number <> 0 Then
+			UFTVersionInRegistry = "unknown"
+		Else
+			UFTVersionInRegistry = major&"."&minor&"."&build
+		End If
+		
+		set WSHShell = nothing
 	End Function
 
 End Class
