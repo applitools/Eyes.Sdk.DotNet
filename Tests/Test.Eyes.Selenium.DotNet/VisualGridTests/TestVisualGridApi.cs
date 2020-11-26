@@ -230,7 +230,11 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
                 UserAgent userAgent = eyes.visualGridEyes_.userAgent_;
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
-                FrameData domData = VisualGridEyes.CaptureDomSnapshot_(switchTo, userAgent, runner, (EyesWebDriver)eyesDriver, eyes.Logger);
+                
+                FrameData domData = VisualGridEyes.CaptureDomSnapshot_(
+                    switchTo, userAgent, config, 
+                    runner, (EyesWebDriver)eyesDriver, eyes.Logger);
+
                 DomAnalyzer domAnalyzer = new DomAnalyzer(runner,
                     domData,
                     eyes.visualGridEyes_.eyesConnector_,

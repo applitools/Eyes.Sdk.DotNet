@@ -24,10 +24,10 @@ namespace Applitools.Selenium.VisualGrid
 {
     public class VisualGridEyes : IEyes, ISeleniumEyes, IVisualGridEyes
     {
-        private static readonly string PROCESS_PAGE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.processPagePoll.js");
-        private static readonly string PROCESS_PAGE_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.processPagePollForIE.js");
-        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.pollResult.js");
-        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.pollResultForIE.js");
+        private static readonly string PROCESS_PAGE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePoll.js");
+        private static readonly string PROCESS_PAGE_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePollForIE.js");
+        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.pollResult.js");
+        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.pollResultForIE.js");
 
         private static readonly int MB = 1024 * 1024;
 

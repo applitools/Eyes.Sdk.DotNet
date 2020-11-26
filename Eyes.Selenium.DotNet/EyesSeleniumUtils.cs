@@ -536,7 +536,7 @@ namespace Applitools.Selenium
                 while (status == CaptureStatusEnum.SUCCESS_CHUNKED && !scriptResponse.Done && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
                     logger.Verbose("Dom script chunks polling...");
-                    chunk = JsonConvert.DeserializeObject<string>(scriptResponse.Value.ToString());
+                    chunk = scriptResponse.Value.ToString();
                     value.Append(chunk);
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
@@ -553,7 +553,7 @@ namespace Applitools.Selenium
                     throw new EyesException("Domsnapshot Timed out");
                 }
 
-                chunk = JsonConvert.DeserializeObject<string>(scriptResponse.Value.ToString());
+                chunk = scriptResponse.Value.ToString();
                 value.Append(chunk);
                 return value.ToString();
             }
