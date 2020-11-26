@@ -509,11 +509,11 @@ namespace Applitools.Selenium
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 while (status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
+                    Thread.Sleep(200);
                     logger.Verbose("Dom script polling...");
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
                     status = scriptResponse.Status;
-                    Thread.Sleep(200);
                 }
 
                 if (status == CaptureStatusEnum.ERROR)
@@ -541,7 +541,6 @@ namespace Applitools.Selenium
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
                     status = scriptResponse.Status;
-                    Thread.Sleep(200);
                 }
 
                 if (status == CaptureStatusEnum.ERROR)

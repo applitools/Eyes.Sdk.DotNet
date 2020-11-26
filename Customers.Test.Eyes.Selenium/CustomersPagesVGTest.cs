@@ -398,18 +398,18 @@ namespace Applitools.Selenium.Tests
                 
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
                 
-                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button.optanon-allow-all"))).Click();
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button.optanon-allow-all"))).Click();
                 
                 driver.FindElement(By.CssSelector("#InputSearchTerm")).SendKeys("Cadillac CTS 2008");
                 driver.FindElement(By.CssSelector("#vs-search-button")).Click();
                 driver.FindElement(By.CssSelector("form.product-form:nth-child(3) > div:nth-child(5) > button:nth-child(1)")).Click();
                 
-                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#DrmForm_DeviceId"))).SendKeys("11111111111111111");
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("#DrmForm_DeviceId"))).SendKeys("11111111111111111");
 
                 driver.FindElement(By.CssSelector(".device_form")).Click();
                 driver.FindElement(By.CssSelector("button.btn-lg:nth-child(1)")).Click();
                
-                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(5) > div:nth-child(2) > input:nth-child(1)"))).SendKeys("First Name");
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(5) > div:nth-child(2) > input:nth-child(1)"))).SendKeys("First Name");
 
                 driver.FindElement(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(7) > div:nth-child(2) > input:nth-child(1)")).SendKeys("Last Name");
 

@@ -29,7 +29,7 @@ namespace Applitools.Selenium.VisualGrid
         private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.pollResult.js");
         private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.pollResultForIE.js");
 
-        private static readonly int KB = 1024 * 1024;
+        private static readonly int MB = 1024 * 1024;
 
         private static readonly string GET_ELEMENT_XPATH_JS =
             "var el = arguments[0];" +
@@ -664,7 +664,7 @@ namespace Applitools.Selenium.VisualGrid
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
 
-            int chunkByteLength = userAgent.IsiOS ? 10 * KB : 256 * KB;
+            int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {
                 serializeResources = true,
