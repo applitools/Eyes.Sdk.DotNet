@@ -6,11 +6,17 @@
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
 - Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
+- Ultrafast Grid: Cross Origin `IFRAME` support. [Trello 2259](https://trello.com/c/iJKPvd75)
+- Ultrafast Grid: `DisableBrowserFetching` configugration option. [Trello 2348](https://trello.com/c/SwRJPQMz)
+- Chunked DOM scripts results. [Trello 2348](https://trello.com/c/SwRJPQMz)
 
 ## [Eyes.Selenium vNext]
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
 - Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
+- Ultrafast Grid: Cross Origin `IFRAME` support. [Trello 2259](https://trello.com/c/iJKPvd75)
+- Ultrafast Grid: `DisableBrowserFetching` configugration option. [Trello 2348](https://trello.com/c/SwRJPQMz)
+- Chunked DOM scripts results. [Trello 2348](https://trello.com/c/SwRJPQMz)
 
 ## [Eyes.Images 2.18] - 2020-11-18
 ### Updated
