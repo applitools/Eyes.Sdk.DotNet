@@ -414,3 +414,6 @@ Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestOpenBeforeRen
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestRunnerConcurrency
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridRunner.TestRetryWhenServerConcurrencyLimitReached
 Applitools.Selenium.Tests.VisualGridTests.TestBatchClose.TestBatchCloseFlag
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCorsIframe
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCorsIframe
+Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCorsIframe

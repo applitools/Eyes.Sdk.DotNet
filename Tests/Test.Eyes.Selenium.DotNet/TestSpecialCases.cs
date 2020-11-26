@@ -74,5 +74,12 @@ namespace Applitools.Selenium.Tests
             GetDriver().FindElement(By.Id("open_simple_modal")).Click();
             GetEyes().Check(Target.Region(By.CssSelector("#simple_modal > .modal-content")));
         }
+
+        [Test]
+        public void TestCorsIframe()
+        {
+            GetDriver().Url = "https://applitools.github.io/demo/TestPages/CorsTestPage/";
+            GetEyes().Check(Target.Window().Fully());
+        }
     }
 }
