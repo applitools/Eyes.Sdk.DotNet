@@ -27,6 +27,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 config.SetAppName("Visual Grid Tests").SetTestName("Test CloseAsync").SetBatch(TestDataProvider.BatchInfo);
                 foreach (BrowserType b in Enum.GetValues(typeof(BrowserType)))
                 {
+                    if (b == BrowserType.EDGE) continue;
                     config.AddBrowser(800, 600, b);
                 }
                 eyes.SetConfiguration(config);
