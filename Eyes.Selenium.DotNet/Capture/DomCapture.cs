@@ -102,7 +102,6 @@ namespace Applitools.Selenium.Capture
             try
             {
                 result = EyesSeleniumUtils.RunDomScript(logger_, webDriver_, captureScript, arguments, arguments, pollingScript);
-                result = JsonConvert.DeserializeObject<string>(result);
             }
             catch (JsonReaderException jsonException)
             {
