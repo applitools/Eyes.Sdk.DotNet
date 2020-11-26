@@ -504,7 +504,7 @@ namespace Applitools.Selenium.VisualGrid
                     switchTo.ParentFrame();
                 }
 
-                FrameData dom = CaptureDomSnapshot_(switchTo, userAgent_, visualGridRunner_, driver_, Logger);
+                FrameData dom = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, visualGridRunner_, driver_, Logger);
 
                 //string scriptResult = captureStatus.Value;
                 IList<VisualGridSelector[]> regionSelectors = GetRegionsXPaths_(checkSettings);
@@ -657,8 +657,8 @@ namespace Applitools.Selenium.VisualGrid
             checkSettings.SetTargetSelector(vgs);
         }
 
-        internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo,
-            UserAgent userAgent, IVisualGridRunner runner, EyesWebDriver driver, Logger logger)
+        internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
+            IConfiguration config, IVisualGridRunner runner, EyesWebDriver driver, Logger logger)
         {
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
@@ -669,6 +669,7 @@ namespace Applitools.Selenium.VisualGrid
             {
                 serializeResources = true,
                 skipResources = runner.CachedBlobsURLs.Keys,
+                dontFetchResources = config.DisableBrowserFetching,
                 chunkByteLength
             };
 
@@ -676,11 +677,11 @@ namespace Applitools.Selenium.VisualGrid
 
             string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
             FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
-            AnalyzeFrameData_(frameData, userAgent, runner, switchTo, driver, logger);
+            AnalyzeFrameData_(frameData, userAgent, config, runner, switchTo, driver, logger);
             return frameData;
         }
 
-        private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent,
+        private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
             IVisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
             FrameChain frameChain = driver.GetFrameChain().Clone();
@@ -696,7 +697,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     IWebElement frame = driver.FindElement(By.CssSelector(crossFrame.Selector));
                     switchTo.Frame(frame);
-                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, runner, driver, logger);
+                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, runner, driver, logger);
                     frameData.Frames.Add(result);
                     frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
                 }
@@ -722,7 +723,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     IWebElement frameElement = driver.FindElement(By.CssSelector(frame.Selector));
                     switchTo.Frame(frameElement);
-                    AnalyzeFrameData_(frame, userAgent, runner, switchTo, driver, logger);
+                    AnalyzeFrameData_(frame, userAgent, config, runner, switchTo, driver, logger);
                 }
                 catch (Exception e)
                 {
