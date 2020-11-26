@@ -365,5 +365,80 @@ namespace Applitools.Selenium.Tests
                 runner.GetAllTestResults();
             }
         }
+
+        [Test]
+        public void Ticket35110Issue5()
+        {
+            IWebDriver driver = new ChromeDriver();
+            VisualGridRunner runner = new VisualGridRunner(10);
+            Eyes eyes = new Eyes(runner);
+            TestUtils.SetupLogging(eyes);
+            Configuration conf = eyes.GetConfiguration();
+            //	    conf.setMatchTimeout(0);
+
+            // Add browsers with different viewports
+            //	    conf.addBrowser(1250, 800, BrowserType.CHROME);
+            //	    conf.addBrowser(1250, 800, BrowserType.SAFARI_ONE_VERSION_BACK);
+            conf.AddBrowser(1200, 1200, BrowserType.FIREFOX);
+            //	    conf.addBrowser(1200, 1200, BrowserType.IE_10);
+            //	    conf.addBrowser(1600, 1200, BrowserType.IE_11);
+            //	    conf.addBrowser(1200, 1200, BrowserType.EDGE);
+            //	    conf.addBrowser(new IosDeviceInfo(IosDeviceName.iPhone_X));
+            //	    conf.addBrowser(new IosDeviceInfo(IosDeviceName.iPhone_8));
+            //	    conf.addDeviceEmulation(DeviceName.iPhone_6_7_8);
+            //	    conf.addBrowser(new IosDeviceInfo(IosDeviceName.iPhone_11_Pro));
+
+            eyes.MatchLevel = MatchLevel.Strict;
+
+            eyes.SetConfiguration(conf);
+            try
+            {
+                driver.Url = "https://www79-edit.navigation.com/home/en_US/GMNA/USD";
+                eyes.Open(driver, "HERE", "Ticket35110 - Issue 5", new Size(1280, 800));
+                
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button.optanon-allow-all"))).Click();
+                
+                driver.FindElement(By.CssSelector("#InputSearchTerm")).SendKeys("Cadillac CTS 2008");
+                driver.FindElement(By.CssSelector("#vs-search-button")).Click();
+                driver.FindElement(By.CssSelector("form.product-form:nth-child(3) > div:nth-child(5) > button:nth-child(1)")).Click();
+                
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#DrmForm_DeviceId"))).SendKeys("11111111111111111");
+
+                driver.FindElement(By.CssSelector(".device_form")).Click();
+                driver.FindElement(By.CssSelector("button.btn-lg:nth-child(1)")).Click();
+               
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(5) > div:nth-child(2) > input:nth-child(1)"))).SendKeys("First Name");
+
+                driver.FindElement(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(7) > div:nth-child(2) > input:nth-child(1)")).SendKeys("Last Name");
+
+                driver.FindElement(By.CssSelector("#Address1")).SendKeys("1050 benton street");
+                driver.FindElement(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(11) > div:nth-child(2) > input:nth-child(1)")).SendKeys("Santa Clara");
+                driver.FindElement(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(12) > div:nth-child(2) > input:nth-child(1)")).SendKeys("95050");
+                SelectElement dropdown = new SelectElement(driver.FindElement(By.CssSelector("div.col-md-12:nth-child(2) > div:nth-child(14) > div:nth-child(2) > div:nth-child(1) > select:nth-child(1)")));
+                dropdown.SelectByValue("CA");
+
+                driver.FindElement(By.CssSelector("#Email")).SendKeys("mattjasaitis@gmail.com");
+                driver.FindElement(By.CssSelector("div.form-group:nth-child(16) > div:nth-child(2) > input:nth-child(1)")).SendKeys("3108501563");
+                driver.FindElement(By.CssSelector("#terms-and-conditions > label:nth-child(1) > span:nth-child(2)")).Click();
+                driver.FindElement(By.CssSelector(".options > li:nth-child(2) > div:nth-child(1) > label:nth-child(1) > span:nth-child(2)")).Click();
+                driver.FindElement(By.CssSelector("button.btn:nth-child(2)")).Click();
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div.payment-selection")));
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.CssSelector("div.loader-container")));
+
+                eyes.Check(Target.Window().Fully());
+                eyes.CloseAsync();
+
+                driver.Close();
+                TestResultsSummary allTestResults = runner.GetAllTestResults();
+            }
+            finally
+            {
+                driver.Quit();
+                eyes.AbortIfNotClosed();
+            }
+        }
     }
 }
