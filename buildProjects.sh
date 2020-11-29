@@ -3,17 +3,6 @@
 cd Eyes.Selenium.DotNet/Properties/NodeResources
 npm install
 
-echo "copying resource files..."
-mkdir ../Resources
-cp node_modules/@applitools/dom-capture/dist/captureDomAndPoll.js ../Resources/
-cp node_modules/@applitools/dom-capture/dist/captureDomAndPollForIE.js ../Resources/
-cp node_modules/@applitools/dom-snapshot/dist/processPageAndSerializePoll.js ../Resources/
-cp node_modules/@applitools/dom-snapshot/dist/processPageAndSerializePollForIE.js ../Resources/
-echo $?
-echo "listing copied resource files..."
-
-ls ../Resources
-
 echo "generating tests"
 
 cd ../../../sdk.coverage.tests

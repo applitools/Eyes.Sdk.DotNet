@@ -16,11 +16,12 @@ namespace Applitools.Selenium.Capture
 {
     class DomCapture
     {
-        private static readonly string captureDomAndPoll_ = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.captureDomAndPoll.js");
-        private static readonly string domCaptureAndPollingScript_ = captureDomAndPoll_ + " return __captureDomAndPoll()";
-
-        private static readonly string captureDomAndPollForIE_ = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.Resources.captureDomAndPollForIE.js");
-        private static readonly string domCaptureAndPollingScriptForIE_ = captureDomAndPollForIE_ + " return __captureDomAndPollForIE()";
+        private static readonly string CAPTURE_DOM = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPoll.js");
+        private static readonly string CAPTURE_DOM_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPollForIE.js");
+        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResult.js");
+        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResultForIE.js");
+       
+        private static readonly int MB = 1024 * 1024;
 
         internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
 
@@ -88,53 +89,38 @@ namespace Applitools.Selenium.Capture
             return inlaidString;
         }
 
-        internal CaptureStatus GetDomCaptureAndPollingScriptResult_()
+        internal string GetDomCaptureAndPollingScriptResult_()
         {
-            CaptureStatus captureStatus;
-            string cptureScript = userAgent_.IsInernetExplorer ? domCaptureAndPollingScriptForIE_ : domCaptureAndPollingScript_;
-            string captureStatusStr = null;
+            string captureScript = userAgent_.IsInternetExplorer ? CAPTURE_DOM_FOR_IE : CAPTURE_DOM;
+            string pollingScript = userAgent_.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
+
+            int chunkByteLength = userAgent_.IsiOS ? 10 * MB : 256 * MB;
+
+            object arguments = new { chunkByteLength };
+
+            string result = null;
             try
             {
-                captureStatusStr = (string)webDriver_.ExecuteScript(cptureScript);
-                captureStatus = JsonConvert.DeserializeObject<CaptureStatus>(captureStatusStr);
+                result = EyesSeleniumUtils.RunDomScript(logger_, webDriver_, captureScript, arguments, arguments, pollingScript);
             }
             catch (JsonReaderException jsonException)
             {
                 logger_.Log("Error: {0}", jsonException);
-                logger_.Log("Error (cont.): Failed to parse string: " + captureStatusStr ?? "<null>");
-                captureStatus = null;
+                logger_.Log("Error (cont.): Failed to parse string: " + result ?? "<null>");
             }
             catch (Exception e)
             {
                 logger_.Log("Error capturing DOM");
                 logger_.Log("Error: {0}", e);
-                captureStatus = null;
             }
-            return captureStatus;
+            return result;
         }
 
         private string GetFrameDom_()
         {
             logger_.Verbose("enter");
 
-            CaptureStatus captureStatus = GetDomCaptureAndPollingScriptResult_();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            while (captureStatus.Status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
-            {
-                Thread.Sleep(200);
-                captureStatus = GetDomCaptureAndPollingScriptResult_();
-            }
-
-            if (captureStatus.Status == CaptureStatusEnum.ERROR)
-            {
-                throw new EyesException("Failed to capture DOM: " + captureStatus.Error);
-            }
-            else if (captureStatus.Status == CaptureStatusEnum.WIP)
-            {
-                throw new EyesException("DOM capture timeout.");
-            }
-
-            string scriptResult = captureStatus.Value;
+            string scriptResult = GetDomCaptureAndPollingScriptResult_();
 
             List<string> missingCssList = new List<string>();
             List<string> missingFramesList = new List<string>();

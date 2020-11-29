@@ -16,6 +16,8 @@ namespace Applitools.Selenium
         bool HideScrollbars { get; set; }
 
         bool HideCaret { get; set; }
+       
+        bool DisableBrowserFetching { get; set; }
 
         List<RenderBrowserInfo> GetBrowsersInfo();
 
@@ -28,6 +30,8 @@ namespace Applitools.Selenium
         IConfiguration SetHideScrollbars(bool hideScreenshot);
 
         IConfiguration SetHideCaret(bool hideCaret);
+
+        IConfiguration SetDisableBrowserFetching(bool disableBrowserFetching);
 
         IConfiguration SetForceFullPageScreenshot(bool forceFullPageScreenshot);
 

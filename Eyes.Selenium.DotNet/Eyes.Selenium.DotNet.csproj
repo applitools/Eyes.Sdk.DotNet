@@ -37,17 +37,25 @@ To learn more, visit https://applitools.com/ .</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Properties\Resources\captureDomAndPoll.js" />
-    <None Remove="Properties\Resources\captureDomAndPollForIE.js" />
-    <None Remove="Properties\Resources\processPageAndSerializePoll.js" />
-    <None Remove="Properties\Resources\processPageAndSerializePollForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPoll.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPollForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\pollResult.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\pollResultForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\pollResult.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\pollResultForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\processPagePoll.js" />
+    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\processPagePollForIE.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources\captureDomAndPoll.js" />
-    <EmbeddedResource Include="Properties\Resources\captureDomAndPollForIE.js" />
-    <EmbeddedResource Include="Properties\Resources\processPageAndSerializePoll.js" />
-    <EmbeddedResource Include="Properties\Resources\processPageAndSerializePollForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPoll.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPollForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResult.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResultForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResult.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResultForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePoll.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePollForIE.js" />
   </ItemGroup>
 
   <ItemGroup>

@@ -25,7 +25,7 @@ namespace Applitools.Utils
                     Path = path,
                     Prefix = testName + "_"
                 };
-                logHandler = new FileLogHandler(Path.Combine(path, $"{testName}.log"), true, true);
+                logHandler = new FileLogHandler(Path.Combine(path, $"{testName}.log"), true, false);
             }
             else
             {

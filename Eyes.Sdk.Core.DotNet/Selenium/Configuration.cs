@@ -19,6 +19,7 @@ namespace Applitools.Selenium
             StitchMode = configuration.StitchMode;
             HideScrollbars = configuration.HideScrollbars;
             HideCaret = configuration.HideCaret;
+            DisableBrowserFetching = configuration.DisableBrowserFetching;
             VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
 
             if (configuration is Configuration config)
@@ -68,6 +69,16 @@ namespace Applitools.Selenium
             return this;
         }
 
+
+        public bool DisableBrowserFetching { get; set; } = false;
+
+        public IConfiguration SetDisableBrowserFetching(bool value)
+        {
+            DisableBrowserFetching = value;
+            return this;
+        }
+        
+        
         public List<RenderBrowserInfo> GetBrowsersInfo()
         {
             return browsersInfo_;

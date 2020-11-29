@@ -70,8 +70,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 renderInfo_ = renderingInfo;
             }
 
-            public override MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, 
-                string domLocation, ICheckSettings checkSettings, IList<IRegion> regions, 
+            public override MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL,
+                string domLocation, ICheckSettings checkSettings, IList<IRegion> regions,
                 IList<VisualGridSelector[]> regionSelectors, Location location, RenderStatusResults results, string source)
             {
                 return new MatchResult() { AsExpected = true };
@@ -113,9 +113,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             driver.Url = "https://applitools.github.io/demo/TestPages/DynamicResolution/desktop.html";
             try
             {
+                IWebDriver eyesDriver;
                 // First check - global + fluent config
                 eyes.Logger.Verbose("starting first check");
-                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver, out eyesDriver);
                 eyes.Logger.Verbose("calling eyes.Check");
                 eyes.Check(Target.Window().VisualGridOptions(new VisualGridOption("option3", "value3"), new VisualGridOption("option4", 5)));
                 eyes.Logger.Verbose("calling eyes.Close");
@@ -132,7 +133,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
 
                 // Second check - only global
-                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver, out eyesDriver);
                 eyes.CheckWindow();
                 eyes.Close();
                 var expected2 = new Dictionary<string, object>()
@@ -143,7 +144,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 CollectionAssert.AreEquivalent(expected2, actual2);
 
                 // Third check - resetting
-                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver, out eyesDriver);
                 config = eyes.GetConfiguration();
                 config.SetVisualGridOptions(null);
                 eyes.SetConfiguration(config);
@@ -181,7 +182,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             driver.Url = "https://applitools.github.io/demo/TestPages/VisualGridTestPage/";
             try
             {
-                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver);
+                MockEyesConnector mockEyesConnector = OpenEyesAndGetConnector_(eyes, config, driver, out IWebDriver eyesDriver);
 
                 eyes.Check(Target.Window());
                 string[] expectedUrls = new string[] {
@@ -228,8 +229,12 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 CollectionAssert.AreEquivalent(expectedUrls, ((IVisualGridRunner)runner).CachedBlobsURLs.Keys);
 
                 UserAgent userAgent = eyes.visualGridEyes_.userAgent_;
-                CaptureStatus captureStatus = VisualGridEyes.CollectDom_(eyes.Logger, userAgent, runner, (IJavaScriptExecutor)driver);
-                FrameData domData = captureStatus.Value;
+                EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
+                
+                FrameData domData = VisualGridEyes.CaptureDomSnapshot_(
+                    switchTo, userAgent, config, 
+                    runner, (EyesWebDriver)eyesDriver, eyes.Logger);
+
                 DomAnalyzer domAnalyzer = new DomAnalyzer(runner,
                     domData,
                     eyes.visualGridEyes_.eyesConnector_,
@@ -267,9 +272,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             runner3.GetAllTestResults();
         }
 
-        private static MockEyesConnector OpenEyesAndGetConnector_(Eyes eyes, Configuration config, IWebDriver driver)
+        private static MockEyesConnector OpenEyesAndGetConnector_(Eyes eyes, Configuration config, IWebDriver webDriver, out IWebDriver eyesDriver)
         {
-            eyes.Open(driver, "Mock app", "Mock Test");
+            eyesDriver = eyes.Open(webDriver, "Mock app", "Mock Test");
 
             MockEyesConnector mockEyesConnector = (MockEyesConnector)eyes.visualGridEyes_.eyesConnector_;
             //MockServerConnector mockServerConnector = new MockServerConnector(eyes.Logger, new Uri(eyes.ServerUrl));
