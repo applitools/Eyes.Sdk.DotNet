@@ -502,6 +502,7 @@
             if (screenshot != null)
             {
                 lastScreenshot_ = screenshot;
+                LastScreenshotBounds = new Rectangle(Point.Empty, screenshot.Image.Size);
             }
         }
 
