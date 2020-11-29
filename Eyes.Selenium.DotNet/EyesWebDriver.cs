@@ -1,15 +1,16 @@
-﻿namespace Applitools.Selenium
-{
-    using OpenQA.Selenium;
-    using OpenQA.Selenium.Internal;
-    using OpenQA.Selenium.Remote;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics.CodeAnalysis;
-    using Utils;
-    using Size = System.Drawing.Size;
+﻿using Applitools.Utils;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Internal;
+using OpenQA.Selenium.Remote;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using Size = System.Drawing.Size;
 
+namespace Applitools.Selenium
+{
     public sealed class EyesWebDriver :
         IHasCapabilities,
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -17,12 +18,11 @@
 #pragma warning restore CS0618 // Type or member is obsolete
         IFindsByClassName, IFindsByCssSelector,
         IFindsById, IFindsByLinkText, IFindsByName, IFindsByTagName, IFindsByXPath,
-        IJavaScriptExecutor, ISearchContext, ITakesScreenshot, IWebDriver, IEyesJsExecutor
+        IJavaScriptExecutor, ISearchContext, ITakesScreenshot, IWebDriver, IActionExecutor,
+        IEyesJsExecutor
     {
         #region Fields
 
-        private const int MaxScrollBarSize_ = 50;
-        private const int MinScreenshotPartHeight_ = 10;
         private Size defaultContentViewportSize_;
         private ITargetLocator targetLocator_;
         private readonly FrameChain frameChain_;
@@ -102,6 +102,8 @@
         }
 
         private Logger Logger_ { get; set; }
+
+        public bool IsActionExecutor => RemoteWebDriver.IsActionExecutor;
 
         #endregion
 
@@ -359,6 +361,16 @@
         public void Dispose()
         {
             RemoteWebDriver.Dispose();
+        }
+
+        public void PerformActions(IList<ActionSequence> actionSequenceList)
+        {
+            RemoteWebDriver.PerformActions(actionSequenceList);
+        }
+
+        public void ResetInputState()
+        {
+            RemoteWebDriver.ResetInputState();
         }
 
         #endregion
