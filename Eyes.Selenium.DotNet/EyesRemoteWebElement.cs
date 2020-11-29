@@ -397,6 +397,7 @@ return getVisibleElementRect(arguments[0])";
             }
         }
 
+        internal string Id_ => Id;
         public string IdForDictionary => Id + "_" + eyesDriver_.RemoteWebDriver.SessionId; // Safari browser uses simple element ids so I chain Selenium session id
 
         #endregion

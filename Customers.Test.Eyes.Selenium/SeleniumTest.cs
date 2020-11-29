@@ -190,7 +190,7 @@ namespace Applitools.Selenium.Tests
             eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider() { Path = logPath };
             try
             {
-                eyes.Open(driver, testName, testName, new Size(1200, 600));
+                IWebDriver eyesDriver = eyes.Open(driver, testName, testName, new Size(1200, 600));
 
                 driver.Url = "https://www.beatsbydre.com/support/headphones/studio3-wireless";
 
@@ -205,9 +205,9 @@ namespace Applitools.Selenium.Tests
                 // Hover effect
                 if (bCheckHover)
                 {
-                    IWebElement we = driver.FindElement(selector);
+                    IWebElement we = eyesDriver.FindElement(selector);
 
-                    Actions action = new Actions(driver);
+                    Actions action = new Actions(eyesDriver);
 
                     action.MoveToElement(we).Perform();
                 }
