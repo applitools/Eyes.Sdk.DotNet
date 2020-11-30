@@ -175,7 +175,9 @@ return getVisibleElementRect(arguments[0])";
             }
 
             FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
-            fi.SetValue(this, fi.GetValue(webElement));
+            string id = (string)fi.GetValue(webElement);
+            fi.SetValue(this, id);
+            IdForDictionary = id + "_" + eyesDriver.RemoteWebDriver.SessionId;
         }
 
         #endregion
@@ -397,8 +399,7 @@ return getVisibleElementRect(arguments[0])";
             }
         }
 
-        internal string Id_ => Id;
-        public string IdForDictionary => Id + "_" + eyesDriver_.RemoteWebDriver.SessionId; // Safari browser uses simple element ids so I chain Selenium session id
+        public string IdForDictionary { get; }
 
         #endregion
 
@@ -493,7 +494,7 @@ return getVisibleElementRect(arguments[0])";
         }
 
         public Rectangle GetVisibleElementRect() => GetVisibleElementRect(webElement_, eyesDriver_, Logger);
-        
+
         public static Rectangle GetVisibleElementRect(IWebElement webElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
         {
             string result = (string)jsExecutor.ExecuteScript(JS_GET_VISIBLE_ELEMENT_RECT, webElement);
