@@ -1,7 +1,7 @@
 [submodule "sdk.coverage.tests"]
 	path = sdk.coverage.tests
 	url = https://github.com/applitools/sdk.coverage.tests.git
-	branch = DotNet_POC
+	branch = DotNet_POC_test
 [submodule "Eyes.Ufg.DotNet"]
 	path = Eyes.Ufg.DotNet
 	url = https://github.com/applitools/Eyes.Ufg.DotNet.git
