@@ -148,13 +148,13 @@ namespace Applitools.Selenium
                 {
                     EyesRemoteWebElement erwe = new EyesRemoteWebElement(Logger_, this, element);
                     eyesWebElementsList.Add(erwe);
-                    elementsFoundSinceLastNavigation_[erwe.Id_] = erwe;
+                    elementsFoundSinceLastNavigation_[erwe.IdForDictionary] = erwe;
                 }
                 else
                 {
                     eyesWebElementsList.Add(element);
-                    FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
-                    string id = (string)fi.GetValue(element);
+                    string id = EyesSeleniumUtils.GetElementIdForDictionary(element, RemoteWebDriver);
+                    
                     elementsFoundSinceLastNavigation_[id] = element;
                 }
             }
@@ -169,12 +169,11 @@ namespace Applitools.Selenium
             if (webElement is RemoteWebElement remoteWebElement && !(webElement is EyesRemoteWebElement))
             {
                 webElement = new EyesRemoteWebElement(Logger_, this, remoteWebElement);
-                id = ((EyesRemoteWebElement)webElement).Id_;
+                id = ((EyesRemoteWebElement)webElement).IdForDictionary;
             }
             else
             {
-                FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
-                id = (string)fi.GetValue(webElement);
+                id = EyesSeleniumUtils.GetElementIdForDictionary(webElement, RemoteWebDriver);
             }
             elementsFoundSinceLastNavigation_[id] = webElement;
             return webElement;
@@ -412,11 +411,11 @@ namespace Applitools.Selenium
                         int x = (int)actionDictionary["x"];
                         int y = (int)actionDictionary["y"];
                         IDictionary<string, object> originDict = (IDictionary<string, object>)actionDictionary["origin"];
-                        string elementId = originDict.Values.FirstOrDefault().ToString();
+                        string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + RemoteWebDriver.SessionId;
                         Rectangle r = Rectangle.Empty;
                         if (elementsFoundSinceLastNavigation_.TryGetValue(elementId, out IWebElement element))
                         {
-                            r = EyesSeleniumUtils.GetElementBounds(element);
+                            r = new Rectangle(element.Location, element.Size);
                         }
                         Eyes.AddMouseTrigger(MouseAction.Move, r, new Point(x, y));
                     }
