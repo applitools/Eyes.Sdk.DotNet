@@ -18,6 +18,7 @@ branches:
 
 addons:
   chrome: stable
+  firefox: latest
 
 git:
   depth: 3
