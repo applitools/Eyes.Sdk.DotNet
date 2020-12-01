@@ -1,8 +1,8 @@
-﻿namespace Applitools
-{
-    using Applitools.Utils;
-    using Applitools.Utils.Geometry;
+﻿using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
+namespace Applitools
+{
     /// <summary>
     /// Encapsulates a text trigger.
     /// </summary>
@@ -10,12 +10,10 @@
     {
         public TextTrigger(
             Region control,
-            string text)
+            string text) : base(control)
         {
-            ArgumentGuard.NotNull(control, nameof(control));
             ArgumentGuard.NotNull(text, nameof(text));
 
-            Control = control;
             Text = text;
         }
 
@@ -23,12 +21,6 @@
         public override TriggerTypes TriggerType 
         { 
             get { return TriggerTypes.Text; } 
-        }
-
-        public Region Control
-        {
-            get;
-            private set;
         }
 
         public string Text

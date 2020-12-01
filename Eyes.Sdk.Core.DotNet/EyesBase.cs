@@ -17,6 +17,7 @@ using Newtonsoft.Json.Converters;
 using Applitools.VisualGrid.Model;
 using Applitools.VisualGrid;
 using System.Threading;
+using Applitools.Ufg;
 
 namespace Applitools
 {
@@ -481,6 +482,8 @@ namespace Applitools
             }
             return null;
         }
+
+        public virtual Trigger UserActionToTrigger(VGUserAction userAction) { return null; }
 
         public void AbortAsync()
         {

@@ -594,14 +594,14 @@ namespace Applitools.VisualGrid
         }
 
         public void Check(ICheckSettings settings, IDebugResourceWriter debugResourceWriter, FrameData domData,
-                          IList<VisualGridSelector[]> regionSelectors, IUfgConnector connector, UserAgent userAgent,
-                          List<VisualGridTask> checkTasks, RenderListener listener)
+                          IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions, IUfgConnector connector, 
+                          UserAgent userAgent, List<VisualGridTask> checkTasks, RenderListener listener)
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
             Logger.Verbose("enter");
             Logger.Verbose("connector type: {0}", connector.GetType().Name);
             RenderRequestCollectionTask resourceCollectionTask = new RenderRequestCollectionTask(this, domData, connector,
-                userAgent, regionSelectors, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
+                userAgent, regionSelectors, userActions, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
                 new RenderingTask.TaskListener<List<RenderingTask>>(
                     (renderingTasks) =>
                     {

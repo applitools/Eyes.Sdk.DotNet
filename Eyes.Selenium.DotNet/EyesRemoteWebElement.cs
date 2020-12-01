@@ -419,9 +419,7 @@ return getVisibleElementRect(arguments[0])";
 
         public new void SendKeys(string text)
         {
-            var control = GetBounds();
-            eyesDriver_.Eyes?.AddKeyboardTrigger(control.ToRectangle(), text);
-
+            eyesDriver_.UserActionsEyes.AddKeyboardTrigger(this, text);
             webElement_.SendKeys(text);
         }
 
@@ -541,7 +539,7 @@ return getVisibleElementRect(arguments[0])";
 
             var control = new Rectangle(left, top, width, height);
             var offset = new Point(offsetX, offsetY);
-            eyesDriver_.Eyes?.AddMouseTrigger(MouseAction.Click, control, offset);
+            eyesDriver_.UserActionsEyes.AddMouseTrigger(MouseAction.Click, this, offset);
 
             Logger.Verbose("Click({0} {1})", control, offset);
 

@@ -176,7 +176,7 @@ namespace Applitools.Selenium.Tests
         public void BeatsByDre_HoverElement(bool bCheckHover)
         {
 
-            string testName = "Hover Element";
+            string testName = "Hover Element (viewport)";
 
             if (bCheckHover == true)
                 testName += " - On";
@@ -199,7 +199,7 @@ namespace Applitools.Selenium.Tests
                 By selector = By.CssSelector(
                         "#maincontent > div:nth-child(1) > div.supportContent.parbase.section > div > div > div.selector.topics > div.boxes > a:nth-child(1) > div > div.content");
                 
-                eyes.CheckWindow("Window", true);
+                eyes.CheckWindow("Window", false);
 
                 //eyes.StitchMode = StitchModes.CSS;
                 // Hover effect
@@ -212,6 +212,8 @@ namespace Applitools.Selenium.Tests
                     action.MoveToElement(we).Perform();
                 }
                 // End
+
+                eyes.CheckWindow("Window 2", false);
 
                 eyes.Check("Region", Target.Region(selector));
 

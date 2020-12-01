@@ -141,10 +141,13 @@ namespace Applitools.Utils.Geometry
         /// </summary>
         public Point Location { get { return new Point(Left, Top); } }
 
+        [JsonIgnore]
         public int Right => Left + Width;
 
+        [JsonIgnore]
         public int Bottom => Top + Height;
 
+        [JsonIgnore]
         public int Area => Width * Height;
 
         public Rectangle Rectangle => ToRectangle();

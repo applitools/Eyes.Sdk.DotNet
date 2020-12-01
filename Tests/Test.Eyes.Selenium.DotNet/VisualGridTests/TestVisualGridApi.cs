@@ -72,7 +72,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
             public override MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL,
                 string domLocation, ICheckSettings checkSettings, IList<IRegion> regions,
-                IList<VisualGridSelector[]> regionSelectors, Location location, RenderStatusResults results, string source)
+                IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions, 
+                Location location, RenderStatusResults results, string source)
             {
                 return new MatchResult() { AsExpected = true };
             }

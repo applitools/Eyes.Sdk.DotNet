@@ -34,7 +34,7 @@ namespace Applitools.Selenium
 
         #region Constructors
 
-        internal EyesWebDriver(Logger logger, SeleniumEyes eyes, RemoteWebDriver driver)
+        internal EyesWebDriver(Logger logger, SeleniumEyes eyes, IUserActionsEyes userActionEyes, RemoteWebDriver driver)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
             //ArgumentGuard.NotNull(eyes, nameof(eyes));
@@ -42,6 +42,7 @@ namespace Applitools.Selenium
 
             Logger_ = logger;
             Eyes = eyes;
+            UserActionsEyes = userActionEyes;
             RemoteWebDriver = driver;
             frameChain_ = new FrameChain(logger);
 
@@ -58,6 +59,7 @@ namespace Applitools.Selenium
         #region Properties
 
         internal SeleniumEyes Eyes { get; private set; }
+        internal IUserActionsEyes UserActionsEyes {get; private set;}
 
         public RemoteWebDriver RemoteWebDriver { get; internal set; }
 
@@ -412,12 +414,10 @@ namespace Applitools.Selenium
                         int y = (int)actionDictionary["y"];
                         IDictionary<string, object> originDict = (IDictionary<string, object>)actionDictionary["origin"];
                         string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + RemoteWebDriver.SessionId;
-                        Rectangle r = Rectangle.Empty;
                         if (elementsFoundSinceLastNavigation_.TryGetValue(elementId, out IWebElement element))
                         {
-                            r = new Rectangle(element.Location, element.Size);
+                            UserActionsEyes.AddMouseTrigger(MouseAction.Move, element, new Point(x, y));
                         }
-                        Eyes.AddMouseTrigger(MouseAction.Move, r, new Point(x, y));
                     }
                     else
                     {

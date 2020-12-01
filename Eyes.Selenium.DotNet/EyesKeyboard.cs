@@ -1,11 +1,11 @@
-﻿namespace Applitools.Selenium
-{
-    using System;
-    using System.Drawing;
-    using Applitools.Utils;
-    using OpenQA.Selenium;
-    using OpenQA.Selenium.Remote;
+﻿using System;
+using System.Drawing;
+using Applitools.Utils;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// A wrapper class for Selenium's Keyboard interface, so we can record keyboard
     /// events.
@@ -45,17 +45,9 @@
 
         public void SendKeys(string keySequence)
         {
-            var control = Rectangle.Empty;
-
             // We try to use the active element to get the region.
             IWebElement activeElement = eyesDriver_.SwitchTo().ActiveElement();
-            if (activeElement is RemoteWebElement)
-            {
-                activeElement = new EyesRemoteWebElement(Logger, eyesDriver_, activeElement);
-                control = ((EyesRemoteWebElement)activeElement).GetBounds().ToRectangle();
-            }
-
-            eyesDriver_.Eyes.AddKeyboardTrigger(control, keySequence);
+            eyesDriver_.UserActionsEyes.AddKeyboardTrigger(activeElement, keySequence);
             keyboard_.SendKeys(keySequence);
         }
 

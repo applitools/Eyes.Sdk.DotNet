@@ -51,7 +51,7 @@ namespace Applitools.Selenium.Tests.Mock
                 { IosDeviceName.iPad_7, new DeviceSize(1080, 810) },
             };
 
-        public MockEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config) 
+        public MockEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
             : base(new MockServerConnectorFactory(), logger)
         {
             SetLogHandler(logger.GetILogHandler());
@@ -79,11 +79,11 @@ namespace Applitools.Selenium.Tests.Mock
         }
 
         public MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation,
-            ICheckSettings checkSettings, IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors, Location location,
-            RenderStatusResults results, string source)
+            ICheckSettings checkSettings, IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
+            IList<VGUserAction> userActions, Location location, RenderStatusResults results, string source)
         {
             MatchResult matchResult = WrappedConnector?.MatchWindow(config, resultImageURL, domLocation, checkSettings,
-                regions, regionSelectors, location, results, source);
+                regions, regionSelectors, userActions, location, results, source);
 
             return matchResult ?? new MatchResult() { AsExpected = true };
         }
