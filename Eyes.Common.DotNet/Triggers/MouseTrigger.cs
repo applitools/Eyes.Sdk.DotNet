@@ -1,8 +1,8 @@
-﻿namespace Applitools
-{
-    using Applitools.Utils;
-    using Applitools.Utils.Geometry;
+﻿using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
+namespace Applitools
+{
     /// <summary>
     /// Mouse action
     /// </summary>
@@ -25,13 +25,11 @@
         public MouseTrigger(
             MouseAction mouseAction,
             Region control,
-            Location location)
+            Location location) : base(control)
         {
-            ArgumentGuard.NotNull(control, nameof(control));
             ArgumentGuard.NotNull(location, nameof(location));
 
             MouseAction = mouseAction;
-            Control = control;
             Location = location;
         }
         
@@ -52,16 +50,6 @@
         }
 
         public MouseAction MouseAction
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// The region of the control that was clicked. If no control is known, specify a region
-        /// with zero size.
-        /// </summary>
-        public Region Control
         {
             get;
             private set;
