@@ -483,8 +483,6 @@ namespace Applitools
             return null;
         }
 
-        public virtual Trigger UserActionToTrigger(VGUserAction userAction) { return null; }
-
         public void AbortAsync()
         {
             Abort();

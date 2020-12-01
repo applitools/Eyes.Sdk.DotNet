@@ -12,9 +12,6 @@ using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using OpenQA.Selenium;
-using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -214,22 +211,6 @@ namespace Applitools.Selenium.VisualGrid
             renderStatusResult_ = results;
             return matchWindowTask.PerformMatch(appOutputWithScreenshot, tag, false, checkSettingsInternal, imageMatchSettings,
                                                 regions, regionSelectors, userActions, this, source, results.RenderId);
-        }
-
-        public override Trigger UserActionToTrigger(VGUserAction userAction)
-        {
-            Trigger trigger = null;
-            IWebElement element = (IWebElement)userAction.Control;
-            Region r = new Region(element.Location, element.Size);
-            if (userAction is VGTextTrigger vgTextTrigger)
-            {
-                trigger = new TextTrigger(r, vgTextTrigger.Text);
-            }
-            else if (userAction is VGMouseTrigger vgMouseTrigger)
-            {
-                trigger = new MouseTrigger(vgMouseTrigger.Action, r, vgMouseTrigger.Cursor);
-            }
-            return trigger;
         }
 
         public void Open(Applitools.IConfiguration config)

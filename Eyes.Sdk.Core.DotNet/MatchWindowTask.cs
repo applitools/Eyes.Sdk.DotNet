@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Threading;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools
 {
@@ -167,15 +168,16 @@ namespace Applitools
                                        ImageMatchSettings imageMatchSettings,
                                        IList<IRegion> regions,
                                        IList<VisualGridSelector[]> regionSelectors,
-                                       IList<VGUserAction> userInputs,
+                                       IList<VGUserAction> userActions,
                                        EyesBase eyes, string source, string renderId = null)
         {
             EyesScreenshot screenshot = appOutput.Screenshot;
             string agentSetupStr = eyes.GetAgentSetupString();
 
-            CollectRegions_(imageMatchSettings, eyes, regions, regionSelectors, userInputs);
+            List<Trigger> userInputs = new List<Trigger>();
+            CollectRegions_(imageMatchSettings, userInputs, regions, regionSelectors, userActions);
             CollectRegions_(imageMatchSettings, checkSettingsInternal);
-            return PerformMatch_(new Trigger[0], appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
+            return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
         }
 
         private void CollectRegions_(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
@@ -245,7 +247,7 @@ namespace Applitools
             return mutableRegions.ToArray();
         }
 
-        private static void CollectRegions_(ImageMatchSettings imageMatchSettings, EyesBase eyes,
+        private static void CollectRegions_(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
                                             IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
                                             IList<VGUserAction> userActions)
         {
@@ -345,15 +347,29 @@ namespace Applitools
             }
             imageMatchSettings.Accessibility = accessibilityRegions.ToArray();
 
-            List<Trigger> userInputs = new List<Trigger>();
             for (int i = 0; i < regionSelectors[6].Length; i++)
             {
                 IMutableRegion mr = mutableRegions[6][i];
                 if (mr.Area == 0) continue;
                 VGUserAction userAction = userActions[i];
-                Trigger trigger = eyes.UserActionToTrigger(userAction);
-                eyes.UserInputs.Add(trigger);
+                Trigger trigger = UserActionToTrigger(mr, userAction);
+                userInputs.Add(trigger);
             }
+        }
+
+        public static Trigger UserActionToTrigger(IMutableRegion mr, VGUserAction userAction)
+        {
+            Trigger trigger = null;
+            Region r = mr.Rectangle;
+            if (userAction is VGTextTrigger vgTextTrigger)
+            {
+                trigger = new TextTrigger(r, vgTextTrigger.Text);
+            }
+            else if (userAction is VGMouseTrigger vgMouseTrigger)
+            {
+                trigger = new MouseTrigger(vgMouseTrigger.Action, r, vgMouseTrigger.Cursor);
+            }
+            return trigger;
         }
 
         private static IMutableRegion[] FilterEmptyEntries_(List<IMutableRegion> list, Point location)
