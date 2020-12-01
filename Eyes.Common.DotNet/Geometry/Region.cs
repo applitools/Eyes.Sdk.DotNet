@@ -134,11 +134,13 @@ namespace Applitools.Utils.Geometry
         /// <summary>
         /// Returns the size of this <see cref="Region"/>.
         /// </summary>
+        [JsonIgnore]
         public Size Size { get { return new Size(Width, Height); } }
 
         /// <summary>
         /// Returns the location of this <see cref="Region"/>.
         /// </summary>
+        [JsonIgnore]
         public Point Location { get { return new Point(Left, Top); } }
 
         [JsonIgnore]
@@ -150,6 +152,7 @@ namespace Applitools.Utils.Geometry
         [JsonIgnore]
         public int Area => Width * Height;
 
+        [JsonIgnore]
         public Rectangle Rectangle => ToRectangle();
 
         /// <summary>
