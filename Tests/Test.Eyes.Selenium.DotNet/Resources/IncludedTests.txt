@@ -379,6 +379,12 @@ Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckElementBiggerTh
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckElementBiggerThanHTML
 Applitools.Selenium.Tests.TestDefaultRootElement.TestCheckDefaultElementBiggerBody
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridVisualViewport.TestUFGVisualViewport
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLongImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLongImage
+# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLargeImage
+# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLongImage
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckElementFullyOnBottomAfterScroll
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckElementFullyOnBottomAfterScroll
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCheckElementFullyOnBottomAfterScroll
