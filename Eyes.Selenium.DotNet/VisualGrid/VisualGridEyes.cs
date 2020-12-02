@@ -19,10 +19,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class VisualGridEyes : IEyes, ISeleniumEyes, IVisualGridEyes
+    public class VisualGridEyes : IEyes, ISeleniumEyes, IVisualGridEyes, IUserActionsEyes
     {
         private static readonly string PROCESS_PAGE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePoll.js");
         private static readonly string PROCESS_PAGE_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePollForIE.js");
@@ -160,6 +161,8 @@ namespace Applitools.Selenium.VisualGrid
             set => Config_.SetBatch(value);
         }
 
+        public List<VGUserAction> UserInputs { get; } = new List<VGUserAction>();
+
         public bool IsEyesClosed()
         {
             Logger.Verbose($"enter - {nameof(testList_)} has {0} tests", testList_.Count);
@@ -292,7 +295,7 @@ namespace Applitools.Selenium.VisualGrid
             }
             if (webDriver is RemoteWebDriver remoteDriver)
             {
-                driver_ = new EyesWebDriver(Logger, null, remoteDriver);
+                driver_ = new EyesWebDriver(Logger, null, this, remoteDriver);
             }
             url_ = webDriver.Url;
         }
@@ -401,6 +404,8 @@ namespace Applitools.Selenium.VisualGrid
             IList<Tuple<IWebElement, object>> floatingElements = GetElementsFromRegions_(floatingRegions);
             IList<Tuple<IWebElement, object>> accessibilityElements = GetElementsFromRegions_(accessibilityRegions);
 
+            IList<Tuple<IWebElement, object>> userActionElements = GetElementsFromUserActions_(UserInputs);
+
             if (state.FrameToSwitchTo != null)
             {
                 driver_.SwitchTo().ParentFrame();
@@ -419,7 +424,26 @@ namespace Applitools.Selenium.VisualGrid
             Tuple<IWebElement, object> targetTuple = new Tuple<IWebElement, object>(targetElement, "target");
             List<Tuple<IWebElement, object>> targetElementList = new List<Tuple<IWebElement, object>>() { targetTuple };
 
-            return new IList<Tuple<IWebElement, object>>[] { ignoreElements, layoutElements, strictElements, contentElements, floatingElements, accessibilityElements, targetElementList };
+            return new IList<Tuple<IWebElement, object>>[] {
+                ignoreElements,
+                layoutElements,
+                strictElements,
+                contentElements,
+                floatingElements,
+                accessibilityElements,
+                userActionElements,
+                targetElementList };
+        }
+
+        private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<VGUserAction> userInputs)
+        {
+            List<Tuple<IWebElement, object>> elements = new List<Tuple<IWebElement, object>>();
+            foreach (VGUserAction userInput in userInputs)
+            {
+                IWebElement element = (IWebElement)userInput.Control;
+                elements.Add(new Tuple<IWebElement, object>(element, new SimpleRegionByElement(element)));
+            }
+            return elements;
         }
 
         private IList<Tuple<IWebElement, object>> GetElementsFromRegions_(IList regionsProvider)
@@ -445,11 +469,18 @@ namespace Applitools.Selenium.VisualGrid
             if (!ValidateEyes_()) return;
             foreach (ICheckSettings checkSetting in checkSettings)
             {
-                Check(checkSetting);
+                CheckImpl_(checkSetting);
             }
+            UserInputs.Clear();
         }
 
         public void Check(ICheckSettings checkSettings)
+        {
+            CheckImpl_(checkSettings);
+            UserInputs.Clear();
+        }
+
+        private void CheckImpl_(ICheckSettings checkSettings)
         {
             ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
             if (!ValidateEyes_()) return;
@@ -522,15 +553,16 @@ namespace Applitools.Selenium.VisualGrid
 
                 Logger.Verbose("eyesConnector_.Type: {0}", eyesConnector_.GetType().Name);
 
+                VGUserAction[] userActions = UserInputs.ToArray();
                 string source = driver_.Url;
                 foreach (RunningTest test in filteredTests)
                 {
-                    VisualGridTask checkTask = test.Check(configClone, checkSettings, regionSelectors, source);
+                    VisualGridTask checkTask = test.Check(configClone, checkSettings, regionSelectors, userActions, source);
                     checkTasks.Add(checkTask);
                 }
 
                 visualGridRunner_.Check(checkSettings, debugResourceWriter_, dom, regionSelectors,
-                        eyesConnector_, userAgent_, checkTasks,
+                        userActions, eyesConnector_, userAgent_, checkTasks,
                         new VisualGridRunner.RenderListener());
 
                 switchTo.Frames(originalFC);
@@ -1094,6 +1126,18 @@ namespace Applitools.Selenium.VisualGrid
             bool result = testList_.Any(t => t.IsServerConcurrencyLimitReached);
             AfterServerConcurrencyLimitReachedQueried?.Invoke(result);
             return result;
+        }
+
+        void IUserActionsEyes.AddKeyboardTrigger(IWebElement element, string text)
+        {
+            VGTextTrigger trigger = new VGTextTrigger(element, text);
+            UserInputs.Add(trigger);
+        }
+
+        void IUserActionsEyes.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
+        {
+            VGMouseTrigger trigger = new VGMouseTrigger(action, element, cursor);
+            UserInputs.Add(trigger);
         }
     }
 }

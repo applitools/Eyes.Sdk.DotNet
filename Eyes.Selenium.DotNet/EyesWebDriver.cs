@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
@@ -26,12 +29,12 @@ namespace Applitools.Selenium
         private Size defaultContentViewportSize_;
         private ITargetLocator targetLocator_;
         private readonly FrameChain frameChain_;
-
+        private Dictionary<string, IWebElement> elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
         #endregion
 
         #region Constructors
 
-        internal EyesWebDriver(Logger logger, SeleniumEyes eyes, RemoteWebDriver driver)
+        internal EyesWebDriver(Logger logger, SeleniumEyes eyes, IUserActionsEyes userActionEyes, RemoteWebDriver driver)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
             //ArgumentGuard.NotNull(eyes, nameof(eyes));
@@ -39,6 +42,7 @@ namespace Applitools.Selenium
 
             Logger_ = logger;
             Eyes = eyes;
+            UserActionsEyes = userActionEyes;
             RemoteWebDriver = driver;
             frameChain_ = new FrameChain(logger);
 
@@ -55,6 +59,7 @@ namespace Applitools.Selenium
         #region Properties
 
         internal SeleniumEyes Eyes { get; private set; }
+        internal IUserActionsEyes UserActionsEyes {get; private set;}
 
         public RemoteWebDriver RemoteWebDriver { get; internal set; }
 
@@ -98,7 +103,11 @@ namespace Applitools.Selenium
         public string Url
         {
             get { return RemoteWebDriver.Url; }
-            set { RemoteWebDriver.Url = value; }
+            set
+            {
+                RemoteWebDriver.Url = value;
+                elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
+            }
         }
 
         private Logger Logger_ { get; set; }
@@ -139,14 +148,18 @@ namespace Applitools.Selenium
             {
                 if (element is RemoteWebElement && !(element is EyesRemoteWebElement))
                 {
-                    eyesWebElementsList.Add(new EyesRemoteWebElement(Logger_, this, element));
+                    EyesRemoteWebElement erwe = new EyesRemoteWebElement(Logger_, this, element);
+                    eyesWebElementsList.Add(erwe);
+                    elementsFoundSinceLastNavigation_[erwe.IdForDictionary] = erwe;
                 }
                 else
                 {
                     eyesWebElementsList.Add(element);
+                    string id = EyesSeleniumUtils.GetElementIdForDictionary(element, RemoteWebDriver);
+                    
+                    elementsFoundSinceLastNavigation_[id] = element;
                 }
             }
-
             return eyesWebElementsList.AsReadOnly();
         }
 
@@ -154,11 +167,17 @@ namespace Applitools.Selenium
         {
             // TODO - Daniel, support additional implementations of WebElement.
             IWebElement webElement = RemoteWebDriver.FindElement(by);
+            string id;
             if (webElement is RemoteWebElement remoteWebElement && !(webElement is EyesRemoteWebElement))
             {
                 webElement = new EyesRemoteWebElement(Logger_, this, remoteWebElement);
+                id = ((EyesRemoteWebElement)webElement).IdForDictionary;
             }
-
+            else
+            {
+                id = EyesSeleniumUtils.GetElementIdForDictionary(webElement, RemoteWebDriver);
+            }
+            elementsFoundSinceLastNavigation_[id] = webElement;
             return webElement;
         }
 
@@ -185,46 +204,54 @@ namespace Applitools.Selenium
         {
             private INavigation navigation_;
             private FrameChain frameChain_;
-            public EyesWebDriverNavigation(INavigation navigation, FrameChain frameChain)
+            private EyesWebDriver driver_;
+
+            public EyesWebDriverNavigation(INavigation navigation, FrameChain frameChain, EyesWebDriver driver)
             {
                 navigation_ = navigation;
                 frameChain_ = frameChain;
+                driver_ = driver;
             }
 
             public void Back()
             {
                 navigation_.Back();
                 frameChain_.Clear();
+                driver_.elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
             }
 
             public void Forward()
             {
                 navigation_.Forward();
                 frameChain_.Clear();
+                driver_.elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
             }
 
             public void GoToUrl(Uri url)
             {
                 navigation_.GoToUrl(url);
                 frameChain_.Clear();
+                driver_.elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
             }
 
             public void GoToUrl(string url)
             {
                 navigation_.GoToUrl(url);
                 frameChain_.Clear();
+                driver_.elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
             }
 
             public void Refresh()
             {
                 navigation_.Refresh();
                 frameChain_.Clear();
+                driver_.elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
             }
         }
 
         public INavigation Navigate()
         {
-            return new EyesWebDriverNavigation(RemoteWebDriver.Navigate(), frameChain_);
+            return new EyesWebDriverNavigation(RemoteWebDriver.Navigate(), frameChain_, this);
         }
 
         public IOptions Manage()
@@ -366,6 +393,38 @@ namespace Applitools.Selenium
         public void PerformActions(IList<ActionSequence> actionSequenceList)
         {
             RemoteWebDriver.PerformActions(actionSequenceList);
+            foreach (ActionSequence actionSequence in actionSequenceList)
+            {
+                Dictionary<string, object> actions = actionSequence.ToDictionary();
+                AddTrigger_(actions);
+            }
+        }
+
+        private void AddTrigger_(Dictionary<string, object> action)
+        {
+            IDictionary<string, object> parameters = (IDictionary<string, object>)action["parameters"];
+            if ("pointer".Equals(action["type"]) && "mouse".Equals(parameters["pointerType"]))
+            {
+                IList<object> actions = (IList<object>)action["actions"];
+                foreach (Dictionary<string, object> actionDictionary in actions)
+                {
+                    if ("pointerMove".Equals(actionDictionary["type"]))
+                    {
+                        int x = (int)actionDictionary["x"];
+                        int y = (int)actionDictionary["y"];
+                        IDictionary<string, object> originDict = (IDictionary<string, object>)actionDictionary["origin"];
+                        string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + RemoteWebDriver.SessionId;
+                        if (elementsFoundSinceLastNavigation_.TryGetValue(elementId, out IWebElement element))
+                        {
+                            UserActionsEyes.AddMouseTrigger(MouseAction.Move, element, new Point(x, y));
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
         }
 
         public void ResetInputState()

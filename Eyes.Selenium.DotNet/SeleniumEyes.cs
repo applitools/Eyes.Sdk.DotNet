@@ -10,7 +10,6 @@ using OpenQA.Selenium.Remote;
 using Applitools.Selenium.Positioning;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Reflection;
 using System.Threading;
@@ -30,7 +29,7 @@ namespace Applitools.Selenium
         "Microsoft.Design",
         "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
         Justification = "EyesWebDriver should only be disposed by the test")]
-    internal class SeleniumEyes : EyesBase, IEyes, ISeleniumEyes
+    internal class SeleniumEyes : EyesBase, IEyes, ISeleniumEyes, IUserActionsEyes
     {
         private const string SET_DATA_APPLITOOLS_SCROLL_ATTR = "var e = arguments[0]; if (e != null) e.setAttribute('data-applitools-scroll','true');";
 
@@ -221,7 +220,7 @@ namespace Applitools.Selenium
 
             if (driver is RemoteWebDriver remoteDriver)
             {
-                driver_ = new EyesWebDriver(Logger, this, remoteDriver);
+                driver_ = new EyesWebDriver(Logger, this, this, remoteDriver);
             }
             else if (driver is EyesWebDriver eyesDriver)
             {
@@ -1006,33 +1005,39 @@ namespace Applitools.Selenium
             return EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE_);
         }
 
-        internal void AddMouseTrigger(MouseAction action, Rectangle control, Point cursor)
+        void IUserActionsEyes.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
         {
-            var ts = "{0} [{1}] {2}".Fmt(action, GeometryUtils.ToString(control), cursor);
+            Rectangle control = Rectangle.Empty;
+            if (element != null)
+            {
+                control = new Rectangle(element.Location, element.Size);
 
-            if (LastScreenshotBoundsProvider == null)
-            {
-                Logger.Verbose("Ignoring {0} (no screenshot)", ts);
-                return;
-            }
+                var ts = $"{action} [{GeometryUtils.ToString(control)}] {cursor}";
 
-            var sb = LastScreenshotBoundsProvider.LastScreenshotBounds;
-            cursor.Offset(control.Location);
-            if (!sb.Contains(cursor))
-            {
-                Logger.Verbose("Ignoring {0} (out of bounds)", ts);
-                return;
-            }
+                if (LastScreenshotBoundsProvider == null)
+                {
+                    Logger.Verbose("Ignoring {0} (no screenshot)", ts);
+                    return;
+                }
 
-            control.Intersect(sb);
-            if (control == Rectangle.Empty)
-            {
-                cursor.Offset(-sb.X, -sb.Y);
-            }
-            else
-            {
-                cursor.Offset(-control.X, -control.Y);
-                control.Offset(-sb.X, -sb.Y);
+                var sb = LastScreenshotBoundsProvider.LastScreenshotBounds;
+                cursor.Offset(control.Location);
+                if (!sb.Contains(cursor))
+                {
+                    Logger.Verbose("Ignoring {0} (out of bounds)", ts);
+                    return;
+                }
+
+                control.Intersect(sb);
+                if (control == Rectangle.Empty)
+                {
+                    cursor.Offset(-sb.X, -sb.Y);
+                }
+                else
+                {
+                    cursor.Offset(-control.X, -control.Y);
+                    control.Offset(-sb.X, -sb.Y);
+                }
             }
 
             var trigger = new MouseTrigger(action, new Region(control), new Location(cursor));
@@ -1041,12 +1046,19 @@ namespace Applitools.Selenium
             Logger.Verbose("Added {0}", trigger);
         }
 
-        internal void AddKeyboardTrigger(Rectangle control, string text)
+        void IUserActionsEyes.AddKeyboardTrigger(IWebElement element, string text)
         {
             if (LastScreenshotBoundsProvider == null)
             {
                 Logger.Verbose("Ignoring {0} (no screenshot)", text);
                 return;
+            }
+
+            Rectangle control = Rectangle.Empty;
+            if (element is RemoteWebElement)
+            {
+                element = new EyesRemoteWebElement(Logger, driver_, element);
+                control = ((EyesRemoteWebElement)element).GetBounds().ToRectangle();
             }
 
             if (control != Rectangle.Empty)
@@ -1208,7 +1220,7 @@ namespace Applitools.Selenium
 
             result.DomUrl = TryCaptureAndPostDom(checkSettingsInternal);
             FrameChain frameChain = driver_.GetFrameChain();
-            if (state.FrameToSwitchTo != null && 
+            if (state.FrameToSwitchTo != null &&
                 (frameChain.Count == 0 ||
                 state.FrameToSwitchTo != frameChain.Last().Reference))
             {

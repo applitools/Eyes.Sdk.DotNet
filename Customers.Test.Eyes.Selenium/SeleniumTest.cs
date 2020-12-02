@@ -176,7 +176,7 @@ namespace Applitools.Selenium.Tests
         public void BeatsByDre_HoverElement(bool bCheckHover)
         {
 
-            string testName = "Hover Element";
+            string testName = "Hover Element (viewport)";
 
             if (bCheckHover == true)
                 testName += " - On";
@@ -190,7 +190,7 @@ namespace Applitools.Selenium.Tests
             eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider() { Path = logPath };
             try
             {
-                eyes.Open(driver, testName, testName, new Size(1200, 600));
+                IWebDriver eyesDriver = eyes.Open(driver, testName, testName, new Size(1200, 600));
 
                 driver.Url = "https://www.beatsbydre.com/support/headphones/studio3-wireless";
 
@@ -199,19 +199,21 @@ namespace Applitools.Selenium.Tests
                 By selector = By.CssSelector(
                         "#maincontent > div:nth-child(1) > div.supportContent.parbase.section > div > div > div.selector.topics > div.boxes > a:nth-child(1) > div > div.content");
                 
-                eyes.CheckWindow("Window", true);
+                eyes.CheckWindow("Window", false);
 
                 //eyes.StitchMode = StitchModes.CSS;
                 // Hover effect
                 if (bCheckHover)
                 {
-                    IWebElement we = driver.FindElement(selector);
+                    IWebElement we = eyesDriver.FindElement(selector);
 
-                    Actions action = new Actions(driver);
+                    Actions action = new Actions(eyesDriver);
 
                     action.MoveToElement(we).Perform();
                 }
                 // End
+
+                eyes.CheckWindow("Window 2", false);
 
                 eyes.Check("Region", Target.Region(selector));
 

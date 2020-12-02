@@ -12,7 +12,6 @@ using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -191,14 +190,16 @@ namespace Applitools.Selenium.VisualGrid
             return null;
         }
 
-        public virtual MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, string domLocation, ICheckSettings checkSettings,
-                                       IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
-                                       Location location, RenderStatusResults results, string source)
+        public virtual MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, 
+                                        string domLocation, ICheckSettings checkSettings, IList<IRegion> regions, 
+                                        IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions,
+                                        Location location, RenderStatusResults results, string source)
         {
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             config_ = (Applitools.Configuration)config;
 
-            MatchWindowTask matchWindowTask = new MatchWindowTask(Logger, ServerConnector, runningSession_, Configuration.MatchTimeout, this, null);
+            MatchWindowTask matchWindowTask = new MatchWindowTask(Logger, ServerConnector, runningSession_, 
+                                                                Configuration.MatchTimeout, this, null);
 
             ImageMatchSettings imageMatchSettings = MatchWindowTask.CreateImageMatchSettings(checkSettingsInternal, this);
 
@@ -208,7 +209,8 @@ namespace Applitools.Selenium.VisualGrid
             AppOutputWithScreenshot appOutputWithScreenshot = new AppOutputWithScreenshot(appOutput, null);
 
             renderStatusResult_ = results;
-            return matchWindowTask.PerformMatch(appOutputWithScreenshot, tag, false, checkSettingsInternal, imageMatchSettings, regions, regionSelectors, this, source, results.RenderId);
+            return matchWindowTask.PerformMatch(appOutputWithScreenshot, tag, false, checkSettingsInternal, imageMatchSettings,
+                                                regions, regionSelectors, userActions, this, source, results.RenderId);
         }
 
         public void Open(Applitools.IConfiguration config)

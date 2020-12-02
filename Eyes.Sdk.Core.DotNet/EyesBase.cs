@@ -17,6 +17,7 @@ using Newtonsoft.Json.Converters;
 using Applitools.VisualGrid.Model;
 using Applitools.VisualGrid;
 using System.Threading;
+using Applitools.Ufg;
 
 namespace Applitools
 {

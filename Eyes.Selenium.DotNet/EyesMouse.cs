@@ -1,12 +1,12 @@
-﻿namespace Applitools.Selenium
-{
-    using System;
-    using System.Drawing;
-    using Applitools.Utils;
-    using Applitools.Utils.Geometry;
-    using OpenQA.Selenium;
-    using OpenQA.Selenium.Interactions.Internal;
+﻿using System;
+using System.Drawing;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions.Internal;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// A wrapper class for Selenium's Mouse class. It adds saving of mouse events
     /// so they can be sent to the agent later on.
@@ -169,7 +169,7 @@
 
         private void AddMouseTrigger_(MouseAction action)
         {
-            eyesDriver_.Eyes.AddMouseTrigger(action, Rectangle.Empty, mouseLocation_.ToPoint());
+            eyesDriver_.UserActionsEyes.AddMouseTrigger(action, null, mouseLocation_.ToPoint());
         }
     }
 }

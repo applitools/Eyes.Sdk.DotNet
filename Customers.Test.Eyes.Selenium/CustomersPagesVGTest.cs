@@ -12,6 +12,7 @@ using OpenQA.Selenium.Interactions;
 using System.Collections.Generic;
 using OpenQA.Selenium.Chrome;
 using Applitools.Tests.Utils;
+using System.Linq;
 
 namespace Applitools.Selenium.Tests
 {
@@ -73,60 +74,61 @@ namespace Applitools.Selenium.Tests
         {
             VisualGridRunner runner = new VisualGridRunner(10);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
-            Eyes eyes = InitEyesWithLogger(runner, verbose: true, writeResources: true);
-            //ConfigureSingleBrowser(eyes);
-            ConfigureMultipleBrowsers(eyes);
-            OpenEyes(driver, "https://www.just-eat.co.uk/", eyes, 1000, 700);
+            Eyes eyes = InitEyesWithLogger(runner, verbose: false, writeResources: false);
+            ConfigureSingleBrowser(eyes);
+            //ConfigureMultipleBrowsers(eyes);
+            IWebDriver eyesWebDriver = OpenEyes(driver, "https://www.just-eat.co.uk/", eyes, 1000, 700);
             try
             {
                 //Close the cookie notification footer
-                driver.FindElement(By.XPath("//*[@data-test-id='cookieBanner-close-button']")).Click();
+                //driver.FindElement(By.XPath("//*[@data-test-id='cookieBanner-close-button']")).Click();
                 IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
                 //Driver for Uber ad shows randomly. Remove this element so it doesn't affect our tests
                 //IWebElement uberContainer = _driver.FindElementByClassName("ex1140 l-container");
 
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                WebDriverWait wait = new WebDriverWait(eyesWebDriver, TimeSpan.FromSeconds(30));
                 //IWebElement element = wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.ex1140.l-container")));
 
-                js.ExecuteScript("var e = document.querySelector('div.ex1140.l-container'); if (e) e.hidden = true;");
+                //js.ExecuteScript("var e = document.querySelector('div.ex1140.l-container'); if (e) e.hidden = true;");
 
                 eyes.CheckWindow("Homepage");
-                eyes.CheckWindow("another test");
+                //eyes.CheckWindow("another test");
 
                 //Search by Postal Code
-                driver.FindElement(By.Name("postcode")).SendKeys("EC4M7RA");
-                driver.FindElement(By.XPath("//button[@data-test-id='find-restaurants-button']")).Click();
+                eyesWebDriver.FindElement(By.Name("postcode")).SendKeys("EC4M7RA");
+                eyes.CheckWindow("Entered postcode");
+                //eyesWebDriver.FindElement(By.XPath("//button[@data-test-id='find-restaurants-button']")).Click();
 
                 //Deal with time of day issues -- Sometimes it asks if you want take away 
-                driver.FindElement(By.ClassName("closeButton")).Click();
+                //eyesWebDriver.FindElements(By.ClassName("closeButton")).FirstOrDefault()?.Click();
 
                 //Narrow the search to just first in the list (helps when running before the restaurant is open
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div.c-searchFilterSection-filterList  span:nth-child(1)"))).Click();
+                //wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div.c-searchFilterSection-filterList span:nth-child(1)"))).Click();
 
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div[data-test-id=searchresults] section:nth-child(1)"))).Click();
+                //wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div[data-test-id=searchresults] section:nth-child(1)"))).Click();
 
-                //Open the Show More link
-                IList<IWebElement> showMoreLink = driver.FindElements(By.Id("showMoreText"));
-                if (showMoreLink.Count > 0)
-                {
-                    Actions actions = new Actions(driver);
-                    actions.MoveToElement(showMoreLink[0]).Click().Perform();
-                }
+                ////Open the Show More link
+                //IList<IWebElement> showMoreLink = driver.FindElements(By.Id("showMoreText"));
+                //if (showMoreLink.Count > 0)
+                //{
+                //    Actions actions = new Actions(driver);
+                //    actions.MoveToElement(showMoreLink[0]).Click().Perform();
+                //}
 
-                eyes.CheckWindow();
-                eyes.CheckRegion(By.ClassName("menuDescription"), "Menu Description");
+                //eyes.CheckWindow();
+                //eyes.CheckRegion(By.ClassName("menuDescription"), "Menu Description");
 
                 //eyes.ForceFullPageScreenshot = false;
 
                 //Check the top Food Allergy link
-                driver.FindElement(By.XPath("//div[@id='basket']//button[contains(text(), 'If you or someone')]")).Click();
-                eyes.CheckWindow("last");
+                //wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[data-test-id=allergen-alert-button]"))).Click();
+                //eyes.CheckWindow("last");
 
-                eyes.CheckRegion(By.XPath("//div[@data-ft='allergenModalDefault']"), "Food Allergy - Top", false);
-                driver.FindElement(By.XPath("//button[text()='Close']")).Click();
+                //eyes.CheckRegion(By.CssSelector("div[data-test-id=allergen-modal]>div[role=dialog]"), "Food Allergy - Top", false);
+                //eyesWebDriver.FindElement(By.CssSelector("div[data-test-id=allergen-modal]>div[role=dialog] button")).Click();
 
                 //Scroll to the bottom of the page to check the second Food Allergy link
-                js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
+                //js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
 
                 //retryingFindClick(By.XPath("//div[@id='menu']//button[contains(text(), 'If you or someone')]"));
                 //eyes.CheckElement(By.XPath("//div[@data-ft='allergenModalDefault']"), "Food Allergy - Bottom");
@@ -262,7 +264,7 @@ namespace Applitools.Selenium.Tests
         private static IWebDriver OpenEyes(IWebDriver driver, string url, Eyes eyes, int width, int height, [CallerMemberName] string testMethod = null)
         {
             IWebDriver eyesWebDriver = eyes.Open(driver, nameof(CustomersPagesVGTest), testMethod, new Size(width, height));
-            driver.Url = url;
+            eyesWebDriver.Url = url;
             return eyesWebDriver;
         }
 

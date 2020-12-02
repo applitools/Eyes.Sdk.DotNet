@@ -1,18 +1,17 @@
-﻿namespace Applitools
+﻿using Applitools.Ufg;
+using Applitools.VisualGrid;
+using Applitools.Fluent;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Threading;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
+using Region = Applitools.Utils.Geometry.Region;
+
+namespace Applitools
 {
-    using Applitools.Utils.Images;
-    using Applitools.VisualGrid;
-    using Fluent;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Threading;
-    using Utils;
-    using Utils.Geometry;
-
-    using Region = Utils.Geometry.Region;
-
     public sealed class MatchWindowTask : IDisposable, ILastScreenshotBounds
     {
 
@@ -169,14 +168,16 @@
                                        ImageMatchSettings imageMatchSettings,
                                        IList<IRegion> regions,
                                        IList<VisualGridSelector[]> regionSelectors,
+                                       IList<VGUserAction> userActions,
                                        EyesBase eyes, string source, string renderId = null)
         {
             EyesScreenshot screenshot = appOutput.Screenshot;
             string agentSetupStr = eyes.GetAgentSetupString();
 
-            CollectRegions_(imageMatchSettings, regions, regionSelectors);
+            List<Trigger> userInputs = new List<Trigger>();
+            CollectRegions_(imageMatchSettings, userInputs, regions, regionSelectors, userActions);
             CollectRegions_(imageMatchSettings, checkSettingsInternal);
-            return PerformMatch_(new Trigger[0], appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
+            return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
         }
 
         private void CollectRegions_(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
@@ -246,8 +247,9 @@
             return mutableRegions.ToArray();
         }
 
-        private static void CollectRegions_(ImageMatchSettings imageMatchSettings,
-                                            IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors)
+        private static void CollectRegions_(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
+                                            IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
+                                            IList<VGUserAction> userActions)
         {
             if (regions == null) return;
 
@@ -262,6 +264,7 @@
                 new List<IMutableRegion>(), // Content Regions
                 new List<IMutableRegion>(), // Floating Regions
                 new List<IMutableRegion>(), // Accessibility Regions
+                new List<IMutableRegion>(), // User Action Regions
                 new List<IMutableRegion>(), // Target Element Location
             };
 
@@ -289,9 +292,9 @@
             Point location = Point.Empty;
 
             // If target element location available
-            if (mutableRegions[6].Count > 0)
+            if (mutableRegions[7].Count > 0)
             {
-                location = mutableRegions[6][0].Location;
+                location = mutableRegions[7][0].Location;
             }
 
             imageMatchSettings.Ignore = FilterEmptyEntries_(mutableRegions[0], location);
@@ -343,6 +346,30 @@
                 }
             }
             imageMatchSettings.Accessibility = accessibilityRegions.ToArray();
+
+            for (int i = 0; i < regionSelectors[6].Length; i++)
+            {
+                IMutableRegion mr = mutableRegions[6][i];
+                if (mr.Area == 0) continue;
+                VGUserAction userAction = userActions[i];
+                Trigger trigger = UserActionToTrigger(mr, userAction);
+                userInputs.Add(trigger);
+            }
+        }
+
+        public static Trigger UserActionToTrigger(IMutableRegion mr, VGUserAction userAction)
+        {
+            Trigger trigger = null;
+            Region r = mr.Rectangle;
+            if (userAction is VGTextTrigger vgTextTrigger)
+            {
+                trigger = new TextTrigger(r, vgTextTrigger.Text);
+            }
+            else if (userAction is VGMouseTrigger vgMouseTrigger)
+            {
+                trigger = new MouseTrigger(vgMouseTrigger.Action, r, vgMouseTrigger.Cursor);
+            }
+            return trigger;
         }
 
         private static IMutableRegion[] FilterEmptyEntries_(List<IMutableRegion> list, Point location)
@@ -521,7 +548,7 @@
             }
             else
             {
-                matchResult_ = PerformMatch(userInputs, appOutputWithScreenshot, tag, 
+                matchResult_ = PerformMatch(userInputs, appOutputWithScreenshot, tag,
                     replaceLast || (lastScreenshotHash_ != null), imageMatchSettings, eyes_, source);
                 lastScreenshotHash_ = currentScreenshotHash;
             }

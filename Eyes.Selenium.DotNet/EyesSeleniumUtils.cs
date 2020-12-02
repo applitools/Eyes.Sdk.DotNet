@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using Applitools.Selenium.Capture;
@@ -11,6 +12,7 @@ using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 
 namespace Applitools.Selenium
 {
@@ -130,6 +132,17 @@ namespace Applitools.Selenium
                 }
             }
             return false;
+        }
+
+        internal static string GetElementId(IWebElement element)
+        {
+            FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (string)fi.GetValue(element);
+        }
+
+        internal static string GetElementIdForDictionary(IWebElement element, RemoteWebDriver remoteWebDriver)
+        {
+            return GetElementId(element) + "_" + remoteWebDriver.SessionId;
         }
 
         private static bool SetBrowserSize_(Logger logger, IWebDriver driver, Size requiredSize)
