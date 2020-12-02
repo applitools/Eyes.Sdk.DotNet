@@ -16,8 +16,10 @@
 - Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
 - Ultrafast Grid: Cross Origin `IFRAME` support. [Trello 2259](https://trello.com/c/iJKPvd75)
 - Ultrafast Grid: `DisableBrowserFetching` configugration option. [Trello 2348](https://trello.com/c/SwRJPQMz)
+- Ultrafast Grid: Record User-Actions. [Trello 2232](https://trello.com/c/jHR7PC0M)
 - Chunked DOM scripts results. [Trello 2348](https://trello.com/c/SwRJPQMz)
 - `EyesWebDriver` now implements `IActionExecutor`. [Trello 2232](https://trello.com/c/jHR7PC0M)
+- Restored User-Action record. [Trello 2232](https://trello.com/c/jHR7PC0M)
 
 ## [Eyes.Images 2.18] - 2020-11-18
 ### Updated
