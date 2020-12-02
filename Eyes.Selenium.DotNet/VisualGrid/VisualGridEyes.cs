@@ -376,8 +376,15 @@ namespace Applitools.Selenium.VisualGrid
             foreach (Tuple<IWebElement, object> element in elementsList)
             {
                 if (element.Item1 == null) continue;
-                string xpath = (string)jsExecutor_.ExecuteScript(GET_ELEMENT_XPATH_JS, element.Item1);
-                xpaths.Add(new VisualGridSelector(xpath, element.Item2));
+                try
+                {
+                    string xpath = (string)jsExecutor_.ExecuteScript(GET_ELEMENT_XPATH_JS, element.Item1);
+                    xpaths.Add(new VisualGridSelector(xpath, element.Item2));
+                }
+                catch (Exception e)
+                {
+                    Logger.Log("Error: {0}", e);
+                }
             }
             result.Add(xpaths.ToArray());
         }
