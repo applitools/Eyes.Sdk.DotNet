@@ -139,7 +139,7 @@ namespace Applitools.Selenium
 
         /// <summary>
         /// Get the viewport size using the driver. Call this method if for some reason you don't 
-        /// want to call <see cref="Open(IWebDriver, string, string)"/> (or one of its variants) yet.
+        /// want to call <see cref="Open(IWebDriver, string, string, Size)"/> (or one of its variants) yet.
         /// </summary>
         /// <param name="driver">The driver to use for getting the viewport.</param>
         /// <returns>The viewport size of the current context.</returns>
@@ -151,7 +151,7 @@ namespace Applitools.Selenium
 
         /// <summary>
         /// Set the viewport size using the driver. Call this method if for some reason you don't 
-        /// want to call <see cref="Open(IWebDriver, string, string)"/> (or one of its variants) yet.
+        /// want to call <see cref="Open(IWebDriver, string, string, Size)"/> (or one of its variants) yet.
         /// </summary>
         /// <param name="driver">The driver to use for setting the viewport.</param>
         /// <param name="size">The required viewport size.</param>

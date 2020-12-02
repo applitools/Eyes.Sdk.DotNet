@@ -17,6 +17,7 @@
 - Ultrafast Grid: Cross Origin `IFRAME` support. [Trello 2259](https://trello.com/c/iJKPvd75)
 - Ultrafast Grid: `DisableBrowserFetching` configugration option. [Trello 2348](https://trello.com/c/SwRJPQMz)
 - Chunked DOM scripts results. [Trello 2348](https://trello.com/c/SwRJPQMz)
+- `EyesWebDriver` now implements `IActionExecutor`. [Trello 2232](https://trello.com/c/jHR7PC0M)
 
 ## [Eyes.Images 2.18] - 2020-11-18
 ### Updated

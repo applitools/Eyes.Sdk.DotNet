@@ -93,12 +93,16 @@ namespace Applitools.Selenium.Tests
                 var eyesDriver = eyes.Open(driver, "Attentia", "#29053", new Size(1200, 800));
 
                 WebDriverWait wait = new WebDriverWait(eyesDriver, TimeSpan.FromSeconds(30));
-
-                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#userNameInput"))).SendKeys("angelinodogan@mailinator.com");
+                IWebElement userName = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#userNameInput")));
+                eyes.CheckWindow("step 1", true);
+                userName.SendKeys("angelinodogan@mailinator.com");
+                eyes.CheckWindow("step 2", true);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#passwordInput"))).SendKeys("Azerty_03");
+                eyes.CheckWindow("step 3", true);
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("#submitButton"))).Click();
+                eyes.CheckWindow("step 4", true);
 
-                eyes.Check(Target.Frame("appFrame").Fully());
+                //eyes.Check(Target.Frame("appFrame").Fully());
 
                 //Close the test
                 eyes.Close();
@@ -194,6 +198,8 @@ namespace Applitools.Selenium.Tests
 
                 By selector = By.CssSelector(
                         "#maincontent > div:nth-child(1) > div.supportContent.parbase.section > div > div > div.selector.topics > div.boxes > a:nth-child(1) > div > div.content");
+                
+                eyes.CheckWindow("Window", true);
 
                 //eyes.StitchMode = StitchModes.CSS;
                 // Hover effect
