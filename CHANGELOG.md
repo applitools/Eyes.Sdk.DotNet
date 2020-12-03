@@ -1,8 +1,12 @@
-## [Eyes.Appium vNext]
+## [Eyes.Sdk.Core 2.37] - 2020-12-03
+### Updated
+- Match to latest Eyes.Common
+
+## [Eyes.Appium 4.15] - 2020-12-03
 ### Fixed
 - `Eyes.Open` now gets any form of `AppiumDriver<W>` decendants. [Trello 2329](https://trello.com/c/81pvfYUj)
 
-## [Eyes.Common vNext]
+## [Eyes.Common 1.2] - 2020-12-03
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
 - Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
@@ -10,7 +14,7 @@
 - Ultrafast Grid: `DisableBrowserFetching` configugration option. [Trello 2348](https://trello.com/c/SwRJPQMz)
 - Chunked DOM scripts results. [Trello 2348](https://trello.com/c/SwRJPQMz)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.37] - 2020-12-03
 ### Added
 - Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
 - Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
