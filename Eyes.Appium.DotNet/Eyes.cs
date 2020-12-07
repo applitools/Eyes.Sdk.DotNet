@@ -188,7 +188,7 @@ namespace Applitools.Appium
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception: " + ex);
+                Logger.Log("Exception: {0}", ex);
                 throw;
             }
         }

@@ -349,7 +349,7 @@ namespace Applitools
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Error uploading " + mediaType + ": " + e);
+                    Logger.Log("Error uploading {0}: {1}", mediaType, e);
                 }
             }
             return null;
