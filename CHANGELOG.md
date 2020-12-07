@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Updated
+- Ultrafast Grid: Reverted Skip-List for now. [Trello 1974](https://trello.com/c/44xq8dze)
+
 ## [Eyes.Sdk.Core 2.37] - 2020-12-03
 ### Updated
 - Match to latest Eyes.Common
