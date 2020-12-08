@@ -114,12 +114,12 @@ namespace Applitools.Selenium.VisualGrid
             httpClient_.Headers.Add("X-Auth-Token", renderInfo_.AccessToken);
         }
 
-        public virtual List<RunningRender> Render(RenderRequest[] renderRequests)
+        public virtual List<RunningRender> Render(IList<RenderRequest> renderRequests)
         {
             return RenderAsync(renderRequests).Result;
         }
 
-        public virtual async Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
+        public virtual async Task<List<RunningRender>> RenderAsync(IList<RenderRequest> renderRequests)
         {
             ArgumentGuard.NotNull(renderRequests, nameof(renderRequests));
             Logger.Verbose("called with {0}", StringUtils.Concat(renderRequests, ","));
@@ -157,7 +157,7 @@ namespace Applitools.Selenium.VisualGrid
             return Applitools.ServerConnector.CreateHttpWebRequest_(url, GetRenderingInfo(), Proxy, FullAgentId);
         }
 
-        public virtual List<RenderStatusResults> RenderStatusById(string[] renderIds)
+        public virtual List<RenderStatusResults> RenderStatusById(IList<string> renderIds)
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
             string idsAsString = string.Join(",", renderIds);

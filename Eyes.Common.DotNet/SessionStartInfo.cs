@@ -22,6 +22,7 @@ namespace Applitools
             string baselineBranchName,
             bool? saveDiffs,
             bool? render,
+            string agentSessionId,
             int? timeout,
             PropertiesCollection properties)
         {
@@ -46,6 +47,7 @@ namespace Applitools
             BaselineBranchName = baselineBranchName;
             SaveDiffs = saveDiffs;
             Render = render;
+            AgentSessionId = agentSessionId;
             Timeout = timeout;
             Properties = properties;
         }
@@ -79,6 +81,8 @@ namespace Applitools
         public bool? SaveDiffs { get; private set; }
 
         public bool? Render { get; set; }
+        
+        public string AgentSessionId { get; }
 
         public int? Timeout { get; private set; }
         

@@ -59,7 +59,7 @@ namespace Applitools.Selenium.Tests.Mock
             config_ = config;
         }
 
-        public RenderRequest[] LastRenderRequests { get; set; }
+        public IList<RenderRequest> LastRenderRequests { get; set; }
 
         protected override Applitools.Configuration Configuration => config_;
 
@@ -97,7 +97,7 @@ namespace Applitools.Selenium.Tests.Mock
         {
         }
 
-        public List<RunningRender> Render(RenderRequest[] requests)
+        public List<RunningRender> Render(IList<RenderRequest> requests)
         {
             return RenderAsync(requests).Result;
         }
@@ -108,10 +108,10 @@ namespace Applitools.Selenium.Tests.Mock
 
         public override bool IsServerConcurrencyLimitReached => WrappedConnector?.IsServerConcurrencyLimitReached ?? false;
 
-        public delegate (bool, List<RunningRender>) OnRenderEventHandler(RenderRequest[] requests);
+        public delegate (bool, List<RunningRender>) OnRenderEventHandler(IList<RenderRequest> requests);
         public event OnRenderEventHandler OnRender = null;
 
-        public async Task<List<RunningRender>> RenderAsync(RenderRequest[] requests)
+        public async Task<List<RunningRender>> RenderAsync(IList<RenderRequest> requests)
         {
             LastRenderRequests = requests;
             List<RunningRender> runningRenders = null;
@@ -149,7 +149,7 @@ namespace Applitools.Selenium.Tests.Mock
             renderStatusResults_ = new List<RenderStatusResults>(resultsList);
         }
 
-        public List<RenderStatusResults> RenderStatusById(string[] renderIds)
+        public List<RenderStatusResults> RenderStatusById(IList<string> renderIds)
         {
             if (renderStatusResults_ != null)
             {

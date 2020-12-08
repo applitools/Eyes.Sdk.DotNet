@@ -1071,6 +1071,7 @@ namespace Applitools
             Logger.Verbose("getting environment...");
             object appEnv = GetEnvironment_();
             Logger.Verbose("Application environment is {0}", appEnv);
+            string agentSessionId = Guid.NewGuid().ToString();
 
             sessionStartInfo_ = new SessionStartInfo(
                 FullAgentId,
@@ -1087,6 +1088,7 @@ namespace Applitools
                 Configuration.BaselineBranchName,
                 Configuration.SaveDiffs,
                 null,
+                agentSessionId,
                 Configuration.AbortIdleTestTimeout,
                 properties_);
 
