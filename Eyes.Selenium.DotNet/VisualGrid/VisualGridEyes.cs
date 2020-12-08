@@ -19,7 +19,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -702,12 +701,11 @@ namespace Applitools.Selenium.VisualGrid
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
-
             int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {
                 serializeResources = true,
-                skipResources = runner.CachedBlobsURLs.Keys,
+                //skipResources = runner.CachedBlobsURLs.Keys,
                 dontFetchResources = config.DisableBrowserFetching,
                 chunkByteLength
             };
