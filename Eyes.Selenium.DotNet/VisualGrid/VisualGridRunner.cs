@@ -91,7 +91,7 @@ namespace Applitools.VisualGrid
             }
         }
 
-        private OpenerService eyesOpenerService_;
+        private OpenService eyesOpenerService_;
         private EyesService eyesCloserService_;
         private EyesService renderRequestCollectionService_;
         private RenderingGridService renderingGridService_;
@@ -262,7 +262,7 @@ namespace Applitools.VisualGrid
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             int concurrentOpenSessions = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency();
-            eyesOpenerService_ = new OpenerService("eyesOpenerService", Logger, concurrentOpenSessions, openerServiceConcurrencyLock_,
+            eyesOpenerService_ = new OpenService("eyesOpenerService", Logger, concurrentOpenSessions, openerServiceConcurrencyLock_,
                 new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(openerServiceLock_, tasker, "eyesOpenerService")),
                 new EyesService.Tasker(() => GetNextTestToOpen_()));
 
