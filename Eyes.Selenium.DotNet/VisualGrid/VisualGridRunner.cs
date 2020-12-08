@@ -619,7 +619,7 @@ namespace Applitools.VisualGrid
                         NotifyAllServices();
                     }
                     ),
-                new RenderingTask.RenderTaskListener(
+                new RenderingTask.TaskListener(
                     () =>
                     {
                         listener.OnRenderSuccess();
