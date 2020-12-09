@@ -1,4 +1,5 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -8,7 +9,7 @@ namespace Test.Eyes.Sdk.DotNet.Core
 {
     [TestFixture]
     [Parallelizable(ParallelScope.All)]
-    public class TestCommonUtils
+    public class TestCommonUtils : ReportingTestSuite
     {
         [Test]
         public void TestReadToEnd()

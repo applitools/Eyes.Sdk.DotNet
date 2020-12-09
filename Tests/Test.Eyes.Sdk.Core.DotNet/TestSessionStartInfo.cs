@@ -1,5 +1,6 @@
 ﻿using Applitools.Common;
 using Applitools.Fluent;
+using Applitools.Tests.Utils;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
@@ -9,7 +10,7 @@ using System;
 namespace Applitools
 {
     [TestFixture]
-    public class TestSessionStartInfo
+    public class TestSessionStartInfo : ReportingTestSuite
     {
         [Test]
         public void TestSerialization()

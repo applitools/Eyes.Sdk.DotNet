@@ -1,10 +1,10 @@
-﻿namespace Applitools
-{
-    using Applitools;
-    using NUnit.Framework;
+﻿using Applitools.Tests.Utils;
+using NUnit.Framework;
 
+namespace Applitools
+{
     [TestFixture]
-    public class TestMatchResult
+    public class TestMatchResult : ReportingTestSuite
     {
         [Test]
         public void Test1()

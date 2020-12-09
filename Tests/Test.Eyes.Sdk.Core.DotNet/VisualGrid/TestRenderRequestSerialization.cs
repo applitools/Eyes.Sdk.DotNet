@@ -1,4 +1,5 @@
-﻿using Applitools.Ufg;
+﻿using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.Utils;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 namespace Applitools.VisualGrid
 {
     [TestFixture]
-    public class TestRenderRequestSerialization
+    public class TestRenderRequestSerialization : ReportingTestSuite
     {
         [Test]
         public void TestSerialization()

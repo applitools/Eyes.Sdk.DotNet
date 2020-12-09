@@ -1,10 +1,11 @@
 ﻿using System;
+using Applitools.Tests.Utils;
 using NUnit.Framework;
 
 namespace Applitools
 {
     [TestFixture]
-    public class TestBatchInfo
+    public class TestBatchInfo : ReportingTestSuite
     {
         [Test]
         public void TestCtor()

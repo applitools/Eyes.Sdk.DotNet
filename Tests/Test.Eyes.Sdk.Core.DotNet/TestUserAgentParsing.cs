@@ -1,10 +1,11 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils;
 using NUnit.Framework;
 
 namespace Applitools
 {
     [TestFixture]
-    public class TestUserAgentParsing
+    public class TestUserAgentParsing : ReportingTestSuite
     {
         [TestCase("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36", OSNames.Windows, "10", "0", BrowserNames.Chrome, "75", "0")]
         [TestCase("Mozilla/5.0 (Linux; Android 9; Android SDK built for x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.105 Mobile Safari/537.36", OSNames.Android, "9", "0", BrowserNames.Chrome, "72", "0")]

@@ -1,10 +1,11 @@
-﻿namespace Applitools
-{
-    using Applitools.Utils.Geometry;
-    using NUnit.Framework;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils.Geometry;
+using NUnit.Framework;
 
+namespace Applitools
+{
     [TestFixture]
-    public class TestAppEnvironment
+    public class TestAppEnvironment : ReportingTestSuite
     {
         [Test]
         public void TestCtor()

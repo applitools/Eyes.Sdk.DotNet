@@ -1,10 +1,11 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils;
 using NUnit.Framework;
 
 namespace Applitools
 {
     [TestFixture]
-    public class TestStringUtils
+    public class TestStringUtils : ReportingTestSuite
     {
         [TestCase(null, null, true)]
         [TestCase("   \t  ", null, true)]

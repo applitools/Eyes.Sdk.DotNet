@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Applitools.VisualGrid
 {
     [Parallelizable(ParallelScope.All)]
-    public class TestRenderingTask
+    public class TestRenderingTask : ReportingTestSuite
     {
         //[Test]
         public void TestTryGetTextualData()

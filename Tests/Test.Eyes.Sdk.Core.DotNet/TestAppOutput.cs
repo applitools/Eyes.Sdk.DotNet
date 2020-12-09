@@ -1,11 +1,12 @@
-﻿namespace Applitools
-{
-    using Applitools.Utils.Geometry;
-    using NUnit.Framework;
-    using System.Text;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils.Geometry;
+using NUnit.Framework;
+using System.Text;
 
+namespace Applitools
+{
     [TestFixture]
-    public class TestAppOutput
+    public class TestAppOutput : ReportingTestSuite
     {
         [Test]
         public void TestCtor()

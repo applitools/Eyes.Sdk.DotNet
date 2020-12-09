@@ -1,11 +1,12 @@
-﻿namespace Applitools
-{
-    using System;
-    using Applitools.Utils.Geometry;
-    using NUnit.Framework;
+﻿using System;
+using Applitools.Tests.Utils;
+using Applitools.Utils.Geometry;
+using NUnit.Framework;
 
+namespace Applitools
+{
     [TestFixture]
-    public class TestMouseTrigger
+    public class TestMouseTrigger : ReportingTestSuite
     {
         [Test]
         public void TestMouseTrigger1()

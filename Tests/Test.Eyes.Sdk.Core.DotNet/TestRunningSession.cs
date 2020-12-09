@@ -7,11 +7,12 @@ using Newtonsoft.Json;
 using NSubstitute;
 using System.IO;
 using System.Text;
+using Applitools.Tests.Utils;
 
 namespace Applitools
 {
     [TestFixture]
-    public class TestRunningSession
+    public class TestRunningSession : ReportingTestSuite
     {
         private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
 

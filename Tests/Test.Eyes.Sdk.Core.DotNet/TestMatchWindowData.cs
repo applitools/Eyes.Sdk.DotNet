@@ -1,4 +1,5 @@
-﻿using Applitools.Utils.Geometry;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils.Geometry;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Text;
 namespace Applitools
 {
     [TestFixture]
-    public class TestMatchWindowData
+    public class TestMatchWindowData : ReportingTestSuite
     {
         private Trigger trigger_;
         private AppOutput appOut_;

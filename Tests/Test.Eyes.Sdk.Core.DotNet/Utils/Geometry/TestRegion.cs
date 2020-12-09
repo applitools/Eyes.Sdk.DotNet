@@ -10,7 +10,7 @@ namespace Applitools.Tests.Utils.Geometry
 {
     [TestFixture]
     [Parallelizable(ParallelScope.All)]
-    public class TestRegion
+    public class TestRegion : ReportingTestSuite
     {
         [Test]
         public void TestCtor()

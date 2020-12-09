@@ -1,10 +1,11 @@
 ﻿using System;
+using Applitools.Tests.Utils;
 using NUnit.Framework;
 
 namespace Applitools.Utils
 {
     [TestFixture]
-    public class TestUrl
+    public class TestUrl : ReportingTestSuite
     {
         private const string Url_ = "http://www.google.com";
 
