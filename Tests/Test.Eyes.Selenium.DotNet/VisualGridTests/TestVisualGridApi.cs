@@ -162,7 +162,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             }
         }
 
-        //[Test]
+        [Test]
         public void TestVisualGridSkipList()
         {
             VisualGridRunner runner = new VisualGridRunner(10);
