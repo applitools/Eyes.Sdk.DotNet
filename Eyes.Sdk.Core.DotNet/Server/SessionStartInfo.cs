@@ -50,6 +50,8 @@ namespace Applitools
             Properties = properties;
         }
 
+        public int ConcurrencyVersion => 2;
+
         public string AgentId { get; private set; }
 
         public string AppIdOrName { get; private set; }
