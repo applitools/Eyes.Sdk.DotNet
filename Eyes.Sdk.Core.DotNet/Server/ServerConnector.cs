@@ -24,7 +24,7 @@ namespace Applitools
     {
         #region Fields
 
-        private HttpRestClient httpClient_;
+        internal HttpRestClient httpClient_;
         private bool apiKeyChanged_ = true;
         private string apiKey_;
         private bool proxyChanged_ = false;
