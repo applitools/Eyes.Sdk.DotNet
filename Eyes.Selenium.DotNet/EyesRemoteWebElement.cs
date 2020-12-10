@@ -118,7 +118,20 @@ namespace Applitools.Selenium
     } 
     
     if (el.tagName !== 'BODY') { // The body element behavior is special... so to say, so we don't want to account it.
-      intersected = intersect(cr, intersected)
+      var tempIntersected = intersect(cr, intersected)
+      if (tempIntersected.height<intersected.height) {
+        if (window.getComputedStyle(el)['overflowY'] == 'visible'){
+          tempIntersected.height = intersected.height
+        }
+      }
+      if (tempIntersected.width < intersected.width)
+      {
+        if (window.getComputedStyle(el)['overflowX'] == 'visible')
+        {
+            tempIntersected.width = intersected.width
+        }
+      }
+      intersected = tempIntersected
     }
 
     el = el.parentElement;
