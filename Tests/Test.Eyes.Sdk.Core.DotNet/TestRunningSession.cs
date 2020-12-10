@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Applitools.Tests.Utils;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Applitools
 {
@@ -110,12 +111,20 @@ namespace Applitools
 
             MockHttpRestClientFactory.MockWebRequestCreator requestCreator = (MockHttpRestClientFactory.MockWebRequestCreator)serverConnector.httpClient_.WebRequestCreator;
             List<string> requests = requestCreator.RequestUrls;
+            List<TimeSpan> timings = requestCreator.Timings;
             Assert.AreEqual(6, requests.Count);
+            Assert.AreEqual(6, timings.Count);
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "api/sessions/running", requests[0]);
             StringAssert.StartsWith(CommonData.DefaultServerUrl + BASE_LOCATION + "status", requests[1]);
+            
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[2]);
+            Assert.Greater(timings[2], TimeSpan.FromSeconds(3));
+
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[3]);
+            Assert.Greater(timings[3], TimeSpan.FromSeconds(5));
+
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url2", requests[4]);
+            Assert.Greater(timings[4], TimeSpan.FromSeconds(1));
         }
 
         private class MockHttpRestClientFactory : IHttpRestClientFactory
@@ -157,7 +166,9 @@ namespace Applitools
                 private int?[] retryAfter_;
                 private int iterations_;
                 private string expectedPollUrlPath_;
+                private Stopwatch stopwatch_ = Stopwatch.StartNew();
                 public List<string> RequestUrls { get; } = new List<string>();
+                public List<TimeSpan> Timings { get; } = new List<TimeSpan>();
 
                 public MockWebRequestCreator(bool? isNew, HttpStatusCode? statusCode, int?[] retryAfter, string[] pollingUrls)
                 {
@@ -242,6 +253,8 @@ namespace Applitools
                     }
                     webRequest.GetResponse().Returns(webResponse);
                     RequestUrls.Add(uri.AbsoluteUri);
+                    Timings.Add(stopwatch_.Elapsed);
+                    stopwatch_ = Stopwatch.StartNew();
                     return webRequest;
                 }
             }
