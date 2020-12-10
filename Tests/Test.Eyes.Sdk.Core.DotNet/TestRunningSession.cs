@@ -102,7 +102,7 @@ namespace Applitools
             ServerConnector serverConnector = new ServerConnector(logger);
             serverConnector.ServerUrl = new Uri(CommonData.DefaultServerUrl);
             serverConnector.HttpRestClientFactory = new MockHttpRestClientFactory(
-                new int?[] { 3, null, 1 },
+                new int?[] { 2, null, 3 },
                 new string[] { CommonData.DefaultServerUrl + "url1", null, CommonData.DefaultServerUrl + "url2" });
             serverConnector.ApiKey = "testKey";
 
@@ -118,13 +118,13 @@ namespace Applitools
             StringAssert.StartsWith(CommonData.DefaultServerUrl + BASE_LOCATION + "status", requests[1]);
             
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[2]);
-            Assert.Greater(timings[2], TimeSpan.FromSeconds(3));
+            Assert.Greater(timings[2], TimeSpan.FromSeconds(2));
 
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[3]);
-            Assert.Greater(timings[3], TimeSpan.FromSeconds(5));
+            Assert.Greater(timings[3], TimeSpan.FromSeconds(1));
 
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url2", requests[4]);
-            Assert.Greater(timings[4], TimeSpan.FromSeconds(1));
+            Assert.Greater(timings[4], TimeSpan.FromSeconds(3));
         }
 
         private class MockHttpRestClientFactory : IHttpRestClientFactory

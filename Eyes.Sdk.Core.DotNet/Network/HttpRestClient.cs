@@ -379,14 +379,15 @@ namespace Applitools.Utils
                                 secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
                                 if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
                                 {
-                                    wait = timeToWait * 1000;
+                                    timeToWait *= 1000;
                                 }
                                 else
                                 {
                                     wait *= 2;
                                     wait = Math.Min(5000, wait);
+                                    timeToWait = wait;
                                 }
-                                Thread.Sleep(wait);
+                                Thread.Sleep(timeToWait);
 
                                 continue;
                             }
