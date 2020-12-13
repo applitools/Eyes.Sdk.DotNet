@@ -20,13 +20,14 @@ namespace Applitools.Tests.Utils
             {
                 // specifically request to send to sandbox...
                 bool b1 = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase);
-                // or local run...
-                bool b2 = Environment.GetEnvironmentVariable("TRAVIS_TAG") == null;
-                // or not a release build and not full coverage
-                bool b3 = Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
-                bool b4 = ReportingTestSuite.IS_FULL_COVERAGE;
+                // local run...
+                bool b2 = !ReportingTestSuite.RUNS_ON_CI;
+                // not a release build and 
+                bool b3 = !Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
+                // not full coverage
+                bool b4 = !ReportingTestSuite.IS_FULL_COVERAGE;
 
-                bool endResult =  b1 || b2 || (!b3 && !b4);
+                bool endResult =  b1 || b2 || (b3 && b4);
                 TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: sandbox: b1: {b1} ; b2: {b2} ; b3: {b3} ; b4: {b4} ; endResult: {endResult}");
                 return endResult;
             }
