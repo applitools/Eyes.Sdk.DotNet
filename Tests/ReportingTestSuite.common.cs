@@ -1,4 +1,5 @@
 ﻿using Applitools.Utils;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;
@@ -148,6 +149,7 @@ namespace Applitools.Tests.Utils
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: sending json: {JsonConvert.SerializeObject(reportSummary_)}");
             HttpRestClient client = new HttpRestClient(new Uri("http://sdk-test-results.herokuapp.com"));
             client.PostJson("/result", reportSummary_);
         }
