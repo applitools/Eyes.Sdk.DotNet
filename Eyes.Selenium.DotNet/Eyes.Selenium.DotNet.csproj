@@ -8,20 +8,15 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.37</Version>
+    <Version>2.38</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Added
-- Ultrafast Grid: iPhone 12 devices. [Trello 2269](https://trello.com/c/yWFy2pRE)
-- Ultrafast Grid: Added `EDGE_CHROMIUM_TWO_VERSIONS_BACK` enum value. [Trello 2320](https://trello.com/c/N9hFfZea)
-- Ultrafast Grid: Cross Origin `IFRAME` support. [Trello 2259](https://trello.com/c/iJKPvd75)
-- Ultrafast Grid: `DisableBrowserFetching` configugration option. [Trello 2348](https://trello.com/c/SwRJPQMz)
-- Ultrafast Grid: Record User-Actions. [Trello 2232](https://trello.com/c/jHR7PC0M)
-- Chunked DOM scripts results. [Trello 2348](https://trello.com/c/SwRJPQMz)
-- `EyesWebDriver` now implements `IActionExecutor`. [Trello 2232](https://trello.com/c/jHR7PC0M)
-- Restored User-Action record. [Trello 2232](https://trello.com/c/jHR7PC0M)
+    <PackageReleaseNotes>### Updated
+- Ultrafast Grid: Reverted Skip-List for now. [Trello 1974](https://trello.com/c/44xq8dze)
+### Fixed
+- `GetVisibleClientRect` now handles elements with `overflow: visible` correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

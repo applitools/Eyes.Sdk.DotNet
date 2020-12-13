@@ -1,12 +1,28 @@
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Images 2.19] - 2020-12-13
 ### Updated
-- Concurrency version 2. [Trello 2368](https://trello.com/c/0qi2c0jW)
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 4.16] - 2020-12-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Selenium 2.38] - 2020-12-13
 ### Updated
 - Ultrafast Grid: Reverted Skip-List for now. [Trello 1974](https://trello.com/c/44xq8dze)
 ### Fixed
 - `GetVisibleClientRect` now handles elements with `overflow: visible` correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
+
+## [Eyes.LeanFT 2.21] - 2020-12-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.20] - 2020-12-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.38] - 2020-12-13
+### Updated
+- Concurrency version 2. [Trello 2368](https://trello.com/c/0qi2c0jW)
 
 ## [Eyes.Sdk.Core 2.37] - 2020-12-03
 ### Updated
