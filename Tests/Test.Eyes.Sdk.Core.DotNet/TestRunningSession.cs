@@ -8,6 +8,8 @@ using NSubstitute;
 using System.IO;
 using System.Text;
 using Applitools.Tests.Utils;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Applitools
 {
@@ -93,10 +95,54 @@ namespace Applitools
             Assert.AreEqual(isNew, result.IsNewSession);
         }
 
+        [Test]
+        public void TestLongRequest_SimplePoll()
+        {
+            Logger logger = new Logger();
+            ServerConnector serverConnector = new ServerConnector(logger);
+            serverConnector.ServerUrl = new Uri(CommonData.DefaultServerUrl);
+            serverConnector.HttpRestClientFactory = new MockHttpRestClientFactory(
+                new int?[] { 2, null, 3 },
+                new string[] { CommonData.DefaultServerUrl + "url1", null, CommonData.DefaultServerUrl + "url2" });
+            serverConnector.ApiKey = "testKey";
+
+            SessionStartInfo startInfo = GetStartInfo();
+            RunningSession result = serverConnector.StartSession(startInfo);
+
+            MockHttpRestClientFactory.MockWebRequestCreator requestCreator = (MockHttpRestClientFactory.MockWebRequestCreator)serverConnector.httpClient_.WebRequestCreator;
+            List<string> requests = requestCreator.RequestUrls;
+            List<TimeSpan> timings = requestCreator.Timings;
+            Assert.AreEqual(6, requests.Count);
+            Assert.AreEqual(6, timings.Count);
+            StringAssert.StartsWith(CommonData.DefaultServerUrl + "api/sessions/running", requests[0]);
+            StringAssert.StartsWith(CommonData.DefaultServerUrl + BASE_LOCATION + "status", requests[1]);
+            
+            StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[2]);
+            Assert.Greater(timings[2], TimeSpan.FromSeconds(2));
+
+            StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[3]);
+            Assert.Greater(timings[3], TimeSpan.FromSeconds(1));
+
+            StringAssert.StartsWith(CommonData.DefaultServerUrl + "url2", requests[4]);
+            Assert.Greater(timings[4], TimeSpan.FromSeconds(3));
+        }
+
         private class MockHttpRestClientFactory : IHttpRestClientFactory
         {
             private bool? isNew_;
             private HttpStatusCode? statusCode_;
+            private string[] pollingUrls_;
+            private int?[] retryAfter_;
+
+            public MockHttpRestClientFactory(int?[] retryAfter, string[] pollingUrls)
+            {
+                if (retryAfter != null && pollingUrls != null && retryAfter.Length != pollingUrls.Length)
+                {
+                    throw new Exception("lists must be the same size");
+                }
+                retryAfter_ = retryAfter;
+                pollingUrls_ = pollingUrls;
+            }
 
             public MockHttpRestClientFactory(bool? isNew = null, HttpStatusCode? statusCode = null)
             {
@@ -107,17 +153,24 @@ namespace Applitools
             public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
             {
                 var client = new HttpRestClient(serverUrl, agentId, jsonSerializer);
-                client.WebRequestCreator = new MockWebRequestCreator(isNew_, statusCode_);
+                client.WebRequestCreator = new MockWebRequestCreator(isNew_, statusCode_, retryAfter_, pollingUrls_);
                 return client;
             }
 
-            private class MockWebRequestCreator : IWebRequestCreate
+            internal class MockWebRequestCreator : IWebRequestCreate
             {
                 private Stream responseStream_;
                 private int counter_ = 0;
                 private HttpStatusCode? statusCode_;
+                private string[] pollingUrls_;
+                private int?[] retryAfter_;
+                private int iterations_;
+                private string expectedPollUrlPath_;
+                private Stopwatch stopwatch_ = Stopwatch.StartNew();
+                public List<string> RequestUrls { get; } = new List<string>();
+                public List<TimeSpan> Timings { get; } = new List<TimeSpan>();
 
-                public MockWebRequestCreator(bool? isNew, HttpStatusCode? statusCode)
+                public MockWebRequestCreator(bool? isNew, HttpStatusCode? statusCode, int?[] retryAfter, string[] pollingUrls)
                 {
                     RunningSession runningSession = new RunningSession()
                     {
@@ -129,6 +182,9 @@ namespace Applitools
                         Url = "https://eyes.applitools.com/app/batches/00000251815599941664/00000251815599941141?accountId=m9QzkQCbDkyTxwMrJ4fKkQ~~"
                     };
                     statusCode_ = statusCode;
+                    pollingUrls_ = pollingUrls;
+                    retryAfter_ = retryAfter;
+                    iterations_ = pollingUrls?.Length ?? retryAfter?.Length ?? 0;
                     string responseObjJson = JsonConvert.SerializeObject(runningSession);
                     byte[] byteArray = Encoding.UTF8.GetBytes(responseObjJson);
                     responseStream_ = new MemoryStream(byteArray);
@@ -148,19 +204,41 @@ namespace Applitools
                         if (uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
                         {
                             webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
-                            headers.Add("Location", CommonData.DefaultServerUrl + BASE_LOCATION + "status");
+                            expectedPollUrlPath_ = "/" + BASE_LOCATION + "status";
+                            headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "status");
                         }
-                        else if (uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
+                        else if (uri.PathAndQuery.StartsWith(expectedPollUrlPath_, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (counter_++ == 0)
+                            if (iterations_ == 0 && counter_ == 0)
                             {
                                 webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                            }
+                            else if (iterations_ > 0 && counter_ < iterations_)
+                            {
+                                webResponse.StatusCode.Returns(HttpStatusCode.OK);
+
+                                if (pollingUrls_ != null)
+                                {
+                                    string pollUrl = pollingUrls_[counter_];
+                                    if (pollUrl != null)
+                                    {
+                                        headers.Add(HttpResponseHeader.Location, pollUrl);
+                                        expectedPollUrlPath_ = new Uri(pollUrl).PathAndQuery;
+                                    }
+                                }
+
+                                if (retryAfter_ != null)
+                                {
+                                    int? retryAfter = retryAfter_[counter_];
+                                    if (retryAfter != null) headers.Add(HttpResponseHeader.RetryAfter, retryAfter.Value.ToString());
+                                }
                             }
                             else
                             {
                                 webResponse.StatusCode.Returns(HttpStatusCode.Created);
-                                headers.Add("Location", CommonData.DefaultServerUrl + BASE_LOCATION + "result");
+                                headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "result");
                             }
+                            counter_++;
                         }
                         else if (uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "result", StringComparison.OrdinalIgnoreCase))
                         {
@@ -174,6 +252,9 @@ namespace Applitools
                         webResponse.GetResponseStream().Returns(responseStream_);
                     }
                     webRequest.GetResponse().Returns(webResponse);
+                    RequestUrls.Add(uri.AbsoluteUri);
+                    Timings.Add(stopwatch_.Elapsed);
+                    stopwatch_ = Stopwatch.StartNew();
                     return webRequest;
                 }
             }

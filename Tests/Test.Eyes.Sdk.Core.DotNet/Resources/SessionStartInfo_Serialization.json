@@ -1,4 +1,5 @@
 {
+  "ConcurrencyVersion": 2,
   "AgentId": "agent",
   "AppIdOrName": "some app",
   "VerId": "1.0",

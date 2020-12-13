@@ -21,7 +21,7 @@ namespace Applitools.Utils
         private readonly JsonSerializer json_;
         private string authUser_;
         private string authPassword_;
-        
+
         #endregion
 
         #region Constructors
@@ -345,7 +345,18 @@ namespace Applitools.Utils
 
             if (AcceptLongRunningTasks)
             {
-                var statusUrl = response.Headers[HttpResponseHeader.Location];
+                string statusUrl = response.Headers[HttpResponseHeader.Location];
+                string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
+                int timeToWait = wait;
+                if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
+                {
+                    timeToWait *= 1000;
+                }
+                else
+                {
+                    timeToWait = wait;
+                }
+
                 if (statusUrl != null && response.StatusCode == HttpStatusCode.Accepted)
                 {
                     response.Close();
@@ -363,9 +374,21 @@ namespace Applitools.Utils
 
                             if (response.StatusCode == HttpStatusCode.OK)
                             {
-                                Thread.Sleep(wait);
-                                wait *= 2;
-                                wait = Math.Min(10000, wait);
+                                statusUrl = response.Headers[HttpResponseHeader.Location] ?? statusUrl;
+
+                                secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
+                                if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
+                                {
+                                    timeToWait *= 1000;
+                                }
+                                else
+                                {
+                                    wait *= 2;
+                                    wait = Math.Min(5000, wait);
+                                    timeToWait = wait;
+                                }
+                                Thread.Sleep(timeToWait);
+
                                 continue;
                             }
 
@@ -448,12 +471,13 @@ namespace Applitools.Utils
             {
                 req.Headers["x-applitools-eyes-client"] = AgentId;
             }
-            
+
             req.Headers["x-applitools-eyes-client-request-id"] = Guid.NewGuid().ToString();
 
             if (AcceptLongRunningTasks)
             {
                 req.Headers["Eyes-Expect"] = "202+location";
+                req.Headers["Eyes-Expect-Version"] = "2";
                 req.Headers["Eyes-Date"] =
                     TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.RFC1123);
             }

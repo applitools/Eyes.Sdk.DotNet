@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Concurrency version 2. [Trello 2368](https://trello.com/c/0qi2c0jW)
+
 ## [Eyes.Selenium vNext]
 ### Updated
 - Ultrafast Grid: Reverted Skip-List for now. [Trello 1974](https://trello.com/c/44xq8dze)
