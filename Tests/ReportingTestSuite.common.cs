@@ -149,7 +149,14 @@ namespace Applitools.Tests.Utils
         public void OneTimeTearDown()
         {
             HttpRestClient client = new HttpRestClient(new Uri("http://sdk-test-results.herokuapp.com"));
-            client.PostJson("/result", reportSummary_);
+            if (IS_FULL_COVERAGE)
+            {
+                client.PostJson("/send_full_regression/sdks", reportSummary_);
+            }
+            else
+            {
+                client.PostJson("/result", reportSummary_);
+            }
         }
     }
 }
