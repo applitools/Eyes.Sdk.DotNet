@@ -1,6 +1,8 @@
 ## [Eyes.Selenium vNext]
 ### Updated
 - Ultrafast Grid: Reverted Skip-List for now. [Trello 1974](https://trello.com/c/44xq8dze)
+### Fixed
+- `GetVisibleClientRect` now handles elements with `overflow: visible` correctly. [Trello 2235](https://trello.com/c/n4vj26sk)
 
 ## [Eyes.Sdk.Core 2.37] - 2020-12-03
 ### Updated
