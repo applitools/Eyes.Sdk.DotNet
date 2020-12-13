@@ -13,7 +13,7 @@ namespace Applitools.Tests.Utils
         public string Id { get; set; } = Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_ID") ?? "0000-0000";
 
         [JsonProperty("sandbox")]
-        public bool Sandbox { get; set; } =
+        public bool Sandbox =>
             // specifically request to send to sandbox...
             "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase) ||
             // or local run...
