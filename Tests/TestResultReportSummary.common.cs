@@ -14,9 +14,12 @@ namespace Applitools.Tests.Utils
 
         [JsonProperty("sandbox")]
         public bool Sandbox { get; set; } =
+            // specifically request to send to sandbox...
             "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase) ||
-            Environment.GetEnvironmentVariable("TRAVIS_TAG") == null ||
-            !Environment.GetEnvironmentVariable("TRAVIS_TAG").Contains("RELEASE_CANDIDATE");
+            // or local run...
+            (Environment.GetEnvironmentVariable("TRAVIS_TAG") == null || 
+            // or not a release build and not full coverage
+            (!Environment.GetEnvironmentVariable("TRAVIS_TAG").Contains("RELEASE_CANDIDATE")) && !ReportingTestSuite.IS_FULL_COVERAGE);  
 
         [JsonProperty("results")]
         public HashSet<TestResult> Results { get; } = new HashSet<TestResult>();
