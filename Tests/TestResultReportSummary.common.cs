@@ -23,7 +23,7 @@ namespace Applitools.Tests.Utils
                 // or local run...
                 bool b2 = Environment.GetEnvironmentVariable("TRAVIS_TAG") == null;
                 // or not a release build and not full coverage
-                bool b3 = Environment.GetEnvironmentVariable("TRAVIS_TAG").Contains("RELEASE_CANDIDATE");
+                bool b3 = Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
                 bool b4 = ReportingTestSuite.IS_FULL_COVERAGE;
 
                 bool endResult =  b1 || b2 || (!b3 && !b4);
