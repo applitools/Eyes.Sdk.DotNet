@@ -218,6 +218,12 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        public void TestSimpleRegionBiggerThenTheViewport()
+        {
+            GetEyes().Check(Target.Window().Region(new Rectangle(0, 0, 2000, 2000)));
+        }
+
+        [Test]
         public void TestCheckElementFullyAfterScroll()
         {
             ((IJavaScriptExecutor)GetDriver()).ExecuteScript("window.scrollTo(0, 500)");

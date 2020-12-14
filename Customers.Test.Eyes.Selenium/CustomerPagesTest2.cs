@@ -690,5 +690,30 @@ document.querySelector('div.copy-container > div > ol > li:nth-child(3) > a').st
                 eyes.AbortIfNotClosed();
             }
         }
+
+        [Test]
+        public void TestRegionBiggerThanViewport()
+        {
+            Eyes eyes = new Eyes();
+            TestUtils.SetupLogging(eyes);
+
+            eyes.SendDom = false;
+            eyes.MatchTimeout = TimeSpan.Zero;
+            eyes.ForceFullPageScreenshot = true;
+
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            try
+            {
+                IWebDriver innerDriver = eyes.Open(driver, "maybelline", "maybelline", new Size(800, 800));
+                driver.Url = "https://www.maybelline.com.sg/face";
+                eyes.Check(Target.Region(By.CssSelector("body > div.container > div.site-container")));
+                eyes.Close();
+            }
+            finally
+            {
+                driver.Quit();
+                eyes.AbortIfNotClosed();
+            }
+        }
     }
 }

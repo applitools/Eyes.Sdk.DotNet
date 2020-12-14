@@ -96,6 +96,7 @@ Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowWithIgnoreRe
 Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestIgnoreDisplacements(False)
 Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestIgnoreDisplacements(True)
 Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestSimpleRegion
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestSimpleRegionBiggerThenTheViewport
 Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestAccessibilityRegions
 Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent
 Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckElementWithIgnoreRegionBySameElement_Fluent
@@ -116,6 +117,7 @@ Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestIgnoreDisplacements(
 Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestIgnoreDisplacements(True)
 Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestScrollbarsHiddenAndReturned_Fluent
 Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestSimpleRegion
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestSimpleRegionBiggerThenTheViewport
 Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestAccessibilityRegions
 Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckElementFully_Fluent
 Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckElementFullyAfterScroll
@@ -139,6 +141,7 @@ Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestIgnoreDisplacements(Fals
 Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestIgnoreDisplacements(True)
 Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestScrollbarsHiddenAndReturned_Fluent
 Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestSimpleRegion
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestSimpleRegionBiggerThenTheViewport
 Applitools.Selenium.Tests.TestHelloWorld.HelloWorldTest(False)
 Applitools.Selenium.Tests.TestPageWithHeader(Chrome, CSS).TestCheckPageWithHeader_Region
 Applitools.Selenium.Tests.TestPageWithHeader(Chrome, CSS).TestCheckPageWithHeader_Region_Fully
