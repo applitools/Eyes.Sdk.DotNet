@@ -48,6 +48,9 @@ script:
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
+  - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
+    export APPLITOOLS_FULL_COVERAGE=true;
+    fi
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
     python updateChangelogAndProjectFiles.py;
     fi

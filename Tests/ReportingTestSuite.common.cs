@@ -1,4 +1,5 @@
 ﻿using Applitools.Utils;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;
@@ -16,12 +17,12 @@ namespace Applitools.Tests.Utils
         protected readonly Dictionary<string, object> suiteArgs_ = new Dictionary<string, object>();
         private static readonly IList<string> includedTestsList = null;
         private static readonly string includedTestsListFilename;
-        public static readonly bool IS_FULL_COVERAGE = Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("FULL_COVERAGE") ?? false;
+        public static readonly bool IS_FULL_COVERAGE = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_FULL_COVERAGE"), StringComparison.OrdinalIgnoreCase);
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
         static ReportingTestSuite()
         {
-            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: TRAVIS_TAG: '{Environment.GetEnvironmentVariable("TRAVIS_TAG")}'");
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: TRAVIS_TAG: '{Environment.GetEnvironmentVariable("TRAVIS_TAG") ?? "<null>"}'");
             TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: IS_FULL_COVERAGE: {IS_FULL_COVERAGE}");
             if (!IS_FULL_COVERAGE)
             {
@@ -148,6 +149,7 @@ namespace Applitools.Tests.Utils
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: sending json: {JsonConvert.SerializeObject(reportSummary_)}");
             HttpRestClient client = new HttpRestClient(new Uri("http://sdk-test-results.herokuapp.com"));
             client.PostJson("/result", reportSummary_);
         }
