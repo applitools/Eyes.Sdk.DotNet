@@ -91,11 +91,11 @@ namespace Applitools.VisualGrid
             }
         }
 
-        private OpenService eyesOpenerService_;
-        private EyesService eyesCloserService_;
+        private OpenService eyesOpenService_;
+        private CloseService eyesCloseService_;
         private EyesService renderRequestCollectionService_;
         private RenderingGridService renderingGridService_;
-        private EyesService eyesCheckerService_;
+        private CheckService eyesCheckService_;
         private RenderingInfo renderingInfo_;
         private bool wasConcurrencyLogSent_;
 
@@ -174,7 +174,7 @@ namespace Applitools.VisualGrid
                     case TaskType.Abort:
                     case TaskType.Close:
                         Logger.Verbose("Task {0}", type);
-                        eyesOpenerService_.DecrementConcurrency();
+                        eyesOpenService_.DecrementConcurrency();
                         openerServiceConcurrencyLock_.Set();
                         break;
                     case TaskType.Check:
@@ -198,11 +198,11 @@ namespace Applitools.VisualGrid
         private void StartServices()
         {
             Logger.Verbose("enter");
-            eyesOpenerService_.Start();
-            eyesCloserService_.Start();
+            eyesOpenService_.Start();
+            eyesCloseService_.Start();
             renderRequestCollectionService_.Start();
             renderingGridService_.Start();
-            eyesCheckerService_.Start();
+            eyesCheckService_.Start();
             IsServicesOn = true;
             Logger.Verbose("exit");
         }
@@ -211,11 +211,11 @@ namespace Applitools.VisualGrid
         {
             Logger.Verbose("enter");
             IsServicesOn = false;
-            eyesOpenerService_.Stop();
-            eyesCloserService_.Stop();
+            eyesOpenService_.Stop();
+            eyesCloseService_.Stop();
             renderRequestCollectionService_.Stop();
             renderingGridService_.Stop();
-            eyesCheckerService_.Stop();
+            eyesCheckService_.Stop();
             Logger.Verbose("exit");
         }
 
@@ -262,11 +262,11 @@ namespace Applitools.VisualGrid
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             int concurrentOpenSessions = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency();
-            eyesOpenerService_ = new OpenService("eyesOpenerService", Logger, concurrentOpenSessions, openerServiceConcurrencyLock_,
+            eyesOpenService_ = new OpenService("eyesOpenerService", Logger, concurrentOpenSessions, openerServiceConcurrencyLock_,
                 new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(openerServiceLock_, tasker, "eyesOpenerService")),
                 new EyesService.Tasker(() => GetNextTestToOpen_()));
 
-            eyesCloserService_ = new EyesService("eyesCloserService", Logger, concurrentOpenSessions,
+            eyesCloseService_ = new EyesService("eyesCloserService", Logger, concurrentOpenSessions,
                 new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(closerServiceLock_, tasker, "eyesCloserService")),
                 new EyesService.Tasker(() => GetNextTestToClose_()));
 
@@ -295,7 +295,7 @@ namespace Applitools.VisualGrid
                     return nextTestToRender;
                 }), renderingServiceLock_);
 
-            eyesCheckerService_ = new EyesService("eyesCheckerService", Logger, concurrentOpenSessions,
+            eyesCheckService_ = new EyesService("eyesCheckerService", Logger, concurrentOpenSessions,
                 new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(checkerServiceLock_, tasker, "eyesCheckerService")),
                 new EyesService.Tasker(() => GetNextCheckTask_()));
         }
