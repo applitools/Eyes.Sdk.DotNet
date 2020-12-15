@@ -606,6 +606,7 @@ namespace Applitools.Selenium
                     }
                     else
                     {
+                        state.OriginLocation = PositionProvider.GetCurrentPosition();
                         CheckWindow_(checkSettingsInternal);
                     }
                 }
@@ -704,6 +705,8 @@ namespace Applitools.Selenium
             Rectangle elementBounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
             Rectangle elementInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
             string positionStyle = EyesRemoteWebElement.GetComputedStyle("position", targetElement, driver_);
+
+            state.OriginLocation = elementInnerBounds.Location;
 
             bool isScrollableElement = scrollSize.Height > elementInnerBounds.Height || scrollSize.Width > elementInnerBounds.Width;
 
@@ -807,6 +810,7 @@ namespace Applitools.Selenium
             }
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
             Rectangle bounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
+            state.OriginLocation = bounds.Location;
             if (!state.EffectiveViewport.Contains(bounds))
             {
                 Point visualOffset = GetFrameChainOffset_(currentFrameChain);
@@ -1226,6 +1230,7 @@ namespace Applitools.Selenium
             {
                 driver_.SwitchTo().Frame(state.FrameToSwitchTo);
             }
+            result.OriginLocation = state.OriginLocation;
             return result;
         }
 

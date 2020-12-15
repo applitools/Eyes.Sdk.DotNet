@@ -14,5 +14,6 @@ namespace Applitools.Selenium
         public IPositionProvider OriginPositionProvider { get; internal set; } = new NullPositionProvider();
         public Size StitchOffset { get; internal set; }
         public IWebElement FrameToSwitchTo { get; set; }
+        public Point OriginLocation { get; set; }
     }
 }
