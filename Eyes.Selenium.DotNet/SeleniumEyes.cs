@@ -706,7 +706,9 @@ namespace Applitools.Selenium
             Rectangle elementInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
             string positionStyle = EyesRemoteWebElement.GetComputedStyle("position", targetElement, driver_);
 
-            state.OriginLocation = elementInnerBounds.Location;
+            Point el = targetElement.Location;
+            el.Offset(elementInnerBounds.X - elementBounds.X, elementInnerBounds.Y - elementBounds.Y);
+            state.OriginLocation = el;
 
             bool isScrollableElement = scrollSize.Height > elementInnerBounds.Height || scrollSize.Width > elementInnerBounds.Width;
 
@@ -810,7 +812,8 @@ namespace Applitools.Selenium
             }
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
             Rectangle bounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
-            state.OriginLocation = bounds.Location;
+            Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
+            state.OriginLocation = el;
             if (!state.EffectiveViewport.Contains(bounds))
             {
                 Point visualOffset = GetFrameChainOffset_(currentFrameChain);
