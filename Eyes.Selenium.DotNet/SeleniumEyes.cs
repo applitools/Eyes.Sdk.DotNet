@@ -1270,6 +1270,8 @@ namespace Applitools.Selenium
         private EyesWebDriverScreenshot GetViewportScreenshot_(ScaleProviderFactory scaleProviderFactory)
         {
             Thread.Sleep(WaitBeforeScreenshots);
+            IWebElement scrolledElement = GetCurrentFrameScrollRootElement();
+            jsExecutor_.ExecuteScript(SET_DATA_APPLITOOLS_SCROLL_ATTR, scrolledElement);
             EyesWebDriverScreenshot result = GetScaledAndCroppedScreenshot_(scaleProviderFactory);
             return result;
         }
