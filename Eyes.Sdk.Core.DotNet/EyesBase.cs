@@ -1202,7 +1202,7 @@ namespace Applitools
 
             string title = GetTitle();
 
-            Location location = screenshot.OriginLocation;
+            Location location = screenshot?.OriginLocation;
             return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl), screenshot);
         }
 
