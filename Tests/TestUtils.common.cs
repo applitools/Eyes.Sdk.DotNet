@@ -81,12 +81,10 @@ namespace Applitools.Tests.Utils
 
         public static string GetDom(string apiKey, TestResults testResults, string domId)
         {
-            string apiSessionUrl = testResults?.ApiUrls?.Session;
+            string apiSessionUrl = testResults?.AppUrls?.Session;
             if (string.IsNullOrWhiteSpace(apiSessionUrl)) return null;
             UriBuilder uriBuilder = new UriBuilder(apiSessionUrl);
             NameValueCollection query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["format"] = "json";
-            query["AccessToken"] = testResults.SecretToken;
             query["apiKey"] = apiKey;
             uriBuilder.Query = query.ToString();
             uriBuilder.Path = $"/api/images/dom/{domId}/";
