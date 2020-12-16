@@ -25,9 +25,9 @@ git:
   submodules: false
 
 before_install:
-    - echo -e "\n\nmachine github.com\n  login $GITHUB_TOKEN\n" >~/.netrc
-    - git submodule update --init --recursive
-    - nvm install node
+  - echo -e "\n\nmachine github.com\n  login $GITHUB_TOKEN\n" >~/.netrc
+  - git submodule update --init --recursive
+  - nvm install node
 
 # env variables
 # $RELEASE_BRANCH
@@ -49,13 +49,15 @@ script:
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
-    export APPLITOOLS_FULL_COVERAGE=true;
+      export APPLITOOLS_FULL_COVERAGE=true;
     fi
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
-    python updateChangelogAndProjectFiles.py;
+      python updateChangelogAndProjectFiles.py;
     fi
   - chmod +x ./buildProjects.sh && ./buildProjects.sh
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
-    chmod +x ./deploy.sh && ./deploy.sh;
-    chmod +x ./sendMail.sh && ./sendMail.sh;
+      chmod +x ./deploy.sh && ./deploy.sh;
+      chmod +x ./sendMail.sh && ./sendMail.sh;
+    elif [[ $APPLITOOLS_FULL_COVERAGE = true ]]; then
+      chmod +x ./sendFullCoverageReport.sh && ./sendFullCoverageReport.sh;
     fi
