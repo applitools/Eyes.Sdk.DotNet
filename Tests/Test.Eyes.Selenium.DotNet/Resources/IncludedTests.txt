@@ -426,3 +426,6 @@ Applitools.Selenium.Tests.VisualGridTests.TestBatchClose.TestBatchCloseFlag
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCorsIframe
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCorsIframe
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCorsIframe
+Applitools.Selenium.Tests.TestFluentApi(Chrome, Scroll).TestCheckWindowAfterSwitchToFrame
+Applitools.Selenium.Tests.TestFluentApi(Chrome, VG).TestCheckWindowAfterSwitchToFrame
+Applitools.Selenium.Tests.TestFluentApi(Chrome, CSS).TestCheckWindowAfterSwitchToFrame

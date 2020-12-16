@@ -97,6 +97,13 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        public void TestCheckWindowAfterSwitchToFrame()
+        {
+            GetDriver().SwitchTo().Frame("frame1");
+            GetEyes().Check(Target.Window().Fully(false));
+        }
+
+        [Test]
         public void TestCheckRegionByCoordinates_Fluent()
         {
             GetEyes().Check("Fluent - Region by coordinates", Target.Region(new Rectangle(50, 70, 90, 110)));
