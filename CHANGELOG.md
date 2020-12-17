@@ -5,6 +5,8 @@
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+### Updated
+- Updated `dom-capture` script. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
 ### Added
 - `SAFARI_EARLY_ACCESS` value in `BrowserType` enum. [Trello 2385](https://trello.com/c/5PncFGDO)
 
