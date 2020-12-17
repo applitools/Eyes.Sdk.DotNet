@@ -706,7 +706,7 @@ namespace Applitools.Selenium
             Rectangle elementInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
             string positionStyle = EyesRemoteWebElement.GetComputedStyle("position", targetElement, driver_);
 
-            Point el = targetElement.Location;
+            Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
             el.Offset(elementInnerBounds.X - elementBounds.X, elementInnerBounds.Y - elementBounds.Y);
             state.OriginLocation = el;
 
