@@ -220,7 +220,7 @@ namespace Applitools.Tests
         public void TestBrowserNames()
         {
             List<BrowserType> browsers = new List<BrowserType>((BrowserType[])Enum.GetValues(typeof(BrowserType)));
-            Assert.AreEqual(16, browsers.Count, "wrong number of browser types");
+            Assert.AreEqual(17, browsers.Count, "wrong number of browser types");
             foreach (BrowserType browser in browsers)
             {
                 Assert.NotNull(BrowserNames.GetBrowserName(browser), $"{nameof(BrowserType)}.{browser} is not covered by {nameof(BrowserNames)}.{nameof(BrowserNames.GetBrowserName)}");
@@ -245,6 +245,8 @@ namespace Applitools.Tests
             browsers.Remove(BrowserType.SAFARI_ONE_VERSION_BACK);
             Assert.AreEqual(BrowserNames.Safari, BrowserNames.GetBrowserName(BrowserType.SAFARI_TWO_VERSIONS_BACK));
             browsers.Remove(BrowserType.SAFARI_TWO_VERSIONS_BACK);
+            Assert.AreEqual(BrowserNames.Safari, BrowserNames.GetBrowserName(BrowserType.SAFARI_EARLY_ACCESS));
+            browsers.Remove(BrowserType.SAFARI_EARLY_ACCESS);
 
             Assert.AreEqual(BrowserNames.IE + " 10", BrowserNames.GetBrowserName(BrowserType.IE_10));
             browsers.Remove(BrowserType.IE_10);

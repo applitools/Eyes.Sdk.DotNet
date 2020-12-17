@@ -17,6 +17,7 @@ namespace Applitools
         [EnumMember(Value = "safari")] SAFARI,
         [EnumMember(Value = "safari-1")] SAFARI_ONE_VERSION_BACK,
         [EnumMember(Value = "safari-2")] SAFARI_TWO_VERSIONS_BACK,
+        [EnumMember(Value = "safari-earlyaccess")] SAFARI_EARLY_ACCESS,
         [EnumMember(Value = "ie10")] IE_10,
         [EnumMember(Value = "ie")] IE_11,
         [EnumMember(Value = "edge")] 
