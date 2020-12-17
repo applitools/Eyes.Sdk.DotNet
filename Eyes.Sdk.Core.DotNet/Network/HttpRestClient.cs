@@ -513,7 +513,9 @@ namespace Applitools.Utils
         public static DefaultWebRequestCreator Instance = new DefaultWebRequestCreator();
         public WebRequest Create(Uri uri)
         {
-            return WebRequest.Create(uri);
+            HttpWebRequest request = WebRequest.CreateHttp(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            return request;
         }
     }
 }
