@@ -28,6 +28,7 @@
                 case BrowserType.SAFARI:
                 case BrowserType.SAFARI_ONE_VERSION_BACK:
                 case BrowserType.SAFARI_TWO_VERSIONS_BACK:
+                case BrowserType.SAFARI_EARLY_ACCESS:
                     return Safari;
 
                 case BrowserType.IE_10: return IE + " 10";
