@@ -16,7 +16,7 @@ namespace Applitools.Tests.Utils
     {
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
 
-        public static string InitLogPath([CallerMemberName]string testName = null)
+        public static string InitLogPath([CallerMemberName] string testName = null)
         {
             string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm_ss");
             string extendedTestName = $"{testName}_{dateString}";
@@ -25,7 +25,7 @@ namespace Applitools.Tests.Utils
             return path;
         }
 
-        public static ILogHandler InitLogHandler([CallerMemberName]string testName = null, string logPath = null)
+        public static ILogHandler InitLogHandler([CallerMemberName] string testName = null, string logPath = null)
         {
             if (!RUNS_ON_CI)
             {
@@ -76,6 +76,25 @@ namespace Applitools.Tests.Utils
             {
                 SessionResults sessionResults = metaResults.DeserializeBody<SessionResults>(false);
                 return sessionResults;
+            }
+        }
+
+        public static string GetDom(string apiKey, TestResults testResults, string domId)
+        {
+            string apiSessionUrl = testResults?.AppUrls?.Session;
+            if (string.IsNullOrWhiteSpace(apiSessionUrl)) return null;
+            UriBuilder uriBuilder = new UriBuilder(apiSessionUrl);
+            NameValueCollection query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["apiKey"] = apiKey;
+            uriBuilder.Query = query.ToString();
+            uriBuilder.Path = $"/api/images/dom/{domId}/";
+
+            HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
+            using (HttpWebResponse response = client.Get(uriBuilder.ToString()))
+            using (Stream s = response.GetResponseStream())
+            {
+                var json = new StreamReader(s).ReadToEnd();
+                return json;
             }
         }
 

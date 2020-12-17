@@ -606,6 +606,7 @@ namespace Applitools.Selenium
                     }
                     else
                     {
+                        state.OriginLocation = PositionProvider.GetCurrentPosition();
                         CheckWindow_(checkSettingsInternal);
                     }
                 }
@@ -704,6 +705,10 @@ namespace Applitools.Selenium
             Rectangle elementBounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
             Rectangle elementInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
             string positionStyle = EyesRemoteWebElement.GetComputedStyle("position", targetElement, driver_);
+
+            Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
+            el.Offset(elementInnerBounds.X - elementBounds.X, elementInnerBounds.Y - elementBounds.Y);
+            state.OriginLocation = el;
 
             bool isScrollableElement = scrollSize.Height > elementInnerBounds.Height || scrollSize.Width > elementInnerBounds.Width;
 
@@ -807,6 +812,8 @@ namespace Applitools.Selenium
             }
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
             Rectangle bounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
+            Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
+            state.OriginLocation = el;
             if (!state.EffectiveViewport.Contains(bounds))
             {
                 Point visualOffset = GetFrameChainOffset_(currentFrameChain);
@@ -1226,6 +1233,7 @@ namespace Applitools.Selenium
             {
                 driver_.SwitchTo().Frame(state.FrameToSwitchTo);
             }
+            result.OriginLocation = state.OriginLocation;
             return result;
         }
 
@@ -1265,6 +1273,8 @@ namespace Applitools.Selenium
         private EyesWebDriverScreenshot GetViewportScreenshot_(ScaleProviderFactory scaleProviderFactory)
         {
             Thread.Sleep(WaitBeforeScreenshots);
+            IWebElement scrolledElement = GetCurrentFrameScrollRootElement();
+            jsExecutor_.ExecuteScript(SET_DATA_APPLITOOLS_SCROLL_ATTR, scrolledElement);
             EyesWebDriverScreenshot result = GetScaledAndCroppedScreenshot_(scaleProviderFactory);
             return result;
         }

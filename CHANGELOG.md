@@ -1,3 +1,11 @@
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
 ## [Eyes.Images 2.19] - 2020-12-13
 ### Updated
 - Match to latest Eyes.Sdk.Core

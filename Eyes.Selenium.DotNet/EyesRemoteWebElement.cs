@@ -69,7 +69,7 @@ namespace Applitools.Selenium
 
         private readonly string JS_GET_SCROLL_POSITION = "return arguments[0].scrollLeft + ',' + arguments[0].scrollTop;";
         private static readonly string JS_GET_SCROLL_SIZE = "return arguments[0].scrollWidth + ',' + arguments[0].scrollHeight;";
-
+        private static readonly string JS_GET_OFFSET_POSITION = "return arguments[0].offsetLeft + ',' + arguments[0].offsetTop;";
         private readonly string JS_GET_CLIENT_WIDTH = "return arguments[0].clientWidth;";
         private readonly string JS_GET_CLIENT_HEIGHT = "return arguments[0].clientHeight;";
 
@@ -436,6 +436,16 @@ return getVisibleElementRect(arguments[0])";
             webElement_.SendKeys(text);
         }
 
+        public static Point GetOffsetPosition(IWebElement targetElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        {
+            if (jsExecutor.ExecuteScript(JS_GET_OFFSET_POSITION, targetElement) is string scrollPositionStr)
+            {
+                string[] data = scrollPositionStr.Split(',');
+                return new Point(Convert.ToInt32(data[0]), Convert.ToInt32(data[1]));
+            }
+            return Point.Empty;
+        }
+
         public Region GetBounds()
         {
             Point weLocation = webElement_.Location;
@@ -768,6 +778,7 @@ return getVisibleElementRect(arguments[0])";
         {
             return base.GetHashCode();
         }
+
         #endregion
     }
 }

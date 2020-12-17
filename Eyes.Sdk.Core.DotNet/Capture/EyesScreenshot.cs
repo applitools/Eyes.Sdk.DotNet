@@ -17,6 +17,8 @@ namespace Applitools
 
         public string DomUrl { get; set; }
 
+        public Point OriginLocation { get; set; }
+
         /// <summary>
         /// Returns a part of the screenshot based on the given region.
         /// </summary>

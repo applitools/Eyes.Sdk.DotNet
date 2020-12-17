@@ -1202,7 +1202,8 @@ namespace Applitools
 
             string title = GetTitle();
 
-            return new AppOutputWithScreenshot(new AppOutput(title, null, imageBytes, url, screenshot?.DomUrl), screenshot);
+            Location location = screenshot?.OriginLocation;
+            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl), screenshot);
         }
 
         protected string TryCaptureAndPostDom(ICheckSettingsInternal checkSettingsInternal)
