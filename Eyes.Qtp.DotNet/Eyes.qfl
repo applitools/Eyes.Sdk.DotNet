@@ -64,7 +64,7 @@ Class Eyes_
 		defaultRetryTimeout_ = 2
 		width_ = -1
 		height_ = -1
-		eyes_.AgentId = "eyes.qtp/1.16 (UFT " & UFTVersionInRegistry() & ")"
+		eyes_.AgentId = "eyes.qtp/1.16.1 (UFT " & UFTVersionInRegistry() & ")"
 		eyes_.InteropMatchTimeout = 0
 	End Sub
 
@@ -222,22 +222,6 @@ Class Eyes_
 	End Sub
 
 	Public Sub SetBaselineInfoFromBrowser(browser, width, height)
-
-		Dim i, j
-		Dim children :  Set children = browser.ChildObjects()
-		Dim props :  set props = browser.GetAllRoProperties()
-		For i = 0 To props.Count - 1
-			SystemUtil.PrintToDebugStream props(i).name & ": " & props(i).Value
-		Next
-
-		For i = 0 To children.Count - 1
-			SystemUtil.PrintToDebugStream "child " & i
-			set props = children(i).GetAllRoProperties()
-			For j = 0 To props.Count - 1
-				SystemUtil.PrintToDebugStream "    " & props(j).name & ": " & props(j).Value
-			Next
-		Next
-
 		If (Not IsBrowserObject_(browser)) Then
 			eyes_.Throw "Not a browser!"
 		End If
