@@ -70,7 +70,7 @@ namespace Applitools.Tests.Utils
             query["AccessToken"] = testResults.SecretToken;
             query["apiKey"] = apiKey;
             uriBuilder.Query = query.ToString();
-
+            System.Threading.Thread.Sleep(500);
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
             using (HttpWebResponse metaResults = client.Get(uriBuilder.ToString()))
             {
