@@ -1208,7 +1208,7 @@ namespace Applitools.Selenium
             {
                 Logger.Verbose($"{nameof(state.EffectiveViewport)}: {{0}} ; {nameof(state.FullRegion)}: {{1}}",
                     state.EffectiveViewport, state.FullRegion);
-                result = GetViewportScreenshot_(scaleProviderFactory);
+                result = GetViewportScreenshot_(scaleProviderFactory, state);
                 result = (EyesWebDriverScreenshot)result.GetSubScreenshot(state.FullRegion, true);
             }
             else if (targetElement != null || stitchContent)
@@ -1217,7 +1217,7 @@ namespace Applitools.Selenium
             }
             else
             {
-                result = GetViewportScreenshot_(scaleProviderFactory);
+                result = GetViewportScreenshot_(scaleProviderFactory, state);
             }
 
             if (targetRegion.HasValue)
@@ -1270,11 +1270,14 @@ namespace Applitools.Selenium
             return result;
         }
 
-        private EyesWebDriverScreenshot GetViewportScreenshot_(ScaleProviderFactory scaleProviderFactory)
+        private EyesWebDriverScreenshot GetViewportScreenshot_(ScaleProviderFactory scaleProviderFactory, CheckState state)
         {
             Thread.Sleep(WaitBeforeScreenshots);
             IWebElement scrolledElement = GetCurrentFrameScrollRootElement();
-            jsExecutor_.ExecuteScript(SET_DATA_APPLITOOLS_SCROLL_ATTR, scrolledElement);
+            if (state.StitchContent)
+            {
+                jsExecutor_.ExecuteScript(SET_DATA_APPLITOOLS_SCROLL_ATTR, scrolledElement);
+            }
             EyesWebDriverScreenshot result = GetScaledAndCroppedScreenshot_(scaleProviderFactory);
             return result;
         }
