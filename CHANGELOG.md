@@ -1,14 +1,30 @@
-## [Eyes.Sdk.Core vNext]
-### Fixed
-- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+## [Eyes.Images 2.20] - 2020-12-20
+### Updated
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 4.17] - 2020-12-20
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Selenium 2.39] - 2020-12-20
 ### Fixed
 - Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
 ### Updated
 - Updated `dom-capture` script. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
 
-## [Eyes.Common vNext]
+## [Eyes.LeanFT 2.22] - 2020-12-20
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.21] - 2020-12-20
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.39] - 2020-12-20
+### Fixed
+- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
+## [Eyes.Common 1.3] - 2020-12-20
 ### Added
 - `SAFARI_EARLY_ACCESS` value in `BrowserType` enum. [Trello 2385](https://trello.com/c/5PncFGDO)
 
