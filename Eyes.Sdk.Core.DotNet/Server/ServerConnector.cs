@@ -269,10 +269,8 @@ namespace Applitools
         /// Matches the current window with the currently expected window.
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="session"></param>
-        public virtual MatchResult MatchWindow(RunningSession session, MatchWindowData data)
+        public virtual MatchResult MatchWindow(MatchWindowData data)
         {
-            ArgumentGuard.NotNull(session, nameof(session));
             ArgumentGuard.NotNull(data, nameof(data));
 
             if (!TryUploadImage_(data))
@@ -282,7 +280,7 @@ namespace Applitools
 
             try
             {
-                string url = string.Format("api/sessions/running/{0}", session.Id);
+                string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
                 using (HttpWebResponse response = httpClient_.PostJson(url, data))
                 {
                     if (response == null)

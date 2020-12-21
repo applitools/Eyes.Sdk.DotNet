@@ -258,7 +258,7 @@ namespace Applitools.VisualGrid
 
             eyesCloseService_ = new CloseService(Logger, ServerConnector);
 
-            resourceCollectionService_ = new ResourceCollectionService(Logger, ServerConnector, DebugResourceWriter, ((IVisualGridRunner)this).ResourcesCacheMap);
+            resourceCollectionService_ = new ResourceCollectionService(Logger, ServerConnector, DebugResourceWriter, ((IVisualGridRunner)this).ResourcesCacheMap, userAgent_);
 
             renderingGridService_ = new RenderingGridService("renderingGridService", Logger, concurrentOpenSessions,
                 new RenderingGridService.RGServiceListener(() =>
@@ -280,9 +280,7 @@ namespace Applitools.VisualGrid
                     return nextTestToRender;
                 }), renderingServiceLock_);
 
-            eyesCheckService_ = new EyesService("eyesCheckerService", Logger, concurrentOpenSessions,
-                new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(checkerServiceLock_, tasker, "eyesCheckerService")),
-                new EyesService.Tasker(() => GetNextCheckTask_()));
+            eyesCheckService_ = new CheckService(Logger, ServerConnector);
         }
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)

@@ -19,7 +19,7 @@ namespace Applitools
 
         void CloseBatch(string batchId);
         RenderingInfo GetRenderingInfo();
-        MatchResult MatchWindow(RunningSession runningSession, MatchWindowData data);
+        MatchResult MatchWindow(MatchWindowData data);
         void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData matchWindowData);
         TestResults EndSession(RunningSession runningSession, bool isAborted, bool save);
         string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, IList<Rectangle> regions, string language);
@@ -29,5 +29,7 @@ namespace Applitools
         Task<List<JobInfo>> GetJobInfo(IRenderRequest[] renderRequests);
         void SendLogs(LogSessionsClientEvents clientEvents);
         void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes);
+        void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes);
+        Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource);
     }
 }

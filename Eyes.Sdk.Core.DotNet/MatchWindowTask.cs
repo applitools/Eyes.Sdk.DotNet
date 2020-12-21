@@ -388,7 +388,7 @@ namespace Applitools
                                         string renderId)
         {
             // Prepare match data.
-            MatchWindowData data = new MatchWindowData(appOutput.AppOutput, tag, agentSetupStr);
+            MatchWindowData data = new MatchWindowData(runningSession_, appOutput.AppOutput, tag, agentSetupStr);
 
             data.IgnoreMismatch = false;
             data.Options = new ImageMatchOptions(imageMatchSettings);
@@ -403,7 +403,7 @@ namespace Applitools
             data.Options.ReplaceLast = replaceLast;
             data.RenderId = renderId;
 
-            return serverConnector_.MatchWindow(runningSession_, data);
+            return serverConnector_.MatchWindow(data);
         }
 
         private static void CollectSimpleRegions_(ICheckSettingsInternal checkSettingsInternal,

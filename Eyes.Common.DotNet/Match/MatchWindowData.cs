@@ -1,4 +1,5 @@
 ﻿using Applitools.Utils;
+using Newtonsoft.Json;
 
 namespace Applitools
 {
@@ -13,16 +14,20 @@ namespace Applitools
         /// <param name="appOutput">The appOutput for the current matchWindow call.</param>
         /// <param name="tag">The step name to use.</param>
         /// <param name="agentSetup">The test setup parameters used.</param>
-        public MatchWindowData(AppOutput appOutput, string tag, object agentSetup = null)
+        public MatchWindowData(RunningSession runningSession, AppOutput appOutput, string tag, object agentSetup = null)
         {
             ArgumentGuard.NotNull(appOutput, nameof(appOutput));
 
+            RunningSession = runningSession;
             AppOutput = appOutput;
             Tag = tag;
             AgentSetup = agentSetup;
         }
 
         public string Tag { get; private set; }
+        
+        [JsonIgnore]
+        public RunningSession RunningSession { get; }
 
         public AppOutput AppOutput { get; private set; }
 
