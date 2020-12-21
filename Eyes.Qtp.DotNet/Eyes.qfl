@@ -1,8 +1,8 @@
-Option Explicit On
+Option Explicit 
 
 Dim eyes, eyesReport
-Set eyes = New Eyes_
-Set eyesReport = New EyesReport_
+Set eyes = new Eyes_
+Set eyesReport = new EyesReport_
 
 Const TOP_LEVEL_OBJECT_TYPE_UNKNOWN = 1
 Const TOP_LEVEL_OBJECT_TYPE_WINDOW = 2
@@ -11,46 +11,46 @@ Const TOP_LEVEL_OBJECT_TYPE_PM_DEVICE = 4
 Const TOP_LEVEL_OBJECT_TYPE_MC_DEVICE = 5
 
 'Declare Function GetAncestor Lib "user32.dll" (ByVal hwnd As Long, ByVal gaFlags As Long) As Long
-Extern.Declare micLong, "GetAncestor", "user32", "GetAncestor", micLong, micLong  
+Extern.Declare micLong, "GetAncestor", "user32", "GetAncestor", micLong, micLong	
 
 Class Eyes_
 
-	' === Fields ===
+    ' === Fields ===
 
-	Private eyesPath_
-	Private eyes_
-	Private utils_
-	Private matchLevel_
-	Private topLevelObject_
-	Private topLevelObjectType_
-	Private logFile_
-	Private hostApp_
-	Private hostOS_
-	Private imageFile_
-	Private defaultRetryTimeout_
-	Private matchOnceOnTimeout_
-	Private account_
-	Private width_
-	Private height_
+    Private eyesPath_
+    Private eyes_
+    Private utils_
+    Private matchLevel_
+    Private topLevelObject_
+    Private topLevelObjectType_
+    Private logFile_
+    Private hostApp_
+    Private hostOS_
+    Private imageFile_
+    Private defaultRetryTimeout_
+    Private matchOnceOnTimeout_
+    Private account_
+    Private width_
+    Private height_
 
-	' === Constructors ===
+    ' === Constructors ===
 
-	Private Sub Class_Initialize()
-		Dim qtp, test, libName, libPath, libsCount, i
+    Private Sub Class_Initialize
+        Dim qtp, test, libName, libPath, libsCount, i
 
-		' Compute the eyes path
-		eyesPath_ = TryGetEyesPath_()
-		If IsEmpty(eyesPath_) Then
+	    ' Compute the eyes path
+	    eyesPath_ = TryGetEyesPath_()
+	    If IsEmpty(eyesPath_) Then
 	        Set qtp = CreateObject("QuickTest.Application")
 		    Set test = qtp.Test
 		    libsCount = test.Settings.Resources.Libraries.Count
-			libName = "Eyes.qfl"
-			For i = 1 To libsCount
-				libPath = test.Settings.Resources.Libraries.Item(i)
-				If Right(libPath, Len(libName)) = libName Then
-					eyesPath_ = Left(libPath, Len(libPath) - Len(libName))
-				End If
-			Next
+		    libName = "Eyes.qfl"
+		    For i = 1 To libsCount
+			    libPath = test.Settings.Resources.Libraries.Item(i)
+			    If Right(libPath, Len(libName)) = libName Then
+				    eyesPath_ = Left(libPath, Len(libPath) - Len(libName))
+			    End If
+		    Next
 		End If
 		
 	    Set eyes_ = DotNetFactory.CreateInstance("Applitools.Images.Eyes", eyesPath_ & "Eyes.Images.DotNet.dll")
@@ -324,19 +324,19 @@ Class Eyes_
 	    Set CheckObject = appImage
     End Function
 
-	Public Function CheckObjectWithTimeout(object, tag, timeout)
-		Dim logMsg, appImage
-
-		logMsg = "CheckObjectWithTimeout(" & Object.ToString & ", " & tag & ", " & timeout & ")"
-		eyes_.Log logMsg
+    Public Function CheckObjectWithTimeout(object, tag, timeout)
+    	Dim logMsg, appImage
+    	
+	    logMsg = "CheckObjectWithTimeout(" & object.ToString & ", " & tag & ", " & timeout & ")"
+	    eyes_.Log logMsg
 	
 	    Set appImage = CheckImageRetry_(object, tag, timeout)
 	
 	    If appImage.IsMatch Then
-			eyes_.Log logMsg & " => Match"
-		Else
-			eyes_.Log logMsg & " => Mismatch"
-		End If
+		    eyes_.Log logMsg & " => Match"
+	    Else
+		    eyes_.Log logMsg & " => Mismatch"
+	    End If
 	
 	    Set CheckObjectWithTimeout = appImage
     End Function
@@ -346,28 +346,28 @@ Class Eyes_
     	
 	    Set testResults = eyes_.Close(false)
 	    eyesReport.Url = testResults.Url
-		eyesReport.IsPassed = testResults.IsPassed
-		eyesReport.IsNew = testResults.IsNew
-		eyesReport.IsRunning = False
-		eyesReport.Steps = testResults.Steps
-		eyesReport.Matches = testResults.Matches
-	End Sub
+	    eyesReport.IsPassed = testResults.IsPassed
+	    eyesReport.IsNew = testResults.IsNew
+	    eyesReport.IsRunning = false
+	    eyesReport.Steps = testResults.Steps
+	    eyesReport.Matches = testResults.Matches
+    End Sub
 
-	' === Private Methods ===
+    ' === Private Methods ===
 
 	Function GetBrowserPage_(obj)
-		Select Case TypeOf_(obj)
-			Case "Browser"
-				Dim children :  Set children = obj.ChildObjects()
+	    Select Case TypeOf_(obj)
+	        Case "Browser"
+	            Dim children: Set children = obj.ChildObjects()
 	            If children.count <> 1 Then
-					eyes_.Throw "Unexpected amount of browser child objects (" & children.count & ")"
-				End If
+	                eyes_.Throw "Unexpected amount of browser child objects (" & children.count & ")"
+	            End If
 	            Set GetBrowserPage_ = children(0)
 	        Case "Page"
 	            Set GetBrowserPage_ = obj
 	        Case Else
-				eyes_.Throw "Browser object expected!"
-		End Select
+	            eyes_.Throw "Browser object expected!"
+	    End Select
 	End Function
 
 	Private Function CheckImageRetry_(object, tag, retryTimeout)
@@ -415,105 +415,105 @@ Class Eyes_
 	    Set CheckImageRetry_ = appImage
     End Function
 
-	Private Function CheckImage_(object, tag, replaceLast)
-		Dim imageUrl
-		eyes_.Log "CheckImage_()"
-		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
-			imageUrl = CaptureRemote_(Of Object)()
-				    	Set CheckImage_ = eyes_.CheckImageAtUrl(imageUrl, tag, replaceLast)
+    Private Function CheckImage_(object, tag, replaceLast)
+    	Dim imageUrl
+	    eyes_.Log "CheckImage_()"
+	    If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
+	    	imageUrl = CaptureRemote_(object)
+	    	Set CheckImage_ = eyes_.CheckImageAtUrl(imageUrl, tag, replaceLast)
 	    Else
-			Capture_ Object
+		    Capture_ object
 		    Set CheckImage_ = eyes_.CheckImageFile(imageFile_, tag, replaceLast)
 	    End If
-	End Function
+    End Function
 
 	Private Function CaptureRemote_(object)
 		Dim imageKey, imageUrl
 		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
 			' Capture image and store it in the cloud repository in a device specific key
-			imageKey = "PUBLIC:/HPD/applitools_" & Object.GetTOProperty("device_id") & ".jpg"
+			imageKey = "PUBLIC:/HPD/applitools_" & object.GetTOProperty("device_id") & ".jpg"
 			topLevelObject_.Screenshot "key=" & imageKey
-
+			
 			' Get the remote image URL.
 			imageUrl = "https://" & account_.ServerUrl & "/services/repositories/media/" & imageKey & "?operation=download&user=" & account_.User & "&password=" & account_.Password
 			eyes_.Log "CaptureRemote_() => " & imageUrl
 			CaptureRemote_ = imageUrl
 		Else
-			eyes_.Throw "Remote catpure is not supported for input object: " & Object.ToString()    
+			eyes_.Throw "Remote catpure is not supported for input object: " & object.ToString()	
 		End If
 	End Function
 
 	Private Sub Capture_(object)
 		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_MC_DEVICE Then
-			Object.CaptureBitmap imageFile_, True
+			object.CaptureBitmap imageFile_, true
 		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
-			utils_.DownloadFile CaptureRemote_(Of Object), imageFile_, True
-		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_BROWSER And IsBrowserObject_(Of Object)() Then
-			GetBrowserPage_(Of Object).CaptureBitmap imageFile_, True
+			utils_.DownloadFile CaptureRemote_(object), imageFile_, true
+		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_BROWSER and IsBrowserObject_(object) Then
+			GetBrowserPage_(object).CaptureBitmap imageFile_, true
 		Else
-			Object.CaptureBitmap imageFile_, True
+			object.CaptureBitmap imageFile_, true
 		End If
-
+		
 		eyes_.Log "Object image captured"
 	End Sub
 
-	Private Sub SetAppEnvironment_()
-		Dim hostOS, hostApp, osName, osVer, appVer
+    Private Sub SetAppEnvironment_()
+    	Dim hostOS, hostApp, osName, osVer, appVer
 
 		' Infer host OS
 		hostOS = hostOS_
-		If IsNull(hostOS) Then
-			If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_MC_DEVICE Then
-				osName = topLevelObject_.GetROProperty("model") & " " & topLevelObject_.GetROProperty("ostype")
-				osVer = MajorMinor_(topLevelObject_.GetROProperty("osversion"))
-				hostOS = osName & " " & osVer
-			ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
-				' Get device model and os
-				osName = topLevelObject_.GetROProperty("model") & " " & topLevelObject_.GetROProperty("os")
-				osVer = MajorMinor_(topLevelObject_.GetROProperty("os_version"))
-				hostOS = osName & " " & osVer
+	    If IsNull(hostOS) Then
+			If topLevelObjectType_ =  TOP_LEVEL_OBJECT_TYPE_MC_DEVICE Then
+    			osName = topLevelObject_.GetROProperty("model") & " " & topLevelObject_.GetROProperty("ostype")
+    			osVer = MajorMinor_(topLevelObject_.GetROProperty("osversion"))
+    			hostOS = osName & " " & osVer
+			Elseif topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
+    			' Get device model and os
+    			osName = topLevelObject_.GetROProperty("model") & " " & topLevelObject_.GetROProperty("os")
+    			osVer = MajorMinor_(topLevelObject_.GetROProperty("os_version"))
+    			hostOS = osName & " " & osVer
 			Else
-				' Get Local OS name
-				osName = Environment("OS")
-				If InStr(osName, "Windows") > 0 Then
-					osName = "Windows"
-				End If
-
+	            ' Get Local OS name
+			    osName = Environment("OS")
+			    If InStr(osName, "Windows") > 0 Then
+				    osName = "Windows"
+			    End If
+				
 				' Get Local OS version
-				osVer = MajorMinor_(Environment("OSVersion"))
-				hostOS = osName & " " & osVer
-			End If
+			    osVer = MajorMinor_(Environment("OSVersion"))
+			    hostOS = osName & " " & osVer
+	    	End If
 		End If
 
-		hostApp = hostApp_
-		If IsNull(hostApp) Then
+        hostApp = hostApp_
+        If IsNull(hostApp) Then
 			If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_WINDOW Then
-				hostApp = utils_.GetProcessName(topLevelObject_.GetROProperty("process id"))
-			ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_BROWSER Then
-				appVer = topLevelObject_.GetROProperty("version")
-				hostApp = utils_.GetBrowserName(appVer)
-			End If
-		End If
-		If IsNull(hostOS) Then
+		    	hostApp = utils_.GetProcessName(topLevelObject_.GetROProperty("process id"))				
+		    ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_BROWSER Then
+		    	appVer = topLevelObject_.GetROProperty("version")
+		    	hostApp = utils_.GetBrowserName(appVer)
+			End If			
+        End If
+    	If IsNull(hostOS) Then
     		Set hostOS = Nothing
     	End If
-		If IsNull(hostApp) Then
+    	If IsNull(hostApp) Then
     		Set hostApp = Nothing
     	End If
-		eyes_.SetAppEnvironment hostOS, hostApp
-	End Sub
-
+        eyes_.SetAppEnvironment hostOS, hostApp
+    End Sub
+    
 	Private Function MajorMinor_(version)
 		Dim parts
-
-		parts = Split(version, ".")
-		If UBound(parts) > 1 Then
-			version = parts(0) & "." & parts(1)
-		End If
-
-		MajorMinor_ = version
+		
+	    parts = Split(version, ".")
+	    If UBound(parts) > 1 Then
+		    version = parts(0) & "." & parts(1)
+	    End If
+	    
+	    MajorMinor_ = version
 	End Function
-
+	
 	Private Function TryGetEyesPath_()
 		Dim path
 		On Error Resume Next
@@ -525,14 +525,14 @@ Class Eyes_
 			path = path & "\"
 		End If
 		TryGetEyesPath_ = path
-
+		
 	End Function
-
+	
 	Private Sub SetTopLevelObjectSize_()
-		If width_ <= 0 Or height_ <= 0 Then
+		If width_ <= 0 or height_ <= 0 Then
 			Exit Sub
 		End If
-
+		
 		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_BROWSER Then
 			SetBrowserSize_ topLevelObject_, width_, height_
 			width_ = -1
@@ -559,7 +559,7 @@ Class Eyes_
 	End Function
 
 	Private Function IsOfType_(object, typeStr)
-		IsOfType_ = StringContains_(TypeOf_(Of Object), typeStr)
+		IsOfType_ = StringContains_(TypeOf_(object), typeStr)
 	End Function
 
 	Private Function TypeOf_(object)
@@ -602,10 +602,11 @@ Class Eyes_
 				Loop Until (wait_retries = 0) Or (size_made_good)
 			End If
 
+			
 			full_retries = full_retries - 1
 			wait interval
-		Loop Until (full_retries = 0) Or (size_made_good)
-
+		Loop until (full_retries = 0) or (size_made_good)
+		
 		' Verify result.
 
 		Capture_ browser
@@ -614,7 +615,7 @@ Class Eyes_
 		
 		hInner = CInt(viewSize.height)
 		wInner = CInt(viewSize.width)
-		If (height <> hInner Or width <> wInner) Then
+		If (height <> hInner or width <> wInner) Then
 			eyes_.Throw "Failed to set viewport size! Expected: " + CStr(width) + "x" + CStr(height) + " Actual: " + CStr(wInner) + "x" + CStr(hInner)
 
 		End If
@@ -669,16 +670,16 @@ Class Eyes_
 	End Function
 
 	Private Function GetChromeLegacyWinObj_(mainHwnd)
-		Dim winObj :  Set winObj = Window("hwnd:=" & mainHwnd)
-		Dim children :  Set children = winObj.ChildObjects()
+		Dim winObj: Set winObj = Window("hwnd:=" & mainHwnd)
+		Dim children: Set children = winObj.ChildObjects()
 		Dim i
-
+	
 		If children.count = 0 Then
 			eyes_.Throw "No child objects found!"
 		End If
-
+		
 		For i = 0 To children.count - 1 Step 1
-			Dim child :  set child = children(i)
+			Dim child: set child = children(i)
 			If child.GetRoProperty("title") = "Chrome Legacy Window" Then
 				Set GetChromeLegacyWinObj_ = child
 				Exit Function
