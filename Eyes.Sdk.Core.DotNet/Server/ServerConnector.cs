@@ -1,5 +1,6 @@
 ﻿using Applitools.Ufg;
 using Applitools.Utils;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -433,7 +434,7 @@ namespace Applitools
             }
         }
 
-        public virtual async Task<List<JobInfo>> GetJobInfo(RenderRequest[] browserInfos)
+        public virtual async Task<List<JobInfo>> GetJobInfo(IRenderRequest[] browserInfos)
         {
             ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
             Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));

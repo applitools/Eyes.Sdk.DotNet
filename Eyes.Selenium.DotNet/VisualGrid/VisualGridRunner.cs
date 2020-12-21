@@ -93,7 +93,7 @@ namespace Applitools.VisualGrid
 
         private OpenService eyesOpenService_;
         private CloseService eyesCloseService_;
-        private EyesService renderRequestCollectionService_;
+        private ResourceCollectionService resourceCollectionService_;
         private RenderingGridService renderingGridService_;
         private CheckService eyesCheckService_;
         private RenderingInfo renderingInfo_;
@@ -105,7 +105,9 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, HashSet<string>> IVisualGridRunner.CachedResourceMapping { get; } = new ConcurrentDictionary<string, HashSet<string>>();
         ConcurrentDictionary<string, ResourceFuture> IVisualGridRunner.CachedResources { get; } = new ConcurrentDictionary<string, ResourceFuture>();
         ConcurrentDictionary<string, byte> IVisualGridRunner.PutResourceCache { get; } = new ConcurrentDictionary<string, byte>();
+        ConcurrentDictionary<string, RGridResource> IVisualGridRunner.ResourcesCacheMap { get; } = new ConcurrentDictionary<string, RGridResource>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
+
 
         public VisualGridRunner(ILogHandler logHandler = null)
             : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler)
@@ -198,11 +200,6 @@ namespace Applitools.VisualGrid
         private void StartServices()
         {
             Logger.Verbose("enter");
-            eyesOpenService_.Start();
-            eyesCloseService_.Start();
-            renderRequestCollectionService_.Start();
-            renderingGridService_.Start();
-            eyesCheckService_.Start();
             IsServicesOn = true;
             Logger.Verbose("exit");
         }
@@ -211,11 +208,6 @@ namespace Applitools.VisualGrid
         {
             Logger.Verbose("enter");
             IsServicesOn = false;
-            eyesOpenService_.Stop();
-            eyesCloseService_.Stop();
-            renderRequestCollectionService_.Stop();
-            renderingGridService_.Stop();
-            eyesCheckService_.Stop();
             Logger.Verbose("exit");
         }
 
@@ -262,18 +254,11 @@ namespace Applitools.VisualGrid
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             int concurrentOpenSessions = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency();
-            eyesOpenService_ = new OpenService("eyesOpenerService", Logger, concurrentOpenSessions, openerServiceConcurrencyLock_,
-                new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(openerServiceLock_, tasker, "eyesOpenerService")),
-                new EyesService.Tasker(() => GetNextTestToOpen_()));
+            eyesOpenService_ = new OpenService(Logger, ServerConnector, concurrentOpenSessions);
 
-            eyesCloseService_ = new EyesService("eyesCloserService", Logger, concurrentOpenSessions,
-                new EyesService.EyesServiceListener((tasker) => GetOrWaitForTask_(closerServiceLock_, tasker, "eyesCloserService")),
-                new EyesService.Tasker(() => GetNextTestToClose_()));
+            eyesCloseService_ = new CloseService(Logger, ServerConnector);
 
-            renderRequestCollectionService_ = new EyesService("renderRequestCollectionService", Logger, concurrentOpenSessions,
-                new EyesService.EyesServiceListener(
-                    (tasker) => GetOrWaitForTask_(renderRequestCollectionServiceLock_, tasker, "renderRequestCollectionService")),
-                new EyesService.Tasker(() => GetNextRenderRequestCollectionTask_()));
+            resourceCollectionService_ = new ResourceCollectionService(Logger, ServerConnector, DebugResourceWriter, ((IVisualGridRunner)this).ResourcesCacheMap);
 
             renderingGridService_ = new RenderingGridService("renderingGridService", Logger, concurrentOpenSessions,
                 new RenderingGridService.RGServiceListener(() =>
