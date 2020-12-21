@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Diagnostics;
+using Applitools.Selenium;
 
 namespace Applitools.VisualGrid
 {
@@ -258,7 +259,8 @@ namespace Applitools.VisualGrid
 
             eyesCloseService_ = new CloseService(Logger, ServerConnector);
 
-            resourceCollectionService_ = new ResourceCollectionService(Logger, ServerConnector, DebugResourceWriter, ((IVisualGridRunner)this).ResourcesCacheMap, userAgent_);
+            Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
+            resourceCollectionService_ = new ResourceCollectionService(Logger, ServerConnector, drw, ((IVisualGridRunner)this).ResourcesCacheMap, null);
 
             renderingGridService_ = new RenderingGridService("renderingGridService", Logger, concurrentOpenSessions,
                 new RenderingGridService.RGServiceListener(() =>
@@ -405,24 +407,24 @@ namespace Applitools.VisualGrid
             }
         }
 
-        private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
-        {
-            Logger.Verbose("locking renderRequestCollectionTaskList_. Count: {0}", renderRequestCollectionTaskList_.Count);
-            lock (renderRequestCollectionTaskList_)
-            {
-                if (renderRequestCollectionTaskList_.Count == 0)
-                {
-                    Logger.Verbose("releasing renderRequestCollectionTaskList_. returning null.");
-                    return null;
-                }
+        //private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
+        //{
+        //    Logger.Verbose("locking renderRequestCollectionTaskList_. Count: {0}", renderRequestCollectionTaskList_.Count);
+        //    lock (renderRequestCollectionTaskList_)
+        //    {
+        //        if (renderRequestCollectionTaskList_.Count == 0)
+        //        {
+        //            Logger.Verbose("releasing renderRequestCollectionTaskList_. returning null.");
+        //            return null;
+        //        }
 
-                RenderRequestCollectionTask renderRequestCollectionTask = renderRequestCollectionTaskList_[0];
-                renderRequestCollectionTaskList_.RemoveAt(0);
-                Task<TestResultContainer> task = new Task<TestResultContainer>(renderRequestCollectionTask.Call);
-                Logger.Verbose("releasing renderRequestCollectionTaskList_. returning task.");
-                return task;
-            }
-        }
+        //        RenderRequestCollectionTask renderRequestCollectionTask = renderRequestCollectionTaskList_[0];
+        //        renderRequestCollectionTaskList_.RemoveAt(0);
+        //        Task<TestResultContainer> task = new Task<TestResultContainer>(renderRequestCollectionTask.Call);
+        //        Logger.Verbose("releasing renderRequestCollectionTaskList_. returning task.");
+        //        return task;
+        //    }
+        //}
 
         private Task<TestResultContainer> GetNextTestToClose_()
         {
@@ -436,33 +438,6 @@ namespace Applitools.VisualGrid
                 }
             }
             return null;
-        }
-
-        private Task<TestResultContainer> GetOrWaitForTask_(AutoResetEvent lockObject, EyesService.Tasker tasker, string serviceName)
-        {
-            Task<TestResultContainer> nextTestToOpen = null;
-            try
-            {
-                nextTestToOpen = tasker.GetNextTask();
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error: {0}", e);
-            }
-            if (nextTestToOpen == null)
-            {
-                try
-                {
-                    Logger.Verbose("VisualGridRunner.GetOrWaitForTask_ - {0} waiting on lockObject #{1}", serviceName, lockObject.GetHashCode());
-                    lockObject.WaitOne(500);
-                    nextTestToOpen = tasker.GetNextTask();
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("Error: {0}", e);
-                }
-            }
-            return nextTestToOpen;
         }
 
         protected override TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)
@@ -585,7 +560,7 @@ namespace Applitools.VisualGrid
             Logger.Verbose("connector type: {0}", connector.GetType().Name);
             RenderRequestCollectionTask resourceCollectionTask = new RenderRequestCollectionTask(this, domData, connector,
                 userAgent, regionSelectors, userActions, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
-                new RenderingTask.TaskListener<List<RenderingTask>>(
+                new TaskListener<List<RenderingTask>>(
                     (renderingTasks) =>
                     {
                         Logger.Verbose("locking renderingTaskList_");
@@ -602,7 +577,7 @@ namespace Applitools.VisualGrid
                         NotifyAllServices();
                     }
                     ),
-                new RenderingTask.TaskListener(
+                new TaskListener(
                     () =>
                     {
                         listener.OnRenderSuccess();

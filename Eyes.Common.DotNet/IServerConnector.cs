@@ -25,7 +25,8 @@ namespace Applitools
         string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, IList<Rectangle> regions, string language);
         string AddRunningSessionImage(RunningSession runningSession, byte[] imageBytes);
         string PostDomCapture(string domJson);
-        RunningSession StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo);
+        RunningSession StartSession(SessionStartInfo sessionStartInfo_);
+        void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo);
         Task<List<JobInfo>> GetJobInfo(IRenderRequest[] renderRequests);
         void SendLogs(LogSessionsClientEvents clientEvents);
         void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes);

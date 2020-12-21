@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Applitools
 {
@@ -23,6 +24,35 @@ namespace Applitools
         {
             OnComplete = onComplete;
             OnFail = onFail;
+        }
+    }
+
+    public class SyncTaskListener<T> : TaskListener<T>
+    {
+        private Action<T> onComplete_;
+        private AutoResetEvent sync_;
+        private T result_;
+
+        public SyncTaskListener(Action<T> onComplete, Action<Exception> onFail)
+            : base(onComplete, onFail)
+        {
+            onComplete_ = onComplete;
+            OnComplete = OnComplete_;
+            OnFail = onFail;
+            sync_ = new AutoResetEvent(false);
+        }
+
+        private void OnComplete_(T t)
+        {
+            onComplete_?.Invoke(t);
+            result_ = t;
+            sync_.Set();
+        }
+
+        public T Get()
+        {
+            if (!sync_.WaitOne(0)) sync_.WaitOne();
+            return result_;
         }
     }
 }

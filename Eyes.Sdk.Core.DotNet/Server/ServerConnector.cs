@@ -124,6 +124,11 @@ namespace Applitools
 
         #region Methods
 
+        public void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
+        {
+            taskListener.OnComplete(StartSession(sessionStartInfo));
+        }
+
         /// <summary>
         /// Starts a new session.
         /// </summary>
@@ -265,11 +270,8 @@ namespace Applitools
             }
         }
 
-        /// <summary>
-        /// Matches the current window with the currently expected window.
-        /// </summary>
-        /// <param name="data"></param>
-        public virtual MatchResult MatchWindow(MatchWindowData data)
+
+        public void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData data)
         {
             ArgumentGuard.NotNull(data, nameof(data));
 
@@ -281,19 +283,33 @@ namespace Applitools
             try
             {
                 string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
-                using (HttpWebResponse response = httpClient_.PostJson(url, data))
-                {
-                    if (response == null)
+                httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+                    (response) =>
                     {
-                        throw new NullReferenceException("response is null");
-                    }
-                    return response.DeserializeBody<MatchResult>(true);
-                }
+                        if (response == null)
+                        {
+                            throw new NullReferenceException("response is null");
+                        }
+                        listener.OnComplete(response.DeserializeBody<MatchResult>(true));
+                    },
+                    (e) => { throw e; }
+                    ), url, data);
             }
             catch (Exception ex)
             {
                 throw new EyesException($"{nameof(MatchWindow)} failed: {ex.Message}", ex);
             }
+        }
+
+        /// <summary>
+        /// Matches the current window with the currently expected window.
+        /// </summary>
+        /// <param name="data"></param>
+        public virtual MatchResult MatchWindow(MatchWindowData data)
+        {
+            SyncTaskListener<MatchResult> sync = new SyncTaskListener<MatchResult>(null, e => throw e);
+            MatchWindow(sync, data);
+            return sync.Get();
         }
 
         private bool TryUploadImage_(MatchWindowData data)
@@ -590,6 +606,21 @@ namespace Applitools
             httpClient_ = httpClient;
             proxyChanged_ = false;
             apiKeyChanged_ = false;
+        }
+
+        public void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

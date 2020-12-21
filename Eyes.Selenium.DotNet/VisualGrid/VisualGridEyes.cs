@@ -81,12 +81,8 @@ namespace Applitools.Selenium.VisualGrid
             visualGridRunner_ = visualGridRunner;
 
             IDebugResourceWriter drw = visualGridRunner_.DebugResourceWriter;
-            if (drw is FileDebugResourceWriter fileDRW)
-            {
-                debugResourceWriter_ = new Ufg.FileDebugResourceWriter(fileDRW.TargetFolder);
-            }
-            debugResourceWriter_ = debugResourceWriter_ ?? NullDebugResourceWriter.Instance;
-
+            Ufg.IDebugResourceWriter ufgDrw = EyesSeleniumUtils.ConvertDebugResourceWriter(drw);
+            debugResourceWriter_ = ufgDrw;
             testListener_ = new RunningTest.RunningTestListener(
                 (task, test) =>
                 {
@@ -99,6 +95,7 @@ namespace Applitools.Selenium.VisualGrid
 
                 () => listener_?.OnRenderComplete());
         }
+
         private Configuration Config_ { get => configProvider_.GetConfiguration(); }
 
         public string ApiKey

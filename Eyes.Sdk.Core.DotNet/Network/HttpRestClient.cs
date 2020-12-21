@@ -165,6 +165,14 @@ namespace Applitools.Utils
         }
 
         /// <summary>
+        /// Sends a POST request to the input path under the base url with a JSON body.
+        /// </summary>
+        public void PostJson<T>(TaskListener<HttpWebResponse> listener, string path, T body, string accept = "application/json")
+        {
+            SendJsonHttpWebRequest_(listener, path, "POST", body, accept);
+        }
+
+        /// <summary>
         /// Sends a POST request of the input body to the input path under the base url.
         /// </summary>
         public HttpWebResponse Post(
@@ -204,6 +212,14 @@ namespace Applitools.Utils
         public HttpWebResponse Delete(string path, string accept = null)
         {
             return SendHttpWebRequest_(path, "DELETE", null, null, accept, null);
+        }
+
+        /// <summary>
+        /// Sends a DELETE request to the input path under the base url.
+        /// </summary>
+        public void Delete(TaskListener<HttpWebResponse> listener, string path, string accept = null)
+        {
+            SendHttpWebRequest_(listener, path, "DELETE", null, null, accept, null);
         }
 
         /// <summary>
@@ -249,8 +265,16 @@ namespace Applitools.Utils
         {
             return true;
         }
-
         private HttpWebResponse SendJsonHttpWebRequest_<T>(
+            string path, string method, T body, string accept)
+        {
+            SyncTaskListener<HttpWebResponse> listener = new SyncTaskListener<HttpWebResponse>(
+                  null, (ex) => { throw ex; });
+            SendJsonHttpWebRequest_(listener, path, method, body, accept);
+            return listener.Get();
+        }
+        private void SendJsonHttpWebRequest_<T>(
+            TaskListener<HttpWebResponse> listener,
             string path, string method, T body, string accept)
         {
             using (var s = new MemoryStream())
@@ -258,15 +282,32 @@ namespace Applitools.Utils
                 json_.Serialize(body, s);
                 s.Position = 0;
 
-                return SendHttpWebRequest_(path, method, s, "application/json", accept, null);
+                SendHttpWebRequest_(listener, path, method, s, "application/json", accept, null);
             }
         }
 
         private HttpWebResponse SendHttpWebRequest_(
             string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
         {
+            SyncTaskListener<HttpWebResponse> listener = new SyncTaskListener<HttpWebResponse>(
+                null, (ex) => { throw ex; });
+            SendHttpWebRequest_(listener, path, method, body, contentType, accept, contentEncoding);
+            return listener.Get();
+        }
+
+        private void SendHttpWebRequest_(TaskListener<HttpWebResponse> listener,
+            string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
+        {
             HttpWebRequest request = null;
             HttpWebResponse response = null;
+            void requestCallback(IAsyncResult result)
+            {
+                if (result.IsCompleted)
+                {
+                    listener.OnComplete((HttpWebResponse)result.AsyncState);
+                }
+            }
+
             void send()
             {
                 request = null;
@@ -288,7 +329,7 @@ namespace Applitools.Utils
                         {
                             throw new NullReferenceException("request is null");
                         }
-                        response = (HttpWebResponse)request.GetResponse();
+                        request.BeginGetResponse(requestCallback, request);
                     }
                     catch (WebException ex)
                     {
@@ -297,7 +338,7 @@ namespace Applitools.Utils
                             throw;
                         }
 
-                        response = (HttpWebResponse)ex.Response;
+                        listener.OnFail(ex);
                     }
                 }
                 catch (Exception ex2)
@@ -368,7 +409,7 @@ namespace Applitools.Utils
                         {
                             if (response.StatusCode == HttpStatusCode.Created)
                             {
-                                return Delete(
+                                Delete(listener,
                                     response.Headers[HttpResponseHeader.Location], accept);
                             }
 
@@ -393,13 +434,14 @@ namespace Applitools.Utils
                             }
 
                             // Something went wrong.
-                            return response;
+                            listener.OnFail(new EyesException());
+                            return;
                         }
                     }
                 }
             }
 
-            return response;
+            listener.OnComplete(response);
         }
 
         private HttpWebRequest CreateHttpWebRequest_(

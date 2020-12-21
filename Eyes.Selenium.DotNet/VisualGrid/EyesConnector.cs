@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class EyesConnector : EyesBase, IUfgConnector
+    public class EyesConnector : EyesBase//, IUfgConnector
     {
         private readonly RenderBrowserInfo browserInfo_;
         protected RenderingInfo renderInfo_;
@@ -259,11 +259,11 @@ namespace Applitools.Selenium.VisualGrid
             return task;
         }
 
-        public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
-        {
-            Task<WebResponse> task = RenderPutResourceAsTask(runningRender.RenderId, resource);
-            return new PutFuture(task, resource, runningRender, this, Logger);
-        }
+        //public PutFuture RenderPutResource(RunningRender runningRender, RGridResource resource)
+        //{
+        //    Task<WebResponse> task = RenderPutResourceAsTask(runningRender.RenderId, resource);
+        //    return new PutFuture(task, resource, runningRender, this, Logger);
+        //}
 
         public ResourceFuture GetResource(Uri url)
         {
