@@ -623,6 +623,21 @@ namespace Applitools
             throw new NotImplementedException();
         }
 
+        public void StopSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Render(TaskListener<List<IRunningRender>> renderListener, IList<IRenderRequest> requests)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RenderStatusById(TaskListener<List<IRenderStatusResults>> pollingListener, IList<string> renderIds)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Classes

@@ -32,5 +32,8 @@ namespace Applitools
         void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes);
         void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes);
         Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource);
+        void StopSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo);
+        void Render(TaskListener<List<IRunningRender>> renderListener, IList<IRenderRequest> requests);
+        void RenderStatusById(TaskListener<List<IRenderStatusResults>> pollingListener, IList<string> renderIds);
     }
 }
