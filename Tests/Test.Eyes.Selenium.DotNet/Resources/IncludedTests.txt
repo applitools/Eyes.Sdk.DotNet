@@ -169,6 +169,7 @@ Applitools.Selenium.Tests.TestSendDom.TestNotSendDOM
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_1
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_2
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_FullWindow
+Applitools.Selenium.Tests.TestSendDom.TestSendDOM_Frame
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_Selector
 Applitools.Selenium.Tests.TestSimpleCases(Chrome, CSS).TestCheckDivOverflowingThePage
 Applitools.Selenium.Tests.TestSimpleCases(Chrome, VG).TestCheckDivOverflowingThePage

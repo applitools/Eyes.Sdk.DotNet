@@ -27,6 +27,9 @@
     "top": 0,
     "left": 0
   },
+  "attributes": {
+    "data-applitools-active-frame": "true"
+  },
   "childNodes": [
     {
       "tagName": "#text",
