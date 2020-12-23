@@ -1,3 +1,7 @@
+## [Eyes.Qtp vNext]
+### Fixed
+- Chrome throwing `Browser has no child windows!` exception. [Trello 2328](https://trello.com/c/hUvN56yk)
+
 ## [Eyes.Images 2.20] - 2020-12-20
 ### Updated
 - Match to latest Eyes.Sdk.Core

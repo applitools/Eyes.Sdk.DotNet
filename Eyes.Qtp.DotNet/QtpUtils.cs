@@ -18,12 +18,14 @@
         private const string Product_ = "(?:(?<name>{0})[ ]+" + MajorMinor_ + ")";
         private const string BrowserIE_ = "internet explorer";
         private const string BrowserChrome_ = "Chrome";
+        private const string BrowserEdge_ = "Edge";
         private const string BrowserFirefox_ = "Firefox";
         private const string BrowserSafari_ = "Safari";
 
         private static readonly Regex BrowserRegex_ = new Regex(
             Product_.Fmt(BrowserIE_) + "|" +
             Product_.Fmt(BrowserChrome_) + "|" +
+            Product_.Fmt(BrowserEdge_) + "|" +
             Product_.Fmt(BrowserSafari_) + "|" +
             Product_.Fmt(BrowserFirefox_),
             RegexOptions.IgnoreCase);
@@ -110,6 +112,10 @@
                 return "Chrome";
             }
 
+            if (name.Equals(BrowserEdge_, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return "Edge";
+            }
             return appVersion;
         }
 

@@ -56,156 +56,156 @@ Class Eyes_
 	    Set eyes_ = DotNetFactory.CreateInstance("Applitools.Images.Eyes", eyesPath_ & "Eyes.Images.DotNet.dll")
 	    Set utils_ = DotNetFactory.CreateInstance("Applitools.Qtp.QtpUtils", eyesPath_ & "Eyes.Qtp.DotNet.dll")	
 	    imageFile_ = Environment("SystemTempDir") + "\applitools.png"
-	    matchLevel_ = 0
+		matchLevel_ = 0
 	    Set topLevelObject_ = Nothing
 	    topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_UNKNOWN
-	    hostOS_ = Null
-	    hostApp_ = Null
-	    defaultRetryTimeout_ = 2
+		hostOS_ = Null
+		hostApp_ = Null
+		defaultRetryTimeout_ = 2
 		width_ = -1
 		height_ = -1
-	    eyes_.AgentId = "eyes.qtp/1.15"
-	    eyes_.InteropMatchTimeout = 0
-    End Sub
+		eyes_.AgentId = "eyes.qtp/1.16 (UFT " & UFTVersionInRegistry() & ")"
+		eyes_.InteropMatchTimeout = 0
+	End Sub
 
-    ' === Properties ===
+	' === Properties ===
 
-    Public Property Get ServerUrl
+	Public Property Get ServerUrl
 	    ServerUrl = eyes_.ServerUrl
     End Property
 
-    Public Property Let ServerUrl(value)
+	Public Property Let ServerUrl(value)
 	    eyes_.ServerUrl = value
     End Property
 
-    Public Property Get ApiKey
+	Public Property Get ApiKey
 	    ApiKey = eyes_.ApiKey
     End Property
 
-    Public Property Let ApiKey(value)
+	Public Property Let ApiKey(value)
 	    eyes_.ApiKey = value
     End Property
 
-    Public Property Get IsDisabled
+	Public Property Get IsDisabled
 	    IsDisabled = eyes_.IsDisabled
     End Property
 
-    Public Property Let IsDisabled(value)
+	Public Property Let IsDisabled(value)
 	    eyes_.IsDisabled = value
     End Property
 
-    Public Property Get HostOS
+	Public Property Get HostOS
 	    HostOS = hostOS_
     End Property
 
-    Public Property Let HostOS(value)
+	Public Property Let HostOS(value)
     	hostOs_ = value
     End Property
 
-    Public Property Get HostApp
+	Public Property Get HostApp
 	    HostApp = hostApp_
     End Property
-    
-    Public Property Let HostApp(value)
+
+	Public Property Let HostApp(value)
     	hostApp_ = value
     End Property
 
-    Public Property Get MatchLevel
+	Public Property Get MatchLevel
 	    MatchLevel = eyes_.MatchLevel
     End Property
 
-    Public Property Let MatchLevel(value)
+	Public Property Let MatchLevel(value)
 	    eyes_.InteropMatchLevel = value
     End Property
 
-    Public Property Get LogFile
+	Public Property Get LogFile
 	    LogFile = logFile_
     End Property
 
-    Public Property Let LogFile(value)
+	Public Property Let LogFile(value)
 	    logFile_ = value
     End Property
 
-    Public Property Get SaveNewTests
+	Public Property Get SaveNewTests
 	    SaveNewTests = eyes_.SaveNewTests
     End Property
 
-    Public Property Let SaveNewTests(value)
+	Public Property Let SaveNewTests(value)
 	    eyes_.SaveNewTests = value
     End Property
 
-    Public Property Get SaveFailedTests
+	Public Property Get SaveFailedTests
 	    SaveFailedTests = eyes_.SaveFailedTests
     End Property
 
-    Public Property Let SaveFailedTests(value)
+	Public Property Let SaveFailedTests(value)
 	    eyes_.SaveFailedTests = value
     End Property
 
-    Public Property Get MatchTimeout
+	Public Property Get MatchTimeout
 	    MatchTimeout = defaultRetryTimeout_
     End Property
 
-    Public Property Let MatchTimeout(value)
+	Public Property Let MatchTimeout(value)
 	    defaultRetryTimeout_ = value
     End Property
-    
-    Public Property Get BranchName
+
+	Public Property Get BranchName
     	Branch = eyes_.BranchName
     End Property
-    
-    Public Property Let BranchName(value)
+
+	Public Property Let BranchName(value)
     	eyes_.BranchName = value
     End Property
-    
-    Public Property Get ParentBranchName
+
+	Public Property Get ParentBranchName
     	ParentBranch = eyes_.ParentBranchName
     End Property
-    
-    Public Property Let ParentBranchName(value)
+
+	Public Property Let ParentBranchName(value)
     	eyes_.ParentBranchName = value
     End Property
 
 	Public Property Get BaselineName
 		BaselineName = eyes_.BaselineName
 	End Property
-	
+
 	Public Property Let BaselineName(value)
 		eyes_.BaselineName = value
 	End Property
-	
-    Public Property Get MatchLayout
+
+	Public Property Get MatchLayout
 	    MatchLayout = 10
     End Property
 
-    Public Property Get MatchContent
+	Public Property Get MatchContent
 	    MatchContent = 20
     End Property
 
-    Public Property Get MatchStrict
+	Public Property Get MatchStrict
 	    MatchStrict = 30
     End Property
 
-    Public Property Get MatchExact
+	Public Property Get MatchExact
 	    MatchExact = 40
     End Property
 
 	Public Property Get MatchLayout2
 		MatchLayout2 = 11
 	End Property
-    ' === Public Methods ===
+	' === Public Methods ===
 
 	Public Sub SetMobileCloudAccount(serverUrl, user, password)
-		Set account_ = new MobileCloudAccount_
+		Set account_ = New MobileCloudAccount_
 		account_.User = user
 		account_.Password = password
-		account_.ServerUrl = serverUrl		
+		account_.ServerUrl = serverUrl
 	End Sub
 
 	Public Sub SetBaselineInfo(topLevelObject, hostOS, hostApp)
-		If not topLevelObject is Nothing Then
+		If Not topLevelObject Is Nothing Then
 			Set topLevelObject_ = topLevelObject
-			topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_UNKNOWN			
+			topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_UNKNOWN
 		End If
 
 		hostOS_ = hostOS
@@ -213,7 +213,7 @@ Class Eyes_
 	End Sub
 
 	Public Sub SetBaselineInfoFromWindow(window)
-		If window is Nothing Then
+		If window Is Nothing Then
 			eyes_.Throw "window must not be NULL"
 		End If
 		
@@ -222,9 +222,9 @@ Class Eyes_
 	End Sub
 
 	Public Sub SetBaselineInfoFromBrowser(browser, width, height)
-		if (Not IsBrowserObject_(browser)) Then
+		If (Not IsBrowserObject_(browser)) Then
 			eyes_.Throw "Not a browser!"
-		End if
+		End If
 
 		Set topLevelObject_ = browser
 		topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_BROWSER
@@ -233,12 +233,12 @@ Class Eyes_
 	End Sub
 
 	Public Sub SetBaselineInfoFromDevice(device)
-		If device is Nothing Then
+		If device Is Nothing Then
 			eyes_.Throw "device must not be NULL"
 		End If
 		
 		Set topLevelObject_ = device
-		If  device.GetROProperty("micclass") = "Device" Then
+		If device.GetROProperty("micclass") = "Device" Then
 			topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_MC_DEVICE
 		Else
 			topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE
@@ -247,77 +247,79 @@ Class Eyes_
 
 	Public Function SetBatch(id, name)
 		Dim batch
-		If IsNull(id) and IsNull(name) Then
+		If IsNull(id) And IsNull(name) Then
 			Set batch = Nothing
 		Else
 			Set batch = NewSdkObj_("Applitools.BatchInfo")
-			If not IsNull(id) Then
+			If Not IsNull(id) Then
 				batch.Id = id
 			End If
-			
-			If not IsNull(name) Then
+
+			If Not IsNull(name) Then
 				batch.Name = name
 			End If
 		End If
 
-		eyes_.Batch = batch		
+		eyes_.Batch = batch
 	End Function
 
-    Public Sub Open(appName, testName)
-    	Dim logHandler, viewportSize
-    	
-	    If Not IsNull(LogFile) And Not IsEmpty(LogFile) Then
+	Public Sub Open(appName, testName)
+		Dim logHandler, viewportSize
+
+		If Not IsNull(LogFile) And Not IsEmpty(LogFile) Then
 		    Set logHandler = NewSdkObj_("Applitools.FileLogHandler")
 		    logHandler.FilePath = LogFile
-		    eyes_.SetLogHandler(logHandler)
-	    End If
-	
-	    If topLevelObject_ is Nothing Then
-		    eyes_.Throw "Open(): No baseline info was set!"
-	    End If
+			eyes_.SetLogHandler(logHandler)
+		End If
 
-	    SetAppEnvironment_()
-	
+		If topLevelObject_ Is Nothing Then
+			eyes_.Throw "Open(): No baseline info was set!"
+		End If
+
+		SetAppEnvironment_()
+
 		Capture_ topLevelObject_
-		
-		If width_ > 0 and height_ > 0 Then
+
+		If width_ > 0 And height_ > 0 Then
 			Set viewportSize = NewSize_(width_, height_)
 		Else
 	    	Set viewportSize = utils_.GetImageSize(imageFile_)
 	    End If
-	    
-	    matchOnceOnTimeout_ = false
-	
-	    eyes_.Open appName, testName, viewportSize
 
-	    ' From here onwards the log file is open!
-	    eyes_.Log "TopLevelObject = '" & topLevelObject_.ToString & "'"
-	
-	    eyesReport.TestName = testName
-	    eyesReport.AppName = appName
-	    eyesReport.Url = Null
-	    eyesReport.IsPassed = Null
-	    eyesReport.IsNew = Null
-	    eyesReport.IsRunning = true
-        eyesReport.Steps = Null
-	    eyesReport.Matches = Null
-    End Sub
+		matchOnceOnTimeout_ = False
+		If eyes_.ApiKey = Empty Then
+			eyes_.ApiKey = Environment.Value("APPLITOOLS_API_KEY")
+		End If
+		eyes_.Open appName, testName, viewportSize
 
-    Public Function CheckObject(object, tag)
-    	Dim logMsg, appImage
-    	
+		' From here onwards the log file is open!
+		eyes_.Log "TopLevelObject = '" & topLevelObject_.ToString & "'"
+
+		eyesReport.TestName = testName
+		eyesReport.AppName = appName
+		eyesReport.Url = Null
+		eyesReport.IsPassed = Null
+		eyesReport.IsNew = Null
+		eyesReport.IsRunning = True
+		eyesReport.Steps = Null
+		eyesReport.Matches = Null
+	End Sub
+
+	Public Function CheckObject(object, tag)
+		Dim logMsg, appImage
+
 		SetTopLevelObjectSize_()
-		
-	    logMsg = "CheckObject(" & object.ToString & ", " & tag & ")"
-	    eyes_.Log logMsg
+
+		logMsg = "CheckObject(" & Object.ToString & ", " & tag & ")"
+		eyes_.Log logMsg
 	
 	    Set appImage = CheckImageRetry_(object, tag, -1)
 	
 	    If appImage.IsMatch Then
-		    eyes_.Log logMsg & " => Match"
-	    Else
-		    eyes_.Log logMsg & " => Mismatch"
-	    End If
+			eyes_.Log logMsg & " => Match"
+		Else
+			eyes_.Log logMsg & " => Mismatch"
+		End If
 	
 	    Set CheckObject = appImage
     End Function
@@ -339,8 +341,8 @@ Class Eyes_
 	    Set CheckObjectWithTimeout = appImage
     End Function
 
-    Public Sub Close
-    	Dim testResults
+	Public Sub Close()
+		Dim testResults
     	
 	    Set testResults = eyes_.Close(false)
 	    eyesReport.Url = testResults.Url
@@ -369,46 +371,46 @@ Class Eyes_
 	End Function
 
 	Private Function CheckImageRetry_(object, tag, retryTimeout)
-    	Dim start, timeout, appImage, replaceLast
-    	
-    	If retryTimeout < 0 Then
-    		retryTimeout = defaultRetryTimeout_
-    	End If
-    	
-    	eyes_.Log "CheckImageRetry_(): retryTimeout = " & retryTimeout
-    	
-        If (matchOnceOnTimeout_ or retryTimeout = 0) Then
-            If retryTimeout > 0 Then
-	       	    Wait(retryTimeout)
-            End if
+		Dim start, timeout, appImage, replaceLast
+
+		If retryTimeout < 0 Then
+			retryTimeout = defaultRetryTimeout_
+		End If
+
+		eyes_.Log "CheckImageRetry_(): retryTimeout = " & retryTimeout
+
+		If (matchOnceOnTimeout_ Or retryTimeout = 0) Then
+			If retryTimeout > 0 Then
+				Wait(retryTimeout)
+			End If
 
 		    Set CheckImageRetry_ = CheckImage_(object, tag, false)
 		    Exit Function
-	    End If
+		End If
 
-	    ' Ignore mistmaches while timeout does not expire
-	    start = utils_.GetCurrentTime()
-	    timeout = retryTimeout * 1000
+		' Ignore mistmaches while timeout does not expire
+		start = utils_.GetCurrentTime()
+		timeout = retryTimeout * 1000
 	
 	    Set appImage = Nothing
-	    replaceLast = false
-        Do While utils_.GetCurrentTime() - start < timeout
-    	    utils_.Sleep 500
+	    replaceLast = False
+		Do While utils_.GetCurrentTime() - start < timeout
+			utils_.Sleep 500
     	    Set appImage = CheckImage_(object, tag, replaceLast)
 		    If appImage.isMatch Then
-			    Exit Do
-		    End If
-		    replaceLast = true
-        Loop
+				Exit Do
+			End If
+			replaceLast = True
+		Loop
 
-        If not appImage.IsMatch Then
+		If Not appImage.IsMatch Then
     	    ' Try one last time...
 		    Set appImage = CheckImage_(object, tag, true)
-	    End if
-	
-	    If not appImage.IsMatch Then
-		    matchOnceOnTimeout_ = True
 	    End If
+
+		If Not appImage.IsMatch Then
+			matchOnceOnTimeout_ = True
+		End If
 	
 	    Set CheckImageRetry_ = appImage
     End Function
@@ -538,70 +540,68 @@ Class Eyes_
 		End If
 
 	End Sub
-	
-    Private Function NewSize_(width, height)
+
+	Private Function NewSize_(width, height)
 	    Set NewSize_ = DotNetFactory.CreateInstance("System.Drawing.Size", Null, width, height)
     End Function
 
-    Private Function NewSdkObj_(fullName)
+	Private Function NewSdkObj_(fullName)
 	    Set NewSdkObj_ = DotNetFactory.CreateInstance(fullName, eyesPath_ & "Eyes.Sdk.Core.DotNet.dll")
     End Function
 
 	Function IsBrowserObject_(obj)
-		If obj is Nothing Then
+		If obj Is Nothing Then
 			IsBrowserObject_ = False
 			Exit Function
 		End If
-		
+
 		IsBrowserObject_ = IsOfType_(obj, "Browser")
 	End Function
 
 	Private Function IsOfType_(object, typeStr)
 		IsOfType_ = StringContains_(TypeOf_(object), typeStr)
 	End Function
-	
+
 	Private Function TypeOf_(object)
-		TypeOf_ = object.GetRoProperty("micclass")
+		TypeOf_ = Object.GetRoProperty("micclass")
 	End Function
 	' === SetBrowserSize ===
-	
+
 	Private Sub SetBrowserSize_(browser, width, height)
 		Dim hInner, wInner, hOuter, wOuter, hTo, wTo
 		Dim wndw, hwnd, size_made_good, interval, full_retries, wait_retries, version
-        Dim viewSize
-        
+		Dim viewSize
+		Dim children :  Set children = browser.ChildObjects()
+
 		interval = 1 'seconds
 		full_retries = 2
-			
-		hwnd = GetMainWindowHandle_(browser)
-		Set wndw = Window("hwnd:=" & hwnd)
-		
-		wndw.Restore()
-		call wndw.Move(0,0)
-		
+
+		browser.Restore()
+
 		Do
-			hInner = GetInnerDim_(browser, "height")
-			wInner = GetInnerDim_(browser, "width")		
-			hOuter = GetOuterDim_(wndw, "height")
-			wOuter = GetOuterDim_(wndw, "width")
-			
+			hOuter = browser.GetROProperty("height")
+			wOuter = browser.GetROProperty("width")
+			hInner = children(0).GetROProperty("height")
+			wInner = children(0).GetROProperty("width")
+
 			wTo = wOuter - wInner + width
 			hTo = hOuter - hInner + height
-			
-			size_made_good = (height = hInner and width = wInner)
-			If not size_made_good Then			
-				wndw.Resize wTo, hTo
-				
+
+			size_made_good = (height = hInner And width = wInner)
+			If Not size_made_good Then
+				browser.Resize wTo, hTo
+
 				' Wait for stabilization
 				wait_retries = 3
 				Do
-					hInner = GetInnerDim_(browser, "height")
-					wInner = GetInnerDim_(browser, "width")
-					size_made_good = (height = hInner and width = wInner)
+					hInner = children(0).GetROProperty("height")
+					wInner = children(0).GetROProperty("width")
+					size_made_good = (height = hInner And width = wInner)
 					wait interval
 					wait_retries = wait_retries - 1
-				Loop until (wait_retries = 0) or (size_made_good)
+				Loop Until (wait_retries = 0) Or (size_made_good)
 			End If
+
 			
 			full_retries = full_retries - 1
 			wait interval
@@ -620,58 +620,51 @@ Class Eyes_
 
 		End If
 	End Sub
-	
-	Private Function GetMainWindowHandle_(browser)
-		Dim hwnd, version: version = browser.GetROProperty("version")
-		If (StringContains_(version, "Chrome")) Then
-			hwnd = GetChildHwnd_(browser)
-		else
-			hwnd = browser.getRoProperty("hwnd")
-		end if
-		GetMainWindowHandle_ = GetRootHwnd_(hwnd)
-	End Function
-	
+
+
 	Private Function GetRootHwnd_(hwnd)
 		Const GA_ROOT = 2
 		GetRootHwnd_ = Extern.GetAncestor(hwnd, GA_ROOT)
 	End Function
-	
+
 	Private Function GetInnerDim_(browser, dimension)
-		Dim version: version = browser.GetROProperty("version")
+		Dim version : version = browser.GetROProperty("version")
 		If (StringContains_(version, "Chrome")) Then
-			Dim childHwnd: childHwnd = GetChildHwnd_(browser)
-			Dim rootHwnd: rootHwnd = GetRootHwnd_(childHwnd)
+			Dim childHwnd : childHwnd = GetChildHwnd_(browser)
+			Dim rootHwnd : rootHwnd = GetRootHwnd_(childHwnd)
 			GetInnerDim_ = GetChromeLegacyWinObj_(rootHwnd).GetROProperty(dimension)
-		elseif (StringContains_(version, "internet explorer 8")) Then
-		 	childHwnd = GetChildHwnd_(browser)
-		 	GetInnerDim_ = Window("hwnd:=" & childHwnd).GetROProperty(dimension)
-		else
+		ElseIf (StringContains_(version, "internet explorer 8")) Then
+			childHwnd = GetChildHwnd_(browser)
+			GetInnerDim_ = Window("hwnd:=" & childHwnd).GetROProperty(dimension)
+		Else
 			GetInnerDim_ = browser.GetROProperty(dimension)
-		End if
+		End If
 	End Function
-	
-	Private Function GetOuterDim_(wndw, dimension)
-		GetOuterDim_ = wndw.GetROProperty(dimension)
-	End Function
-	
+
 	Private Function GetChildHwnd_(browser)
-		Dim children: Set children = browser.ChildObjects()
+		Dim children :  Set children = browser.ChildObjects()
+		Dim roProps :  set roProps = browser.GetAllROProperties()
 		Dim hwnd, i
 		If children.count = 0 Then
 			eyes_.Throw "Browser has no child objects!"
 		End If
-		
-		For i = 0 to children.count - 1
+
+		For i = 0 To children.count - 1
 			hwnd = children(i).GetRoProperty("HWND")
 			If hwnd <> 0 Then
 				GetChildHwnd_ = hwnd
-				Exit function
+				Exit Function
 			End If
 		Next
-		
+
+		hwnd = browser.GetRoProperty("TOP_LEVEL_HWND")
+		If hwnd <> 0 Then
+			GetChildHwnd_ = hwnd
+			Exit Function
+		End If
 		eyes_.Throw "Browser has no child windows!"
 	End Function
-	
+
 	Private Function StringContains_(str1, str2)
 		StringContains_ = (InStr(str1, str2) > 0)
 	End Function
@@ -693,6 +686,23 @@ Class Eyes_
 			End If
 		Next
 		eyes_.Throw "Chrome Legacy Window not found!"
+	End Function
+
+	Public Function UFTVersionInRegistry()
+		Dim WSHShell, strValue, major, minor, build
+		On Error Resume Next
+		Set WSHShell = CreateObject("WScript.Shell")
+		major = WSHShell.RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercury Interactive\QuickTest Professional\CurrentVersion\Major")
+		minor = WSHShell.RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercury Interactive\QuickTest Professional\CurrentVersion\Minor")
+		build = WSHShell.RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercury Interactive\QuickTest Professional\CurrentVersion\build")
+
+		If err.number <> 0 Then
+			UFTVersionInRegistry = "unknown"
+		Else
+			UFTVersionInRegistry = major&"."&minor&"."&build
+		End If
+		
+		set WSHShell = nothing
 	End Function
 
 End Class
