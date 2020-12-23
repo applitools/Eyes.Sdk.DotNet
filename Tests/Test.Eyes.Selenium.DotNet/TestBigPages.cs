@@ -28,14 +28,14 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
-        public void TestCheckCoreceLongImage()
+        public void TestCheckCoerceLongImage()
         {
             GetDriver().Url = "https://applitools.github.io/demo/TestPages/SimpleTestPage/?long";
             GetEyes().Check("Cropped long image", Target.Region(By.Id("overflowing-div")).Fully());
         }
 
         [Test]
-        public void TestCheckCoreceLargeImage()
+        public void TestCheckCoerceLargeImage()
         {
             GetDriver().Url = "https://applitools.github.io/demo/TestPages/SimpleTestPage/?large";
             GetEyes().Check("Cropped large image", Target.Region(By.Id("overflowing-div")).Fully());
