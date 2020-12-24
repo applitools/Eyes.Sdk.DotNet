@@ -1,9 +1,11 @@
 ﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
+using Applitools.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Drawing;
+using System.Threading;
 
 namespace Applitools.Selenium.Tests.ApiTests
 {
@@ -13,7 +15,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         [TestCase(true)]
         public void TestCloseBatch(bool dontCloseBatch)
         {
-            Environment.SetEnvironmentVariable("APPLITOOLS_DONT_CLOSE_BATCHES", dontCloseBatch.ToString());
+            CommonUtils.DontCloseBatches = dontCloseBatch;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             // Initialize the VisualGridEyes SDK and set your private API key.
             EyesRunner runner = new ClassicRunner();
@@ -44,6 +46,8 @@ namespace Applitools.Selenium.Tests.ApiTests
             Assert.IsFalse(batch.IsCompleted);
 
             runner.GetAllTestResults(false);
+
+            Thread.Sleep(10000);
 
             batch = TestUtils.GetBatchInfo(eyes);
             Assert.AreEqual(!dontCloseBatch, batch.IsCompleted);
