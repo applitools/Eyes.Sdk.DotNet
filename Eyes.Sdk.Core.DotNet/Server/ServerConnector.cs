@@ -447,7 +447,7 @@ namespace Applitools
             }
         }
 
-        public virtual async Task<List<JobInfo>> GetJobInfo(IRenderRequest[] browserInfos)
+        public virtual IList<JobInfo> GetJobInfo(IList<IRenderRequest> browserInfos)
         {
             ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
             Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
@@ -459,7 +459,7 @@ namespace Applitools
                 Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
                 serializer_.Serialize(browserInfos, request.GetRequestStream());
 
-                using (WebResponse response = await request.GetResponseAsync())
+                using (WebResponse response = request.GetResponse())
                 {
                     Stream s = response.GetResponseStream();
                     string json = new StreamReader(s).ReadToEnd();

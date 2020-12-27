@@ -29,7 +29,7 @@ namespace Applitools.Selenium.VisualGrid
 
         internal EyesConnector(Logger logger, RenderBrowserInfo browserInfo,
             Applitools.Configuration configuration, IServerConnectorFactory serverConnectorFactory)
-            : base(serverConnectorFactory, logger)
+            : base(serverConnectorFactory, null, logger)
         {
             browserInfo_ = browserInfo;
             config_ = configuration;
@@ -190,15 +190,15 @@ namespace Applitools.Selenium.VisualGrid
             return null;
         }
 
-        public virtual MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL, 
-                                        string domLocation, ICheckSettings checkSettings, IList<IRegion> regions, 
+        public virtual MatchResult MatchWindow(Applitools.IConfiguration config, string resultImageURL,
+                                        string domLocation, ICheckSettings checkSettings, IList<IRegion> regions,
                                         IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions,
                                         Location location, RenderStatusResults results, string source)
         {
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             config_ = (Applitools.Configuration)config;
 
-            MatchWindowTask matchWindowTask = new MatchWindowTask(Logger, ServerConnector, runningSession_, 
+            MatchWindowTask matchWindowTask = new MatchWindowTask(Logger, ServerConnector, runningSession_,
                                                                 Configuration.MatchTimeout, this, null);
 
             ImageMatchSettings imageMatchSettings = MatchWindowTask.CreateImageMatchSettings(checkSettingsInternal, this);
@@ -325,9 +325,7 @@ namespace Applitools.Selenium.VisualGrid
                 RenderInfo renderInfo = new RenderInfo(browserInfo_.Width, browserInfo_.Height, default, null,
                     null, browserInfo_.EmulationInfo, browserInfo_.IosDeviceInfo);
                 RenderRequest renderRequest = new RenderRequest(renderInfo, browserInfo_.Platform, browserInfo_.BrowserType);
-                Task<List<JobInfo>> jobInfoTask = ServerConnector.GetJobInfo(new RenderRequest[] { renderRequest });
-                Logger.Verbose("got task of list of job info objects, waiting for results...");
-                List<JobInfo> jobInfos = jobInfoTask.Result;
+                IList<JobInfo> jobInfos = ServerConnector.GetJobInfo(new RenderRequest[] { renderRequest });
                 if (jobInfos == null || jobInfos.Count == 0)
                 {
                     throw new EyesException("Failed getting job info");
