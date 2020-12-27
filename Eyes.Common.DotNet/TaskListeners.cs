@@ -30,15 +30,17 @@ namespace Applitools
     public class SyncTaskListener<T> : TaskListener<T>
     {
         private Action<T> onComplete_;
+        private Action<Exception> onFail_;
         private AutoResetEvent sync_;
         private T result_;
 
-        public SyncTaskListener(Action<T> onComplete, Action<Exception> onFail)
+        public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null)
             : base(onComplete, onFail)
         {
             onComplete_ = onComplete;
             OnComplete = OnComplete_;
-            OnFail = onFail;
+            onFail_ = onFail;
+            OnFail = OnFail_;
             sync_ = new AutoResetEvent(false);
         }
 
@@ -46,6 +48,12 @@ namespace Applitools
         {
             onComplete_?.Invoke(t);
             result_ = t;
+            sync_.Set();
+        }
+
+        private void OnFail_(Exception e)
+        {
+            onFail_?.Invoke(e);
             sync_.Set();
         }
 

@@ -145,7 +145,7 @@ namespace Applitools.VisualGrid
             {
                 foreach (RunningTest runningTest in eyes.GetAllRunningTests())
                 {
-                    foreach (VisualGridTask visualGridTask in runningTest.TaskList)
+                    foreach (VisualGridTask visualGridTask in runningTest.CheckTasks)
                     {
                         if (visualGridTask.TaskType == type)
                         {

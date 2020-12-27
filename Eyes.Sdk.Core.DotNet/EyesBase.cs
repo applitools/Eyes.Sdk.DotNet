@@ -1,23 +1,20 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Cropping;
+using Applitools.Exceptions;
+using Applitools.Fluent;
+using Applitools.Utils;
+using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Applitools.Fluent;
-using Applitools.Exceptions;
-using Applitools.Utils.Cropping;
-using Applitools.Cropping;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Applitools.VisualGrid.Model;
-using Applitools.VisualGrid;
 using System.Threading;
-using Applitools.Ufg;
 
 namespace Applitools
 {
@@ -42,13 +39,15 @@ namespace Applitools
         "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
         Justification = "Cleanup performed by Close or AbortIfNotClosed")]
     [ComVisible(true)]
-    public abstract class EyesBase : EyesBaseConfig, IEyesBase, IBatchCloser
+    public abstract class EyesBase : EyesBaseConfig, IEyesBase
     {
 
         #region Fields
 
+        protected ClassicRunner runner_;
         protected internal RunningSession runningSession_;
         protected MatchWindowTask matchWindowTask_;
+        private int validationId_;
         private SessionStartInfo sessionStartInfo_;
         private bool shouldMatchWindowRunOnceOnTimeout_;
         private IScaleProvider scaleProvider_;
@@ -133,6 +132,11 @@ namespace Applitools
         /// If <c>true</c>, all interactions with this API are silently ignored.
         /// </summary>
         public virtual bool IsDisabled { get; set; }
+
+        public virtual SessionStartInfo PrepareForOpen()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// User inputs collected between <see cref="CheckWindowBase(Rectangle?, ICheckSettings, string)"/> (or one of its overloads) invocations.
@@ -723,6 +727,39 @@ namespace Applitools
         protected virtual void BeforeOpen() { }
         protected virtual void AfterOpen() { }
 
+        public void OpenCompleted(RunningSession result)
+        {
+            runningSession_ = result;
+            Logger.Verbose("Server session ID is {0}", runningSession_.Id);
+
+            string testName = "'" + TestName + "'";
+            //Logger.SessionId = runningSession_.SessionId;
+            if (runningSession_.IsNewSession)
+            {
+                Logger.Log("--- New test started - " + testName);
+                shouldMatchWindowRunOnceOnTimeout_ = true;
+            }
+            else
+            {
+                Logger.Log("--- Test started - " + testName);
+                shouldMatchWindowRunOnceOnTimeout_ = false;
+            }
+
+            matchWindowTask_ = new MatchWindowTask(
+                Logger,
+                ServerConnector,
+                runningSession_,
+                Configuration.MatchTimeout,
+                this,
+                // A callback which will call getAppOutput
+                GetAppOutput_
+            );
+
+            validationId_ = -1;
+            IsOpen = true;
+        }
+
+
         private MatchResult MatchWindow_(Rectangle? region, string tag, ICheckSettingsInternal checkSettingsInternal,
             string source)
         {
@@ -807,37 +844,51 @@ namespace Applitools
         /// </summary>
         protected void OpenBase()
         {
-            Logger.GetILogHandler().Open();
+
+            SessionStartInfo startInfo = PrepareForOpen();
+            if (startInfo == null)
+            {
+                return;
+            }
+
+            RunningSession runningSession = runner_.Open(startInfo);
+            if (runningSession == null)
+            {
+                throw new EyesException("Failed starting session with the server");
+            }
+            OpenCompleted(runningSession);
+
+            //Logger.GetILogHandler().Open();
 
             try
             {
-                if (IsDisabled)
-                {
-                    Logger.Verbose("Ignored");
-                    return;
-                }
+            //    if (IsDisabled)
+            //    {
+            //        Logger.Verbose("Ignored");
+            //        return;
+            //    }
 
-                Logger.Log("Agent = {0}", FullAgentId);
-                Logger.Verbose(".NET Framework = {0}", Environment.Version);
+            //    Logger.Log("Agent = {0}", FullAgentId);
+            //    Logger.Verbose(".NET Framework = {0}", Environment.Version);
 
-                ValidateAPIKey(ApiKey);
-                UpdateServerConnector_();
-                LogOpenBase_();
-                ValidateSessionOpen_();
+            //    ValidateAPIKey(ApiKey);
+            //    UpdateServerConnector_();
+            //    LogOpenBase_();
+            //    ValidateSessionOpen_();
 
-                InitProviders_();
+            //    InitProviders_();
 
-                isViewportSizeSet_ = false;
+            //    isViewportSizeSet_ = false;
 
-                BeforeOpen();
+            //    BeforeOpen();
 
-                viewportSize_ = GetViewportSizeForOpen();
-                EnsureRunningSession();
+            //    viewportSize_ = GetViewportSizeForOpen();
+            //    EnsureRunningSession();
 
-                IsOpen = true;
-                Logger.Verbose("EyesBase now open. (hashcode: {0})", GetHashCode());
+            //    IsOpen = true;
+            //    Logger.Verbose("EyesBase now open. (hashcode: {0})", GetHashCode());
 
-                AfterOpen();
+            //    AfterOpen();
             }
             catch (Exception ex)
             {

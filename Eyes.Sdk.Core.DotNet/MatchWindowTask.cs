@@ -1,5 +1,4 @@
-﻿using Applitools.Ufg;
-using Applitools.VisualGrid;
+﻿using Applitools.VisualGrid;
 using Applitools.Fluent;
 using System;
 using System.Collections.Generic;

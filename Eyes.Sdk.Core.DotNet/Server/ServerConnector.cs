@@ -1,5 +1,4 @@
-﻿using Applitools.Ufg;
-using Applitools.Utils;
+﻿using Applitools.Utils;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

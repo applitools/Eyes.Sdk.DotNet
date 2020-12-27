@@ -46,9 +46,9 @@ To learn more, visit https://applitools.com/ .</Description>
     <ProjectReference Include="..\Eyes.Common.DotNet\Eyes.Common.DotNet.csproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
-    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj">
+    <!--<ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj">
       <PrivateAssets>all</PrivateAssets>
-    </ProjectReference>
+    </ProjectReference>-->
   </ItemGroup>
 
   <ItemGroup>

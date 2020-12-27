@@ -570,7 +570,7 @@ namespace Applitools.Selenium.VisualGrid
             List<RunningTest> filteredTests = new List<RunningTest>();
             foreach (RunningTest test in tests)
             {
-                TaskType? lastTaskType = test.TaskList.LastOrDefault()?.TaskType;
+                TaskType? lastTaskType = test.CheckTasks.LastOrDefault()?.TaskType;
                 logger.Debug("task type: <{0}>", lastTaskType);
 
                 bool testIsOpenAndNotClosed = lastTaskType == null && test.IsOpenTaskIssued && !test.IsCloseTaskIssued;
@@ -949,7 +949,7 @@ namespace Applitools.Selenium.VisualGrid
                     else
                     {
                         Logger.Verbose("runningTest: IsTestReadyToClose: {0} ; contained in list: {1} ; inner tasks: {2}",
-                            isTestReadyToClose, containedInList, runningTest.TaskList.Count);
+                            isTestReadyToClose, containedInList, runningTest.CheckTasks.Count);
                     }
                 }
             }
@@ -986,7 +986,7 @@ namespace Applitools.Selenium.VisualGrid
             Logger.Verbose("enter - {0} elements in {1}", testList_.Count, nameof(testList_));
             foreach (RunningTest runningTest in testList_)
             {
-                List<VisualGridTask> taskList = runningTest.TaskList;
+                List<VisualGridTask> taskList = runningTest.CheckTasks;
 
                 VisualGridTask task;
                 //Logger.Verbose("locking taskList");
