@@ -49,7 +49,7 @@ namespace Applitools
         protected MatchWindowTask matchWindowTask_;
         private int validationId_;
         private SessionStartInfo sessionStartInfo_;
-        private bool shouldMatchWindowRunOnceOnTimeout_;
+        protected bool shouldMatchWindowRunOnceOnTimeout_;
         private IScaleProvider scaleProvider_;
         private SetScaleProviderHandler setScaleProvider_;
         private ICutProvider cutProvider_;
@@ -222,9 +222,15 @@ namespace Applitools
         /// </summary>
         protected virtual string BaseAgentId => GetBaseAgentId();
 
-        internal string GetBaseAgentId()
+        protected FileVersionInfo GetActualAssemblyVersionInfo()
         {
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(actualAssembly_.Location);
+            return versionInfo;
+        }
+
+        internal string GetBaseAgentId()
+        {
+            FileVersionInfo versionInfo = GetActualAssemblyVersionInfo();
             return $"{versionInfo.FileDescription}/{versionInfo.ProductVersion}";
         }
 
@@ -529,6 +535,33 @@ namespace Applitools
             Abort();
         }
 
+        public virtual MatchWindowData PrepareForMatch(IList<Trigger> userInputs,
+                                     AppOutputWithScreenshot appOutput,
+                                     string tag, bool replaceLast,
+                                     ImageMatchSettings imageMatchSettings,
+                                     EyesBase eyes, string renderId, string source)
+        {
+            // called from regular flow and from check many flow.
+            string agentSetupStr = eyes.GetAgentSetupString();
+
+            // Prepare match data.
+            MatchWindowData data = new MatchWindowData(runningSession_, appOutput.AppOutput, tag, agentSetupStr);
+
+            data.IgnoreMismatch = false;
+            data.Options = new ImageMatchOptions(imageMatchSettings);
+            data.Options.Name = tag;
+            data.Options.UserInputs = userInputs;
+            data.Options.IgnoreMismatch = false;
+            data.Options.IgnoreMatch = false;
+            data.Options.ForceMismatch = false;
+            data.Options.ForceMatch = false;
+            data.Options.Source = source;
+            data.Options.RenderId = renderId;
+            data.Options.ReplaceLast = replaceLast;
+            data.RenderId = renderId;
+            return data;
+        }
+
         /// <summary>
         /// Sets the OS (e.g., Windows) and application (e.g., Chrome) 
         /// that host the application under test.
@@ -813,7 +846,7 @@ namespace Applitools
             return ServerConnector.PostDomCapture(domJson);
         }
 
-        private void ValidateResult_(string tag, MatchResult result)
+        protected void ValidateResult_(string tag, MatchResult result)
         {
             if (result.AsExpected)
             {
@@ -1082,7 +1115,7 @@ namespace Applitools
                 null,
                 TestName,
                 testBatch,
-                Configuration.BaselineEnvName,
+                GetBaselineEnvName(),
                 appEnv,
                 Configuration.EnvironmentName,
                 DefaultMatchSettings,
@@ -1096,6 +1129,11 @@ namespace Applitools
                 properties_);
 
             return sessionStartInfo_;
+        }
+
+        protected virtual string GetBaselineEnvName()
+        {
+            return Configuration.BaselineEnvName;
         }
 
         protected virtual object GetAgentSetup() { return null; }

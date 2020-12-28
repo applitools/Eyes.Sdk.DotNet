@@ -174,12 +174,12 @@ namespace Applitools
             string agentSetupStr = eyes.GetAgentSetupString();
 
             List<Trigger> userInputs = new List<Trigger>();
-            CollectRegions_(imageMatchSettings, userInputs, regions, regionSelectors, userActions, appOutput.AppOutput.Location);
-            CollectRegions_(imageMatchSettings, checkSettingsInternal, appOutput.AppOutput.Location);
+            CollectRegions(imageMatchSettings, userInputs, regions, regionSelectors, userActions);
+            CollectRegions(imageMatchSettings, checkSettingsInternal);
             return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
         }
 
-        private void CollectRegions_(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal, Location location)
+        public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
         {
             imageMatchSettings.Ignore = ConvertSimpleRegions(checkSettingsInternal.GetIgnoreRegions(), imageMatchSettings.Ignore);
             imageMatchSettings.Content = ConvertSimpleRegions(checkSettingsInternal.GetContentRegions(), imageMatchSettings.Content);
@@ -189,7 +189,7 @@ namespace Applitools
             imageMatchSettings.Accessibility = ConvertAccessibilityRegions(checkSettingsInternal.GetAccessibilityRegions(), imageMatchSettings.Accessibility);
         }
 
-        private AccessibilityRegionByRectangle[] ConvertAccessibilityRegions(IGetAccessibilityRegion[] accessibilityRegions, AccessibilityRegionByRectangle[] currentRegions)
+        private static AccessibilityRegionByRectangle[] ConvertAccessibilityRegions(IGetAccessibilityRegion[] accessibilityRegions, AccessibilityRegionByRectangle[] currentRegions)
         {
             List<AccessibilityRegionByRectangle> mutableRegions = new List<AccessibilityRegionByRectangle>();
             if (currentRegions != null)
@@ -208,7 +208,7 @@ namespace Applitools
             return mutableRegions.ToArray();
         }
 
-        private FloatingMatchSettings[] ConvertFloatingRegions(IGetFloatingRegion[] floatingRegions, FloatingMatchSettings[] currentRegions)
+        private static FloatingMatchSettings[] ConvertFloatingRegions(IGetFloatingRegion[] floatingRegions, FloatingMatchSettings[] currentRegions)
         {
             List<FloatingMatchSettings> mutableRegions = new List<FloatingMatchSettings>();
             if (currentRegions != null)
@@ -246,7 +246,7 @@ namespace Applitools
             return mutableRegions.ToArray();
         }
 
-        private static void CollectRegions_(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
+        public static void CollectRegions(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
                                             IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
                                             IList<VGUserAction> userActions, Location location)
         {
