@@ -64,6 +64,7 @@ namespace Applitools.Selenium
         new IConfiguration SetParentBranchName(string value);
         new IConfiguration SetSaveDiffs(bool? value);
         new IConfiguration SetSaveNewTests(bool value);
+        new IConfiguration SetSaveFailedTests(bool value);
         new IConfiguration SetSendDom(bool value);
         new IConfiguration SetStitchOverlap(int value);
         new IConfiguration SetTestName(string value);

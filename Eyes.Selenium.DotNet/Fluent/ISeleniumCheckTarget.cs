@@ -12,5 +12,7 @@ namespace Applitools.Selenium.Fluent
         IList<FrameLocator> GetFrameChain();
 
         CheckState State { get; set; }
+
+        void Init(Logger logger, EyesWebDriver driver);
     }
 }

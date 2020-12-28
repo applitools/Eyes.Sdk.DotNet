@@ -1,5 +1,4 @@
 ﻿using Applitools.Utils;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -62,5 +61,10 @@ namespace Applitools
         public string ServerUrl { get; set; } = CommonUtils.ServerUrl;
         public bool IsDisabled { get; set; }
         public bool DontCloseBatches { get; set; } = CommonUtils.DontCloseBatches;
+        public string AgentId
+        {
+            get { return ServerConnector.AgentId; }
+            set { if (value != null) ServerConnector.AgentId = value; }
+        }
     }
 }

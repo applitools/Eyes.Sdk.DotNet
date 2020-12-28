@@ -61,6 +61,7 @@ namespace Applitools.VisualGrid
         internal readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
         private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
         private readonly List<RenderRequestCollectionTask> renderRequestCollectionTaskList_ = new List<RenderRequestCollectionTask>();
+        private EyesServiceRunner eyesServiceRunner_;
 
         internal AutoResetEvent debugLock_ = null;
 
@@ -552,7 +553,7 @@ namespace Applitools.VisualGrid
         }
 
         public void Check(ICheckSettings settings, IDebugResourceWriter debugResourceWriter, FrameData domData,
-                          IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions, IUfgConnector connector, 
+                          IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions, IUfgConnector connector,
                           UserAgent userAgent, List<VisualGridTask> checkTasks, RenderListener listener)
         {
             debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;

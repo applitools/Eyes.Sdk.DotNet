@@ -14,7 +14,6 @@ using System.Drawing;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace Applitools
 {
@@ -47,7 +46,6 @@ namespace Applitools
         protected ClassicRunner runner_;
         protected internal RunningSession runningSession_;
         protected MatchWindowTask matchWindowTask_;
-        private int validationId_;
         private SessionStartInfo sessionStartInfo_;
         protected bool shouldMatchWindowRunOnceOnTimeout_;
         private IScaleProvider scaleProvider_;
@@ -64,6 +62,8 @@ namespace Applitools
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         private IServerConnector serverConnector_;
         protected TestResultContainer testResultContainer_;
+        private EyesScreenshot lastScreenshot_;
+        private readonly Queue<Trigger> userInputs_;
 
         #endregion
 
@@ -136,6 +136,8 @@ namespace Applitools
         /// If <c>true</c>, all interactions with this API are silently ignored.
         /// </summary>
         public virtual bool IsDisabled { get; set; }
+
+        public bool IsCompleted => testResultContainer_ != null;
 
         public virtual SessionStartInfo PrepareForOpen()
         {
@@ -823,10 +825,8 @@ namespace Applitools
                 GetAppOutput_
             );
 
-            validationId_ = -1;
             IsOpen = true;
         }
-
 
         private MatchResult MatchWindow_(Rectangle? region, string tag, ICheckSettingsInternal checkSettingsInternal,
             string source)
@@ -1129,6 +1129,46 @@ namespace Applitools
                 properties_);
 
             return sessionStartInfo_;
+        }
+
+
+        public SessionStopInfo PrepareStopSession(bool isAborted)
+        {
+            if (runningSession_ == null || !IsOpen)
+            {
+                Logger.Log("Server session was not started --- Empty test ended.");
+                return null;
+            }
+
+            IsOpen = false;
+            lastScreenshot_ = null;
+            ClearUserInputs_();
+            InitProviders_();
+
+            bool isNewSession = runningSession_.IsNewSession;
+            Logger.Verbose("Ending server session...");
+            bool save = (isNewSession && Configuration.SaveNewTests)
+                    || (!isNewSession && Configuration.SaveFailedTests);
+            Logger.Verbose("Automatically save test? " + save);
+            return new SessionStopInfo(runningSession_, isAborted, save);
+        }
+
+        protected void ClearUserInputs_()
+        {
+            if (IsDisabled)
+            {
+                return;
+            }
+            userInputs_.Clear();
+        }
+
+        protected Trigger[] GetUserInputs()
+        {
+            if (IsDisabled)
+            {
+                return null;
+            }
+            return userInputs_.ToArray();
         }
 
         protected virtual string GetBaselineEnvName()
