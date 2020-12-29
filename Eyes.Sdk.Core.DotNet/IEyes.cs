@@ -10,6 +10,7 @@ namespace Applitools
         void Check(params ICheckSettings[] checkSettings);
 
         IDictionary<string, IRunningTest> GetAllRunningTests();
-
+        bool IsCompleted();
+        IList<TestResultContainer> GetAllTestResults();
     }
 }

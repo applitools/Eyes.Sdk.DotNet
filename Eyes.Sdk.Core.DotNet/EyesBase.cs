@@ -1153,6 +1153,31 @@ namespace Applitools
             return new SessionStopInfo(runningSession_, isAborted, save);
         }
 
+        protected TestResults StopSession(bool isAborted)
+        {
+            if (IsDisabled)
+            {
+                Logger.Verbose("Ignored");
+                return new TestResults();
+            }
+            TestResults testResults;
+            SessionStopInfo sessionStopInfo = PrepareStopSession(isAborted);
+            if (sessionStopInfo == null)
+            {
+                testResults = new TestResults();
+                testResults.Status = TestResultsStatus.NotOpened;
+                return testResults;
+            }
+
+            testResults = runner_.Close(sessionStopInfo);
+            runningSession_ = null;
+            if (testResults == null)
+            {
+                Logger.Log("Failed stopping session");
+                throw new EyesException(string.Format("Failed stopping session. SessionStopInfo: {0}", sessionStopInfo));
+            }
+            return testResults;
+        }
         protected void ClearUserInputs_()
         {
             if (IsDisabled)

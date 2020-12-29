@@ -10,7 +10,7 @@ namespace Applitools
 
         private List<TestResults> allTestResult_ = new List<TestResults>();
 
-        public EyesException Exception { get; internal set; }
+        public EyesException Exception { get; set; }
 
         public ClassicRunner()
         {

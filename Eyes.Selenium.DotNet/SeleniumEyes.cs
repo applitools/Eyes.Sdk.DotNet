@@ -19,6 +19,7 @@ using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
 using Region = Applitools.Utils.Geometry.Region;
 using System.Linq;
+using Applitools.VisualGrid;
 using System.Text;
 
 namespace Applitools.Selenium
@@ -1372,12 +1373,19 @@ namespace Applitools.Selenium
             TestResults results = null;
             try
             {
-                results = base.Close(throwEx);
+                results = StopSession(false);
+                CloseCompleted(results);
             }
-            catch (EyesException e)
+            catch (Exception e)
             {
-                runner_.Exception = e;
-                if (throwEx) throw;
+                Logger.Log("Error: {0}", e);
+                CloseFailed(e);
+                throw;
+            }
+
+            if (error_ != null && throwEx)
+            {
+                throw new Exception(error_);
             }
 
             if (runner_ != null && results != null)
@@ -1461,6 +1469,21 @@ namespace Applitools.Selenium
                 CheckSettings = lastCheckSettings_,
                 FluentCommandString = fluentCommandString,
             };
+        }
+
+        public IDictionary<string, IRunningTest> GetAllRunningTests()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IEyes.IsCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<TestResultContainer> GetAllTestResults()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Methods

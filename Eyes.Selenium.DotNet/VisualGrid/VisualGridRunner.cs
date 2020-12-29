@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Diagnostics;
 using Applitools.Selenium;
+using Newtonsoft.Json;
 
 namespace Applitools.VisualGrid
 {
@@ -29,7 +30,6 @@ namespace Applitools.VisualGrid
                 return lockObject_;
             }
         }
-
 
         internal class TestConcurrency
         {
@@ -58,48 +58,16 @@ namespace Applitools.VisualGrid
         internal readonly TestConcurrency testConcurrency_;
 
         private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
-        internal readonly HashSet<IVisualGridEyes> allEyes_ = new HashSet<IVisualGridEyes>();
-        private readonly List<RenderingTask> renderingTaskList_ = new List<RenderingTask>();
-        private readonly List<RenderRequestCollectionTask> renderRequestCollectionTaskList_ = new List<RenderRequestCollectionTask>();
+        internal readonly HashSet<IEyes> allEyes_ = new HashSet<IEyes>();
         private EyesServiceRunner eyesServiceRunner_;
 
         internal AutoResetEvent debugLock_ = null;
 
-        private readonly AutoResetEvent openerServiceConcurrencyLock_ = new AutoResetEvent(true);
-        private readonly AutoResetEvent openerServiceLock_ = new AutoResetEvent(true);
-        private readonly AutoResetEvent closerServiceLock_ = new AutoResetEvent(true);
-        private readonly AutoResetEvent checkerServiceLock_ = new AutoResetEvent(true);
-        private readonly AutoResetEvent renderingServiceLock_ = new AutoResetEvent(true);
-        private readonly AutoResetEvent renderRequestCollectionServiceLock_ = new AutoResetEvent(true);
-        private readonly EyesListener eyesListener_;
-
         internal static TimeSpan waitForResultTimeout_ = TimeSpan.FromMinutes(10);
 
-        public class RenderListener
-        {
-            public Action OnRenderSuccess { get; }
-            public Action<Exception> OnRenderFailed { get; }
-
-            public RenderListener()
-            {
-                OnRenderSuccess = () => { };
-                OnRenderFailed = (e) => { };
-            }
-
-            public RenderListener(Action onRenderSuccess, Action<Exception> onRenderFailed)
-            {
-                OnRenderSuccess = onRenderSuccess;
-                OnRenderFailed = onRenderFailed;
-            }
-        }
-
-        private OpenService eyesOpenService_;
-        private CloseService eyesCloseService_;
-        private ResourceCollectionService resourceCollectionService_;
-        private RenderingGridService renderingGridService_;
-        private CheckService eyesCheckService_;
         private RenderingInfo renderingInfo_;
         private bool wasConcurrencyLogSent_;
+        private string suiteName_;
 
         RenderingInfo IVisualGridRunner.RenderingInfo => renderingInfo_;
 
@@ -110,496 +78,139 @@ namespace Applitools.VisualGrid
         ConcurrentDictionary<string, RGridResource> IVisualGridRunner.ResourcesCacheMap { get; } = new ConcurrentDictionary<string, RGridResource>();
         public IDebugResourceWriter DebugResourceWriter { get; set; }
 
-
-        public VisualGridRunner(ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), logHandler)
+        public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), suiteName, logHandler)
         {
             testConcurrency_ = new TestConcurrency();
         }
 
-        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), logHandler)
+        public VisualGridRunner(int concurrentOpenSessions, string suiteName = null, ILogHandler logHandler = null)
+            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), suiteName, logHandler)
         {
             testConcurrency_ = new TestConcurrency(concurrentOpenSessions, true);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName = null, ILogHandler logHandler = null)
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
             if (logHandler != null) Logger.SetLogHandler(logHandler);
-            eyesListener_ = new EyesListener(OnTaskComplete, OnRenderComplete);
-            Init();
-            Logger.Verbose("rendering grid manager is built");
-            StartServices();
+            Init(suiteName);
         }
 
         ~VisualGridRunner()
         {
             TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
         }
-
-        internal List<VisualGridTask> GetAllTasksByType(TaskType type)
-        {
-            List<VisualGridTask> allTasks = new List<VisualGridTask>();
-            foreach (IVisualGridEyes eyes in AllEyes)
-            {
-                foreach (RunningTest runningTest in eyes.GetAllRunningTests())
-                {
-                    foreach (VisualGridTask visualGridTask in runningTest.CheckTasks)
-                    {
-                        if (visualGridTask.TaskType == type)
-                        {
-                            allTasks.Add(visualGridTask);
-                        }
-                    }
-                }
-            }
-            return allTasks;
-        }
-
-        void OnTaskComplete(VisualGridTask task, IVisualGridEyes eyes)
-        {
-            Logger.Verbose("Enter with: {0}", task.TaskType);
-            TaskType type = task.TaskType;
-            try
-            {
-                switch (type)
-                {
-                    case TaskType.Open:
-                        Logger.Verbose("locking eyesToOpenList");
-                        lock (eyesToOpenList_)
-                        {
-                            Logger.Verbose("removing task {0}", task);
-                            eyesToOpenList_.Remove(eyes);
-                        }
-                        Logger.Verbose("releasing eyesToOpenList");
-                        break;
-                    case TaskType.Abort:
-                    case TaskType.Close:
-                        Logger.Verbose("Task {0}", type);
-                        eyesOpenService_.DecrementConcurrency();
-                        openerServiceConcurrencyLock_.Set();
-                        break;
-                    case TaskType.Check:
-                        Logger.Verbose("Check complete.");
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error: {0}", e);
-            }
-
-            NotifyAllServices();
-        }
-
-        void OnRenderComplete()
-        {
-            NotifyAllServices();
-        }
-
-        private void StartServices()
-        {
-            Logger.Verbose("enter");
-            IsServicesOn = true;
-            Logger.Verbose("exit");
-        }
-
-        private void StopServices()
-        {
-            Logger.Verbose("enter");
-            IsServicesOn = false;
-            Logger.Verbose("exit");
-        }
-
-        internal void NotifyAllServices()
-        {
-            NotifyOpenerService();
-            NotifyCloserService();
-            NotifyRenderRequestCollectionService();
-            NotifyCheckerService();
-            NotifyRenderingService();
-        }
-
-        private void NotifyRenderingService()
-        {
-            Logger.Verbose($"releasing {nameof(renderingServiceLock_)}.");
-            renderingServiceLock_.Set();
-        }
-
-        private void NotifyCheckerService()
-        {
-            Logger.Verbose($"releasing {nameof(checkerServiceLock_)}.");
-            checkerServiceLock_.Set();
-        }
-
-        private void NotifyCloserService()
-        {
-            Logger.Verbose($"releasing {nameof(closerServiceLock_)}.");
-            closerServiceLock_.Set();
-        }
-
-        private void NotifyOpenerService()
-        {
-            Logger.Verbose($"releasing {nameof(openerServiceLock_)}.");
-            openerServiceLock_.Set();
-        }
-
-        private void NotifyRenderRequestCollectionService()
-        {
-            Logger.Verbose($"releasing {nameof(renderRequestCollectionServiceLock_)}.");
-            renderRequestCollectionServiceLock_.Set();
-        }
-
-        private void Init()
-        {
-            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-            int concurrentOpenSessions = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency();
-            eyesOpenService_ = new OpenService(Logger, ServerConnector, concurrentOpenSessions);
-
-            eyesCloseService_ = new CloseService(Logger, ServerConnector);
-
-            Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
-            resourceCollectionService_ = new ResourceCollectionService(Logger, ServerConnector, drw, ((IVisualGridRunner)this).ResourcesCacheMap, null);
-
-            renderingGridService_ = new RenderingGridService("renderingGridService", Logger, concurrentOpenSessions,
-                new RenderingGridService.RGServiceListener(() =>
-                {
-                    RenderingTask nextTestToRender = GetNextRenderingTask_();
-                    try
-                    {
-                        if (nextTestToRender == null)
-                        {
-                            Logger.Verbose("nextTestToRender is null. Waiting 300ms on {0}", nameof(renderingServiceLock_));
-                            renderingServiceLock_.WaitOne(300);
-                            nextTestToRender = GetNextRenderingTask_();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Log("Error: {0}", e);
-                    }
-                    return nextTestToRender;
-                }), renderingServiceLock_);
-
-            eyesCheckService_ = new CheckService(Logger, ServerConnector);
-        }
-
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             Logger.Log("Error: {0}", e);
         }
 
-        public void Close(IVisualGridEyes eyes)
+        private void Init(string suiteName)
         {
-            NotifyAllServices();
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            int concurrentOpenSessions = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency();
+
+            suiteName_ = suiteName;
+            if (suiteName_ == null)
+            {
+                StackFrame frame = new StackFrame(2);
+                suiteName_ = frame.GetMethod().DeclaringType.Name;
+            }
+
+            Logger.Log("runner created");
+            IDictionary<string, RGridResource> resourcesCacheMap = ((IVisualGridRunner)this).ResourcesCacheMap;
+            Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
+
+            eyesServiceRunner_ = new EyesServiceRunner(Logger, ServerConnector, allEyes_, concurrentOpenSessions,
+                drw, resourcesCacheMap);
+            eyesServiceRunner_.Start();
+
+            Logger.Verbose("rendering grid manager is built");
         }
 
-        private Task<TestResultContainer> GetNextCheckTask_()
-        {
-            ScoreTask bestScoreTask = null;
-            int bestScore = -1;
-            Logger.Verbose("looking for best test in a list of {0}", allEyes_.Count);
-
-            foreach (IVisualGridEyes eyes in AllEyes)
-            {
-                Stopwatch sw = Stopwatch.StartNew();
-                ScoreTask currentScoreTask = eyes.GetBestScoreTaskForCheck();
-                Logger.Verbose("{0} - {1} took {2} seconds. Result null? {3}",
-                    nameof(GetNextCheckTask_), nameof(eyes.GetBestScoreTaskForCheck), sw.Elapsed.TotalSeconds, currentScoreTask == null);
-                if (currentScoreTask == null) continue;
-                int currentTestMark = currentScoreTask.Score;
-                if (bestScore < currentTestMark)
-                {
-                    bestScoreTask = currentScoreTask;
-                    bestScore = currentTestMark;
-                }
-            }
-
-            if (bestScoreTask == null)
-            {
-                Logger.Verbose("no test found.");
-                return null;
-            }
-            Logger.Verbose("found test with score {0}", bestScore);
-            VisualGridTask vgTask = bestScoreTask.Task;
-            Task<TestResultContainer> task = new Task<TestResultContainer>(vgTask.Call, vgTask);
-            Logger.Verbose("task id: {0}", task.Id);
-            return task;
-        }
-
-        private Task<TestResultContainer> GetNextTestToOpen_()
-        {
-            ScoreTask bestScoreTask = null;
-            int bestMark = -1;
-            Logger.Verbose("GetNextTestToOpen_ - looking for best test in a list of {0} eyes.", allEyes_.Count);
-            var allEyes = AllEyes;
-            if (allEyes.Any((eyes) => eyes.IsServerConcurrencyLimitReached())) return null;
-
-            foreach (IVisualGridEyes eyes in allEyes)
-            {
-                ScoreTask currentTestMark = eyes.GetBestScoreTaskForOpen();
-                if (currentTestMark == null) continue;
-                int currentScore = currentTestMark.Score;
-                if (bestMark < currentScore)
-                {
-                    bestMark = currentScore;
-                    bestScoreTask = currentTestMark;
-                }
-            }
-
-            if (bestScoreTask == null)
-            {
-                Logger.Verbose("GetNextTestToOpen_ - no relevant test found in: {0}", allEyes.Concat(" ; "));
-                return null;
-            }
-
-            Logger.Verbose("found test with mark {0}", bestMark);
-            Logger.Verbose("calling getNextOpenTaskAndRemove on {0}", bestScoreTask);
-            VisualGridTask nextOpenTask = bestScoreTask.Task;
-            Task<TestResultContainer> task = new Task<TestResultContainer>(nextOpenTask.Call, nextOpenTask);
-            Logger.Verbose("task id: {0}", task.Id);
-            return task;
-        }
-        private RenderingTask GetNextRenderingTask_()
-        {
-            Logger.Verbose("GetNextRenderingTask_ - enter - renderingTaskList_.Count: {0}", renderingTaskList_.Count);
-            lock (renderingTaskList_)
-            {
-                if (renderingTaskList_.Count == 0)
-                {
-                    return null;
-                }
-
-                RenderingTask finalRenderingTask = null;
-                List<RenderingTask> chosenTasks = new List<RenderingTask>();
-                foreach (RenderingTask renderingTask in renderingTaskList_)
-                {
-                    if (!renderingTask.IsReady)
-                    {
-                        continue;
-                    }
-
-                    if (finalRenderingTask == null)
-                    {
-                        finalRenderingTask = renderingTask;
-                    }
-                    else
-                    {
-                        finalRenderingTask.Merge(renderingTask);
-                    }
-
-                    chosenTasks.Add(renderingTask);
-                }
-
-                finalRenderingTask = finalRenderingTask != null && finalRenderingTask.IsReady ? finalRenderingTask : null;
-
-                if (finalRenderingTask != null)
-                {
-                    Logger.Verbose("GetNextRenderingTask_ - Next rendering task contains {0} render requests", chosenTasks.Count);
-                    foreach (var task in chosenTasks)
-                    {
-                        renderingTaskList_.Remove(task);
-                    }
-                }
-
-                return finalRenderingTask;
-            }
-        }
-
-        //private Task<TestResultContainer> GetNextRenderRequestCollectionTask_()
-        //{
-        //    Logger.Verbose("locking renderRequestCollectionTaskList_. Count: {0}", renderRequestCollectionTaskList_.Count);
-        //    lock (renderRequestCollectionTaskList_)
-        //    {
-        //        if (renderRequestCollectionTaskList_.Count == 0)
-        //        {
-        //            Logger.Verbose("releasing renderRequestCollectionTaskList_. returning null.");
-        //            return null;
-        //        }
-
-        //        RenderRequestCollectionTask renderRequestCollectionTask = renderRequestCollectionTaskList_[0];
-        //        renderRequestCollectionTaskList_.RemoveAt(0);
-        //        Task<TestResultContainer> task = new Task<TestResultContainer>(renderRequestCollectionTask.Call);
-        //        Logger.Verbose("releasing renderRequestCollectionTaskList_. returning task.");
-        //        return task;
-        //    }
-        //}
-
-        private Task<TestResultContainer> GetNextTestToClose_()
-        {
-            RunningTest runningTest;
-            foreach (IVisualGridEyes eyes in AllEyes)
-            {
-                runningTest = eyes.GetNextTestToClose();
-                if (runningTest != null)
-                {
-                    return runningTest.GetNextCloseTask();
-                }
-            }
-            return null;
-        }
-
-        protected override TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)
+        public void Open(IEyes eyes, IList<VisualGridRunningTest> newTests)
         {
             Logger.Verbose("enter");
-            Dictionary<IVisualGridEyes, ICollection<Task<TestResultContainer>>> allFutures = new Dictionary<IVisualGridEyes, ICollection<Task<TestResultContainer>>>();
 
-            foreach (IVisualGridEyes eyes in AllEyes)
-            {
-                ICollection<Task<TestResultContainer>> futureList = eyes.Close();
-                Logger.Verbose("adding a {0} items list to allFutures.", futureList.Count);
-                if (allFutures.TryGetValue(eyes, out ICollection<Task<TestResultContainer>> futures) && futures != null)
-                {
-                    foreach (Task<TestResultContainer> future in futures)
-                    {
-                        futureList.Add(future);
-                    }
-                }
-                allFutures.Add(eyes, futureList);
-            }
+            ApiKey = eyes.ApiKey;
+            ServerUrl = eyes.ServerUrl;
+            ServerConnector.Proxy = eyes.Proxy;
 
-            Exception exception = null;
-            NotifyAllServices();
-            List<TestResultContainer> allResults = new List<TestResultContainer>();
-            Logger.Verbose("trying to call future.get on {0} future lists.", allFutures.Count);
-            foreach (KeyValuePair<IVisualGridEyes, ICollection<Task<TestResultContainer>>> entry in allFutures)
-            {
-                ICollection<Task<TestResultContainer>> value = entry.Value;
-                IVisualGridEyes key = entry.Key;
-                key.TestResults.Clear();
-                Logger.Verbose("trying to call future.get on {0} futures of {1}", value.Count, key);
-                foreach (Task<TestResultContainer> future in value)
-                {
-                    Logger.Verbose("calling future.get on {0}", key);
-                    TestResultContainer testResultContainer = null;
-                    try
-                    {
-                        if (Task.WhenAny(future, Task.Delay(waitForResultTimeout_)).Result == future)
-                        {
-                            testResultContainer = future.Result;
-                            if (testResultContainer.Exception != null && exception == null)
-                            {
-                                exception = testResultContainer.Exception;
-                            }
-                            allResults.Add(testResultContainer);
-                            key.TestResults.Add(testResultContainer);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Log("Error: {0}", e);
-                        if (exception == null)
-                        {
-                            exception = e;
-                        }
-                    }
-                    Logger.Verbose("got TestResultContainer: {0}", testResultContainer);
-                }
-            }
-
-            //lock (lockObject_) allEyes_.Clear();
-            //eyesToOpenList_.Clear();
-            //renderingTaskList_.Clear();
-
-            StopServices();
-            NotifyAllServices();
-
-            if (shouldThrowException && exception != null)
-            {
-                Logger.Log("Error: {0}", exception);
-                throw exception;
-            }
-            Logger.Verbose("exit");
-            TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
-            return new TestResultsSummary(allResults);
-        }
-
-        public void Open(IVisualGridEyes eyes, RenderingInfo renderingInfo)
-        {
-            Logger.Verbose("enter");
             if (renderingInfo_ == null)
             {
-                renderingInfo_ = renderingInfo;
+                renderingInfo_ = ServerConnector.GetRenderingInfo();
             }
 
-            Logger.Verbose("locking eyesToOpenList_");
-            lock (eyesToOpenList_)
-            {
-                eyesToOpenList_.Add(eyes);
-            }
-            Logger.Verbose("releasing eyesToOpenList_");
+            eyesServiceRunner_.SetRenderingInfo(renderingInfo_);
 
-            if (allEyes_.Add(eyes))
+            allEyes_.Add(eyes);
+
+            try
             {
-                if (allEyes_.Count == 1 && Logger.GetILogHandler() is NullLogHandler)
+                object logMessage = GetConcurrencyLog();
+                if (logMessage != null)
                 {
-                    ILogHandler handler = eyes.Logger.GetILogHandler();
-                    if (handler != null)
-                    {
-                        Logger.SetLogHandler(handler);
-                    }
+                    NetworkLogHandler.SendEvent(ServerConnector, TraceLevel.Notice, logMessage);
                 }
             }
-            else
+            catch (JsonException e)
             {
-                Logger.Verbose("eyes already in list.");
+                Logger.Log("Error: {0}", e);
             }
-            eyes.SetListener(eyesListener_);
 
-            AddBatch(eyes.Batch.Id, eyes.GetBatchCloser());
-            Logger.Log("exit");
+            AddBatch(eyes.Batch.Id, (IBatchCloser)eyes);
+            eyesServiceRunner_.OpenTests(newTests);
         }
 
-        public void Check(ICheckSettings settings, IDebugResourceWriter debugResourceWriter, FrameData domData,
-                          IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions, IUfgConnector connector,
-                          UserAgent userAgent, List<VisualGridTask> checkTasks, RenderListener listener)
+        public void Check(FrameData domData, List<CheckTask> checkTasks)
         {
-            debugResourceWriter = debugResourceWriter ?? DebugResourceWriter ?? NullDebugResourceWriter.Instance;
-            Logger.Verbose("enter");
-            Logger.Verbose("connector type: {0}", connector.GetType().Name);
-            RenderRequestCollectionTask resourceCollectionTask = new RenderRequestCollectionTask(this, domData, connector,
-                userAgent, regionSelectors, userActions, settings, checkTasks, (Ufg.IDebugResourceWriter)debugResourceWriter,
-                new TaskListener<List<RenderingTask>>(
-                    (renderingTasks) =>
-                    {
-                        Logger.Verbose("locking renderingTaskList_");
-                        lock (renderingTaskList_)
-                        {
-                            renderingTaskList_.AddRange(renderingTasks);
-                        }
-                        Logger.Verbose("releasing renderingTaskList_");
-                        NotifyAllServices();
-                        debugLock_?.Set();
-                    },
-                    (e) =>
-                    {
-                        NotifyAllServices();
-                    }
-                    ),
-                new TaskListener(
-                    () =>
-                    {
-                        listener.OnRenderSuccess();
-                        NotifyAllServices();
-                    },
-                    (e) =>
-                    {
-                        NotifyAllServices();
-                        listener.OnRenderFailed(e);
-                    })
-            );
+            eyesServiceRunner_.AddResourceCollectionTask(domData, checkTasks);
+        }
 
-            Logger.Verbose("locking resourceCollectionTaskList_");
-            lock (renderRequestCollectionTaskList_)
+        protected override TestResultsSummary GetAllTestResultsImpl(bool throwException)
+        {
+            bool isRunning = true;
+            while (isRunning && eyesServiceRunner_.Error == null)
             {
-                renderRequestCollectionTaskList_.Add(resourceCollectionTask);
+                isRunning = false;
+                foreach (IEyes eyes in AllEyes)
+                {
+                    isRunning = isRunning || !eyes.IsCompleted();
+                }
+                Thread.Sleep(500);
             }
-            Logger.Verbose("releasing resourceCollectionTaskList_");
 
-            NotifyAllServices();
-            //Logger.Verbose("exit");
+            if (eyesServiceRunner_.Error != null)
+            {
+                throw new EyesException("Execution crashed", eyesServiceRunner_.Error);
+            }
+
+            eyesServiceRunner_.StopServices();
+
+            Exception exception = null;
+            List<TestResultContainer> allResults = new List<TestResultContainer>();
+            foreach (IEyes eyes in AllEyes)
+            {
+                IList<TestResultContainer> eyesResults = eyes.GetAllTestResults();
+                foreach (TestResultContainer result in eyesResults)
+                {
+                    if (exception == null && result.Exception != null)
+                    {
+                        exception = result.Exception;
+                    }
+                }
+
+                allResults.AddRange(eyesResults);
+            }
+
+            if (throwException && exception != null)
+            {
+                throw new Exception("Error", exception);
+            }
+            TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
+            return new TestResultsSummary(allResults);
         }
 
         internal string PrintAllEyesFutures()
@@ -613,7 +224,7 @@ namespace Applitools.VisualGrid
         }
 
         public bool IsServicesOn { get; set; }
-        internal IEnumerable<IVisualGridEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
+        internal IEnumerable<IEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
 
         public object GetConcurrencyLog()
         {

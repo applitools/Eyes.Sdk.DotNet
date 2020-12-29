@@ -36,7 +36,7 @@ namespace Applitools.Selenium.VisualGrid
             "return '//*[data-applitools-element-id=\"'+id+'\"]';";
 
         private readonly VisualGridRunner visualGridRunner_;
-        private readonly Dictionary<string, RunningTest> testList_ = new Dictionary<string, RunningTest>();
+        private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private RenderingInfo renderingInfo_;
@@ -206,7 +206,7 @@ namespace Applitools.Selenium.VisualGrid
             }
 
             Logger.Verbose("opening {0} tests...", testList_.Count);
-            visualGridRunner_.Open(this, renderingInfo_);
+            visualGridRunner_.Open(this, newTests);
             Logger.Verbose("done");
             return driver_ ?? webDriver;
         }
@@ -417,14 +417,13 @@ namespace Applitools.Selenium.VisualGrid
                     seleniumCheckTarget.Init(Logger, driver_);
                 }
 
-
                 int waitBeforeScreenshots = Config_.WaitBeforeScreenshots;
                 Thread.Sleep(waitBeforeScreenshots);
 
                 checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo);
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
 
-                FrameData scriptResult = CaptureDomSnapshot_(switchTo);
+                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, visualGridRunner_, driver_, Logger);
 
                 Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
                 Logger.Verbose("Cdt length: {0}", scriptResult.Cdt.Count);
@@ -432,7 +431,7 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("Resources urls: {0}", StringUtils.Concat(scriptResult.ResourceUrls, ", "));
 
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
-                Logger.Verbose("regionXPaths : {0}" , regionsXPaths);
+                Logger.Verbose("regionXPaths : {0}", regionsXPaths);
 
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
 
@@ -450,7 +449,7 @@ namespace Applitools.Selenium.VisualGrid
                     checkTasks.Add(runningTest.IssueCheck((ICheckSettings)checkSettingsInternal, regionsXPaths, source));
                 }
 
-                scriptResult.UserAgent = userAgent;
+                scriptResult.UserAgent = userAgent_;
                 //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
                 visualGridRunner_.Check(scriptResult, checkTasks);
                 Logger.Verbose("created renderTask  ({0})", checkSettings);
@@ -461,7 +460,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     runningTest.SetTestInExceptionMode(e);
                 }
-                GeneralUtils.logExceptionStackTrace(logger, e);
+                Logger.Log("Error: {0}", e);
             }
             finally
             {
@@ -752,7 +751,7 @@ namespace Applitools.Selenium.VisualGrid
                 Thread.Sleep(500);
             }
 
-            List<TestResultContainer> allResults = GetAllTestResults();
+            IList<TestResultContainer> allResults = GetAllTestResults();
             TestResultContainer errorResult = null;
             TestResults firstResult = null;
             foreach (TestResultContainer result in allResults)
@@ -806,11 +805,6 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("closing current running test");
                 vgRunningTest.IssueClose();
             }
-        }
-
-        public IDictionary<string, RunningTest> GetAllRunningTests()
-        {
-            return testList_;
         }
 
         public void AddProperty(string name, string value)
@@ -875,7 +869,7 @@ namespace Applitools.Selenium.VisualGrid
 
         public IBatchCloser GetBatchCloser()
         {
-            return testList_.Values.FirstOrDefault();
+            return testList_.Values.FirstOrDefault() as IBatchCloser;
         }
 
         internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
@@ -893,7 +887,7 @@ namespace Applitools.Selenium.VisualGrid
             UserInputs.Add(trigger);
         }
 
-        public List<TestResultContainer> GetAllTestResults()
+        public IList<TestResultContainer> GetAllTestResults()
         {
             List<TestResultContainer> allResults = new List<TestResultContainer>();
             foreach (RunningTest runningTest in testList_.Values)
@@ -911,7 +905,7 @@ namespace Applitools.Selenium.VisualGrid
 
         IDictionary<string, IRunningTest> IEyes.GetAllRunningTests()
         {
-            throw new NotImplementedException();
+            return testList_;
         }
     }
 }
