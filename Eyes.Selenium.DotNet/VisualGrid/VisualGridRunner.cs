@@ -84,13 +84,21 @@ namespace Applitools.VisualGrid
             testConcurrency_ = new TestConcurrency();
         }
 
-        public VisualGridRunner(int concurrentOpenSessions, string suiteName = null, ILogHandler logHandler = null)
+        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
+            : this(concurrentOpenSessions, null, logHandler)
+        { }
+
+        public VisualGridRunner(int concurrentOpenSessions, string suiteName, ILogHandler logHandler = null)
             : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), suiteName, logHandler)
         {
             testConcurrency_ = new TestConcurrency(concurrentOpenSessions, true);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName = null, ILogHandler logHandler = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
+            : this(runnerOptions, null, logHandler)
+        { }
+
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null)
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);

@@ -9,5 +9,6 @@ namespace Applitools.Selenium
         IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize);
         TestResults Close(bool throwEx);
         EyesWebDriver GetDriver();
+        void CloseAsync();
     }
 }

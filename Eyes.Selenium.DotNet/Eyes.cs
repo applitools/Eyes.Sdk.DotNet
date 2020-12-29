@@ -570,27 +570,7 @@ namespace Applitools.Selenium
                 return;
             }
             Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
-            if (isVisualGridEyes_)
-            {
-                CloseAsync_();
-            }
-            else
-            {
-                seleniumEyes_.Close(false);
-            }
-        }
-
-        internal virtual ICollection<Task<TestResultContainer>> CloseAsync_()
-        {
-            Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
-            if (isVisualGridEyes_)
-            {
-                return visualGridEyes_.CloseAsync(false);
-            }
-            TestResults testResult = seleniumEyes_.Close(false);
-            TestResultContainer testResultContainer = new TestResultContainer(testResult);
-            Task<TestResultContainer> testResultContainerTask = new Task<TestResultContainer>((result) => (TestResultContainer)result, testResultContainer);
-            return new Task<TestResultContainer>[] { testResultContainerTask };
+            activeEyes_.CloseAsync();
         }
 
         public void Log(string msg, params object[] args)

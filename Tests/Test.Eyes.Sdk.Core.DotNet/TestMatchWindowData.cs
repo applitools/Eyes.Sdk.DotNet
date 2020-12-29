@@ -22,16 +22,17 @@ namespace Applitools
         [Test]
         public void TestCtor()
         {
-            MatchWindowData mwd = new MatchWindowData(appOut_, "mytag");
+            RunningSession runningSession = new RunningSession();
+            MatchWindowData mwd = new MatchWindowData(runningSession, appOut_, "mytag");
             ImageMatchSettings ims = new ImageMatchSettings();
             mwd.Options = new ImageMatchOptions(ims);
             mwd.Options.UserInputs = new Trigger[] { trigger_ };
             Assert.AreEqual(appOut_, mwd.AppOutput);
             Assert.AreEqual(new Trigger[] { trigger_ }, mwd.Options.UserInputs);
             Assert.AreEqual("mytag", mwd.Tag);
-            new MatchWindowData(appOut_, "tag");
-            Assert.Throws<ArgumentNullException>(() => new MatchWindowData(null, "tag"));
-            var ok = new MatchWindowData(appOut_, null);
+            new MatchWindowData(runningSession, appOut_, "tag");
+            Assert.Throws<ArgumentNullException>(() => new MatchWindowData(runningSession, null, "tag"));
+            var ok = new MatchWindowData(runningSession, appOut_, null);
         }
     }
 }

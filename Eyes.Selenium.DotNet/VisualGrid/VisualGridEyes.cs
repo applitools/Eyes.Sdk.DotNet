@@ -135,8 +135,6 @@ namespace Applitools.Selenium.VisualGrid
 
         public ICollection<TestResultContainer> TestResults { get; } = new List<TestResultContainer>();
 
-        internal IEyesConnectorFactory EyesConnectorFactory { get; set; } = new EyesConnectorFactory();
-
         public IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize)
         {
             Config_.SetAppName(appName);
@@ -412,7 +410,7 @@ namespace Applitools.Selenium.VisualGrid
             try
             {
                 ArgumentGuard.NotOfType(checkSettings, typeof(ICheckSettings), nameof(checkSettings));
-                if (checkSettings is ISeleniumCheckTarget seleniumCheckTarget)
+                if (checkSettings is IImplicitInitialization seleniumCheckTarget)
                 {
                     seleniumCheckTarget.Init(Logger, driver_);
                 }
@@ -446,7 +444,7 @@ namespace Applitools.Selenium.VisualGrid
                         continue;
                     }
 
-                    checkTasks.Add(runningTest.IssueCheck((ICheckSettings)checkSettingsInternal, regionsXPaths, source));
+                    checkTasks.Add((CheckTask)runningTest.IssueCheck((ICheckSettings)checkSettingsInternal, regionsXPaths, source));
                 }
 
                 scriptResult.UserAgent = userAgent_;
@@ -784,7 +782,7 @@ namespace Applitools.Selenium.VisualGrid
             return GetAllTestResults() != null;
         }
 
-        internal void CloseAsync()
+        public void CloseAsync()
         {
             Logger.Verbose("enter");
             if (ValidateEyes_())

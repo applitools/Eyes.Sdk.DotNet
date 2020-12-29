@@ -35,13 +35,9 @@ namespace Applitools.VisualGrid
                 new VisualGridSelector(xpath, category)
             };
             bool sendDom = true;
-            TaskType taskType = default;
-            Logger logger = null;
-            RunningTest runningTest = null;
-            VisualGridTask task = new VisualGridTask(taskType, logger, runningTest);
 
-            RenderRequest request = new RenderRequest(webHook, url, stitchingServiceUrl, dom, resources, 
-                renderInfo, platform, browserName, scriptHooks, selectorsToFindRegionsFor, sendDom, task, null);
+            RenderRequest request = new RenderRequest(webHook, url, stitchingServiceUrl, dom, resources,
+                renderInfo, platform, browserName, scriptHooks, selectorsToFindRegionsFor, sendDom, null, null, null);
 
             JsonSerializerSettings settings = JsonUtils.CreateSerializerSettings();
             settings.Formatting = Formatting.Indented;
@@ -64,14 +60,10 @@ namespace Applitools.VisualGrid
             RenderInfo renderInfo = new RenderInfo(0, 0, target, selector, region, null, deviceInfo);
             VisualGridSelector[] selectorsToFindRegionsFor = new VisualGridSelector[0];
             bool sendDom = true;
-            TaskType taskType = default;
-            Logger logger = null;
-            RunningTest runningTest = null;
-            VisualGridTask task = new VisualGridTask(taskType, logger, runningTest);
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
 
             RenderRequest request = new RenderRequest(null, url, stitchingServiceUrl, dom, resources, renderInfo,
-                browserInfo.Platform, browserInfo.BrowserType, null, selectorsToFindRegionsFor, sendDom, task, null);
+                browserInfo.Platform, browserInfo.BrowserType, null, selectorsToFindRegionsFor, sendDom, null, null, null);
 
             JsonSerializerSettings settings = JsonUtils.CreateSerializerSettings();
             settings.Formatting = Formatting.Indented;

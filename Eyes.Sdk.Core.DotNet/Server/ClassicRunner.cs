@@ -35,7 +35,7 @@ namespace Applitools
             return new TestResultsSummary(result);
         }
 
-        internal void AggregateResult(TestResults testResult)
+        public void AggregateResult(TestResults testResult)
         {
             allTestResult_.Add(testResult);
         }

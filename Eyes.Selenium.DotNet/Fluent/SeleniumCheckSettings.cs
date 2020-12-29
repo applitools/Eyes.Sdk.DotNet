@@ -37,6 +37,24 @@ namespace Applitools.Selenium.Fluent
         {
         }
 
+        //public void Init(Logger logger, EyesWebDriver driver)
+        //{
+        //    initGetRegions(logger, driver, ignoreRegions);
+        //    initGetRegions(logger, driver, layoutRegions);
+        //    initGetRegions(logger, driver, strictRegions);
+        //    initGetRegions(logger, driver, contentRegions);
+        //    initGetRegions(logger, driver, floatingRegions);
+        //    initGetRegions(logger, driver, accessibilityRegions);
+        //}
+        //private void initGetRegions(Logger logger, EyesWebDriver driver, List<? extends GetRegion> getRegions)
+        //{
+        //    foreach (GetRegion getRegion in getRegions)
+        //    {
+        //        if (getRegion is ImplicitInitiation) {
+        //            ((ImplicitInitiation)getRegion).init(logger, driver);
+        //        }
+        //    }
+        //}
         By ISeleniumCheckTarget.GetTargetSelector()
         {
             return targetSelector_;

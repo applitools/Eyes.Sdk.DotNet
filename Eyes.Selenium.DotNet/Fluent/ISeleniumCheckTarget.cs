@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent
 {
-    interface ISeleniumCheckTarget : IScrollRootElementContainer
+    interface ISeleniumCheckTarget : IScrollRootElementContainer//, IImplicitInitialization
     {
         By GetTargetSelector();
 
@@ -12,7 +12,5 @@ namespace Applitools.Selenium.Fluent
         IList<FrameLocator> GetFrameChain();
 
         CheckState State { get; set; }
-
-        void Init(Logger logger, EyesWebDriver driver);
     }
 }
