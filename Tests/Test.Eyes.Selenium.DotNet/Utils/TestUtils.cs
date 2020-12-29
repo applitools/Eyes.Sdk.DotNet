@@ -20,7 +20,6 @@ namespace Applitools.Tests.Utils
         public static readonly bool RUN_HEADLESS = !Debugger.IsAttached || RUNS_ON_CI;// "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_RUN_HEADLESS"), StringComparison.OrdinalIgnoreCase) || RUNS_ON_CI;
         public static readonly bool IS_RELEASE_CANDIDATE = Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
         public static readonly string LOGS_PATH = Environment.GetEnvironmentVariable("APPLITOOLS_LOGS_PATH") ?? ".";
-        public const string COVERED_BY_GENERATED_TESTS_MESSAGE = "covered by generated tests";
 
         public static List<object[]> GeneratePermutationsList(List<List<object>> lists)
         {

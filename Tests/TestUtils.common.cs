@@ -16,6 +16,7 @@ namespace Applitools.Tests.Utils
     internal partial class TestUtils
     {
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
+        public const string COVERED_BY_GENERATED_TESTS_MESSAGE = "covered by generated tests";
 
         public static string InitLogPath([CallerMemberName] string testName = null)
         {
