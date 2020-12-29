@@ -265,7 +265,6 @@ namespace Applitools
                 new List<IMutableRegion>(), // Floating Regions
                 new List<IMutableRegion>(), // Accessibility Regions
                 new List<IMutableRegion>(), // User Action Regions
-                new List<IMutableRegion>(), // Target Element Location
             };
 
             foreach (IRegion r in regions)
