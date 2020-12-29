@@ -6,6 +6,7 @@ using System.Drawing;
 using Region = Applitools.Utils.Geometry.Region;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 using Applitools.Selenium.VisualGrid;
+using Applitools.Tests.Utils;
 
 namespace Applitools.Selenium.Tests
 {
@@ -38,6 +39,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckRegionWithIgnoreRegion_Fluent()
         {
             GetEyes().Check("Fluent - Region with Ignore region", Target.Region(By.Id("overflowing-div"))
@@ -54,13 +56,14 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindow_Fluent()
         {
             GetEyes().Check("Fluent - Window", Target.Window());
         }
 
         [Test]
-        [Retry(3)]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithIgnoreBySelector_Fluent()
         {
             GetEyes().Check("Fluent - Window with ignore region by selector", Target.Window()
@@ -88,6 +91,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithFloatingBySelector_Fluent()
         {
             GetEyes().Check("Fluent - Window with ignore region by selector", Target.Window()
@@ -109,6 +113,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent()
         {
             IWebElement element = GetWebDriver().FindElement(By.Id("overflowing-div-image"));
@@ -118,6 +123,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckElementWithIgnoreRegionBySameElement_Fluent()
         {
             IWebElement element = GetWebDriver().FindElement(By.Id("overflowing-div-image"));
@@ -138,6 +144,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent()
         {
             GetEyes().Check("Fluent - Region by element", Target.Window().Fully().Ignore(By.CssSelector(".ignore")));
@@ -195,6 +202,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithFloatingByRegion_Fluent()
         {
             ICheckSettings settings = Target.Window()

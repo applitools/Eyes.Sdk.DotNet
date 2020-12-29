@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Applitools.Tests.Utils;
+using NUnit.Framework;
 using OpenQA.Selenium;
 
 namespace Applitools.Selenium.Tests
@@ -28,12 +29,14 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckPageWithHeader_Window()
         {
             GetEyes().Check("Page with header", Target.Window().Fully(false));
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckPageWithHeader_Window_Fully()
         {
             GetEyes().Check("Page with header - fully", Target.Window().Fully(true));

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Applitools.Tests.Utils;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using System.Threading;
 
@@ -20,6 +21,7 @@ namespace Applitools.Selenium.Tests
          : base("Eyes Selenium SDK - Classic API", options, stitchMode) { }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindow()
         {
             GetEyes().CheckWindow("Window");
@@ -87,6 +89,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowAfterScroll()
         {
             ((IJavaScriptExecutor)GetDriver()).ExecuteScript("document.documentElement.scrollTop=350;");
