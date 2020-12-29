@@ -25,12 +25,14 @@ namespace Applitools.Selenium.Tests
             : base("Eyes Selenium SDK - Fluent API", options, stitchMode) { }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckFrame_Fully_Fluent()
         {
             GetEyes().Check("Fluent - Full Frame", Target.Frame("frame1").Fully());
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckFrame_Fluent()
         {
             GetEyes().Check("Fluent - Frame", Target.Frame("frame1"));
@@ -47,6 +49,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckFrameInFrame_Fully_Fluent()
         {
             GetEyes().Check("Fluent - Full Frame in Frame", Target.Frame("frame1")

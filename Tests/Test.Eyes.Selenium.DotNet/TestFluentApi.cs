@@ -26,6 +26,7 @@ namespace Applitools.Selenium.Tests
          : base("Eyes Selenium SDK - Fluent API", options, stitchMode) { }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithIgnoreRegion_Fluent()
         {
             GetDriver().FindElement(By.TagName("input")).SendKeys("My Input");
@@ -101,12 +102,14 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckRegionByCoordinates_Fluent()
         {
             GetEyes().Check("Fluent - Region by coordinates", Target.Region(new Rectangle(50, 70, 90, 110)));
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckOverflowingRegionByCoordinates_Fluent()
         {
             GetEyes().Check("Fluent - Region by overflowing coordinates", Target.Region(new Rectangle(50, 110, 90, 550)));
@@ -132,6 +135,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestScrollbarsHiddenAndReturned_Fluent()
         {
             //eyes_.SendDom = false;
@@ -232,6 +236,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckElementFullyAfterScroll()
         {
             ((IJavaScriptExecutor)GetDriver()).ExecuteScript("window.scrollTo(0, 500)");

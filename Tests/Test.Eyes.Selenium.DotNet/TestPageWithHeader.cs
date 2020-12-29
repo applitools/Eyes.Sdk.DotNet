@@ -43,12 +43,14 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckPageWithHeader_Region()
         {
             GetEyes().Check("Page with header", Target.Region(By.CssSelector("div.page")).Fully(false));
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckPageWithHeader_Region_Fully()
         {
             GetEyes().Check("Page with header - fully", Target.Region(By.CssSelector("div.page")).Fully(true));

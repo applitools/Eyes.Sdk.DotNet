@@ -49,6 +49,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckRegion()
         {
             GetEyes().CheckRegion(By.Id("overflowing-div"), "Region", false);
@@ -61,6 +62,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckFrame()
         {
             GetEyes().CheckFrame("frame1", "frame1");
@@ -73,6 +75,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckInnerFrame()
         {
             GetEyes().HideScrollbars = false;
