@@ -5,6 +5,7 @@
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Always send full-page DOM capture, even when inside an `IFRAME`. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
 ## [Eyes.Qtp vNext]
 ### Fixed
 - Chrome throwing `Browser has no child windows!` exception. [Trello 2328](https://trello.com/c/hUvN56yk)
