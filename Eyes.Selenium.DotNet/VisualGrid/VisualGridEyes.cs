@@ -689,7 +689,7 @@ namespace Applitools.Selenium.VisualGrid
             object arguments = new
             {
                 serializeResources = true,
-                //skipResources = runner.CachedBlobsURLs.Keys,
+                skipResources = runner.CachedBlobsURLs.Keys,
                 dontFetchResources = config.DisableBrowserFetching,
                 chunkByteLength
             };

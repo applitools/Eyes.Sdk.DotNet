@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Always send full-page DOM capture, even when inside an `IFRAME`. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
@@ -17,6 +21,7 @@
 ## [Eyes.Selenium 2.39] - 2020-12-20
 ### Fixed
 - Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+- Ultrafast Grid: Fixed Skip-List implementation and updated DOM-snapshot script. [Trello 1974](https://trello.com/c/44xq8dze)
 ### Updated
 - Updated `dom-capture` script. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
 

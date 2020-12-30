@@ -715,5 +715,31 @@ document.querySelector('div.copy-container > div > ol > li:nth-child(3) > a').st
                 eyes.AbortIfNotClosed();
             }
         }
+
+        [Test]
+        public void GovIL_35147_2235()
+        {
+            IWebDriver driver = new ChromeDriver();
+
+            var eyes = new Eyes();
+            eyes.SetLogHandler(new StdoutLogHandler(true));
+            try
+            {
+                driver = eyes.Open(driver, "GovIL", "#35147", new Size(1200, 700));
+
+                driver.Url = "file:///C:/Users/USER/Downloads/Itai/YuvalApplications%20-%20Power%20BI%20Report%20Server.htm";
+
+                IWebElement frame = driver.FindElement(By.CssSelector("#main > div > div > div > div > iframe"));
+                driver.SwitchTo().Frame(frame);
+                eyes.Check(Target.Window().Ignore(By.CssSelector("#pvExplorationHost > div > div > exploration > div > explore-canvas-modern > div > div.canvasFlexBox > div > div.displayArea.disableAnimations.fitToWidthOrigin > div.visualContainerHost > visual-container-repeat > visual-container-group:nth-child(16) > transform > div > div.vcGroupBody.themableBackgroundColor.themableBorderColorSolid > visual-container-modern:nth-child(4) > transform > div")));
+                //eyes.Check(Target.Window().Layout(By.CssSelector("#pvExplorationHost > div > div > exploration > div > explore-canvas-modern > div > div.canvasFlexBox > div > div.displayArea.disableAnimations.fitToWidthOrigin > div.visualContainerHost > visual-container-repeat > visual-container-group:nth-child(16) > transform > div > div.vcGroupBody.themableBackgroundColor.themableBorderColorSolid > visual-container-modern:nth-child(4) > transform > div")));
+
+                eyes.Close(false);
+            }
+            finally
+            {
+                driver.Quit();
+            }
+        }
     }
 }
