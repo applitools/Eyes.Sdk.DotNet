@@ -21,7 +21,7 @@ namespace Applitools.Tests.Utils
             // specifically request to send to sandbox...
             bool b1 = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase);
             // not a release build and 
-            bool b2 = !Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
+            bool b2 = !(Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false);
             // not full coverage
             bool b3 = !ReportingTestSuite.IS_FULL_COVERAGE;
 
