@@ -14,20 +14,19 @@ namespace Applitools.Tests.Utils
         public string Id { get; set; } = Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_ID") ?? "0000-0000";
 
         [JsonProperty("sandbox")]
-        public bool Sandbox
+        public bool Sandbox => SendToSandbox();
+        
+        internal static bool SendToSandbox()
         {
-            get
-            {
-                // specifically request to send to sandbox...
-                bool b1 = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase);
-                // not a release build and 
-                bool b2 = !Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
-                // not full coverage
-                bool b3 = !ReportingTestSuite.IS_FULL_COVERAGE;
+            // specifically request to send to sandbox...
+            bool b1 = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_REPORT_TO_SANDBOX"), StringComparison.OrdinalIgnoreCase);
+            // not a release build and 
+            bool b2 = !Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false;
+            // not full coverage
+            bool b3 = !ReportingTestSuite.IS_FULL_COVERAGE;
 
-                bool endResult =  b1 || (b2 && b3);
-                return endResult;
-            }
+            bool endResult = b1 || (b2 && b3);
+            return endResult;
         }
 
         [JsonProperty("results")]
