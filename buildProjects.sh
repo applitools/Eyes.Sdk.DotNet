@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-cd Eyes.Selenium.DotNet/Properties/NodeResources
+pushd Eyes.Selenium.DotNet/Properties/NodeResources
 npm install
+popd
 
 echo "running tests"
 

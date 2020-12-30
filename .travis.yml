@@ -61,7 +61,7 @@ jobs:
       name: Generic Tests
       script:
         - echo "generating tests"
-        - pushd ../../../sdk.coverage.tests
+        - pushd sdk.coverage.tests
         - npm run dotnet:generate
         - popd
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Generated
