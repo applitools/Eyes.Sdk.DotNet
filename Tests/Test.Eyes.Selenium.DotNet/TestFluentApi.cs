@@ -6,6 +6,7 @@ using System.Drawing;
 using Region = Applitools.Utils.Geometry.Region;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 using Applitools.Selenium.VisualGrid;
+using Applitools.Tests.Utils;
 
 namespace Applitools.Selenium.Tests
 {
@@ -25,6 +26,7 @@ namespace Applitools.Selenium.Tests
          : base("Eyes Selenium SDK - Fluent API", options, stitchMode) { }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithIgnoreRegion_Fluent()
         {
             GetDriver().FindElement(By.TagName("input")).SendKeys("My Input");
@@ -38,6 +40,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckRegionWithIgnoreRegion_Fluent()
         {
             GetEyes().Check("Fluent - Region with Ignore region", Target.Region(By.Id("overflowing-div"))
@@ -54,13 +57,14 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindow_Fluent()
         {
             GetEyes().Check("Fluent - Window", Target.Window());
         }
 
         [Test]
-        [Retry(3)]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithIgnoreBySelector_Fluent()
         {
             GetEyes().Check("Fluent - Window with ignore region by selector", Target.Window()
@@ -88,6 +92,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithFloatingBySelector_Fluent()
         {
             GetEyes().Check("Fluent - Window with ignore region by selector", Target.Window()
@@ -97,18 +102,21 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckRegionByCoordinates_Fluent()
         {
             GetEyes().Check("Fluent - Region by coordinates", Target.Region(new Rectangle(50, 70, 90, 110)));
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckOverflowingRegionByCoordinates_Fluent()
         {
             GetEyes().Check("Fluent - Region by overflowing coordinates", Target.Region(new Rectangle(50, 110, 90, 550)));
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent()
         {
             IWebElement element = GetWebDriver().FindElement(By.Id("overflowing-div-image"));
@@ -118,6 +126,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckElementWithIgnoreRegionBySameElement_Fluent()
         {
             IWebElement element = GetWebDriver().FindElement(By.Id("overflowing-div-image"));
@@ -126,6 +135,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestScrollbarsHiddenAndReturned_Fluent()
         {
             //eyes_.SendDom = false;
@@ -138,6 +148,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent()
         {
             GetEyes().Check("Fluent - Region by element", Target.Window().Fully().Ignore(By.CssSelector(".ignore")));
@@ -195,6 +206,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckWindowWithFloatingByRegion_Fluent()
         {
             ICheckSettings settings = Target.Window()
@@ -224,6 +236,7 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestCheckElementFullyAfterScroll()
         {
             ((IJavaScriptExecutor)GetDriver()).ExecuteScript("window.scrollTo(0, 500)");

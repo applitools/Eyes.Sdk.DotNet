@@ -169,6 +169,7 @@ Applitools.Selenium.Tests.TestSendDom.TestNotSendDOM
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_1
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_2
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_FullWindow
+Applitools.Selenium.Tests.TestSendDom.TestSendDOM_Frame
 Applitools.Selenium.Tests.TestSendDom.TestSendDOM_Selector
 Applitools.Selenium.Tests.TestSimpleCases(Chrome, CSS).TestCheckDivOverflowingThePage
 Applitools.Selenium.Tests.TestSimpleCases(Chrome, VG).TestCheckDivOverflowingThePage
@@ -382,12 +383,12 @@ Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckElementBiggerTh
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckElementBiggerThanHTML
 Applitools.Selenium.Tests.TestDefaultRootElement.TestCheckDefaultElementBiggerBody
 Applitools.Selenium.Tests.VisualGridTests.TestVisualGridVisualViewport.TestUFGVisualViewport
-Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLargeImage
-Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoreceLongImage
-Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLargeImage
-Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoreceLongImage
-# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLargeImage
-# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoreceLongImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoerceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, CSS).TestCheckCoerceLongImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoerceLargeImage
+Applitools.Selenium.Tests.TestBigPages(Chrome, Scroll).TestCheckCoerceLongImage
+# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoerceLargeImage
+# Applitools.Selenium.Tests.TestBigPages(Chrome, VG).TestCheckCoerceLongImage
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCheckElementFullyOnBottomAfterScroll
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCheckElementFullyOnBottomAfterScroll
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCheckElementFullyOnBottomAfterScroll

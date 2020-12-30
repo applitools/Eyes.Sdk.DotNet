@@ -68,6 +68,7 @@ namespace Applitools.Selenium.Tests
             }
         }
 
+
         [Test]
         public void TestSendDOM_FullWindow()
         {
@@ -76,42 +77,68 @@ namespace Applitools.Selenium.Tests
             DomInterceptingEyes eyes = new DomInterceptingEyes();
             eyes.Batch = TestDataProvider.BatchInfo;
 
-            EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Full Window", new Size(1024, 768));
+            EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Window", new Size(1024, 768));
             try
             {
                 eyes.Check(Target.Window().Fully().WithName("Window"));
                 string actualDomJsonString = eyes.DomJson;
-
-                string expectedDomJsonString = CommonUtils.ReadResourceFile("Test.Eyes.Selenium.DotNet.Resources.expected_dom1.json");
-                string expectedDomJson= JsonUtility.NormalizeJsonString(expectedDomJsonString);
-
-                TestResults results = eyes.Close(false);
-                bool hasDom = GetHasDom_(eyes, results);
-                Assert.IsTrue(hasDom);
-                
-                string actualDomJson = JsonUtility.NormalizeJsonString(actualDomJsonString);
-                if (actualDomJson != expectedDomJson && !TestUtils.RUNS_ON_CI)
-                {
-                    string path = TestUtils.InitLogPath();
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    File.WriteAllText(Path.Combine(path, "actualDom.json"), actualDomJson);
-                }
-                Assert.AreEqual(expectedDomJson, actualDomJson);
-
-                SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
-                ActualAppOutput[] actualAppOutput = sessionResults.ActualAppOutput;
-                string downloadedDomJsonString = TestUtils.GetStepDom(eyes, actualAppOutput[0]);
-                string downloadedDomJson = JsonUtility.NormalizeJsonString(downloadedDomJsonString);
-                Assert.AreEqual(expectedDomJson, downloadedDomJson);
+                CompareDomJsons(eyes, actualDomJsonString, "Test.Eyes.Selenium.DotNet.Resources.expected_dom_window.json");
             }
             finally
             {
                 eyes.Abort();
                 webDriver.Quit();
             }
+        }
+
+        [Test]
+        public void TestSendDOM_Frame()
+        {
+            IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();
+            webDriver.Url = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
+            DomInterceptingEyes eyes = new DomInterceptingEyes();
+            eyes.Batch = TestDataProvider.BatchInfo;
+
+            EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Frame", new Size(1024, 768));
+            try
+            {
+                eyes.Check(Target.Frame("frame1").Fully().WithName("frame1"));
+                string actualDomJsonString = eyes.DomJson;
+                CompareDomJsons(eyes, actualDomJsonString, "Test.Eyes.Selenium.DotNet.Resources.expected_dom_frame.json");
+            }
+            finally
+            {
+                eyes.Abort();
+                webDriver.Quit();
+            }
+        }
+
+        private static void CompareDomJsons(DomInterceptingEyes eyes, string actualDomJsonString, string expectedContentFilename)
+        {
+            string expectedDomJsonString = CommonUtils.ReadResourceFile(expectedContentFilename);
+            string expectedDomJson = JsonUtility.NormalizeJsonString(expectedDomJsonString);
+
+            TestResults results = eyes.Close(false);
+            bool hasDom = GetHasDom_(eyes, results);
+            Assert.IsTrue(hasDom);
+
+            string actualDomJson = JsonUtility.NormalizeJsonString(actualDomJsonString);
+            if (actualDomJson != expectedDomJson && !TestUtils.RUNS_ON_CI)
+            {
+                string path = TestUtils.InitLogPath();
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                File.WriteAllText(Path.Combine(path, "actualDom.json"), actualDomJson);
+            }
+            Assert.AreEqual(expectedDomJson, actualDomJson);
+
+            SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
+            ActualAppOutput[] actualAppOutput = sessionResults.ActualAppOutput;
+            string downloadedDomJsonString = TestUtils.GetStepDom(eyes, actualAppOutput[0]);
+            string downloadedDomJson = JsonUtility.NormalizeJsonString(downloadedDomJsonString);
+            Assert.AreEqual(expectedDomJson, downloadedDomJson);
         }
 
         private static bool GetHasDom_(IEyesBase eyes, TestResults results)
@@ -122,7 +149,7 @@ namespace Applitools.Selenium.Tests
             bool hasDom = actualAppOutputs[0].Image.HasDom;
             return hasDom;
         }
-        
+
         //[Test]
         public void TestSendDOM_Simple_HTML()
         {
@@ -136,7 +163,7 @@ namespace Applitools.Selenium.Tests
                 logger.SetLogHandler(TestUtils.InitLogHandler());
                 UserAgent ua = eyes.seleniumEyes_.userAgent_;
                 DomCapture domCapture = new DomCapture(logger, eyesWebDriver, ua);
-                string actualDomJsonString = domCapture.GetFullWindowDom();
+                string actualDomJsonString = domCapture.GetFullWindowDom(new NullPositionProvider());
                 string actualDomJson = JsonUtility.NormalizeJsonString(actualDomJsonString);
                 string expectedDomJson = GetExpectedDomFromUrl_("https://applitools-dom-capture-origin-1.surge.sh/test.dom.json");
 
@@ -248,6 +275,7 @@ namespace Applitools.Selenium.Tests
                     JObject normalized = new JObject();
                     foreach (JProperty property in orderedProperties)
                     {
+                        if (property.Name == "cd_frame_id_") continue;
                         normalized.Add(property.Name, NormalizeToken(property.Value));
                     }
                     return normalized;

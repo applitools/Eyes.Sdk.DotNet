@@ -175,12 +175,12 @@ namespace Applitools
             string agentSetupStr = eyes.GetAgentSetupString();
 
             List<Trigger> userInputs = new List<Trigger>();
-            CollectRegions_(imageMatchSettings, userInputs, regions, regionSelectors, userActions);
-            CollectRegions_(imageMatchSettings, checkSettingsInternal);
+            CollectRegions_(imageMatchSettings, userInputs, regions, regionSelectors, userActions, appOutput.AppOutput.Location);
+            CollectRegions_(imageMatchSettings, checkSettingsInternal, appOutput.AppOutput.Location);
             return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
         }
 
-        private void CollectRegions_(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
+        private void CollectRegions_(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal, Location location)
         {
             imageMatchSettings.Ignore = ConvertSimpleRegions(checkSettingsInternal.GetIgnoreRegions(), imageMatchSettings.Ignore);
             imageMatchSettings.Content = ConvertSimpleRegions(checkSettingsInternal.GetContentRegions(), imageMatchSettings.Content);
@@ -249,7 +249,7 @@ namespace Applitools
 
         private static void CollectRegions_(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
                                             IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
-                                            IList<VGUserAction> userActions)
+                                            IList<VGUserAction> userActions, Location location)
         {
             if (regions == null) return;
 
@@ -265,7 +265,6 @@ namespace Applitools
                 new List<IMutableRegion>(), // Floating Regions
                 new List<IMutableRegion>(), // Accessibility Regions
                 new List<IMutableRegion>(), // User Action Regions
-                new List<IMutableRegion>(), // Target Element Location
             };
 
             foreach (IRegion r in regions)
@@ -287,14 +286,6 @@ namespace Applitools
                 }
                 MutableRegion mr = new MutableRegion(r);
                 mutableRegions[currentTypeIndex].Add(mr);
-            }
-
-            Point location = Point.Empty;
-
-            // If target element location available
-            if (mutableRegions[7].Count > 0)
-            {
-                location = mutableRegions[7][0].Location;
             }
 
             imageMatchSettings.Ignore = FilterEmptyEntries_(mutableRegions[0], location);
@@ -372,7 +363,7 @@ namespace Applitools
             return trigger;
         }
 
-        private static IMutableRegion[] FilterEmptyEntries_(List<IMutableRegion> list, Point location)
+        private static IMutableRegion[] FilterEmptyEntries_(List<IMutableRegion> list, Location location)
         {
             for (int i = list.Count - 1; i >= 0; i--)
             {

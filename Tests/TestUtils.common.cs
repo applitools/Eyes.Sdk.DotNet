@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -15,6 +16,7 @@ namespace Applitools.Tests.Utils
     internal partial class TestUtils
     {
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
+        public const string COVERED_BY_GENERATED_TESTS_MESSAGE = "covered by generated tests";
 
         public static string InitLogPath([CallerMemberName] string testName = null)
         {
@@ -70,13 +72,20 @@ namespace Applitools.Tests.Utils
             query["AccessToken"] = testResults.SecretToken;
             query["apiKey"] = apiKey;
             uriBuilder.Query = query.ToString();
-
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
-            using (HttpWebResponse metaResults = client.Get(uriBuilder.ToString()))
+            SessionResults sessionResults = null;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            TimeSpan timeout = TimeSpan.FromSeconds(40);
+            while (sessionResults == null && stopwatch.Elapsed < timeout)
             {
-                SessionResults sessionResults = metaResults.DeserializeBody<SessionResults>(false);
-                return sessionResults;
+                using (HttpWebResponse metaResults = client.Get(uriBuilder.ToString()))
+                {
+                    sessionResults = metaResults.DeserializeBody<SessionResults>(false);
+                }
+                if (sessionResults != null && sessionResults.ActualAppOutput.Length > 0) break;
+                System.Threading.Thread.Sleep(500);
             }
+            return sessionResults;
         }
 
         public static string GetDom(string apiKey, TestResults testResults, string domId)

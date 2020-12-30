@@ -353,7 +353,7 @@ namespace Applitools.Selenium.VisualGrid
             }
 
             int i;
-            for (i = 0; i < elementLists.Length - 1; ++i)
+            for (i = 0; i < elementLists.Length; ++i)
             {
                 IList<Tuple<IWebElement, object>> elementsList = elementLists[i];
                 GetRegionsXPaths_(result, elementsList);
@@ -363,8 +363,6 @@ namespace Applitools.Selenium.VisualGrid
             {
                 driver_.SwitchTo().ParentFrame();
             }
-
-            GetRegionsXPaths_(result, elementLists[i]);
 
             return result;
         }
@@ -417,19 +415,6 @@ namespace Applitools.Selenium.VisualGrid
                 driver_.SwitchTo().ParentFrame();
             }
 
-            IWebElement targetElement = ((ISeleniumCheckTarget)csInternal).GetTargetElement();
-            if (targetElement == null)
-            {
-                By targetSelector = ((ISeleniumCheckTarget)csInternal).GetTargetSelector();
-                if (targetSelector != null)
-                {
-                    targetElement = webDriver_.FindElement(targetSelector);
-                }
-            }
-
-            Tuple<IWebElement, object> targetTuple = new Tuple<IWebElement, object>(targetElement, "target");
-            List<Tuple<IWebElement, object>> targetElementList = new List<Tuple<IWebElement, object>>() { targetTuple };
-
             return new IList<Tuple<IWebElement, object>>[] {
                 ignoreElements,
                 layoutElements,
@@ -437,8 +422,7 @@ namespace Applitools.Selenium.VisualGrid
                 contentElements,
                 floatingElements,
                 accessibilityElements,
-                userActionElements,
-                targetElementList };
+                userActionElements };
         }
 
         private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<VGUserAction> userInputs)

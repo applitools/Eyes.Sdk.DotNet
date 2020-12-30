@@ -1,6 +1,5 @@
 ﻿using Applitools.Metadata;
 using Applitools.Selenium;
-using Applitools.Tests.Utils;
 using Applitools.Utils;
 using System;
 using System.Collections.Generic;
