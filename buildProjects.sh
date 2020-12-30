@@ -3,12 +3,6 @@
 cd Eyes.Selenium.DotNet/Properties/NodeResources
 npm install
 
-echo "generating tests"
-
-cd ../../../sdk.coverage.tests
-npm run dotnet:generate
-cd ..
-
 echo "running tests"
 
 dotnet test -f netcoreapp3.1 Eyes.Sdk.DotNet_Travis.sln --filter $1

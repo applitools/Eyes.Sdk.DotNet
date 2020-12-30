@@ -59,12 +59,14 @@ jobs:
   include:
     - stage: Test
       name: Generic Tests
-      if: type != cron
       script:
+        - echo "generating tests"
+        - pushd ../../../sdk.coverage.tests
+        - npm run dotnet:generate
+        - popd
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Generated
 
     - name: Hand Written Tests
-      if: type != cron
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh FullyQualifiedName!~Generated
 
