@@ -174,7 +174,7 @@ namespace Applitools
             string agentSetupStr = eyes.GetAgentSetupString();
 
             List<Trigger> userInputs = new List<Trigger>();
-            CollectRegions(imageMatchSettings, userInputs, regions, regionSelectors, userActions);
+            CollectRegions(imageMatchSettings, userInputs, regions, regionSelectors, userActions, appOutput.AppOutput.Location);
             CollectRegions(imageMatchSettings, checkSettingsInternal);
             return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
         }
