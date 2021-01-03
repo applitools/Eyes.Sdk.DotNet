@@ -55,7 +55,7 @@ namespace Applitools
             }
         }
 
-        protected ServerConnector ServerConnector { get; set; }
+        protected IServerConnector ServerConnector { get; set; }
 
         public string ApiKey { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
         public string ServerUrl { get; set; } = CommonUtils.ServerUrl;

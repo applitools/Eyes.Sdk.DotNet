@@ -11,7 +11,7 @@ namespace Applitools
         protected readonly List<Tuple<string, Exception>> errorQueue_ = new List<Tuple<string, Exception>>();
 
         protected Logger Logger { get; private set; }
-        protected IServerConnector ServerConnector { get; private set; }
+        protected internal IServerConnector ServerConnector { get; set; }
 
         public EyesService(Logger logger, IServerConnector serverConnector)
         {

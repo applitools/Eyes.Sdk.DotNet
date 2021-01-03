@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Applitools
 {
@@ -17,6 +18,14 @@ namespace Applitools
             openService_ = new OpenService(Logger, ServerConnector, 1);
             checkService_ = new CheckService(Logger, ServerConnector);
             closeService_ = new CloseService(Logger, ServerConnector);
+        }
+
+        public void UpdateServerConnector(IServerConnector serverConnector)
+        {
+            ServerConnector = serverConnector;
+            openService_.ServerConnector = serverConnector;
+            checkService_.ServerConnector = serverConnector;
+            closeService_.ServerConnector = serverConnector;
         }
 
         protected override TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)

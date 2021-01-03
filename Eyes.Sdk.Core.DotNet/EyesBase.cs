@@ -930,6 +930,7 @@ namespace Applitools
         {
             ServerConnector.ApiKey = ApiKey;
             ServerConnector.ServerUrl = new Uri(ServerUrl);
+            runner_.UpdateServerConnector(ServerConnector);
         }
 
         protected virtual RectangleSize GetViewportSizeForOpen()
