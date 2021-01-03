@@ -47,7 +47,7 @@ namespace Applitools.Selenium.Tests.Mock
             return new RenderingInfo();
         }
 
-        public override MatchResult MatchWindow(RunningSession runningSession, MatchWindowData data)
+        public MatchResult MatchWindow(RunningSession runningSession, MatchWindowData data)
         {
             if (data.Options.ReplaceLast)
             {
@@ -85,7 +85,7 @@ namespace Applitools.Selenium.Tests.Mock
             return newSession;
         }
 
-        public async override Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests)
+        public async Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests)
         {
             Logger.Verbose("getting job info");
             await Task.Delay(10);

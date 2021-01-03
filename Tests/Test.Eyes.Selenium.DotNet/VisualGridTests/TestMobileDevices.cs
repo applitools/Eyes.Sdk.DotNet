@@ -23,7 +23,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new LocalEyesConnectorFactory();
+            //eyes.visualGridEyes_.EyesConnectorFactory = new LocalEyesConnectorFactory();
 
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(new DesktopBrowserInfo(new RectangleSize(700, 460), BrowserType.CHROME));
@@ -98,14 +98,14 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         }
     }
 
-    class LocalEyesConnectorFactory : IEyesConnectorFactory
-    {
-        public IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
-        {
-            IUfgConnector eyesConnector = new LocalEyesConnector(logger, browserInfo, config);
-            return eyesConnector;
-        }
-    }
+    //class LocalEyesConnectorFactory : IEyesConnectorFactory
+    //{
+    //    public IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
+    //    {
+    //        IUfgConnector eyesConnector = new LocalEyesConnector(logger, browserInfo, config);
+    //        return eyesConnector;
+    //    }
+    //}
 
     class LocalEyesConnector : EyesConnector
     {
@@ -116,12 +116,12 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             ServerConnector.ApiKey = ApiKey;
         }
 
-        public override List<RunningRender> Render(RenderRequest[] renderRequests)
+        public List<RunningRender> Render(RenderRequest[] renderRequests)
         {
             throw new Exception();
         }
 
-        public override Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
+        public Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
         {
             throw new Exception();
         }

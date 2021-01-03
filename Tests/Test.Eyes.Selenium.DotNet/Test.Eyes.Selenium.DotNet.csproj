@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <Compile Remove="VisualGridTests\TestRenderingTask.cs" />
+    <Compile Remove="VisualGridTests\TestVGNoMissingSteps.cs" />
+    <Compile Remove="VisualGridTests\TestVisualGridRunner.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -258,6 +260,11 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\ExcludedTests.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="VisualGridTests\TestVGNoMissingSteps.cs" />
+    <None Include="VisualGridTests\TestVisualGridRunner.cs" />
   </ItemGroup>
 
 </Project>
