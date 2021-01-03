@@ -67,7 +67,7 @@ namespace Applitools.Selenium
         private readonly string JS_GET_SCROLL_WIDTH = "return arguments[0].scrollWidth;";
         private readonly string JS_GET_SCROLL_HEIGHT = "return arguments[0].scrollHeight;";
 
-        private readonly string JS_GET_SCROLL_POSITION = "return arguments[0].scrollLeft + ',' + arguments[0].scrollTop;";
+        private static readonly string JS_GET_SCROLL_POSITION = "return arguments[0].scrollLeft + ',' + arguments[0].scrollTop;";
         private static readonly string JS_GET_SCROLL_SIZE = "return arguments[0].scrollWidth + ',' + arguments[0].scrollHeight;";
         private static readonly string JS_GET_OFFSET_POSITION = "return arguments[0].offsetLeft + ',' + arguments[0].offsetTop;";
         private readonly string JS_GET_CLIENT_WIDTH = "return arguments[0].clientWidth;";
@@ -259,17 +259,16 @@ return getVisibleElementRect(arguments[0])";
             get { return Convert.ToInt32(eyesDriver_.ExecuteScript(JS_GET_SCROLL_TOP, this)); }
         }
 
-        public Point ScrollPosition
+        public Point ScrollPosition => GetScrollPosition(this, eyesDriver_);
+
+        public static Point GetScrollPosition(IWebElement targetElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
         {
-            get
+            if (jsExecutor.ExecuteScript(JS_GET_SCROLL_POSITION, targetElement) is string scrollPositionStr)
             {
-                if (eyesDriver_.ExecuteScript(JS_GET_SCROLL_POSITION, this) is string scrollPositionStr)
-                {
-                    string[] data = scrollPositionStr.Split(',');
-                    return new Point(Convert.ToInt32(data[0]), Convert.ToInt32(data[1]));
-                }
-                return Point.Empty;
+                string[] data = scrollPositionStr.Split(',');
+                return new Point(Convert.ToInt32(data[0]), Convert.ToInt32(data[1]));
             }
+            return Point.Empty;
         }
 
         public int ScrollWidth
@@ -444,6 +443,15 @@ return getVisibleElementRect(arguments[0])";
                 return new Point(Convert.ToInt32(data[0]), Convert.ToInt32(data[1]));
             }
             return Point.Empty;
+        }
+
+        public static Point GetOffsetPositionFromActiveFrame(IWebElement targetElement, EyesWebDriver driver, Logger logger)
+        {
+            IWebElement activeFrame = driver.FindElement(By.TagName("html"));
+            Point afp = GetScrollPosition(activeFrame, driver, logger);
+            Point elp = GetOffsetPosition(targetElement, driver, logger);
+            elp.Offset(afp);
+            return elp;
         }
 
         public Region GetBounds()

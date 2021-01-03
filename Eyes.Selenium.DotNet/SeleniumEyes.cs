@@ -708,8 +708,12 @@ namespace Applitools.Selenium
 
             Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
             el.Offset(elementInnerBounds.X - elementBounds.X, elementInnerBounds.Y - elementBounds.Y);
+            IWebElement currentFrame = driver_.FindElement(By.TagName("html"));
+            if (userDefinedSRE_ != null && !userDefinedSRE_.Equals(currentFrame))
+            {
+                el.Offset(EyesRemoteWebElement.GetScrollPosition(currentFrame, driver_, Logger));
+            }
             state.OriginLocation = el;
-
             bool isScrollableElement = scrollSize.Height > elementInnerBounds.Height || scrollSize.Width > elementInnerBounds.Width;
 
             if (isScrollableElement)
@@ -813,12 +817,16 @@ namespace Applitools.Selenium
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
             Rectangle bounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
             Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
-            state.OriginLocation = el;
             if (!state.EffectiveViewport.Contains(bounds))
             {
                 Point visualOffset = GetFrameChainOffset_(currentFrameChain);
                 bounds.Offset(visualOffset);
                 IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
+                IWebElement currentFrame = driver_.FindElement(By.TagName("html"));
+                if (!currentFrameSRE.Equals(currentFrame))
+                {
+                    el.Offset(EyesRemoteWebElement.GetScrollPosition(currentFrame, driver_, Logger));
+                }
                 IPositionProvider currentFramePositionProvider = GetPositionProviderForScrollRootElement_(currentFrameSRE);
                 Point currentFramePosition = currentFramePositionProvider.GetCurrentPosition();
                 bounds.Offset(currentFramePosition);
@@ -830,6 +838,7 @@ namespace Applitools.Selenium
                 Point actualFramePosition = bounds.Location - (Size)actualElementBounds.Location;
                 bounds.Location -= (Size)actualFramePosition;
             }
+            state.OriginLocation = el;
 
             EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)driver_.SwitchTo();
             FrameChain fcClone = currentFrameChain.Clone();
@@ -909,19 +918,6 @@ namespace Applitools.Selenium
             }
             CheckWindowBase(targetRegion, checkSettingsInternal, source: driver_.Url);
         }
-
-        //private void CheckRegion_(ICheckSettingsInternal checkSettingsInternal, Rectangle targetRegion)
-        //{
-        //    if (((ISeleniumCheckTarget)checkSettingsInternal).GetFrameChain().Count > 0)
-        //    {
-        //        Logger.Verbose("Target.Frame(frame).Region(x,y,w,h).Fully(false)");
-        //    }
-        //    else
-        //    {
-        //        Logger.Verbose("Target.Region(x,y,w,h).Fully(false)");
-        //    }
-        //    CheckWindowBase(targetRegion, checkSettingsInternal, source: driver_.Url);
-        //}
 
         private void CheckFullFrame_(ICheckSettingsInternal checkSettingsInternal, CheckState state)
         {
