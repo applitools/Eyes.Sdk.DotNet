@@ -32,8 +32,10 @@ namespace Applitools.Selenium.VisualGrid
         private static readonly int MB = 1024 * 1024;
 
         private static readonly string GET_ELEMENT_XPATH_JS =
-            "var id = window.performance.now(); arguments[0].setAttribute('data-applitools-element-id', id); " +
-            "return '//*[data-applitools-element-id=\"'+id+'\"]';";
+            "const atName='data-applitools-element-id'; var el=arguments[0];" +
+            "if (el.hasAttribute(atName)) { var id = el.getAttribute(atName) } " +
+            "else { var id = windows.performance.now(); $0.setAttribute(atName, id); }" +
+            "return '//*['+atName+'=\"'+id+'\"]';";
 
         private readonly VisualGridRunner visualGridRunner_;
         private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
