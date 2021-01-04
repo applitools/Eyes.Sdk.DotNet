@@ -66,7 +66,6 @@ namespace Applitools.Utils
             ConfigureRequest = other.ConfigureRequest;
             RequestCompleted = other.RequestCompleted;
             RequestFailed = other.RequestFailed;
-            AcceptLongRunningTasks = other.AcceptLongRunningTasks;
             WebRequestCreator = other.WebRequestCreator;
         }
         #endregion
@@ -120,11 +119,6 @@ namespace Applitools.Utils
         public Func<Uri, Uri> FormatRequestUri { get; set; }
 
         /// <summary>
-        /// Whether or not to accept long-running async tasks.
-        /// </summary>
-        public bool AcceptLongRunningTasks { get; set; }
-
-        /// <summary>
         /// Gets or sets the proxy used by this client or <c>null</c> to obtain the system 
         /// proxy.
         /// </summary>
@@ -169,7 +163,7 @@ namespace Applitools.Utils
         /// </summary>
         public void PostJson<T>(TaskListener<HttpWebResponse> listener, string path, T body, string accept = "application/json")
         {
-            SendJsonHttpWebRequest_(listener, path, "POST", body, accept);
+            SendAsyncJsonHttpWebRequest_(listener, path, "POST", body, accept);
         }
 
         /// <summary>
@@ -219,7 +213,7 @@ namespace Applitools.Utils
         /// </summary>
         public void Delete(TaskListener<HttpWebResponse> listener, string path, string accept = null)
         {
-            SendHttpWebRequest_(listener, path, "DELETE", null, null, accept, null);
+            SendAsyncHttpWebRequest_(listener, path, "DELETE", null, null, accept, null);
         }
 
         /// <summary>
@@ -265,15 +259,20 @@ namespace Applitools.Utils
         {
             return true;
         }
+
         private HttpWebResponse SendJsonHttpWebRequest_<T>(
             string path, string method, T body, string accept)
         {
-            SyncTaskListener<HttpWebResponse> listener = new SyncTaskListener<HttpWebResponse>(
-                  null, (ex) => { throw ex; });
-            SendJsonHttpWebRequest_(listener, path, method, body, accept);
-            return listener.Get();
+            using (var s = new MemoryStream())
+            {
+                json_.Serialize(body, s);
+                s.Position = 0;
+
+                return SendHttpWebRequest_(path, method, s, "application/json", accept, null);
+            }
         }
-        private void SendJsonHttpWebRequest_<T>(
+
+        private void SendAsyncJsonHttpWebRequest_<T>(
             TaskListener<HttpWebResponse> listener,
             string path, string method, T body, string accept)
         {
@@ -282,7 +281,7 @@ namespace Applitools.Utils
                 json_.Serialize(body, s);
                 s.Position = 0;
 
-                SendHttpWebRequest_(listener, path, method, s, "application/json", accept, null);
+                SendAsyncHttpWebRequest_(listener, path, method, s, "application/json", accept, null);
             }
         }
 
@@ -290,7 +289,7 @@ namespace Applitools.Utils
         {
             Uri requestUri = new Uri(url);
             HttpWebRequest request = CreateHttpWebRequest_(requestUri, method, null, null, null, null);
-            request.BeginGetResponse(ar=>
+            request.BeginGetResponse(ar =>
             {
                 if (!ar.IsCompleted) return;
                 HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
@@ -303,13 +302,20 @@ namespace Applitools.Utils
         private HttpWebResponse SendHttpWebRequest_(
             string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
         {
-            SyncTaskListener<HttpWebResponse> listener = new SyncTaskListener<HttpWebResponse>(
-                null, (ex) => { throw ex; });
-            SendHttpWebRequest_(listener, path, method, body, contentType, accept, contentEncoding);
-            return listener.Get();
+            Uri requestUri = string.IsNullOrEmpty(path) ? ServerUrl : new Uri(ServerUrl, path);
+
+            HttpWebRequest request = CreateHttpWebRequest_(
+               requestUri, method, body, contentType, accept, contentEncoding);
+
+            if (request == null)
+            {
+                throw new NullReferenceException("request is null");
+            }
+
+            return (HttpWebResponse)request.GetResponse();
         }
 
-        private void SendHttpWebRequest_(TaskListener<HttpWebResponse> listener,
+        private void SendAsyncHttpWebRequest_(TaskListener<HttpWebResponse> listener,
             string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
         {
             HttpWebRequest request = null;
@@ -372,29 +378,23 @@ namespace Applitools.Utils
                     throw new NullReferenceException("response is null");
                 }
 
-                if (AcceptLongRunningTasks)
-                {
-                    SendLongRequest_(listener, response, wait, accept);
-                }
-                else if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    listener.OnComplete(response);
-                    if (RequestCompleted != null)
-                    {
-                        var args = new HttpRequestCompletedEventArgs(
-                            TimeSpan.MinValue, request, response);
-                        CommonUtils.DontThrow(() => RequestCompleted(this, args));
-                    }
-                    response.Close();
-                }
+                SendLongRequest_(listener, response, wait, accept);
             }
 
             send();
+        }
+        private void SendLongRequest_(TaskListener<HttpWebResponse> listener, HttpWebRequest request)
+        {
+
         }
 
         private void SendLongRequest_(TaskListener<HttpWebResponse> listener, HttpWebResponse response, int wait, string accept)
         {
             string statusUrl = response.Headers[HttpResponseHeader.Location];
+            RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, null, statusUrl, listener);
+
+            SendAsyncRequest(requestPollingListener, statusUrl, "");
+
             string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
             int timeToWait;
             if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
@@ -520,14 +520,8 @@ namespace Applitools.Utils
             }
 
             req.Headers["x-applitools-eyes-client-request-id"] = Guid.NewGuid().ToString();
-
-            if (AcceptLongRunningTasks)
-            {
-                req.Headers["Eyes-Expect"] = "202+location";
-                req.Headers["Eyes-Expect-Version"] = "2";
-                req.Headers["Eyes-Date"] =
-                    TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.RFC1123);
-            }
+            
+            SetLongRequestHeaders(req);
 
             if (body != null)
             {
@@ -547,6 +541,14 @@ namespace Applitools.Utils
             }
 
             return req;
+        }
+
+        private static void SetLongRequestHeaders(HttpWebRequest req)
+        {
+            req.Headers["Eyes-Expect"] = "202+location";
+            req.Headers["Eyes-Expect-Version"] = "2";
+            req.Headers["Eyes-Date"] =
+                TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.RFC1123);
         }
 
         #endregion

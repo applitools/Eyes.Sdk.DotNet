@@ -123,20 +123,15 @@ namespace Applitools
 
         #region Methods
 
-        public void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
-        {
-            taskListener.OnComplete(StartSession(sessionStartInfo));
-        }
-
         /// <summary>
         /// Starts a new session.
         /// </summary>
-        public RunningSession StartSession(SessionStartInfo startInfo)
+        public void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
         {
-            return StartSessionInternal(startInfo);
+            StartSessionInternal(taskListener, sessionStartInfo);
         }
 
-        protected virtual RunningSession StartSessionInternal(SessionStartInfo startInfo)
+        protected virtual void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo startInfo)
         {
             ArgumentGuard.NotNull(startInfo, nameof(startInfo));
 
@@ -148,33 +143,36 @@ namespace Applitools
             try
             {
                 EnsureHttpClient_();
-                using (HttpWebResponse response = httpClient_.PostJson("api/sessions/running", body))
-                {
-                    if (response == null)
-                    {
-                        throw new NullReferenceException("response is null");
-                    }
-                    // response.DeserializeBody disposes the response object's stream, 
-                    // rendering all of its properties unusable, including StatusCode.
-                    HttpStatusCode responseStatusCode = response.StatusCode;
-                    RunningSession runningSession;
-                    if (responseStatusCode == HttpStatusCode.ServiceUnavailable)
-                    {
-                        runningSession = new RunningSession();
-                        runningSession.ConcurrencyFull = true;
-                    }
-                    else
-                    {
-                        runningSession = response.DeserializeBody<RunningSession>(
-                            true, serializer_, HttpStatusCode.OK, HttpStatusCode.Created);
-                        if (runningSession.isNewSession_ == null)
+                httpClient_.PostJson(
+                    new TaskListener<HttpWebResponse>(
+                        response =>
                         {
-                            runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
-                        }
-                        runningSession.ConcurrencyFull = false;
-                    }
-                    return runningSession;
-                }
+                            if (response == null)
+                            {
+                                throw new NullReferenceException("response is null");
+                            }
+                            // response.DeserializeBody disposes the response object's stream, 
+                            // rendering all of its properties unusable, including StatusCode.
+                            HttpStatusCode responseStatusCode = response.StatusCode;
+                            RunningSession runningSession;
+                            if (responseStatusCode == HttpStatusCode.ServiceUnavailable)
+                            {
+                                runningSession = new RunningSession();
+                                runningSession.ConcurrencyFull = true;
+                            }
+                            else
+                            {
+                                runningSession = response.DeserializeBody<RunningSession>(
+                                    true, serializer_, HttpStatusCode.OK, HttpStatusCode.Created);
+                                if (runningSession.isNewSession_ == null)
+                                {
+                                    runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
+                                }
+                                runningSession.ConcurrencyFull = false;
+                            }
+                            taskListener.OnComplete(runningSession);
+                        }, ex => taskListener.OnFail(ex))
+                    , "api/sessions/running", body);
             }
             catch (Exception ex)
             {
@@ -582,7 +580,6 @@ namespace Applitools
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
             HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, serializer_);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
-            httpClient.AcceptLongRunningTasks = true;
             httpClient.Proxy = Proxy;
 
             httpClient.RequestCompleted += (s, args) =>

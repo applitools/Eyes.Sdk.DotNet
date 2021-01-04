@@ -32,7 +32,7 @@ namespace Applitools.Utils
                 HttpStatusCode status = response.StatusCode;
                 if (status == HttpStatusCode.Created)
                 {
-                    logger.Verbose("exit (CREATED)");
+                    logger?.Verbose("exit (CREATED)");
                     restClient.SendAsyncRequest(listener, location, "DELETE");
                     return;
                 }
@@ -67,7 +67,7 @@ namespace Applitools.Utils
             }
 
             Thread.Sleep(timeToWait);
-            logger.Verbose("polling...");
+            logger?.Verbose("polling...");
             restClient.SendAsyncRequest(this, pollingUrl, "GET");
         }
 
