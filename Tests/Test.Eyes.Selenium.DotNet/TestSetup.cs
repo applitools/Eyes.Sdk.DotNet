@@ -438,19 +438,19 @@ namespace Applitools.Selenium.Tests
                     }
                     testData.Eyes.Logger.Log("Mismatches: " + results.Mismatches);
                 }
-                if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes && visualGridEyes.eyesConnector_ is Mock.MockEyesConnector mockEyesConnector)
-                {
-                    RenderRequest[] lastRequests = mockEyesConnector.LastRenderRequests;
-                    string serializedRequests = JsonUtils.Serialize(lastRequests);
-                    if (!TestUtils.RUNS_ON_CI)
-                    {
-                        string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm");
-                        string directory = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "VGResults", dateString);
-                        Directory.CreateDirectory(directory);
-                        File.WriteAllText(Path.Combine(directory, testData.TestNameAsFilename + ".json"), serializedRequests);
-                    }
-                    Assert.AreEqual(testData.ExpectedVGOutput, serializedRequests, "VG Request DOM JSON");
-                }
+                //if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes && visualGridEyes.eyesConnector_ is Mock.MockEyesConnector mockEyesConnector)
+                //{
+                //    RenderRequest[] lastRequests = mockEyesConnector.LastRenderRequests;
+                //    string serializedRequests = JsonUtils.Serialize(lastRequests);
+                //    if (!TestUtils.RUNS_ON_CI)
+                //    {
+                //        string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm");
+                //        string directory = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "VGResults", dateString);
+                //        Directory.CreateDirectory(directory);
+                //        File.WriteAllText(Path.Combine(directory, testData.TestNameAsFilename + ".json"), serializedRequests);
+                //    }
+                //    Assert.AreEqual(testData.ExpectedVGOutput, serializedRequests, "VG Request DOM JSON");
+                //}
             }
             catch (Exception ex)
             {

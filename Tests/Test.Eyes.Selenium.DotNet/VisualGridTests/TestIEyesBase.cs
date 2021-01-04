@@ -40,7 +40,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             LogPath = TestUtils.InitLogPath(fixtureName);
             LogHandler = TestUtils.InitLogHandler(fixtureName, LogPath);
-            RenderingTask.pollTimeout_ = TimeSpan.FromMinutes(2);
+            //RenderingTask.pollTimeout_ = TimeSpan.FromMinutes(2);
             VisualGridRunner.waitForResultTimeout_ = TimeSpan.FromMinutes(1);
             suiteArgs_.Add("fixture", fixtureName);
         }

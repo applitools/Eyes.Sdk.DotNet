@@ -20,6 +20,8 @@ namespace Applitools
         public Action<T> OnComplete;
         public Action<Exception> OnFail;
 
+        protected TaskListener() { }
+
         public TaskListener(Action<T> onComplete, Action<Exception> onFail)
         {
             OnComplete = onComplete;

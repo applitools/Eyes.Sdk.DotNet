@@ -286,6 +286,20 @@ namespace Applitools.Utils
             }
         }
 
+        internal void SendAsyncRequest(TaskListener<HttpWebResponse> listener, string url, string method)
+        {
+            Uri requestUri = new Uri(url);
+            HttpWebRequest request = CreateHttpWebRequest_(requestUri, method, null, null, null, null);
+            request.BeginGetResponse(ar=>
+            {
+                if (!ar.IsCompleted) return;
+                HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
+                HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+                listener.OnComplete(response);
+                response.Close();
+            }, request);
+        }
+
         private HttpWebResponse SendHttpWebRequest_(
             string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
         {
@@ -300,13 +314,7 @@ namespace Applitools.Utils
         {
             HttpWebRequest request = null;
             HttpWebResponse response = null;
-            void requestCallback(IAsyncResult result)
-            {
-                if (result.IsCompleted)
-                {
-                    listener.OnComplete((HttpWebResponse)result.AsyncState);
-                }
-            }
+            int wait = 500;
 
             void send()
             {
@@ -329,7 +337,7 @@ namespace Applitools.Utils
                         {
                             throw new NullReferenceException("request is null");
                         }
-                        request.BeginGetResponse(requestCallback, request);
+                        request.BeginGetResponse(OnResponse_, request);
                     }
                     catch (WebException ex)
                     {
@@ -351,97 +359,94 @@ namespace Applitools.Utils
 
                     throw;
                 }
-
-                if (RequestCompleted != null)
-                {
-                    var args = new HttpRequestCompletedEventArgs(
-                        sw.Elapsed, request, response);
-                    CommonUtils.DontThrow(() => RequestCompleted(this, args));
-                }
             }
 
-            int wait = 500;
-            int retriesLeft = 2;
-            do
+            void OnResponse_(IAsyncResult result)
             {
-                try
-                {
-                    send();
-                    retriesLeft = 0;
-                }
-                catch
-                {
-                    CommonUtils.DontThrow(() => response?.Close());
+                if (!result.IsCompleted) return;
+                HttpWebRequest resultRequest = (HttpWebRequest)result.AsyncState;
+                response = (HttpWebResponse)resultRequest.EndGetResponse(result);
 
-                    Thread.Sleep(wait);
-                    wait *= 2;
-                    wait = Math.Min(10000, wait);
-                }
-            } while (retriesLeft-- > 0);
-
-            if (response == null)
-            {
-                throw new NullReferenceException("response is null");
-            }
-
-            if (AcceptLongRunningTasks)
-            {
-                string statusUrl = response.Headers[HttpResponseHeader.Location];
-                string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
-                int timeToWait = wait;
-                if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
+                if (response == null)
                 {
-                    timeToWait *= 1000;
-                }
-                else
-                {
-                    timeToWait = wait;
+                    throw new NullReferenceException("response is null");
                 }
 
-                if (statusUrl != null && response.StatusCode == HttpStatusCode.Accepted)
+                if (AcceptLongRunningTasks)
                 {
-                    response.Close();
-
-                    wait = 500;
-                    while (true)
+                    SendLongRequest_(listener, response, wait, accept);
+                }
+                else if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    listener.OnComplete(response);
+                    if (RequestCompleted != null)
                     {
-                        using (response = Get(statusUrl))
+                        var args = new HttpRequestCompletedEventArgs(
+                            TimeSpan.MinValue, request, response);
+                        CommonUtils.DontThrow(() => RequestCompleted(this, args));
+                    }
+                    response.Close();
+                }
+            }
+
+            send();
+        }
+
+        private void SendLongRequest_(TaskListener<HttpWebResponse> listener, HttpWebResponse response, int wait, string accept)
+        {
+            string statusUrl = response.Headers[HttpResponseHeader.Location];
+            string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
+            int timeToWait;
+            if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
+            {
+                timeToWait *= 1000;
+            }
+            else
+            {
+                timeToWait = wait;
+            }
+
+            if (statusUrl != null && response.StatusCode == HttpStatusCode.Accepted)
+            {
+                response.Close();
+
+                wait = 500;
+                while (true)
+                {
+                    using (response = Get(statusUrl))
+                    {
+                        if (response.StatusCode == HttpStatusCode.Created)
                         {
-                            if (response.StatusCode == HttpStatusCode.Created)
-                            {
-                                Delete(listener,
-                                    response.Headers[HttpResponseHeader.Location], accept);
-                            }
-
-                            if (response.StatusCode == HttpStatusCode.OK)
-                            {
-                                statusUrl = response.Headers[HttpResponseHeader.Location] ?? statusUrl;
-
-                                secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
-                                if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
-                                {
-                                    timeToWait *= 1000;
-                                }
-                                else
-                                {
-                                    wait *= 2;
-                                    wait = Math.Min(5000, wait);
-                                    timeToWait = wait;
-                                }
-                                Thread.Sleep(timeToWait);
-
-                                continue;
-                            }
-
-                            // Something went wrong.
-                            listener.OnFail(new EyesException());
-                            return;
+                            Delete(listener,
+                                response.Headers[HttpResponseHeader.Location], accept);
                         }
+
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            statusUrl = response.Headers[HttpResponseHeader.Location] ?? statusUrl;
+
+                            secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
+                            if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
+                            {
+                                timeToWait *= 1000;
+                            }
+                            else
+                            {
+                                wait *= 2;
+                                wait = Math.Min(5000, wait);
+                                timeToWait = wait;
+                            }
+                            Thread.Sleep(timeToWait);
+
+                            continue;
+                        }
+
+                        // Something went wrong.
+                        listener.OnFail(new EyesException());
+                        return;
                     }
                 }
             }
-
-            listener.OnComplete(response);
         }
 
         private HttpWebRequest CreateHttpWebRequest_(
