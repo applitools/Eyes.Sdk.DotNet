@@ -110,6 +110,7 @@ namespace Applitools.VisualGrid
         {
             TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
         }
+
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             Logger.Log("Error: {0}", e);
@@ -129,10 +130,11 @@ namespace Applitools.VisualGrid
 
             Logger.Log("runner created");
             IDictionary<string, RGridResource> resourcesCacheMap = ((IVisualGridRunner)this).ResourcesCacheMap;
+            IDictionary<string, HashSet<string>> cachedResourceMapping = ((IVisualGridRunner)this).CachedResourceMapping;
             Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
 
             eyesServiceRunner_ = new EyesServiceRunner(Logger, ServerConnector, allEyes_, concurrentOpenSessions,
-                drw, resourcesCacheMap);
+                drw, resourcesCacheMap, this);
             eyesServiceRunner_.Start();
 
             Logger.Verbose("rendering grid manager is built");
@@ -168,7 +170,7 @@ namespace Applitools.VisualGrid
                 Logger.Log("Error: {0}", e);
             }
 
-            AddBatch(eyes.Batch.Id, (IBatchCloser)eyes);
+            AddBatch(eyes.Batch.Id, ((IVisualGridEyes)eyes).GetBatchCloser());
             eyesServiceRunner_.OpenTests(newTests);
         }
 
@@ -231,7 +233,6 @@ namespace Applitools.VisualGrid
             return sb.ToString();
         }
 
-        public bool IsServicesOn { get; set; }
         internal IEnumerable<IEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
 
         public object GetConcurrencyLog()

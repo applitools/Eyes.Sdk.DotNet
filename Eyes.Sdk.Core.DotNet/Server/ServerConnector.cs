@@ -609,7 +609,17 @@ namespace Applitools
 
         public void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
         {
-            throw new NotImplementedException();
+            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+                  (response) =>
+                  {
+                      if (response == null)
+                      {
+                          throw new NullReferenceException("response is null");
+                      }
+                      taskListener.OnComplete(response.DeserializeBody<bool?[]>(true));
+                  },
+                  (e) => { taskListener.OnFail(e); }),
+                  $"/query/resources-exist?rg_render-id={renderId}", hashes);
         }
 
         public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)

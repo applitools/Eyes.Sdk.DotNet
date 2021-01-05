@@ -34,15 +34,14 @@ namespace Applitools.Selenium.VisualGrid
         private static readonly string GET_ELEMENT_XPATH_JS =
             "const atName='data-applitools-element-id'; var el=arguments[0];" +
             "if (el.hasAttribute(atName)) { var id = el.getAttribute(atName) } " +
-            "else { var id = windows.performance.now(); $0.setAttribute(atName, id); }" +
+            "else { var id = window.performance.now(); el.setAttribute(atName, id); }" +
             "return '//*['+atName+'=\"'+id+'\"]';";
 
-        private readonly VisualGridRunner visualGridRunner_;
+        private readonly VisualGridRunner runner_;
         private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private RenderingInfo renderingInfo_;
-        internal IUfgConnector eyesConnector_;
         private IJavaScriptExecutor jsExecutor_;
         private string url_;
 #pragma warning disable CS0414
@@ -64,9 +63,9 @@ namespace Applitools.Selenium.VisualGrid
             ArgumentGuard.NotNull(visualGridRunner, nameof(visualGridRunner));
             configProvider_ = configurationProvider;
             Logger = visualGridRunner.Logger;
-            visualGridRunner_ = visualGridRunner;
+            runner_ = visualGridRunner;
 
-            IDebugResourceWriter drw = visualGridRunner_.DebugResourceWriter;
+            IDebugResourceWriter drw = runner_.DebugResourceWriter;
             Ufg.IDebugResourceWriter ufgDrw = EyesSeleniumUtils.ConvertDebugResourceWriter(drw);
             debugResourceWriter_ = ufgDrw;
         }
@@ -75,21 +74,13 @@ namespace Applitools.Selenium.VisualGrid
 
         public string ApiKey
         {
-            get => Config_.ApiKey ?? visualGridRunner_.ApiKey;
+            get => Config_.ApiKey ?? runner_.ApiKey;
             set => Config_.ApiKey = value;
         }
 
         public string ServerUrl
         {
-            get
-            {
-                if (eyesConnector_ != null)
-                {
-                    string uri = eyesConnector_.ServerUrl;
-                    if (uri != null) return uri;
-                }
-                return Config_.ServerUrl ?? visualGridRunner_.ServerUrl;
-            }
+            get => Config_.ServerUrl ?? runner_.ServerUrl;
             set => Config_.ServerUrl = value;
         }
 
@@ -99,7 +90,7 @@ namespace Applitools.Selenium.VisualGrid
 
         public bool IsDisabled
         {
-            get => isDisabled_ ?? visualGridRunner_.IsDisabled;
+            get => isDisabled_ ?? runner_.IsDisabled;
             set => isDisabled_ = value;
         }
 
@@ -161,7 +152,13 @@ namespace Applitools.Selenium.VisualGrid
 
             ArgumentGuard.NotEmpty(Config_.AppName, "appName");
             ArgumentGuard.NotEmpty(Config_.TestName, "testName");
+            if (isOpen_)
+            {
+                Logger.Log("WARNING: called open more than once! Ignoring");
+                return webDriver_ != null ? webDriver_ : webDriver;
+            }
 
+            isOpen_ = true;
             InitDriver(webDriver);
 
             string uaString = driver_.GetUserAgent();
@@ -188,9 +185,9 @@ namespace Applitools.Selenium.VisualGrid
                 browserInfoList.Add(new RenderBrowserInfo(desktopBrowserInfo));
             }
 
-            if (visualGridRunner_.AgentId == null)
+            if (runner_.AgentId == null)
             {
-                visualGridRunner_.AgentId = FullAgentId;
+                runner_.AgentId = FullAgentId;
             }
 
             configAtOpen_ = GetConfigClone_();
@@ -206,7 +203,7 @@ namespace Applitools.Selenium.VisualGrid
             }
 
             Logger.Verbose("opening {0} tests...", testList_.Count);
-            visualGridRunner_.Open(this, newTests);
+            runner_.Open(this, newTests);
             Logger.Verbose("done");
             return driver_ ?? webDriver;
         }
@@ -262,22 +259,11 @@ namespace Applitools.Selenium.VisualGrid
             ICheckSettingsInternal csInternal = (ICheckSettingsInternal)checkSettings;
             IList<Tuple<IWebElement, object>>[] elementLists = CollectSeleniumRegions_(csInternal);
 
-            CheckState state = ((ISeleniumCheckTarget)csInternal).State;
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
-            }
-
             int i;
             for (i = 0; i < elementLists.Length; ++i)
             {
                 IList<Tuple<IWebElement, object>> elementsList = elementLists[i];
                 GetRegionsXPaths_(result, elementsList);
-            }
-
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().ParentFrame();
             }
 
             return result;
@@ -304,12 +290,6 @@ namespace Applitools.Selenium.VisualGrid
 
         private IList<Tuple<IWebElement, object>>[] CollectSeleniumRegions_(ICheckSettingsInternal csInternal)
         {
-            CheckState state = ((ISeleniumCheckTarget)csInternal).State;
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
-            }
-
             IGetRegions[] ignoreRegions = csInternal.GetIgnoreRegions();
             IGetRegions[] layoutRegions = csInternal.GetLayoutRegions();
             IGetRegions[] strictRegions = csInternal.GetStrictRegions();
@@ -325,11 +305,6 @@ namespace Applitools.Selenium.VisualGrid
             IList<Tuple<IWebElement, object>> accessibilityElements = GetElementsFromRegions_(accessibilityRegions);
 
             IList<Tuple<IWebElement, object>> userActionElements = GetElementsFromUserActions_(UserInputs);
-
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().ParentFrame();
-            }
 
             return new IList<Tuple<IWebElement, object>>[] {
                 ignoreElements,
@@ -388,17 +363,16 @@ namespace Applitools.Selenium.VisualGrid
 
         private void CheckImpl_(ICheckSettings checkSettings)
         {
-            ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
             if (!ValidateEyes_()) return;
 
             Logger.Verbose("enter (#{0})", GetHashCode());
 
             try
             {
-                object logMessage = visualGridRunner_.GetConcurrencyLog();
+                object logMessage = runner_.GetConcurrencyLog();
                 if (logMessage != null)
                 {
-                    NetworkLogHandler.SendEvent(((EyesBase)eyesConnector_).ServerConnector, TraceLevel.Notice, logMessage);
+                    NetworkLogHandler.SendEvent(runner_.ServerConnector, TraceLevel.Notice, logMessage);
                 }
             }
             catch (JsonException e)
@@ -422,8 +396,8 @@ namespace Applitools.Selenium.VisualGrid
 
                 checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo);
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-
-                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, visualGridRunner_, driver_, Logger);
+               
+                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger);
 
                 Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
                 Logger.Verbose("Cdt length: {0}", scriptResult.Cdt.Count);
@@ -451,7 +425,7 @@ namespace Applitools.Selenium.VisualGrid
 
                 scriptResult.UserAgent = userAgent_;
                 //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
-                visualGridRunner_.Check(scriptResult, checkTasks);
+                runner_.Check(scriptResult, checkTasks);
                 Logger.Verbose("created renderTask  ({0})", checkSettings);
             }
             catch (Exception e)
@@ -809,26 +783,12 @@ namespace Applitools.Selenium.VisualGrid
 
         public void AddProperty(string name, string value)
         {
-            if (eyesConnector_ == null)
-            {
-                properties_.Add(name, value);
-            }
-            else
-            {
-                eyesConnector_.AddProperty(name, value);
-            }
+            properties_.Add(name, value);
         }
 
         public void ClearProperties()
         {
-            if (eyesConnector_ == null)
-            {
-                properties_.Clear();
-            }
-            else
-            {
-                eyesConnector_.ClearProperties();
-            }
+            properties_.Clear();
         }
 
         public string PrintAllFutures()
@@ -847,11 +807,6 @@ namespace Applitools.Selenium.VisualGrid
             if (IsDisabled)
             {
                 Logger.Verbose("WARNING! Invalid Operation - Eyes Disabled!");
-                return false;
-            }
-            if (!visualGridRunner_.IsServicesOn)
-            {
-                Logger.Verbose("WARNING! Invalid Operation - visualGridRunner.getAllTestResults already called!");
                 return false;
             }
             return true;

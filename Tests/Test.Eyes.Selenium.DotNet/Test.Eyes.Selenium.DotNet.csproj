@@ -20,6 +20,7 @@
     <Compile Remove="VisualGridTests\TestVGCloseAsync.cs" />
     <Compile Remove="VisualGridTests\TestVGNoMissingSteps.cs" />
     <Compile Remove="VisualGridTests\TestVGServerConfigs.cs" />
+    <Compile Remove="VisualGridTests\TestVisualGridApi.cs" />
     <Compile Remove="VisualGridTests\TestVisualGridRunner.cs" />
     <Compile Remove="VisualGridTests\TestVisualGridVisualViewport.cs" />
   </ItemGroup>
@@ -269,6 +270,7 @@
     <None Include="VisualGridTests\TestVGCloseAsync.cs" />
     <None Include="VisualGridTests\TestVGNoMissingSteps.cs" />
     <None Include="VisualGridTests\TestVGServerConfigs.cs" />
+    <None Include="VisualGridTests\TestVisualGridApi.cs" />
     <None Include="VisualGridTests\TestVisualGridRunner.cs" />
     <None Include="VisualGridTests\TestVisualGridVisualViewport.cs" />
   </ItemGroup>

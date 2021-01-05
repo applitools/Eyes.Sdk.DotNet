@@ -1,4 +1,5 @@
 ﻿using Applitools.Utils;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -7,6 +8,12 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private readonly ConcurrentDictionary<string, IBatchCloser> batchClosers_ = new ConcurrentDictionary<string, IBatchCloser>();
+
+        public EyesRunner()
+        {
+            ServerConnectorFactory = new ServerConnectorFactory();
+            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
+        }
 
         public Logger Logger { get; } = new Logger();
 
@@ -55,7 +62,8 @@ namespace Applitools
             }
         }
 
-        protected IServerConnector ServerConnector { get; set; }
+        public IServerConnector ServerConnector { get; set; }
+        public IServerConnectorFactory ServerConnectorFactory { get; set; }
 
         public string ApiKey { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
         public string ServerUrl { get; set; } = CommonUtils.ServerUrl;

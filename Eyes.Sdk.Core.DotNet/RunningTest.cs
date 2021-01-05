@@ -154,7 +154,7 @@ namespace Applitools
             IssueAbort(e, true);
         }
 
-        public string TestId { get; private set; }
+        public string TestId { get; private set; } = Guid.NewGuid().ToString();
 
         public TestResultContainer GetTestResultContainer() { return testResultContainer_; }
     }

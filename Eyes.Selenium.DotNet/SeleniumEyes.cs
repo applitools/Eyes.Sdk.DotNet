@@ -27,10 +27,6 @@ namespace Applitools.Selenium
     /// <summary>
     /// Applitools Eyes Selenium DotNet API.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Microsoft.Design",
-        "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
-        Justification = "EyesWebDriver should only be disposed by the test")]
     internal class SeleniumEyes : RunningTest, IEyes, ISeleniumEyes, IUserActionsEyes
     {
         private const string SET_DATA_APPLITOOLS_SCROLL_ATTR = "var e = arguments[0]; if (e != null) e.setAttribute('data-applitools-scroll','true');";

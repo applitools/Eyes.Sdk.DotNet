@@ -321,49 +321,43 @@ namespace Applitools.Utils
             HttpWebRequest request = null;
             HttpWebResponse response = null;
 
-            void send()
+            Stopwatch sw = Stopwatch.StartNew();
+
+            try
             {
-                request = null;
-                response = null;
-
-                Stopwatch sw = Stopwatch.StartNew();
-
                 try
                 {
-                    try
+                    var requestUri = string.IsNullOrEmpty(path) ?
+                        ServerUrl : new Uri(ServerUrl, path);
+
+                    request = CreateHttpWebRequest_(
+                       requestUri, method, body, contentType, accept, contentEncoding);
+
+                    if (request == null)
                     {
-                        var requestUri = string.IsNullOrEmpty(path) ?
-                            ServerUrl : new Uri(ServerUrl, path);
-
-                        request = CreateHttpWebRequest_(
-                           requestUri, method, body, contentType, accept, contentEncoding);
-
-                        if (request == null)
-                        {
-                            throw new NullReferenceException("request is null");
-                        }
-                        request.BeginGetResponse(OnLongRequestResponse_, request);
+                        throw new NullReferenceException("request is null");
                     }
-                    catch (WebException ex)
-                    {
-                        if (request == null || ex.Response == null)
-                        {
-                            throw;
-                        }
-
-                        listener.OnFail(ex);
-                    }
+                    request.BeginGetResponse(OnLongRequestResponse_, request);
                 }
-                catch (Exception ex2)
+                catch (WebException ex)
                 {
-                    if (request != null && RequestFailed != null)
+                    if (request == null || ex.Response == null)
                     {
-                        var args = new HttpRequestFailedEventArgs(sw.Elapsed, request, ex2);
-                        CommonUtils.DontThrow(() => RequestFailed(this, args));
+                        throw;
                     }
 
-                    throw;
+                    listener.OnFail(ex);
                 }
+            }
+            catch (Exception ex2)
+            {
+                if (request != null && RequestFailed != null)
+                {
+                    var args = new HttpRequestFailedEventArgs(sw.Elapsed, request, ex2);
+                    CommonUtils.DontThrow(() => RequestFailed(this, args));
+                }
+
+                throw;
             }
 
             void OnLongRequestResponse_(IAsyncResult result)
@@ -382,7 +376,6 @@ namespace Applitools.Utils
                 SendAsyncRequest(requestPollingListener, statusUrl, "GET");
             }
 
-            send();
         }
 
         private HttpWebRequest CreateHttpWebRequest_(
