@@ -123,6 +123,14 @@ namespace Applitools
 
         #region Methods
 
+        // for testing purposes only
+        internal RunningSession StartSession(SessionStartInfo sessionStartInfo)
+        {
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>();
+            StartSessionInternal(listener, sessionStartInfo);
+            return listener.Get();
+        }
+
         /// <summary>
         /// Starts a new session.
         /// </summary>
@@ -202,40 +210,30 @@ namespace Applitools
         /// <summary>
         /// Ends the input running session.
         /// </summary>
-        public TestResults EndSession(RunningSession runningSession, bool isAborted, bool save)
+        public void EndSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
         {
-            return EndSessionInternal(runningSession, isAborted, save);
+            EndSessionInternal(taskListener, sessionStopInfo);
         }
 
-        protected virtual TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
+        protected virtual void EndSessionInternal(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
         {
-            ArgumentGuard.NotNull(runningSession, nameof(runningSession));
+            ArgumentGuard.NotNull(sessionStopInfo, nameof(sessionStopInfo));
+            ArgumentGuard.NotNull(sessionStopInfo.RunningSession, nameof(sessionStopInfo.RunningSession));
 
-            var body = new
-            {
-                Aborted = isAborted,
-                UpdateBaseline = save,
-            };
-
-            try
-            {
-                using (HttpWebResponse response = httpClient_.DeleteJson("api/sessions/running/" + runningSession.Id, body))
+            httpClient_.DeleteJson(new TaskListener<HttpWebResponse>(
+                response =>
                 {
                     if (response == null)
                     {
                         throw new NullReferenceException("response is null");
                     }
-                    return response.DeserializeBody<TestResults>(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new EyesException($"EndSession failed: {ex.Message}", ex);
-            }
+                    taskListener.OnComplete(response.DeserializeBody<TestResults>(true));
+                },
+                ex => taskListener.OnFail(ex)
+                ), $"api/sessions/running/{sessionStopInfo.RunningSession.Id}", sessionStopInfo);
         }
 
         internal IHttpRestClientFactory HttpRestClientFactory { get; set; } = new DefaultHttpRestClientFactory();
-
 
         public virtual void CloseBatch(string batchId)
         {
@@ -619,10 +617,6 @@ namespace Applitools
             throw new NotImplementedException();
         }
 
-        public void StopSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Render(TaskListener<List<IRunningRender>> renderListener, IList<IRenderRequest> requests)
         {

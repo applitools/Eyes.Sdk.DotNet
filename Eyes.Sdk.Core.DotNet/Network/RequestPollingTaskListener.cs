@@ -13,8 +13,8 @@ namespace Applitools.Utils
         private int sleepDuration = 500;
         private int requestCount;
 
-        public RequestPollingTaskListener(HttpRestClient restClient, Logger logger,
-            string pollingUrl, TaskListener<HttpWebResponse> listener)
+        public RequestPollingTaskListener(HttpRestClient restClient, string pollingUrl, 
+            TaskListener<HttpWebResponse> listener, Logger logger = null)
         {
             this.restClient = restClient;
             this.logger = logger;

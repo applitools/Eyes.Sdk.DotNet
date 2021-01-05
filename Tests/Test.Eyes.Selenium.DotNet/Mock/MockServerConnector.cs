@@ -34,12 +34,12 @@ namespace Applitools.Selenium.Tests.Mock
         public delegate void AfterEndSessionDelegate(RunningSession runningSession, bool isAborted, bool save);
         public event AfterEndSessionDelegate AfterEndSession;
 
-        protected override TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
+        protected override void EndSessionInternal(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
         {
-            Logger.Log("ending session: {0}", runningSession.SessionId);
+            Logger.Log("ending session: {0}", sessionStopInfo.RunningSession.SessionId);
             TestResults testResults = new TestResults();
-            AfterEndSession?.Invoke(runningSession, isAborted, save);
-            return testResults;
+            AfterEndSession?.Invoke(sessionStopInfo.RunningSession, sessionStopInfo.Aborted, sessionStopInfo.UpdateBaseline);
+            taskListener.OnComplete(testResults);
         }
 
         public override RenderingInfo GetRenderingInfo()
@@ -65,7 +65,7 @@ namespace Applitools.Selenium.Tests.Mock
         public delegate (bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
         public event OnStartSessionDelegate OnStartSession;
 
-        protected override RunningSession StartSessionInternal(SessionStartInfo sessionStartInfo)
+        protected override void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
         {
             Logger.Log("starting session: {0}", sessionStartInfo);
 
@@ -82,7 +82,7 @@ namespace Applitools.Selenium.Tests.Mock
                 Sessions.Add(newSession.SessionId, newSession);
                 SessionsStartInfo.Add(newSession.SessionId, sessionStartInfo);
             }
-            return newSession;
+            taskListener.OnComplete(newSession);
         }
 
         public async Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests)

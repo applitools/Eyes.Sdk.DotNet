@@ -58,7 +58,7 @@ namespace Applitools
 
             try
             {
-                ServerConnector.StopSession(taskListener, sessionStopInfo);
+                ServerConnector.EndSession(taskListener, sessionStopInfo);
             }
             catch (Exception e)
             {

@@ -63,7 +63,7 @@ namespace Applitools
         private IServerConnector serverConnector_;
         protected TestResultContainer testResultContainer_;
         private EyesScreenshot lastScreenshot_;
-        private readonly Queue<Trigger> userInputs_;
+        private readonly Queue<Trigger> userInputs_ = new Queue<Trigger>();
 
         #endregion
 
@@ -396,7 +396,10 @@ namespace Applitools
                 Logger.Verbose("Ending server session...");
                 var save = (isNewSession && Configuration.SaveNewTests) || (!isNewSession && (Configuration.SaveDiffs ?? false));
 
-                TestResults results = ServerConnector.EndSession(runningSession_, false, save);
+                SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, false, save);
+                SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>();
+                ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
+                TestResults results = syncTaskListener.Get();
                 results.IsNew = isNewSession;
                 results.Url = runningSession_.Url;
 
@@ -513,7 +516,10 @@ namespace Applitools
                 Logger.Verbose("Aborting server session...");
                 try
                 {
-                    TestResults results = ServerConnector.EndSession(runningSession_, true, false);
+                    SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, true, false);
+                    SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>();
+                    ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
+                    TestResults results = syncTaskListener.Get();
                     results.IsNew = runningSession_.IsNewSession;
                     results.Url = runningSession_.Url;
                     Logger.Log("Test aborted");
