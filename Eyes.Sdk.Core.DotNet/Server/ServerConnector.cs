@@ -416,7 +416,7 @@ namespace Applitools
             Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
             try
             {
-                HttpWebRequest request = CreateUfgHttpWebRequest_("job-info", Proxy, AgentId);
+                HttpWebRequest request = CreateUfgHttpWebRequest_("job-info");
                 Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
                 serializer_.Serialize(browserInfos, request.GetRequestStream());
 
@@ -453,20 +453,22 @@ namespace Applitools
             using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
         }
 
-        public HttpWebRequest CreateUfgHttpWebRequest_(string url, WebProxy proxy, string fullAgentId)
+        public HttpWebRequest CreateUfgHttpWebRequest_(string url, WebProxy proxy = null, string fullAgentId = null,
+            string method = "POST", string contentType = "application/json", string mediaType = "application/json")
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
-            return CreateUfgHttpWebRequest_(url, renderingInfo, proxy, fullAgentId);
+            return CreateUfgHttpWebRequest_(url, renderingInfo, proxy ?? Proxy, fullAgentId ?? AgentId, method, contentType, mediaType);
         }
 
-        public static HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)
+        public static HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy,
+            string fullAgentId, string method = "POST", string contentType = "application/json", string mediaType = "application/json")
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
             HttpWebRequest request = WebRequest.CreateHttp(uri);
             if (proxy != null) request.Proxy = proxy;
-            request.ContentType = "application/json";
-            request.MediaType = "application/json";
-            request.Method = "POST";
+            request.ContentType = contentType;
+            request.MediaType = mediaType;
+            request.Method = method;
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
             if (fullAgentId != null)
             {
@@ -587,7 +589,7 @@ namespace Applitools
 
         public void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
         {
-            HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}", Proxy, AgentId);
+            HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Verbose("querying for existing resources for render id {0}", renderId);
             serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
@@ -609,18 +611,55 @@ namespace Applitools
 
         public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentGuard.NotNull(resource, nameof(resource));
+            byte[] content = resource.Content;
+            ArgumentGuard.NotNull(content, nameof(resource.Content));
 
+            string hash = resource.Sha256;
+            string contentType = resource.ContentType;
+
+            Logger.Verbose("resource hash: {0} ; url: {1} ; render id: {2}", hash, resource.Url, renderId);
+
+            HttpWebRequest request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
+                method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream");
+            request.ContentLength = content.Length;
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(content, 0, content.Length);
+            dataStream.Close();
+
+            Task<WebResponse> task = request.GetResponseAsync();
+            Logger.Verbose("future created.");
+            return task;
+        }
 
         public void Render(TaskListener<List<IRunningRender>> renderListener, IList<IRenderRequest> requests)
         {
-            throw new NotImplementedException();
+            ArgumentGuard.NotNull(requests, nameof(requests));
+            Logger.Verbose("called with {0}", StringUtils.Concat(requests, ","));
+            string fullAgentId = AgentId;
+            foreach (IRenderRequest renderRequest in requests)
+            {
+                renderRequest.AgentId = fullAgentId;
+            }
+
+            HttpWebRequest request = CreateUfgHttpWebRequest_("render");
+            Logger.Verbose("sending /render request to {0}", request.RequestUri);
+            serializer_.Serialize(requests, request.GetRequestStream());
+
+            SendUFGAsyncRequest_(renderListener, request);
         }
 
-        public void RenderStatusById(TaskListener<List<IRenderStatusResults>> pollingListener, IList<string> renderIds)
+        public void RenderStatusById(TaskListener<List<IRenderStatusResults>> taskListener, IList<string> renderIds)
         {
-            throw new NotImplementedException();
+            ArgumentGuard.NotNull(renderIds, nameof(renderIds));
+            string idsAsString = string.Join(",", renderIds);
+            Logger.Verbose("requesting visual grid server for render status of the following render ids: {0}", idsAsString);
+
+            HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");
+            request.ContinueTimeout = 1000;
+            serializer_.Serialize(renderIds, request.GetRequestStream());
+
+            SendUFGAsyncRequest_(taskListener, request);
         }
 
         #endregion

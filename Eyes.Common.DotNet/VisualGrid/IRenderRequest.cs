@@ -2,5 +2,6 @@
 {
     public interface IRenderRequest
     {
+        string AgentId { get; set; }
     }
 }
