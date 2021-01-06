@@ -285,10 +285,15 @@ namespace Applitools.Utils
             }
         }
 
-        internal void SendAsyncRequest(TaskListener<HttpWebResponse> listener, string url, string method)
+        public void SendAsyncRequest(TaskListener<HttpWebResponse> listener, string url, string method)
         {
             Uri requestUri = new Uri(url);
             HttpWebRequest request = CreateHttpWebRequest_(requestUri, method, null, null, null, null);
+            SendAsyncRequest(listener, request);
+        }
+
+        public static void SendAsyncRequest(TaskListener<HttpWebResponse> listener, HttpWebRequest request)
+        {
             request.BeginGetResponse(ar =>
             {
                 if (!ar.IsCompleted) return;

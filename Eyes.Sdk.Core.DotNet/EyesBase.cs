@@ -849,7 +849,9 @@ namespace Applitools
         private string TryPostDomCapture_(string domJson)
         {
             if (domJson == null) return null;
-            return ServerConnector.PostDomCapture(domJson);
+            SyncTaskListener<string> syncListener = new SyncTaskListener<string>();
+            ServerConnector.PostDomCapture(syncListener, domJson);
+            return syncListener.Get();
         }
 
         protected void ValidateResult_(string tag, MatchResult result)

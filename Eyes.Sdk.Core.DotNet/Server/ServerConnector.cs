@@ -117,7 +117,7 @@ namespace Applitools
         /// <summary>
         /// Message logger.
         /// </summary>
-        protected Logger Logger { get; private set; }
+        protected internal Logger Logger { get; private set; }
 
         #endregion
 
@@ -270,30 +270,37 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(data, nameof(data));
 
-            if (!TryUploadImage_(data))
-            {
-                throw new EyesException($"{nameof(MatchWindow)} failed: could not upload image to storage service.");
-            }
-
-            try
-            {
-                string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
-                httpClient_.PostJson(new TaskListener<HttpWebResponse>(
-                    (response) =>
+            UploadImage(new TaskListener<string>(
+                    returnedUrl =>
                     {
-                        if (response == null)
+                        if (returnedUrl == null)
                         {
-                            throw new NullReferenceException("response is null");
+                            listener.OnFail(new EyesException($"{nameof(MatchWindow)} failed: could not upload image to storage service."));
+                            return;
                         }
-                        listener.OnComplete(response.DeserializeBody<MatchResult>(true));
+                        try
+                        {
+                            data.AppOutput.ScreenshotUrl = returnedUrl;
+                            string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
+                            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+                                (response) =>
+                                {
+                                    if (response == null)
+                                    {
+                                        throw new NullReferenceException("response is null");
+                                    }
+                                    listener.OnComplete(response.DeserializeBody<MatchResult>(true));
+                                },
+                                (e) => { throw e; }
+                                ), url, data);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new EyesException($"{nameof(MatchWindow)} failed: {ex.Message}", ex);
+                        }
                     },
-                    (e) => { throw e; }
-                    ), url, data);
-            }
-            catch (Exception ex)
-            {
-                throw new EyesException($"{nameof(MatchWindow)} failed: {ex.Message}", ex);
-            }
+                    ex => listener.OnFail(ex)
+                ), data.AppOutput.ScreenshotBytes);
         }
 
         /// <summary>
@@ -307,82 +314,42 @@ namespace Applitools
             return sync.Get();
         }
 
-        private bool TryUploadImage_(MatchWindowData data)
-        {
-            if (data.AppOutput.ScreenshotUrl != null)
-            {
-                return true;
-            }
+        //private void TryUploadImage_(TaskListener<bool> listener, MatchWindowData data)
+        //{
+        //    if (data.AppOutput.ScreenshotUrl != null)
+        //    {
+        //        listener.OnComplete(true);
+        //        return;
+        //    }
 
-            byte[] bytes = data.AppOutput.ScreenshotBytes;
-            return (data.AppOutput.ScreenshotUrl = TryUploadData_(bytes, "image/png", "image/png")) != null;
-        }
+        //    byte[] bytes = data.AppOutput.ScreenshotBytes;
 
-        private string TryUploadData_(byte[] bytes, string contentType, string mediaType)
+        //    UploadImage(new TaskListener<string>(
+        //            returnedUrl =>
+        //            {
+        //                data.AppOutput.ScreenshotUrl = returnedUrl;
+        //                listener.OnComplete(returnedUrl != null);
+        //            },
+        //            ex => listener.OnFail(ex)
+        //        ), bytes);
+        //}
+
+        private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
-
-            if (renderingInfo != null && renderingInfo.ResultsUrl != null)
+            string targetUrl;
+            if (renderingInfo == null || (targetUrl = renderingInfo.ResultsUrl.AbsoluteUri) == null)
             {
-                try
-                {
-                    string targetUrl = renderingInfo.ResultsUrl.AbsoluteUri;
-                    Guid guid = Guid.NewGuid();
-                    targetUrl = targetUrl.Replace("__random__", guid.ToString());
-                    Logger.Verbose("uploading {0} to {1}", mediaType, targetUrl);
-
-                    int retriesLeft = 3;
-                    int wait = 500;
-                    while (retriesLeft-- > 0)
-                    {
-                        try
-                        {
-                            int statusCode = UploadData_(bytes, renderingInfo, targetUrl, contentType, mediaType);
-                            if (statusCode == 200 || statusCode == 201)
-                            {
-                                Logger.Verbose("upload {0} guid {1} complete.", mediaType, guid);
-                                return targetUrl;
-                            }
-                            if (statusCode < 500)
-                            {
-                                break;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            if (retriesLeft == 0) throw;
-                        }
-                        Thread.Sleep(wait);
-                        wait *= 2;
-                        wait = Math.Min(10000, wait);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("Error uploading " + mediaType + ": " + e);
-                }
+                listener.OnComplete(null);
+                return;
             }
-            return null;
-        }
 
-        private int UploadData_(byte[] bytes, RenderingInfo renderingInfo, string targetUrl, string contentType, string mediaType)
-        {
-            HttpWebRequest request = WebRequest.CreateHttp(targetUrl);
-            if (Proxy != null) request.Proxy = Proxy;
-            request.ContentType = contentType;
-            request.ContentLength = bytes.Length;
-            request.MediaType = mediaType;
-            request.Method = "PUT";
-            request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.Headers.Add("x-ms-blob-type", "BlockBlob");
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(bytes, 0, bytes.Length);
-            dataStream.Close();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            HttpStatusCode statusCode = response.StatusCode;
-            Logger.Verbose("Upload Status Code: {0}", statusCode);
-            response.Close();
-            return (int)statusCode;
+            Guid guid = Guid.NewGuid();
+            targetUrl = targetUrl.Replace("__random__", guid.ToString());
+            Logger.Verbose("uploading {0} to {1}", mediaType, targetUrl);
+
+            UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType);
+            callback.UploadDataAsync();
         }
 
         /// <summary>
@@ -443,36 +410,35 @@ namespace Applitools
             }
         }
 
-        public virtual IList<JobInfo> GetJobInfo(IList<IRenderRequest> browserInfos)
+        public virtual void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
         {
             ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
             Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
             try
             {
-                RenderingInfo renderingInfo = GetRenderingInfo();
-
-                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy, AgentId);
+                HttpWebRequest request = CreateUfgHttpWebRequest_("job-info", Proxy, AgentId);
                 Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
                 serializer_.Serialize(browserInfos, request.GetRequestStream());
 
-                using (WebResponse response = request.GetResponse())
-                {
-                    Stream s = response.GetResponseStream();
-                    string json = new StreamReader(s).ReadToEnd();
-                    JObject[] jobInfosUnparsed = JsonConvert.DeserializeObject<JObject[]>(json);
-                    List<JobInfo> jobInfos = new List<JobInfo>();
-                    foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
+                HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+                    response =>
                     {
-                        JobInfo jobInfo = new JobInfo
+                        JObject[] jobInfosUnparsed = response.DeserializeBody<JObject[]>(true);
+                        List<JobInfo> jobInfos = new List<JobInfo>();
+                        foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
                         {
-                            Renderer = jobInfoUnparsed.Value<string>("renderer"),
-                            EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
-                        };
-                        jobInfos.Add(jobInfo);
-                    }
-                    Logger.Verbose("request succeeded");
-                    return jobInfos;
-                }
+                            JobInfo jobInfo = new JobInfo
+                            {
+                                Renderer = jobInfoUnparsed.Value<string>("renderer"),
+                                EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
+                            };
+                            jobInfos.Add(jobInfo);
+                        }
+                        Logger.Verbose("request succeeded");
+                        listener.OnComplete(jobInfos);
+                    },
+                    ex => listener.OnFail(ex)
+                    ), request);
             }
             catch (Exception e)
             {
@@ -487,8 +453,13 @@ namespace Applitools
             using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
         }
 
-        public static HttpWebRequest CreateHttpWebRequest_(string url,
-            RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)
+        public HttpWebRequest CreateUfgHttpWebRequest_(string url, WebProxy proxy, string fullAgentId)
+        {
+            RenderingInfo renderingInfo = GetRenderingInfo();
+            return CreateUfgHttpWebRequest_(url, renderingInfo, proxy, fullAgentId);
+        }
+
+        public static HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
             HttpWebRequest request = WebRequest.CreateHttp(uri);
@@ -541,7 +512,7 @@ namespace Applitools
             return member;
         }
 
-        public string PostDomCapture(string domJson)
+        public void PostDomCapture(TaskListener<string> listener, string domJson)
         {
             try
             {
@@ -556,7 +527,10 @@ namespace Applitools
                     binData = compressedStream.ToArray();
                 }
 
-                return TryUploadData_(binData, "application/octet-stream", "application/json");
+                UploadData_(new TaskListener<string>(
+                    r => listener.OnComplete(r),
+                    ex => listener.OnFail(ex)
+                ), binData, "application/octet-stream", "application/json");
             }
             catch (Exception ex)
             {
@@ -602,24 +576,35 @@ namespace Applitools
             apiKeyChanged_ = false;
         }
 
-        public void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes)
+        public void UploadImage(TaskListener<string> listener, byte[] screenshotBytes)
         {
-            throw new NotImplementedException();
+            UploadData_(new TaskListener<string>(
+                    r => listener.OnComplete(r),
+                    ex => listener.OnFail(ex)
+                ),
+                screenshotBytes, "image/png", "image/png");
         }
 
         public void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
         {
-            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
-                  (response) =>
+            HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}", Proxy, AgentId);
+            Logger.Verbose("querying for existing resources for render id {0}", renderId);
+            serializer_.Serialize(hashes, request.GetRequestStream());
+            SendUFGAsyncRequest_(taskListener, request);
+        }
+
+        private void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request)
+        {
+            HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+              response =>
+              {
+                  if (response == null)
                   {
-                      if (response == null)
-                      {
-                          throw new NullReferenceException("response is null");
-                      }
-                      taskListener.OnComplete(response.DeserializeBody<bool?[]>(true));
-                  },
-                  (e) => { taskListener.OnFail(e); }),
-                  $"/query/resources-exist?rg_render-id={renderId}", hashes);
+                      throw new NullReferenceException("response is null");
+                  }
+                  taskListener.OnComplete(response.DeserializeBody<T>(true));
+              },
+              ex => taskListener.OnFail(ex)), request);
         }
 
         public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)

@@ -154,7 +154,7 @@ namespace Applitools.Selenium.VisualGrid
 
         private HttpWebRequest CreateHttpWebRequest_(string url)
         {
-            return Applitools.ServerConnector.CreateHttpWebRequest_(url, GetRenderingInfo(), Proxy, FullAgentId);
+            return Applitools.ServerConnector.CreateUfgHttpWebRequest_(url, GetRenderingInfo(), Proxy, FullAgentId);
         }
 
         public virtual List<RenderStatusResults> RenderStatusById(IList<string> renderIds)
@@ -325,7 +325,9 @@ namespace Applitools.Selenium.VisualGrid
                 RenderInfo renderInfo = new RenderInfo(browserInfo_.Width, browserInfo_.Height, default, null,
                     null, browserInfo_.EmulationInfo, browserInfo_.IosDeviceInfo);
                 RenderRequest renderRequest = new RenderRequest(renderInfo, browserInfo_.Platform, browserInfo_.BrowserType);
-                IList<JobInfo> jobInfos = ServerConnector.GetJobInfo(new RenderRequest[] { renderRequest });
+                SyncTaskListener<IList<JobInfo>> syncListener = new SyncTaskListener<IList<JobInfo>>();
+                ServerConnector.GetJobInfo(syncListener, new RenderRequest[] { renderRequest });
+                IList<JobInfo> jobInfos = syncListener.Get();
                 if (jobInfos == null || jobInfos.Count == 0)
                 {
                     throw new EyesException("Failed getting job info");

@@ -23,10 +23,10 @@ namespace Applitools
         void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData matchWindowData);
         string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, IList<Rectangle> regions, string language);
         string AddRunningSessionImage(RunningSession runningSession, byte[] imageBytes);
-        string PostDomCapture(string domJson);
+        void PostDomCapture(TaskListener<string> listener, string domJson);
         void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo);
         void EndSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo);
-        IList<JobInfo> GetJobInfo(IList<IRenderRequest> renderRequests);
+        void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos);
         void SendLogs(LogSessionsClientEvents clientEvents);
         void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes);
         void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes);
