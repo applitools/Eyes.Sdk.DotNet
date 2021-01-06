@@ -29,13 +29,7 @@ before_install:
   - git submodule update --init --recursive
   - nvm install node
 
-# env variables
-# $RELEASE_BRANCH
-# $GITHUB_TOKEN
-# $ALLOWED_RELEASE_COMMITERS
-# $SDK
-script:
-  - python --version
+before_script:
   - latestChromeDriverURL=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -q -O -)
   - wget "http://chromedriver.storage.googleapis.com/${latestChromeDriverURL}/chromedriver_linux64.zip"
   - unzip chromedriver_linux64.zip -d /home/travis/build/
@@ -48,16 +42,41 @@ script:
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
+  - echo "Travis event type is $TRAVIS_EVENT_TYPE"
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
       export APPLITOOLS_FULL_COVERAGE=true;
     fi
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
       python updateChangelogAndProjectFiles.py;
     fi
-  - chmod +x ./buildProjects.sh && ./buildProjects.sh
-  - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
-      chmod +x ./deploy.sh && ./deploy.sh;
-      chmod +x ./sendMail.sh && ./sendMail.sh;
-    elif [[ $APPLITOOLS_FULL_COVERAGE = true ]]; then
-      chmod +x ./sendFullCoverageReport.sh && ./sendFullCoverageReport.sh;
-    fi
+
+# env variables
+# $RELEASE_BRANCH
+# $GITHUB_TOKEN
+# $ALLOWED_RELEASE_COMMITERS
+# $SDK
+jobs:
+  include:
+    - stage: Test
+      name: Generic Tests
+      script:
+        - echo "generating tests"
+        - pushd sdk.coverage.tests
+        - npm run dotnet:generate
+        - popd
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Generated
+
+    - name: Hand Written Tests
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh FullyQualifiedName!~Generated
+
+    - stage: Full Regression Mail
+      if: type = cron AND branch = master
+      script:
+        - chmod +x ./sendFullCoverageReport.sh && ./sendFullCoverageReport.sh
+
+    - stage: Deploy
+      if: tag =~ ^RELEASE_CANDIDATE AND fork == false
+      script:
+        - chmod +x ./deploy.sh && ./deploy.sh
+        - chmod +x ./sendMail.sh && ./sendMail.sh

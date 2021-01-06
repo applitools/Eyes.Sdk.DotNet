@@ -24,6 +24,7 @@ namespace Applitools.Tests.Utils
         {
             TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: TRAVIS_TAG: '{Environment.GetEnvironmentVariable("TRAVIS_TAG") ?? "<null>"}'");
             TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: IS_FULL_COVERAGE: {IS_FULL_COVERAGE}");
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Send to sandbox: {TestResultReportSummary.SendToSandbox()}");
             if (!IS_FULL_COVERAGE)
             {
                 Assembly asm = Assembly.GetExecutingAssembly();
