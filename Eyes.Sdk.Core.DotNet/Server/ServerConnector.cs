@@ -632,7 +632,7 @@ namespace Applitools
             return task;
         }
 
-        public void Render(TaskListener<List<IRunningRender>> renderListener, IList<IRenderRequest> requests)
+        public void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
         {
             ArgumentGuard.NotNull(requests, nameof(requests));
             Logger.Verbose("called with {0}", StringUtils.Concat(requests, ","));
@@ -649,7 +649,7 @@ namespace Applitools
             SendUFGAsyncRequest_(renderListener, request);
         }
 
-        public void RenderStatusById(TaskListener<List<IRenderStatusResults>> taskListener, IList<string> renderIds)
+        public void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
             string idsAsString = string.Join(",", renderIds);

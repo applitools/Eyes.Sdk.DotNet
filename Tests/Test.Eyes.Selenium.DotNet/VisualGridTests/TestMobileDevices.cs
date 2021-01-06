@@ -107,24 +107,24 @@ namespace Applitools.Selenium.Tests.VisualGridTests
     //    }
     //}
 
-    class LocalEyesConnector : EyesConnector
-    {
-        public LocalEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
-            : base(logger, browserInfo, configuration)
-        {
-            ServerConnector.ServerUrl = new Uri(ServerUrl);
-            ServerConnector.ApiKey = ApiKey;
-        }
+    //class LocalEyesConnector : EyesConnector
+    //{
+    //    public LocalEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
+    //        : base(logger, browserInfo, configuration)
+    //    {
+    //        ServerConnector.ServerUrl = new Uri(ServerUrl);
+    //        ServerConnector.ApiKey = ApiKey;
+    //    }
 
-        public List<RunningRender> Render(RenderRequest[] renderRequests)
-        {
-            throw new Exception();
-        }
+    //    public List<RunningRender> Render(RenderRequest[] renderRequests)
+    //    {
+    //        throw new Exception();
+    //    }
 
-        public Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
-        {
-            throw new Exception();
-        }
-    }
+    //    public Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
+    //    {
+    //        throw new Exception();
+    //    }
+    //}
 
 }

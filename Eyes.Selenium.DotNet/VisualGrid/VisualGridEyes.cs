@@ -35,7 +35,7 @@ namespace Applitools.Selenium.VisualGrid
             "const atName='data-applitools-element-id'; var el=arguments[0];" +
             "if (el.hasAttribute(atName)) { var id = el.getAttribute(atName) } " +
             "else { var id = window.performance.now(); el.setAttribute(atName, id); }" +
-            "return '//*['+atName+'=\"'+id+'\"]';";
+            "return '//*[@'+atName+'=\"'+id+'\"]';";
 
         private readonly VisualGridRunner runner_;
         private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
@@ -396,6 +396,10 @@ namespace Applitools.Selenium.VisualGrid
 
                 checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo);
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+
+                TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
+                IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
+                Logger.Verbose("regionXPaths : {0}", regionsXPaths);
                
                 FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger);
 
@@ -403,11 +407,6 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("Cdt length: {0}", scriptResult.Cdt.Count);
                 Logger.Verbose("Blobs urls: {0}", StringUtils.Concat(blobsUrls, ", "));
                 Logger.Verbose("Resources urls: {0}", StringUtils.Concat(scriptResult.ResourceUrls, ", "));
-
-                IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
-                Logger.Verbose("regionXPaths : {0}", regionsXPaths);
-
-                TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
 
                 checkSettings = UpdateCheckSettings_(checkSettings);
 
