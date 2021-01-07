@@ -32,7 +32,7 @@ namespace Applitools.Selenium.Tests
             {
                 UserAgent ua = eyes.seleniumEyes_.userAgent_;
                 DomCapture domCapture = new DomCapture(eyes.Logger, eyesWebDriver, ua);
-                string json = domCapture.GetFullWindowDom(new NullPositionProvider());
+                string json = domCapture.GetFullWindowDom();
 
                 object expectedJsonObj = JsonConvert.DeserializeObject(expectedDomJson);
                 object jsonObj = JsonConvert.DeserializeObject(json);

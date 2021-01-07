@@ -41,19 +41,16 @@ namespace Applitools.Selenium.Capture
             userAgent_ = userAgent;
         }
 
-        internal string GetFullWindowDom(IPositionProvider positionProvider)
+        internal string GetFullWindowDom()
         {
             logger_.Verbose("enter");
             FrameChain originalFC = webDriver_.GetFrameChain().Clone();
-            PositionMemento originalPosition = positionProvider.GetState();
-            positionProvider.SetPosition(Point.Empty);
             webDriver_.ExecuteScript("document.documentElement.setAttribute('data-applitools-active-frame', true)");
             webDriver_.SwitchTo().DefaultContent();
             Stopwatch stopwatch = Stopwatch.StartNew();
             string domJson = GetDom_();
             logger_.Verbose(nameof(GetDom_) + " took {0} ms", stopwatch.Elapsed.TotalMilliseconds);
             ((EyesWebDriverTargetLocator)webDriver_.SwitchTo()).Frames(originalFC);
-            positionProvider.RestoreState(originalPosition);
             logger_.Verbose("exit");
             return domJson;
         }
