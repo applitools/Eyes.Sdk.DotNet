@@ -270,7 +270,9 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(data, nameof(data));
 
-            UploadImage(new TaskListener<string>(
+            if (data.AppOutput.ScreenshotBytes != null)
+            {
+                UploadImage(new TaskListener<string>(
                     returnedUrl =>
                     {
                         if (returnedUrl == null)
@@ -281,18 +283,7 @@ namespace Applitools
                         try
                         {
                             data.AppOutput.ScreenshotUrl = returnedUrl;
-                            string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
-                            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
-                                (response) =>
-                                {
-                                    if (response == null)
-                                    {
-                                        throw new NullReferenceException("response is null");
-                                    }
-                                    listener.OnComplete(response.DeserializeBody<MatchResult>(true));
-                                },
-                                (e) => { throw e; }
-                                ), url, data);
+                            MathWindowImpl_(listener, data);
                         }
                         catch (Exception ex)
                         {
@@ -301,6 +292,31 @@ namespace Applitools
                     },
                     ex => listener.OnFail(ex)
                 ), data.AppOutput.ScreenshotBytes);
+            }
+            else if (data.AppOutput.ScreenshotUrl != null)
+            {
+                MathWindowImpl_(listener, data);
+            }
+            else
+            {
+                throw new EyesException("Failed to upload image.");
+            }
+        }
+
+        private void MathWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        {
+            string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
+            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+                response =>
+                {
+                    if (response == null)
+                    {
+                        throw new NullReferenceException("response is null");
+                    }
+                    listener.OnComplete(response.DeserializeBody<MatchResult>(true));
+                },
+                e => { throw e; }
+                ), url, data);
         }
 
         /// <summary>

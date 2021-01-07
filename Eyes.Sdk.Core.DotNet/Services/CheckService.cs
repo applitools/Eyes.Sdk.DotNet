@@ -33,7 +33,7 @@ namespace Applitools
 
             while (matchWindowQueue_.Count > 0)
             {
-                Tuple<string, MatchWindowData> nextInput = inputQueue_.Dequeue();
+                Tuple<string, MatchWindowData> nextInput = matchWindowQueue_.Dequeue();
                 string id = nextInput.Item1;
                 MatchWindowData matchWindowData = nextInput.Item2;
                 TaskListener<MatchResult> listener = new TaskListener<MatchResult>(

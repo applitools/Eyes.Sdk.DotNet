@@ -23,6 +23,7 @@ namespace Applitools.Utils
         public UploadCallback(TaskListener<string> listener, ServerConnector serverConnector,
                           string targetUrl, byte[] bytes, string contentType, string mediaType)
         {
+            ArgumentGuard.NotNull(bytes, nameof(bytes));
             OnComplete = OnComplete_;
             OnFail = OnFail_;
             listener_ = listener;
@@ -81,11 +82,12 @@ namespace Applitools.Utils
             HttpWebRequest request = WebRequest.CreateHttp(targetUrl_);
             if (serverConnector_.Proxy != null) request.Proxy = serverConnector_.Proxy;
             request.ContentType = contentType_;
-            request.ContentLength = bytes_.Length;
             request.MediaType = mediaType_;
             request.Method = "PUT";
             request.Headers.Add("X-Auth-Token", serverConnector_.GetRenderingInfo().AccessToken);
             request.Headers.Add("x-ms-blob-type", "BlockBlob");
+
+            request.ContentLength = bytes_.Length;
             Stream dataStream = request.GetRequestStream();
             dataStream.Write(bytes_, 0, bytes_.Length);
             dataStream.Close();
