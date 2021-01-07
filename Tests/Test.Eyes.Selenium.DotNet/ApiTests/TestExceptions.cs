@@ -34,9 +34,8 @@ namespace Applitools.Selenium.Tests.ApiTests
                 eyes.SetConfiguration(conf);
                 eyes.Open(driver);
 
-                TestResults results = eyes.Close();
+                TestResults results = eyes.Close(false);
                 results?.Delete();
-                runner.GetAllTestResults();
             }
             finally
             {
