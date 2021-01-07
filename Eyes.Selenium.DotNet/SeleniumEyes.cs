@@ -602,7 +602,7 @@ namespace Applitools.Selenium
                     }
                     else
                     {
-                        state.OriginLocation = PositionProvider.GetCurrentPosition();
+                        state.OriginLocation = Point.Empty;// PositionProvider.GetCurrentPosition();
                         CheckWindow_(checkSettingsInternal);
                     }
                 }
@@ -834,7 +834,7 @@ namespace Applitools.Selenium
                 Point actualFramePosition = bounds.Location - (Size)actualElementBounds.Location;
                 bounds.Location -= (Size)actualFramePosition;
             }
-            state.OriginLocation = el;
+            state.OriginLocation = bounds.Location;
 
             EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)driver_.SwitchTo();
             FrameChain fcClone = currentFrameChain.Clone();
@@ -1258,7 +1258,7 @@ namespace Applitools.Selenium
             Logger.Verbose("Building screenshot object...");
             Point frameLocationInScreenshot = new Point(-state.FullRegion.Left, -state.FullRegion.Top);
             result = new EyesWebDriverScreenshot(Logger, driver_, entireFrameOrElement, entireFrameOrElement.Size, frameLocationInScreenshot);
-
+            state.OriginLocation = state.FullRegion.Location;
             return result;
         }
 
