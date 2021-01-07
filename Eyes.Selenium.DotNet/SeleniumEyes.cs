@@ -238,12 +238,8 @@ namespace Applitools.Selenium
         protected override string TryCaptureDom()
         {
             Logger.Verbose("enter");
-            FrameChain fc = driver_.GetFrameChain().Clone();
-
-            IWebElement scrollRootElement = fc.Peek()?.ScrollRootElement ?? EyesSeleniumUtils.GetDefaultRootElement(driver_);
-            IPositionProvider positionProvider = SeleniumPositionProviderFactory.GetPositionProvider(Logger, StitchModes.Scroll, jsExecutor_, scrollRootElement, userAgent_);
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
-            string domJson = domCapture.GetFullWindowDom(positionProvider);
+            string domJson = domCapture.GetFullWindowDom();
             Logger.Verbose("exit. DOM JSON length: {0}", domJson.Length);
             return domJson;
         }
