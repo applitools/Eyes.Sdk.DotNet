@@ -655,10 +655,10 @@ namespace Applitools.Selenium.Fluent
         public override Dictionary<string, object> ToSerializableDictionary()
         {
             Dictionary<string, object> dict = base.ToSerializableDictionary();
-            dict.Add("TargetElement", targetElement_);
-            dict.Add("TargetSelector", targetSelector_);
+            dict.Add("TargetElement", targetElement_?.ToString());
+            dict.Add("TargetSelector", targetSelector_?.ToString());
             dict.Add("FrameChain", frameChain_);
-            dict.Add("ScrollRootElement", scrollRootElement_);
+            dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
             dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
             dict.Add("VGTargetSelector", vgTargetSelector_);
 
