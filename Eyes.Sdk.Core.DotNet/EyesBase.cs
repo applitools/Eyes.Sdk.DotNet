@@ -1128,8 +1128,8 @@ namespace Applitools
             object agentSetup = GetAgentSetup();
             JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
             {
-                TypeNameHandling = TypeNameHandling.Auto,
                 Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
                 Converters = new[] { new StringEnumConverter() }
             };
             return JsonConvert.SerializeObject(agentSetup, serializerSettings);

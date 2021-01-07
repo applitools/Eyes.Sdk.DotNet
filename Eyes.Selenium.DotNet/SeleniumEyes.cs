@@ -120,6 +120,8 @@ namespace Applitools.Selenium
         public override string ServerUrl { get => base.ServerUrl ?? runner_.ServerUrl; set => base.ServerUrl = value; }
 
         private bool? isDisabled_;
+        private object lastCheckSettings_;
+
         public override bool IsDisabled { get => isDisabled_ ?? runner_.IsDisabled; set => isDisabled_ = value; }
 
         public IPositionProvider CurrentFramePositionProvider { get; protected set; }
@@ -269,7 +271,7 @@ namespace Applitools.Selenium
         {
             ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
             bool originalForceFPS = ForceFullPageScreenshot;
-
+            lastCheckSettings_ = new List<object>();
             if (checkSettings.Length > 1)
             {
                 ForceFullPageScreenshot = true;
@@ -282,7 +284,7 @@ namespace Applitools.Selenium
             {
                 ICheckSettings settings = checkSettings[i];
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)settings;
-
+                ((IList<object>)lastCheckSettings_).Add(checkSettingsInternal.ToSerializableDictionary());
                 checkSettingsInternalDictionary.Add(i, checkSettingsInternal);
 
                 Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
@@ -497,9 +499,9 @@ namespace Applitools.Selenium
                 ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
 
                 Logger.Verbose("URL: {0}", driver_.Url);
-
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
                 ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
+                lastCheckSettings_ = checkSettingsInternal.ToSerializableDictionary();
 
                 CheckState state = new CheckState();
                 seleniumCheckTarget.State = state;
@@ -1435,6 +1437,7 @@ namespace Applitools.Selenium
                     },
                 },
                 ScrollRootElement = userDefinedSRE_?.ToString(),
+                CheckSettings = this.lastCheckSettings_,
             };
         }
 
