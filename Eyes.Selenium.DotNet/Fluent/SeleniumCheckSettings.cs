@@ -651,5 +651,18 @@ namespace Applitools.Selenium.Fluent
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
             return clone;
         }
+
+        public override Dictionary<string, object> ToSerializableDictionary()
+        {
+            Dictionary<string, object> dict = base.ToSerializableDictionary();
+            dict.Add("TargetElement", targetElement_);
+            dict.Add("TargetSelector", targetSelector_);
+            dict.Add("FrameChain", frameChain_);
+            dict.Add("ScrollRootElement", scrollRootElement_);
+            dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
+            dict.Add("VGTargetSelector", vgTargetSelector_);
+
+            return dict;
+        }
     }
 }

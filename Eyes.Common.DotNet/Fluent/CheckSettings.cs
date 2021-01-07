@@ -622,5 +622,31 @@ namespace Applitools
         {
             return null;
         }
+
+        public virtual Dictionary<string, object> ToSerializableDictionary()
+        {
+            return new Dictionary<string, object>()
+            {
+                { "AccessibilityRegions", accessibilityRegions_ },
+                { "IgnoreRegion", ignoreRegions_ },
+                { "ContentRegions", contentRegions_ },
+                { "FloatingRegions", floatingRegions_ },
+                { "LayoutRegions", layoutRegions_ },
+                { "StrictRegions", strictRegions_ },
+                { "TargetRegion", targetRegion_ },
+                { "Fully", stitchContent_ },
+                { "MatchLevel", matchLevel_ },
+                { "Timeout", timeout_ },
+                { "IgnoreCaret", ignoreCaret_ },
+                { "SendDom", sendDom_ },
+                { "Name", name_ },
+                { "UseDom", useDom_ },
+                { "ReplaceLast", replaceLast_ },
+                { "EnablePatterns", enablePatterns_ },
+                { "IgnoreDisplacements", ignoreDisplacements_ },
+                { "VisualGridOptions", visualGridOptions_ },
+                { "ScriptHook", scriptHooks_ }
+            };
+        }
     }
 }
