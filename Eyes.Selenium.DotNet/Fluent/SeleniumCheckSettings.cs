@@ -1,4 +1,5 @@
-﻿using Applitools.VisualGrid;
+﻿using Applitools.Utils;
+using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -657,7 +658,7 @@ namespace Applitools.Selenium.Fluent
             Dictionary<string, object> dict = base.ToSerializableDictionary();
             dict.Add("TargetElement", targetElement_?.ToString());
             dict.Add("TargetSelector", targetSelector_?.ToString());
-            dict.Add("FrameChain", frameChain_);
+            dict.Add("FrameChain", StringUtils.Concat(frameChain_, " --> "));
             dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
             dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
             dict.Add("VGTargetSelector", vgTargetSelector_);
