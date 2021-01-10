@@ -32,5 +32,7 @@ namespace Applitools.Fluent
         VisualGridSelector GetTargetSelector();
         VisualGridOption[] GetVisualGridOptions();
         Dictionary<string, object> ToSerializableDictionary();
+
+        string GetFluentCommandString();
     }
 }

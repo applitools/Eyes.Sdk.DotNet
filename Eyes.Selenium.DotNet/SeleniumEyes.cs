@@ -19,6 +19,7 @@ using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
 using Region = Applitools.Utils.Geometry.Region;
 using System.Linq;
+using System.Text;
 
 namespace Applitools.Selenium
 {
@@ -121,6 +122,7 @@ namespace Applitools.Selenium
 
         private bool? isDisabled_;
         private object lastCheckSettings_;
+        private object lastCheckSettingsInternal_;
 
         public override bool IsDisabled { get => isDisabled_ ?? runner_.IsDisabled; set => isDisabled_ = value; }
 
@@ -272,6 +274,7 @@ namespace Applitools.Selenium
             ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
             bool originalForceFPS = ForceFullPageScreenshot;
             lastCheckSettings_ = new List<object>();
+            lastCheckSettingsInternal_ = new List<ICheckSettingsInternal>();
             if (checkSettings.Length > 1)
             {
                 ForceFullPageScreenshot = true;
@@ -285,6 +288,7 @@ namespace Applitools.Selenium
                 ICheckSettings settings = checkSettings[i];
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)settings;
                 ((IList<object>)lastCheckSettings_).Add(checkSettingsInternal.ToSerializableDictionary());
+                ((IList<ICheckSettingsInternal>)lastCheckSettingsInternal_).Add(checkSettingsInternal);
                 checkSettingsInternalDictionary.Add(i, checkSettingsInternal);
 
                 Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
@@ -502,6 +506,7 @@ namespace Applitools.Selenium
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
                 ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
                 lastCheckSettings_ = checkSettingsInternal.ToSerializableDictionary();
+                lastCheckSettingsInternal_ = checkSettingsInternal;
 
                 CheckState state = new CheckState();
                 seleniumCheckTarget.State = state;
@@ -1390,6 +1395,22 @@ namespace Applitools.Selenium
             Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
             string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
             string eyesCoreTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesCoreAsm);
+            string fluentCommandString = null;
+            if (lastCheckSettingsInternal_ is ICheckSettingsInternal csInternal)
+            {
+                fluentCommandString = csInternal.GetFluentCommandString();
+            }
+            else if (lastCheckSettingsInternal_ is IList<ICheckSettingsInternal> lstCsInternal)
+            {
+                StringBuilder fluentCommandSB = new StringBuilder();
+                foreach (ICheckSettingsInternal csi in lstCsInternal)
+                {
+                    fluentCommandSB.Append(csi.GetFluentCommandString());
+                    fluentCommandSB.Append(", ");
+                }
+                if (fluentCommandSB.Length > 2) fluentCommandSB.Length -= 2;
+                fluentCommandString = fluentCommandSB.ToString();
+            }
             EyesRemoteWebElement html = (EyesRemoteWebElement)driver_.FindElement(By.TagName("html"));
             EyesRemoteWebElement body = (EyesRemoteWebElement)driver_.FindElement(By.TagName("body"));
             return new
@@ -1437,7 +1458,8 @@ namespace Applitools.Selenium
                     },
                 },
                 ScrollRootElement = userDefinedSRE_?.ToString(),
-                CheckSettings = this.lastCheckSettings_,
+                CheckSettings = lastCheckSettings_,
+                FluentCommandString = fluentCommandString,
             };
         }
 

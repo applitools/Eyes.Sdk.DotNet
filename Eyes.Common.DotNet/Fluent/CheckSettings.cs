@@ -3,6 +3,7 @@ using Applitools.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 
 namespace Applitools
 {
@@ -36,7 +37,7 @@ namespace Applitools
         /// <summary>
         /// 
         /// </summary>
-        internal protected CheckSettings() { }
+        internal protected CheckSettings() { fluentCode_.Append("Target.Window()"); }
 
         /// <summary>
         /// 
@@ -45,6 +46,7 @@ namespace Applitools
         internal protected CheckSettings(Rectangle region)
         {
             targetRegion_ = region;
+            fluentCode_.Append($"Target.Region(new Rectangle({region.X},{region.Y},{region.Width},{region.Height}))");
         }
 
         /// <summary>
@@ -143,6 +145,8 @@ namespace Applitools
             strictRegions_.Add(regionProvider);
         }
 
+        protected StringBuilder fluentCode_ = new StringBuilder();
+
         /// <summary>
         /// Shortcut to set the match level to <see cref="MatchLevel.Exact"/>.
         /// </summary>
@@ -151,6 +155,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Exact;
+            clone.fluentCode_.Append($".{nameof(Exact)}()");
             return clone;
         }
 
@@ -162,6 +167,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Layout;
+            clone.fluentCode_.Append($".{nameof(Layout)}()");
             return clone;
         }
 
@@ -173,6 +179,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Strict;
+            clone.fluentCode_.Append($".{nameof(Strict)}()");
             return clone;
         }
 
@@ -184,6 +191,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Content;
+            clone.fluentCode_.Append($".{nameof(Content)}()");
             return clone;
         }
 
@@ -196,6 +204,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.matchLevel_ = matchLevel;
+            clone.fluentCode_.Append($".{nameof(MatchLevel)}({nameof(MatchLevel)}.{matchLevel})");
             return clone;
         }
 
@@ -212,10 +221,13 @@ namespace Applitools
         public ICheckSettings Floating(int maxOffset, params Rectangle[] regions)
         {
             CheckSettings clone = Clone();
+            clone.fluentCode_.Append($"{nameof(Floating)}({maxOffset}");
             foreach (Rectangle region in regions)
             {
                 clone.Floating_(region, maxOffset, maxOffset, maxOffset, maxOffset);
+                clone.fluentCode_.Append($", new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -233,6 +245,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Floating_(region, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
+            clone.fluentCode_.Append($"{nameof(Floating)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height}),{maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset})");
             return clone;
         }
 
@@ -244,6 +257,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Accessibility_(region);
+            clone.fluentCode_.Append($"{nameof(Accessibility)}(new {nameof(AccessibilityRegionByRectangle)}({region.Left},{region.Top},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{region.Type}))");
             return clone;
         }
 
@@ -251,6 +265,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Accessibility_(region, regionType);
+            clone.fluentCode_.Append($"{nameof(Accessibility)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{regionType}))");
             return clone;
         }
 
@@ -264,6 +279,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.stitchContent_ = true;
+            clone.fluentCode_.Append($".{nameof(Fully)}()");
             return clone;
         }
 
@@ -276,6 +292,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.stitchContent_ = fully;
+            clone.fluentCode_.Append($".{nameof(Fully)}({fully})");
             return clone;
         }
 
@@ -289,10 +306,13 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Ignore_(new SimpleRegionByRectangle(region));
+            clone.fluentCode_.Append($".{nameof(Ignore)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
             foreach (Rectangle r in regions)
             {
                 clone.Ignore_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -304,10 +324,13 @@ namespace Applitools
         public ICheckSettings Ignore(IEnumerable<Rectangle> regions)
         {
             CheckSettings clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (Rectangle r in regions)
             {
                 clone.Ignore_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -321,10 +344,13 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Content_(new SimpleRegionByRectangle(region));
+            clone.fluentCode_.Append($".{nameof(Content)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
             foreach (Rectangle r in regions)
             {
                 clone.Content_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -336,10 +362,13 @@ namespace Applitools
         public ICheckSettings Content(IEnumerable<Rectangle> regions)
         {
             CheckSettings clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (Rectangle r in regions)
             {
                 clone.Content_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -353,10 +382,13 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Layout_(new SimpleRegionByRectangle(region));
+            clone.fluentCode_.Append($".{nameof(Layout)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
             foreach (Rectangle r in regions)
             {
                 clone.Layout_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -368,10 +400,13 @@ namespace Applitools
         public ICheckSettings Layout(IEnumerable<Rectangle> regions)
         {
             CheckSettings clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (Rectangle r in regions)
             {
                 clone.Layout_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -385,10 +420,13 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.Strict_(new SimpleRegionByRectangle(region));
+            clone.fluentCode_.Append($".{nameof(Strict)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
             foreach (Rectangle r in regions)
             {
                 clone.Strict_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -400,10 +438,13 @@ namespace Applitools
         public ICheckSettings Strict(IEnumerable<Rectangle> regions)
         {
             CheckSettings clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (Rectangle r in regions)
             {
                 clone.Strict_(new SimpleRegionByRectangle(r));
+                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -416,6 +457,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.timeout_ = (int)timeout.TotalMilliseconds;
+            clone.fluentCode_.Append($".{nameof(Timeout)}({timeout})");
             return clone;
         }
 
@@ -428,6 +470,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.ignoreCaret_ = ignoreCaret;
+            clone.fluentCode_.Append($".{nameof(IgnoreCaret)}({ignoreCaret})");
             return clone;
         }
 
@@ -440,6 +483,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.sendDom_ = sendDom;
+            clone.fluentCode_.Append($".{nameof(SendDom)}({sendDom})");
             return clone;
         }
 
@@ -452,6 +496,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.name_ = name;
+            clone.fluentCode_.Append($".{nameof(WithName)}(\"{name}\")");
             return clone;
         }
 
@@ -459,12 +504,14 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.useDom_ = useDom;
+            clone.fluentCode_.Append($".{nameof(UseDom)}({useDom})");
             return clone;
         }
         public ICheckSettings ReplaceLast(bool replaceLast = true)
         {
             CheckSettings clone = Clone();
             clone.replaceLast_ = replaceLast;
+            clone.fluentCode_.Append($".{nameof(ReplaceLast)}({replaceLast})");
             return clone;
         }
 
@@ -472,6 +519,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.enablePatterns_ = enablePatterns;
+            clone.fluentCode_.Append($".{nameof(EnablePatterns)}({enablePatterns})");
             return clone;
         }
 
@@ -479,6 +527,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.ignoreDisplacements_ = ignoreDisplacements;
+            clone.fluentCode_.Append($".{nameof(IgnoreDisplacements)}({ignoreDisplacements})");
             return clone;
         }
 
@@ -487,6 +536,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.scriptHooks_.Add(BEFORE_CAPTURE_SCREENSHOT, hook);
+            clone.fluentCode_.Append($".{nameof(ScriptHook)}({hook})");
             return clone;
         }
 
@@ -494,6 +544,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.scriptHooks_.Add(BEFORE_CAPTURE_SCREENSHOT, hook);
+            clone.fluentCode_.Append($".{nameof(BeforeRenderScreenshotHook)}({hook})");
             return clone;
         }
 
@@ -501,6 +552,12 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.visualGridOptions_ = (VisualGridOption[])options?.Clone();
+            clone.fluentCode_.Append($".{nameof(VisualGridOptions)}(");
+            foreach(VisualGridOption option in options)
+            {
+                clone.fluentCode_.Append($"new {nameof(VisualGridOption)}(\"{option.Key}\", {option.Value})");
+            }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -537,6 +594,8 @@ namespace Applitools
             {
                 clone.scriptHooks_.Add(kvp.Key, kvp.Value);
             }
+
+            clone.fluentCode_ = fluentCode_;
         }
 
         protected virtual CheckSettings Clone()
@@ -647,6 +706,11 @@ namespace Applitools
                 { "VisualGridOptions", visualGridOptions_ },
                 { "ScriptHook", scriptHooks_ }
             };
+        }
+
+        string ICheckSettingsInternal.GetFluentCommandString()
+        {
+            return fluentCode_.ToString();
         }
     }
 }
