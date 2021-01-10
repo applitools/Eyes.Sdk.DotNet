@@ -1,4 +1,5 @@
-﻿using Applitools.VisualGrid;
+﻿using Applitools.Utils;
+using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,13 @@ namespace Applitools.Selenium.Fluent
         internal SeleniumCheckSettings(By targetSelector)
         {
             targetSelector_ = targetSelector;
+            fluentCode_.Append($"Target.Region({targetSelector})");
         }
 
         internal SeleniumCheckSettings(IWebElement targetElement)
         {
             targetElement_ = targetElement;
+            fluentCode_.Append($"Target.Region({targetElement})");
         }
 
         internal SeleniumCheckSettings(Rectangle region)
@@ -65,6 +68,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.frameChain_.Add(new FrameLocator() { FrameSelector = by });
+            clone.fluentCode_.Append($".Frame({by})");
             return clone;
         }
 
@@ -72,6 +76,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.frameChain_.Add(new FrameLocator() { FrameNameOrId = frameNameOrId });
+            clone.fluentCode_.Append($".Frame(\"{frameNameOrId}\")");
             return clone;
         }
 
@@ -79,6 +84,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.frameChain_.Add(new FrameLocator() { FrameIndex = index });
+            clone.fluentCode_.Append($".Frame({index})");
             return clone;
         }
 
@@ -86,6 +92,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.frameChain_.Add(new FrameLocator() { FrameReference = frameReference });
+            clone.fluentCode_.Append($".Frame({frameReference})");
             return clone;
         }
 
@@ -107,6 +114,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.UpdateTargetRegion(rect);
+            clone.fluentCode_.Append($".Region(new Rectangle({rect.X},{rect.Y},{rect.Width},{rect.Height}))");
             return clone;
         }
 
@@ -114,6 +122,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.targetSelector_ = by;
+            clone.fluentCode_.Append($".Region({by})");
             return clone;
         }
 
@@ -121,6 +130,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.targetElement_ = targetElement;
+            clone.fluentCode_.Append($".Region({targetElement})");
             return clone;
         }
 
@@ -134,10 +144,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Ignore_(new SimpleRegionBySelector(selector));
+            clone.fluentCode_.Append($".{nameof(Ignore)}({selector}");
             foreach (By sel in selectors)
             {
                 clone.Ignore_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -149,10 +162,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Ignore(IEnumerable<By> selectors)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (By sel in selectors)
             {
                 clone.Ignore_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -166,10 +182,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Ignore_(new SimpleRegionByElement(element));
+            clone.fluentCode_.Append($".{nameof(Ignore)}({element}");
             foreach (IWebElement elem in elements)
             {
                 clone.Ignore_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -181,10 +200,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Ignore(IEnumerable<IWebElement> elements)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (IWebElement elem in elements)
             {
                 clone.Ignore_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -198,10 +220,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Layout_(new SimpleRegionBySelector(selector));
+            clone.fluentCode_.Append($".{nameof(Layout)}({selector}");
             foreach (By sel in selectors)
             {
                 clone.Layout_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -213,10 +238,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Layout(IEnumerable<By> selectors)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (By sel in selectors)
             {
                 clone.Layout_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -230,10 +258,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Layout_(new SimpleRegionByElement(element));
+            clone.fluentCode_.Append($".{nameof(Layout)}({element}");
             foreach (IWebElement elem in elements)
             {
                 clone.Layout_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -245,10 +276,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Layout(IEnumerable<IWebElement> elements)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (IWebElement elem in elements)
             {
                 clone.Layout_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -262,10 +296,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Strict_(new SimpleRegionBySelector(selector));
+            clone.fluentCode_.Append($".{nameof(Strict)}({selector}");
             foreach (By sel in selectors)
             {
                 clone.Strict_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
         /// <summary>
@@ -276,10 +313,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Strict(IEnumerable<By> selectors)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (By sel in selectors)
             {
                 clone.Strict_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -293,10 +333,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Strict_(new SimpleRegionByElement(element));
+            clone.fluentCode_.Append($".{nameof(Strict)}({element}");
             foreach (IWebElement elem in elements)
             {
                 clone.Strict_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -308,10 +351,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Strict(IEnumerable<IWebElement> elements)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (IWebElement elem in elements)
             {
                 clone.Strict_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -325,10 +371,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Content_(new SimpleRegionBySelector(selector));
+            clone.fluentCode_.Append($".{nameof(Content)}({selector}");
             foreach (By sel in selectors)
             {
                 clone.Content_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -340,10 +389,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Content(IEnumerable<By> selectors)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (By sel in selectors)
             {
                 clone.Content_(new SimpleRegionBySelector(sel));
+                clone.fluentCode_.Append($", {sel}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -357,10 +409,13 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Content_(new SimpleRegionByElement(element));
+            clone.fluentCode_.Append($".{nameof(Content)}({element}");
             foreach (IWebElement elem in elements)
             {
                 clone.Content_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -372,10 +427,13 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Content(IEnumerable<IWebElement> elements)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (IWebElement elem in elements)
             {
                 clone.Content_(new SimpleRegionByElement(elem));
+                clone.fluentCode_.Append($", {elem}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -383,6 +441,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Floating_(new FloatingRegionBySelector(regionSelector, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset));
+            clone.fluentCode_.Append($".{nameof(Floating)}({regionSelector},{maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset})");
             return clone;
         }
 
@@ -390,6 +449,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Floating_(new FloatingRegionBySelector(regionSelector, maxOffset, maxOffset, maxOffset, maxOffset));
+            clone.fluentCode_.Append($".{nameof(Floating)}({regionSelector},{maxOffset})");
             return clone;
         }
 
@@ -397,6 +457,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Floating_(new FloatingRegionByElement(element, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset));
+            clone.fluentCode_.Append($".{nameof(Floating)}({element},{maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset})");
             return clone;
         }
 
@@ -404,16 +465,20 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Floating_(new FloatingRegionByElement(element, maxOffset, maxOffset, maxOffset, maxOffset));
+            clone.fluentCode_.Append($".{nameof(Floating)}({element},{maxOffset})");
             return clone;
         }
 
         public SeleniumCheckSettings Floating(int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset, params IWebElement[] elementsToIgnore)
         {
             SeleniumCheckSettings clone = Clone_();
+            clone.fluentCode_.Append($".{nameof(Floating)}({maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset}");
             foreach (IWebElement element in elementsToIgnore)
             {
                 clone.Floating_(new FloatingRegionByElement(element, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset));
+                clone.fluentCode_.Append($", {element}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -423,6 +488,7 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Accessibility_(new AccessibilityRegionBySelector(regionSelector, regionType));
+            clone.fluentCode_.Append($".{nameof(Accessibility)}({regionSelector},{nameof(AccessibilityRegionType)}.{regionType})");
             return clone;
         }
 
@@ -431,16 +497,20 @@ namespace Applitools.Selenium.Fluent
         {
             SeleniumCheckSettings clone = Clone_();
             clone.Accessibility_(new AccessibilityRegionByElement(element, regionType));
+            clone.fluentCode_.Append($".{nameof(Accessibility)}({element},{nameof(AccessibilityRegionType)}.{regionType})");
             return clone;
         }
 
-        public SeleniumCheckSettings Accessibility(AccessibilityRegionType regionType, params IWebElement[] elementsToIgnore)
+        public SeleniumCheckSettings Accessibility(AccessibilityRegionType regionType, params IWebElement[] elements)
         {
             SeleniumCheckSettings clone = Clone_();
-            foreach (IWebElement element in elementsToIgnore)
+            clone.fluentCode_.Append($".{nameof(Accessibility)}({nameof(AccessibilityRegionType)}.{regionType}");
+            foreach (IWebElement element in elements)
             {
                 clone.Accessibility_(new AccessibilityRegionByElement(element, regionType));
+                clone.fluentCode_.Append($", {element}");
             }
+            clone.fluentCode_.Append(")");
             return clone;
         }
 
@@ -457,6 +527,7 @@ namespace Applitools.Selenium.Fluent
             {
                 frameChain_[frameChain_.Count - 1].ScrollRootSelector = selector;
             }
+            clone.fluentCode_.Append($".{nameof(ScrollRootElement)}({selector})");
             return clone;
         }
         public SeleniumCheckSettings ScrollRootElement(IWebElement element)
@@ -470,6 +541,7 @@ namespace Applitools.Selenium.Fluent
             {
                 frameChain_[frameChain_.Count - 1].ScrollRootElement = element;
             }
+            clone.fluentCode_.Append($".{nameof(ScrollRootElement)}({element})");
             return clone;
         }
 
@@ -650,6 +722,19 @@ namespace Applitools.Selenium.Fluent
             clone.vgTargetSelector_ = vgTargetSelector_;
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
             return clone;
+        }
+
+        public override Dictionary<string, object> ToSerializableDictionary()
+        {
+            Dictionary<string, object> dict = base.ToSerializableDictionary();
+            dict.Add("TargetElement", targetElement_?.ToString());
+            dict.Add("TargetSelector", targetSelector_?.ToString());
+            dict.Add("FrameChain", StringUtils.Concat(frameChain_, " --> "));
+            dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
+            dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
+            dict.Add("VGTargetSelector", vgTargetSelector_);
+
+            return dict;
         }
     }
 }

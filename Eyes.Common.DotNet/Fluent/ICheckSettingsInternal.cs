@@ -31,5 +31,8 @@ namespace Applitools.Fluent
         SizeMode GetSizeMode();
         VisualGridSelector GetTargetSelector();
         VisualGridOption[] GetVisualGridOptions();
+        Dictionary<string, object> ToSerializableDictionary();
+
+        string GetFluentCommandString();
     }
 }

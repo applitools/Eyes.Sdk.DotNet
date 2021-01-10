@@ -40,5 +40,16 @@ namespace Applitools.Selenium.Fluent
         {
             return ScrollRootSelector;
         }
+
+        public override string ToString()
+        {
+            string locator = "";
+            if (FrameIndex.HasValue) locator = $"index: {FrameIndex.Value}";
+            else if (FrameNameOrId != null) locator = $"name or id: '{FrameNameOrId}'";
+            else if (FrameSelector != null) locator = $"selector: {FrameSelector}";
+            else if (FrameReference != null) locator = $"reference: {FrameReference}";
+
+            return $"{nameof(FrameLocator)}: {locator}";
+        }
     }
 }
