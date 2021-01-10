@@ -27,6 +27,7 @@ namespace Applitools.Utils
         private void OnComplete_(HttpWebResponse response)
         {
             string location = response.Headers[HttpResponseHeader.Location];
+            string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
             try
             {
                 HttpStatusCode status = response.StatusCode;
@@ -54,7 +55,6 @@ namespace Applitools.Utils
             }
 
             int timeToWait = sleepDuration;
-            string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
             if (secondsToWait != null)
             {
                 timeToWait = int.Parse(secondsToWait) * 1000;

@@ -760,7 +760,7 @@ namespace Applitools.Selenium.VisualGrid
         public void CloseAsync()
         {
             Logger.Verbose("enter");
-            if (ValidateEyes_())
+            if (!ValidateEyes_())
             {
                 return;
             }

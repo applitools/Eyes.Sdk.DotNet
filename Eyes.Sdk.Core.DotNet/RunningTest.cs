@@ -96,7 +96,7 @@ namespace Applitools
                 return;
             }
 
-            Logger.Verbose(ToString());
+            isAbortIssued_ = false;
         }
 
         public virtual void IssueAbort(Exception exception, bool forceAbort)
@@ -106,7 +106,6 @@ namespace Applitools
                 return;
             }
 
-            Logger.Verbose(ToString());
             isAbortIssued_ = true;
             if (exception_ == null)
             {
@@ -116,6 +115,7 @@ namespace Applitools
 
         public void CloseCompleted(TestResults testResults)
         {
+            startedCloseProcess_ = true;
             if (!IsTestAborted)
             {
                 try
@@ -134,12 +134,19 @@ namespace Applitools
 
         public void CloseFailed(Exception e)
         {
+            startedCloseProcess_ = true;
             if (exception_ == null)
             {
                 exception_ = e;
             }
 
             testResultContainer_ = new TestResultContainer(null, BrowserInfo, exception_);
+        }
+
+        public override SessionStopInfo PrepareStopSession(bool isAborted)
+        {
+            startedCloseProcess_ = true;
+            return base.PrepareStopSession(isAborted);
         }
 
         public void SetTestInExceptionMode(Exception e)

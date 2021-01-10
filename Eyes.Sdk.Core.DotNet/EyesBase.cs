@@ -1141,7 +1141,7 @@ namespace Applitools
         }
 
 
-        public SessionStopInfo PrepareStopSession(bool isAborted)
+        public virtual SessionStopInfo PrepareStopSession(bool isAborted)
         {
             if (runningSession_ == null || !IsOpen)
             {
