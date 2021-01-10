@@ -457,7 +457,7 @@ namespace Applitools
         {
             CheckSettings clone = Clone();
             clone.timeout_ = (int)timeout.TotalMilliseconds;
-            clone.fluentCode_.Append($".{nameof(Timeout)}({timeout})");
+            clone.fluentCode_.Append($".{nameof(Timeout)}({timeout.TotalMilliseconds})");
             return clone;
         }
 
@@ -551,9 +551,10 @@ namespace Applitools
         public ICheckSettings VisualGridOptions(params VisualGridOption[] options)
         {
             CheckSettings clone = Clone();
-            clone.visualGridOptions_ = (VisualGridOption[])options?.Clone();
+            if (options == null) return clone;
+            clone.visualGridOptions_ = (VisualGridOption[])options.Clone();
             clone.fluentCode_.Append($".{nameof(VisualGridOptions)}(");
-            foreach(VisualGridOption option in options)
+            foreach (VisualGridOption option in options)
             {
                 clone.fluentCode_.Append($"new {nameof(VisualGridOption)}(\"{option.Key}\", {option.Value})");
             }
