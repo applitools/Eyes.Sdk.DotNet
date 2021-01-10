@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -12,6 +13,8 @@ namespace Applitools
         private int currentTestAmount_;
         private readonly int eyesConcurrency_;
         private bool isServerConcurrencyLimitReached_ = false;
+
+        private readonly HashSet<string> inProgressTests_ = new HashSet<string>();
 
         public OpenService(Logger logger, IServerConnector serverConnector, int eyesConcurrency) : base(logger, serverConnector)
         {
@@ -27,11 +30,13 @@ namespace Applitools
 
                 Tuple<string, SessionStartInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
+                inProgressTests_.Add(id);
                 Operate(nextInput.Item2, new TaskListener<RunningSession>(
                 (output) =>
                 {
                     lock (outputQueue_)
                     {
+                        inProgressTests_.Remove(id);
                         outputQueue_.Add(Tuple.Create(id, output));
                     }
                 },
@@ -40,6 +45,7 @@ namespace Applitools
                     Logger.Log("Failed completing task on input {0}", nextInput);
                     lock (errorQueue_)
                     {
+                        inProgressTests_.Remove(id);
                         errorQueue_.Add(Tuple.Create(id, ex));
                     }
                 }));

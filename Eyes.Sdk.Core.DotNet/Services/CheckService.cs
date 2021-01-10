@@ -6,6 +6,9 @@ namespace Applitools
     public class CheckService : EyesService<MatchWindowData, MatchResult>
     {
         private readonly Queue<Tuple<string, MatchWindowData>> matchWindowQueue_ = new Queue<Tuple<string, MatchWindowData>>();
+       
+        private readonly HashSet<string> inUploadProcess_ = new HashSet<string>();
+        private readonly HashSet<string> inMatchWindowProcess_ = new HashSet<string>();
 
         public CheckService(Logger logger, IServerConnector serverConnector) : base(logger, serverConnector)
         {
@@ -17,15 +20,18 @@ namespace Applitools
             {
                 Tuple<string, MatchWindowData> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
+                inUploadProcess_.Add(id);
                 MatchWindowData matchWindowData = nextInput.Item2;
                 TryUploadImage(matchWindowData,
                     new TaskListener(
                         () =>
                         {
+                            inUploadProcess_.Remove(id);
                             matchWindowQueue_.Enqueue(Tuple.Create(id, matchWindowData));
                         },
                         (e) =>
                         {
+                            inUploadProcess_.Remove(id);
                             Logger.Log("Failed completing task on input {0}", nextInput);
                             errorQueue_.Add(Tuple.Create(id, e));
                         }));
@@ -35,14 +41,17 @@ namespace Applitools
             {
                 Tuple<string, MatchWindowData> nextInput = matchWindowQueue_.Dequeue();
                 string id = nextInput.Item1;
+                inMatchWindowProcess_.Add(id);
                 MatchWindowData matchWindowData = nextInput.Item2;
                 TaskListener<MatchResult> listener = new TaskListener<MatchResult>(
                 (taskResponse) =>
                 {
+                    inMatchWindowProcess_.Remove(id);
                     outputQueue_.Add(Tuple.Create(id, taskResponse));
                 },
                 (e) =>
                 {
+                    inMatchWindowProcess_.Remove(id);
                     Logger.Log("Failed completing task on input {0}", nextInput);
                     errorQueue_.Add(new Tuple<string, Exception>(id, new EyesException("Match window failed")));
                 });

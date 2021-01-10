@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Applitools
 {
@@ -8,15 +9,19 @@ namespace Applitools
         {
         }
 
+        private readonly HashSet<string> inProgressTests_ = new HashSet<string>();
+
         public override void Run()
         {
             while (inputQueue_.Count > 0)
             {
                 Tuple<string, SessionStopInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
+                inProgressTests_.Add(id);
                 Operate(nextInput.Item2, new TaskListener<TestResults>(
                     (output) =>
                     {
+                        inProgressTests_.Remove(id);
                         outputQueue_.Add(Tuple.Create(id, output));
                     },
                     (ex) =>
@@ -24,6 +29,7 @@ namespace Applitools
                         Logger.Log("Failed completing task on input {0}", nextInput);
                         lock (errorQueue_)
                         {
+                            inProgressTests_.Remove(id);
                             errorQueue_.Add(Tuple.Create(id, ex));
                         }
                     }
