@@ -400,7 +400,7 @@ namespace Applitools.Selenium.VisualGrid
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
                 Logger.Verbose("regionXPaths : {0}", regionsXPaths);
-               
+
                 FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger);
 
                 Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
@@ -444,8 +444,11 @@ namespace Applitools.Selenium.VisualGrid
         private ICheckSettings SwitchFramesAsNeeded_(ICheckSettings checkSettings, EyesWebDriverTargetLocator switchTo)
         {
             int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
-            bool isFullPage = IsFullPage_((ICheckSettingsInternal)checkSettings);
-            if (switchedToCount > 0 && isFullPage)
+            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
+            bool isFullPage = IsFullPage_(checkSettingsInternal);
+            if (switchedToCount > 0 && isFullPage &&
+                seleniumCheckTarget.GetTargetSelector() == null && seleniumCheckTarget.GetTargetElement() == null)
             {
                 FrameChain frameChain = driver_.GetFrameChain().Clone();
                 Frame frame = frameChain.Pop();
