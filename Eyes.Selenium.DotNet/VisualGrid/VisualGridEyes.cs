@@ -61,6 +61,10 @@ namespace Applitools.Selenium.VisualGrid
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
         {
             ArgumentGuard.NotNull(visualGridRunner, nameof(visualGridRunner));
+            if (visualGridRunner.GetAllTestResultsAlreadyCalled)
+            {
+                throw new InvalidOperationException("Runner already returned its results");
+            }
             configProvider_ = configurationProvider;
             Logger = visualGridRunner.Logger;
             runner_ = visualGridRunner;

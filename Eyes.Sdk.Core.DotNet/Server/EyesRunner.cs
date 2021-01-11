@@ -27,6 +27,7 @@ namespace Applitools
             TestResultsSummary allTestResults;
             try
             {
+                GetAllTestResultsAlreadyCalled = true;
                 allTestResults = GetAllTestResultsImpl(shouldThrowException);
             }
             finally
@@ -74,5 +75,7 @@ namespace Applitools
             get { return ServerConnector.AgentId; }
             set { if (value != null) ServerConnector.AgentId = value; }
         }
+
+        public bool GetAllTestResultsAlreadyCalled { get; private set; } = false;
     }
 }

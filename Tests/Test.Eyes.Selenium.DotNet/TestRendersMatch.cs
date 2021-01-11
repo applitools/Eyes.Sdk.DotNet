@@ -88,7 +88,7 @@ namespace Applitools.Selenium.Tests
             }
             catch (InvalidOperationException e)
             {
-                if (e.Message.Equals("Eyes not open"))
+                if (e.Message.Equals("Runner already returned its results"))
                 {
                     Assert.Pass();
                 }
