@@ -395,7 +395,6 @@ namespace Applitools.Selenium.VisualGrid
                 Thread.Sleep(waitBeforeScreenshots);
 
                 checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo);
-                ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
 
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
@@ -409,6 +408,7 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("Resources urls: {0}", StringUtils.Concat(scriptResult.ResourceUrls, ", "));
 
                 checkSettings = UpdateCheckSettings_(checkSettings);
+                ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
 
                 string source = webDriver_.Url;
                 List<CheckTask> checkTasks = new List<CheckTask>();

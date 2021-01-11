@@ -298,9 +298,16 @@ namespace Applitools.Utils
             {
                 if (!ar.IsCompleted) return;
                 HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
-                HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
-                listener.OnComplete(response);
-                response.Close();
+                try
+                {
+                    HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+                    listener.OnComplete(response);
+                    response.Close();
+                }
+                catch (WebException ex)
+                {
+                    listener.OnFail(ex);
+                }
             }, request);
         }
 
