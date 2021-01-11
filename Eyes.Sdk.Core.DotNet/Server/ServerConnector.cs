@@ -353,8 +353,8 @@ namespace Applitools
         private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
-            string targetUrl;
-            if (renderingInfo == null || (targetUrl = renderingInfo.ResultsUrl.AbsoluteUri) == null)
+            string targetUrl = renderingInfo?.ResultsUrl?.AbsoluteUri;
+            if (targetUrl == null)
             {
                 listener.OnComplete(null);
                 return;

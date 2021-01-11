@@ -337,13 +337,16 @@ namespace Applitools
             }
             imageMatchSettings.Accessibility = accessibilityRegions.ToArray();
 
-            for (int i = 0; i < regionSelectors[6].Length; i++)
+            if (userActions != null)
             {
-                IMutableRegion mr = mutableRegions[6][i];
-                if (mr.Area == 0) continue;
-                VGUserAction userAction = userActions[i];
-                Trigger trigger = UserActionToTrigger(mr, userAction);
-                userInputs.Add(trigger);
+                for (int i = 0; i < regionSelectors[6].Length; i++)
+                {
+                    IMutableRegion mr = mutableRegions[6][i];
+                    if (mr.Area == 0) continue;
+                    VGUserAction userAction = userActions[i];
+                    Trigger trigger = UserActionToTrigger(mr, userAction);
+                    userInputs.Add(trigger);
+                }
             }
         }
 
