@@ -117,7 +117,7 @@ namespace Applitools
             Assert.AreEqual(6, timings.Count);
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "api/sessions/running", requests[0]);
             StringAssert.StartsWith(CommonData.DefaultServerUrl + BASE_LOCATION + "status", requests[1]);
-            
+
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[2]);
             Assert.Greater(timings[2], TimeSpan.FromSeconds(2));
 
@@ -191,69 +191,84 @@ namespace Applitools
                     responseStream_ = new MemoryStream(byteArray);
                 }
 
-                public WebRequest Create(Uri uri)
+                public WebRequest Create(Uri url)
                 {
                     var webRequest = Substitute.For<HttpWebRequest>();
                     webRequest.Headers.Returns(new WebHeaderCollection());
                     webRequest.GetRequestStream().Returns(new MemoryStream(new byte[2000]));
-
-                    var webResponse = Substitute.For<HttpWebResponse>();
-                    WebHeaderCollection headers = new WebHeaderCollection();
-                    webResponse.Headers.Returns(headers);
-                    if (statusCode_ == null)
-                    {
-                        if (uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
+                    webRequest.RequestUri.Returns(url);
+                    webRequest.BeginGetResponse(default, default)
+                        .ReturnsForAnyArgs(ci =>
                         {
-                            webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
-                            expectedPollUrlPath_ = "/" + BASE_LOCATION + "status";
-                            headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "status");
-                        }
-                        else if (uri.PathAndQuery.StartsWith(expectedPollUrlPath_, StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (iterations_ == 0 && counter_ == 0)
-                            {
-                                webResponse.StatusCode.Returns(HttpStatusCode.OK);
-                            }
-                            else if (iterations_ > 0 && counter_ < iterations_)
-                            {
-                                webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                            AsyncCallback cb = ci.Arg<AsyncCallback>();
+                            HttpWebRequest req = ci.Arg<HttpWebRequest>();
+                            cb.Invoke(new MockAsyncResult(req));
+                            return null;
+                        });
 
-                                if (pollingUrls_ != null)
+                    webRequest.EndGetResponse(default)
+                        .ReturnsForAnyArgs(ci =>
+                        {
+                            MockAsyncResult mockAsyncResult = ci.Arg<MockAsyncResult>();
+                            Uri uri = ((HttpWebRequest)mockAsyncResult.AsyncState).RequestUri;
+                            var webResponse = Substitute.For<HttpWebResponse>();
+                            WebHeaderCollection headers = new WebHeaderCollection();
+                            webResponse.Headers.Returns(headers);
+                            if (statusCode_ == null)
+                            {
+                                if (uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    string pollUrl = pollingUrls_[counter_];
-                                    if (pollUrl != null)
-                                    {
-                                        headers.Add(HttpResponseHeader.Location, pollUrl);
-                                        expectedPollUrlPath_ = new Uri(pollUrl).PathAndQuery;
-                                    }
+                                    webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
+                                    expectedPollUrlPath_ = "/" + BASE_LOCATION + "status";
+                                    headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "status");
                                 }
-
-                                if (retryAfter_ != null)
+                                else if (uri.PathAndQuery.StartsWith(expectedPollUrlPath_, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    int? retryAfter = retryAfter_[counter_];
-                                    if (retryAfter != null) headers.Add(HttpResponseHeader.RetryAfter, retryAfter.Value.ToString());
+                                    if (iterations_ == 0 && counter_ == 0)
+                                    {
+                                        webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                                    }
+                                    else if (iterations_ > 0 && counter_ < iterations_)
+                                    {
+                                        webResponse.StatusCode.Returns(HttpStatusCode.OK);
+
+                                        if (pollingUrls_ != null)
+                                        {
+                                            string pollUrl = pollingUrls_[counter_];
+                                            if (pollUrl != null)
+                                            {
+                                                headers.Add(HttpResponseHeader.Location, pollUrl);
+                                                expectedPollUrlPath_ = new Uri(pollUrl).PathAndQuery;
+                                            }
+                                        }
+
+                                        if (retryAfter_ != null)
+                                        {
+                                            int? retryAfter = retryAfter_[counter_];
+                                            if (retryAfter != null) headers.Add(HttpResponseHeader.RetryAfter, retryAfter.Value.ToString());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        webResponse.StatusCode.Returns(HttpStatusCode.Created);
+                                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "result");
+                                    }
+                                    counter_++;
+                                }
+                                else if (uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "result", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                                    webResponse.GetResponseStream().Returns(responseStream_);
                                 }
                             }
                             else
                             {
-                                webResponse.StatusCode.Returns(HttpStatusCode.Created);
-                                headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "result");
+                                webResponse.StatusCode.Returns(statusCode_.Value);
+                                webResponse.GetResponseStream().Returns(responseStream_);
                             }
-                            counter_++;
-                        }
-                        else if (uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "result", StringComparison.OrdinalIgnoreCase))
-                        {
-                            webResponse.StatusCode.Returns(HttpStatusCode.OK);
-                            webResponse.GetResponseStream().Returns(responseStream_);
-                        }
-                    }
-                    else
-                    {
-                        webResponse.StatusCode.Returns(statusCode_.Value);
-                        webResponse.GetResponseStream().Returns(responseStream_);
-                    }
-                    webRequest.GetResponse().Returns(webResponse);
-                    RequestUrls.Add(uri.AbsoluteUri);
+                            return webResponse;
+                        });
+                    RequestUrls.Add(url.AbsoluteUri);
                     Timings.Add(stopwatch_.Elapsed);
                     stopwatch_ = Stopwatch.StartNew();
                     return webRequest;
