@@ -91,10 +91,10 @@ def update_csproj(name, version_data, release_notes_data):
     release_notes = root.find('.//PackageReleaseNotes')
     version = root.find('.//Version')
     if release_notes is None:
-        print("Could not find the PackageReleaseNotes section!")
+        print("Could not find the PackageReleaseNotes section in " + xmlfile + "!")
         exit(1)
     if version is None:
-        print("Could not find the Version section!")
+        print("Could not find the Version section in " + xmlfile + "!")
         exit(2)
     release_notes.text = release_notes_data
     version.text = version_data
