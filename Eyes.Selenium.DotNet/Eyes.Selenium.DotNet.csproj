@@ -8,15 +8,16 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.39</Version>
+    <Version>2.40</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Fixed
-- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
-### Updated
-- Updated `dom-capture` script. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+- Always send full-page DOM capture, even when inside an `IFRAME`. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+### Added
+- Serialize `CheckSettings` as part of `AgentSetup`
+- Serialize Fluent-Command string as part of `AgentSetup`
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

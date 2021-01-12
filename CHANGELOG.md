@@ -1,21 +1,37 @@
-## [Eyes.Common vNext]
-### Added
-- Fluent Command logging.
+## [Eyes.Images 2.21] - 2021-01-12
+### Updated
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Sdk.Core vNext]
-### Fixed
-- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+## [Eyes.Appium 4.18] - 2021-01-12
+### Updated
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.40] - 2021-01-12
 ### Fixed
 - Always send full-page DOM capture, even when inside an `IFRAME`. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
 ### Added
 - Serialize `CheckSettings` as part of `AgentSetup`
 - Serialize Fluent-Command string as part of `AgentSetup`
 
-## [Eyes.Qtp vNext]
+## [Eyes.Qtp 1.16] - 2021-01-12
 ### Fixed
 - Chrome throwing `Browser has no child windows!` exception. [Trello 2328](https://trello.com/c/hUvN56yk)
+
+## [Eyes.LeanFT 2.23] - 2021-01-12
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.22] - 2021-01-12
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.40] - 2021-01-12
+### Fixed
+- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
+## [Eyes.Common 1.4] - 2021-01-12
+### Added
+- Fluent Command logging.
 
 ## [Eyes.Images 2.20] - 2020-12-20
 ### Updated

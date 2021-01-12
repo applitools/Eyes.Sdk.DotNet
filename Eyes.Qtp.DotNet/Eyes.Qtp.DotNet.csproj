@@ -1,12 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <AssemblyVersion>1.0.2.0</AssemblyVersion>
     <FileVersion>1.0.1.0</FileVersion>
     <IsPackable>false</IsPackable>
-    <PackageReleaseNotes>***</PackageReleaseNotes>
-    <Version>1.14.0</Version>
+    <PackageReleaseNotes>### Fixed
+- Chrome throwing `Browser has no child windows!` exception. [Trello 2328](https://trello.com/c/hUvN56yk)
+</PackageReleaseNotes>
+    <Version>1.16</Version>
   </PropertyGroup>
 
   <ItemGroup>
