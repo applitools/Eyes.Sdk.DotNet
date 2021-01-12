@@ -235,6 +235,10 @@
 - Fixed the way DOM Capture and DOM Snapshot scripts are chosen. [Trello 2196](https://trello.com/c/nvHzS0Ba)
 - Fixed collection of resources from CSS files. [Trello 2156](https://trello.com/c/mSS6mLxP)
 
+## [Eyes.Qtp 1.15] - 2020-09-10
+### Updated
+- Agent Id
+
 ## [Eyes.Appium 4.12] - 2020-09-03
 ### Updated
 - Match to latest Eyes.Sdk.Core
