@@ -1,6 +1,17 @@
+## [Eyes.Common vNext]
+### Added
+- Fluent Command logging.
+
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Send correct origin location with screenshot. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Always send full-page DOM capture, even when inside an `IFRAME`. [Trello 2379](https://trello.com/c/Wn9Fp4XN)
+### Added
+- Serialize `CheckSettings` as part of `AgentSetup`
+- Serialize Fluent-Command string as part of `AgentSetup`
 
 ## [Eyes.Qtp vNext]
 ### Fixed
