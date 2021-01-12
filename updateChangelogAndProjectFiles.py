@@ -25,17 +25,27 @@ def upSemanticVersion(currentVersion, part):
             vNext = (vNext+".{}").format(vMajor, vMinor, vPatch + 1)
     return vNext
 
-
-def collect_changes():
+def getDependentPackages(packageName, packageNextVersions, versionPart):
     packageDependecies = {
         "Eyes.Common": ["Eyes.Sdk.Core"],
         "Eyes.Sdk.Core": ["Eyes.Windows", "Eyes.LeanFT", "Eyes.Images", "Eyes.Appium", "Eyes.Selenium"],
         "Eyes.Windows": ["Eyes.CodedUI"],
     }
+    dependencyDefaultChangelogStr="### Updated\n- Match to latest {}\n"
+    dependentPackages = packageDependecies.get(packageName)
+    if dependentPackages:
+        for dependentPackageName in dependentPackages:
+            if not packageNextVersions.has_key(dependentPackageName):
+                packageNextVersions[dependentPackageName] = {
+                    "version_part": versionPart, "changelog": dependencyDefaultChangelogStr.format(packageName)
+                    }
+                getDependentPackages(dependentPackageName, packageNextVersions, versionPart)
+
+def collect_changes():
+
     packageLastVersions = {}
     packageNextVersions = {}
 
-    dependencyDefaultChangelogStr="### Updated\n- Match to latest {}\n"
     originalLines = ""
 
     f = open("CHANGELOG.md", "r")
@@ -52,12 +62,7 @@ def collect_changes():
             lastVNextPackageName = packageName
             packageNextVersions[packageName] = {
                 "version_part": versionPart, "changelog": ""}
-            dependentPackages = packageDependecies.get(packageName)
-            if dependentPackages:
-                for dependentPackageName in dependentPackages:
-                    if not packageNextVersions.has_key(dependentPackageName):
-                        packageNextVersions[dependentPackageName] = {
-                            "version_part": versionPart, "changelog": dependencyDefaultChangelogStr.format(packageName)}
+            getDependentPackages(packageName, packageNextVersions, versionPart)
         else:
             matches = re.search(vLastPattern, line)
             if matches:
