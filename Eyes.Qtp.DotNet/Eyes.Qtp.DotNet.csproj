@@ -6,6 +6,7 @@
     <FileVersion>1.0.1.0</FileVersion>
     <IsPackable>false</IsPackable>
     <PackageReleaseNotes>***</PackageReleaseNotes>
+    <Version>1.14.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
