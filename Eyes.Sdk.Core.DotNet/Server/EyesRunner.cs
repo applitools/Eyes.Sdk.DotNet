@@ -24,6 +24,7 @@ namespace Applitools
 
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
+            Logger.Verbose("Enter");
             TestResultsSummary allTestResults;
             try
             {
@@ -34,6 +35,7 @@ namespace Applitools
             {
                 DeleteAllBatches_();
             }
+            Logger.Verbose("Exit. Test results: {0}", allTestResults.Count);
             return allTestResults;
         }
 
