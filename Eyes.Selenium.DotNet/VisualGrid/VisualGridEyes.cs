@@ -198,10 +198,12 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.Verbose("creating test descriptors for each browser info...");
             List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
+            IServerConnector serverConnector = runner_.ServerConnector;
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
                 Logger.Verbose("creating test descriptor");
-                VisualGridRunningTest test = new VisualGridRunningTest(browserInfo, Logger, (Configuration)configAtOpen_);
+                VisualGridRunningTest test = new VisualGridRunningTest(
+                    browserInfo, Logger, (Configuration)configAtOpen_, serverConnector);
                 testList_.Add(test.TestId, test);
                 newTests.Add(test);
             }

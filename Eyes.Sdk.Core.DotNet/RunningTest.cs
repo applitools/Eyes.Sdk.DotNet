@@ -46,7 +46,8 @@ namespace Applitools
             BrowserInfo = null;
         }
 
-        protected RunningTest(RenderBrowserInfo browserInfo, Logger logger) : base(logger)
+        protected RunningTest(RenderBrowserInfo browserInfo, Logger logger, IServerConnector serverConnector) 
+            : base(logger, serverConnector)
         {
             BrowserInfo = browserInfo;
         }

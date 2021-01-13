@@ -52,10 +52,8 @@ namespace Applitools
         private SetScaleProviderHandler setScaleProvider_;
         private ICutProvider cutProvider_;
         private Assembly actualAssembly_;
-        private readonly PropertiesCollection properties_;
+        private PropertiesCollection properties_;
         private static readonly object screenshotLock_ = new object();
-        private readonly TimeSpan TIME_TO_WAIT_FOR_OPEN = TimeSpan.FromSeconds(70);
-        private readonly TimeSpan TIME_THRESHOLD = TimeSpan.FromSeconds(20);
         private bool isViewportSizeSet_;
         private IDebugScreenshotProvider debugScreenshotProvider_ = NullDebugScreenshotProvider.Instance;
         protected RectangleSize viewportSize_;
@@ -86,24 +84,33 @@ namespace Applitools
         /// </summary>
         protected EyesBase() : this(new ServerConnectorFactory(), null, null) { }
 
+        protected EyesBase(Logger logger, IServerConnector serverConnector)
+        {
+            Init_(null, logger);
+            ServerConnector = serverConnector;
+        }
+
         public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, null) { }
 
         protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), null, logger) { }
 
         protected EyesBase(IServerConnectorFactory serverConnectorFactory, ClassicRunner runner, Logger logger)
         {
-            runner_ = runner ?? new ClassicRunner();
+            Init_(runner, logger);
             ServerConnectorFactory = serverConnectorFactory;
+            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
+        }
 
+        private void Init_(ClassicRunner runner, Logger logger)
+        {
+            runner_ = runner ?? new ClassicRunner();
             Logger = logger ?? new Logger();
 
             //EnsureConfiguration_();
 
             UpdateActualAssembly_();
-            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
             runningSession_ = null;
             UserInputs = new List<Trigger>();
-
             properties_ = new PropertiesCollection();
 
             setScaleProvider_ = provider => { scaleProvider_ = provider; };
