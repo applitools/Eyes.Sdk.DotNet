@@ -486,6 +486,7 @@ namespace Applitools
             request.MediaType = mediaType;
             request.Method = method;
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             if (fullAgentId != null)
             {
                 request.Headers.Add("x-applitools-eyes-client", fullAgentId);
