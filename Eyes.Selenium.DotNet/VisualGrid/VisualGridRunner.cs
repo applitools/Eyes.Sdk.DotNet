@@ -11,6 +11,7 @@ using System.Linq;
 using System.Diagnostics;
 using Applitools.Selenium;
 using Newtonsoft.Json;
+using Applitools.Selenium.VisualGrid;
 
 namespace Applitools.VisualGrid
 {
@@ -185,8 +186,13 @@ namespace Applitools.VisualGrid
             while (isRunning && eyesServiceRunner_.Error == null)
             {
                 isRunning = false;
-                foreach (IEyes eyes in AllEyes)
+                foreach (VisualGridEyes eyes in AllEyes)
                 {
+                    if (!eyes.IsCloseIssued)
+                    {
+                        Logger.Log($"WARNING! {nameof(GetAllTestResults)} called without closing eyes! Closing implicitly.");
+                        eyes.CloseAsync();
+                    }
                     isRunning = isRunning || !eyes.IsCompleted();
                 }
                 Thread.Sleep(500);

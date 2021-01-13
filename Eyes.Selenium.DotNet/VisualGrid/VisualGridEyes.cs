@@ -766,6 +766,8 @@ namespace Applitools.Selenium.VisualGrid
             return GetAllTestResults() != null;
         }
 
+        internal bool IsCloseIssued => !isOpen_;
+
         public void CloseAsync()
         {
             Logger.Verbose("enter");
