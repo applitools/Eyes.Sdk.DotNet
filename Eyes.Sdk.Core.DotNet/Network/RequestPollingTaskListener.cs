@@ -6,20 +6,20 @@ namespace Applitools.Utils
 {
     internal class RequestPollingTaskListener : TaskListener<HttpWebResponse>
     {
-        private HttpRestClient restClient;
-        private Logger logger;
-        private string pollingUrl;
-        private TaskListener<HttpWebResponse> listener;
-        private int sleepDuration = 500;
-        private int requestCount;
+        private HttpRestClient restClient_;
+        private Logger logger_;
+        private string pollingUrl_;
+        private TaskListener<HttpWebResponse> listener_;
+        private int sleepDuration_ = 500;
+        private int requestCount_;
 
         public RequestPollingTaskListener(HttpRestClient restClient, string pollingUrl, 
             TaskListener<HttpWebResponse> listener, Logger logger = null)
         {
-            this.restClient = restClient;
-            this.logger = logger;
-            this.pollingUrl = pollingUrl;
-            this.listener = listener;
+            restClient_ = restClient;
+            logger_ = logger;
+            pollingUrl_ = pollingUrl;
+            listener_ = listener;
             OnComplete = OnComplete_;
             OnFail = OnFail_;
         }
@@ -33,14 +33,14 @@ namespace Applitools.Utils
                 HttpStatusCode status = response.StatusCode;
                 if (status == HttpStatusCode.Created)
                 {
-                    logger?.Verbose("exit (CREATED)");
-                    restClient.SendAsyncRequest(listener, location, "DELETE");
+                    logger_?.Verbose("exit (CREATED)");
+                    restClient_.SendAsyncRequest(listener_, location, "DELETE");
                     return;
                 }
 
                 if (status != HttpStatusCode.OK)
                 {
-                    listener.OnFail(new EyesException($"Got bad status code when polling from the server. Status code: {status}"));
+                    listener_.OnFail(new EyesException($"Got bad status code when polling from the server. Status code: {status}"));
                     return;
                 }
             }
@@ -51,29 +51,29 @@ namespace Applitools.Utils
 
             if (location != null)
             {
-                pollingUrl = location;
+                pollingUrl_ = location;
             }
 
-            int timeToWait = sleepDuration;
+            int timeToWait = sleepDuration_;
             if (secondsToWait != null)
             {
                 timeToWait = int.Parse(secondsToWait) * 1000;
             }
-            else if (requestCount++ >= 5)
+            else if (requestCount_++ >= 5)
             {
-                sleepDuration *= 2;
-                requestCount = 0;
-                sleepDuration = Math.Min(5000, sleepDuration);
+                sleepDuration_ *= 2;
+                requestCount_ = 0;
+                sleepDuration_ = Math.Min(5000, sleepDuration_);
             }
 
             Thread.Sleep(timeToWait);
-            logger?.Verbose("polling...");
-            restClient.SendAsyncRequest(this, pollingUrl, "GET");
+            logger_?.Verbose("polling...");
+            restClient_.SendAsyncRequest(this, pollingUrl_, "GET");
         }
 
         private void OnFail_(Exception ex)
         {
-            listener.OnFail(ex);
+            listener_.OnFail(ex);
         }
     }
 }
