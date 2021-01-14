@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using CssParser.Model;
 using CssParser.Model.Rules;
@@ -93,10 +94,7 @@ namespace CssParser
         internal static void AppendDeclarations(StyleDeclaration list, string css, bool quirksMode = false)
         {
             var parser = new Parser();//(new StyleSheet(), new StylesheetReader(declarations))
-           
-
             parser.AddRuleSet(list.ParentRule ?? new StyleRule(list));
-
             parser._parsingContext = ParsingContext.InDeclaration;
             parser.Parse(css);
         }

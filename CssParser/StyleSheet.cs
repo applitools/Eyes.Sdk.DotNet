@@ -23,6 +23,7 @@ namespace CssParser
         }
 
         public List<RuleSet> Rules { get; private set; }
+        public HashSet<string> ExternalUrls { get; private set; } = new HashSet<string>();
 
         public StyleSheet RemoveRule(int index)
         {
@@ -143,6 +144,11 @@ namespace CssParser
             }
 
             return builder.TrimFirstLine().TrimLastLine().ToString();
+        }
+
+        internal void AddExternalUrl(string href)
+        {
+            ExternalUrls.Add(href);
         }
     }
 }

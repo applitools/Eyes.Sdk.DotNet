@@ -389,7 +389,9 @@ namespace CssParser
                     return AddTerm(new PrimitiveTerm(UnitType.String, ((StringBlock)token).Value));
 
                 case GrammarSegment.Url:// "url('http://....')"
-                    return AddTerm(new PrimitiveTerm(UnitType.Uri, ((StringBlock)token).Value));
+                    string urlValue = ((StringBlock)token).Value;
+                    _styleSheet.AddExternalUrl(urlValue);
+                    return AddTerm(new PrimitiveTerm(UnitType.Uri, urlValue));
 
                 case GrammarSegment.Percentage: // "10%"
                     return AddTerm(new PrimitiveTerm(UnitType.Percentage, ((UnitBlock)token).Value));
@@ -633,8 +635,10 @@ namespace CssParser
         {
             if (token.GrammarSegment == GrammarSegment.String || token.GrammarSegment == GrammarSegment.Url)
             {
-                CastRuleSet<ImportRule>().Href = ((StringBlock)token).Value;
+                ImportRule importRule = CastRuleSet<ImportRule>();
+                importRule.Href = ((StringBlock)token).Value;
                 SetParsingContext(ParsingContext.InMediaList);
+                _styleSheet.AddExternalUrl(importRule.Href);
                 return true;
             }
 
