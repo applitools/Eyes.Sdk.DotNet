@@ -38,9 +38,16 @@ namespace Applitools.Selenium.Tests
                     eyes.Check(Target.Window().Fully());
                     eyes.CloseAsync();
 
-                    eyes = InitEyes_(visualGridRunner, webDriver, viewport);
-                    eyes.Check(Target.Window().Fully());
-                    eyes.CloseAsync();
+                    try
+                    {
+                        eyes = InitEyes_(visualGridRunner, webDriver, viewport);
+                        eyes.Check(Target.Window().Fully());
+                        eyes.CloseAsync();
+                    }
+                    finally
+                    {
+                        eyes.AbortAsync();
+                    }
                 }
                 TestResultsSummary results = visualGridRunner.GetAllTestResults();
                 Assert.AreEqual(ViewportList.Length, results?.Count);
@@ -48,7 +55,6 @@ namespace Applitools.Selenium.Tests
             finally
             {
                 webDriver?.Quit();
-                eyes?.Abort();
             }
         }
 
