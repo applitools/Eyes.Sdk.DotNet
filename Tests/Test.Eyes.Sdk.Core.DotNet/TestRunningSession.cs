@@ -122,7 +122,7 @@ namespace Applitools
             Assert.Greater(timings[2], TimeSpan.FromSeconds(2));
 
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url1", requests[3]);
-            Assert.Greater(timings[3], TimeSpan.FromSeconds(1));
+            Assert.Greater(timings[3], TimeSpan.FromSeconds(0.5));
 
             StringAssert.StartsWith(CommonData.DefaultServerUrl + "url2", requests[4]);
             Assert.Greater(timings[4], TimeSpan.FromSeconds(3));
