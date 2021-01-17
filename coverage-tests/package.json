@@ -1,0 +1,40 @@
+{
+  "name": "@applitools/coverage-tests",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "main": "index.js",
+  "description": "Coverage Tests for Applitools SDKs",
+  "author": "Applitools <team@applitools.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applitools/sdk.coverage.tests.git"
+  },
+  "scripts": {
+    "dotnet:generate": "npm install && coverage-tests generate ./configuration && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
+    "dotnet:generate:local": "npm install && cd dotNet && coverage-tests generate --configPath . --tests ../coverage-tests.js && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
+    "dotnet:generate:win": "npm install && coverage-tests generate ./configuration && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
+    "dotnet:generate:win:local": "coverage-tests generate ./configuration --tests ./coverage-tests.js && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
+    "dotnet:run:parallel": "cd ./dotNet/test && APPLITOOLS_BATCH_ID=$(uuidgen) dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
+    "dotnet:run:appium": "cd ./dotNet/test/Appium && APPLITOOLS_BATCH_ID=$(uuidgen) dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
+    "dotnet:run:selenium": "cd ./dotNet/test/Selenium && APPLITOOLS_BATCH_ID=$(uuidgen) dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
+    "dotnet:run:parallel:win": "cd ./dotNet/test && set APPLITOOLS_BATCH_ID=$(uuidgen) && dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
+    "dotnet:run:appium:win": "cd ./dotNet/test/Appium && set APPLITOOLS_BATCH_ID=$(uuidgen) && dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
+    "dotnet:run:selenium:win": "cd ./dotNet/test/Selenium && set APPLITOOLS_BATCH_ID=$(uuidgen) && dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
+    "dotnet:report": "[ \"$TEST_REPORT_SANDBOX\" = \"False\" ] && npm run dotnet:report:prod || npm run dotnet:report:sandbox ",
+    "dotnet:report:sandbox": "cd dotNet && coverage-tests process-report --path . --reportId $APPLITOOLS_REPORT_ID",
+    "dotnet:report:prod": "cd dotNet && coverage-tests process-report --path . --reportId $APPLITOOLS_REPORT_ID --send-report prod",
+    "dotnet:tests": "./dotNet/dotnet_tests.sh"
+  },
+  "dependencies": {
+    "@applitools/sdk-coverage-tests": "^2.3.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "typescript": "^3.7.4"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.1"
+  }
+}
