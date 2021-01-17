@@ -32,7 +32,11 @@ namespace Applitools.Utils
             bytes_ = bytes;
             contentType_ = contentType;
             mediaType_ = mediaType;
+            HttpRestClient client = serverConnector.CreateHttpRestClientFactory(new Uri(targetUrl));
+            WebRequestCreator = client.WebRequestCreator;
         }
+
+        internal IWebRequestCreate WebRequestCreator { get; set; } = DefaultWebRequestCreator.Instance;
 
         private void OnComplete_(HttpWebResponse response)
         {
@@ -79,7 +83,7 @@ namespace Applitools.Utils
 
         public void UploadDataAsync()
         {
-            HttpWebRequest request = WebRequest.CreateHttp(targetUrl_);
+            HttpWebRequest request = (HttpWebRequest)WebRequestCreator.Create(new Uri(targetUrl_));
             if (serverConnector_.Proxy != null) request.Proxy = serverConnector_.Proxy;
             request.ContentType = contentType_;
             request.MediaType = mediaType_;

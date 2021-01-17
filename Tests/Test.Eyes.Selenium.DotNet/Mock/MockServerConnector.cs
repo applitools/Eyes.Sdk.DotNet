@@ -1,16 +1,20 @@
-﻿using Applitools.Ufg;
+﻿using Applitools.Utils;
+using Newtonsoft.Json;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
 
 namespace Applitools.Selenium.Tests.Mock
 {
     class MockServerConnector : ServerConnector
     {
         public MockServerConnector(Logger logger, Uri serverUrl)
-            : base(logger, serverUrl)
+            : base(logger, new Uri("http://some.url.com"))
         {
             logger.Verbose("created");
+            HttpRestClientFactory = new MockHttpRestClientFactory();
         }
 
         internal List<MatchWindowData> MatchWindowCalls { get; } = new List<MatchWindowData>();
@@ -44,10 +48,12 @@ namespace Applitools.Selenium.Tests.Mock
 
         public override RenderingInfo GetRenderingInfo()
         {
-            return new RenderingInfo();
+            RenderingInfo renderingInfo = new RenderingInfo();
+            renderingInfo.ResultsUrl = new Uri("https://some.url.com");
+            return renderingInfo;
         }
 
-        public MatchResult MatchWindow(RunningSession runningSession, MatchWindowData data)
+        public override MatchResult MatchWindow(MatchWindowData data)
         {
             if (data.Options.ReplaceLast)
             {
@@ -62,7 +68,7 @@ namespace Applitools.Selenium.Tests.Mock
             return new MatchResult() { AsExpected = this.AsExcepted };
         }
 
-        public delegate (bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
+        public delegate (bool, bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
         public event OnStartSessionDelegate OnStartSession;
 
         protected override void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
@@ -71,9 +77,10 @@ namespace Applitools.Selenium.Tests.Mock
 
             RunningSession newSession = null;
             bool continueInvocation = true;
+            bool callBase = false;
             if (OnStartSession != null)
             {
-                (continueInvocation, newSession) = OnStartSession(sessionStartInfo);
+                (callBase, continueInvocation, newSession) = OnStartSession(sessionStartInfo);
             }
             if (continueInvocation)
             {
@@ -82,14 +89,89 @@ namespace Applitools.Selenium.Tests.Mock
                 Sessions.Add(newSession.SessionId, newSession);
                 SessionsStartInfo.Add(newSession.SessionId, sessionStartInfo);
             }
-            taskListener.OnComplete(newSession);
+            if (callBase)
+            {
+                base.StartSessionInternal(taskListener, sessionStartInfo);
+            }
+            else
+            {
+                EnsureHttpClient_();
+                taskListener.OnComplete(newSession);
+            }
         }
 
-        public async Task<List<JobInfo>> GetJobInfo(RenderRequest[] renderRequests)
+        public override void PostDomCapture(TaskListener<string> listener, string domJson)
         {
-            Logger.Verbose("getting job info");
-            await Task.Delay(10);
-            return new List<JobInfo>(new JobInfo[] { new JobInfo() });
+            listener.OnComplete("http://some.targeturl.com/dom");
+        }
+    }
+
+    class MockHttpRestClientFactory : IHttpRestClientFactory
+    {
+        public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
+        {
+            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer);
+            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator();
+            return mockedHttpRestClient;
+        }
+    }
+
+    class MockWebRequestCreator : IWebRequestCreate
+    {
+        private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
+        private string expectedPollUrlPath_;
+
+        public WebRequest Create(Uri uri)
+        {
+            HttpWebRequest webRequest = Substitute.For<HttpWebRequest>();
+            webRequest.RequestUri.Returns(uri);
+            webRequest.Headers = new WebHeaderCollection();
+            webRequest.GetRequestStream().Returns(new MemoryStream(new byte[10000]));
+            webRequest.BeginGetResponse(default, default)
+                       .ReturnsForAnyArgs(ci =>
+                       {
+                           AsyncCallback cb = ci.Arg<AsyncCallback>();
+                           HttpWebRequest req = ci.Arg<HttpWebRequest>();
+                           cb.Invoke(new MockAsyncResult(req));
+                           return null;
+                       });
+
+            webRequest.EndGetResponse(default)
+                .ReturnsForAnyArgs(ci =>
+                {
+                    MockAsyncResult mockAsyncResult = ci.Arg<MockAsyncResult>();
+                    HttpWebRequest webRequest = ((HttpWebRequest)mockAsyncResult.AsyncState);
+                    Uri uri = webRequest.RequestUri;
+                    HttpWebResponse webResponse = Substitute.For<HttpWebResponse>();
+                    WebHeaderCollection headers = new WebHeaderCollection();
+                    webResponse.Headers.Returns(headers);
+                    if (webRequest.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
+                        uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
+                    {
+                        webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
+                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "status");
+                    }
+                    else if (webRequest.Method.Equals("GET", StringComparison.OrdinalIgnoreCase) &&
+                        uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
+                    {
+                        webResponse.StatusCode.Returns(HttpStatusCode.Created);
+                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "created");
+                    }
+                    else if (webRequest.Method.Equals("DELETE", StringComparison.OrdinalIgnoreCase) &&
+                        uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "created", StringComparison.OrdinalIgnoreCase))
+                    {
+                        webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
+                    }
+                    else
+                    {
+                        webResponse.ResponseUri.Returns(uri);
+                        webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                    }
+                    return webResponse;
+                });
+
+            return webRequest;
         }
     }
 }

@@ -9,7 +9,6 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -249,7 +248,7 @@ namespace Applitools.Selenium.Tests
             {
                 driver.Url = "https://applitools.github.io/demo/TestPages/SpecialCases/neverchanging.html";
                 eyes.Open(driver, "Applitools Eyes SDK", "Test No Replace Matched Step", new Size(700, 460));
-                eyes.Check("Step 1", Target.Window());
+                eyes.Check("Step 1", Target.Window().SendDom(false));
                 eyes.Close();
             }
             finally

@@ -30,7 +30,7 @@ namespace Applitools
         private bool proxyChanged_ = false;
         private WebProxy proxy;
         private RenderingInfo renderingInfo_;
-        private readonly JsonSerializer serializer_;
+        internal readonly JsonSerializer serializer_;
 
         #endregion
 
@@ -53,6 +53,11 @@ namespace Applitools
 
             Timeout = TimeSpan.FromMinutes(5);
             logger.Verbose("created");
+        }
+
+        internal HttpRestClient CreateHttpRestClientFactory(Uri uri)
+        {
+            return HttpRestClientFactory.Create(uri, AgentId, serializer_);
         }
 
         #endregion
@@ -283,7 +288,7 @@ namespace Applitools
                         try
                         {
                             data.AppOutput.ScreenshotUrl = returnedUrl;
-                            MathWindowImpl_(listener, data);
+                            MatchWindowImpl_(listener, data);
                         }
                         catch (Exception ex)
                         {
@@ -295,7 +300,7 @@ namespace Applitools
             }
             else if (data.AppOutput.ScreenshotUrl != null)
             {
-                MathWindowImpl_(listener, data);
+                MatchWindowImpl_(listener, data);
             }
             else
             {
@@ -303,7 +308,7 @@ namespace Applitools
             }
         }
 
-        private void MathWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        private void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
         {
             string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
             httpClient_.PostJson(new TaskListener<HttpWebResponse>(
@@ -531,7 +536,7 @@ namespace Applitools
             return member;
         }
 
-        public void PostDomCapture(TaskListener<string> listener, string domJson)
+        public virtual void PostDomCapture(TaskListener<string> listener, string domJson)
         {
             try
             {
@@ -557,7 +562,7 @@ namespace Applitools
             }
         }
 
-        private void EnsureHttpClient_()
+        protected void EnsureHttpClient_()
         {
             if (httpClient_ != null && httpClient_.ServerUrl.Equals(ServerUrl) && !apiKeyChanged_ && !proxyChanged_)
             {
@@ -569,7 +574,7 @@ namespace Applitools
             }
             Logger.Verbose("enter");
             //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
-            HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, serializer_);
+            HttpRestClient httpClient = CreateHttpRestClientFactory(ServerUrl);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
             httpClient.Proxy = Proxy;
 
