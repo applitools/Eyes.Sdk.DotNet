@@ -121,7 +121,7 @@ namespace Applitools.Selenium.VisualGrid
             set => Config_.SetBatch(value);
         }
 
-        public List<VGUserAction> UserInputs { get; } = new List<VGUserAction>();
+        public List<IUserAction> UserInputs { get; } = new List<IUserAction>();
 
         public bool IsEyesClosed()
         {
@@ -322,7 +322,7 @@ namespace Applitools.Selenium.VisualGrid
                 userActionElements };
         }
 
-        private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<VGUserAction> userInputs)
+        private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<IUserAction> userInputs)
         {
             List<Tuple<IWebElement, object>> elements = new List<Tuple<IWebElement, object>>();
             foreach (VGUserAction userInput in userInputs)
@@ -424,7 +424,8 @@ namespace Applitools.Selenium.VisualGrid
                         continue;
                     }
 
-                    checkTasks.Add((CheckTask)runningTest.IssueCheck((ICheckSettings)checkSettingsInternal, regionsXPaths, source));
+                    checkTasks.Add((CheckTask)runningTest.IssueCheck(
+                        (ICheckSettings)checkSettingsInternal, regionsXPaths, source, UserInputs));
                 }
 
                 scriptResult.UserAgent = userAgent_;

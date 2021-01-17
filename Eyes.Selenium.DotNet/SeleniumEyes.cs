@@ -1493,7 +1493,8 @@ namespace Applitools.Selenium
             throw new NotImplementedException();
         }
 
-        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, string source)
+        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, 
+            string source, IList<IUserAction> userInputs)
         {
             throw new NotImplementedException();
         }

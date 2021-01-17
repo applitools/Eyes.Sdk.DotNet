@@ -2,7 +2,7 @@
 
 namespace Applitools.VisualGrid
 {
-    public abstract class VGUserAction
+    public abstract class VGUserAction : IUserAction
     {
         public VGUserAction(object control)
         {

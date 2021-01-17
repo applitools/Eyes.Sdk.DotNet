@@ -36,7 +36,8 @@ namespace Applitools
 
         public abstract MatchWindowData PrepareForMatch(ICheckTask checkTask);
 
-        public abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, string source);
+        public abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, 
+            string source, IList<IUserAction> userInputs);
 
         public abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
 
