@@ -15,7 +15,7 @@
   },
   "scripts": {
     "dotnet:generate": "npm install && coverage-tests generate ./configuration && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
-    "dotnet:generate:local": "npm install && cd dotNet && coverage-tests generate --configPath . --tests ../coverage-tests.js && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
+    "dotnet:generate:local": "npm install && coverage-tests generate ./configuration --tests ./coverage-tests.js && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
     "dotnet:generate:win": "npm install && coverage-tests generate ./configuration && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
     "dotnet:generate:win:local": "coverage-tests generate ./configuration --tests ./coverage-tests.js && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
     "dotnet:run:parallel": "cd ./dotNet/test && APPLITOOLS_BATCH_ID=$(uuidgen) dotnet test --logger \"junit;LogFilePath=./../coverage-test-report.xml\"",
