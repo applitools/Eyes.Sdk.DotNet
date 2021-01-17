@@ -386,7 +386,6 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Log("Error: {0}", e);
             }
 
-
             FrameChain originalFC = driver_.GetFrameChain().Clone();
             EyesWebDriverTargetLocator switchTo = ((EyesWebDriverTargetLocator)driver_.SwitchTo());
             try
@@ -399,6 +398,7 @@ namespace Applitools.Selenium.VisualGrid
 
                 int waitBeforeScreenshots = Config_.WaitBeforeScreenshots;
                 Thread.Sleep(waitBeforeScreenshots);
+                checkSettings = UpdateCheckSettings_(checkSettings);
 
                 checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo);
 
@@ -413,7 +413,6 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("Blobs urls: {0}", StringUtils.Concat(blobsUrls, ", "));
                 Logger.Verbose("Resources urls: {0}", StringUtils.Concat(scriptResult.ResourceUrls, ", "));
 
-                checkSettings = UpdateCheckSettings_(checkSettings);
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
 
                 string source = webDriver_.Url;
