@@ -63,9 +63,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CssParser", "CssParser\CssP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Eyes.Windows.WPF", "Tests\Tests.Eyes.Windows.WPF\Tests.Eyes.Windows.WPF.csproj", "{FA02FE71-AD06-4235-A491-A76E1A1FFD49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "sdk.coverage.tests\dotNet\test\Selenium\Tests.Eyes.Selenium.Generated.csproj", "{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "coverage-tests\test\Selenium\Tests.Eyes.Selenium.Generated.csproj", "{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "sdk.coverage.tests\dotNet\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{B1990708-3C60-42B6-A7DD-F47810B1D0B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "coverage-tests\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{B1990708-3C60-42B6-A7DD-F47810B1D0B3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.Common.DotNet\Eyes.Common.DotNet.csproj", "{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}"
 EndProject
