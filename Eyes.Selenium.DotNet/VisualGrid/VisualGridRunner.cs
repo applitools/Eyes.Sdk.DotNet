@@ -223,7 +223,7 @@ namespace Applitools.VisualGrid
 
             if (throwException && exception != null)
             {
-                throw new Exception("Error", exception);
+                throw new EyesException("Error", exception);
             }
             TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
             return new TestResultsSummary(allResults);

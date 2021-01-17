@@ -32,7 +32,7 @@ namespace Applitools
         {
             if (shouldThrowException && Exception != null)
             {
-                throw Exception;
+                throw new EyesException("Error", Exception);
             }
             List<TestResultContainer> result = new List<TestResultContainer>();
             foreach (TestResults testResults in allTestResult_)

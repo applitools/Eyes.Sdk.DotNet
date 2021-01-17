@@ -619,7 +619,7 @@ namespace Applitools.Selenium
             catch (Exception ex)
             {
                 Logger.Log("Exception: " + ex);
-                throw;
+                throw new EyesException("Error", ex);
             }
         }
 

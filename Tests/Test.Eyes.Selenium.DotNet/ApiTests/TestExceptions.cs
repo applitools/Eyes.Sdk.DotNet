@@ -70,13 +70,9 @@ namespace Applitools.Selenium.Tests.ApiTests
                 conf.SetTestName("test");
                 eyes.SetConfiguration(conf);
                 eyes.Open(driver);
-                Assert.That(() =>
-                {
-                    TestResults results = eyes.Close();
-                    results?.Delete();
-                    runner.GetAllTestResults();
-                }, Throws.InvalidOperationException.With.Property("Message").EqualTo("Eyes not open"));
-
+                TestResults results = eyes.Close();
+                results?.Delete();
+                TestResultsSummary resultsSummary = runner.GetAllTestResults();
             }
             finally
             {
