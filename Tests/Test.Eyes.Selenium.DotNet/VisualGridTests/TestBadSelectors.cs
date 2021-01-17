@@ -85,7 +85,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     eyes.CloseAsync();
                     runner.GetAllTestResults();
 
-                }, Throws.Exception.With.InstanceOf<NoSuchElementException>());
+                }, Throws.Exception.With.InstanceOf<NoSuchElementException>().Or.With.InstanceOf<EyesException>().With.InnerException.With.InstanceOf<NoSuchElementException>());
             }
             finally
             {
