@@ -73,7 +73,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     eyes.Check(Target.Window().WithName("Test"));
                     eyes.Close();
                     runner.GetAllTestResults();
-                }, Throws.Exception.With.InstanceOf<EyesException>().With.Property("Message").EqualTo("DOM capture timeout."));
+                }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.InstanceOf<EyesException>().With.Property("Message").EqualTo("DOM capture timeout."));
             }
             finally
             {
