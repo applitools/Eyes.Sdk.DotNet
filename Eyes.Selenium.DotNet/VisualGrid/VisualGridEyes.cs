@@ -203,7 +203,7 @@ namespace Applitools.Selenium.VisualGrid
             {
                 Logger.Verbose("creating test descriptor");
                 VisualGridRunningTest test = new VisualGridRunningTest(
-                    browserInfo, Logger, (Configuration)configAtOpen_, serverConnector);
+                    browserInfo, Logger, configProvider_, serverConnector);
                 testList_.Add(test.TestId, test);
                 newTests.Add(test);
             }
@@ -398,11 +398,12 @@ namespace Applitools.Selenium.VisualGrid
 
                 int waitBeforeScreenshots = Config_.WaitBeforeScreenshots;
                 Thread.Sleep(waitBeforeScreenshots);
+                int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
+                TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 checkSettings = UpdateCheckSettings_(checkSettings);
 
-                checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo);
+                //checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo, switchedToCount);
 
-                TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
                 Logger.Verbose("regionXPaths : {0}", regionsXPaths);
 
@@ -447,9 +448,9 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        private ICheckSettings SwitchFramesAsNeeded_(ICheckSettings checkSettings, EyesWebDriverTargetLocator switchTo)
+        private ICheckSettings SwitchFramesAsNeeded_(ICheckSettings checkSettings, EyesWebDriverTargetLocator switchTo,
+            int switchedToCount)
         {
-            int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
             bool isFullPage = IsFullPage_(checkSettingsInternal);
@@ -479,12 +480,12 @@ namespace Applitools.Selenium.VisualGrid
             return isFullPage;
         }
 
-        private void UpdateFrameScrollRoot_(IScrollRootElementContainer frameTarget)
-        {
-            IWebElement rootElement = EyesSeleniumUtils.GetScrollRootElement(Logger, webDriver_, frameTarget);
-            Frame frame = driver_.GetFrameChain().Peek();
-            frame.ScrollRootElement = rootElement;
-        }
+        //private void UpdateFrameScrollRoot_(IScrollRootElementContainer frameTarget)
+        //{
+        //    IWebElement rootElement = EyesSeleniumUtils.GetScrollRootElement(Logger, webDriver_, frameTarget);
+        //    Frame frame = driver_.GetFrameChain().Peek();
+        //    frame.ScrollRootElement = rootElement;
+        //}
 
         private int SwitchToFrame_(ISeleniumCheckTarget checkTarget)
         {
@@ -512,7 +513,7 @@ namespace Applitools.Selenium.VisualGrid
             if (frameIndex != null)
             {
                 switchTo.Frame(frameIndex.Value);
-                UpdateFrameScrollRoot_(frameTarget);
+                //UpdateFrameScrollRoot_(frameTarget);
                 return true;
             }
 
@@ -520,7 +521,7 @@ namespace Applitools.Selenium.VisualGrid
             if (frameNameOrId != null)
             {
                 switchTo.Frame(frameNameOrId);
-                UpdateFrameScrollRoot_(frameTarget);
+                //UpdateFrameScrollRoot_(frameTarget);
                 return true;
             }
 
@@ -528,7 +529,7 @@ namespace Applitools.Selenium.VisualGrid
             if (frameReference != null)
             {
                 switchTo.Frame(frameReference);
-                UpdateFrameScrollRoot_(frameTarget);
+                //UpdateFrameScrollRoot_(frameTarget);
                 return true;
             }
 
@@ -539,7 +540,7 @@ namespace Applitools.Selenium.VisualGrid
                 if (frameElement != null)
                 {
                     switchTo.Frame(frameElement);
-                    UpdateFrameScrollRoot_(frameTarget);
+                    //UpdateFrameScrollRoot_(frameTarget);
                     return true;
                 }
             }
