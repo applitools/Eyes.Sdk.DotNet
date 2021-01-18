@@ -41,9 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Appium.DotNet", "Eyes.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Appium.DotNet", "Tests\Test.Eyes.Appium.DotNet\Test.Eyes.Appium.DotNet.csproj", "{86401849-E3F7-4DF8-9BE8-24BC2C62089C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "sdk.coverage.tests\dotNet\test\Selenium\Tests.Eyes.Selenium.Generated.csproj", "{182D5566-9009-47AA-A3E2-B3FA6BF1B930}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "coverage-tests\test\Selenium\Tests.Eyes.Selenium.Generated.csproj", "{182D5566-9009-47AA-A3E2-B3FA6BF1B930}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "sdk.coverage.tests\dotNet\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{0C0307A7-E06E-468B-95AD-3A74375802DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "coverage-tests\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{0C0307A7-E06E-468B-95AD-3A74375802DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.Common.DotNet\Eyes.Common.DotNet.csproj", "{809D3F18-D837-4E19-8E1C-546B017035A6}"
 EndProject

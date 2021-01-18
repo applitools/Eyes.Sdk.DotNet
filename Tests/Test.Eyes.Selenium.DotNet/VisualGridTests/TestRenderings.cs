@@ -63,7 +63,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             foreach (BrowserType b in Enum.GetValues(typeof(BrowserType)))
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                if (b == BrowserType.EDGE) continue;
+                if (b == BrowserType.EDGE || b == BrowserType.SAFARI_EARLY_ACCESS) continue;
 #pragma warning restore CS0618 // Type or member is obsolete
                 sconf.AddBrowser(700, 500, b);
                 sconf.AddBrowser(800, 600, b);
