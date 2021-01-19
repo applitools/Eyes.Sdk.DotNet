@@ -569,6 +569,7 @@ namespace Applitools.Selenium.VisualGrid
                             continue;
                         }
                         viewportSize = new RectangleSize(deviceInfo.Width, deviceInfo.Height);
+                        break;
                     }
                 }
             }
