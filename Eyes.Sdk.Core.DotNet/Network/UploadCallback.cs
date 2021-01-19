@@ -32,7 +32,7 @@ namespace Applitools.Utils
             bytes_ = bytes;
             contentType_ = contentType;
             mediaType_ = mediaType;
-            HttpRestClient client = serverConnector.CreateHttpRestClientFactory(new Uri(targetUrl));
+            HttpRestClient client = serverConnector.CreateHttpRestClient(new Uri(targetUrl));
             WebRequestCreator = client.WebRequestCreator;
         }
 

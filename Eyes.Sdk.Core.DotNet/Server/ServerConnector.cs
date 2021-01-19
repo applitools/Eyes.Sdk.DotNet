@@ -55,7 +55,7 @@ namespace Applitools
             logger.Verbose("created");
         }
 
-        internal HttpRestClient CreateHttpRestClientFactory(Uri uri)
+        internal HttpRestClient CreateHttpRestClient(Uri uri)
         {
             return HttpRestClientFactory.Create(uri, AgentId, serializer_);
         }
@@ -575,7 +575,7 @@ namespace Applitools
                 throw new EyesException("ApiKey is null.");
             }
             Logger.Verbose("enter");
-            HttpRestClient httpClient = CreateHttpRestClientFactory(ServerUrl);
+            HttpRestClient httpClient = CreateHttpRestClient(ServerUrl);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
             httpClient.Proxy = Proxy;
 
