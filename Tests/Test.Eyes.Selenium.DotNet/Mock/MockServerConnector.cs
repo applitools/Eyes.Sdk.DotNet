@@ -119,7 +119,6 @@ namespace Applitools.Selenium.Tests.Mock
     class MockWebRequestCreator : IWebRequestCreate
     {
         private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
-        private string expectedPollUrlPath_;
 
         public WebRequest Create(Uri uri)
         {

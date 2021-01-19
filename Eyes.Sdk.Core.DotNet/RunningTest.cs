@@ -19,7 +19,7 @@ namespace Applitools
         private bool startedCloseProcess_ = false;
 
         internal bool isCloseTaskIssued_;
-      
+
         public static readonly int PARALLEL_STEPS_LIMIT = 1;
 
         public override void OpenCompleted(RunningSession result)
@@ -36,7 +36,7 @@ namespace Applitools
 
         public abstract MatchWindowData PrepareForMatch(ICheckTask checkTask);
 
-        public abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, 
+        public abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
             string source, IList<IUserAction> userInputs);
 
         public abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
@@ -47,14 +47,14 @@ namespace Applitools
             BrowserInfo = null;
         }
 
-        protected RunningTest(RenderBrowserInfo browserInfo, Logger logger, IServerConnector serverConnector) 
+        protected RunningTest(RenderBrowserInfo browserInfo, Logger logger, IServerConnector serverConnector)
             : base(logger, serverConnector)
         {
             BrowserInfo = browserInfo;
         }
 
         protected RunningTest(ClassicRunner runner, IServerConnectorFactory serverConnectorFactory, Logger logger = null)
-            :base(serverConnectorFactory, runner, logger)
+            : base(serverConnectorFactory, runner, logger)
         {
         }
 
@@ -90,7 +90,7 @@ namespace Applitools
         }
 
         public bool IsTestAborted => isAbortIssued_ ?? false;
-        
+
         public void IssueClose()
         {
             if (IsCloseTaskIssued)

@@ -107,6 +107,13 @@ namespace Applitools.VisualGrid
             Init(suiteName);
         }
 
+        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, IServerConnectorFactory serverConnectorFactory)
+            : this(concurrentOpenSessions, suiteName)
+        {
+            ServerConnectorFactory = serverConnectorFactory;
+            ServerConnector = serverConnectorFactory.CreateNewServerConnector(Logger, new Uri("https://some.url.com"));
+        }
+
         ~VisualGridRunner()
         {
             TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
