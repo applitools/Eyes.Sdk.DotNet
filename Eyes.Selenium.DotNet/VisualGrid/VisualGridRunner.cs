@@ -107,11 +107,20 @@ namespace Applitools.VisualGrid
             Init(suiteName);
         }
 
-        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, IServerConnectorFactory serverConnectorFactory)
-            : this(concurrentOpenSessions, suiteName)
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, 
+            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
         {
             ServerConnectorFactory = serverConnectorFactory;
             ServerConnector = serverConnectorFactory.CreateNewServerConnector(Logger, new Uri("https://some.url.com"));
+            runnerOptions_ = runnerOptions;
+            testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
+            if (logHandler != null) Logger.SetLogHandler(logHandler);
+            Init(suiteName);
+        }
+
+        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, IServerConnectorFactory serverConnectorFactory)
+            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory)
+        {
         }
 
         ~VisualGridRunner()

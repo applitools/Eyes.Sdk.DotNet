@@ -1,10 +1,13 @@
 ﻿using Applitools.Utils;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace Applitools.Selenium.Tests.Mock
 {
@@ -24,6 +27,8 @@ namespace Applitools.Selenium.Tests.Mock
         internal List<string> SessionIds { get; } = new List<string>();
 
         public bool AsExcepted { get; set; } = true;
+
+        public List<string> RenderRequests { get; } = new List<string>();
 
         public override void CloseBatch(string batchId)
         {
@@ -50,6 +55,8 @@ namespace Applitools.Selenium.Tests.Mock
         {
             RenderingInfo renderingInfo = new RenderingInfo();
             renderingInfo.ResultsUrl = new Uri("https://some.url.com");
+            renderingInfo.ServiceUrl = new Uri("https://services.url.com");
+            renderingInfo.StitchingServiceUrl = new Uri("https://stitching.url.com");
             return renderingInfo;
         }
 
@@ -100,6 +107,49 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
+        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
+        {
+            if (request.Method == "POST" && request.RequestUri.PathAndQuery == "/render")
+            {
+                Stream stream = request.GetRequestStream();
+                stream.Position = 0;
+                byte[] bytes = stream.ReadToEnd();
+                string requestJsonStr = Encoding.UTF8.GetString(bytes);
+                RenderRequests.Add(requestJsonStr);
+                List<RunningRender> response = new List<RunningRender>();
+                JArray list = (JArray)JsonConvert.DeserializeObject(requestJsonStr);
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    response.Add(new RunningRender(i.ToString(), "abc", RenderStatus.Rendered, null, false));
+                }
+                taskListener.OnComplete(response as T);
+            }
+            else
+            {
+                base.SendUFGAsyncRequest_(taskListener, request);
+            }
+        }
+
+        public override void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
+        {
+            IList<JobInfo> jobs = new List<JobInfo>();
+            for (int i = 0; i < browserInfos?.Count; ++i)
+            {
+                jobs.Add(new JobInfo() { EyesEnvironment = "MockEnvironment", Renderer = "MockRenderer" });
+            }
+            listener.OnComplete(jobs);
+        }
+
+        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        {
+            bool?[] result = new bool?[hashes.Length];
+            for (int i = 0; i < hashes.Length; ++i)
+            {
+                result[i] = true;
+            }
+            taskListener.OnComplete(result);
+        }
+
         public override void PostDomCapture(TaskListener<string> listener, string domJson)
         {
             listener.OnComplete("http://some.targeturl.com/dom");
@@ -125,7 +175,7 @@ namespace Applitools.Selenium.Tests.Mock
             HttpWebRequest webRequest = Substitute.For<HttpWebRequest>();
             webRequest.RequestUri.Returns(uri);
             webRequest.Headers = new WebHeaderCollection();
-            webRequest.GetRequestStream().Returns(new MemoryStream(new byte[10000]));
+            webRequest.GetRequestStream().Returns(new MemoryStream(new byte[1000000]));
             webRequest.BeginGetResponse(default, default)
                        .ReturnsForAnyArgs(ci =>
                        {

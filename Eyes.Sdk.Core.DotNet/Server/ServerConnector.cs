@@ -481,11 +481,13 @@ namespace Applitools
             return CreateUfgHttpWebRequest_(url, renderingInfo, proxy ?? Proxy, fullAgentId ?? AgentId, method, contentType, mediaType);
         }
 
-        public static HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy,
+        public HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy,
             string fullAgentId, string method = "POST", string contentType = "application/json", string mediaType = "application/json")
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
-            HttpWebRequest request = WebRequest.CreateHttp(uri);
+            HttpRestClient restClient = CreateHttpRestClient(uri);
+            HttpWebRequest request = (HttpWebRequest)restClient.WebRequestCreator.Create(uri);
+            //HttpWebRequest request =  WebRequest.CreateHttp(uri); // TODO - replace with factory
             if (proxy != null) request.Proxy = proxy;
             request.ContentType = contentType;
             request.MediaType = mediaType;
@@ -573,7 +575,6 @@ namespace Applitools
                 throw new EyesException("ApiKey is null.");
             }
             Logger.Verbose("enter");
-            //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
             HttpRestClient httpClient = CreateHttpRestClientFactory(ServerUrl);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
             httpClient.Proxy = Proxy;
@@ -609,7 +610,7 @@ namespace Applitools
                 screenshotBytes, "image/png", "image/png");
         }
 
-        public void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
         {
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Verbose("querying for existing resources for render id {0}", renderId);
@@ -617,7 +618,7 @@ namespace Applitools
             SendUFGAsyncRequest_(taskListener, request);
         }
 
-        private void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request)
+        protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
         {
             HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
               response =>
@@ -654,7 +655,7 @@ namespace Applitools
             return task;
         }
 
-        public void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
+        public virtual void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
         {
             ArgumentGuard.NotNull(requests, nameof(requests));
             Logger.Verbose("called with {0}", StringUtils.Concat(requests, ","));
