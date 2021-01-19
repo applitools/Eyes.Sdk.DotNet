@@ -28,3 +28,5 @@ TestResult.xml
 /Eyes.Selenium.DotNet/Properties/Resources/processPagePoll.js
 /Eyes.Selenium.DotNet/Properties/Resources/processPagePollForIE.js
 /coverage-tests/node_modules/
+/coverage-tests/test/Selenium/coverage/generic
+/coverage-tests/coverage-tests-metadata.json
