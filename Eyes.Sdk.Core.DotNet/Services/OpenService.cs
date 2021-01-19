@@ -9,7 +9,6 @@ namespace Applitools
     {
         private readonly TimeSpan TIME_TO_WAIT_FOR_OPEN = TimeSpan.FromMinutes(60);
 
-        private int concurrentSessions_;
         private int currentTestAmount_;
         private readonly int eyesConcurrency_;
         private bool isServerConcurrencyLimitReached_ = false;
@@ -126,7 +125,7 @@ namespace Applitools
 
         public int DecrementConcurrency()
         {
-            return Interlocked.Decrement(ref concurrentSessions_);
+            return Interlocked.Decrement(ref currentTestAmount_);
         }
     }
 }
