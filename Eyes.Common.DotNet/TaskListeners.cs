@@ -55,6 +55,7 @@ namespace Applitools
 
         private void OnFail_(Exception e)
         {
+            Exception = e;
             onFail_?.Invoke(e);
             sync_.Set();
         }
@@ -64,5 +65,7 @@ namespace Applitools
             if (!sync_.WaitOne(0)) sync_.WaitOne();
             return result_;
         }
+
+        public Exception Exception { get; private set; }
     }
 }
