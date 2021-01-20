@@ -96,7 +96,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 }
             }
             int browserCount = sconf.GetBrowsersInfo().Count;
-            Assert.Greater(browserCount, numOfBrowsers);
+            Assert.AreEqual(browserCount, numOfBrowsers * 2);
             Assert.AreEqual(browserCount, requests.Count);
         }
 
