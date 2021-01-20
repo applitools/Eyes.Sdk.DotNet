@@ -2,7 +2,7 @@
 
 namespace Applitools.VisualGrid
 {
-    public class RenderStatusResults : IRenderStatusResults
+    public class RenderStatusResults
     {
         public RenderStatus Status { get; set; } = RenderStatus.None;
         public string DomLocation { get; set; }

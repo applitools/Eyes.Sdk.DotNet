@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Applitools
 {
-    public abstract class RunningTest : EyesBase, IRunningTest
+    public abstract class RunningTest : EyesBase
     {
 #pragma warning disable IDE0052 // Remove unread private members
 #pragma warning disable CS0414 // Filed is assigned but its value is never used

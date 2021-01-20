@@ -1473,7 +1473,7 @@ namespace Applitools.Selenium
             };
         }
 
-        public IDictionary<string, IRunningTest> GetAllRunningTests()
+        public IDictionary<string, RunningTest> GetAllRunningTests()
         {
             throw new NotImplementedException();
         }

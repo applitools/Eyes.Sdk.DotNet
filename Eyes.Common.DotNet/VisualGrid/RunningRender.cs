@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Applitools.VisualGrid
 {
-    public class RunningRender : IRunningRender
+    public class RunningRender
     {
         public RunningRender()
         {

@@ -9,7 +9,7 @@ namespace Applitools
 
         void Check(params ICheckSettings[] checkSettings);
 
-        IDictionary<string, IRunningTest> GetAllRunningTests();
+        IDictionary<string, RunningTest> GetAllRunningTests();
         bool IsCompleted();
         IList<TestResultContainer> GetAllTestResults();
     }

@@ -38,7 +38,7 @@ namespace Applitools.Selenium.VisualGrid
             "return '//*[@'+atName+'=\"'+id+'\"]';";
 
         private readonly VisualGridRunner runner_;
-        private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
+        private readonly Dictionary<string, RunningTest> testList_ = new Dictionary<string, RunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private RenderingInfo renderingInfo_;
@@ -870,7 +870,7 @@ namespace Applitools.Selenium.VisualGrid
             return allResults;
         }
 
-        IDictionary<string, IRunningTest> IEyes.GetAllRunningTests()
+        IDictionary<string, RunningTest> IEyes.GetAllRunningTests()
         {
             return testList_;
         }
