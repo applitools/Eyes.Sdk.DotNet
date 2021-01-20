@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent
 {
-    interface ISeleniumCheckTarget : IScrollRootElementContainer//, IImplicitInitialization
+    interface ISeleniumCheckTarget : IScrollRootElementContainer
     {
         By GetTargetSelector();
 

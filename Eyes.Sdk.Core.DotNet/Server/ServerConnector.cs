@@ -335,26 +335,6 @@ namespace Applitools
             return sync.Get();
         }
 
-        //private void TryUploadImage_(TaskListener<bool> listener, MatchWindowData data)
-        //{
-        //    if (data.AppOutput.ScreenshotUrl != null)
-        //    {
-        //        listener.OnComplete(true);
-        //        return;
-        //    }
-
-        //    byte[] bytes = data.AppOutput.ScreenshotBytes;
-
-        //    UploadImage(new TaskListener<string>(
-        //            returnedUrl =>
-        //            {
-        //                data.AppOutput.ScreenshotUrl = returnedUrl;
-        //                listener.OnComplete(returnedUrl != null);
-        //            },
-        //            ex => listener.OnFail(ex)
-        //        ), bytes);
-        //}
-
         private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();

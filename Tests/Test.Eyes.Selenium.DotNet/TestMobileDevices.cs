@@ -10,8 +10,6 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using ScreenOrientation = OpenQA.Selenium.ScreenOrientation;
 
 namespace Applitools.Selenium.Tests
