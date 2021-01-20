@@ -1,22 +1,18 @@
-﻿using Applitools.VisualGrid;
-using NUnit.Framework;
-using OpenQA.Selenium;
-using System;
-using System.Threading;
-using OpenQA.Selenium.Chrome;
-using Applitools.Selenium;
+﻿using Applitools.Selenium;
 using Applitools.Tests.Utils;
-using Applitools.Utils.Geometry;
-using System.Collections.Generic;
+using Applitools.VisualGrid;
+using Newtonsoft.Json.Linq;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
-using OpenQA.Selenium.Edge;
-using OpenQA.Selenium.Safari;
 using OpenQA.Selenium.Remote;
-using System.Web;
-using System.Collections.Specialized;
-using Newtonsoft.Json.Linq;
+using OpenQA.Selenium.Safari;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Applitools.Generated.Selenium.Tests
 {
@@ -174,6 +170,7 @@ namespace Applitools.Generated.Selenium.Tests
             //eyes.AddProperty("ForceFPS", eyes.ForceFullPageScreenshot ? "true" : "false");
             //eyes.AddProperty("Agent ID", eyes.FullAgentId);
             eyes.HideScrollbars = true;
+            eyes.SetLogHandler(TestUtils.InitLogHandler());
         }
 
 

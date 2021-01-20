@@ -8,8 +8,7 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium;
 using Applitools.Appium;
 using Applitools.Generated.Selenium.Tests;
-using NUnit.Framework;
-using NUnit.Framework.Interfaces;
+using Applitools.Tests.Utils;
 
 namespace Applitools.Generated.Appium.Tests
 {
@@ -25,13 +24,14 @@ namespace Applitools.Generated.Appium.Tests
 		public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
 
 
-		protected void initEyes(Boolean isVisualGrid, Boolean isCSSMode)
+		protected void initEyes(bool isVisualGrid, bool isCSSMode)
 		{
 			eyes = new Applitools.Appium.Eyes();
 			eyes.MatchTimeout = TimeSpan.FromSeconds(10);
 			eyes.Batch = BatchInfo;
 			eyes.BranchName = "master";
 			eyes.SaveNewTests = false;
+			eyes.SetLogHandler(TestUtils.InitLogHandler());
 		}
 
 		protected void initDriver(string device, string app)
