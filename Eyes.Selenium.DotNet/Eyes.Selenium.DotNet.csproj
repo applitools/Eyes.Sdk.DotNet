@@ -29,10 +29,6 @@ To learn more, visit https://applitools.com/ .</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="VisualGrid\EyesConnector.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPoll.js" />
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPollForIE.js" />
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\pollResult.js" />
@@ -57,7 +53,6 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
-    <None Include="VisualGrid\EyesConnector.cs" />
   </ItemGroup>
 
   <ItemGroup>
