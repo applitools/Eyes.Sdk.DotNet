@@ -1,3 +1,19 @@
+## [Eyes.Common vNext]
+### Added
+- `SaveFailedTests` Configuration property
+- `SessionStartInfo` moved here and was added `AgentSessionId` property
+- `TestStatusResult` enum was added `NotOpened`
+
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Made most communication calls asynchronous
+
+## [Eyes.Selenium vNext]
+### Updated
+- `dom-snapshot` script updated to version 4.4.8
+- Ultrafast Grid: XPath to elements is much smaller now and more robust
+- Ultrafast Grid: Performance improvements in CSS resource collection
+
 ## [Eyes.Images 2.21] - 2021-01-12
 ### Updated
 - Match to latest Eyes.Sdk.Core
