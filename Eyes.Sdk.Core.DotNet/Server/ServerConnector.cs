@@ -131,7 +131,7 @@ namespace Applitools
         // for testing purposes only
         internal RunningSession StartSession(SessionStartInfo sessionStartInfo)
         {
-            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>();
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
             StartSessionInternal(listener, sessionStartInfo);
             return listener.Get();
         }
@@ -330,7 +330,7 @@ namespace Applitools
         /// <param name="data"></param>
         public virtual MatchResult MatchWindow(MatchWindowData data)
         {
-            SyncTaskListener<MatchResult> sync = new SyncTaskListener<MatchResult>(null, e => throw e);
+            SyncTaskListener<MatchResult> sync = new SyncTaskListener<MatchResult>(null, e => throw e, Logger);
             MatchWindow(sync, data);
             return sync.Get();
         }

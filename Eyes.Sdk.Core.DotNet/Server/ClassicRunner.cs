@@ -51,14 +51,14 @@ namespace Applitools
 
         public RunningSession Open(SessionStartInfo sessionStartInfo)
         {
-            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(null, null);
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
             openService_.Operate(sessionStartInfo, listener);
             return listener.Get();
         }
 
         public MatchResult Check(MatchWindowData matchWindowData)
         {
-            SyncTaskListener<bool?> listener = new SyncTaskListener<bool?>();
+            SyncTaskListener<bool?> listener = new SyncTaskListener<bool?>(logger: Logger);
             checkService_.TryUploadImage(matchWindowData, new TaskListener(
                 () => listener.OnComplete(true),
                 e => listener.OnFail(e)
@@ -69,7 +69,7 @@ namespace Applitools
                 throw new EyesException("Failed performing match with the server");
             }
 
-            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>();
+            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>(logger: Logger);
             checkService_.MatchWindow(matchWindowData, matchListener);
             return matchListener.Get();
         }
@@ -77,7 +77,7 @@ namespace Applitools
 
         public TestResults Close(SessionStopInfo sessionStopInfo)
         {
-            SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>();
+            SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger);
             closeService_.Operate(sessionStopInfo, listener);
             return listener.Get();
         }

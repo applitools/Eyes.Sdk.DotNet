@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Applitools
@@ -34,15 +35,21 @@ namespace Applitools
         private Action<T> onComplete_;
         private Action<Exception> onFail_;
         private AutoResetEvent sync_;
+        private Logger logger_;
+        private string caller_;
         private T result_;
 
-        public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null)
+        public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null,
+            Logger logger = null, [CallerMemberName] string callingMember = null)
             : base(onComplete, onFail)
         {
             onComplete_ = onComplete;
             OnComplete = OnComplete_;
             onFail_ = onFail;
             OnFail = OnFail_;
+            logger_ = logger;
+            caller_ = callingMember;
+            logger?.Log("caller: {0}", callingMember);
             sync_ = new AutoResetEvent(false);
         }
 
@@ -55,6 +62,7 @@ namespace Applitools
 
         private void OnFail_(Exception e)
         {
+            logger_?.Log("Error: {0}", e.ToString());
             Exception = e;
             onFail_?.Invoke(e);
             sync_.Set();
@@ -62,7 +70,9 @@ namespace Applitools
 
         public T Get()
         {
+            logger_?.Log("Waiting for result for {0}...", caller_);
             if (!sync_.WaitOne(0)) sync_.WaitOne();
+            logger_?.Log("Result arrived for {0}: {1}", caller_, result_);
             return result_;
         }
 

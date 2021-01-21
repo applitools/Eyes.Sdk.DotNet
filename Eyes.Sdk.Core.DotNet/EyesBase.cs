@@ -404,7 +404,7 @@ namespace Applitools
                 var save = (isNewSession && Configuration.SaveNewTests) || (!isNewSession && (Configuration.SaveDiffs ?? false));
 
                 SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, false, save);
-                SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>();
+                SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger);
                 ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
                 TestResults results = syncTaskListener.Get();
                 results.IsNew = isNewSession;
@@ -524,7 +524,7 @@ namespace Applitools
                 try
                 {
                     SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, true, false);
-                    SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>();
+                    SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger);
                     ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
                     TestResults results = syncTaskListener.Get();
                     results.IsNew = runningSession_.IsNewSession;
@@ -856,7 +856,7 @@ namespace Applitools
         private string TryPostDomCapture_(string domJson)
         {
             if (domJson == null) return null;
-            SyncTaskListener<string> syncListener = new SyncTaskListener<string>();
+            SyncTaskListener<string> syncListener = new SyncTaskListener<string>(logger: Logger);
             ServerConnector.PostDomCapture(syncListener, domJson);
             return syncListener.Get();
         }
