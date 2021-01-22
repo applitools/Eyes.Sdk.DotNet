@@ -10,7 +10,7 @@ packages/
 /packages
 /testrunner
 *.user
-/Eyes.Selenium.DotNet/Properties/NodeResources/node_modules/
+# /Eyes.Selenium.DotNet/Properties/NodeResources/node_modules/
 /Eyes.Selenium.DotNet/Properties/Resources/processResource.js
 /.idea/
 /.vscode/
