@@ -7,7 +7,7 @@ namespace Applitools.VisualGrid
 {
     public class RenderInfo : IEquatable<RenderInfo>
     {
-        public RenderInfo(int width, int height, SizeMode target, VisualGridSelector selector, 
+        public RenderInfo(int width, int height, SizeMode target, VisualGridSelector selector,
             Rectangle? region, EmulationBaseInfo emulationInfo, IosDeviceInfo iosDeviceInfo)
         {
             Width = width;
@@ -18,6 +18,8 @@ namespace Applitools.VisualGrid
             EmulationInfo = emulationInfo;
             IosDeviceInfo = iosDeviceInfo;
         }
+
+        public RenderInfo() { }
 
         public int Width { get; set; }
         public int Height { get; set; }
