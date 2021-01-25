@@ -17,6 +17,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -642,30 +643,38 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
-            IConfiguration config, IVisualGridRunner runner, EyesWebDriver driver, Logger logger)
+            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger)
         {
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
+            bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
+            
             int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {
                 serializeResources = true,
                 //skipResources = runner.CachedBlobsURLs.Keys,
                 dontFetchResources = config.DisableBrowserFetching,
-                chunkByteLength
+                chunkByteLength,
+                //uniqueUrl = "(url, query) => url"
             };
 
             object pollingArguments = new { chunkByteLength };
 
             string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
+            if (keepOriginalUrls)
+            {
+                Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);
+                result = removeQueryParameter.Replace(result, string.Empty);
+            }
             FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
             AnalyzeFrameData_(frameData, userAgent, config, runner, switchTo, driver, logger);
             return frameData;
         }
 
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
-            IVisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
+            VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
             FrameChain frameChain = driver.GetFrameChain().Clone();
             foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
