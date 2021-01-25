@@ -320,10 +320,8 @@ namespace Applitools.Selenium.Tests
                     }
                 }
             }
-            else
-            {
-                runner = useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
-            }
+                
+            runner = runner ?? (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner());
 
             Eyes eyes = new Eyes(runner);
 
