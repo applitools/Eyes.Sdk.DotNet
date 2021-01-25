@@ -15,13 +15,15 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestFullWindowInCorrectLocationAfterRetry()
         {
-            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory();
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webdriverProvider);
             Eyes eyes = new Eyes(serverConnectorFactory);
             eyes.Batch = TestDataProvider.BatchInfo;
             TestUtils.SetupLogging(eyes);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
             mockServerConnector.AsExcepted = false;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
             driver.Url = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
             try
             {

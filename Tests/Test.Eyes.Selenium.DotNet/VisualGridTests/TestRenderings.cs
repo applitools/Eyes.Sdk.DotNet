@@ -47,7 +47,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void ViewportsTest()
         {
-            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory();
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webdriverProvider);
             VisualGridRunner runner = new VisualGridRunner(30, nameof(ViewportsTest), serverConnectorFactory);
             Eyes eyes = new Eyes(runner);
 
@@ -72,8 +73,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 numOfBrowsers++;
             }
             eyes.SetConfiguration(sconf);
-
+            
             ChromeDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
             try
             {
                 eyes.Open(driver);

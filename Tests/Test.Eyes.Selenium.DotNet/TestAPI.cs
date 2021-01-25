@@ -212,10 +212,12 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestReplaceMatchedStep()
         {
-            Eyes eyes = new Eyes(new MockServerConnectorFactory());
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            Eyes eyes = new Eyes(new MockServerConnectorFactory(webdriverProvider));
             TestUtils.SetupLogging(eyes);
             eyes.Batch = TestDataProvider.BatchInfo;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
             mockServerConnector.AsExcepted = false;
             try
@@ -238,10 +240,12 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestNoReplaceMatchedStep()
         {
-            Eyes eyes = new Eyes(new MockServerConnectorFactory());
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            Eyes eyes = new Eyes(new MockServerConnectorFactory(webdriverProvider));
             TestUtils.SetupLogging(eyes);
             eyes.Batch = TestDataProvider.BatchInfo;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
             mockServerConnector.AsExcepted = false;
             try

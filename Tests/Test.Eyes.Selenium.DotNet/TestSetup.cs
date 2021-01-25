@@ -1,4 +1,5 @@
 ﻿using Applitools.Metadata;
+using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
@@ -47,6 +48,7 @@ namespace Applitools.Selenium.Tests
             public string TestName { get; }
             public string TestNameAsFilename { get; set; }
             public string ExpectedVGOutput { get; set; }
+            public WebDriverProvider WebDriverProvider { get; internal set; }
         }
 
         protected DriverOptions options_;
@@ -239,6 +241,7 @@ namespace Applitools.Selenium.Tests
 
             testDataByTestId_[TestContext.CurrentContext.Test.ID].WrappedDriver = driver;
             testDataByTestId_[TestContext.CurrentContext.Test.ID].WebDriver = webDriver;
+            testDataByTestId_[TestContext.CurrentContext.Test.ID].WebDriverProvider.SetDriver(driver);
         }
 
         private string InitTestName_(ref string testName)
@@ -302,7 +305,7 @@ namespace Applitools.Selenium.Tests
             EyesRunner runner = null;
             string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
             string expectedVGOutput = null;
-
+            Mock.WebDriverProvider webDriverProvider = null;
             if (useVisualGrid_)
             {
                 if (RUNS_ON_CI || USE_MOCK_VG)
@@ -316,7 +319,8 @@ namespace Applitools.Selenium.Tests
                         {
                             expectedVGOutput = reader.ReadToEnd();
                         }
-                        runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory());
+                        webDriverProvider = new Mock.WebDriverProvider();
+                        runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory(webDriverProvider));
                     }
                 }
             }
@@ -329,6 +333,7 @@ namespace Applitools.Selenium.Tests
             testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
             testContextReqs.TestNameAsFilename = testNameAsFilename;
             testContextReqs.ExpectedVGOutput = expectedVGOutput;
+            testContextReqs.WebDriverProvider = webDriverProvider;
 
             string serverUrl = Environment.GetEnvironmentVariable("APPLITOOLS_SERVER_URL");
             if (!string.IsNullOrEmpty(serverUrl))
@@ -487,7 +492,6 @@ namespace Applitools.Selenium.Tests
                     Thread.Sleep(1000);
                 }
                 GetEyes()?.Abort();
-                GetWebDriver()?.Quit();
             }
         }
 

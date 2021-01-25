@@ -4,8 +4,10 @@ using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -14,11 +16,12 @@ namespace Applitools.Selenium.Tests.Mock
 {
     class MockServerConnector : ServerConnector
     {
-        public MockServerConnector(Logger logger, Uri serverUrl)
+        public MockServerConnector(Logger logger, Uri serverUrl, WebDriverProvider driverProvider)
             : base(logger, new Uri("http://some.url.com"))
         {
             logger.Verbose("created");
             HttpRestClientFactory = new MockHttpRestClientFactory(Logger);
+            driverProvider_ = driverProvider;
         }
 
         internal List<MatchWindowData> MatchWindowCalls { get; } = new List<MatchWindowData>();
@@ -26,8 +29,10 @@ namespace Applitools.Selenium.Tests.Mock
         internal Dictionary<string, RunningSession> Sessions { get; } = new Dictionary<string, RunningSession>();
         internal Dictionary<string, SessionStartInfo> SessionsStartInfo { get; } = new Dictionary<string, SessionStartInfo>();
         internal List<string> SessionIds { get; } = new List<string>();
-
+        private Dictionary<string, JToken> renderRequestsById_ = new Dictionary<string, JToken>();
         public bool AsExcepted { get; set; } = true;
+        
+        private WebDriverProvider driverProvider_;
 
         public List<string> RenderRequests { get; } = new List<string>();
 
@@ -119,9 +124,11 @@ namespace Applitools.Selenium.Tests.Mock
                 RenderRequests.Add(requestJsonStr);
                 List<RunningRender> response = new List<RunningRender>();
                 JArray list = (JArray)JsonConvert.DeserializeObject(requestJsonStr);
-                for (int i = 0; i < list.Count; ++i)
+                foreach (JToken item in list)
                 {
-                    response.Add(new RunningRender(i.ToString(), "abc", RenderStatus.Rendered, null, false));
+                    string id = Guid.NewGuid().ToString();
+                    renderRequestsById_.Add(id, item);
+                    response.Add(new RunningRender(id, "abc", RenderStatus.Rendered, null, false));
                 }
                 taskListener.OnComplete(response as T);
             }
@@ -136,11 +143,26 @@ namespace Applitools.Selenium.Tests.Mock
             List<RenderStatusResults> results = new List<RenderStatusResults>();
             foreach (string renderId in renderIds)
             {
+                List<VGRegion> selectorRegions = new List<VGRegion>();
+                JToken request = renderRequestsById_[renderId];
+                JToken selectors = request["selectorsToFindRegionsFor"];
+                if (selectors != null && selectors is JArray selectorsArr)
+                {
+                    IWebDriver driver = driverProvider_.ProvideDriver();
+                    foreach (JObject selectorToken in selectorsArr)
+                    {
+                        string selector = selectorToken["selector"].Value<string>();
+                        IWebElement elem = driver.FindElement(By.XPath(selector));
+                        Rectangle r = EyesSeleniumUtils.GetElementBounds(elem);
+                        selectorRegions.Add(new VGRegion() { X = r.X, Y = r.Y, Width = r.Width, Height = r.Height });
+                    }
+                }
                 RenderStatusResults result = new RenderStatusResults()
                 {
                     RenderId = renderId,
                     Status = RenderStatus.Rendered,
-                    ImageLocation = "http://image.some.url.com/" + renderId
+                    ImageLocation = "http://image.some.url.com/" + renderId,
+                    SelectorRegions = selectorRegions.ToArray()
                 };
                 results.Add(result);
             }
