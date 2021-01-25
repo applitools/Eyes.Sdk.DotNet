@@ -324,7 +324,7 @@ namespace Applitools.Selenium.Tests
                     }
                 }
             }
-                
+
             runner = runner ?? (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner());
 
             Eyes eyes = new Eyes(runner);
@@ -483,6 +483,7 @@ namespace Applitools.Selenium.Tests
             }
             finally
             {
+                GetWebDriver()?.Quit();
                 Logger logger = GetEyes()?.Logger;
                 if (logger != null)
                 {
