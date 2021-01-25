@@ -863,6 +863,10 @@ namespace Applitools.Selenium.VisualGrid
             {
                 if (!runningTest.IsCompleted)
                 {
+                    if (runner_.GetError() != null)
+                    {
+                        throw new EyesException("Execution crashed", runner_.GetError());
+                    }
                     return null;
                 }
 

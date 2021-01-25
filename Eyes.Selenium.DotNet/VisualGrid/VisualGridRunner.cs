@@ -256,6 +256,11 @@ namespace Applitools.VisualGrid
         }
 
         internal IEnumerable<IEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
+  
+        internal Exception GetError()
+        {
+            return eyesServiceRunner_.Error;
+        }
 
         public object GetConcurrencyLog()
         {
