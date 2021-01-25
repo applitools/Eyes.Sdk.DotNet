@@ -10,7 +10,9 @@ namespace Applitools.VisualGrid
             Selector = xpath;
             Category = category;
         }
-        public string Selector { get; }
+
+        public VisualGridSelector() { }
+        public string Selector { get; set; }
 
         [JsonIgnore]
         public object Category { get; }
