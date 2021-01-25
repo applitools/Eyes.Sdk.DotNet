@@ -34,7 +34,9 @@ namespace Applitools.Selenium.VisualGrid
         private static readonly string GET_ELEMENT_XPATH_JS =
             "const atName='data-applitools-element-id'; var el=arguments[0];" +
             "if (el.hasAttribute(atName)) { var id = el.getAttribute(atName) } " +
-            "else { var id = window.performance.now(); el.setAttribute(atName, id); }" +
+            "else { window.APPLITOOLS_ELEMENT_ID = window.APPLITOOLS_ELEMENT_ID || 0; " +
+            " window.APPLITOOLS_ELEMENT_ID++; var id = window.APPLITOOLS_ELEMENT_ID;" +
+            " el.setAttribute(atName, id); }" +
             "return '//*[@'+atName+'=\"'+id+'\"]';";
 
         private readonly VisualGridRunner runner_;
