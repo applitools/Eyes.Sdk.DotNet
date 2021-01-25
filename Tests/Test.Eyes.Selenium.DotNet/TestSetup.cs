@@ -164,51 +164,13 @@ namespace Applitools.Selenium.Tests
 
         private void Init_(string testName)
         {
+            string testNameWithArguments = InitTestName_(ref testName);
+
             // Initialize the eyes SDK and set your private API key.
-            Eyes eyes = InitEyes_();
-
-            string testNameWithArguments = testName;
-            foreach(object argValue in TestContext.CurrentContext.Test.Arguments)
-            {
-                testNameWithArguments += "_" + argValue;
-            }
-
-            if (eyes.runner_ is VisualGridRunner)
-            {
-                testName += "_VG";
-                testNameWithArguments += "_VG";
-            }
-            else if (stitchMode_ == StitchModes.Scroll)
-            {
-                testName += "_Scroll";
-                testNameWithArguments += "_Scroll";
-            }
+            Eyes eyes = InitEyes_(testName);
 
             TestUtils.SetupLogging(eyes, testNameWithArguments);
             eyes.Logger.Log("initializing test: {0}", TestContext.CurrentContext.Test.FullName);
-            SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
-            testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
-
-            //if ((eyes.runner_ is VisualGridRunner && RUNS_ON_CI) || USE_MOCK_VG)
-            //{
-            //    eyes.Logger.Log("using VG mock eyes connector");
-            //    string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
-            //    testContextReqs.TestNameAsFilename = testNameAsFilename;
-            //    Assembly thisAssembly = Assembly.GetCallingAssembly();
-            //    Stream expectedOutputJsonStream = thisAssembly.GetManifestResourceStream("Test.Eyes.Selenium.DotNet.Resources.VGTests." + testNameAsFilename + ".json");
-            //    if (expectedOutputJsonStream != null)
-            //    {
-            //        using (StreamReader reader = new StreamReader(expectedOutputJsonStream))
-            //        {
-            //            testContextReqs.ExpectedVGOutput = reader.ReadToEnd();
-            //        }
-            //        eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
-            //    }
-            //}
-            //else
-            //{
-            //    eyes.Logger.Log("using regular VG eyes connector");
-            //}
 
             string seleniumServerUrl = SetupSeleniumServer(testName);
             bool isWellFormedUri = Uri.IsWellFormedUriString(seleniumServerUrl, UriKind.Absolute);
@@ -279,6 +241,28 @@ namespace Applitools.Selenium.Tests
             testDataByTestId_[TestContext.CurrentContext.Test.ID].WebDriver = webDriver;
         }
 
+        private string InitTestName_(ref string testName)
+        {
+            string testNameWithArguments = testName;
+            foreach (object argValue in TestContext.CurrentContext.Test.Arguments)
+            {
+                testNameWithArguments += "_" + argValue;
+            }
+
+            if (useVisualGrid_)
+            {
+                testName += "_VG";
+                testNameWithArguments += "_VG";
+            }
+            else if (stitchMode_ == StitchModes.Scroll)
+            {
+                testName += "_Scroll";
+                testNameWithArguments += "_Scroll";
+            }
+
+            return testNameWithArguments;
+        }
+
         protected virtual void BeforeOpen(Eyes eyes) { }
 
         public void AddExpectedProperty(string propertyName, object expectedValue)
@@ -313,10 +297,40 @@ namespace Applitools.Selenium.Tests
             return driver;
         }
 
-        private Eyes InitEyes_(bool? forceFullPageScreenshot = null)
+        private Eyes InitEyes_(string testName, bool? forceFullPageScreenshot = null)
         {
-            EyesRunner runner = useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
+            EyesRunner runner = null;
+            string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
+            string expectedVGOutput = null;
+
+            if (useVisualGrid_)
+            {
+                if (RUNS_ON_CI || USE_MOCK_VG)
+                {
+                    //eyes.Logger.Log("using VG mock eyes connector");
+                    Assembly thisAssembly = Assembly.GetCallingAssembly();
+                    Stream expectedOutputJsonStream = thisAssembly.GetManifestResourceStream("Test.Eyes.Selenium.DotNet.Resources.VGTests." + testNameAsFilename + ".json");
+                    if (expectedOutputJsonStream != null)
+                    {
+                        using (StreamReader reader = new StreamReader(expectedOutputJsonStream))
+                        {
+                            expectedVGOutput = reader.ReadToEnd();
+                        }
+                        runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory());
+                    }
+                }
+            }
+            else
+            {
+                runner = useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
+            }
+
             Eyes eyes = new Eyes(runner);
+
+            SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
+            testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
+            testContextReqs.TestNameAsFilename = testNameAsFilename;
+            testContextReqs.ExpectedVGOutput = expectedVGOutput;
 
             string serverUrl = Environment.GetEnvironmentVariable("APPLITOOLS_SERVER_URL");
             if (!string.IsNullOrEmpty(serverUrl))
@@ -438,19 +452,25 @@ namespace Applitools.Selenium.Tests
                     }
                     testData.Eyes.Logger.Log("Mismatches: " + results.Mismatches);
                 }
-                //if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes && visualGridEyes.eyesConnector_ is Mock.MockEyesConnector mockEyesConnector)
-                //{
-                //    RenderRequest[] lastRequests = mockEyesConnector.LastRenderRequests;
-                //    string serializedRequests = JsonUtils.Serialize(lastRequests);
-                //    if (!TestUtils.RUNS_ON_CI)
-                //    {
-                //        string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm");
-                //        string directory = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "VGResults", dateString);
-                //        Directory.CreateDirectory(directory);
-                //        File.WriteAllText(Path.Combine(directory, testData.TestNameAsFilename + ".json"), serializedRequests);
-                //    }
-                //    Assert.AreEqual(testData.ExpectedVGOutput, serializedRequests, "VG Request DOM JSON");
-                //}
+                if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes &&
+                    visualGridEyes.runner_.ServerConnector is Mock.MockServerConnector mockServerConnector)
+                {
+                    List<RenderRequest> requests = new List<RenderRequest>();
+                    foreach (string requestJson in mockServerConnector.RenderRequests)
+                    {
+                        RenderRequest[] reqs = Newtonsoft.Json.JsonConvert.DeserializeObject<RenderRequest[]>(requestJson);
+                        requests.AddRange(reqs);
+                    }
+                    string serializedRequests = JsonUtils.Serialize(requests);
+                    if (!TestUtils.RUNS_ON_CI)
+                    {
+                        string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm");
+                        string directory = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "VGResults", dateString);
+                        Directory.CreateDirectory(directory);
+                        File.WriteAllText(Path.Combine(directory, testData.TestNameAsFilename + ".json"), serializedRequests);
+                    }
+                    Assert.AreEqual(testData.ExpectedVGOutput, serializedRequests, "VG Request DOM JSON");
+                }
             }
             catch (Exception ex)
             {
@@ -461,7 +481,8 @@ namespace Applitools.Selenium.Tests
             finally
             {
                 Logger logger = GetEyes()?.Logger;
-                if (logger != null) {
+                if (logger != null)
+                {
                     logger.GetILogHandler()?.Open();
                     logger.Log("Test finished.");
                     logger.GetILogHandler()?.Close();

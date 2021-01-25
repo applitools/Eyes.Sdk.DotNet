@@ -39,7 +39,7 @@ namespace Applitools.Selenium.VisualGrid
             " el.setAttribute(atName, id); }" +
             "return '//*[@'+atName+'=\"'+id+'\"]';";
 
-        private readonly VisualGridRunner runner_;
+        internal readonly VisualGridRunner runner_;
         private readonly Dictionary<string, RunningTest> testList_ = new Dictionary<string, RunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
