@@ -58,6 +58,11 @@ namespace Applitools.VisualGrid
                         case BrowserType.EDGE_CHROMIUM_ONE_VERSION_BACK:
                         case BrowserType.EDGE_CHROMIUM_TWO_VERSIONS_BACK:
                             return "windows";
+                        case BrowserType.SAFARI:
+                        case BrowserType.SAFARI_ONE_VERSION_BACK:
+                        case BrowserType.SAFARI_TWO_VERSIONS_BACK:
+                        case BrowserType.SAFARI_EARLY_ACCESS:
+                            return "mac os x";
                     }
                 }
                 return "linux";
