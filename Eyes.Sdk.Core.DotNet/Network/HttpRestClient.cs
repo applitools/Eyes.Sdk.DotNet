@@ -39,7 +39,7 @@ namespace Applitools.Utils
         /// to use the default serializer.</param>
         /// <param name="agentId">The full agent ID of the SDK.</param>
         /// <param name="serverUrl">Server's base URL</param>
-        public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null)
+        public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null, Logger logger = null)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
 
@@ -47,6 +47,7 @@ namespace Applitools.Utils
             json_ = jsonSerializer ?? JsonUtils.CreateSerializer(false, false);
             AgentId = agentId;
             ConnectionLimit = 10;
+            Logger = logger;
             Timeout = TimeSpan.FromMinutes(10);
         }
 
@@ -111,6 +112,7 @@ namespace Applitools.Utils
         /// Excess connections will block.
         /// </summary>
         public int ConnectionLimit { get; set; }
+        public Logger Logger { get; }
 
         /// <summary>
         /// Formats HTTP request URIs.

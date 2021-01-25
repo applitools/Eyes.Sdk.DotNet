@@ -652,7 +652,7 @@ namespace Applitools
             SendUFGAsyncRequest_(renderListener, request);
         }
 
-        public void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
+        public virtual void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
             string idsAsString = string.Join(",", renderIds);

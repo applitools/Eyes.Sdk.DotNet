@@ -17,7 +17,7 @@ namespace Applitools.Selenium.Tests.Mock
             : base(logger, new Uri("http://some.url.com"))
         {
             logger.Verbose("created");
-            HttpRestClientFactory = new MockHttpRestClientFactory();
+            HttpRestClientFactory = new MockHttpRestClientFactory(Logger);
         }
 
         internal List<MatchWindowData> MatchWindowCalls { get; } = new List<MatchWindowData>();
@@ -130,6 +130,22 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
+        public override void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
+        {
+            List<RenderStatusResults> results = new List<RenderStatusResults>();
+            foreach (string renderId in renderIds)
+            {
+                RenderStatusResults result = new RenderStatusResults()
+                {
+                    RenderId = renderId,
+                    Status = RenderStatus.Rendered,
+                    ImageLocation = "http://image.some.url.com/" + renderId
+                };
+                results.Add(result);
+            }
+            taskListener.OnComplete(results);
+        }
+
         public override void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
         {
             IList<JobInfo> jobs = new List<JobInfo>();
@@ -158,10 +174,17 @@ namespace Applitools.Selenium.Tests.Mock
 
     class MockHttpRestClientFactory : IHttpRestClientFactory
     {
+        public MockHttpRestClientFactory(Logger logger)
+        {
+            Logger = logger;
+        }
+
+        public Logger Logger { get; set; }
+
         public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
         {
-            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer);
-            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator();
+            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger);
+            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator(Logger);
             return mockedHttpRestClient;
         }
     }
@@ -170,8 +193,16 @@ namespace Applitools.Selenium.Tests.Mock
     {
         private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
 
+        public MockWebRequestCreator(Logger logger)
+        {
+            Logger = logger;
+        }
+
+        public Logger Logger { get; }
+
         public WebRequest Create(Uri uri)
         {
+            Logger?.Verbose("creating mock request for URI: {0}", uri);
             HttpWebRequest webRequest = Substitute.For<HttpWebRequest>();
             webRequest.RequestUri.Returns(uri);
             webRequest.Headers = new WebHeaderCollection();
@@ -181,6 +212,7 @@ namespace Applitools.Selenium.Tests.Mock
                        {
                            AsyncCallback cb = ci.Arg<AsyncCallback>();
                            HttpWebRequest req = ci.Arg<HttpWebRequest>();
+                           Logger?.Verbose("BeginGerResponse called with method {0} for URI: {1}", req.Method, req.RequestUri);
                            cb.Invoke(new MockAsyncResult(req));
                            return null;
                        });
@@ -190,26 +222,30 @@ namespace Applitools.Selenium.Tests.Mock
                 {
                     MockAsyncResult mockAsyncResult = ci.Arg<MockAsyncResult>();
                     HttpWebRequest webRequest = ((HttpWebRequest)mockAsyncResult.AsyncState);
+                    string method = webRequest.Method;
                     Uri uri = webRequest.RequestUri;
+                    Logger?.Verbose("EndGerResponse called for request with method {0} for URI: {1}", method, uri);
                     HttpWebResponse webResponse = Substitute.For<HttpWebResponse>();
                     WebHeaderCollection headers = new WebHeaderCollection();
                     webResponse.Headers.Returns(headers);
-                    if (webRequest.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
+                    if (method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
                         uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
                     {
                         webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
                         headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "status");
                     }
-                    else if (webRequest.Method.Equals("GET", StringComparison.OrdinalIgnoreCase) &&
+                    else if (method.Equals("GET", StringComparison.OrdinalIgnoreCase) &&
                         uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
                     {
                         webResponse.StatusCode.Returns(HttpStatusCode.Created);
                         headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "created");
                     }
-                    else if (webRequest.Method.Equals("DELETE", StringComparison.OrdinalIgnoreCase) &&
+                    else if (method.Equals("DELETE", StringComparison.OrdinalIgnoreCase) &&
                         uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "created", StringComparison.OrdinalIgnoreCase))
                     {
                         webResponse.StatusCode.Returns(HttpStatusCode.OK);
+                        Stream stream = new MemoryStream(Encoding.UTF8.GetBytes("{\"AsExpected\":true}"));
+                        webResponse.GetResponseStream().Returns(stream);
                         headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
                     }
                     else
