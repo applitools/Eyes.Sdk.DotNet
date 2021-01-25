@@ -1,4 +1,5 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Ufg;
+using Applitools.Utils;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -151,7 +152,9 @@ namespace Applitools.Selenium.Tests.Mock
             IList<JobInfo> jobs = new List<JobInfo>();
             for (int i = 0; i < browserInfos?.Count; ++i)
             {
-                jobs.Add(new JobInfo() { EyesEnvironment = "MockEnvironment", Renderer = "MockRenderer" });
+                RenderRequest request = (RenderRequest)browserInfos[i];
+                string renderer = request.Browser.Name.GetAttribute<System.Runtime.Serialization.EnumMemberAttribute>().Value;
+                jobs.Add(new JobInfo() { EyesEnvironment = "MockEnvironment", Renderer = renderer });
             }
             listener.OnComplete(jobs);
         }
