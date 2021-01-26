@@ -9,6 +9,7 @@ using System.Threading;
 using System.Runtime.Versioning;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 
 namespace Applitools.Utils
 {
@@ -103,7 +104,8 @@ namespace Applitools.Utils
                 int count;
                 long maxPosition = maxLength - bufferSize;
                 bool stillReading = true;
-                while (stillReading && (count = stream.Read(array, 0, array.Length)) != 0)
+                NetworkStream networkStream = stream as NetworkStream;
+                while (stillReading && (networkStream?.DataAvailable ?? true) && (count = stream.Read(array, 0, array.Length)) != 0)
                 {
                     if (maxLength > 0 && ms.Position >= maxPosition)
                     {
