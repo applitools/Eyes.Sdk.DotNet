@@ -11,7 +11,12 @@ namespace Applitools
     class MockServerConnector : ServerConnector
     {
         public MockServerConnector(Logger logger)
-            : base(logger, new Uri("http://some.url.com"))
+            : this(logger, new Uri("http://some.url.com"))
+        {
+        }
+
+        public MockServerConnector(Logger logger, Uri serverUrl)
+            : base(logger, serverUrl)
         {
             logger.Verbose("created");
             HttpRestClientFactory = new MockHttpRestClientFactory(Logger);

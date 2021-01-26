@@ -28,7 +28,7 @@ namespace Applitools.Tests
             enabledBatchClose.SetUrl(serverUrl2);
             Assert.AreEqual(serverUrl2, enabledBatchClose.ServerUrl);
 
-            MockServerConnector serverConnector = new MockServerConnector(logger);
+            MockServerConnector serverConnector = new MockServerConnector(logger, null);
             enabledBatchClose.serverConnector_ = serverConnector;
 
             enabledBatchClose.Close();
