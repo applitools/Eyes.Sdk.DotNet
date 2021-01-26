@@ -248,17 +248,12 @@ namespace Applitools
         public virtual void CloseBatch(string batchId, Uri url)
         {
             ArgumentGuard.NotNull(batchId, nameof(batchId));
-
-            HttpRestClient httpClient = httpClient_;
-            if (httpClient.ServerUrl != url)
-            {
-                httpClient = httpClient_.Clone();
-                httpClient.ServerUrl = url;
-            }
+            EnsureHttpClient_();
+            HttpRestClient httpClient = CloneHttpClient_(url);
             HttpWebResponse response = null;
             try
             {
-                response = httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
+                response = CloseBatchImpl_(batchId, httpClient);
             }
             catch (Exception ex)
             {
@@ -270,6 +265,22 @@ namespace Applitools
             }
         }
 
+        protected virtual HttpWebResponse CloseBatchImpl_(string batchId, HttpRestClient httpClient)
+        {
+            return httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
+        }
+
+        private HttpRestClient CloneHttpClient_(Uri url)
+        {
+            HttpRestClient httpClient = httpClient_;
+            if (httpClient.ServerUrl != url)
+            {
+                httpClient = httpClient_.Clone();
+                httpClient.ServerUrl = url;
+            }
+
+            return httpClient;
+        }
 
         public void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData data)
         {
