@@ -1,5 +1,4 @@
-﻿using Applitools.Ufg;
-using Applitools.VisualGrid;
+﻿using Applitools.VisualGrid;
 using Applitools.Fluent;
 using System;
 using System.Collections.Generic;
@@ -175,12 +174,12 @@ namespace Applitools
             string agentSetupStr = eyes.GetAgentSetupString();
 
             List<Trigger> userInputs = new List<Trigger>();
-            CollectRegions_(imageMatchSettings, userInputs, regions, regionSelectors, userActions, appOutput.AppOutput.Location);
-            CollectRegions_(imageMatchSettings, checkSettingsInternal, appOutput.AppOutput.Location);
+            CollectRegions(imageMatchSettings, userInputs, regions, regionSelectors, userActions, appOutput.AppOutput.Location);
+            CollectRegions(imageMatchSettings, checkSettingsInternal);
             return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
         }
 
-        private void CollectRegions_(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal, Location location)
+        public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
         {
             imageMatchSettings.Ignore = ConvertSimpleRegions(checkSettingsInternal.GetIgnoreRegions(), imageMatchSettings.Ignore);
             imageMatchSettings.Content = ConvertSimpleRegions(checkSettingsInternal.GetContentRegions(), imageMatchSettings.Content);
@@ -190,7 +189,7 @@ namespace Applitools
             imageMatchSettings.Accessibility = ConvertAccessibilityRegions(checkSettingsInternal.GetAccessibilityRegions(), imageMatchSettings.Accessibility);
         }
 
-        private AccessibilityRegionByRectangle[] ConvertAccessibilityRegions(IGetAccessibilityRegion[] accessibilityRegions, AccessibilityRegionByRectangle[] currentRegions)
+        private static AccessibilityRegionByRectangle[] ConvertAccessibilityRegions(IGetAccessibilityRegion[] accessibilityRegions, AccessibilityRegionByRectangle[] currentRegions)
         {
             List<AccessibilityRegionByRectangle> mutableRegions = new List<AccessibilityRegionByRectangle>();
             if (currentRegions != null)
@@ -209,7 +208,7 @@ namespace Applitools
             return mutableRegions.ToArray();
         }
 
-        private FloatingMatchSettings[] ConvertFloatingRegions(IGetFloatingRegion[] floatingRegions, FloatingMatchSettings[] currentRegions)
+        private static FloatingMatchSettings[] ConvertFloatingRegions(IGetFloatingRegion[] floatingRegions, FloatingMatchSettings[] currentRegions)
         {
             List<FloatingMatchSettings> mutableRegions = new List<FloatingMatchSettings>();
             if (currentRegions != null)
@@ -247,7 +246,7 @@ namespace Applitools
             return mutableRegions.ToArray();
         }
 
-        private static void CollectRegions_(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
+        public static void CollectRegions(ImageMatchSettings imageMatchSettings, IList<Trigger> userInputs,
                                             IList<IRegion> regions, IList<VisualGridSelector[]> regionSelectors,
                                             IList<VGUserAction> userActions, Location location)
         {
@@ -338,13 +337,16 @@ namespace Applitools
             }
             imageMatchSettings.Accessibility = accessibilityRegions.ToArray();
 
-            for (int i = 0; i < regionSelectors[6].Length; i++)
+            if (userActions != null)
             {
-                IMutableRegion mr = mutableRegions[6][i];
-                if (mr.Area == 0) continue;
-                VGUserAction userAction = userActions[i];
-                Trigger trigger = UserActionToTrigger(mr, userAction);
-                userInputs.Add(trigger);
+                for (int i = 0; i < regionSelectors[6].Length; i++)
+                {
+                    IMutableRegion mr = mutableRegions[6][i];
+                    if (mr.Area == 0) continue;
+                    VGUserAction userAction = userActions[i];
+                    Trigger trigger = UserActionToTrigger(mr, userAction);
+                    userInputs.Add(trigger);
+                }
             }
         }
 
@@ -388,7 +390,7 @@ namespace Applitools
                                         string renderId)
         {
             // Prepare match data.
-            MatchWindowData data = new MatchWindowData(appOutput.AppOutput, tag, agentSetupStr);
+            MatchWindowData data = new MatchWindowData(runningSession_, appOutput.AppOutput, tag, agentSetupStr);
 
             data.IgnoreMismatch = false;
             data.Options = new ImageMatchOptions(imageMatchSettings);
@@ -403,7 +405,7 @@ namespace Applitools
             data.Options.ReplaceLast = replaceLast;
             data.RenderId = renderId;
 
-            return serverConnector_.MatchWindow(runningSession_, data);
+            return serverConnector_.MatchWindow(data);
         }
 
         private static void CollectSimpleRegions_(ICheckSettingsInternal checkSettingsInternal,

@@ -17,12 +17,13 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class VisualGridEyes : IEyes, ISeleniumEyes, IVisualGridEyes, IUserActionsEyes
+    public class VisualGridEyes : IVisualGridEyes, ISeleniumEyes, IUserActionsEyes
     {
         private static readonly string PROCESS_PAGE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePoll.js");
         private static readonly string PROCESS_PAGE_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePollForIE.js");
@@ -32,34 +33,20 @@ namespace Applitools.Selenium.VisualGrid
         private static readonly int MB = 1024 * 1024;
 
         private static readonly string GET_ELEMENT_XPATH_JS =
-            "var el = arguments[0];" +
-            "var xpath = '';" +
-            "do {" +
-            " var parent = el.parentElement;" +
-            " var index = 1;" +
-            " if (parent !== null) {" +
-            "  var children = parent.children;" +
-            "  for (var childIdx in children) {" +
-            "    var child = children[childIdx];" +
-            "    if (child === el) break;" +
-            "    if (child.tagName === el.tagName) index++;" +
-            "  }" +
-            "}" +
-            "xpath = '/' + el.tagName + '[' + index + ']' + xpath;" +
-            " el = parent;" +
-            "} while (el !== null);" +
-            "return '/' + xpath;";
+            "const atName='data-applitools-element-id'; var el=arguments[0];" +
+            "if (el.hasAttribute(atName)) { var id = el.getAttribute(atName) } " +
+            "else { window.APPLITOOLS_ELEMENT_ID = window.APPLITOOLS_ELEMENT_ID || 0; " +
+            " window.APPLITOOLS_ELEMENT_ID++; var id = window.APPLITOOLS_ELEMENT_ID;" +
+            " el.setAttribute(atName, id); }" +
+            "return '//*[@'+atName+'=\"'+id+'\"]';";
 
-        private readonly VisualGridRunner visualGridRunner_;
-        private readonly List<RunningTest> testList_ = new List<RunningTest>();
+        internal readonly VisualGridRunner runner_;
+        private readonly Dictionary<string, RunningTest> testList_ = new Dictionary<string, RunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private RenderingInfo renderingInfo_;
-        internal IUfgConnector eyesConnector_;
         private IJavaScriptExecutor jsExecutor_;
         private string url_;
-        private EyesListener listener_;
-        private readonly RunningTest.RunningTestListener testListener_;
 #pragma warning disable CS0414
         private bool hasEyesIssuedOpenTasks_;  // for debugging
 #pragma warning restore CS0414
@@ -72,52 +59,35 @@ namespace Applitools.Selenium.VisualGrid
         internal UserAgent userAgent_;
         private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
         private RectangleSize viewportSize_;
+        private bool isOpen_;
 
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
         {
             ArgumentGuard.NotNull(visualGridRunner, nameof(visualGridRunner));
+            if (visualGridRunner.GetAllTestResultsAlreadyCalled)
+            {
+                throw new InvalidOperationException("Runner already returned its results");
+            }
             configProvider_ = configurationProvider;
             Logger = visualGridRunner.Logger;
-            visualGridRunner_ = visualGridRunner;
+            runner_ = visualGridRunner;
 
-            IDebugResourceWriter drw = visualGridRunner_.DebugResourceWriter;
-            if (drw is FileDebugResourceWriter fileDRW)
-            {
-                debugResourceWriter_ = new Ufg.FileDebugResourceWriter(fileDRW.TargetFolder);
-            }
-            debugResourceWriter_ = debugResourceWriter_ ?? NullDebugResourceWriter.Instance;
-
-            testListener_ = new RunningTest.RunningTestListener(
-                (task, test) =>
-                {
-                    if (task.TaskType == TaskType.Close || task.TaskType == TaskType.Abort)
-                    {
-                        hasEyesIssuedOpenTasks_ = false;
-                    }
-                    listener_?.OnTaskComplete(task, this);
-                },
-
-                () => listener_?.OnRenderComplete());
+            IDebugResourceWriter drw = runner_.DebugResourceWriter;
+            Ufg.IDebugResourceWriter ufgDrw = EyesSeleniumUtils.ConvertDebugResourceWriter(drw);
+            debugResourceWriter_ = ufgDrw;
         }
+
         private Configuration Config_ { get => configProvider_.GetConfiguration(); }
 
         public string ApiKey
         {
-            get => Config_.ApiKey ?? visualGridRunner_.ApiKey;
+            get => Config_.ApiKey ?? runner_.ApiKey;
             set => Config_.ApiKey = value;
         }
 
         public string ServerUrl
         {
-            get
-            {
-                if (eyesConnector_ != null)
-                {
-                    string uri = eyesConnector_.ServerUrl;
-                    if (uri != null) return uri;
-                }
-                return Config_.ServerUrl ?? visualGridRunner_.ServerUrl;
-            }
+            get => Config_.ServerUrl ?? runner_.ServerUrl;
             set => Config_.ServerUrl = value;
         }
 
@@ -127,7 +97,7 @@ namespace Applitools.Selenium.VisualGrid
 
         public bool IsDisabled
         {
-            get => isDisabled_ ?? visualGridRunner_.IsDisabled;
+            get => isDisabled_ ?? runner_.IsDisabled;
             set => isDisabled_ = value;
         }
 
@@ -146,13 +116,7 @@ namespace Applitools.Selenium.VisualGrid
             set => Config_.SetAgentId(value);
         }
 
-        public string FullAgentId
-        {
-            get
-            {
-                return (AgentId == null) ? BaseAgentId : $"{AgentId} [{BaseAgentId}]";
-            }
-        }
+        public string FullAgentId => (AgentId == null) ? BaseAgentId : $"{AgentId} [{BaseAgentId}]";
 
         public BatchInfo Batch
         {
@@ -160,27 +124,16 @@ namespace Applitools.Selenium.VisualGrid
             set => Config_.SetBatch(value);
         }
 
-        public List<VGUserAction> UserInputs { get; } = new List<VGUserAction>();
+        public List<IUserAction> UserInputs { get; } = new List<IUserAction>();
 
         public bool IsEyesClosed()
         {
-            Logger.Verbose($"enter - {nameof(testList_)} has {0} tests", testList_.Count);
-            foreach (RunningTest runningTest in testList_)
-            {
-                Logger.Verbose("is test {0} closed? {1}", runningTest.TestId, runningTest.IsTestClose);
-                if (!runningTest.IsTestClose)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return testList_.Values.All(t => t.IsCompleted);
         }
 
-        public bool IsOpen { get { return !IsEyesClosed(); } }
+        public bool IsOpen => !IsEyesClosed();
 
         public ICollection<TestResultContainer> TestResults { get; } = new List<TestResultContainer>();
-
-        internal IEyesConnectorFactory EyesConnectorFactory { get; set; } = new EyesConnectorFactory();
 
         public IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize)
         {
@@ -206,7 +159,13 @@ namespace Applitools.Selenium.VisualGrid
 
             ArgumentGuard.NotEmpty(Config_.AppName, "appName");
             ArgumentGuard.NotEmpty(Config_.TestName, "testName");
+            if (isOpen_)
+            {
+                Logger.Log("WARNING: called open more than once! Ignoring");
+                return webDriver_ != null ? webDriver_ : webDriver;
+            }
 
+            isOpen_ = true;
             InitDriver(webDriver);
 
             string uaString = driver_.GetUserAgent();
@@ -233,56 +192,29 @@ namespace Applitools.Selenium.VisualGrid
                 browserInfoList.Add(new RenderBrowserInfo(desktopBrowserInfo));
             }
 
+            if (runner_.AgentId == null)
+            {
+                runner_.AgentId = FullAgentId;
+            }
+
             configAtOpen_ = GetConfigClone_();
 
             Logger.Verbose("creating test descriptors for each browser info...");
+            List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
+            IServerConnector serverConnector = runner_.ServerConnector;
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
                 Logger.Verbose("creating test descriptor");
-                RunningTest test = new RunningTest(CreateEyesConnector_(browserInfo, apiKey), browserInfo, Logger, testListener_, url_);
-                testList_.Add(test);
+                VisualGridRunningTest test = new VisualGridRunningTest(
+                    browserInfo, Logger, configProvider_, serverConnector);
+                testList_.Add(test.TestId, test);
+                newTests.Add(test);
             }
 
             Logger.Verbose("opening {0} tests...", testList_.Count);
-            visualGridRunner_.Open(this, renderingInfo_);
+            runner_.Open(this, newTests);
             Logger.Verbose("done");
             return driver_ ?? webDriver;
-        }
-
-        internal IUfgConnector CreateEyesConnector_(RenderBrowserInfo browserInfo, string apiKey)
-        {
-            Logger.Verbose("creating eyes server connector using {0}", EyesConnectorFactory.GetType().Name);
-            IUfgConnector eyesConnector = EyesConnectorFactory.CreateNewEyesConnector(
-                Logger, browserInfo, (Applitools.Configuration)configAtOpen_);
-
-            eyesConnector.SetLogHandler(Logger.GetILogHandler());
-            eyesConnector.Proxy = Proxy;
-            eyesConnector.Batch = Batch;
-            eyesConnector.IsDisabled = IsDisabled;
-
-            string serverUri = ServerUrl;
-            if (serverUri != null)
-            {
-                eyesConnector.ServerUrl = serverUri;
-            }
-
-            eyesConnector.ApiKey = apiKey;
-
-            if (renderingInfo_ == null)
-            {
-                Logger.Verbose("initializing rendering info...");
-                renderingInfo_ = eyesConnector.GetRenderingInfo();
-            }
-            eyesConnector.SetRenderInfo(renderingInfo_);
-
-            foreach (KeyValuePair<string, string> kvp in properties_)
-            {
-                eyesConnector.AddProperty(kvp.Key, kvp.Value);
-            }
-            properties_.Clear();
-
-            eyesConnector_ = eyesConnector;
-            return eyesConnector;
         }
 
         internal void InitDriver(IWebDriver webDriver)
@@ -308,35 +240,25 @@ namespace Applitools.Selenium.VisualGrid
         public TestResults Abort()
         {
             Logger.Verbose("enter");
-            List<Task<TestResultContainer>> tasks = AbortAndCollectTasks_();
-            return ParseCloseTasks_(tasks, false);
+            AbortAsync();
+            return WaitForEyesToFinish_(false);
         }
 
         public void AbortAsync()
         {
             Logger.Verbose("enter");
-            AbortAndCollectTasks_();
-            Logger.Verbose("exit");
-        }
-
-        private List<Task<TestResultContainer>> AbortAndCollectTasks_()
-        {
-            Logger.Verbose("enter");
-            List<Task<TestResultContainer>> tasks = new List<Task<TestResultContainer>>();
-            foreach (RunningTest runningTest in testList_)
+            foreach (RunningTest runningTest in testList_.Values)
             {
-                Task<TestResultContainer> task = runningTest.AbortIfNotClosed();
-                tasks.Add(task);
+                runningTest.IssueAbort(new EyesException("Eyes.Close wasn't called. Aborted the test"), false);
             }
             Logger.Verbose("exit");
-            return tasks;
         }
 
         private void Abort_(Exception e)
         {
-            foreach (RunningTest runningTest in testList_)
+            foreach (RunningTest runningTest in testList_.Values)
             {
-                runningTest.Abort(e);
+                runningTest.IssueAbort(e, true);
             }
         }
 
@@ -346,22 +268,11 @@ namespace Applitools.Selenium.VisualGrid
             ICheckSettingsInternal csInternal = (ICheckSettingsInternal)checkSettings;
             IList<Tuple<IWebElement, object>>[] elementLists = CollectSeleniumRegions_(csInternal);
 
-            CheckState state = ((ISeleniumCheckTarget)csInternal).State;
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
-            }
-
             int i;
             for (i = 0; i < elementLists.Length; ++i)
             {
                 IList<Tuple<IWebElement, object>> elementsList = elementLists[i];
                 GetRegionsXPaths_(result, elementsList);
-            }
-
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().ParentFrame();
             }
 
             return result;
@@ -388,12 +299,6 @@ namespace Applitools.Selenium.VisualGrid
 
         private IList<Tuple<IWebElement, object>>[] CollectSeleniumRegions_(ICheckSettingsInternal csInternal)
         {
-            CheckState state = ((ISeleniumCheckTarget)csInternal).State;
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
-            }
-
             IGetRegions[] ignoreRegions = csInternal.GetIgnoreRegions();
             IGetRegions[] layoutRegions = csInternal.GetLayoutRegions();
             IGetRegions[] strictRegions = csInternal.GetStrictRegions();
@@ -410,11 +315,6 @@ namespace Applitools.Selenium.VisualGrid
 
             IList<Tuple<IWebElement, object>> userActionElements = GetElementsFromUserActions_(UserInputs);
 
-            if (state.FrameToSwitchTo != null)
-            {
-                driver_.SwitchTo().ParentFrame();
-            }
-
             return new IList<Tuple<IWebElement, object>>[] {
                 ignoreElements,
                 layoutElements,
@@ -425,7 +325,7 @@ namespace Applitools.Selenium.VisualGrid
                 userActionElements };
         }
 
-        private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<VGUserAction> userInputs)
+        private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<IUserAction> userInputs)
         {
             List<Tuple<IWebElement, object>> elements = new List<Tuple<IWebElement, object>>();
             foreach (VGUserAction userInput in userInputs)
@@ -472,17 +372,16 @@ namespace Applitools.Selenium.VisualGrid
 
         private void CheckImpl_(ICheckSettings checkSettings)
         {
-            ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
             if (!ValidateEyes_()) return;
 
             Logger.Verbose("enter (#{0})", GetHashCode());
 
             try
             {
-                object logMessage = visualGridRunner_.GetConcurrencyLog();
+                object logMessage = runner_.GetConcurrencyLog();
                 if (logMessage != null)
                 {
-                    NetworkLogHandler.SendEvent(((EyesBase)eyesConnector_).ServerConnector, TraceLevel.Notice, logMessage);
+                    NetworkLogHandler.SendEvent(runner_.ServerConnector, TraceLevel.Notice, logMessage);
                 }
             }
             catch (JsonException e)
@@ -490,103 +389,166 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Log("Error: {0}", e);
             }
 
-            AddOpenTaskToAllRunningTest_();
-
-            List<VisualGridTask> checkTasks = new List<VisualGridTask>();
-
-            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
-            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-
-            CheckState state = new CheckState();
-            state.StitchContent = checkSettingsInternal.GetStitchContent() ?? Config_.IsForceFullPageScreenshot ?? true;
-            seleniumCheckTarget.State = state;
-            ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
-
+            FrameChain originalFC = driver_.GetFrameChain().Clone();
+            EyesWebDriverTargetLocator switchTo = ((EyesWebDriverTargetLocator)driver_.SwitchTo());
             try
             {
-                FrameChain originalFC = driver_.GetFrameChain().Clone();
-                EyesWebDriverTargetLocator switchTo = ((EyesWebDriverTargetLocator)driver_.SwitchTo());
-
-                IList<FrameLocator> frameLocators = seleniumCheckTarget.GetFrameChain();
-                int switchedToCount = frameLocators.Count;
-                foreach (FrameLocator locator in frameLocators)
+                ArgumentGuard.NotOfType(checkSettings, typeof(ICheckSettings), nameof(checkSettings));
+                if (checkSettings is IImplicitInitialization seleniumCheckTarget)
                 {
-                    IWebElement frameElement = EyesSeleniumUtils.FindFrameByFrameCheckTarget(locator, driver_);
-                    switchTo.Frame(frameElement);
+                    seleniumCheckTarget.Init(Logger, driver_);
                 }
 
-                if (switchedToCount > 0 && !(checkSettingsInternal.GetStitchContent() ?? Config_.IsForceFullPageScreenshot ?? true))
-                {
-                    FrameChain frameChain = driver_.GetFrameChain().Clone();
-                    Frame frame = frameChain.Pop();
-                    checkSettings = ((SeleniumCheckSettings)checkSettings).Region(frame.Reference);
-                    seleniumCheckTarget = checkSettings as ISeleniumCheckTarget;
-                    checkSettingsInternal = checkSettings as ICheckSettingsInternal;
-                    switchTo.ParentFrame();
-                }
-
-                FrameData dom = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, visualGridRunner_, driver_, Logger);
-
-                //string scriptResult = captureStatus.Value;
-                IList<VisualGridSelector[]> regionSelectors = GetRegionsXPaths_(checkSettings);
-
-                //RGridResource gridResource = new RGridResource(new Uri(url_), "application/json", Encoding.UTF8.GetBytes(scriptResult), Logger, "");
-                debugResourceWriter_.Write(dom);
-                //Logger.Verbose("Done collecting DOM.");
-
+                int waitBeforeScreenshots = Config_.WaitBeforeScreenshots;
+                Thread.Sleep(waitBeforeScreenshots);
+                int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
-
                 checkSettings = UpdateCheckSettings_(checkSettings);
-                List<RunningTest> filteredTests = CollectTestsForCheck_(Logger, testList_);
 
-                Configuration configClone = GetConfigClone_();
+                //checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo, switchedToCount);
 
-                Logger.Verbose("eyesConnector_.Type: {0}", eyesConnector_.GetType().Name);
+                IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
+                Logger.Verbose("regionXPaths : {0}", regionsXPaths);
 
-                VGUserAction[] userActions = UserInputs.ToArray();
-                string source = driver_.Url;
-                foreach (RunningTest test in filteredTests)
+                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger);
+
+                Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
+                Logger.Verbose("Cdt length: {0}", scriptResult.Cdt.Count);
+                Logger.Verbose("Blobs urls: {0}", StringUtils.Concat(blobsUrls, ", "));
+                Logger.Verbose("Resources urls: {0}", StringUtils.Concat(scriptResult.ResourceUrls, ", "));
+
+                ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+
+                string source = webDriver_.Url;
+                List<CheckTask> checkTasks = new List<CheckTask>();
+                foreach (RunningTest runningTest in testList_.Values)
                 {
-                    VisualGridTask checkTask = test.Check(configClone, checkSettings, regionSelectors, userActions, source);
-                    checkTasks.Add(checkTask);
+                    if (runningTest.IsCloseTaskIssued)
+                    {
+                        continue;
+                    }
+
+                    checkTasks.Add((CheckTask)runningTest.IssueCheck(
+                        (ICheckSettings)checkSettingsInternal, regionsXPaths, source, UserInputs));
                 }
 
-                visualGridRunner_.Check(checkSettings, debugResourceWriter_, dom, regionSelectors,
-                        userActions, eyesConnector_, userAgent_, checkTasks,
-                        new VisualGridRunner.RenderListener());
-
-                switchTo.Frames(originalFC);
+                scriptResult.UserAgent = userAgent_;
+                //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
+                runner_.Check(scriptResult, checkTasks);
+                Logger.Verbose("created renderTask  ({0})", checkSettings);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Abort_(ex);
-                foreach (RunningTest test in testList_)
+                foreach (RunningTest runningTest in testList_.Values)
                 {
-                    test.SetTestInExceptionMode(ex);
+                    runningTest.SetTestInExceptionMode(e);
                 }
-                Logger.Log("Error: {0}", ex);
+                Logger.Log("Error: {0}", e);
+            }
+            finally
+            {
+                switchTo.Frames(originalFC);
             }
         }
 
-        internal static List<RunningTest> CollectTestsForCheck_(Logger logger, List<RunningTest> tests)
+        private ICheckSettings SwitchFramesAsNeeded_(ICheckSettings checkSettings, EyesWebDriverTargetLocator switchTo,
+            int switchedToCount)
         {
-            List<RunningTest> filteredTests = new List<RunningTest>();
-            foreach (RunningTest test in tests)
+            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
+            bool isFullPage = IsFullPage_(checkSettingsInternal);
+            if (switchedToCount > 0 && isFullPage &&
+                seleniumCheckTarget.GetTargetSelector() == null && seleniumCheckTarget.GetTargetElement() == null)
             {
-                TaskType? lastTaskType = test.TaskList.LastOrDefault()?.TaskType;
-                logger.Debug("task type: <{0}>", lastTaskType);
+                FrameChain frameChain = driver_.GetFrameChain().Clone();
+                Frame frame = frameChain.Pop();
+                checkSettings = ((SeleniumCheckSettings)checkSettings).Region(frame.Reference);
+                switchTo.ParentFrame();
+            }
+            return checkSettings;
+        }
 
-                bool testIsOpenAndNotClosed = lastTaskType == null && test.IsOpenTaskIssued && !test.IsCloseTaskIssued;
-                bool lastTaskIsNotAClosingTask = lastTaskType != null && lastTaskType != TaskType.Close && lastTaskType != TaskType.Abort;
+        private bool IsFullPage_(ICheckSettingsInternal checkSettingsInternal)
+        {
+            bool isFullPage = true;
+            bool? b;
+            if ((b = checkSettingsInternal.GetStitchContent()) != null)
+            {
+                isFullPage = b.Value;
+            }
+            else if ((b = Config_.IsForceFullPageScreenshot) != null)
+            {
+                isFullPage = b.Value;
+            }
+            return isFullPage;
+        }
 
-                // We are interested in tests which should be opened or are open.
-                if (testIsOpenAndNotClosed || lastTaskIsNotAClosingTask)
+        //private void UpdateFrameScrollRoot_(IScrollRootElementContainer frameTarget)
+        //{
+        //    IWebElement rootElement = EyesSeleniumUtils.GetScrollRootElement(Logger, webDriver_, frameTarget);
+        //    Frame frame = driver_.GetFrameChain().Peek();
+        //    frame.ScrollRootElement = rootElement;
+        //}
+
+        private int SwitchToFrame_(ISeleniumCheckTarget checkTarget)
+        {
+            if (checkTarget == null)
+            {
+                return 0;
+            }
+
+            IList<FrameLocator> frameChain = checkTarget.GetFrameChain();
+            int switchedToFrameCount = 0;
+            foreach (FrameLocator frameLocator in frameChain)
+            {
+                if (SwitchToFrame_(frameLocator))
                 {
-                    filteredTests.Add(test);
+                    switchedToFrameCount++;
+                }
+            }
+            return switchedToFrameCount;
+        }
+
+        private bool SwitchToFrame_(ISeleniumFrameCheckTarget frameTarget)
+        {
+            ITargetLocator switchTo = driver_.SwitchTo();
+            int? frameIndex = frameTarget.GetFrameIndex();
+            if (frameIndex != null)
+            {
+                switchTo.Frame(frameIndex.Value);
+                //UpdateFrameScrollRoot_(frameTarget);
+                return true;
+            }
+
+            string frameNameOrId = frameTarget.GetFrameNameOrId();
+            if (frameNameOrId != null)
+            {
+                switchTo.Frame(frameNameOrId);
+                //UpdateFrameScrollRoot_(frameTarget);
+                return true;
+            }
+
+            IWebElement frameReference = frameTarget.GetFrameReference();
+            if (frameReference != null)
+            {
+                switchTo.Frame(frameReference);
+                //UpdateFrameScrollRoot_(frameTarget);
+                return true;
+            }
+
+            By frameSelector = frameTarget.GetFrameSelector();
+            if (frameSelector != null)
+            {
+                IWebElement frameElement = webDriver_.FindElement(frameSelector);
+                if (frameElement != null)
+                {
+                    switchTo.Frame(frameElement);
+                    //UpdateFrameScrollRoot_(frameTarget);
+                    return true;
                 }
             }
 
-            return filteredTests;
+            return false;
         }
 
         private Configuration GetConfigClone_()
@@ -610,6 +572,7 @@ namespace Applitools.Selenium.VisualGrid
                             continue;
                         }
                         viewportSize = new RectangleSize(deviceInfo.Width, deviceInfo.Height);
+                        break;
                     }
                 }
             }
@@ -680,30 +643,38 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
-            IConfiguration config, IVisualGridRunner runner, EyesWebDriver driver, Logger logger)
+            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger)
         {
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
+            bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
+            
             int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {
                 serializeResources = true,
                 //skipResources = runner.CachedBlobsURLs.Keys,
                 dontFetchResources = config.DisableBrowserFetching,
-                chunkByteLength
+                chunkByteLength,
+                //uniqueUrl = "(url, query) => url"
             };
 
             object pollingArguments = new { chunkByteLength };
 
             string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
+            if (keepOriginalUrls)
+            {
+                Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);
+                result = removeQueryParameter.Replace(result, string.Empty);
+            }
             FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
             AnalyzeFrameData_(frameData, userAgent, config, runner, switchTo, driver, logger);
             return frameData;
         }
 
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
-            IVisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
+            VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
             FrameChain frameChain = driver.GetFrameChain().Clone();
             foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
@@ -762,308 +733,85 @@ namespace Applitools.Selenium.VisualGrid
             Logger.SetLogHandler(logHandler);
         }
 
-        public ICollection<Task<TestResultContainer>> Close()
+        public TestResults Close(bool throwEx = true)
         {
-            if (!ValidateEyes_()) return new Task<TestResultContainer>[0];
-            closeFutures_ = CloseAndReturnResults(false);
-            return closeFutures_;
+            CloseAsync();
+            return WaitForEyesToFinish_(throwEx);
         }
 
-        public TestResults Close(bool throwEx)
+        private TestResults WaitForEyesToFinish_(bool throwException)
         {
-            Logger.Verbose("enter. throwEx: {0}", throwEx);
-            ICollection<Task<TestResultContainer>> close = Close();
-            return ParseCloseTasks_(close, throwEx);
+            while (!IsCompleted())
+            {
+                Thread.Sleep(500);
+            }
+
+            IList<TestResultContainer> allResults = GetAllTestResults();
+            TestResultContainer errorResult = null;
+            TestResults firstResult = null;
+            foreach (TestResultContainer result in allResults)
+            {
+                if (firstResult == null)
+                {
+                    firstResult = result.TestResults;
+                }
+                if (result.Exception != null)
+                {
+                    errorResult = result;
+                    break;
+                }
+            }
+
+            if (errorResult != null)
+            {
+                if (throwException)
+                {
+                    throw new EyesException("Error occured during run:", errorResult.Exception);
+                }
+                return errorResult.TestResults;
+            }
+
+            return firstResult;
         }
 
-        private TestResults ParseCloseTasks_(ICollection<Task<TestResultContainer>> close, bool throwEx)
+        public bool IsCompleted()
+        {
+            return GetAllTestResults() != null;
+        }
+
+        internal bool IsCloseIssued => !isOpen_;
+
+        public void CloseAsync()
         {
             Logger.Verbose("enter");
-            if (close != null && close.Count > 0)
+            if (!ValidateEyes_())
             {
-                Logger.Verbose("closing {0} tasks.", close.Count);
-                TestResultContainer errorResult = null;
-                TestResultContainer firstResult = null;
-                try
-                {
-                    foreach (Task<TestResultContainer> closeFuture in close)
-                    {
-                        if (closeFuture == null)
-                        {
-                            Logger.Log("Error: closeFuture is null!");
-                            continue;
-                        }
-                        Task result = Task.WhenAny(closeFuture, Task.Delay(TimeSpan.FromSeconds(30))).Result;
-                        if (result != closeFuture)
-                        {
-                            throw new Exception("timeout");
-
-                        }
-                        TestResultContainer testResultContainer = closeFuture.Result;
-                        if (firstResult == null)
-                        {
-                            firstResult = testResultContainer;
-                        }
-
-                        Exception error = testResultContainer.Exception;
-                        if (error != null && errorResult == null)
-                        {
-                            errorResult = testResultContainer;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("Error: {0}", e);
-                }
-
-                if (errorResult != null)
-                {
-                    if (throwEx)
-                    {
-                        throw errorResult.Exception;
-                    }
-                    Logger.Verbose("returning errorResult.TestResults: {0}", errorResult.TestResults);
-                    return errorResult.TestResults;
-                }
-                else
-                { // returning the first result
-                    if (firstResult != null)
-                    {
-                        Logger.Verbose("returning firstResult.TestResults: {0}", firstResult.TestResults);
-                        return firstResult.TestResults;
-                    }
-                }
-            }
-            Logger.Verbose("returning null");
-            return null;
-        }
-
-        private ICollection<Task<TestResultContainer>> CloseAndReturnResults(bool throwEx)
-        {
-            if (!ValidateEyes_()) return new Task<TestResultContainer>[0];
-
-            Exception exception = null;
-            Logger.Verbose("enter {0}", Batch);
-
-            try
-            {
-                ICollection<Task<TestResultContainer>> futureList = CloseAsync(throwEx);
-                visualGridRunner_.Close(this);
-                foreach (Task<TestResultContainer> future in futureList)
-                {
-                    Task result = Task.WhenAny(future, Task.Delay(TimeSpan.FromSeconds(30))).Result;
-                    if (result != future)
-                    {
-                        if (exception == null)
-                        {
-                            exception = new Exception("timeout");
-                        }
-                    }
-                    else
-                    {
-                        TestResultContainer testResultContainer = future.Result;
-                        if (exception == null && testResultContainer.Exception != null)
-                        {
-                            exception = testResultContainer.Exception;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error: {0}", e);
-                if (exception == null)
-                {
-                    exception = e;
-                }
+                return;
             }
 
-            //testList_.Clear();
-            //testsInCloseProcess_.Clear();
-            //properties_.Clear();
-
-            if (throwEx)
+            isOpen_ = false;
+            Logger.Verbose("closing {0} running tests", testList_.Count);
+            foreach (RunningTest runningTest in testList_.Values)
             {
-                throw exception;
+                VisualGridRunningTest vgRunningTest = (VisualGridRunningTest)runningTest;
+                Logger.Verbose("running test name: {0}", Config_.TestName);
+                Logger.Verbose("running test device info: {0}", vgRunningTest.BrowserInfo);
+                Logger.Verbose("is current running test open: {0}", vgRunningTest.IsOpen);
+                Logger.Verbose("is current running test ready to close: {0}", vgRunningTest.IsTestReadyToClose);
+                Logger.Verbose("is current running test closed: {0}", vgRunningTest.IsCompleted);
+                Logger.Verbose("closing current running test");
+                vgRunningTest.IssueClose();
             }
-            return closeFutures_;
-        }
-
-        internal ICollection<Task<TestResultContainer>> CloseAsync(bool throwEx)
-        {
-            if (!ValidateEyes_()) return new Task<TestResultContainer>[0];
-
-            Configuration configClone = GetConfigClone_();
-
-            ICollection<Task<TestResultContainer>> futureList = AddCloseTasks_(configClone, throwEx);
-            foreach (Task<TestResultContainer> future in futureList)
-            {
-                closeFutures_.Add(future);
-            }
-            Logger.Verbose("futures_: {0}", PrintAllFutures());
-            visualGridRunner_.Close(this);
-            return futureList;
-        }
-
-        private ICollection<Task<TestResultContainer>> AddCloseTasks_(Configuration config, bool throwEx)
-        {
-            HashSet<Task<TestResultContainer>> futures = new HashSet<Task<TestResultContainer>>();
-            lock (testList_)
-            {
-                foreach (RunningTest runningTest in testList_)
-                {
-                    Logger.Verbose("running test name: {0}", Config_.TestName);
-                    Logger.Verbose("is current running test open: {0}", runningTest.IsTestOpen);
-                    Logger.Verbose("is current running test ready to close: {0}", runningTest.IsTestReadyToClose);
-                    Logger.Verbose("is current running test closed: {0}", runningTest.IsTestClose);
-                    Logger.Verbose("closing current running test");
-                    Task<TestResultContainer> closeFuture = runningTest.Close(config, throwEx);
-                    Logger.Verbose("adding closeFuture to futureList. closeFuture == null? {0}", closeFuture == null);
-                    futures.Add(closeFuture);
-                }
-            }
-            return futures;
-        }
-
-        void IVisualGridEyes.SetListener(EyesListener listener)
-        {
-            listener_ = listener;
-        }
-
-        RunningTest IVisualGridEyes.GetNextTestToClose()
-        {
-            Logger.Verbose("locking 'testsInCloseProcess_'. Count: {0} (object #{1})", testList_.Count, GetHashCode());
-            lock (testsInCloseProcess_)
-            {
-                foreach (RunningTest runningTest in testList_)
-                {
-                    if (runningTest.IsTestClose) continue;
-
-                    bool isTestReadyToClose = runningTest.IsTestReadyToClose;
-                    bool containedInList = testsInCloseProcess_.Contains(runningTest);
-
-                    if (isTestReadyToClose && !containedInList)
-                    {
-                        testsInCloseProcess_.Add(runningTest);
-                        Logger.Verbose("found test to close: #{0}. lock on 'testsInCloseProcess_' released", runningTest.GetHashCode());
-                        return runningTest;
-                    }
-                    else
-                    {
-                        Logger.Verbose("runningTest: IsTestReadyToClose: {0} ; contained in list: {1} ; inner tasks: {2}",
-                            isTestReadyToClose, containedInList, runningTest.TaskList.Count);
-                    }
-                }
-            }
-            Logger.Verbose("lock on 'testsInCloseProcess_' released");
-            return null;
-        }
-
-        ScoreTask IVisualGridEyes.GetBestScoreTaskForOpen()
-        {
-            int bestMark = -1;
-            ScoreTask currentBest = null;
-            lock (testList_)
-            {
-                foreach (RunningTest runningTest in testList_)
-                {
-                    ScoreTask currentScoreTask = runningTest.GetScoreTaskObjectByType(TaskType.Open);
-                    if (currentScoreTask == null) continue;
-
-                    if (bestMark < currentScoreTask.Score)
-                    {
-                        bestMark = currentScoreTask.Score;
-                        currentBest = currentScoreTask;
-                    }
-                }
-            }
-            return currentBest;
-        }
-
-        ScoreTask IVisualGridEyes.GetBestScoreTaskForCheck()
-        {
-            int bestScore = -1;
-
-            ScoreTask currentBest = null;
-            Logger.Verbose("enter - {0} elements in {1}", testList_.Count, nameof(testList_));
-            foreach (RunningTest runningTest in testList_)
-            {
-                List<VisualGridTask> taskList = runningTest.TaskList;
-
-                VisualGridTask task;
-                //Logger.Verbose("locking taskList");
-                try
-                {
-                    Monitor.Enter(taskList);
-                    if (taskList.Count == 0) continue;
-
-                    task = taskList[0];
-                    if (!runningTest.IsTestOpen || task.TaskType != TaskType.Check || !task.IsTaskReadyToCheck)
-                        continue;
-                }
-                finally
-                {
-                    //Logger.Verbose("releasing taskList");
-                    Monitor.Exit(taskList);
-                }
-
-                ScoreTask scoreTask = runningTest.GetScoreTaskObjectByType(TaskType.Check);
-
-                if (scoreTask == null) continue;
-
-                if (bestScore < scoreTask.Score)
-                {
-                    currentBest = scoreTask;
-                    bestScore = scoreTask.Score;
-                }
-            }
-            return currentBest;
-        }
-
-        private List<VisualGridTask> AddOpenTaskToAllRunningTest_()
-        {
-            Logger.Verbose("enter");
-            List<VisualGridTask> tasks = new List<VisualGridTask>();
-            foreach (RunningTest runningTest in testList_)
-            {
-                if (!runningTest.IsOpenTaskIssued)
-                {
-                    VisualGridTask task = runningTest.Open((Configuration)configAtOpen_);
-                    tasks.Add(task);
-                }
-            }
-            Logger.Verbose("exit");
-            return tasks;
-        }
-
-        public ICollection<RunningTest> GetAllRunningTests()
-        {
-            return testList_;
         }
 
         public void AddProperty(string name, string value)
         {
-            if (eyesConnector_ == null)
-            {
-                properties_.Add(name, value);
-            }
-            else
-            {
-                eyesConnector_.AddProperty(name, value);
-            }
+            properties_.Add(name, value);
         }
 
         public void ClearProperties()
         {
-            if (eyesConnector_ == null)
-            {
-                properties_.Clear();
-            }
-            else
-            {
-                eyesConnector_.ClearProperties();
-            }
+            properties_.Clear();
         }
 
         public string PrintAllFutures()
@@ -1084,11 +832,6 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("WARNING! Invalid Operation - Eyes Disabled!");
                 return false;
             }
-            if (!visualGridRunner_.IsServicesOn)
-            {
-                Logger.Verbose("WARNING! Invalid Operation - visualGridRunner.getAllTestResults already called!");
-                return false;
-            }
             return true;
         }
 
@@ -1104,18 +847,11 @@ namespace Applitools.Selenium.VisualGrid
 
         public IBatchCloser GetBatchCloser()
         {
-            return testList_[0].GetBatchCloser();
+            return testList_.Values.FirstOrDefault() as IBatchCloser;
         }
 
         internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
         internal event AfterServerConcurrencyLimitReachedQueriedDelegate AfterServerConcurrencyLimitReachedQueried;
-
-        bool IVisualGridEyes.IsServerConcurrencyLimitReached()
-        {
-            bool result = testList_.Any(t => t.IsServerConcurrencyLimitReached);
-            AfterServerConcurrencyLimitReachedQueried?.Invoke(result);
-            return result;
-        }
 
         void IUserActionsEyes.AddKeyboardTrigger(IWebElement element, string text)
         {
@@ -1127,6 +863,31 @@ namespace Applitools.Selenium.VisualGrid
         {
             VGMouseTrigger trigger = new VGMouseTrigger(action, element, cursor);
             UserInputs.Add(trigger);
+        }
+
+        public IList<TestResultContainer> GetAllTestResults()
+        {
+            List<TestResultContainer> allResults = new List<TestResultContainer>();
+            foreach (RunningTest runningTest in testList_.Values)
+            {
+                if (!runningTest.IsCompleted)
+                {
+                    if (runner_.GetError() != null)
+                    {
+                        throw new EyesException("Execution crashed", runner_.GetError());
+                    }
+                    return null;
+                }
+
+                allResults.Add(runningTest.GetTestResultContainer());
+            }
+
+            return allResults;
+        }
+
+        IDictionary<string, RunningTest> IEyes.GetAllRunningTests()
+        {
+            return testList_;
         }
     }
 }

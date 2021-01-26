@@ -17,7 +17,9 @@ namespace Applitools.Selenium.Tests
         {
             IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();
             //webDriver.Url = "https://applitools.github.io/demo/TestPages/DynamicResolution/mobile.html";
-            Eyes eyes = new Eyes(new MockServerConnectorFactory());
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            webdriverProvider.SetDriver(webDriver);
+            Eyes eyes = new Eyes(new MockServerConnectorFactory(webdriverProvider));
             eyes.SendDom = false;
             TestUtils.SetupLogging(eyes);
             eyes.Batch = TestDataProvider.BatchInfo;

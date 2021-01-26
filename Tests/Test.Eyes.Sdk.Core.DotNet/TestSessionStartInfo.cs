@@ -44,6 +44,7 @@ namespace Applitools
                 "baseline branch",
                 saveDiffs: null,
                 render: null,
+                agentSessionId: "59436361-2782-45EF-9DC5-5633F15150CE",
                 timeout: 10,
                 properties: sessionProperties);
 

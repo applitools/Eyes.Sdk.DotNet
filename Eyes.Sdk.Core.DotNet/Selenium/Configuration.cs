@@ -162,6 +162,7 @@ namespace Applitools.Selenium
         public new IConfiguration SetParentBranchName(string value) => (IConfiguration)base.SetParentBranchName(value);
         public new IConfiguration SetSaveDiffs(bool? value) => (IConfiguration)base.SetSaveDiffs(value);
         public new IConfiguration SetSaveNewTests(bool value) => (IConfiguration)base.SetSaveNewTests(value);
+        public new IConfiguration SetSaveFailedTests(bool value) => (IConfiguration)base.SetSaveFailedTests(value);
         public new IConfiguration SetSendDom(bool value) => (IConfiguration)base.SetSendDom(value);
         public new IConfiguration SetStitchOverlap(int value) => (IConfiguration)base.SetStitchOverlap(value);
         public new IConfiguration SetTestName(string value) => (IConfiguration)base.SetTestName(value);

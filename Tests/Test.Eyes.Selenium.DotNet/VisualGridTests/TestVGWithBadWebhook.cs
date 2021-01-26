@@ -35,7 +35,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 eyes.Close();
                 runner.GetAllTestResults();
-            }, Throws.Exception.With.Property("Message").StartsWith("Render Failed for DesktopBrowserInfo {ViewportSize={Width=800, Height=600}, BrowserType=CHROME} "));
+            }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.Property("Message").StartsWith("Render Failed for DesktopBrowserInfo {ViewportSize={Width=800, Height=600}, BrowserType=CHROME} "));
 
         }
     }

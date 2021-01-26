@@ -9,7 +9,6 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -213,10 +212,12 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestReplaceMatchedStep()
         {
-            Eyes eyes = new Eyes(new MockServerConnectorFactory());
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            Eyes eyes = new Eyes(new MockServerConnectorFactory(webdriverProvider));
             TestUtils.SetupLogging(eyes);
             eyes.Batch = TestDataProvider.BatchInfo;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
             mockServerConnector.AsExcepted = false;
             try
@@ -239,17 +240,19 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestNoReplaceMatchedStep()
         {
-            Eyes eyes = new Eyes(new MockServerConnectorFactory());
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            Eyes eyes = new Eyes(new MockServerConnectorFactory(webdriverProvider));
             TestUtils.SetupLogging(eyes);
             eyes.Batch = TestDataProvider.BatchInfo;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
             mockServerConnector.AsExcepted = false;
             try
             {
                 driver.Url = "https://applitools.github.io/demo/TestPages/SpecialCases/neverchanging.html";
                 eyes.Open(driver, "Applitools Eyes SDK", "Test No Replace Matched Step", new Size(700, 460));
-                eyes.Check("Step 1", Target.Window());
+                eyes.Check("Step 1", Target.Window().SendDom(false));
                 eyes.Close();
             }
             finally

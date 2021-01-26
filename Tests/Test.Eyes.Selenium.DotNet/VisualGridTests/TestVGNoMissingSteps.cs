@@ -66,7 +66,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             internal RunningTestBuilder AddTask(TaskType taskType)
             {
                 VisualGridTask task = CreateTask_(taskType);
-                runningTest_.TaskList.Add(task);
+                runningTest_.CheckTasks.Add(task);
                 return this;
             }
 

@@ -34,6 +34,7 @@ namespace Applitools
         bool? SaveDiffs { get; set; }
 
         bool SaveNewTests { get; set; }
+        bool SaveFailedTests { get; set; }
 
         bool SendDom { get; set; }
 
@@ -73,6 +74,7 @@ namespace Applitools
         IConfiguration SetParentBranchName(string value);
         IConfiguration SetSaveDiffs(bool? value);
         IConfiguration SetSaveNewTests(bool value);
+        IConfiguration SetSaveFailedTests(bool value);
         IConfiguration SetSendDom(bool value);
         IConfiguration SetStitchOverlap(int value);
         IConfiguration SetTestName(string value);

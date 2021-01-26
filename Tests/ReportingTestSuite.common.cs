@@ -57,6 +57,10 @@ namespace Applitools.Tests.Utils
                 TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Skipping Test (will be marked as Inconclusive): {tc.Test.FullName}");
                 Assert.Inconclusive();
             }
+            else
+            {
+                TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test Starting: {tc.Test.FullName}");
+            }
         }
 
         [TearDown]

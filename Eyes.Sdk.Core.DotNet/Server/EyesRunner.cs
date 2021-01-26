@@ -9,6 +9,12 @@ namespace Applitools
     {
         private readonly ConcurrentDictionary<string, IBatchCloser> batchClosers_ = new ConcurrentDictionary<string, IBatchCloser>();
 
+        public EyesRunner()
+        {
+            ServerConnectorFactory = new ServerConnectorFactory();
+            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
+        }
+
         public Logger Logger { get; } = new Logger();
 
         public TestResultsSummary GetAllTestResults()
@@ -18,15 +24,18 @@ namespace Applitools
 
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
+            Logger.Verbose("Enter");
             TestResultsSummary allTestResults;
             try
             {
+                GetAllTestResultsAlreadyCalled = true;
                 allTestResults = GetAllTestResultsImpl(shouldThrowException);
             }
             finally
             {
                 DeleteAllBatches_();
             }
+            Logger.Verbose("Exit. Test results: {0}", allTestResults.Count);
             return allTestResults;
         }
 
@@ -56,9 +65,19 @@ namespace Applitools
             }
         }
 
+        public IServerConnector ServerConnector { get; set; }
+        public IServerConnectorFactory ServerConnectorFactory { get; set; }
+
         public string ApiKey { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
         public string ServerUrl { get; set; } = CommonUtils.ServerUrl;
         public bool IsDisabled { get; set; }
         public bool DontCloseBatches { get; set; } = CommonUtils.DontCloseBatches;
+        public string AgentId
+        {
+            get { return ServerConnector.AgentId; }
+            set { if (value != null) ServerConnector.AgentId = value; }
+        }
+
+        public bool GetAllTestResultsAlreadyCalled { get; private set; } = false;
     }
 }

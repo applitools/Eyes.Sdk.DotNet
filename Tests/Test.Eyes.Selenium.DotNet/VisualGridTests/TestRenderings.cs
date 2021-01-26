@@ -1,4 +1,5 @@
 ﻿using Applitools.Metadata;
+using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
@@ -46,7 +47,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void ViewportsTest()
         {
-            VisualGridRunner runner = new VisualGridRunner(30);
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webdriverProvider);
+            VisualGridRunner runner = new VisualGridRunner(30, nameof(ViewportsTest), serverConnectorFactory);
             Eyes eyes = new Eyes(runner);
 
             eyes.SetLogHandler(TestUtils.InitLogHandler());
@@ -63,54 +66,40 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             foreach (BrowserType b in Enum.GetValues(typeof(BrowserType)))
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                if (b == BrowserType.EDGE || b == BrowserType.SAFARI_EARLY_ACCESS) continue;
+                if (b == BrowserType.EDGE) continue;
 #pragma warning restore CS0618 // Type or member is obsolete
                 sconf.AddBrowser(700, 500, b);
                 sconf.AddBrowser(800, 600, b);
                 numOfBrowsers++;
             }
             eyes.SetConfiguration(sconf);
-
+            
             ChromeDriver driver = SeleniumUtils.CreateChromeDriver();
-            eyes.Open(driver);
-            driver.Url = "https://www.applitools.com";
-            eyes.Check("Test Viewport", Target.Window().Fully());
-            driver.Quit();
-
-            TestResultsSummary allResults = runner.GetAllTestResults(false);
-            Assert.Greater(sconf.GetBrowsersInfo().Count, numOfBrowsers);
-
-            Dictionary<string, HashSet<Size>> results = new Dictionary<string, HashSet<Size>>();
-            foreach (TestResultContainer testResultContainer in allResults)
+            webdriverProvider.SetDriver(driver);
+            try
             {
-                Assert.NotNull(testResultContainer, nameof(testResultContainer));
-                SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, testResultContainer.TestResults);
-                if (sessionResults == null)
-                {
-                    eyes.Logger.Log("Error: sessionResults is null for item {0}", testResultContainer);
-                    continue;
-                }
-                BaselineEnv env = sessionResults.Env;
-                string browser = env.HostingAppInfo;
-                if (browser == null)
-                {
-                    eyes.Logger.Log("Error: HostingAppInfo (browser) is null. {0}", testResultContainer);
-                    continue;
-                }
-                if (!results.TryGetValue(browser, out HashSet<Size> sizesList))
-                {
-                    sizesList = new HashSet<Size>();
-                    results.Add(browser, sizesList);
-                }
-                Size displaySize = env.DisplaySize;
-                if (sizesList.Contains(displaySize))
-                {
-                    Assert.Fail($"Browser {browser} viewport size {displaySize} already exist in results.");
-                }
-                sizesList.Add(displaySize);
+                eyes.Open(driver);
+                driver.Url = "data:text/html,<html><body><h1>Hello, world!</h1></body></html>";
+                eyes.Check("Test Viewport", Target.Window().Fully());
             }
-            Assert.AreEqual(numOfBrowsers, results.Count, "unique browsers in results");
-            Assert.AreEqual(sconf.GetBrowsersInfo().Count, allResults.Count, "all results");
+            finally
+            {
+                driver.Quit();
+            }
+            TestResultsSummary allResults = runner.GetAllTestResults(false);
+            MockServerConnector serverConnector = (MockServerConnector)runner.ServerConnector;
+            HashSet<RenderRequest> requests = new HashSet<RenderRequest>();
+            foreach (string requestJson in serverConnector.RenderRequests)
+            {
+                RenderRequest[] reqs = Newtonsoft.Json.JsonConvert.DeserializeObject<RenderRequest[]>(requestJson);
+                foreach (RenderRequest req in reqs)
+                {
+                    requests.Add(req);
+                }
+            }
+            int browserCount = sconf.GetBrowsersInfo().Count;
+            Assert.AreEqual(browserCount, numOfBrowsers * 2);
+            Assert.AreEqual(browserCount, requests.Count);
         }
 
         [Parallelizable(ParallelScope.None)]

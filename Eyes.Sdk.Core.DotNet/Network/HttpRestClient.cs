@@ -39,7 +39,7 @@ namespace Applitools.Utils
         /// to use the default serializer.</param>
         /// <param name="agentId">The full agent ID of the SDK.</param>
         /// <param name="serverUrl">Server's base URL</param>
-        public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null)
+        public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null, Logger logger = null)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
 
@@ -47,6 +47,7 @@ namespace Applitools.Utils
             json_ = jsonSerializer ?? JsonUtils.CreateSerializer(false, false);
             AgentId = agentId;
             ConnectionLimit = 10;
+            Logger = logger;
             Timeout = TimeSpan.FromMinutes(10);
         }
 
@@ -66,7 +67,6 @@ namespace Applitools.Utils
             ConfigureRequest = other.ConfigureRequest;
             RequestCompleted = other.RequestCompleted;
             RequestFailed = other.RequestFailed;
-            AcceptLongRunningTasks = other.AcceptLongRunningTasks;
             WebRequestCreator = other.WebRequestCreator;
         }
         #endregion
@@ -112,17 +112,13 @@ namespace Applitools.Utils
         /// Excess connections will block.
         /// </summary>
         public int ConnectionLimit { get; set; }
+        public Logger Logger { get; }
 
         /// <summary>
         /// Formats HTTP request URIs.
         /// </summary>
         /// <returns>A new URI to use in the request</returns>
         public Func<Uri, Uri> FormatRequestUri { get; set; }
-
-        /// <summary>
-        /// Whether or not to accept long-running async tasks.
-        /// </summary>
-        public bool AcceptLongRunningTasks { get; set; }
 
         /// <summary>
         /// Gets or sets the proxy used by this client or <c>null</c> to obtain the system 
@@ -162,6 +158,14 @@ namespace Applitools.Utils
         public HttpWebResponse PostJson<T>(string path, T body, string accept = "application/json")
         {
             return SendJsonHttpWebRequest_(path, "POST", body, accept);
+        }
+
+        /// <summary>
+        /// Sends a POST request to the input path under the base url with a JSON body.
+        /// </summary>
+        public void PostJson<T>(TaskListener<HttpWebResponse> listener, string path, T body, string accept = "application/json")
+        {
+            SendLongJsonRequest_(listener, path, "POST", body, accept);
         }
 
         /// <summary>
@@ -207,12 +211,20 @@ namespace Applitools.Utils
         }
 
         /// <summary>
+        /// Sends a DELETE request to the input path under the base url.
+        /// </summary>
+        public void Delete(TaskListener<HttpWebResponse> listener, string path, string accept = null)
+        {
+            SendLongRequest_(listener, path, "DELETE", null, null, accept, null);
+        }
+
+        /// <summary>
         /// Sends a DELETE request to the input path under the base url with a Json body.
         /// </summary>
-        public HttpWebResponse DeleteJson<T>(
+        public void DeleteJson<T>(TaskListener<HttpWebResponse> listener,
             string path, T body, string accept = "application/json")
         {
-            return SendJsonHttpWebRequest_(path, "DELETE", body, accept);
+            SendLongJsonRequest_(listener, path, "DELETE", body, accept);
         }
 
         /// <summary>
@@ -262,144 +274,122 @@ namespace Applitools.Utils
             }
         }
 
+        private void SendLongJsonRequest_<T>(
+            TaskListener<HttpWebResponse> listener,
+            string path, string method, T body, string accept)
+        {
+            using (var s = new MemoryStream())
+            {
+                json_.Serialize(body, s);
+                s.Position = 0;
+
+                SendLongRequest_(listener, path, method, s, "application/json", accept, null);
+            }
+        }
+
+        public void SendAsyncRequest(TaskListener<HttpWebResponse> listener, string url, string method)
+        {
+            Uri requestUri = new Uri(url);
+            HttpWebRequest request = CreateHttpWebRequest_(requestUri, method, null, null, null, null);
+            SendAsyncRequest(listener, request);
+        }
+
+        public static void SendAsyncRequest(TaskListener<HttpWebResponse> listener, HttpWebRequest request)
+        {
+            request.BeginGetResponse(ar =>
+            {
+                if (!ar.IsCompleted) return;
+                HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
+                try
+                {
+                    HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+                    listener.OnComplete(response);
+                    response.Close();
+                }
+                catch (WebException ex)
+                {
+                    listener.OnFail(ex);
+                }
+            }, request);
+        }
+
         private HttpWebResponse SendHttpWebRequest_(
+            string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
+        {
+            Uri requestUri = string.IsNullOrEmpty(path) ? ServerUrl : new Uri(ServerUrl, path);
+
+            HttpWebRequest request = CreateHttpWebRequest_(
+               requestUri, method, body, contentType, accept, contentEncoding);
+
+            if (request == null)
+            {
+                throw new NullReferenceException("request is null");
+            }
+
+            return (HttpWebResponse)request.GetResponse();
+        }
+
+        private void SendLongRequest_(TaskListener<HttpWebResponse> listener,
             string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
         {
             HttpWebRequest request = null;
             HttpWebResponse response = null;
-            void send()
-            {
-                request = null;
-                response = null;
 
-                Stopwatch sw = Stopwatch.StartNew();
+            Stopwatch sw = Stopwatch.StartNew();
 
-                try
-                {
-                    try
-                    {
-                        var requestUri = string.IsNullOrEmpty(path) ?
-                            ServerUrl : new Uri(ServerUrl, path);
-
-                        request = CreateHttpWebRequest_(
-                           requestUri, method, body, contentType, accept, contentEncoding);
-
-                        if (request == null)
-                        {
-                            throw new NullReferenceException("request is null");
-                        }
-                        response = (HttpWebResponse)request.GetResponse();
-                    }
-                    catch (WebException ex)
-                    {
-                        if (request == null || ex.Response == null)
-                        {
-                            throw;
-                        }
-
-                        response = (HttpWebResponse)ex.Response;
-                    }
-                }
-                catch (Exception ex2)
-                {
-                    if (request != null && RequestFailed != null)
-                    {
-                        var args = new HttpRequestFailedEventArgs(sw.Elapsed, request, ex2);
-                        CommonUtils.DontThrow(() => RequestFailed(this, args));
-                    }
-
-                    throw;
-                }
-
-                if (RequestCompleted != null)
-                {
-                    var args = new HttpRequestCompletedEventArgs(
-                        sw.Elapsed, request, response);
-                    CommonUtils.DontThrow(() => RequestCompleted(this, args));
-                }
-            }
-
-            int wait = 500;
-            int retriesLeft = 2;
-            do
+            try
             {
                 try
                 {
-                    send();
-                    retriesLeft = 0;
+                    var requestUri = string.IsNullOrEmpty(path) ?
+                        ServerUrl : new Uri(ServerUrl, path);
+
+                    request = CreateHttpWebRequest_(
+                       requestUri, method, body, contentType, accept, contentEncoding);
+
+                    if (request == null)
+                    {
+                        throw new NullReferenceException("request is null");
+                    }
+                    request.BeginGetResponse(OnLongRequestResponse_, request);
                 }
-                catch
+                catch (WebException ex)
                 {
-                    CommonUtils.DontThrow(() => response?.Close());
+                    if (request == null || ex.Response == null)
+                    {
+                        throw;
+                    }
 
-                    Thread.Sleep(wait);
-                    wait *= 2;
-                    wait = Math.Min(10000, wait);
+                    listener.OnFail(ex);
                 }
-            } while (retriesLeft-- > 0);
-
-            if (response == null)
+            }
+            catch (Exception ex2)
             {
-                throw new NullReferenceException("response is null");
+                if (request != null && RequestFailed != null)
+                {
+                    var args = new HttpRequestFailedEventArgs(sw.Elapsed, request, ex2);
+                    CommonUtils.DontThrow(() => RequestFailed(this, args));
+                }
+
+                throw;
             }
 
-            if (AcceptLongRunningTasks)
+            void OnLongRequestResponse_(IAsyncResult result)
             {
+                if (!result.IsCompleted) return;
+                HttpWebRequest resultRequest = (HttpWebRequest)result.AsyncState;
+                response = (HttpWebResponse)resultRequest.EndGetResponse(result);
+
+                if (response == null)
+                {
+                    throw new NullReferenceException("response is null");
+                }
+
                 string statusUrl = response.Headers[HttpResponseHeader.Location];
-                string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
-                int timeToWait = wait;
-                if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
-                {
-                    timeToWait *= 1000;
-                }
-                else
-                {
-                    timeToWait = wait;
-                }
-
-                if (statusUrl != null && response.StatusCode == HttpStatusCode.Accepted)
-                {
-                    response.Close();
-
-                    wait = 500;
-                    while (true)
-                    {
-                        using (response = Get(statusUrl))
-                        {
-                            if (response.StatusCode == HttpStatusCode.Created)
-                            {
-                                return Delete(
-                                    response.Headers[HttpResponseHeader.Location], accept);
-                            }
-
-                            if (response.StatusCode == HttpStatusCode.OK)
-                            {
-                                statusUrl = response.Headers[HttpResponseHeader.Location] ?? statusUrl;
-
-                                secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
-                                if (secondsToWait != null && int.TryParse(secondsToWait, out timeToWait))
-                                {
-                                    timeToWait *= 1000;
-                                }
-                                else
-                                {
-                                    wait *= 2;
-                                    wait = Math.Min(5000, wait);
-                                    timeToWait = wait;
-                                }
-                                Thread.Sleep(timeToWait);
-
-                                continue;
-                            }
-
-                            // Something went wrong.
-                            return response;
-                        }
-                    }
-                }
+                RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, statusUrl, listener);
+                SendAsyncRequest(requestPollingListener, statusUrl, "GET");
             }
 
-            return response;
         }
 
         private HttpWebRequest CreateHttpWebRequest_(
@@ -474,13 +464,7 @@ namespace Applitools.Utils
 
             req.Headers["x-applitools-eyes-client-request-id"] = Guid.NewGuid().ToString();
 
-            if (AcceptLongRunningTasks)
-            {
-                req.Headers["Eyes-Expect"] = "202+location";
-                req.Headers["Eyes-Expect-Version"] = "2";
-                req.Headers["Eyes-Date"] =
-                    TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.RFC1123);
-            }
+            SetLongRequestHeaders(req);
 
             if (body != null)
             {
@@ -500,6 +484,14 @@ namespace Applitools.Utils
             }
 
             return req;
+        }
+
+        private static void SetLongRequestHeaders(HttpWebRequest req)
+        {
+            req.Headers["Eyes-Expect"] = "202+location";
+            req.Headers["Eyes-Expect-Version"] = "2";
+            req.Headers["Eyes-Date"] =
+                TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.RFC1123);
         }
 
         #endregion

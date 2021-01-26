@@ -19,6 +19,7 @@ using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
 using Region = Applitools.Utils.Geometry.Region;
 using System.Linq;
+using Applitools.VisualGrid;
 using System.Text;
 
 namespace Applitools.Selenium
@@ -26,11 +27,7 @@ namespace Applitools.Selenium
     /// <summary>
     /// Applitools Eyes Selenium DotNet API.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Microsoft.Design",
-        "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
-        Justification = "EyesWebDriver should only be disposed by the test")]
-    internal class SeleniumEyes : EyesBase, IEyes, ISeleniumEyes, IUserActionsEyes
+    internal class SeleniumEyes : RunningTest, IEyes, ISeleniumEyes, IUserActionsEyes
     {
         private const string SET_DATA_APPLITOOLS_SCROLL_ATTR = "var e = arguments[0]; if (e != null) e.setAttribute('data-applitools-scroll','true');";
 
@@ -51,7 +48,6 @@ namespace Applitools.Selenium
 
         private IWebElement userDefinedSRE_;
         private ISeleniumConfigurationProvider configProvider_;
-        private ClassicRunner runner_;
 
         #endregion Fields
 
@@ -63,26 +59,28 @@ namespace Applitools.Selenium
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
         public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, Uri serverUrl, ClassicRunner runner)
+            : base(runner)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
             configProvider_ = configurationProvider;
             ServerUrl = serverUrl.ToString();
-            runner_ = runner;
             Init_();
         }
 
         /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
-        public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner)
+        public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner) 
+            : base(runner)
         {
             configProvider_ = configurationProvider;
             runner_ = runner;
             Init_();
         }
 
-        internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner, IServerConnectorFactory serverConnectorFactory)
-            : base(serverConnectorFactory, null)
+        internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner, 
+            IServerConnectorFactory serverConnectorFactory)
+            : base(runner, serverConnectorFactory)
         {
             configProvider_ = configurationProvider;
             runner_ = runner;
@@ -621,7 +619,7 @@ namespace Applitools.Selenium
             catch (Exception ex)
             {
                 Logger.Log("Exception: " + ex);
-                throw;
+                throw new EyesException("Error", ex);
             }
         }
 
@@ -1367,17 +1365,29 @@ namespace Applitools.Selenium
             return driver_;
         }
 
+        public void CloseAsync()
+        {
+            Close(false);
+        }
+
         public override TestResults Close(bool throwEx)
         {
-            TestResults results = null;
+            TestResults results;
             try
             {
-                results = base.Close(throwEx);
+                results = StopSession(false);
+                CloseCompleted(results);
             }
-            catch (EyesException e)
+            catch (Exception e)
             {
-                runner_.Exception = e;
-                if (throwEx) throw;
+                Logger.Log("Error: {0}", e);
+                CloseFailed(e);
+                throw;
+            }
+
+            if (exception_ != null && throwEx)
+            {
+                throw new Exception("Error", exception_);
             }
 
             if (runner_ != null && results != null)
@@ -1461,6 +1471,37 @@ namespace Applitools.Selenium
                 CheckSettings = lastCheckSettings_,
                 FluentCommandString = fluentCommandString,
             };
+        }
+
+        public IDictionary<string, RunningTest> GetAllRunningTests()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IEyes.IsCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<TestResultContainer> GetAllTestResults()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override MatchWindowData PrepareForMatch(ICheckTask checkTask)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, 
+            string source, IList<IUserAction> userInputs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Methods

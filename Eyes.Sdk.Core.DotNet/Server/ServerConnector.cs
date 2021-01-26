@@ -1,5 +1,5 @@
-﻿using Applitools.Ufg;
-using Applitools.Utils;
+﻿using Applitools.Utils;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -30,7 +30,7 @@ namespace Applitools
         private bool proxyChanged_ = false;
         private WebProxy proxy;
         private RenderingInfo renderingInfo_;
-        private readonly JsonSerializer serializer_;
+        internal readonly JsonSerializer serializer_;
 
         #endregion
 
@@ -53,6 +53,11 @@ namespace Applitools
 
             Timeout = TimeSpan.FromMinutes(5);
             logger.Verbose("created");
+        }
+
+        internal HttpRestClient CreateHttpRestClient(Uri uri)
+        {
+            return HttpRestClientFactory.Create(uri, AgentId, serializer_);
         }
 
         #endregion
@@ -117,21 +122,29 @@ namespace Applitools
         /// <summary>
         /// Message logger.
         /// </summary>
-        protected Logger Logger { get; private set; }
+        protected internal Logger Logger { get; private set; }
 
         #endregion
 
         #region Methods
 
+        // for testing purposes only
+        internal RunningSession StartSession(SessionStartInfo sessionStartInfo)
+        {
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
+            StartSessionInternal(listener, sessionStartInfo);
+            return listener.Get();
+        }
+
         /// <summary>
         /// Starts a new session.
         /// </summary>
-        public RunningSession StartSession(SessionStartInfo startInfo)
+        public void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
         {
-            return StartSessionInternal(startInfo);
+            StartSessionInternal(taskListener, sessionStartInfo);
         }
 
-        protected virtual RunningSession StartSessionInternal(SessionStartInfo startInfo)
+        protected virtual void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo startInfo)
         {
             ArgumentGuard.NotNull(startInfo, nameof(startInfo));
 
@@ -143,33 +156,36 @@ namespace Applitools
             try
             {
                 EnsureHttpClient_();
-                using (HttpWebResponse response = httpClient_.PostJson("api/sessions/running", body))
-                {
-                    if (response == null)
-                    {
-                        throw new NullReferenceException("response is null");
-                    }
-                    // response.DeserializeBody disposes the response object's stream, 
-                    // rendering all of its properties unusable, including StatusCode.
-                    HttpStatusCode responseStatusCode = response.StatusCode;
-                    RunningSession runningSession;
-                    if (responseStatusCode == HttpStatusCode.ServiceUnavailable)
-                    {
-                        runningSession = new RunningSession();
-                        runningSession.ConcurrencyFull = true;
-                    }
-                    else
-                    {
-                        runningSession = response.DeserializeBody<RunningSession>(
-                            true, serializer_, HttpStatusCode.OK, HttpStatusCode.Created);
-                        if (runningSession.isNewSession_ == null)
+                httpClient_.PostJson(
+                    new TaskListener<HttpWebResponse>(
+                        response =>
                         {
-                            runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
-                        }
-                        runningSession.ConcurrencyFull = false;
-                    }
-                    return runningSession;
-                }
+                            if (response == null)
+                            {
+                                throw new NullReferenceException("response is null");
+                            }
+                            // response.DeserializeBody disposes the response object's stream, 
+                            // rendering all of its properties unusable, including StatusCode.
+                            HttpStatusCode responseStatusCode = response.StatusCode;
+                            RunningSession runningSession;
+                            if (responseStatusCode == HttpStatusCode.ServiceUnavailable)
+                            {
+                                runningSession = new RunningSession();
+                                runningSession.ConcurrencyFull = true;
+                            }
+                            else
+                            {
+                                runningSession = response.DeserializeBody<RunningSession>(
+                                    true, serializer_, HttpStatusCode.OK, HttpStatusCode.Created);
+                                if (runningSession.isNewSession_ == null)
+                                {
+                                    runningSession.isNewSession_ = responseStatusCode == HttpStatusCode.Created;
+                                }
+                                runningSession.ConcurrencyFull = false;
+                            }
+                            taskListener.OnComplete(runningSession);
+                        }, ex => taskListener.OnFail(ex))
+                    , "api/sessions/running", body);
             }
             catch (Exception ex)
             {
@@ -199,40 +215,30 @@ namespace Applitools
         /// <summary>
         /// Ends the input running session.
         /// </summary>
-        public TestResults EndSession(RunningSession runningSession, bool isAborted, bool save)
+        public void EndSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
         {
-            return EndSessionInternal(runningSession, isAborted, save);
+            EndSessionInternal(taskListener, sessionStopInfo);
         }
 
-        protected virtual TestResults EndSessionInternal(RunningSession runningSession, bool isAborted, bool save)
+        protected virtual void EndSessionInternal(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo)
         {
-            ArgumentGuard.NotNull(runningSession, nameof(runningSession));
+            ArgumentGuard.NotNull(sessionStopInfo, nameof(sessionStopInfo));
+            ArgumentGuard.NotNull(sessionStopInfo.RunningSession, nameof(sessionStopInfo.RunningSession));
 
-            var body = new
-            {
-                Aborted = isAborted,
-                UpdateBaseline = save,
-            };
-
-            try
-            {
-                using (HttpWebResponse response = httpClient_.DeleteJson("api/sessions/running/" + runningSession.Id, body))
+            httpClient_.DeleteJson(new TaskListener<HttpWebResponse>(
+                response =>
                 {
                     if (response == null)
                     {
                         throw new NullReferenceException("response is null");
                     }
-                    return response.DeserializeBody<TestResults>(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new EyesException($"EndSession failed: {ex.Message}", ex);
-            }
+                    taskListener.OnComplete(response.DeserializeBody<TestResults>(true));
+                },
+                ex => taskListener.OnFail(ex)
+                ), $"api/sessions/running/{sessionStopInfo.RunningSession.Id}", sessionStopInfo);
         }
 
         internal IHttpRestClientFactory HttpRestClientFactory { get; set; } = new DefaultHttpRestClientFactory();
-
 
         public virtual void CloseBatch(string batchId)
         {
@@ -264,115 +270,87 @@ namespace Applitools
             }
         }
 
-        /// <summary>
-        /// Matches the current window with the currently expected window.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="session"></param>
-        public virtual MatchResult MatchWindow(RunningSession session, MatchWindowData data)
+
+        public void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData data)
         {
-            ArgumentGuard.NotNull(session, nameof(session));
             ArgumentGuard.NotNull(data, nameof(data));
 
-            if (!TryUploadImage_(data))
+            if (data.AppOutput.ScreenshotBytes != null)
             {
-                throw new EyesException($"{nameof(MatchWindow)} failed: could not upload image to storage service.");
+                UploadImage(new TaskListener<string>(
+                    returnedUrl =>
+                    {
+                        if (returnedUrl == null)
+                        {
+                            listener.OnFail(new EyesException($"{nameof(MatchWindow)} failed: could not upload image to storage service."));
+                            return;
+                        }
+                        try
+                        {
+                            data.AppOutput.ScreenshotUrl = returnedUrl;
+                            MatchWindowImpl_(listener, data);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new EyesException($"{nameof(MatchWindow)} failed: {ex.Message}", ex);
+                        }
+                    },
+                    ex => listener.OnFail(ex)
+                ), data.AppOutput.ScreenshotBytes);
             }
-
-            try
+            else if (data.AppOutput.ScreenshotUrl != null)
             {
-                string url = string.Format("api/sessions/running/{0}", session.Id);
-                using (HttpWebResponse response = httpClient_.PostJson(url, data))
+                MatchWindowImpl_(listener, data);
+            }
+            else
+            {
+                throw new EyesException("Failed to upload image.");
+            }
+        }
+
+        private void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        {
+            string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
+            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+                response =>
                 {
                     if (response == null)
                     {
                         throw new NullReferenceException("response is null");
                     }
-                    return response.DeserializeBody<MatchResult>(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new EyesException($"{nameof(MatchWindow)} failed: {ex.Message}", ex);
-            }
+                    listener.OnComplete(response.DeserializeBody<MatchResult>(true));
+                },
+                e => { throw e; }
+                ), url, data);
         }
 
-        private bool TryUploadImage_(MatchWindowData data)
+        /// <summary>
+        /// Matches the current window with the currently expected window.
+        /// </summary>
+        /// <param name="data"></param>
+        public virtual MatchResult MatchWindow(MatchWindowData data)
         {
-            if (data.AppOutput.ScreenshotUrl != null)
-            {
-                return true;
-            }
-
-            byte[] bytes = data.AppOutput.ScreenshotBytes;
-            return (data.AppOutput.ScreenshotUrl = TryUploadData_(bytes, "image/png", "image/png")) != null;
+            SyncTaskListener<MatchResult> sync = new SyncTaskListener<MatchResult>(null, e => throw e, Logger);
+            MatchWindow(sync, data);
+            return sync.Get();
         }
 
-        private string TryUploadData_(byte[] bytes, string contentType, string mediaType)
+        private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
-
-            if (renderingInfo != null && renderingInfo.ResultsUrl != null)
+            string targetUrl = renderingInfo?.ResultsUrl?.AbsoluteUri;
+            if (targetUrl == null)
             {
-                try
-                {
-                    string targetUrl = renderingInfo.ResultsUrl.AbsoluteUri;
-                    Guid guid = Guid.NewGuid();
-                    targetUrl = targetUrl.Replace("__random__", guid.ToString());
-                    Logger.Verbose("uploading {0} to {1}", mediaType, targetUrl);
-
-                    int retriesLeft = 3;
-                    int wait = 500;
-                    while (retriesLeft-- > 0)
-                    {
-                        try
-                        {
-                            int statusCode = UploadData_(bytes, renderingInfo, targetUrl, contentType, mediaType);
-                            if (statusCode == 200 || statusCode == 201)
-                            {
-                                Logger.Verbose("upload {0} guid {1} complete.", mediaType, guid);
-                                return targetUrl;
-                            }
-                            if (statusCode < 500)
-                            {
-                                break;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            if (retriesLeft == 0) throw;
-                        }
-                        Thread.Sleep(wait);
-                        wait *= 2;
-                        wait = Math.Min(10000, wait);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("Error uploading " + mediaType + ": " + e);
-                }
+                listener.OnComplete(null);
+                return;
             }
-            return null;
-        }
 
-        private int UploadData_(byte[] bytes, RenderingInfo renderingInfo, string targetUrl, string contentType, string mediaType)
-        {
-            HttpWebRequest request = WebRequest.CreateHttp(targetUrl);
-            if (Proxy != null) request.Proxy = Proxy;
-            request.ContentType = contentType;
-            request.ContentLength = bytes.Length;
-            request.MediaType = mediaType;
-            request.Method = "PUT";
-            request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.Headers.Add("x-ms-blob-type", "BlockBlob");
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(bytes, 0, bytes.Length);
-            dataStream.Close();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            HttpStatusCode statusCode = response.StatusCode;
-            Logger.Verbose("Upload Status Code: {0}", statusCode);
-            response.Close();
-            return (int)statusCode;
+            Guid guid = Guid.NewGuid();
+            targetUrl = targetUrl.Replace("__random__", guid.ToString());
+            Logger.Verbose("uploading {0} to {1}", mediaType, targetUrl);
+
+            UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType);
+            callback.UploadDataAsync();
         }
 
         /// <summary>
@@ -433,36 +411,35 @@ namespace Applitools
             }
         }
 
-        public virtual async Task<List<JobInfo>> GetJobInfo(RenderRequest[] browserInfos)
+        public virtual void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
         {
             ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
             Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
             try
             {
-                RenderingInfo renderingInfo = GetRenderingInfo();
-
-                HttpWebRequest request = CreateHttpWebRequest_("job-info", renderingInfo, Proxy, AgentId);
+                HttpWebRequest request = CreateUfgHttpWebRequest_("job-info");
                 Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
                 serializer_.Serialize(browserInfos, request.GetRequestStream());
 
-                using (WebResponse response = await request.GetResponseAsync())
-                {
-                    Stream s = response.GetResponseStream();
-                    string json = new StreamReader(s).ReadToEnd();
-                    JObject[] jobInfosUnparsed = JsonConvert.DeserializeObject<JObject[]>(json);
-                    List<JobInfo> jobInfos = new List<JobInfo>();
-                    foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
+                HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+                    response =>
                     {
-                        JobInfo jobInfo = new JobInfo
+                        JObject[] jobInfosUnparsed = response.DeserializeBody<JObject[]>(true);
+                        List<JobInfo> jobInfos = new List<JobInfo>();
+                        foreach (JObject jobInfoUnparsed in jobInfosUnparsed)
                         {
-                            Renderer = jobInfoUnparsed.Value<string>("renderer"),
-                            EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
-                        };
-                        jobInfos.Add(jobInfo);
-                    }
-                    Logger.Verbose("request succeeded");
-                    return jobInfos;
-                }
+                            JobInfo jobInfo = new JobInfo
+                            {
+                                Renderer = jobInfoUnparsed.Value<string>("renderer"),
+                                EyesEnvironment = jobInfoUnparsed.Value<object>("eyesEnvironment")
+                            };
+                            jobInfos.Add(jobInfo);
+                        }
+                        Logger.Verbose("request succeeded");
+                        listener.OnComplete(jobInfos);
+                    },
+                    ex => listener.OnFail(ex)
+                    ), request);
             }
             catch (Exception e)
             {
@@ -477,16 +454,26 @@ namespace Applitools
             using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
         }
 
-        public static HttpWebRequest CreateHttpWebRequest_(string url,
-            RenderingInfo renderingInfo, WebProxy proxy, string fullAgentId)
+        public HttpWebRequest CreateUfgHttpWebRequest_(string url, WebProxy proxy = null, string fullAgentId = null,
+            string method = "POST", string contentType = "application/json", string mediaType = "application/json")
+        {
+            RenderingInfo renderingInfo = GetRenderingInfo();
+            return CreateUfgHttpWebRequest_(url, renderingInfo, proxy ?? Proxy, fullAgentId ?? AgentId, method, contentType, mediaType);
+        }
+
+        public HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy,
+            string fullAgentId, string method = "POST", string contentType = "application/json", string mediaType = "application/json")
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
-            HttpWebRequest request = WebRequest.CreateHttp(uri);
+            HttpRestClient restClient = CreateHttpRestClient(uri);
+            HttpWebRequest request = (HttpWebRequest)restClient.WebRequestCreator.Create(uri);
+            //HttpWebRequest request =  WebRequest.CreateHttp(uri); // TODO - replace with factory
             if (proxy != null) request.Proxy = proxy;
-            request.ContentType = "application/json";
-            request.MediaType = "application/json";
-            request.Method = "POST";
+            request.ContentType = contentType;
+            request.MediaType = mediaType;
+            request.Method = method;
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             if (fullAgentId != null)
             {
                 request.Headers.Add("x-applitools-eyes-client", fullAgentId);
@@ -531,7 +518,7 @@ namespace Applitools
             return member;
         }
 
-        public string PostDomCapture(string domJson)
+        public virtual void PostDomCapture(TaskListener<string> listener, string domJson)
         {
             try
             {
@@ -546,7 +533,10 @@ namespace Applitools
                     binData = compressedStream.ToArray();
                 }
 
-                return TryUploadData_(binData, "application/octet-stream", "application/json");
+                UploadData_(new TaskListener<string>(
+                    r => listener.OnComplete(r),
+                    ex => listener.OnFail(ex)
+                ), binData, "application/octet-stream", "application/json");
             }
             catch (Exception ex)
             {
@@ -554,7 +544,7 @@ namespace Applitools
             }
         }
 
-        private void EnsureHttpClient_()
+        protected void EnsureHttpClient_()
         {
             if (httpClient_ != null && httpClient_.ServerUrl.Equals(ServerUrl) && !apiKeyChanged_ && !proxyChanged_)
             {
@@ -565,10 +555,8 @@ namespace Applitools
                 throw new EyesException("ApiKey is null.");
             }
             Logger.Verbose("enter");
-            //HttpRestClient httpClient = new HttpRestClient(ServerUrl, AgentId, json_);
-            HttpRestClient httpClient = HttpRestClientFactory.Create(ServerUrl, AgentId, serializer_);
+            HttpRestClient httpClient = CreateHttpRestClient(ServerUrl);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
-            httpClient.AcceptLongRunningTasks = true;
             httpClient.Proxy = Proxy;
 
             httpClient.RequestCompleted += (s, args) =>
@@ -591,6 +579,90 @@ namespace Applitools
             httpClient_ = httpClient;
             proxyChanged_ = false;
             apiKeyChanged_ = false;
+        }
+
+        public void UploadImage(TaskListener<string> listener, byte[] screenshotBytes)
+        {
+            UploadData_(new TaskListener<string>(
+                    r => listener.OnComplete(r),
+                    ex => listener.OnFail(ex)
+                ),
+                screenshotBytes, "image/png", "image/png");
+        }
+
+        public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        {
+            HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
+            Logger.Verbose("querying for existing resources for render id {0}", renderId);
+            serializer_.Serialize(hashes, request.GetRequestStream());
+            SendUFGAsyncRequest_(taskListener, request);
+        }
+
+        protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
+        {
+            HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+              response =>
+              {
+                  if (response == null)
+                  {
+                      throw new NullReferenceException("response is null");
+                  }
+                  taskListener.OnComplete(response.DeserializeBody<T>(true));
+              },
+              ex => taskListener.OnFail(ex)), request);
+        }
+
+        public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)
+        {
+            ArgumentGuard.NotNull(resource, nameof(resource));
+            byte[] content = resource.Content;
+            ArgumentGuard.NotNull(content, nameof(resource.Content));
+
+            string hash = resource.Sha256;
+            string contentType = resource.ContentType;
+
+            Logger.Verbose("resource hash: {0} ; url: {1} ; render id: {2}", hash, resource.Url, renderId);
+
+            HttpWebRequest request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
+                method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream");
+            request.ContentLength = content.Length;
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(content, 0, content.Length);
+            dataStream.Close();
+
+            Task<WebResponse> task = request.GetResponseAsync();
+            Logger.Verbose("future created.");
+            return task;
+        }
+
+        public virtual void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
+        {
+            ArgumentGuard.NotNull(requests, nameof(requests));
+            Logger.Verbose("called with {0}", StringUtils.Concat(requests, ","));
+            string fullAgentId = AgentId;
+            foreach (IRenderRequest renderRequest in requests)
+            {
+                renderRequest.AgentId = fullAgentId;
+            }
+
+            HttpWebRequest request = CreateUfgHttpWebRequest_("render");
+            Logger.Verbose("sending /render request to {0}", request.RequestUri);
+            serializer_.Serialize(requests, request.GetRequestStream());
+
+            SendUFGAsyncRequest_(renderListener, request);
+        }
+
+        public virtual void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
+        {
+            ArgumentGuard.NotNull(renderIds, nameof(renderIds));
+            string idsAsString = string.Join(",", renderIds);
+            Logger.Verbose("requesting visual grid server for render status of the following render ids: {0}", idsAsString);
+
+            HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");
+            request.ContinueTimeout = 1000;
+            serializer_.Serialize(renderIds, request.GetRequestStream());
+
+            SendUFGAsyncRequest_(taskListener, request);
         }
 
         #endregion

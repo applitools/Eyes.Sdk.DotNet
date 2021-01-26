@@ -3,6 +3,10 @@
     public class RunnerOptions : IRunnerOptionsInternal
     {
         public RunnerOptions() { }
+        internal RunnerOptions(int concurrency)
+        {
+            concurrency_ = concurrency;
+        }
 
         RunnerOptions(RunnerOptions other)
         {

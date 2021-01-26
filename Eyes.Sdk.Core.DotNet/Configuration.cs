@@ -33,6 +33,7 @@ namespace Applitools
             ParentBranchName = configuration.ParentBranchName;
             SaveDiffs = configuration.SaveDiffs;
             SaveNewTests = configuration.SaveNewTests;
+            SaveFailedTests = configuration.SaveFailedTests;
             SendDom = configuration.SendDom;
             ServerUrl = configuration.ServerUrl;
             StitchOverlap = configuration.StitchOverlap;
@@ -189,6 +190,13 @@ namespace Applitools
             return this;
         }
 
+        public bool SaveFailedTests { get; set; }
+
+        public IConfiguration SetSaveFailedTests(bool value)
+        {
+            SaveFailedTests = value;
+            return this;
+        }
 
         public string AppName { get; set; }
 

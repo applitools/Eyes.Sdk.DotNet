@@ -1,23 +1,19 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Cropping;
+using Applitools.Exceptions;
+using Applitools.Fluent;
+using Applitools.Utils;
+using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Applitools.Fluent;
-using Applitools.Exceptions;
-using Applitools.Utils.Cropping;
-using Applitools.Cropping;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Applitools.VisualGrid.Model;
-using Applitools.VisualGrid;
-using System.Threading;
-using Applitools.Ufg;
 
 namespace Applitools
 {
@@ -47,23 +43,25 @@ namespace Applitools
 
         #region Fields
 
+        protected ClassicRunner runner_;
         protected internal RunningSession runningSession_;
         protected MatchWindowTask matchWindowTask_;
         private SessionStartInfo sessionStartInfo_;
-        private bool shouldMatchWindowRunOnceOnTimeout_;
+        protected bool shouldMatchWindowRunOnceOnTimeout_;
         private IScaleProvider scaleProvider_;
         private SetScaleProviderHandler setScaleProvider_;
         private ICutProvider cutProvider_;
         private Assembly actualAssembly_;
-        private readonly PropertiesCollection properties_;
+        private PropertiesCollection properties_;
         private static readonly object screenshotLock_ = new object();
-        private readonly TimeSpan TIME_TO_WAIT_FOR_OPEN = TimeSpan.FromSeconds(70);
-        private readonly TimeSpan TIME_THRESHOLD = TimeSpan.FromSeconds(20);
         private bool isViewportSizeSet_;
         private IDebugScreenshotProvider debugScreenshotProvider_ = NullDebugScreenshotProvider.Instance;
         protected RectangleSize viewportSize_;
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         private IServerConnector serverConnector_;
+        protected TestResultContainer testResultContainer_;
+        private EyesScreenshot lastScreenshot_;
+        private readonly Queue<Trigger> userInputs_ = new Queue<Trigger>();
 
         #endregion
 
@@ -84,23 +82,35 @@ namespace Applitools
         /// Creates a new <see cref="EyesBase"/> instance that interacts with the Eyes cloud
         /// service.
         /// </summary>
-        protected EyesBase() : this(new ServerConnectorFactory(), null) { }
+        protected EyesBase() : this(new ServerConnectorFactory(), null, null) { }
 
-        protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), logger) { }
-
-        protected EyesBase(IServerConnectorFactory serverConnectorFactory, Logger logger)
+        protected EyesBase(Logger logger, IServerConnector serverConnector)
         {
-            ServerConnectorFactory = serverConnectorFactory;
+            Init_(null, logger);
+            ServerConnector = serverConnector;
+        }
 
+        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, null) { }
+
+        protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), null, logger) { }
+
+        protected EyesBase(IServerConnectorFactory serverConnectorFactory, ClassicRunner runner, Logger logger)
+        {
+            Init_(runner, logger);
+            ServerConnectorFactory = serverConnectorFactory;
+            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
+        }
+
+        private void Init_(ClassicRunner runner, Logger logger)
+        {
+            runner_ = runner ?? new ClassicRunner();
             Logger = logger ?? new Logger();
 
             //EnsureConfiguration_();
 
             UpdateActualAssembly_();
-            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
             runningSession_ = null;
             UserInputs = new List<Trigger>();
-
             properties_ = new PropertiesCollection();
 
             setScaleProvider_ = provider => { scaleProvider_ = provider; };
@@ -133,6 +143,46 @@ namespace Applitools
         /// If <c>true</c>, all interactions with this API are silently ignored.
         /// </summary>
         public virtual bool IsDisabled { get; set; }
+
+        public bool IsCompleted => testResultContainer_ != null;
+
+        public virtual SessionStartInfo PrepareForOpen()
+        {
+            Logger.GetILogHandler().Open();
+
+            try
+            {
+                if (IsDisabled)
+                {
+                    Logger.Verbose("Ignored");
+                    return null;
+                }
+
+                Logger.Log("Agent = {0}", FullAgentId);
+                Logger.Verbose(".NET Framework = {0}", Environment.Version);
+
+                ValidateAPIKey(ApiKey);
+                UpdateServerConnector_();
+                LogOpenBase_();
+                ValidateSessionOpen_();
+
+                InitProviders_();
+
+                isViewportSizeSet_ = false;
+
+                BeforeOpen();
+
+                viewportSize_ = GetViewportSizeForOpen();
+
+                return PrepareStartSession_();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("PrepareForOpen(): {0}", Tracer.FormatException(ex));
+                Logger.GetILogHandler().Close();
+                throw;
+            }
+        }
 
         /// <summary>
         /// User inputs collected between <see cref="CheckWindowBase(Rectangle?, ICheckSettings, string)"/> (or one of its overloads) invocations.
@@ -181,9 +231,15 @@ namespace Applitools
         /// </summary>
         protected virtual string BaseAgentId => GetBaseAgentId();
 
-        internal string GetBaseAgentId()
+        protected FileVersionInfo GetActualAssemblyVersionInfo()
         {
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(actualAssembly_.Location);
+            return versionInfo;
+        }
+
+        internal string GetBaseAgentId()
+        {
+            FileVersionInfo versionInfo = GetActualAssemblyVersionInfo();
             return $"{versionInfo.FileDescription}/{versionInfo.ProductVersion}";
         }
 
@@ -347,7 +403,10 @@ namespace Applitools
                 Logger.Verbose("Ending server session...");
                 var save = (isNewSession && Configuration.SaveNewTests) || (!isNewSession && (Configuration.SaveDiffs ?? false));
 
-                TestResults results = ServerConnector.EndSession(runningSession_, false, save);
+                SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, false, save);
+                SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger);
+                ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
+                TestResults results = syncTaskListener.Get();
                 results.IsNew = isNewSession;
                 results.Url = runningSession_.Url;
 
@@ -464,7 +523,10 @@ namespace Applitools
                 Logger.Verbose("Aborting server session...");
                 try
                 {
-                    TestResults results = ServerConnector.EndSession(runningSession_, true, false);
+                    SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, true, false);
+                    SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger);
+                    ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
+                    TestResults results = syncTaskListener.Get();
                     results.IsNew = runningSession_.IsNewSession;
                     results.Url = runningSession_.Url;
                     Logger.Log("Test aborted");
@@ -486,6 +548,33 @@ namespace Applitools
         public void AbortAsync()
         {
             Abort();
+        }
+
+        public virtual MatchWindowData PrepareForMatch(IList<Trigger> userInputs,
+                                     AppOutputWithScreenshot appOutput,
+                                     string tag, bool replaceLast,
+                                     ImageMatchSettings imageMatchSettings,
+                                     EyesBase eyes, string renderId, string source)
+        {
+            // called from regular flow and from check many flow.
+            string agentSetupStr = eyes.GetAgentSetupString();
+
+            // Prepare match data.
+            MatchWindowData data = new MatchWindowData(runningSession_, appOutput.AppOutput, tag, agentSetupStr);
+
+            data.IgnoreMismatch = false;
+            data.Options = new ImageMatchOptions(imageMatchSettings);
+            data.Options.Name = tag;
+            data.Options.UserInputs = userInputs;
+            data.Options.IgnoreMismatch = false;
+            data.Options.IgnoreMatch = false;
+            data.Options.ForceMismatch = false;
+            data.Options.ForceMatch = false;
+            data.Options.Source = source;
+            data.Options.RenderId = renderId;
+            data.Options.ReplaceLast = replaceLast;
+            data.RenderId = renderId;
+            return data;
         }
 
         /// <summary>
@@ -572,7 +661,7 @@ namespace Applitools
 
             if (runningSession_ == null)
             {
-                StartSession_();
+                OpenBase();
             }
 
             Rectangle region = getRegion();
@@ -687,8 +776,6 @@ namespace Applitools
 
                 ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
 
-                EnsureRunningSession();
-
                 BeforeMatchWindow();
 
                 MatchResult result = MatchWindow_(region, tag, checkSettingsInternal, source);
@@ -723,6 +810,37 @@ namespace Applitools
         protected virtual void BeforeOpen() { }
         protected virtual void AfterOpen() { }
 
+        public virtual void OpenCompleted(RunningSession result)
+        {
+            runningSession_ = result;
+            Logger.Verbose("Server session ID is {0}", runningSession_.Id);
+
+            string testName = "'" + TestName + "'";
+            //Logger.SessionId = runningSession_.SessionId;
+            if (runningSession_.IsNewSession)
+            {
+                Logger.Log("--- New test started - " + testName);
+                shouldMatchWindowRunOnceOnTimeout_ = true;
+            }
+            else
+            {
+                Logger.Log("--- Test started - " + testName);
+                shouldMatchWindowRunOnceOnTimeout_ = false;
+            }
+
+            matchWindowTask_ = new MatchWindowTask(
+                Logger,
+                ServerConnector,
+                runningSession_,
+                Configuration.MatchTimeout,
+                this,
+                // A callback which will call getAppOutput
+                GetAppOutput_
+            );
+
+            IsOpen = true;
+        }
+
         private MatchResult MatchWindow_(Rectangle? region, string tag, ICheckSettingsInternal checkSettingsInternal,
             string source)
         {
@@ -738,10 +856,12 @@ namespace Applitools
         private string TryPostDomCapture_(string domJson)
         {
             if (domJson == null) return null;
-            return ServerConnector.PostDomCapture(domJson);
+            SyncTaskListener<string> syncListener = new SyncTaskListener<string>(logger: Logger);
+            ServerConnector.PostDomCapture(syncListener, domJson);
+            return syncListener.Get();
         }
 
-        private void ValidateResult_(string tag, MatchResult result)
+        protected void ValidateResult_(string tag, MatchResult result)
         {
             if (result.AsExpected)
             {
@@ -807,50 +927,25 @@ namespace Applitools
         /// </summary>
         protected void OpenBase()
         {
-            Logger.GetILogHandler().Open();
-
-            try
+            SessionStartInfo startInfo = PrepareForOpen();
+            if (startInfo == null)
             {
-                if (IsDisabled)
-                {
-                    Logger.Verbose("Ignored");
-                    return;
-                }
-
-                Logger.Log("Agent = {0}", FullAgentId);
-                Logger.Verbose(".NET Framework = {0}", Environment.Version);
-
-                ValidateAPIKey(ApiKey);
-                UpdateServerConnector_();
-                LogOpenBase_();
-                ValidateSessionOpen_();
-
-                InitProviders_();
-
-                isViewportSizeSet_ = false;
-
-                BeforeOpen();
-
-                viewportSize_ = GetViewportSizeForOpen();
-                EnsureRunningSession();
-
-                IsOpen = true;
-                Logger.Verbose("EyesBase now open. (hashcode: {0})", GetHashCode());
-
-                AfterOpen();
+                return;
             }
-            catch (Exception ex)
+
+            RunningSession runningSession = runner_.Open(startInfo);
+            if (runningSession == null)
             {
-                Logger.Log("Open(): {0}", Tracer.FormatException(ex));
-                Logger.GetILogHandler().Close();
-                throw;
+                throw new EyesException("Failed starting session with the server");
             }
+            OpenCompleted(runningSession);
         }
 
         protected internal void UpdateServerConnector_()
         {
             ServerConnector.ApiKey = ApiKey;
             ServerConnector.ServerUrl = new Uri(ServerUrl);
+            runner_.UpdateServerConnector(ServerConnector);
         }
 
         protected virtual RectangleSize GetViewportSizeForOpen()
@@ -894,49 +989,6 @@ namespace Applitools
             Logger.Verbose("Timeout = {0}", ServerConnector.Timeout);
             Logger.Log("MatchTimeout = {0}", Configuration.MatchTimeout);
             Logger.Log("DefaultMatchSettings = {0}", DefaultMatchSettings);
-        }
-
-        protected virtual void EnsureRunningSession()
-        {
-            if (runningSession_ != null)
-            {
-                Logger.Log("Session already running.");
-                return;
-            }
-
-            Logger.Log("No running session, calling start session...");
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            TimeSpan sleepDuration = TimeSpan.FromSeconds(5);
-            bool startSessionResult = false;
-            while (!startSessionResult && stopwatch.Elapsed < TIME_TO_WAIT_FOR_OPEN)
-            {
-                startSessionResult = StartSession_();
-                if (!startSessionResult)
-                {
-                    if (stopwatch.Elapsed > TIME_THRESHOLD)
-                    {
-                        sleepDuration = TimeSpan.FromSeconds(10);
-                    }
-                    Thread.Sleep(sleepDuration);
-                    IsServerConcurrencyLimitReached = false;
-                }
-            }
-            if (!startSessionResult)
-            {
-                Logger.Log("Error: could not start session.");
-                return;
-            }
-            Logger.Log("Done!");
-
-            matchWindowTask_ = new MatchWindowTask(
-                Logger,
-                ServerConnector,
-                runningSession_,
-                Configuration.MatchTimeout,
-                this,
-                // A callback which will call getAppOutput
-                GetAppOutput_
-            );
         }
 
         protected abstract Size GetViewportSize();
@@ -1050,7 +1102,7 @@ namespace Applitools
             return appEnv;
         }
 
-        private bool StartSession_()
+        private SessionStartInfo PrepareStartSession_()
         {
             Logger.Verbose("enter");
 
@@ -1071,6 +1123,7 @@ namespace Applitools
             Logger.Verbose("getting environment...");
             object appEnv = GetEnvironment_();
             Logger.Verbose("Application environment is {0}", appEnv);
+            string agentSessionId = Guid.NewGuid().ToString();
 
             sessionStartInfo_ = new SessionStartInfo(
                 FullAgentId,
@@ -1078,7 +1131,7 @@ namespace Applitools
                 null,
                 TestName,
                 testBatch,
-                Configuration.BaselineEnvName,
+                GetBaselineEnvName(),
                 appEnv,
                 Configuration.EnvironmentName,
                 DefaultMatchSettings,
@@ -1087,38 +1140,81 @@ namespace Applitools
                 Configuration.BaselineBranchName,
                 Configuration.SaveDiffs,
                 null,
+                agentSessionId,
                 Configuration.AbortIdleTestTimeout,
                 properties_);
 
-            Logger.Verbose("Starting server session...");
-            Logger.Verbose(JsonConvert.SerializeObject(sessionStartInfo_));
-            runningSession_ = ServerConnector.StartSession(sessionStartInfo_);
+            return sessionStartInfo_;
+        }
 
-            if (runningSession_.ConcurrencyFull)
-            {
-                IsServerConcurrencyLimitReached = true;
-                Logger.Verbose("Failed starting test {0}, concurrency is fully used. Trying again.", Configuration.TestName);
-                return false;
-            }
-            IsServerConcurrencyLimitReached = false;
-            //Logger.Verbose("getting rendering info...");
-            //runningSession_.RenderingInfo = serverConnector_.GetRenderingInfo();
 
-            Logger.Verbose("Server session ID is " + runningSession_.Id);
-
-            string testInfo = $"'{Configuration.TestName}' of '{Configuration.AppName}' {appEnv}";
-            if (runningSession_.IsNewSession)
+        public virtual SessionStopInfo PrepareStopSession(bool isAborted)
+        {
+            if (runningSession_ == null || !IsOpen)
             {
-                Logger.Verbose("--- New test started - " + testInfo);
-                shouldMatchWindowRunOnceOnTimeout_ = true;
-            }
-            else
-            {
-                Logger.Verbose("--- Test started - " + testInfo);
-                shouldMatchWindowRunOnceOnTimeout_ = false;
+                Logger.Log("Server session was not started --- Empty test ended.");
+                return null;
             }
 
-            return true;
+            IsOpen = false;
+            lastScreenshot_ = null;
+            ClearUserInputs_();
+            InitProviders_();
+
+            bool isNewSession = runningSession_.IsNewSession;
+            Logger.Verbose("Ending server session...");
+            bool save = (isNewSession && Configuration.SaveNewTests)
+                    || (!isNewSession && Configuration.SaveFailedTests);
+            Logger.Verbose("Automatically save test? " + save);
+            return new SessionStopInfo(runningSession_, isAborted, save);
+        }
+
+        protected TestResults StopSession(bool isAborted)
+        {
+            if (IsDisabled)
+            {
+                Logger.Verbose("Ignored");
+                return new TestResults();
+            }
+            TestResults testResults;
+            SessionStopInfo sessionStopInfo = PrepareStopSession(isAborted);
+            if (sessionStopInfo == null)
+            {
+                testResults = new TestResults();
+                testResults.Status = TestResultsStatus.NotOpened;
+                return testResults;
+            }
+
+            testResults = runner_.Close(sessionStopInfo);
+            runningSession_ = null;
+            if (testResults == null)
+            {
+                Logger.Log("Failed stopping session");
+                throw new EyesException(string.Format("Failed stopping session. SessionStopInfo: {0}", sessionStopInfo));
+            }
+            return testResults;
+        }
+        protected void ClearUserInputs_()
+        {
+            if (IsDisabled)
+            {
+                return;
+            }
+            userInputs_.Clear();
+        }
+
+        protected Trigger[] GetUserInputs()
+        {
+            if (IsDisabled)
+            {
+                return null;
+            }
+            return userInputs_.ToArray();
+        }
+
+        protected virtual string GetBaselineEnvName()
+        {
+            return Configuration.BaselineEnvName;
         }
 
         protected virtual object GetAgentSetup() { return null; }

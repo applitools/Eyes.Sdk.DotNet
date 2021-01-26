@@ -1,6 +1,7 @@
 ﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using OpenQA.Selenium;
 using System.Drawing;
 
@@ -30,7 +31,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     eyes.CloseAsync();
                     runner.GetAllTestResults();
 
-                }, Throws.Exception.With.InstanceOf<NoSuchElementException>());
+                }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.InstanceOf<NoSuchElementException>());
             }
             finally
             {
@@ -84,7 +85,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                     eyes.CloseAsync();
                     runner.GetAllTestResults();
 
-                }, Throws.Exception.With.InstanceOf<NoSuchElementException>());
+                }, Throws.Exception.With.InstanceOf<NoSuchElementException>().Or.With.InstanceOf<EyesException>().With.InnerException.With.InstanceOf<NoSuchElementException>());
             }
             finally
             {

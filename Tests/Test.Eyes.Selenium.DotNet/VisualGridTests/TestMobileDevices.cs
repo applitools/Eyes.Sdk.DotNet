@@ -1,16 +1,9 @@
-﻿using Applitools.Metadata;
-using Applitools.Selenium.Tests.Mock;
-using Applitools.Selenium.Tests.Utils;
-using Applitools.Selenium.VisualGrid;
+﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
-using Applitools.Ufg;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -23,7 +16,6 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupLogging(eyes);
-            eyes.visualGridEyes_.EyesConnectorFactory = new LocalEyesConnectorFactory();
 
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(new DesktopBrowserInfo(new RectangleSize(700, 460), BrowserType.CHROME));
@@ -86,45 +78,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 Assert.Fail();
             }
 
-            //SessionResults chromeSessionResults = TestUtils.GetSessionResults(eyes.ApiKey, testResults[0]);
-            //string actualUserAgent = chromeSessionResults.StartInfo.Environment.Inferred;
-            //Dictionary<BrowserType, string> userAgents = MockEyesConnector.UserAgents;
-            //Assert.AreEqual("useragent: " + userAgents[BrowserType.CHROME], actualUserAgent);
-
             Assert.AreEqual(new RectangleSize(700, 460), testResults[0].HostDisplaySize);
             Assert.AreEqual(new RectangleSize(360, 640), testResults[1].HostDisplaySize);
             Assert.AreEqual(new RectangleSize(375, 812), testResults[2].HostDisplaySize);
             Assert.AreEqual(new RectangleSize(414, 896), testResults[3].HostDisplaySize);
         }
     }
-
-    class LocalEyesConnectorFactory : IEyesConnectorFactory
-    {
-        public IUfgConnector CreateNewEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration config)
-        {
-            IUfgConnector eyesConnector = new LocalEyesConnector(logger, browserInfo, config);
-            return eyesConnector;
-        }
-    }
-
-    class LocalEyesConnector : EyesConnector
-    {
-        public LocalEyesConnector(Logger logger, RenderBrowserInfo browserInfo, Applitools.Configuration configuration)
-            : base(logger, browserInfo, configuration)
-        {
-            ServerConnector.ServerUrl = new Uri(ServerUrl);
-            ServerConnector.ApiKey = ApiKey;
-        }
-
-        public override List<RunningRender> Render(RenderRequest[] renderRequests)
-        {
-            throw new Exception();
-        }
-
-        public override Task<List<RunningRender>> RenderAsync(RenderRequest[] renderRequests)
-        {
-            throw new Exception();
-        }
-    }
-
 }

@@ -32,7 +32,7 @@ namespace Applitools
     /// <summary>
     /// A base class for model transition triggers.
     /// </summary>
-    public abstract class Trigger
+    public abstract class Trigger : IUserAction
     {
         public Trigger(Region control)
         {

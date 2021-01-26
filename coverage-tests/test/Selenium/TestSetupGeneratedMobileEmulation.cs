@@ -1,11 +1,7 @@
-﻿//using Applitools.VisualGrid;
-using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using System;
 using OpenQA.Selenium.Chrome;
 using Applitools.Selenium;
-using Applitools.Tests.Utils;
-using Applitools.Utils.Geometry;
 using System.Collections.Generic;
 
 namespace Applitools.Generated.Selenium.Tests

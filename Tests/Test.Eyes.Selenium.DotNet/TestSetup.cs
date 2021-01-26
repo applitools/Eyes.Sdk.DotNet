@@ -1,4 +1,5 @@
 ﻿using Applitools.Metadata;
+using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
@@ -47,6 +48,7 @@ namespace Applitools.Selenium.Tests
             public string TestName { get; }
             public string TestNameAsFilename { get; set; }
             public string ExpectedVGOutput { get; set; }
+            public WebDriverProvider WebDriverProvider { get; internal set; }
         }
 
         protected DriverOptions options_;
@@ -164,51 +166,13 @@ namespace Applitools.Selenium.Tests
 
         private void Init_(string testName)
         {
+            string testNameWithArguments = InitTestName_(ref testName);
+
             // Initialize the eyes SDK and set your private API key.
-            Eyes eyes = InitEyes_();
-
-            string testNameWithArguments = testName;
-            foreach(object argValue in TestContext.CurrentContext.Test.Arguments)
-            {
-                testNameWithArguments += "_" + argValue;
-            }
-
-            if (eyes.runner_ is VisualGridRunner)
-            {
-                testName += "_VG";
-                testNameWithArguments += "_VG";
-            }
-            else if (stitchMode_ == StitchModes.Scroll)
-            {
-                testName += "_Scroll";
-                testNameWithArguments += "_Scroll";
-            }
+            Eyes eyes = InitEyes_(testName);
 
             TestUtils.SetupLogging(eyes, testNameWithArguments);
             eyes.Logger.Log("initializing test: {0}", TestContext.CurrentContext.Test.FullName);
-            SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
-            testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
-
-            //if ((eyes.runner_ is VisualGridRunner && RUNS_ON_CI) || USE_MOCK_VG)
-            //{
-            //    eyes.Logger.Log("using VG mock eyes connector");
-            //    string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
-            //    testContextReqs.TestNameAsFilename = testNameAsFilename;
-            //    Assembly thisAssembly = Assembly.GetCallingAssembly();
-            //    Stream expectedOutputJsonStream = thisAssembly.GetManifestResourceStream("Test.Eyes.Selenium.DotNet.Resources.VGTests." + testNameAsFilename + ".json");
-            //    if (expectedOutputJsonStream != null)
-            //    {
-            //        using (StreamReader reader = new StreamReader(expectedOutputJsonStream))
-            //        {
-            //            testContextReqs.ExpectedVGOutput = reader.ReadToEnd();
-            //        }
-            //        eyes.visualGridEyes_.EyesConnectorFactory = new Mock.MockEyesConnectorFactory();
-            //    }
-            //}
-            //else
-            //{
-            //    eyes.Logger.Log("using regular VG eyes connector");
-            //}
 
             string seleniumServerUrl = SetupSeleniumServer(testName);
             bool isWellFormedUri = Uri.IsWellFormedUriString(seleniumServerUrl, UriKind.Absolute);
@@ -277,6 +241,29 @@ namespace Applitools.Selenium.Tests
 
             testDataByTestId_[TestContext.CurrentContext.Test.ID].WrappedDriver = driver;
             testDataByTestId_[TestContext.CurrentContext.Test.ID].WebDriver = webDriver;
+            testDataByTestId_[TestContext.CurrentContext.Test.ID].WebDriverProvider.SetDriver(driver);
+        }
+
+        private string InitTestName_(ref string testName)
+        {
+            string testNameWithArguments = testName;
+            foreach (object argValue in TestContext.CurrentContext.Test.Arguments)
+            {
+                testNameWithArguments += "_" + argValue;
+            }
+
+            if (useVisualGrid_)
+            {
+                testName += "_VG";
+                testNameWithArguments += "_VG";
+            }
+            else if (stitchMode_ == StitchModes.Scroll)
+            {
+                testName += "_Scroll";
+                testNameWithArguments += "_Scroll";
+            }
+
+            return testNameWithArguments;
         }
 
         protected virtual void BeforeOpen(Eyes eyes) { }
@@ -313,10 +300,39 @@ namespace Applitools.Selenium.Tests
             return driver;
         }
 
-        private Eyes InitEyes_(bool? forceFullPageScreenshot = null)
+        private Eyes InitEyes_(string testName, bool? forceFullPageScreenshot = null)
         {
-            EyesRunner runner = useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
+            EyesRunner runner = null;
+            string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
+            string expectedVGOutput = null;
+            WebDriverProvider webDriverProvider = new WebDriverProvider();
+            if (useVisualGrid_)
+            {
+                if (RUNS_ON_CI || USE_MOCK_VG)
+                {
+                    //eyes.Logger.Log("using VG mock eyes connector");
+                    Assembly thisAssembly = Assembly.GetCallingAssembly();
+                    Stream expectedOutputJsonStream = thisAssembly.GetManifestResourceStream("Test.Eyes.Selenium.DotNet.Resources.VGTests." + testNameAsFilename + ".json");
+                    if (expectedOutputJsonStream != null)
+                    {
+                        using (StreamReader reader = new StreamReader(expectedOutputJsonStream))
+                        {
+                            expectedVGOutput = reader.ReadToEnd();
+                        }
+                        runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory(webDriverProvider));
+                    }
+                }
+            }
+
+            runner = runner ?? (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner());
+
             Eyes eyes = new Eyes(runner);
+
+            SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
+            testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
+            testContextReqs.TestNameAsFilename = testNameAsFilename;
+            testContextReqs.ExpectedVGOutput = expectedVGOutput;
+            testContextReqs.WebDriverProvider = webDriverProvider;
 
             string serverUrl = Environment.GetEnvironmentVariable("APPLITOOLS_SERVER_URL");
             if (!string.IsNullOrEmpty(serverUrl))
@@ -438,10 +454,16 @@ namespace Applitools.Selenium.Tests
                     }
                     testData.Eyes.Logger.Log("Mismatches: " + results.Mismatches);
                 }
-                if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes && visualGridEyes.eyesConnector_ is Mock.MockEyesConnector mockEyesConnector)
+                if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes &&
+                    visualGridEyes.runner_.ServerConnector is Mock.MockServerConnector mockServerConnector)
                 {
-                    RenderRequest[] lastRequests = mockEyesConnector.LastRenderRequests;
-                    string serializedRequests = JsonUtils.Serialize(lastRequests);
+                    List<RenderRequest> requests = new List<RenderRequest>();
+                    foreach (string requestJson in mockServerConnector.RenderRequests)
+                    {
+                        RenderRequest[] reqs = Newtonsoft.Json.JsonConvert.DeserializeObject<RenderRequest[]>(requestJson);
+                        requests.AddRange(reqs);
+                    }
+                    string serializedRequests = JsonUtils.Serialize(requests);
                     if (!TestUtils.RUNS_ON_CI)
                     {
                         string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm");
@@ -460,15 +482,16 @@ namespace Applitools.Selenium.Tests
             }
             finally
             {
+                GetWebDriver()?.Quit();
                 Logger logger = GetEyes()?.Logger;
-                if (logger != null) {
+                if (logger != null)
+                {
                     logger.GetILogHandler()?.Open();
                     logger.Log("Test finished.");
                     logger.GetILogHandler()?.Close();
                     Thread.Sleep(1000);
                 }
                 GetEyes()?.Abort();
-                GetWebDriver()?.Quit();
             }
         }
 

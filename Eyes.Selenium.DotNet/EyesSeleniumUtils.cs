@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Applitools.Selenium.Capture;
+using Applitools.Selenium.Fluent;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
@@ -366,7 +367,7 @@ namespace Applitools.Selenium
             string nameOrId = frameTarget.GetFrameNameOrId();
             if (nameOrId != null)
             {
-                System.Collections.Generic.IList<IWebElement> byId = driver.FindElements(By.Id(nameOrId));
+                IList<IWebElement> byId = driver.FindElements(By.Id(nameOrId));
                 if (byId.Count > 0)
                 {
                     return byId[0];
@@ -575,5 +576,41 @@ namespace Applitools.Selenium
                 logger.Verbose("Finished dom extraction");
             }
         }
+
+        internal static IWebElement GetScrollRootElement(Logger logger, IWebDriver driver, 
+            IScrollRootElementContainer scrollRootElementContainer)
+        {
+            if (scrollRootElementContainer == null)
+            {
+                return GetDefaultRootElement(driver, logger);
+            }
+
+            IWebElement scrollRootElement = scrollRootElementContainer.GetScrollRootElement();
+            if (scrollRootElement != null)
+            {
+                return scrollRootElement;
+            }
+
+            By scrollRootSelector = scrollRootElementContainer.GetScrollRootSelector();
+            if (scrollRootSelector != null)
+            {
+                return driver.FindElement(scrollRootSelector);
+            }
+
+            logger.Log("Warning: Got an empty scroll root element container");
+            return EyesSeleniumUtils.GetDefaultRootElement(driver, logger);
+        }
+
+        internal static Ufg.IDebugResourceWriter ConvertDebugResourceWriter(IDebugResourceWriter drw)
+        {
+            Ufg.IDebugResourceWriter ufgDrw = null;
+            if (drw is FileDebugResourceWriter fileDRW)
+            {
+                ufgDrw = new Ufg.FileDebugResourceWriter(fileDRW.TargetFolder);
+            }
+            ufgDrw = ufgDrw ?? Ufg.NullDebugResourceWriter.Instance;
+            return ufgDrw;
+        }
+
     }
 }
