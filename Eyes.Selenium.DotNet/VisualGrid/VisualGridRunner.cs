@@ -172,7 +172,10 @@ namespace Applitools.VisualGrid
 
             eyesServiceRunner_.SetRenderingInfo(renderingInfo_);
 
-            allEyes_.Add(eyes);
+            lock (allEyes_)
+            {
+                allEyes_.Add(eyes);
+            }
 
             try
             {
