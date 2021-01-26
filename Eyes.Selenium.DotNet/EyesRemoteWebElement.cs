@@ -107,14 +107,14 @@ namespace Applitools.Selenium
   while (el != null) {
     var bcr = el.getBoundingClientRect()
     var cr = {
-      x: bcr.left + el.clientLeft,
-      y: bcr.top + el.clientTop,
+      left: bcr.left + el.clientLeft,
+      top: bcr.top + el.clientTop,
       width: el.clientWidth,
       height: el.clientHeight,
     }
     if (el.tagName === 'IFRAME'){
-      intersected.x += cr.x
-      intersected.y += cr.y
+      intersected.left += cr.left
+      intersected.top += cr.top
     } 
     
     if (el.tagName !== 'BODY') { // The body element behavior is special... so to say, so we don't want to account it.
@@ -139,21 +139,21 @@ namespace Applitools.Selenium
       el = el.ownerDocument.defaultView.frameElement
     }
   }
-  return intersected.x+';'+intersected.y+';'+intersected.width+';'+intersected.height;
+  return intersected.left+';'+intersected.top+';'+intersected.width+';'+intersected.height;
   function intersect(rect1, rect2) {
-    var intersectionLeft = rect1.x >= rect2.x ? rect1.x : rect2.x
-    var intersectionTop = rect1.y >= rect2.y ? rect1.y : rect2.y
-    var rect1Right = rect1.x + rect1.width
-    var rect2Right = rect2.x + rect2.width
+    var intersectionLeft = rect1.left >= rect2.left ? rect1.left : rect2.left
+    var intersectionTop = rect1.top >= rect2.top ? rect1.top : rect2.top
+    var rect1Right = rect1.left + rect1.width
+    var rect2Right = rect2.left + rect2.width
     var intersectionRight = rect1Right <= rect2Right ? rect1Right : rect2Right
     var intersectionWidth = intersectionRight - intersectionLeft
-    var rect1Bottom = rect1.y + rect1.height
-    var rect2Bottom = rect2.y + rect2.height
+    var rect1Bottom = rect1.top + rect1.height
+    var rect2Bottom = rect2.top + rect2.height
     var intersectionBottom = rect1Bottom <= rect2Bottom ? rect1Bottom : rect2Bottom
     var intersectionHeight = intersectionBottom - intersectionTop
     return {
-      x: intersectionLeft,
-      y: intersectionTop,
+      left: intersectionLeft,
+      top: intersectionTop,
       width: intersectionWidth,
       height: intersectionHeight,
     }
