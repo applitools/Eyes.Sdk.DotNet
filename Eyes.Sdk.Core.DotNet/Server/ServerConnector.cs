@@ -248,7 +248,10 @@ namespace Applitools
         public virtual void CloseBatch(string batchId, Uri url)
         {
             ArgumentGuard.NotNull(batchId, nameof(batchId));
-            EnsureHttpClient_();
+            if (httpClient_ == null)
+            {
+                EnsureHttpClient_(url);
+            }
             HttpRestClient httpClient = CloneHttpClient_(url);
             HttpWebResponse response = null;
             try
@@ -555,7 +558,7 @@ namespace Applitools
             }
         }
 
-        protected void EnsureHttpClient_()
+        protected void EnsureHttpClient_(Uri url = null)
         {
             if (httpClient_ != null && httpClient_.ServerUrl.Equals(ServerUrl) && !apiKeyChanged_ && !proxyChanged_)
             {
@@ -566,6 +569,8 @@ namespace Applitools
                 throw new EyesException("ApiKey is null.");
             }
             Logger.Verbose("enter");
+
+            ServerUrl = ServerUrl ?? url;
             HttpRestClient httpClient = CreateHttpRestClient(ServerUrl);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
             httpClient.Proxy = Proxy;
