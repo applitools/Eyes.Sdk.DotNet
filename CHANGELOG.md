@@ -7,6 +7,8 @@
 ## [Eyes.Sdk.Core vNext]
 ### Updated
 - Made most communication calls asynchronous
+### Fixed
+- `BatchClose` now support `ApiKey` and `Proxy` [Trello 2435](https://trello.com/c/Dnszwwld)
 
 ## [Eyes.Selenium vNext]
 ### Updated
