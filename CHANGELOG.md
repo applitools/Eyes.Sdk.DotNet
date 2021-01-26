@@ -13,6 +13,8 @@
 - `dom-snapshot` script updated to version 4.4.8
 - Ultrafast Grid: XPath to elements is much smaller now and more robust
 - Ultrafast Grid: Performance improvements in CSS resource collection
+### Fixed
+- `GetClientVisibleRect` now works on IE11 [Trello 2431](https://trello.com/c/rsgJoiIb)
 
 ## [Eyes.Images 2.21] - 2021-01-12
 ### Updated
