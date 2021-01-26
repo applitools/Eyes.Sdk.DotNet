@@ -305,7 +305,7 @@ namespace Applitools.Selenium.Tests
             EyesRunner runner = null;
             string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
             string expectedVGOutput = null;
-            Mock.WebDriverProvider webDriverProvider = null;
+            WebDriverProvider webDriverProvider = new WebDriverProvider();
             if (useVisualGrid_)
             {
                 if (RUNS_ON_CI || USE_MOCK_VG)
@@ -319,7 +319,6 @@ namespace Applitools.Selenium.Tests
                         {
                             expectedVGOutput = reader.ReadToEnd();
                         }
-                        webDriverProvider = new Mock.WebDriverProvider();
                         runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory(webDriverProvider));
                     }
                 }
