@@ -94,7 +94,8 @@ namespace Applitools.Utils
         /// <summary>
         /// Returns all the bytes of the input stream.
         /// </summary>
-        public static byte[] ReadToEnd(this Stream stream, int bufferSize = 1024, int length = 0, long maxLength = 0)
+        public static byte[] ReadToEnd(this Stream stream, int bufferSize = 1024, int length = 0, long maxLength = 0,
+            Logger logger = null)
         {
             ArgumentGuard.NotNull(stream, nameof(stream));
 
@@ -105,6 +106,7 @@ namespace Applitools.Utils
                 long maxPosition = maxLength - bufferSize;
                 bool stillReading = true;
                 NetworkStream networkStream = stream as NetworkStream;
+                logger?.Log("start reading from {0}", stream.GetType().Name);
                 while (stillReading && (networkStream?.DataAvailable ?? true) && (count = stream.Read(array, 0, array.Length)) != 0)
                 {
                     if (maxLength > 0 && ms.Position >= maxPosition)
@@ -114,7 +116,10 @@ namespace Applitools.Utils
                     }
                     ms.Write(array, 0, count);
                 }
-                return ms.ToArray();
+                byte[] bytes = ms.ToArray();
+                logger?.Log("done reading {0} bytes", bytes.Length);
+
+                return bytes;
             }
         }
 
