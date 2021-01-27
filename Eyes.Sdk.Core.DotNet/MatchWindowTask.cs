@@ -161,24 +161,6 @@ namespace Applitools
             return PerformMatch_(userInputs, appOutput, tag, replaceLast, imageMatchSettings, agentSetupStr, source, null);
         }
 
-        public MatchResult PerformMatch(AppOutputWithScreenshot appOutput,
-                                       string tag, bool ignoreMismatch,
-                                       ICheckSettingsInternal checkSettingsInternal,
-                                       ImageMatchSettings imageMatchSettings,
-                                       IList<IRegion> regions,
-                                       IList<VisualGridSelector[]> regionSelectors,
-                                       IList<VGUserAction> userActions,
-                                       EyesBase eyes, string source, string renderId = null)
-        {
-            EyesScreenshot screenshot = appOutput.Screenshot;
-            string agentSetupStr = eyes.GetAgentSetupString();
-
-            List<Trigger> userInputs = new List<Trigger>();
-            CollectRegions(imageMatchSettings, userInputs, regions, regionSelectors, userActions, appOutput.AppOutput.Location);
-            CollectRegions(imageMatchSettings, checkSettingsInternal);
-            return PerformMatch_(userInputs, appOutput, tag, ignoreMismatch, imageMatchSettings, agentSetupStr, source, renderId);
-        }
-
         public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
         {
             imageMatchSettings.Ignore = ConvertSimpleRegions(checkSettingsInternal.GetIgnoreRegions(), imageMatchSettings.Ignore);
