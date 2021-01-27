@@ -38,6 +38,8 @@ namespace Applitools
         public void Close()
         {
             logger_.Verbose("Closing {0} batches", batchIds_.Count());
+            serverConnector_.ApiKey = ApiKey;
+            serverConnector_.Proxy = Proxy;
             foreach (string batchId in batchIds_)
             {
                 serverConnector_.CloseBatch(batchId, ServerUrl);

@@ -248,17 +248,15 @@ namespace Applitools
         public virtual void CloseBatch(string batchId, Uri url)
         {
             ArgumentGuard.NotNull(batchId, nameof(batchId));
-
-            HttpRestClient httpClient = httpClient_;
-            if (httpClient.ServerUrl != url)
+            if (httpClient_ == null)
             {
-                httpClient = httpClient_.Clone();
-                httpClient.ServerUrl = url;
+                EnsureHttpClient_(url);
             }
+            HttpRestClient httpClient = CloneHttpClient_(url);
             HttpWebResponse response = null;
             try
             {
-                response = httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
+                response = CloseBatchImpl_(batchId, httpClient);
             }
             catch (Exception ex)
             {
@@ -270,6 +268,22 @@ namespace Applitools
             }
         }
 
+        protected virtual HttpWebResponse CloseBatchImpl_(string batchId, HttpRestClient httpClient)
+        {
+            return httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
+        }
+
+        private HttpRestClient CloneHttpClient_(Uri url)
+        {
+            HttpRestClient httpClient = httpClient_;
+            if (httpClient.ServerUrl != url)
+            {
+                httpClient = httpClient_.Clone();
+                httpClient.ServerUrl = url;
+            }
+
+            return httpClient;
+        }
 
         public void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData data)
         {
@@ -544,7 +558,7 @@ namespace Applitools
             }
         }
 
-        protected void EnsureHttpClient_()
+        protected void EnsureHttpClient_(Uri url = null)
         {
             if (httpClient_ != null && httpClient_.ServerUrl.Equals(ServerUrl) && !apiKeyChanged_ && !proxyChanged_)
             {
@@ -555,6 +569,8 @@ namespace Applitools
                 throw new EyesException("ApiKey is null.");
             }
             Logger.Verbose("enter");
+
+            ServerUrl = ServerUrl ?? url;
             HttpRestClient httpClient = CreateHttpRestClient(ServerUrl);
             httpClient.FormatRequestUri = uri => uri.AddUriQueryArg("apiKey", ApiKey);
             httpClient.Proxy = Proxy;
