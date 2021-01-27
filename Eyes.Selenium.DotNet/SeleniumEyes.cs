@@ -415,6 +415,7 @@ namespace Applitools.Selenium
         {
             string name = checkSettingsInternal.GetName();
             string source = driver_.Url;
+            Logger.Log($"{nameof(MatchRegion)} - subScreenshots: {subScreenshots.Count}");
             foreach (EyesScreenshot subScreenshot in subScreenshots)
             {
                 DebugScreenshotProvider.Save(subScreenshot.Image, $"subscreenshot_{name}");
@@ -427,7 +428,7 @@ namespace Applitools.Selenium
                 MatchResult matchResult = mwt.PerformMatch(
                         new Trigger[0], appOutputWithScreenshot, name, false, ims, this, source);
 
-                Logger.Verbose("matchResult.asExcepted: {0}", matchResult.AsExpected);
+                Logger.Log("matchResult.asExcepted: {0}", matchResult.AsExpected);
             }
         }
 
