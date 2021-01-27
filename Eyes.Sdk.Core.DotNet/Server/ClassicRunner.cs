@@ -56,25 +56,6 @@ namespace Applitools
             return listener.Get();
         }
 
-        public MatchResult Check(MatchWindowData matchWindowData)
-        {
-            SyncTaskListener<bool?> listener = new SyncTaskListener<bool?>(logger: Logger);
-            checkService_.TryUploadImage(matchWindowData, new TaskListener(
-                () => listener.OnComplete(true),
-                e => listener.OnFail(e)
-                ));
-            bool? result = listener.Get();
-            if (!result.HasValue || !result.Value)
-            {
-                throw new EyesException("Failed performing match with the server");
-            }
-
-            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>(logger: Logger);
-            checkService_.MatchWindow(matchWindowData, matchListener);
-            return matchListener.Get();
-        }
-
-
         public TestResults Close(SessionStopInfo sessionStopInfo)
         {
             SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger);
