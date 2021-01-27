@@ -14,5 +14,10 @@
         /// The matched window id.
         /// </summary>
         public string WindowId { get; set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(AsExpected)}: {AsExpected} ; {nameof(WindowId)}: {WindowId}";
+        }
     }
 }
