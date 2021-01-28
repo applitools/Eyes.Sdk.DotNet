@@ -424,10 +424,10 @@ namespace Applitools.Selenium
                 MatchWindowTask.CollectRegions(this, subScreenshot, checkSettingsInternal, ims);
                 Location location = subScreenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
                 AppOutput appOutput = new AppOutput(name, location, subScreenshot.Image);
-                AppOutputWithScreenshot appOutputWithScreenshot = new AppOutputWithScreenshot(appOutput, subScreenshot);
                          
-                MatchWindowData data = PrepareForMatch(
-                    new Trigger[0], appOutputWithScreenshot, name, false, ims, this, null, source);
+                MatchWindowData data = PrepareForMatch(checkSettingsInternal,
+                    new Trigger[0], appOutput, name, false, ims, null, source);
+
                 MatchResult matchResult = PerformMatch(data);
 
                 Logger.Log("matchResult.asExcepted: {0}", matchResult.AsExpected);

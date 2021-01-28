@@ -550,17 +550,19 @@ namespace Applitools
             Abort();
         }
 
-        public virtual MatchWindowData PrepareForMatch(IList<Trigger> userInputs,
-                                     AppOutputWithScreenshot appOutput,
-                                     string tag, bool replaceLast,
-                                     ImageMatchSettings imageMatchSettings,
-                                     EyesBase eyes, string renderId, string source)
+        public virtual MatchWindowData PrepareForMatch(
+                                    ICheckSettingsInternal checkSettingsInternal,
+                                    IList<Trigger> userInputs,
+                                    AppOutput appOutput,
+                                    string tag, bool replaceLast,
+                                    ImageMatchSettings imageMatchSettings,
+                                    string renderId, string source)
         {
             // called from regular flow and from check many flow.
-            string agentSetupStr = eyes.GetAgentSetupString();
+            string agentSetupStr = GetAgentSetupString();
 
             // Prepare match data.
-            MatchWindowData data = new MatchWindowData(runningSession_, appOutput.AppOutput, tag, agentSetupStr);
+            MatchWindowData data = new MatchWindowData(runningSession_, appOutput, tag, agentSetupStr);
 
             data.IgnoreMismatch = false;
             data.Options = new ImageMatchOptions(imageMatchSettings);
@@ -684,6 +686,18 @@ namespace Applitools
             };
 
             return new InRegionBase(null, region, CreateImage_, getText);
+        }
+        public string TestId { get; private set; } = Guid.NewGuid().ToString();
+
+        protected internal MatchResult PerformMatch(MatchWindowData data)
+        {
+            MatchResult result = runner_.Check(TestId, data);
+            if (result == null)
+            {
+                throw new EyesException("Failed performing match with the server");
+            }
+
+            return result;
         }
 
         private string CreateImage_(Rectangle bounds)

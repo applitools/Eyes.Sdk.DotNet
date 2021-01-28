@@ -150,17 +150,6 @@ namespace Applitools
             eyes.Logger.Verbose("exit");
         }
 
-        public MatchResult PerformMatch(IList<Trigger> userInputs,
-                                       AppOutputWithScreenshot appOutput,
-                                       string tag, bool replaceLast,
-                                       ImageMatchSettings imageMatchSettings,
-                                       EyesBase eyes, string source)
-        {
-            // called from regular flow and from check many flow.
-            string agentSetupStr = eyes.GetAgentSetupString();
-            return PerformMatch_(userInputs, appOutput, tag, replaceLast, imageMatchSettings, agentSetupStr, source, null);
-        }
-
         public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
         {
             imageMatchSettings.Ignore = ConvertSimpleRegions(checkSettingsInternal.GetIgnoreRegions(), imageMatchSettings.Ignore);
@@ -363,33 +352,6 @@ namespace Applitools
             return list.ToArray();
         }
 
-        private MatchResult PerformMatch_(IList<Trigger> userInputs,
-                                        AppOutputWithScreenshot appOutput,
-                                        string tag, bool replaceLast,
-                                        ImageMatchSettings imageMatchSettings,
-                                        string agentSetupStr,
-                                        string source,
-                                        string renderId)
-        {
-            // Prepare match data.
-            MatchWindowData data = new MatchWindowData(runningSession_, appOutput.AppOutput, tag, agentSetupStr);
-
-            data.IgnoreMismatch = false;
-            data.Options = new ImageMatchOptions(imageMatchSettings);
-            data.Options.Name = tag;
-            data.Options.UserInputs = userInputs;
-            data.Options.IgnoreMismatch = false;
-            data.Options.IgnoreMatch = false;
-            data.Options.ForceMismatch = false;
-            data.Options.ForceMatch = false;
-            data.Options.Source = source;
-            data.Options.RenderId = renderId;
-            data.Options.ReplaceLast = replaceLast;
-            data.RenderId = renderId;
-
-            return serverConnector_.MatchWindow(data);
-        }
-
         private static void CollectSimpleRegions_(ICheckSettingsInternal checkSettingsInternal,
                                              ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                              EyesScreenshot screenshot)
@@ -523,8 +485,10 @@ namespace Applitools
             }
             else
             {
-                matchResult_ = PerformMatch(userInputs, appOutputWithScreenshot, tag,
-                    replaceLast || (lastScreenshotHash_ != null), imageMatchSettings, eyes_, source);
+                MatchWindowData data = eyes_.PrepareForMatch(checkSettingsInternal, userInputs, appOutput, 
+                    tag, lastScreenshotHash_ != null, imageMatchSettings, null, source);
+
+                matchResult_ = eyes_.PerformMatch(data);
                 lastScreenshotHash_ = currentScreenshotHash;
             }
             Logger_.Verbose("exit");
