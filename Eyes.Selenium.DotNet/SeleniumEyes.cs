@@ -70,7 +70,7 @@ namespace Applitools.Selenium
         /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
-        public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner) 
+        public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner)
             : base(runner)
         {
             configProvider_ = configurationProvider;
@@ -78,7 +78,7 @@ namespace Applitools.Selenium
             Init_();
         }
 
-        internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner, 
+        internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner,
             IServerConnectorFactory serverConnectorFactory)
             : base(runner, serverConnectorFactory)
         {
@@ -1476,17 +1476,22 @@ namespace Applitools.Selenium
 
         public IDictionary<string, RunningTest> GetAllRunningTests()
         {
-            throw new NotImplementedException();
+            return new Dictionary<string, RunningTest>() { { TestId, this } };
         }
 
         bool IEyes.IsCompleted()
         {
-            throw new NotImplementedException();
+            return testResultContainer_ != null;
         }
 
         public IList<TestResultContainer> GetAllTestResults()
         {
-            throw new NotImplementedException();
+            if (!((IEyes)this).IsCompleted())
+            {
+                return null;
+            }
+
+            return new TestResultContainer[] { testResultContainer_ };
         }
 
         public override MatchWindowData PrepareForMatch(ICheckTask checkTask)
@@ -1494,7 +1499,7 @@ namespace Applitools.Selenium
             throw new NotImplementedException();
         }
 
-        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors, 
+        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
             string source, IList<IUserAction> userInputs)
         {
             throw new NotImplementedException();
