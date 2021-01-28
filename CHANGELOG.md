@@ -9,6 +9,7 @@
 - Made most communication calls asynchronous
 ### Fixed
 - `BatchClose` now support `ApiKey` and `Proxy` [Trello 2435](https://trello.com/c/Dnszwwld)
+- Fixed a bug in the stitching algorithm. [Trello 2223](https://trello.com/c/bHwlpmuX) [Trello 2416](https://trello.com/c/4NDa6Vxl) [Trello 2392](https://trello.com/c/PC2vRlqV)
 
 ## [Eyes.Selenium vNext]
 ### Updated

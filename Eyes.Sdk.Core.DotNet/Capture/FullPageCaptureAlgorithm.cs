@@ -363,7 +363,7 @@ namespace Applitools
 
                 Point partPastePosition = partRegion.PasteLocation;
                 //partPastePosition.Offset(-fullarea.Left, -fullarea.Top);
-                partPastePosition.Offset(dx, dy);
+                partPastePosition.Offset(-dx, -dy);
 
                 // Actually taking the screenshot.
                 Thread.Sleep(waitBeforeScreenshots_);
@@ -372,7 +372,8 @@ namespace Applitools
                 {
                     Bitmap croppedPart;
                     Rectangle r = partRegion.PhysicalCropArea;
-
+                    r.Width += dx;
+                    r.Height += dy;
                     if ((r.Width * r.Height) != 0)
                     {
                         croppedPart = BasicImageUtils.Crop(cutPart, r);
@@ -383,6 +384,8 @@ namespace Applitools
                     }
 
                     Rectangle r2 = partRegion.LogicalCropArea;
+                    r2.Width += dx;
+                    r2.Height += dy;
 
                     using (Bitmap scaledPartImage = BasicImageUtils.ScaleImage(croppedPart, scaleRatio))
                     using (Bitmap scaledCroppedPartImage = BasicImageUtils.Crop(scaledPartImage, r2))
