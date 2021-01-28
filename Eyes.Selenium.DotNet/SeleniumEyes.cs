@@ -425,8 +425,10 @@ namespace Applitools.Selenium
                 Location location = subScreenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
                 AppOutput appOutput = new AppOutput(name, location, subScreenshot.Image);
                 AppOutputWithScreenshot appOutputWithScreenshot = new AppOutputWithScreenshot(appOutput, subScreenshot);
-                MatchResult matchResult = mwt.PerformMatch(
-                        new Trigger[0], appOutputWithScreenshot, name, false, ims, this, source);
+                         
+                MatchWindowData data = PrepareForMatch(
+                    new Trigger[0], appOutputWithScreenshot, name, false, ims, this, null, source);
+                MatchResult matchResult = PerformMatch(data);
 
                 Logger.Log("matchResult.asExcepted: {0}", matchResult.AsExpected);
             }

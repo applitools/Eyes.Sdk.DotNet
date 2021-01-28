@@ -36,6 +36,17 @@ namespace Applitools
 
         public abstract MatchWindowData PrepareForMatch(ICheckTask checkTask);
 
+        protected MatchResult PerformMatch(MatchWindowData data)
+        {
+            MatchResult result = runner_.Check(TestId, data);
+            if (result == null)
+            {
+                throw new EyesException("Failed performing match with the server");
+            }
+
+            return result;
+        }
+
         public abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
             string source, IList<IUserAction> userInputs);
 
