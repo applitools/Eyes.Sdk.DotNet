@@ -219,7 +219,7 @@ namespace Applitools.Selenium.Tests
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             webdriverProvider.SetDriver(driver);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
-            mockServerConnector.AsExcepted = false;
+            mockServerConnector.AsExpected = false;
             try
             {
                 driver.Url = "https://applitools.github.io/demo/TestPages/SpecialCases/everchanging.html";
@@ -247,7 +247,7 @@ namespace Applitools.Selenium.Tests
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             webdriverProvider.SetDriver(driver);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
-            mockServerConnector.AsExcepted = false;
+            mockServerConnector.AsExpected = false;
             try
             {
                 driver.Url = "https://applitools.github.io/demo/TestPages/SpecialCases/neverchanging.html";

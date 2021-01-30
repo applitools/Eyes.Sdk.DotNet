@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Tests.Mock
         internal Dictionary<string, SessionStartInfo> SessionsStartInfo { get; } = new Dictionary<string, SessionStartInfo>();
         internal List<string> SessionIds { get; } = new List<string>();
         private Dictionary<string, JToken> renderRequestsById_ = new Dictionary<string, JToken>();
-        public bool AsExcepted { get; set; } = true;
+        public bool AsExpected { get; set; } = true;
         
         private WebDriverProvider driverProvider_;
 

@@ -21,7 +21,7 @@ namespace Applitools.Selenium.Tests
             eyes.Batch = TestDataProvider.BatchInfo;
             TestUtils.SetupLogging(eyes);
             MockServerConnector mockServerConnector = (MockServerConnector)eyes.seleniumEyes_.ServerConnector;
-            mockServerConnector.AsExcepted = false;
+            mockServerConnector.AsExpected = false;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             webdriverProvider.SetDriver(driver);
             driver.Url = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
