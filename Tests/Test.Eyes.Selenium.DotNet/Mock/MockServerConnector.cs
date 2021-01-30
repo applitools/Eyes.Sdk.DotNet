@@ -20,7 +20,7 @@ namespace Applitools.Selenium.Tests.Mock
             : base(logger, new Uri("http://some.url.com"))
         {
             logger.Verbose("created");
-            HttpRestClientFactory = new MockHttpRestClientFactory(Logger);
+            HttpRestClientFactory = new MockHttpRestClientFactory(Logger, this);
             driverProvider_ = driverProvider;
         }
 
@@ -66,7 +66,7 @@ namespace Applitools.Selenium.Tests.Mock
             return renderingInfo;
         }
 
-        public override MatchResult MatchWindow(MatchWindowData data)
+        protected override void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
         {
             if (data.Options.ReplaceLast)
             {
@@ -78,7 +78,8 @@ namespace Applitools.Selenium.Tests.Mock
                 Logger.Verbose("add new step");
                 MatchWindowCalls.Add(data);
             }
-            return new MatchResult() { AsExpected = this.AsExcepted };
+            
+            base.MatchWindowImpl_(listener, data);
         }
 
         public delegate (bool, bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
@@ -199,17 +200,20 @@ namespace Applitools.Selenium.Tests.Mock
 
     class MockHttpRestClientFactory : IHttpRestClientFactory
     {
-        public MockHttpRestClientFactory(Logger logger)
+        public MockHttpRestClientFactory(Logger logger, MockServerConnector connector)
         {
             Logger = logger;
+            connector_ = connector;
         }
 
         public Logger Logger { get; set; }
 
+        private readonly MockServerConnector connector_;
+
         public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
         {
             HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger);
-            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator(Logger);
+            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator(Logger, connector_);
             return mockedHttpRestClient;
         }
     }
@@ -217,10 +221,12 @@ namespace Applitools.Selenium.Tests.Mock
     class MockWebRequestCreator : IWebRequestCreate
     {
         private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
+        private readonly MockServerConnector connector_;
 
-        public MockWebRequestCreator(Logger logger)
+        public MockWebRequestCreator(Logger logger, MockServerConnector connector)
         {
             Logger = logger;
+            connector_ = connector;
         }
 
         public Logger Logger { get; }
@@ -269,7 +275,7 @@ namespace Applitools.Selenium.Tests.Mock
                         uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "created", StringComparison.OrdinalIgnoreCase))
                     {
                         webResponse.StatusCode.Returns(HttpStatusCode.OK);
-                        Stream stream = new MemoryStream(Encoding.UTF8.GetBytes("{\"AsExpected\":true}"));
+                        Stream stream = new MemoryStream(Encoding.UTF8.GetBytes($"{{\"AsExpected\":{connector_.AsExpected.ToString().ToLower()}}}"));
                         webResponse.GetResponseStream().Returns(stream);
                         headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
                     }
