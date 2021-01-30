@@ -338,17 +338,6 @@ namespace Applitools
                 ), url, data);
         }
 
-        /// <summary>
-        /// Matches the current window with the currently expected window.
-        /// </summary>
-        /// <param name="data"></param>
-        public virtual MatchResult MatchWindow(MatchWindowData data)
-        {
-            SyncTaskListener<MatchResult> sync = new SyncTaskListener<MatchResult>(null, e => throw e, Logger);
-            MatchWindow(sync, data);
-            return sync.Get();
-        }
-
         private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();

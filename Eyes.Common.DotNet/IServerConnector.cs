@@ -19,7 +19,6 @@ namespace Applitools
 
         void CloseBatch(string batchId);
         RenderingInfo GetRenderingInfo();
-        MatchResult MatchWindow(MatchWindowData data);
         void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData matchWindowData);
         string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, IList<Rectangle> regions, string language);
         string AddRunningSessionImage(RunningSession runningSession, byte[] imageBytes);
