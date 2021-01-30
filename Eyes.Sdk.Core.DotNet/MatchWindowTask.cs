@@ -485,8 +485,8 @@ namespace Applitools
             }
             else
             {
-                MatchWindowData data = eyes_.PrepareForMatch(checkSettingsInternal, userInputs, appOutput, 
-                    tag, lastScreenshotHash_ != null, imageMatchSettings, null, source);
+                MatchWindowData data = eyes_.PrepareForMatch(checkSettingsInternal, userInputs, appOutput,
+                    tag, replaceLast || (lastScreenshotHash_ != null), imageMatchSettings, null, source);
 
                 matchResult_ = eyes_.PerformMatch(data);
                 lastScreenshotHash_ = currentScreenshotHash;
