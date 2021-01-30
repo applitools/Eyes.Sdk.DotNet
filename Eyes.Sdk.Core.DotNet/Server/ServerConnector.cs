@@ -322,7 +322,7 @@ namespace Applitools
             }
         }
 
-        private void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        protected virtual void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
         {
             string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
             httpClient_.PostJson(new TaskListener<HttpWebResponse>(
