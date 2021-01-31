@@ -3,6 +3,8 @@
 - `SaveFailedTests` Configuration property
 - `SessionStartInfo` moved here and was added `AgentSessionId` property
 - `TestStatusResult` enum was added `NotOpened`
+### Updates
+- `MatchWindow` is now async also in `ClassicRunner` [Trello 2092](https://trello.com/c/gulak9SJ)
 
 ## [Eyes.Sdk.Core vNext]
 ### Updated

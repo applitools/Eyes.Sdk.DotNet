@@ -6,7 +6,7 @@ namespace Applitools
     public class CheckService : EyesService<MatchWindowData, MatchResult>
     {
         private readonly Queue<Tuple<string, MatchWindowData>> matchWindowQueue_ = new Queue<Tuple<string, MatchWindowData>>();
-       
+
         private readonly HashSet<string> inUploadProcess_ = new HashSet<string>();
         private readonly HashSet<string> inMatchWindowProcess_ = new HashSet<string>();
 
@@ -22,7 +22,7 @@ namespace Applitools
                 string id = nextInput.Item1;
                 inUploadProcess_.Add(id);
                 MatchWindowData matchWindowData = nextInput.Item2;
-                TryUploadImage(matchWindowData,
+                TryUploadImage(id, matchWindowData,
                     new TaskListener(
                         () =>
                         {
@@ -58,7 +58,7 @@ namespace Applitools
 
                 try
                 {
-                    ServerConnector.MatchWindow(listener, matchWindowData);
+                    MatchWindow(id, matchWindowData, listener);
                 }
                 catch (Exception ex)
                 {
@@ -66,11 +66,9 @@ namespace Applitools
                     listener.OnFail(ex);
                 }
             };
-
-
         }
 
-        public void TryUploadImage(MatchWindowData data, TaskListener taskListener)
+        public void TryUploadImage(string testId, MatchWindowData data, TaskListener taskListener)
         {
             AppOutput appOutput = data.AppOutput;
             if (appOutput.ScreenshotUrl != null)
@@ -85,12 +83,12 @@ namespace Applitools
                 {
                     if (url == null)
                     {
-                        Logger.Verbose("Got null url from upload");
+                        Logger.Verbose("Got null url from upload. Test id: {0}", testId);
                         appOutput.ScreenshotUrl = null;
                         taskListener.OnFail(new EyesException("Failed uploading image"));
                         return;
                     }
-
+                    Logger.Verbose("Upload completed for test id {0}. Resource url: {1}", testId, url);
                     appOutput.ScreenshotUrl = url;
                     taskListener.OnComplete();
                 },
@@ -112,11 +110,12 @@ namespace Applitools
         }
 
 
-        public void MatchWindow(MatchWindowData data, TaskListener<MatchResult> listener)
+        public void MatchWindow(string testId, MatchWindowData data, TaskListener<MatchResult> listener)
         {
             try
             {
-                ServerConnector.MatchWindow(listener, data);
+                LoggingListener<MatchResult> loggingListener = new LoggingListener<MatchResult>(listener, Logger, testId);
+                ServerConnector.MatchWindow(loggingListener, data);
             }
             catch (Exception ex)
             {

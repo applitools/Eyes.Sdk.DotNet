@@ -322,7 +322,7 @@ namespace Applitools
             }
         }
 
-        private void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        protected virtual void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
         {
             string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
             httpClient_.PostJson(new TaskListener<HttpWebResponse>(
@@ -336,17 +336,6 @@ namespace Applitools
                 },
                 e => { throw e; }
                 ), url, data);
-        }
-
-        /// <summary>
-        /// Matches the current window with the currently expected window.
-        /// </summary>
-        /// <param name="data"></param>
-        public virtual MatchResult MatchWindow(MatchWindowData data)
-        {
-            SyncTaskListener<MatchResult> sync = new SyncTaskListener<MatchResult>(null, e => throw e, Logger);
-            MatchWindow(sync, data);
-            return sync.Get();
         }
 
         private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
