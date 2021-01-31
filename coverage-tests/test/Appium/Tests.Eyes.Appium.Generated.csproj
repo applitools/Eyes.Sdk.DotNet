@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\IncludedTests.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="..\..\..\Tests\NunitLogHandler.common.cs" Link="Utils\NunitLogHandler.common.cs" />
     <Compile Include="..\..\..\Tests\ReportingTestSuite.common.cs" Link="Utils\ReportingTestSuite.common.cs" />
     <Compile Include="..\..\..\Tests\SkipAttribute.common.cs" Link="Utils\SkipAttribute.common.cs" />
@@ -17,10 +13,6 @@
     <Compile Include="..\..\..\Tests\TestResultReportSummary.common.cs" Link="Utils\TestResultReportSummary.common.cs" />
 	<Compile Include="..\..\..\Tests\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
 	<Compile Include="..\GeneratedTestUtils.common.cs" Link="Utils\GeneratedTestUtils.common.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\IncludedTests.txt" />
   </ItemGroup>
 
   <ItemGroup>
