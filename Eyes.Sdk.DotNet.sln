@@ -71,6 +71,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Ufg.DotNet", "Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj", "{A4DA651E-5D95-4C3D-BE46-82A495B6673E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "coverage-tests", "coverage-tests", "{13C182C9-852E-4320-9D41-D10DC92F2DF8}"
+	ProjectSection(SolutionItems) = preProject
+		coverage-tests\package-lock.json = coverage-tests\package-lock.json
+		coverage-tests\package.json = coverage-tests\package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configuration", "configuration", "{6F0429F3-5C65-4C4D-84C2-7498F1DD2B28}"
+	ProjectSection(SolutionItems) = preProject
+		coverage-tests\configuration\index.js = coverage-tests\configuration\index.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -181,6 +192,7 @@ Global
 		{FA02FE71-AD06-4235-A491-A76E1A1FFD49} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
 		{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
 		{B1990708-3C60-42B6-A7DD-F47810B1D0B3} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{6F0429F3-5C65-4C4D-84C2-7498F1DD2B28} = {13C182C9-852E-4320-9D41-D10DC92F2DF8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2D3A563-3BF6-42B1-B7A9-7A7DCD842A2E}
