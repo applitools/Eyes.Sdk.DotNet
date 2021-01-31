@@ -253,6 +253,20 @@ namespace Applitools.Utils
             return lines;
         }
 
+        public static IList<string> ReadStreamAsLines(Stream stream)
+        {
+            List<string> lines = new List<string>();
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string line = null;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    lines.Add(line);
+                }
+            }
+            return lines;
+        }
+
         public static byte[] ReadResourceBytes(string filename)
         {
             Assembly thisAssembly = Assembly.GetCallingAssembly();
