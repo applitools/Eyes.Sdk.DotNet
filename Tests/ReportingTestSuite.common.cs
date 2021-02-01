@@ -33,7 +33,15 @@ namespace Applitools.Tests.Utils
                 if (!RUNS_ON_CI || includedTestsListFilename == null || !File.Exists(includedTestsListFilename))
                 {
                     TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Reading regression list from embedded resource: {asmName}.Resources.IncludedTests.txt");
-                    includedTestsList = CommonUtils.ReadResourceFileAsLines(asmName + ".Resources.IncludedTests.txt");
+                    Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
+                    if (includedTestsListStream != null)
+                    {
+                        includedTestsList = CommonUtils.ReadStreamAsLines(includedTestsListStream);
+                    }
+                    else
+                    {
+                        includedTestsList = null;
+                    }
                 }
                 else
                 {
@@ -52,7 +60,8 @@ namespace Applitools.Tests.Utils
         public void SetUp()
         {
             TestContext tc = TestContext.CurrentContext;
-            if (!IS_FULL_COVERAGE && !includedTestsList.Contains(tc.Test.FullName))
+
+            if (!IS_FULL_COVERAGE && includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName))
             {
                 TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Skipping Test (will be marked as Inconclusive): {tc.Test.FullName}");
                 Assert.Inconclusive();
