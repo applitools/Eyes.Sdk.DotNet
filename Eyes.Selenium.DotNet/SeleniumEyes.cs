@@ -768,7 +768,8 @@ namespace Applitools.Selenium
             // already has an offset caused by "BringRegionToView", so we should consider this offset.
             if (StitchMode == StitchModes.Scroll && !isScrollableElement)
             {
-                state.StitchOffset = (Size)originalElementLocation - (Size)elementBounds.Location;
+                IWebElement sre = GetCurrentFrameScrollRootElement();
+                state.StitchOffset = (Size)EyesRemoteWebElement.GetScrollPosition(sre, driver_, Logger);
             }
 
             // 2. Intersect the element and the effective viewport
