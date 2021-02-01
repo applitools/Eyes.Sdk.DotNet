@@ -797,7 +797,7 @@ namespace Applitools.Selenium
                 if (StitchMode == StitchModes.CSS)
                 {
                     state.StitchPositionProvider = new CssTranslatePositionProvider(Logger, driver_, targetElement);
-                    state.OriginPositionProvider = new ScrollPositionProvider(Logger, driver_, scrollRootElement);
+                    state.OriginPositionProvider = new NullPositionProvider();
                 }
                 else
                 {
