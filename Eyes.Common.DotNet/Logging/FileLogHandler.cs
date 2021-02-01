@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using Applitools.Utils;
 
 namespace Applitools
 {
@@ -12,6 +10,8 @@ namespace Applitools
     [ComVisible(true)]
     public class FileLogHandler : LogHandlerBase
     {
+        private FileStream fileStream_;
+        private TextWriter textWriter_;
         #region Constructors
 
         /// <summary>
@@ -71,13 +71,20 @@ namespace Applitools
 
         public override void OnMessage(string message, TraceLevel level)
         {
-            try
+            if (textWriter_ != null)
             {
-                File.AppendAllText(FilePath, message + Environment.NewLine);
-            }
-            catch
-            {
-                // We don't want a trace failure the fail the test
+                try
+                {
+                    lock (textWriter_)
+                    {
+                        textWriter_.WriteLine(message);
+                        textWriter_.Flush();
+                    }
+                }
+                catch
+                {
+                    // We don't want a trace failure the fail the test
+                }
             }
         }
 
@@ -91,11 +98,13 @@ namespace Applitools
                 }
                 if (!AppendToFile)
                 {
-                    lock (FilePath)
-                    {
-                        FileUtils.WriteTextFile(FilePath, string.Empty, false);
-                    }
+                    fileStream_ = new FileStream(FilePath, FileMode.Create);
                 }
+                else
+                {
+                    fileStream_ = new FileStream(FilePath, FileMode.Append);
+                }
+                textWriter_ = new StreamWriter(fileStream_);
             }
             catch
             {
@@ -103,6 +112,12 @@ namespace Applitools
             }
         }
 
-        #endregion
+        public override void Close()
+        {
+            textWriter_?.Close();
+            fileStream_?.Close();
+        }
+
+       #endregion
     }
 }
