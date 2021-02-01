@@ -23,7 +23,7 @@ namespace Applitools
         {
             lock (clientEvents_)
             {
-                string currentTime = TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.ISO8601);
+                string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
                 ClientEvent clientEvent = new ClientEvent(currentTime, @event, level);
                 clientEvents_.Add(clientEvent);
                 if (clientEvents_.Count >= MAX_EVENTS_SIZE)

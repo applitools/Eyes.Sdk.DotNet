@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Applitools
 {
@@ -35,6 +36,15 @@ namespace Applitools
         }
 
         public abstract void OnMessage(string message, TraceLevel level = default);
+
+
+        public void OnMessage(ClientEvent @event)
+        {
+            if (@event.Level >= minLevel_)
+            {
+                OnMessage(JsonConvert.SerializeObject(@event), @event.Level);
+            }
+        }
 
         public virtual void Close() { }
 
