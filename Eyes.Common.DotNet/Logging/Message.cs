@@ -9,7 +9,7 @@ namespace Applitools
 
         public Stage Stage { get; }
 
-        public Type Type { get; }
+        public StageType? Type { get; }
 
         public long ThreadId { get; }
 
@@ -21,7 +21,7 @@ namespace Applitools
 
         public Message() { }
 
-        public Message(string agentId, Stage stage, Type type, HashSet<string> testId, long threadId,
+        public Message(string agentId, Stage stage, StageType? type, HashSet<string> testId, long threadId,
                        string stackTrace, Dictionary<string, object> data)
         {
             AgentId = agentId;

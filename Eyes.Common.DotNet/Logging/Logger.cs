@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using Applitools.Utils;
+using Applitools.VisualGrid;
 
 namespace Applitools
 {
@@ -102,13 +103,23 @@ namespace Applitools
             });
         }
 
-        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, Type type,
+        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, StageType type,
             params Tuple<string, object>[] data)
         {
-
+            LogInner_(level, testIds, stage, type, data);
         }
 
-        private void LogInner_(TraceLevel level, HashSet<string> testIds, Stage stage, Type type,
+        public void Log(TraceLevel level, string testId, Stage stage, params Tuple<string, object>[] data)
+        {
+            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type: null, data);
+        }
+
+        public void Log(TraceLevel level, string testId, Stage stage, StageType type, params Tuple<string, object>[] data)
+        {
+            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type, data);
+        }
+
+        private void LogInner_(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type,
             params Tuple<string, object>[] data)
         {
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
@@ -116,7 +127,7 @@ namespace Applitools
             logHandler_.OnMessage(@event);
         }
 
-        private Message CreateMessageFromLog(HashSet<string> testIds, Stage stage, Type type, int methodsBack,
+        private Message CreateMessageFromLog(HashSet<string> testIds, Stage stage, StageType? type, int methodsBack,
             Tuple<string, object>[] data)
         {
             Dictionary<string, object> map = new Dictionary<string, object>();

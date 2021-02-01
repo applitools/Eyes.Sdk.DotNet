@@ -38,7 +38,7 @@ namespace Applitools
         public abstract void OnMessage(string message, TraceLevel level = default);
 
 
-        public void OnMessage(ClientEvent @event)
+        public virtual void OnMessage(ClientEvent @event)
         {
             if (@event.Level >= minLevel_)
             {
