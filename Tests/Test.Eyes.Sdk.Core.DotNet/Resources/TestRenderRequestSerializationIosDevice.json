@@ -1,4 +1,5 @@
 ﻿{
+  "id": "id",
   "url": "https://another.url.co.il",
   "stitchingService": "https://another.stitchingserviceuri.co.il",
   "dom": {

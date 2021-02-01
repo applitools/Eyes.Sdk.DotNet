@@ -20,7 +20,9 @@ namespace Applitools
         void CloseBatch(string batchId);
         RenderingInfo GetRenderingInfo();
         void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData matchWindowData);
-        string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, IList<Rectangle> regions, string language);
+        string[] GetTextInRunningSessionImage(RunningSession runningSession, string imageId, 
+            IList<Rectangle> regions, string language);
+
         string AddRunningSessionImage(RunningSession runningSession, byte[] imageBytes);
         void PostDomCapture(TaskListener<string> listener, string domJson);
         void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo);
@@ -31,6 +33,7 @@ namespace Applitools
         void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes);
         Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource);
         void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests);
-        void RenderStatusById(TaskListener<List<RenderStatusResults>> pollingListener, IList<string> renderIds);
+        void RenderStatusById(TaskListener<List<RenderStatusResults>> pollingListener, 
+            IList<string> testIds, IList<string> renderIds);
     }
 }

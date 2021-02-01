@@ -643,25 +643,31 @@ namespace Applitools
         public virtual void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
         {
             ArgumentGuard.NotNull(requests, nameof(requests));
-            Logger.Verbose("called with {0}", StringUtils.Concat(requests, ","));
             string fullAgentId = AgentId;
             foreach (IRenderRequest renderRequest in requests)
             {
-                renderRequest.AgentId = fullAgentId;
+                renderRequest.AgentId = fullAgentId; 
+                Logger.Log(TraceLevel.Info, renderRequest.TestId, Stage.Render, Tuple.Create("renderRequest", (object)renderRequest));
             }
 
             HttpWebRequest request = CreateUfgHttpWebRequest_("render");
-            Logger.Verbose("sending /render request to {0}", request.RequestUri);
             serializer_.Serialize(requests, request.GetRequestStream());
 
             SendUFGAsyncRequest_(renderListener, request);
         }
 
-        public virtual void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
+        public virtual void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener,
+            IList<string> testIds, IList<string> renderIds)
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
+            ArgumentGuard.NotNull(testIds, nameof(testIds));
             string idsAsString = string.Join(",", renderIds);
             Logger.Verbose("requesting visual grid server for render status of the following render ids: {0}", idsAsString);
+
+            for (int i = 0; i < testIds.Count; i++)
+            {
+                Logger.Log(TraceLevel.Info, testIds[i], Stage.Render, StageType.RenderStatus, Tuple.Create("renderId", (object)renderIds[i]));
+            }
 
             HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");
             request.ContinueTimeout = 1000;

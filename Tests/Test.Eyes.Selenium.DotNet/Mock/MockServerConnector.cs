@@ -139,7 +139,8 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
-        public override void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
+        public override void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener,
+            IList<string> testIds, IList<string> renderIds)
         {
             List<RenderStatusResults> results = new List<RenderStatusResults>();
             foreach (string renderId in renderIds)
