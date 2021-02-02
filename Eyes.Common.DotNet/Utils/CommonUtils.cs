@@ -200,27 +200,35 @@ namespace Applitools.Utils
         public static string GetDotNetVersion()
         {
 #if NET45
-            return "4.5";
+            return ".NET Framework 4.5";
 #elif NET451
-            return "4.5.1";
+            return ".NET Framework 4.5.1";
 #elif NET452
-            return "4.5.2";
+            return ".NET Framework 4.5.2";
 #elif NET46
-            return "4.6";
+            return ".NET Framework 4.6";
 #elif NET461
-            return "4.6.1";
+            return ".NET Framework 4.6.1";
 #elif NET462
-            return "4.6.2";
+            return ".NET Framework 4.6.2";
 #elif NET47
-            return "4.7";
+            return ".NET Framework 4.7";
 #elif NET471
-            return "4.7.1";
+            return ".NET Framework 4.7.1";
 #elif NET472
-            return "4.7.2";
+            return ".NET Framework 4.7.2";
 #elif NET48
-            return "4.8";
+            return ".NET Framework 4.8";
+#elif NETCOREAPP3_1
+            return ".NET Core 3.1";
+#elif NETCOREAPP3_0
+            return ".NET Core 3.0";
+#elif NETCOREAPP2_1 
+            return ".NET Core 2.1";
+#elif NETSTANDARD2_0
+            return ".NET Core 2.0";
 #else
-            return Environment.Version.ToString();
+            return ".NET " + Environment.Version.ToString();
 #endif
         }
         #endregion
