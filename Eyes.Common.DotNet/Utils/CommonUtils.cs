@@ -330,10 +330,10 @@ namespace Applitools.Utils
 
         public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, params string[] testIds)
         {
-            LogExceptionStackTrace(logger, stage, StageType.None, ex, testIds);
+            LogExceptionStackTrace(logger, stage, null, ex, testIds);
         }
         
-        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, params string[] testIds)
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, params string[] testIds)
         {
             HashSet<string> ids = new HashSet<string>();
             if (testIds != null && testIds.Length > 0)

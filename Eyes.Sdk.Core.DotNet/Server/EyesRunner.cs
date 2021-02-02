@@ -24,7 +24,8 @@ namespace Applitools
 
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
-            Logger.Verbose("Enter");
+            Logger.Log(Stage.Close, StageType.Called);
+
             TestResultsSummary allTestResults;
             try
             {
@@ -42,6 +43,7 @@ namespace Applitools
         private void DeleteAllBatches_()
         {
             if (DontCloseBatches) return;
+            Logger.Log(Stage.Close, StageType.CloseBatch, Tuple.Create("batchSize", (object)batchClosers_.Count));
             foreach (KeyValuePair<string, IBatchCloser> kvp in batchClosers_)
             {
                 IBatchCloser connector = kvp.Value;

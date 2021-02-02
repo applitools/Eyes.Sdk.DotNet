@@ -37,7 +37,7 @@ namespace Applitools
 
         public void Close()
         {
-            logger_.Verbose("Closing {0} batches", batchIds_.Count());
+            logger_.Log(Stage.Close, StageType.CloseBatch, Tuple.Create("batchSize", (object)batchIds_.Count()));
             serverConnector_.ApiKey = ApiKey;
             serverConnector_.Proxy = Proxy;
             foreach (string batchId in batchIds_)

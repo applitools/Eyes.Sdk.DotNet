@@ -1157,6 +1157,7 @@ namespace Applitools
                 Configuration.AbortIdleTestTimeout,
                 properties_);
 
+            Logger.Log(TraceLevel.Info, TestId, Stage.Open, Tuple.Create("sessionStartInfo", (object)sessionStartInfo_));
             return sessionStartInfo_;
         }
 

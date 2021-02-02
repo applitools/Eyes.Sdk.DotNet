@@ -88,7 +88,8 @@ namespace Applitools
                         taskListener.OnFail(new EyesException("Failed uploading image"));
                         return;
                     }
-                    Logger.Verbose("Upload completed for test id {0}. Resource url: {1}", testId, url);
+                    Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadComplete, 
+                        Tuple.Create("url", (object)url));
                     appOutput.ScreenshotUrl = url;
                     taskListener.OnComplete();
                 },
@@ -101,6 +102,8 @@ namespace Applitools
 
             try
             {
+                Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadStart, 
+                    Tuple.Create("matchWindowData", (object)matchWindowQueue_));
                 ServerConnector.UploadImage(uploadListener, appOutput.ScreenshotBytes);
             }
             catch (Exception ex)
@@ -109,11 +112,12 @@ namespace Applitools
             }
         }
 
-
         public void MatchWindow(string testId, MatchWindowData data, TaskListener<MatchResult> listener)
         {
             try
             {
+                Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.MatchStart, 
+                    Tuple.Create("matchWindowData", (object)data));
                 LoggingListener<MatchResult> loggingListener = new LoggingListener<MatchResult>(listener, Logger, testId);
                 ServerConnector.MatchWindow(loggingListener, data);
             }
