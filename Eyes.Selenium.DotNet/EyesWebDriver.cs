@@ -369,7 +369,7 @@ namespace Applitools.Selenium
             }
 
             Logger_.Verbose("Extracting viewport size...");
-            defaultContentViewportSize_ = EyesSeleniumUtils.GetViewportSizeOrDisplaySize(Logger_, this);
+            defaultContentViewportSize_ = EyesSeleniumUtils.GetViewportSizeOrDisplaySize(Logger_, Eyes.TestId, this);
             Logger_.Verbose("Done! Viewport size: {0}", defaultContentViewportSize_);
 
             if (currentFrames.Count > 0)

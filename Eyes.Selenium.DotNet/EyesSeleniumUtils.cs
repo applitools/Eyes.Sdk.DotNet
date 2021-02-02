@@ -70,11 +70,10 @@ namespace Applitools.Selenium
             {
                 size = GetViewportSize_(logger, (IJavaScriptExecutor)driver);
             }
-            logger.Verbose("viewport size: {0}", size);
             return size;
         }
 
-        public static Size GetViewportSizeOrDisplaySize(Logger logger, IWebDriver driver)
+        public static Size GetViewportSizeOrDisplaySize(Logger logger, string testId, IWebDriver driver)
         {
             Size size;
             try
@@ -89,7 +88,7 @@ namespace Applitools.Selenium
             }
             catch (Exception ex)
             {
-                logger.Log("inner width / height not supported: {0}", ex.Message);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex);
             }
 
             logger.Log("Using browser size.");

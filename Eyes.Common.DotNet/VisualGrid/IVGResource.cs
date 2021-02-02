@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Applitools.VisualGrid
 {
@@ -10,5 +11,6 @@ namespace Applitools.VisualGrid
         string HashFormat { get; }
         int? ErrorStatusCode { get; }
         Uri Url { get; }
+        HashSet<string> TestIds { get; }
     }
 }

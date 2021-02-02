@@ -10,7 +10,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Region = Applitools.Utils.Geometry.Region;
 
@@ -487,20 +486,15 @@ namespace Applitools
 
         public virtual RenderingInfo GetRenderingInfo()
         {
-            Logger.Verbose("enter");
             if (renderingInfo_ == null)
             {
                 renderingInfo_ = GetFromPath(renderingInfo_, "api/sessions/renderinfo", "Render Info");
             }
-            Logger.Verbose("exit");
             return renderingInfo_;
         }
 
         private T GetFromPath<T>(T member, string path, string name)
         {
-            Logger.Verbose("enter");
-
-            Logger.Verbose("trying to get {0} from server ...", name);
             try
             {
                 EnsureHttpClient_();
@@ -517,7 +511,6 @@ namespace Applitools
             {
                 throw new EyesException($"Getting {name} failed: {ex.Message}", ex);
             }
-            Logger.Verbose("exit");
             return member;
         }
 
@@ -557,7 +550,6 @@ namespace Applitools
             {
                 throw new EyesException("ApiKey is null.");
             }
-            Logger.Verbose("enter");
 
             ServerUrl = ServerUrl ?? url;
             HttpRestClient httpClient = CreateHttpRestClient(ServerUrl);
@@ -598,8 +590,7 @@ namespace Applitools
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
-            Logger.Verbose("querying for existing resources for render id {0}", renderId);
-            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes });
+            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
             serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }
@@ -627,7 +618,8 @@ namespace Applitools
             string hash = resource.Sha256;
             string contentType = resource.ContentType;
 
-            Logger.Verbose("resource hash: {0} ; url: {1} ; render id: {2}", hash, resource.Url, renderId);
+            Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render, null,
+                new { resourceHash = hash, resourceUrl = resource.Url, renderId });
 
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
                 method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream");
@@ -662,12 +654,11 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(renderIds, nameof(renderIds));
             ArgumentGuard.NotNull(testIds, nameof(testIds));
-            string idsAsString = string.Join(",", renderIds);
-            Logger.Verbose("requesting visual grid server for render status of the following render ids: {0}", idsAsString);
 
             for (int i = 0; i < testIds.Count; i++)
             {
-                Logger.Log(TraceLevel.Info, testIds[i], Stage.Render, StageType.RenderStatus, new { renderId = renderIds[i] });
+                Logger.Log(TraceLevel.Info, testIds[i], Stage.Render, StageType.RenderStatus,
+                    new { renderId = renderIds[i] });
             }
 
             HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");
