@@ -10,6 +10,7 @@ using System.Runtime.Versioning;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using Microsoft.Win32;
 
 namespace Applitools.Utils
 {
@@ -196,6 +197,32 @@ namespace Applitools.Utils
             }
         }
 
+        public static string GetDotNetVersion()
+        {
+#if NET45
+            return "4.5";
+#elif NET451
+            return "4.5.1";
+#elif NET452
+            return "4.5.2";
+#elif NET46
+            return "4.6";
+#elif NET461
+            return "4.6.1";
+#elif NET462
+            return "4.6.2";
+#elif NET47
+            return "4.7";
+#elif NET471
+            return "4.7.1";
+#elif NET472
+            return "4.7.2";
+#elif NET48
+            return "4.8";
+#else
+            return Environment.Version.ToString();
+#endif
+        }
         #endregion
 
         #region Hash

@@ -154,12 +154,11 @@ namespace Applitools
             {
                 if (IsDisabled)
                 {
-                    Logger.Verbose("Ignored");
                     return null;
                 }
-
-                Logger.Log("Agent = {0}", FullAgentId);
-                Logger.Verbose(".NET Framework = {0}", Environment.Version);
+                
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Open, StageType.Called,
+                           new { FullAgentId, DotNetVersion = CommonUtils.GetDotNetVersion() });
 
                 ValidateAPIKey(ApiKey);
                 UpdateServerConnector_();
@@ -366,11 +365,10 @@ namespace Applitools
             {
                 if (IsDisabled)
                 {
-                    Logger.Verbose("Ignored");
                     return new TestResults() { ServerConnector = ServerConnector };
                 }
 
-                Logger.Verbose("enter (hashcode: {0})", GetHashCode());
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.Called);
 
                 ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
 
@@ -388,7 +386,7 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Close failed: {0}", ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, ex);
                 }
 
                 if (runningSession_ == null)
@@ -400,7 +398,6 @@ namespace Applitools
 
                 bool isNewSession = runningSession_.IsNewSession;
 
-                Logger.Verbose("Ending server session...");
                 var save = (isNewSession && Configuration.SaveNewTests) || (!isNewSession && (Configuration.SaveDiffs ?? false));
 
                 SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, false, save);
@@ -415,7 +412,6 @@ namespace Applitools
                 LogSessionResultsAndThrowException(throwEx, results);
 
                 results.ServerConnector = ServerConnector;
-                Logger.Verbose("exit");
                 return results;
             }
             finally
@@ -491,11 +487,10 @@ namespace Applitools
             {
                 if (IsDisabled)
                 {
-                    Logger.Verbose("Ignored");
                     return null;
                 }
 
-                Logger.Verbose("enter (hashcode: {0})", GetHashCode());
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.Called);
 
                 IsOpen = false;
 
@@ -516,10 +511,9 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Close failed: {0}", ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, ex);
                 }
 
-                Logger.Verbose("Aborting server session...");
                 try
                 {
                     SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, true, false);
@@ -528,12 +522,11 @@ namespace Applitools
                     TestResults results = syncTaskListener.Get();
                     results.IsNew = runningSession_.IsNewSession;
                     results.Url = runningSession_.Url;
-                    Logger.Log("Test aborted");
                     return results;
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Failed to abort server session: " + ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, ex);
                 }
             }
             finally
@@ -686,7 +679,7 @@ namespace Applitools
 
             return new InRegionBase(null, region, CreateImage_, getText);
         }
-        public string TestId { get; private set; } = Guid.NewGuid().ToString();
+        public string TestId { get; protected internal set; } = Guid.NewGuid().ToString();
 
         protected internal MatchResult PerformMatch(MatchWindowData data)
         {

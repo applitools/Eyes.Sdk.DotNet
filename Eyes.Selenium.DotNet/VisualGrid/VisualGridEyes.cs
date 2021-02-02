@@ -60,6 +60,7 @@ namespace Applitools.Selenium.VisualGrid
         private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
         private RectangleSize viewportSize_;
         private bool isOpen_;
+        private readonly string eyesId_ = new Guid().ToString();
 
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
         {
@@ -149,8 +150,8 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.GetILogHandler()?.Open();
 
-            Logger.Log("Agent = {0}", FullAgentId);
-            Logger.Verbose(".NET Framework = {0}", Environment.Version);
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called,
+                new { FullAgentId, DotNetVersion = CommonUtils.GetDotNetVersion() });
 
             ArgumentGuard.NotNull(webDriver, nameof(webDriver));
 
@@ -161,7 +162,8 @@ namespace Applitools.Selenium.VisualGrid
             ArgumentGuard.NotEmpty(Config_.TestName, "testName");
             if (isOpen_)
             {
-                Logger.Log("WARNING: called open more than once! Ignoring");
+                Logger.Log(TraceLevel.Warn, eyesId_, Stage.Open, StageType.Called,
+                    new { message = "called open more than once! Ignoring" });
                 return webDriver_ != null ? webDriver_ : webDriver;
             }
 
@@ -171,11 +173,14 @@ namespace Applitools.Selenium.VisualGrid
             string uaString = driver_.GetUserAgent();
             if (uaString != null)
             {
-                Logger.Verbose("User-Agent: {0}", uaString);
+                Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called, new { userAgent = uaString });
                 userAgent_ = UserAgent.ParseUserAgentString(uaString, true);
             }
 
             EnsureViewportSize_();
+
+            Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called,
+                new { appName = Config_.AppName, testName = Config_.TestName, viewportSize = viewportSize_ });
 
             closeFutures_.Clear();
 
@@ -184,7 +189,6 @@ namespace Applitools.Selenium.VisualGrid
                 Config_.SetBatch(Batch);
             }
 
-            Logger.Verbose("getting all browsers info...");
             List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
             if (browserInfoList.Count == 0)
             {
@@ -199,21 +203,18 @@ namespace Applitools.Selenium.VisualGrid
 
             configAtOpen_ = GetConfigClone_();
 
-            Logger.Verbose("creating test descriptors for each browser info...");
             List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
             IServerConnector serverConnector = runner_.ServerConnector;
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
-                Logger.Verbose("creating test descriptor");
                 VisualGridRunningTest test = new VisualGridRunningTest(
-                    browserInfo, Logger, configProvider_, serverConnector);
+                    eyesId_, browserInfo, Logger, configProvider_, serverConnector);
                 testList_.Add(test.TestId, test);
                 newTests.Add(test);
             }
 
-            Logger.Verbose("opening {0} tests...", testList_.Count);
+            Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called, new { testCount = testList_.Count });
             runner_.Open(this, newTests);
-            Logger.Verbose("done");
             return driver_ ?? webDriver;
         }
 
@@ -649,7 +650,7 @@ namespace Applitools.Selenium.VisualGrid
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
             bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
-            
+
             int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {

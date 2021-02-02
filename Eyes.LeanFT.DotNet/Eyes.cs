@@ -507,7 +507,7 @@
             IImageProvider imageProvider = new LeanFTImageProvider(this.topLevelObject_);
             
             RenderingInfo renderingInfo = ServerConnector.GetRenderingInfo();
-            FullPageCaptureAlgorithm algo = new FullPageCaptureAlgorithm(Logger, null, WaitBeforeScreenshots, DebugScreenshotProvider,
+            FullPageCaptureAlgorithm algo = new FullPageCaptureAlgorithm(Logger, TestId, null, WaitBeforeScreenshots, DebugScreenshotProvider,
             (image) => new EyesLeanFTScreenshot(image), scaleProviderFactory, CutProvider, 0, imageProvider,
             renderingInfo.MaxImageHeight, renderingInfo.MaxImageArea);
 
