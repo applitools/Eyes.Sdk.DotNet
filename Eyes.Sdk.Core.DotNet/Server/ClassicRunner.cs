@@ -65,10 +65,10 @@ namespace Applitools
             return matchListener.Get();
         }
 
-        public TestResults Close(SessionStopInfo sessionStopInfo)
+        public TestResults Close(string testId, SessionStopInfo sessionStopInfo)
         {
             SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger);
-            closeService_.Operate(sessionStopInfo, listener);
+            closeService_.Operate(testId, sessionStopInfo, listener);
             return listener.Get();
         }
     }

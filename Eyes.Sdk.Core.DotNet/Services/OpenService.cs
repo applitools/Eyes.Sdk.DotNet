@@ -25,7 +25,7 @@ namespace Applitools
             while (inputQueue_.Count > 0 && !isServerConcurrencyLimitReached_ && eyesConcurrency_ > currentTestAmount_)
             {
                 Interlocked.Increment(ref currentTestAmount_);
-                Logger.Log("A new test was added. Current amount of tests: {0}", currentTestAmount_);
+                Logger.Log(TraceLevel.Info, testIds: null, Stage.Open, null, new { testAmount = currentTestAmount_ });
 
                 Tuple<string, SessionStartInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
@@ -112,8 +112,8 @@ namespace Applitools
                 Logger.Verbose("Trying startSession again");
                 ServerConnector.StartSession(
                     new TaskListener<RunningSession>(
-                        (runningSession)=>OnComplete_(sessionStartInfo, listener, runningSession, stopwatch),
-                        (ex)=>OnFail_(stopwatch, sessionStartInfo, listener)
+                        (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch),
+                        (ex) => OnFail_(stopwatch, sessionStartInfo, listener)
                     ),
                     sessionStartInfo);
             }

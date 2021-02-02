@@ -332,7 +332,7 @@ namespace Applitools.Utils
         {
             LogExceptionStackTrace(logger, stage, null, ex, testIds);
         }
-        
+
         public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, params string[] testIds)
         {
             HashSet<string> ids = new HashSet<string>();
@@ -340,12 +340,12 @@ namespace Applitools.Utils
             {
                 ids.UnionWith(testIds);
             }
-            try {
+            try
+            {
                 Console.Error.WriteLine(ex);
-                logger.Log(TraceLevel.Error, ids, stage, type,
-                        Tuple.Create("message", (object)ex.ToString()),
-                        Tuple.Create("stacktrace", (object)ex.StackTrace));
-            } catch (Exception e)
+                logger.Log(TraceLevel.Error, ids, stage, type, new { message = ex.ToString(), ex.StackTrace });
+            }
+            catch (Exception e)
             {
                 Console.Error.WriteLine(e);
             }

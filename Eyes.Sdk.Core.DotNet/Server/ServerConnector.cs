@@ -599,7 +599,7 @@ namespace Applitools
         {
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Verbose("querying for existing resources for render id {0}", renderId);
-            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, Tuple.Create("hashes", (object)hashes));
+            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes });
             serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }
@@ -647,8 +647,8 @@ namespace Applitools
             string fullAgentId = AgentId;
             foreach (IRenderRequest renderRequest in requests)
             {
-                renderRequest.AgentId = fullAgentId; 
-                Logger.Log(TraceLevel.Info, renderRequest.TestId, Stage.Render, Tuple.Create("renderRequest", (object)renderRequest));
+                renderRequest.AgentId = fullAgentId;
+                Logger.Log(TraceLevel.Info, renderRequest.TestId, Stage.Render, new { renderRequest });
             }
 
             HttpWebRequest request = CreateUfgHttpWebRequest_("render");
@@ -667,7 +667,7 @@ namespace Applitools
 
             for (int i = 0; i < testIds.Count; i++)
             {
-                Logger.Log(TraceLevel.Info, testIds[i], Stage.Render, StageType.RenderStatus, Tuple.Create("renderId", (object)renderIds[i]));
+                Logger.Log(TraceLevel.Info, testIds[i], Stage.Render, StageType.RenderStatus, new { renderId = renderIds[i] });
             }
 
             HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");

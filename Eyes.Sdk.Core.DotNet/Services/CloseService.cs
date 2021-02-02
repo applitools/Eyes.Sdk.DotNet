@@ -18,7 +18,7 @@ namespace Applitools
                 Tuple<string, SessionStopInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
                 inProgressTests_.Add(id);
-                Operate(nextInput.Item2, new TaskListener<TestResults>(
+                Operate(id, nextInput.Item2, new TaskListener<TestResults>(
                     (output) =>
                     {
                         inProgressTests_.Remove(id);
@@ -37,7 +37,7 @@ namespace Applitools
             }
         }
 
-        public void Operate(SessionStopInfo sessionStopInfo, TaskListener<TestResults> listener)
+        public void Operate(string testId, SessionStopInfo sessionStopInfo, TaskListener<TestResults> listener)
         {
             if (sessionStopInfo == null)
             {
@@ -50,7 +50,7 @@ namespace Applitools
             TaskListener<TestResults> taskListener = new TaskListener<TestResults>(
             (testResults) =>
             {
-                Logger.Log("Session stopped successfully");
+                Logger.Log(TraceLevel.Notice, testId, Stage.Close, new { testResults });
                 testResults.IsNew = sessionStopInfo.RunningSession.IsNewSession;
                 testResults.Url = sessionStopInfo.RunningSession.Url;
                 Logger.Verbose(testResults.ToString());
@@ -64,6 +64,7 @@ namespace Applitools
 
             try
             {
+                Logger.Log(TraceLevel.Notice, testId, Stage.Close, new { sessionStopInfo });
                 ServerConnector.EndSession(taskListener, sessionStopInfo);
             }
             catch (Exception e)

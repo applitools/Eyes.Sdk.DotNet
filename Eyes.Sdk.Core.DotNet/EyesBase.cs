@@ -435,8 +435,8 @@ namespace Applitools
             string scenarioIdOrName = results.Name;
             string appIdOrName = results.AppName;
 
-            Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.TestResults, 
-                Tuple.Create("status", (object)status), Tuple.Create("url", (object)sessionResultsUrl));
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.TestResults,
+                new { status, url = sessionResultsUrl });
 
             switch (status)
             {
@@ -1157,7 +1157,7 @@ namespace Applitools
                 Configuration.AbortIdleTestTimeout,
                 properties_);
 
-            Logger.Log(TraceLevel.Info, TestId, Stage.Open, Tuple.Create("sessionStartInfo", (object)sessionStartInfo_));
+            Logger.Log(TraceLevel.Info, TestId, Stage.Open, new { sessionStartInfo = sessionStartInfo_ });
             return sessionStartInfo_;
         }
 
@@ -1166,7 +1166,7 @@ namespace Applitools
         {
             if (runningSession_ == null || !IsOpen)
             {
-                Logger.Log(TestId, Stage.Close, Tuple.Create("message", "Tried to close a non opened test"));
+                Logger.Log(TestId, Stage.Close, new { message = "Tried to close a non opened test" });
                 return null;
             }
 
@@ -1199,7 +1199,7 @@ namespace Applitools
                 return testResults;
             }
 
-            testResults = runner_.Close(sessionStopInfo);
+            testResults = runner_.Close(TestId, sessionStopInfo);
             runningSession_ = null;
             if (testResults == null)
             {
@@ -1287,7 +1287,7 @@ namespace Applitools
         /// <param name="region">The region of the screenshot which will be set in the application output.</param>
         /// <param name="checkSettingsInternal">The check settings object of the current test.</param>
         /// <param name="imageMatchSettings">The image match settings object in which to collect the coded-regions.</param>
-        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, 
+        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings)
         {
             string url = null;
@@ -1314,7 +1314,7 @@ namespace Applitools
             string title = GetTitle();
 
             Location location = screenshot?.OriginLocation;
-            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl), 
+            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl),
                 screenshot);
         }
 
@@ -1327,7 +1327,7 @@ namespace Applitools
                 {
                     string domJson = TryCaptureDom();
                     domUrl = TryPostDomCapture_(domJson);
-                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, 
+                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript,
                         Tuple.Create("domUrl", (object)domUrl));
                 }
                 catch (Exception ex)

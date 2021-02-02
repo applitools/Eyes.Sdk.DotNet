@@ -482,7 +482,7 @@ namespace Applitools.Selenium
         {
             ISizeAdjuster sizeAdjuster = ImageProviderFactory.GetImageSizeAdjuster(userAgent_, jsExecutor_);
             return new FullPageCaptureAlgorithm(
-                Logger, regionPositionCompensation_, WaitBeforeScreenshots,
+                Logger, TestId, regionPositionCompensation_, WaitBeforeScreenshots,
                 DebugScreenshotProvider,
                 (image) => new EyesWebDriverScreenshot(Logger, driver_, image,
                     EyesWebDriverScreenshot.ScreenshotTypeEnum.VIEWPORT, Point.Empty),

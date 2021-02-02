@@ -31,6 +31,8 @@ namespace Applitools
         private readonly int maxHeight_;
         private readonly int maxArea_;
 
+        public string TestId { get; private set; }
+
         private void SaveDebugScreenshotPart_(Bitmap image, Rectangle region, string name)
         {
             if (debugScreenshotsProvider_ is NullDebugScreenshotProvider) return;
@@ -43,6 +45,7 @@ namespace Applitools
         /// Create a new instance of <see cref="FullPageCaptureAlgorithm"/>.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
+        /// <param name="testId">The test id.</param>
         /// <param name="regionPositionCompensation">A class used to compensate for region offsets in various browsers.</param>
         /// <param name="waitBeforeScreenshots">The time to wait before a call for capturing a screenshot. Used mainly for allowing the page to stabilize after a position was set.</param>
         /// <param name="debugScreenshotsProvider">An object responsible for storing the intermediate images created in the process, for debugging purposes.</param>
@@ -54,7 +57,7 @@ namespace Applitools
         /// <param name="maxHeight">The maximum image height acceptable by the server.</param>
         /// <param name="maxArea">The maximum image area (height x width) acceptable by the server.</param>
         /// <param name="sizeAdjuster">A size adjuster for the image. Needed for mobile devices that render desktop web pages.</param>
-        public FullPageCaptureAlgorithm(Logger logger, IRegionPositionCompensation regionPositionCompensation,
+        public FullPageCaptureAlgorithm(Logger logger, string testId, IRegionPositionCompensation regionPositionCompensation,
                                   int waitBeforeScreenshots, IDebugScreenshotProvider debugScreenshotsProvider,
                                   Func<Bitmap, EyesScreenshot> getEyesScreenshot,
                                   ScaleProviderFactory scaleProviderFactory, ICutProvider cutProvider,
@@ -65,6 +68,7 @@ namespace Applitools
             ArgumentGuard.NotNull(logger, nameof(logger));
 
             logger_ = logger;
+            TestId = testId;
             waitBeforeScreenshots_ = waitBeforeScreenshots;
             debugScreenshotsProvider_ = debugScreenshotsProvider;
             getEyesScreenshot_ = getEyesScreenshot;
@@ -104,8 +108,8 @@ namespace Applitools
             ArgumentGuard.NotNull(region, nameof(region));
             ArgumentGuard.NotNull(positionProvider, nameof(positionProvider));
 
-            logger_.Verbose("region: {0} ; fullarea: {1} ; positionProvider: {2}",
-                region, fullarea, positionProvider.GetType().Name);
+            logger_.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.CaptureScreenshot,
+                new { region, fullarea, positionProvider = positionProvider.GetType().Name });
 
             Point originalStitchedState = positionProvider.GetCurrentPosition();
             logger_.Verbose("region size: {0}, originalStitchedState: {1}", region, originalStitchedState);
@@ -135,6 +139,7 @@ namespace Applitools
             }
 
             Region regionInScreenshot = GetRegionInScreenshot_(region, initialScreenshot, pixelRatio);
+            logger_.Log(TestId, Stage.Check, StageType.CaptureScreenshot, new { regionInScreenshot });
             Bitmap croppedInitialScreenshot = CropScreenshot_(initialScreenshot, regionInScreenshot);
             debugScreenshotsProvider_.Save(croppedInitialScreenshot, "cropped");
 

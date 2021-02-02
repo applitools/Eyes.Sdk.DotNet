@@ -124,7 +124,7 @@ namespace Applitools
                 retryTimeout = defaultRetryTimeout_;
             }
 
-            Logger_.Verbose("retryTimeout: {0} ; replaceLast: {1}", retryTimeout, replaceLast);
+            //Logger_.Verbose("retryTimeout: {0} ; replaceLast: {1}", retryTimeout, replaceLast);
             EyesScreenshot screenshot = TakeScreenshot_(
                 region, userInputs, tag, shouldRunOnceOnRetryTimeout,
                 replaceLast, checkSettingsInternal, imageMatchSettings, retryTimeout, source);
@@ -142,12 +142,12 @@ namespace Applitools
         public static void CollectRegions(EyesBase eyes, EyesScreenshot screenshot,
             ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings)
         {
-            eyes.Logger.Verbose("enter");
+            //eyes.Logger.Verbose("enter");
             CollectSimpleRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
             CollectFloatingRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
             CollectAccessibilityRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
-            LogRegions_(eyes.Logger, imageMatchSettings);
-            eyes.Logger.Verbose("exit");
+            //LogRegions_(eyes.Logger, imageMatchSettings);
+            //eyes.Logger.Verbose("exit");
         }
 
         public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
@@ -356,24 +356,21 @@ namespace Applitools
                                              ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                              EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             imageMatchSettings.Ignore = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetIgnoreRegions(), "Ignore");
             imageMatchSettings.Strict = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetStrictRegions(), "Strict");
             imageMatchSettings.Layout = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetLayoutRegions(), "Layout");
             imageMatchSettings.Content = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetContentRegions(), "Content");
-            eyes.Logger.Verbose("exit");
         }
 
         private static IMutableRegion[] CollectSimpleRegions_(EyesBase eyes,
                                           EyesScreenshot screenshot, IGetRegions[] regionProviders, string type)
         {
-            eyes.Logger.Verbose("enter - region type: {0}", type);
             List<IMutableRegion> mutableRegions = new List<IMutableRegion>();
             foreach (IGetRegions regionProvider in regionProviders)
             {
                 mutableRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check, new { type, regions = mutableRegions });
             return mutableRegions.ToArray();
         }
 
@@ -381,28 +378,29 @@ namespace Applitools
                                              ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                              EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             List<FloatingMatchSettings> floatingRegions = new List<FloatingMatchSettings>();
             foreach (IGetFloatingRegion regionProvider in checkSettingsInternal.GetFloatingRegions())
             {
                 floatingRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
             imageMatchSettings.Floating = floatingRegions.ToArray();
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check, 
+                new { type = "floating", regions = floatingRegions });
         }
 
         private static void CollectAccessibilityRegions_(ICheckSettingsInternal checkSettingsInternal,
-                                       ImageMatchSettings imageMatchSettings, IEyesBase eyes,
+                                       ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                        EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             List<AccessibilityRegionByRectangle> accessibilityRegions = new List<AccessibilityRegionByRectangle>();
             foreach (IGetAccessibilityRegion regionProvider in checkSettingsInternal.GetAccessibilityRegions())
             {
                 accessibilityRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
             imageMatchSettings.Accessibility = accessibilityRegions.ToArray();
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check,
+                new { type = "accessibility", regions = accessibilityRegions });
+
         }
 
         private EyesScreenshot TakeScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag,
@@ -545,41 +543,15 @@ namespace Applitools
 
         public static ImageMatchSettings CreateImageMatchSettings(ICheckSettingsInternal checkSettingsInternal, EyesBase eyes, EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             ImageMatchSettings imageMatchSettings = CreateImageMatchSettings(checkSettingsInternal, eyes);
             if (imageMatchSettings != null)
             {
                 CollectSimpleRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
                 CollectFloatingRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
                 CollectAccessibilityRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
-                LogRegions_(eyes.Logger, imageMatchSettings);
             }
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Info, eyes.TestId, Stage.Check, new { regions = imageMatchSettings });
             return imageMatchSettings;
-        }
-
-        private static void LogRegions_(Logger logger, ImageMatchSettings ims)
-        {
-            LogTypedRegions_(logger, "Ignore", ims.Ignore);
-            LogTypedRegions_(logger, "Strict", ims.Strict);
-            LogTypedRegions_(logger, "Content", ims.Content);
-            LogTypedRegions_(logger, "Layout", ims.Layout);
-            LogTypedRegions_(logger, "Floating", ims.Floating);
-            LogTypedRegions_(logger, "Accessibility", ims.Accessibility);
-        }
-
-        private static void LogTypedRegions_(Logger logger, string regionType, object[] regions)
-        {
-            if (regions == null || regions.Length == 0)
-            {
-                logger.Verbose("{0} Regions list is null or empty", regionType);
-                return;
-            }
-            logger.Verbose("{0} Regions:", regionType);
-            foreach (object region in regions)
-            {
-                logger.Verbose("    {0}", region);
-            }
         }
 
         #endregion

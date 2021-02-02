@@ -114,7 +114,17 @@ namespace Applitools
             LogInner_(level, testIds, stage, type, data);
         }
 
+        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type, object data)
+        {
+            LogInner_(level, testIds, stage, type, data);
+        }
+
         public void Log(TraceLevel level, string testId, Stage stage, params Tuple<string, object>[] data)
+        {
+            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type: null, data);
+        }
+
+        public void Log(TraceLevel level, string testId, Stage stage, object data)
         {
             LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type: null, data);
         }
@@ -124,8 +134,12 @@ namespace Applitools
             LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type, data);
         }
 
-        private void LogInner_(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type,
-            params Tuple<string, object>[] data)
+        public void Log(TraceLevel level, string testId, Stage stage, StageType type, object data)
+        {
+            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type, data);
+        }
+
+        private void LogInner_(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type, object data)
         {
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
             ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 4, data), level);
@@ -133,17 +147,8 @@ namespace Applitools
         }
 
         private Message CreateMessageFromLog(HashSet<string> testIds, Stage stage, StageType? type, int methodsBack,
-            Tuple<string, object>[] data)
+            object data)
         {
-            Dictionary<string, object> map = new Dictionary<string, object>();
-            if (data != null && data.Length > 0)
-            {
-                foreach (Tuple<string, object> pair in data)
-                {
-                    map[pair.Item1] = pair.Item2;
-                }
-            }
-
             StackFrame[] stackFrames = new StackTrace().GetFrames();
             string stackTrace = "";
             if (stackFrames.Length > methodsBack)
@@ -152,7 +157,7 @@ namespace Applitools
                 stackTrace += $"{method.DeclaringType.Name}.{method.Name}()";
             }
 
-            return new Message(AgentId, stage, type, testIds, Thread.CurrentThread.ManagedThreadId, stackTrace, map);
+            return new Message(AgentId, stage, type, testIds, Thread.CurrentThread.ManagedThreadId, stackTrace, data);
         }
 
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Applitools
 {
@@ -17,12 +16,12 @@ namespace Applitools
 
         public HashSet<string> TestId { get; }
 
-        public Dictionary<string, object> Data { get; }
+        public object Data { get; }
 
         public Message() { }
 
         public Message(string agentId, Stage stage, StageType? type, HashSet<string> testId, long threadId,
-                       string stackTrace, Dictionary<string, object> data)
+                       string stackTrace, object data)
         {
             AgentId = agentId;
             Stage = stage;
