@@ -6,6 +6,7 @@ namespace Applitools
     [JsonConverter(typeof(StringEnumConverter))]
     public enum StageType
     {
+        None,
         Called,
         Retry,
         JobInfo,

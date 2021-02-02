@@ -608,6 +608,7 @@ namespace Applitools
             renderId = renderId ?? "NONE";
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
+            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, Tuple.Create("hashes", (object)hashes));
             serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }
