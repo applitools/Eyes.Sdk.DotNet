@@ -2,6 +2,7 @@
 {
     public enum StageType
     {
+        None,
         Called,
         Retry,
         JobInfo,

@@ -595,10 +595,11 @@ namespace Applitools
                 screenshotBytes, "image/png", "image/png");
         }
 
-        public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Verbose("querying for existing resources for render id {0}", renderId);
+            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, Tuple.Create("hashes", (object)hashes));
             serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }

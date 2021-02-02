@@ -9,7 +9,7 @@ namespace Applitools
         private readonly CheckService checkService_;
         private readonly CloseService closeService_;
 
-        private List<TestResults> allTestResult_ = new List<TestResults>();
+        private List<TestResultContainer> allTestResult_ = new List<TestResultContainer>();
 
         public EyesException Exception { get; set; }
 
@@ -34,17 +34,10 @@ namespace Applitools
             {
                 throw new EyesException("Error", Exception);
             }
-            List<TestResultContainer> result = new List<TestResultContainer>();
-            foreach (TestResults testResults in allTestResult_)
-            {
-                result.Add(new TestResultContainer(testResults, null, null));
-                EyesBase.LogSessionResultsAndThrowException(Logger, shouldThrowException, testResults);
-            }
-
-            return new TestResultsSummary(result);
+            return new TestResultsSummary(allTestResult_);
         }
 
-        public void AggregateResult(TestResults testResult)
+        public void AggregateResult(TestResultContainer testResult)
         {
             allTestResult_.Add(testResult);
         }

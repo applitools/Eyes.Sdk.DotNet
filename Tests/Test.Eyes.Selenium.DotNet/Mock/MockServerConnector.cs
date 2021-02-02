@@ -183,7 +183,8 @@ namespace Applitools.Selenium.Tests.Mock
             listener.OnComplete(jobs);
         }
 
-        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testId, 
+            string renderId, HashObject[] hashes)
         {
             bool?[] result = new bool?[hashes.Length];
             for (int i = 0; i < hashes.Length; ++i)

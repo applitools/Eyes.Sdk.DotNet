@@ -412,7 +412,7 @@ namespace Applitools
 
                 Logger.Verbose(results.ToString());
 
-                LogSessionResultsAndThrowException(Logger, throwEx, results);
+                LogSessionResultsAndThrowException(throwEx, results);
 
                 results.ServerConnector = ServerConnector;
                 Logger.Verbose("exit");
@@ -428,50 +428,48 @@ namespace Applitools
             }
         }
 
-        public static void LogSessionResultsAndThrowException(Logger logger, bool throwEx, TestResults results)
+        public void LogSessionResultsAndThrowException(bool throwEx, TestResults results)
         {
-            if (results.Status == TestResultsStatus.Unresolved)
-            {
-                if (results.IsNew)
-                {
-                    string instructions = "Please approve the new baseline at " + results.Url;
-                    logger.Log("--- New test ended. " + instructions);
+            TestResultsStatus status = results.Status;
+            string sessionResultsUrl = results.Url;
+            string scenarioIdOrName = results.Name;
+            string appIdOrName = results.AppName;
 
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.TestResults, 
+                Tuple.Create("status", (object)status), Tuple.Create("url", (object)sessionResultsUrl));
+
+            switch (status)
+            {
+                case TestResultsStatus.Failed:
                     if (throwEx)
                     {
-                        string message = "'" + results.Name
-                                + "' of '" + results.AppName
-                                + "'. " + instructions;
-                        throw new NewTestException(results, message);
+                        throw new TestFailedException(results, scenarioIdOrName, appIdOrName);
                     }
-                }
-                else
-                {
-                    logger.Log("--- Differences found. See details at " + results.Url);
-
+                    break;
+                case TestResultsStatus.Passed:
+                    break;
+                case TestResultsStatus.NotOpened:
                     if (throwEx)
                     {
-                        throw new DiffsFoundException(results, results.Name, results.AppName, results.Url);
+                        throw new EyesException("Called close before calling open");
                     }
-                }
-            }
-            else if (results.Status == TestResultsStatus.Failed)
-            {
-                logger.Log("--- Failed test ended. See details at " + results.Url);
-
-                if (throwEx)
-                {
-                    string message = "'" + results.Name
-                             + "' of '" + results.AppName
-                             + "'. See details at " + results.Url;
-
-                    throw new TestFailedException(results, message);
-                }
-            }
-            else
-            {
-                // Test passed
-                logger.Log("--- Test passed. See details at " + results.Url);
+                    break;
+                case TestResultsStatus.Unresolved:
+                    if (results.IsNew)
+                    {
+                        if (throwEx)
+                        {
+                            throw new NewTestException(results, scenarioIdOrName, appIdOrName);
+                        }
+                    }
+                    else
+                    {
+                        if (throwEx)
+                        {
+                            throw new DiffsFoundException(results, scenarioIdOrName, appIdOrName);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -480,6 +478,7 @@ namespace Applitools
         /// </summary>
         public TestResults AbortIfNotClosed()
         {
+            Logger.Log(TestId, Stage.Close, StageType.Called);
             return Abort();
         }
 
@@ -1166,7 +1165,7 @@ namespace Applitools
         {
             if (runningSession_ == null || !IsOpen)
             {
-                Logger.Log("Server session was not started --- Empty test ended.");
+                Logger.Log(TestId, Stage.Close, Tuple.Create("message", "Tried to close a non opened test"));
                 return null;
             }
 
@@ -1176,10 +1175,10 @@ namespace Applitools
             InitProviders_();
 
             bool isNewSession = runningSession_.IsNewSession;
-            Logger.Verbose("Ending server session...");
+            //Logger.Verbose("Ending server session...");
             bool save = (isNewSession && Configuration.SaveNewTests)
                     || (!isNewSession && Configuration.SaveFailedTests);
-            Logger.Verbose("Automatically save test? " + save);
+            //Logger.Verbose("Automatically save test? " + save);
             return new SessionStopInfo(runningSession_, isAborted, save);
         }
 
@@ -1287,7 +1286,8 @@ namespace Applitools
         /// <param name="region">The region of the screenshot which will be set in the application output.</param>
         /// <param name="checkSettingsInternal">The check settings object of the current test.</param>
         /// <param name="imageMatchSettings">The image match settings object in which to collect the coded-regions.</param>
-        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings)
+        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, 
+            ImageMatchSettings imageMatchSettings)
         {
             string url = null;
             byte[] imageBytes = null;
@@ -1313,7 +1313,8 @@ namespace Applitools
             string title = GetTitle();
 
             Location location = screenshot?.OriginLocation;
-            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl), screenshot);
+            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl), 
+                screenshot);
         }
 
         protected string TryCaptureAndPostDom(ICheckSettingsInternal checkSettingsInternal)
@@ -1325,11 +1326,12 @@ namespace Applitools
                 {
                     string domJson = TryCaptureDom();
                     domUrl = TryPostDomCapture_(domJson);
-                    Logger.Verbose("domUrl: {0}", domUrl);
+                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, 
+                        Tuple.Create("domUrl", (object)domUrl));
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Error: {0}", ex);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.DomScript, ex, TestId);
                 }
             }
 

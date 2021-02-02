@@ -1394,12 +1394,11 @@ namespace Applitools.Selenium
                 throw new Exception("Error", exception_);
             }
 
-            if (runner_ != null && results != null)
+            if (runner_ != null)
             {
-                runner_.AggregateResult(results);
+                runner_.AggregateResult(testResultContainer_);
             }
             return results;
-
         }
 
         protected override object GetAgentSetup()

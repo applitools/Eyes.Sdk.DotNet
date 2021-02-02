@@ -30,7 +30,7 @@ namespace Applitools
         void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos);
         void SendLogs(LogSessionsClientEvents clientEvents);
         void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes);
-        void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes);
+        void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes);
         Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource);
         void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests);
         void RenderStatusById(TaskListener<List<RenderStatusResults>> pollingListener, 

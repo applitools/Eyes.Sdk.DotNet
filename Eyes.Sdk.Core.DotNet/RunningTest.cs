@@ -122,7 +122,7 @@ namespace Applitools
             {
                 try
                 {
-                    LogSessionResultsAndThrowException(Logger, true, testResults);
+                    LogSessionResultsAndThrowException(true, testResults);
                 }
                 catch (Exception e)
                 {

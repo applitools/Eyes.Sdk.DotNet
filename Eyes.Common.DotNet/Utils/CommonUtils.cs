@@ -327,5 +327,28 @@ namespace Applitools.Utils
             get => dontCloseBatches_ ?? "true".Equals(GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
             internal set => dontCloseBatches_ = value;
         }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, params string[] testIds)
+        {
+            LogExceptionStackTrace(logger, stage, StageType.None, ex, testIds);
+        }
+        
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, params string[] testIds)
+        {
+            HashSet<string> ids = new HashSet<string>();
+            if (testIds != null && testIds.Length > 0)
+            {
+                ids.UnionWith(testIds);
+            }
+            try {
+                Console.Error.WriteLine(ex);
+                logger.Log(TraceLevel.Error, ids, stage, type,
+                        Tuple.Create("message", (object)ex.ToString()),
+                        Tuple.Create("stacktrace", (object)ex.StackTrace));
+            } catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+        }
     }
 }
