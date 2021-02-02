@@ -124,7 +124,12 @@ namespace Applitools
             return new Message(AgentId, stage, type, testIds, Thread.CurrentThread.ManagedThreadId, stackTrace, data);
         }
 
-        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, StageType type,
+        public void Log(Stage stage, StageType type, params Tuple<string, object>[] data)
+        {
+            LogInner_(TraceLevel.Notice, null, stage, type, data);
+        }
+
+        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type,
             params Tuple<string, object>[] data)
         {
             LogInner_(level, testIds, stage, type, data);
