@@ -413,7 +413,7 @@ namespace Applitools.Selenium.VisualGrid
 
                 Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
 
-                Logger.Log(TraceLevel.Info, eyesId_, Stage.Check, StageType.DomScript,
+                Logger.Log(TraceLevel.Info, testList_.Keys, Stage.Check, StageType.DomScript,
                     new { regionsXPaths, blobsUrls, scriptResult.ResourceUrls, cdtCount = scriptResult.Cdt.Count });
 
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
