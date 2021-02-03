@@ -303,7 +303,14 @@ namespace Applitools.Utils
                 try
                 {
                     HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
-                    listener.OnComplete(response);
+                    if (response.StatusCode >= HttpStatusCode.Ambiguous)
+                    {
+                        listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.StatusDescription}"));
+                    }
+                    else
+                    {
+                        listener.OnComplete(response);
+                    }
                     response.Close();
                 }
                 catch (WebException ex)
