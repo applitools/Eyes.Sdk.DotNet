@@ -107,7 +107,8 @@ namespace Applitools.Utils
                 long maxPosition = maxLength - bufferSize;
                 bool stillReading = true;
                 NetworkStream networkStream = stream as NetworkStream;
-                logger?.Log("start reading from {0}", stream.GetType().Name);
+                logger?.Log(TraceLevel.Debug, null, Stage.General, 
+                    new { message = "start reading", streamType = stream.GetType().Name });
                 while (stillReading && (networkStream?.DataAvailable ?? true) && (count = stream.Read(array, 0, array.Length)) != 0)
                 {
                     if (maxLength > 0 && ms.Position >= maxPosition)
@@ -118,7 +119,8 @@ namespace Applitools.Utils
                     ms.Write(array, 0, count);
                 }
                 byte[] bytes = ms.ToArray();
-                logger?.Log("done reading {0} bytes", bytes.Length);
+                logger?.Log(TraceLevel.Debug, null, Stage.General,
+                    new { message = "done reading", streamType = stream.GetType().Name , bytesRead = bytes.Length});
 
                 return bytes;
             }
@@ -375,15 +377,21 @@ namespace Applitools.Utils
             {
                 ids.UnionWith(testIds);
             }
+            LogExceptionStackTrace(logger, stage, type, ex, ids);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, HashSet<string> testIds)
+        {
             try
             {
                 Console.Error.WriteLine(ex);
-                logger.Log(TraceLevel.Error, ids, stage, type, new { message = ex.ToString(), ex.StackTrace });
+                logger.Log(TraceLevel.Error, testIds, stage, type, new { message = ex.ToString(), ex.StackTrace });
             }
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
             }
         }
+
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Applitools.Selenium.Scrolling;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using Applitools.Utils;
-using Applitools.Utils.Geometry;
 
 namespace Applitools.Selenium
 {
@@ -51,7 +51,7 @@ namespace Applitools.Selenium
 
         public IWebDriver DefaultContent()
         {
-            logger_.Verbose("Switching to default content.");
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
             driver_.GetFrameChain().Clear();
             targetLocator_.DefaultContent();
             return driver_;
@@ -59,25 +59,21 @@ namespace Applitools.Selenium
 
         public IWebDriver Frame(IWebElement frameElement)
         {
-            logger_.Debug("EyesTargetLocator.frame(element)");
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
             WillSwitchToFrame_(frameElement);
-            logger_.Debug("Switching to frame...");
             targetLocator_.Frame(frameElement);
-            logger_.Verbose("Done!");
             return driver_;
         }
 
         public IWebDriver Frame(string nameOrId)
         {
-            logger_.Verbose("('{0}')", nameOrId);
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called, new { nameOrId });
             // Finding the target element so we can report it.
             // We use find elements(plural) to avoid exception when the element
             // is not found.
-            logger_.Verbose("Getting frames by name...");
             ReadOnlyCollection<IWebElement> frames = driver_.FindElementsByName(nameOrId);
             if (frames.Count == 0)
             {
-                logger_.Verbose("No frames found! Trying by id...");
                 // If there are no frames by that name, we'll try the id
                 frames = driver_.FindElementsById(nameOrId);
                 if (frames.Count == 0)
@@ -86,31 +82,23 @@ namespace Applitools.Selenium
                     throw new NoSuchFrameException($"No frame with name or id '{nameOrId}' exists!");
                 }
             }
-            logger_.Verbose("Done! Making preparations...");
             WillSwitchToFrame_(frames[0]);
-            logger_.Verbose("Done! Switching to frame {0}...", nameOrId);
             targetLocator_.Frame(nameOrId);
-            logger_.Verbose("Done!");
             return driver_;
         }
 
         public IWebDriver Frame(int frameIndex)
         {
-            logger_.Verbose("({0})", frameIndex);
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called, new { frameIndex });
             // Finding the target element so and reporting it using onWillSwitch.
-            logger_.Verbose("Getting frames list...");
             ReadOnlyCollection<IWebElement> frames = driver_.FindElements(By.CssSelector("frame, iframe"));
             if (frameIndex >= frames.Count)
             {
                 throw new NoSuchFrameException(string.Format("Frame index [{0}] is invalid!", frameIndex));
             }
-            logger_.Debug("Done! getting the specific frame...");
             IWebElement targetFrame = frames[frameIndex];
-            logger_.Debug("Done! Making preparations...");
             WillSwitchToFrame_(targetFrame);
-            logger_.Debug("Done! Switching to frame...");
             targetLocator_.Frame(frameIndex);
-            logger_.Verbose("Done!");
             return driver_;
         }
 
@@ -147,7 +135,8 @@ namespace Applitools.Selenium
 
         public IWebDriver ParentFrame()
         {
-            logger_.Debug("frame chain size: {0}", driver_.GetFrameChain().Count);
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called, 
+                new { frameChainSize = driver_.GetFrameChain().Count });
             if (driver_.GetFrameChain().Count != 0)
             {
                 Frame frame = driver_.GetFrameChain().Pop();
@@ -160,7 +149,7 @@ namespace Applitools.Selenium
 
         public static void ParentFrame(Logger logger, ITargetLocator targetLocator, FrameChain frameChainToParent)
         {
-            logger.Debug("enter (static)");
+            logger.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
             try
             {
                 targetLocator.ParentFrame();
@@ -199,11 +188,12 @@ namespace Applitools.Selenium
 
             if (FrameChain.IsSameFrameChain(currentFrameChain, frameChain))
             {
-                logger_.Verbose("given frame chain equals current frame chain. returning.");
+                logger_.Log(TraceLevel.Debug, null, Stage.General, 
+                    new { message = "given frame chain equals current frame chain. returning." });
                 return driver_;
             }
 
-            logger_.Debug("(frameChain) - number of frames: {0}", frameChain?.Count ?? 0);
+            logger_.Log(TraceLevel.Debug, null, Stage.General, new { frameChainSize = frameChain?.Count ?? 0 });
             if (currentFrameChain.Count > 0)
             {
                 this.DefaultContent();
@@ -213,13 +203,10 @@ namespace Applitools.Selenium
             {
                 foreach (Frame frame in frameChain)
                 {
-                    logger_.Debug("frame.Reference: {0}", frame.Reference);
                     this.Frame(frame.Reference);
-                    logger_.Debug("frame.ScrollRootElement: {0}", frame.ScrollRootElement);
                     Frame newFrame = driver_.GetFrameChain().Peek();
                     newFrame.ScrollRootElement = frame.ScrollRootElement;
                 }
-                logger_.Verbose("Done switching into nested frames!");
             }
             return driver_;
         }
@@ -231,43 +218,38 @@ namespace Applitools.Selenium
         /// <returns>The WebDriver with the switched context.</returns>
         public IWebDriver Frames(string[] framesPath)
         {
-            logger_.Verbose("(framesPath)");
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
             ITargetLocator targetLocator = driver_.SwitchTo();
             foreach (string frameNameOrId in framesPath)
             {
-                logger_.Debug("Switching to frame '{0}'...", frameNameOrId);
                 targetLocator.Frame(frameNameOrId);
             }
-            logger_.Verbose("Done switching into nested frames!");
             return driver_;
         }
 
         public IWebDriver FramesDoScroll(FrameChain frameChain)
         {
-            logger_.Verbose("EyesTargetLocator.framesDoScroll(frameChain)");
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
             ITargetLocator targetLocator = driver_.SwitchTo();
             targetLocator.DefaultContent();
             IPositionProvider scrollProvider = new ScrollPositionProvider(logger_, jsExecutor_, driver_.Eyes.GetCurrentFrameScrollRootElement());
             defaultContentPositionMemento_ = scrollProvider.GetState();
             foreach (Frame frame in frameChain)
             {
-                logger_.Verbose("Scrolling by parent scroll position...");
                 Point frameLocation = frame.Location;
                 scrollProvider.SetPosition(frameLocation);
-                logger_.Verbose("Done! Switching to frame...");
                 targetLocator.Frame(frame.Reference);
                 Frame newFrame = driver_.GetFrameChain().Peek();
                 newFrame.ScrollRootElement = frame.ScrollRootElement;
                 newFrame.ScrollRootElementInnerBounds = frame.ScrollRootElementInnerBounds;
-                logger_.Verbose("Done!");
             }
 
-            logger_.Verbose("Done switching into nested frames!");
             return driver_;
         }
 
         internal void ResetScroll()
         {
+            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
             if (defaultContentPositionMemento_ != null)
             {
                 scrollPositionProvider_?.RestoreState(defaultContentPositionMemento_);
