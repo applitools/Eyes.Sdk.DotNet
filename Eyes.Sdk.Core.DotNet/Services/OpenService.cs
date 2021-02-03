@@ -41,7 +41,7 @@ namespace Applitools
                 },
                 (ex) =>
                 {
-                    Logger.Log("Failed completing task on input {0}", nextInput);
+                    Logger.Log(TraceLevel.Error, id, Stage.Open, new { nextInput });
                     lock (errorQueue_)
                     {
                         inProgressTests_.Remove(id);

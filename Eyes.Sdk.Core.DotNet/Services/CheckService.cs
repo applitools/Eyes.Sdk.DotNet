@@ -32,7 +32,7 @@ namespace Applitools
                         (e) =>
                         {
                             inUploadProcess_.Remove(id);
-                            Logger.Log("Failed completing task on input {0}", nextInput);
+                            Logger.Log(TraceLevel.Error, id, Stage.Check, StageType.UploadComplete, new { nextInput });
                             errorQueue_.Add(Tuple.Create(id, e));
                         }));
             }
@@ -52,7 +52,7 @@ namespace Applitools
                 (e) =>
                 {
                     inMatchWindowProcess_.Remove(id);
-                    Logger.Log("Failed completing task on input {0}", nextInput);
+                    Logger.Log(TraceLevel.Error, id, Stage.Check, StageType.MatchComplete, new { nextInput });
                     errorQueue_.Add(new Tuple<string, Exception>(id, new EyesException("Match window failed")));
                 });
 
