@@ -63,7 +63,12 @@ namespace Applitools
             return null;
         }
 
-        public virtual bool IsTestReadyToClose => !inOpenProcess_ && isAbortIssued_ != null && !startedCloseProcess_;
+        public virtual bool IsTestReadyToClose => GetIsTestReadyToClose();
+
+        protected bool GetIsTestReadyToClose()
+        {
+            return !inOpenProcess_ && isAbortIssued_ != null && !startedCloseProcess_;
+        }
 
         public bool IsCloseTaskIssued { get => isAbortIssued_ != null; }
 
