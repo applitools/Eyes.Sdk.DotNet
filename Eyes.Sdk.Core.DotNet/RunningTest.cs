@@ -7,13 +7,7 @@ namespace Applitools
 {
     public abstract class RunningTest : EyesBase
     {
-#pragma warning disable IDE0052 // Remove unread private members
-#pragma warning disable CS0414 // Filed is assigned but its value is never used
-        private bool isTestInExceptionMode_ = false;
         protected Exception exception_;
-#pragma warning restore CS0414 // Filed is assigned but its value is never used
-#pragma warning restore IDE0052 // Remove unread private members
-
         private bool? isAbortIssued_ = null;
         private bool inOpenProcess_ = false;
         private bool startedCloseProcess_ = false;
@@ -40,7 +34,6 @@ namespace Applitools
             string source, IList<IUserAction> userInputs);
 
         public abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
-
 
         protected RunningTest(ClassicRunner runner) : base(runner)
         {
@@ -131,7 +124,7 @@ namespace Applitools
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Error: {0}", e);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e, TestId);
                     exception_ = e;
                 }
             }
@@ -158,7 +151,7 @@ namespace Applitools
 
         public void SetTestInExceptionMode(Exception e)
         {
-            Logger.Log("Error: {0}", e);
+            CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e, TestId);
             if (IsTestAborted)
             {
                 return;
