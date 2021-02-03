@@ -589,6 +589,7 @@ namespace Applitools
 
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
+            renderId = renderId ?? "NONE"; 
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
             serializer_.Serialize(hashes, request.GetRequestStream());
