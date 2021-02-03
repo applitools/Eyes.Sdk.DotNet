@@ -163,7 +163,7 @@ namespace Applitools
         private void LogInner_(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type, object data)
         {
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
-            ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 4, data), level);
+            ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 3, data), level);
             logHandler_.OnMessage(@event);
         }
 
