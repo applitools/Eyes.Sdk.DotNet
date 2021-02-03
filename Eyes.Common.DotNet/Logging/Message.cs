@@ -14,19 +14,19 @@ namespace Applitools
 
         public string StackTrace { get; }
 
-        public HashSet<string> TestId { get; }
+        public IEnumerable<string> TestId { get; }
 
         public object Data { get; }
 
         public Message() { }
 
-        public Message(string agentId, Stage stage, StageType? type, HashSet<string> testId, long threadId,
+        public Message(string agentId, Stage stage, StageType? type, IEnumerable<string> testId, long threadId,
                        string stackTrace, object data)
         {
             AgentId = agentId;
             Stage = stage;
             Type = type;
-            TestId = testId ?? new HashSet<string>();
+            TestId = testId ?? new string[0];
             ThreadId = threadId;
             StackTrace = stackTrace;
             Data = data;

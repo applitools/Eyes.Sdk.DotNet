@@ -58,7 +58,7 @@ namespace Applitools.Selenium
         #region Properties
 
         internal SeleniumEyes Eyes { get; private set; }
-        internal IUserActionsEyes UserActionsEyes {get; private set;}
+        internal IUserActionsEyes UserActionsEyes { get; private set; }
 
         public RemoteWebDriver RemoteWebDriver { get; internal set; }
 
@@ -124,12 +124,10 @@ namespace Applitools.Selenium
             try
             {
                 userAgent = (string)JSBrowserCommands.WithReturn.GetUserAgent((s) => ExecuteScript(s));
-
-                Logger_.Log(userAgent);
             }
             catch (Exception)
             {
-                Logger_.Log("Failed to obtain user-agent string");
+                Logger_.Log(TraceLevel.Error, Eyes.TestId, Stage.Open, new { message = "Failed to obtain user-agent string" });
             }
 
             return userAgent;
@@ -155,7 +153,7 @@ namespace Applitools.Selenium
                 {
                     eyesWebElementsList.Add(element);
                     string id = EyesSeleniumUtils.GetElementIdForDictionary(element, RemoteWebDriver);
-                    
+
                     elementsFoundSinceLastNavigation_[id] = element;
                 }
             }

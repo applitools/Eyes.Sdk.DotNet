@@ -43,7 +43,7 @@ namespace Applitools
         private void DeleteAllBatches_()
         {
             if (DontCloseBatches) return;
-            Logger.Log(Stage.Close, StageType.CloseBatch, Tuple.Create("batchSize", (object)batchClosers_.Count));
+            Logger.Log(TraceLevel.Notice, null, Stage.Close, StageType.CloseBatch, new { batches = batchClosers_.Keys });
             foreach (KeyValuePair<string, IBatchCloser> kvp in batchClosers_)
             {
                 IBatchCloser connector = kvp.Value;

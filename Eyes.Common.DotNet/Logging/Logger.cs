@@ -108,45 +108,34 @@ namespace Applitools
             LogInner_(TraceLevel.Notice, null, stage, type, data);
         }
 
-        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type,
-            params Tuple<string, object>[] data)
+        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data)
         {
             LogInner_(level, testIds, stage, type, data);
-        }
-
-        public void Log(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type, object data)
-        {
-            LogInner_(level, testIds, stage, type, data);
-        }
-
-        public void Log(TraceLevel level, string testId, Stage stage, params Tuple<string, object>[] data)
-        {
-            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type: null, data);
         }
 
         public void Log(TraceLevel level, string testId, Stage stage, object data)
         {
-            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type: null, data);
+            LogInner_(level, testId == null ? null : new string[] { testId }, stage, type: null, data);
         }
 
-        public void Log(TraceLevel level, string testId, Stage stage, StageType type, params Tuple<string, object>[] data)
+        public void Log(TraceLevel level, string testId, Stage stage, StageType type)
         {
-            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type, data);
+            LogInner_(level, testId == null ? null : new string[] { testId }, stage, type, null);
         }
 
         public void Log(TraceLevel level, string testId, Stage stage, StageType type, object data)
         {
-            LogInner_(level, testId == null ? null : new HashSet<string>(new string[] { testId }), stage, type, data);
+            LogInner_(level, testId == null ? null : new string[] { testId }, stage, type, data);
         }
 
-        private void LogInner_(TraceLevel level, HashSet<string> testIds, Stage stage, StageType? type, object data)
+        private void LogInner_(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data)
         {
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
             ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 3, data), level);
             logHandler_.OnMessage(@event);
         }
 
-        private Message CreateMessageFromLog(HashSet<string> testIds, Stage stage, StageType? type, int methodsBack,
+        private Message CreateMessageFromLog(IEnumerable<string> testIds, Stage stage, StageType? type, int methodsBack,
             object data)
         {
             StackFrame[] stackFrames = new StackTrace().GetFrames();
