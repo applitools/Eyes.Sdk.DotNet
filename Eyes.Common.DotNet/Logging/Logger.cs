@@ -129,24 +129,34 @@ namespace Applitools
             LogInner_(TraceLevel.Notice, null, stage, type, null);
         }
 
-        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data)
+        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, object data = null)
+        {
+            LogInner_(level, testIds, stage, null, data);
+        }
+
+        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type = null, object data = null)
         {
             LogInner_(level, testIds, stage, type, data);
         }
 
-        public void Log(TraceLevel level, string testId, Stage stage, object data)
+        public void Log(TraceLevel level, string testId, Stage stage, object data = null)
         {
-            LogInner_(level, testId == null ? null : new string[] { testId }, stage, type: null, data);
+            LogInner_(level, testId == null ? null : new string[] { testId }, stage, null, data);
         }
 
-        public void Log(TraceLevel level, string testId, Stage stage, StageType type)
-        {
-            LogInner_(level, testId == null ? null : new string[] { testId }, stage, type, null);
-        }
-
-        public void Log(TraceLevel level, string testId, Stage stage, StageType type, object data)
+        public void Log(TraceLevel level, string testId, Stage stage, StageType? type = null, object data = null)
         {
             LogInner_(level, testId == null ? null : new string[] { testId }, stage, type, data);
+        }
+
+        public void Log(TraceLevel level, Stage stage, object data = null)
+        {
+            LogInner_(level, null, stage, null, data);
+        }
+
+        public void Log(TraceLevel level, Stage stage, StageType? type = null, object data = null)
+        {
+            LogInner_(level, null, stage, type, data);
         }
 
         private void LogInner_(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data)
