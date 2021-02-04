@@ -671,7 +671,7 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("{0} failed: {1}", traceMsg, Tracer.FormatException(ex));
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.General, ex, TestId);
                     throw;
                 }
             };
@@ -721,7 +721,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log("{0} failed: {1}", traceMsg, Tracer.FormatException(ex));
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.General, ex, TestId);
                 throw;
             }
         }
@@ -798,7 +798,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception: {0}", Tracer.FormatException(ex));
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
                 throw;
             }
         }

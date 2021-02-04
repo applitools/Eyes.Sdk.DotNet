@@ -621,7 +621,7 @@ namespace Applitools.Selenium
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception: " + ex);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex);
                 throw new EyesException("Error", ex);
             }
         }
@@ -1345,7 +1345,7 @@ namespace Applitools.Selenium
                 }
                 catch (Exception ex)
                 {
-                    Logger.Verbose("failed ({0})", ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
                     dontGetTitle_ = true;
                 }
             }
@@ -1384,7 +1384,7 @@ namespace Applitools.Selenium
             }
             catch (Exception e)
             {
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, e, TestId);
                 CloseFailed(e);
                 throw;
             }

@@ -56,8 +56,7 @@ namespace Applitools.Selenium.Capture
 
         private string GetDom_()
         {
-            FrameChain originalFC = null;
-            originalFC = webDriver_.GetFrameChain().Clone();
+            FrameChain originalFC = webDriver_.GetFrameChain().Clone();
             logger_.Verbose("saving current frame chain - size: {0} ; frame: {1}", originalFC.Count, originalFC.Peek());
             string dom = "";
             try
@@ -66,7 +65,7 @@ namespace Applitools.Selenium.Capture
             }
             catch (Exception e)
             {
-                logger_.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.DomScript, e);
             }
 
             logger_.Verbose("switching back to original frame");
@@ -95,15 +94,9 @@ namespace Applitools.Selenium.Capture
             {
                 result = EyesSeleniumUtils.RunDomScript(logger_, webDriver_, captureScript, arguments, arguments, pollingScript);
             }
-            catch (JsonReaderException jsonException)
-            {
-                logger_.Log("Error: {0}", jsonException);
-                logger_.Log("Error (cont.): Failed to parse string: " + result ?? "<null>");
-            }
             catch (Exception e)
             {
-                logger_.Log("Error capturing DOM");
-                logger_.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.DomScript, e);
             }
             return result;
         }

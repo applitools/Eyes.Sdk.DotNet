@@ -259,7 +259,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log($"WARNING: Close session failed: {ex.Message}");
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, StageType.CloseBatch, ex);
             }
             finally
             {
@@ -445,7 +445,7 @@ namespace Applitools
             }
             catch (Exception e)
             {
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, StageType.JobInfo, e);
                 throw;
             }
         }
@@ -589,7 +589,7 @@ namespace Applitools
 
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
-            renderId = renderId ?? "NONE"; 
+            renderId = renderId ?? "NONE";
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
             serializer_.Serialize(hashes, request.GetRequestStream());

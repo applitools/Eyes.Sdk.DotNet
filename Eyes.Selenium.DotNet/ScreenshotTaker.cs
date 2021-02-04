@@ -48,7 +48,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Log("GetScreenshot() failed: {0}", ex);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.CaptureScreenshot, ex);
                 throw;
             }
         }

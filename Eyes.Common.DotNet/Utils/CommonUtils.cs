@@ -380,12 +380,12 @@ namespace Applitools.Utils
             LogExceptionStackTrace(logger, stage, type, ex, ids);
         }
 
-        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, HashSet<string> testIds)
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, IEnumerable<string> testIds)
         {
             try
             {
                 Console.Error.WriteLine(ex);
-                logger.Log(TraceLevel.Error, testIds, stage, type, new { message = ex.ToString(), ex.StackTrace });
+                logger?.Log(TraceLevel.Error, testIds, stage, type, new { message = ex.ToString(), ex.StackTrace });
             }
             catch (Exception e)
             {

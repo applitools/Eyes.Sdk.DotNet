@@ -414,7 +414,7 @@ namespace Applitools.Selenium
             }
             catch (Exception e)
             {
-                logger?.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.Check, e);
                 scrollingElement = null;
             }
 
