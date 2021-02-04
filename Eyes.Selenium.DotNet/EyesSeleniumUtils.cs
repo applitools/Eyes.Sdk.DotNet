@@ -505,7 +505,7 @@ namespace Applitools.Selenium
         internal static string RunDomScript(Logger logger, EyesWebDriver driver,
             string domScript, object domScriptArguments, object pollingScriptArguments, string pollingScript)
         {
-            logger.Verbose("Starting dom extraction");
+            logger.Log(TraceLevel.Info, null, Stage.General, StageType.DomScript, new { message = "Starting" });
             if (domScriptArguments == null)
             {
                 domScriptArguments = new { };
@@ -523,7 +523,7 @@ namespace Applitools.Selenium
                 while (status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
                     Thread.Sleep(200);
-                    logger.Verbose("Dom script polling...");
+                    logger.Log(TraceLevel.Info, null, Stage.General, StageType.DomScript, new { message = "Polling" });
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
                     status = scriptResponse.Status;
@@ -548,7 +548,7 @@ namespace Applitools.Selenium
                 string chunk;
                 while (status == CaptureStatusEnum.SUCCESS_CHUNKED && !scriptResponse.Done && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
-                    logger.Verbose("Dom script chunks polling...");
+                    logger.Log(TraceLevel.Info, null, Stage.General, StageType.DomScript, new { message = "Chunks Polling" });
                     chunk = scriptResponse.Value.ToString();
                     value.Append(chunk);
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
@@ -572,11 +572,11 @@ namespace Applitools.Selenium
             }
             finally
             {
-                logger.Verbose("Finished dom extraction");
+                logger.Log(TraceLevel.Info, null, Stage.General, StageType.DomScript, new { message = "Done" });
             }
         }
 
-        internal static IWebElement GetScrollRootElement(Logger logger, IWebDriver driver, 
+        internal static IWebElement GetScrollRootElement(Logger logger, IWebDriver driver,
             IScrollRootElementContainer scrollRootElementContainer)
         {
             if (scrollRootElementContainer == null)

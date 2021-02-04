@@ -60,7 +60,6 @@ namespace Applitools
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         private IServerConnector serverConnector_;
         protected TestResultContainer testResultContainer_;
-        private EyesScreenshot lastScreenshot_;
         private readonly Queue<Trigger> userInputs_ = new Queue<Trigger>();
 
         #endregion
@@ -156,7 +155,7 @@ namespace Applitools
                 {
                     return null;
                 }
-                
+
                 Logger.Log(TraceLevel.Notice, TestId, Stage.Open, StageType.Called,
                            new { FullAgentId, DotNetVersion = CommonUtils.GetDotNetVersion() });
 
@@ -177,7 +176,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log("PrepareForOpen(): {0}", Tracer.FormatException(ex));
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, ex, TestId);
                 Logger.GetILogHandler().Close();
                 throw;
             }
@@ -923,7 +922,8 @@ namespace Applitools
             Configuration.SetAppName(appName ?? Configuration.AppName);
             Configuration.SetViewportSize(viewportSize);
 
-            Logger.Verbose("Open({0}, {1}, {2})", appName, testName, viewportSize);
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Open, StageType.Called,
+                new { testName, appName, viewportSize });
 
             OpenBase();
         }
@@ -1110,25 +1110,19 @@ namespace Applitools
 
         private SessionStartInfo PrepareStartSession_()
         {
-            Logger.Verbose("enter");
-
             EnsureViewportSize_();
 
             BatchInfo testBatch;
             if (Configuration.Batch == null)
             {
-                Logger.Verbose("No batch set");
                 testBatch = new BatchInfo(null);
             }
             else
             {
-                Logger.Verbose("Batch is {0}", Configuration.Batch);
                 testBatch = Configuration.Batch;
             }
 
-            Logger.Verbose("getting environment...");
             object appEnv = GetEnvironment_();
-            Logger.Verbose("Application environment is {0}", appEnv);
             string agentSessionId = Guid.NewGuid().ToString();
 
             sessionStartInfo_ = new SessionStartInfo(
@@ -1150,7 +1144,7 @@ namespace Applitools
                 Configuration.AbortIdleTestTimeout,
                 properties_);
 
-            Logger.Log(TraceLevel.Info, TestId, Stage.Open, new { sessionStartInfo = sessionStartInfo_ });
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Open, new { sessionStartInfo = sessionStartInfo_ });
             return sessionStartInfo_;
         }
 
@@ -1164,7 +1158,6 @@ namespace Applitools
             }
 
             IsOpen = false;
-            lastScreenshot_ = null;
             ClearUserInputs_();
             InitProviders_();
 
@@ -1180,7 +1173,6 @@ namespace Applitools
         {
             if (IsDisabled)
             {
-                Logger.Verbose("Ignored");
                 return new TestResults();
             }
             TestResults testResults;
@@ -1196,7 +1188,7 @@ namespace Applitools
             runningSession_ = null;
             if (testResults == null)
             {
-                Logger.Log("Failed stopping session");
+                Logger.Log(TraceLevel.Error, TestId, Stage.Close, new { message = "Failed stopping session" });
                 throw new EyesException(string.Format("Failed stopping session. SessionStopInfo: {0}", sessionStopInfo));
             }
             return testResults;
@@ -1242,13 +1234,13 @@ namespace Applitools
         {
             if (!isViewportSizeSet_)
             {
-                Logger.Verbose("viewportSize_: {0} ({1})", viewportSize_, GetHashCode());
+                //Logger.Verbose("viewportSize_: {0} ({1})", viewportSize_, GetHashCode());
                 if (viewportSize_ == null || viewportSize_.IsEmpty())
                 {
                     try
                     {
                         viewportSize_ = GetViewportSize();
-                        Logger.Verbose("viewport size: {0} ({1})", viewportSize_, GetHashCode());
+                        //Logger.Verbose("viewport size: {0} ({1})", viewportSize_, GetHashCode());
                         SetEffectiveViewportSize(viewportSize_);
                     }
                     catch (EyesException)
@@ -1260,7 +1252,7 @@ namespace Applitools
                 {
                     try
                     {
-                        Logger.Verbose("Setting viewport size to {0} ({1})", viewportSize_, GetHashCode());
+                        //Logger.Verbose("Setting viewport size to {0} ({1})", viewportSize_, GetHashCode());
                         SetViewportSize(viewportSize_);
                         isViewportSizeSet_ = true;
                     }
@@ -1301,7 +1293,7 @@ namespace Applitools
                 {
                     throw new NullReferenceException("Screenshot URL is null");
                 }
-                Logger.Verbose("Screenshot URL is {0}", url);
+                //Logger.Verbose("Screenshot URL is {0}", url);
             }
 
             string title = GetTitle();
@@ -1320,8 +1312,7 @@ namespace Applitools
                 {
                     string domJson = TryCaptureDom();
                     domUrl = TryPostDomCapture_(domJson);
-                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript,
-                        Tuple.Create("domUrl", (object)domUrl));
+                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domUrl });
                 }
                 catch (Exception ex)
                 {

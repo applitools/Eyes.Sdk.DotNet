@@ -59,7 +59,7 @@ namespace Applitools.Selenium.VisualGrid
         private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
         private RectangleSize viewportSize_;
         private bool isOpen_;
-        private readonly string eyesId_ = new Guid().ToString();
+        private readonly string eyesId_ = Guid.NewGuid().ToString();
 
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
         {
