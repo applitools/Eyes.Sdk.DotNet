@@ -68,7 +68,7 @@ namespace Applitools.Tests.Utils
             }
             else
             {
-                TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test Starting: {tc.Test.FullName}");
+                TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} [{Thread.CurrentThread.ManagedThreadId}] - Eyes: Test Starting: {tc.Test.FullName}");
             }
         }
 
@@ -77,7 +77,7 @@ namespace Applitools.Tests.Utils
         {
             TestContext tc = TestContext.CurrentContext;
             TestStatus status = tc.Result.Outcome.Status;
-            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test {status}: {tc.Test.FullName}");
+            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} [{Thread.CurrentThread.ManagedThreadId}] - Eyes: Test {status}: {tc.Test.FullName}");
             if (status == TestStatus.Inconclusive)
             {
                 return;
@@ -104,7 +104,7 @@ namespace Applitools.Tests.Utils
             }
             catch (Exception ex)
             {
-                string s = $"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test Report Error: {ex}";
+                string s = $"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} [{Thread.CurrentThread.ManagedThreadId}] - Eyes: Test Report Error: {ex}";
                 TestContext.Progress.WriteLine(s);
                 return false;
             }
