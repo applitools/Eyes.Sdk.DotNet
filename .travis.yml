@@ -60,11 +60,7 @@ jobs:
     - stage: Test
       name: Generic Tests
       script:
-        - echo "generating tests"
-        - pushd coverage-tests
-        - npm run dotnet:generate
-        - popd
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh Generated
+        - chmod +x ./genericTests.sh && ./genericTests.sh
 
     - name: Hand Written Tests
       script:
