@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Applitools
 {
@@ -30,9 +31,11 @@ namespace Applitools
 
         protected override TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)
         {
-            if (shouldThrowException && Exception != null)
+            TestResultContainer resultInException = allTestResult_.FirstOrDefault(tr => tr.Exception != null);
+            Exception ex = resultInException?.Exception ?? Exception;
+            if (shouldThrowException && ex != null)
             {
-                throw new EyesException("Error", Exception);
+                throw new EyesException("Error", ex);
             }
             return new TestResultsSummary(allTestResult_);
         }

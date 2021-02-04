@@ -7,7 +7,7 @@ using System;
 
 namespace Applitools.Selenium.Tests.ApiTests
 {
-    [TestFixture, Parallelizable]
+    [TestFixture, Parallelizable(ParallelScope.All)]
     [TestFixtureSource(typeof(TestAbort), nameof(TestAbort.UseVisualGridDataSource))]
     public class TestAbort2 : ReportingTestSuite
     {
