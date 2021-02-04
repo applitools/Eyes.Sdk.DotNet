@@ -159,7 +159,8 @@ namespace Applitools.VisualGrid
 
         public void Open(IEyes eyes, IList<VisualGridRunningTest> newTests)
         {
-            Logger.Verbose("enter");
+            string[] testIds = newTests.Select(t => t.TestId).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.Called);
 
             ApiKey = eyes.ApiKey;
             ServerUrl = eyes.ServerUrl;
@@ -187,7 +188,12 @@ namespace Applitools.VisualGrid
             }
             catch (JsonException e)
             {
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, e, testIds);
+            }
+            catch (Exception ex)
+            {
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, ex, testIds);
+                throw;
             }
 
             AddBatch(eyes.Batch.Id, ((IVisualGridEyes)eyes).GetBatchCloser());

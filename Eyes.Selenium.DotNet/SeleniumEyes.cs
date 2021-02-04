@@ -1,26 +1,26 @@
 ﻿using Applitools.Capture;
+using Applitools.Cropping;
 using Applitools.Fluent;
 using Applitools.Positioning;
-using Applitools.Selenium.Fluent;
-using Applitools.Selenium.Scrolling;
 using Applitools.Selenium.Capture;
-using Applitools.Cropping;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Positioning;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using System.Threading;
+using Applitools.Selenium.Scrolling;
 using Applitools.Utils;
 using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
-using Region = Applitools.Utils.Geometry.Region;
-using System.Linq;
 using Applitools.VisualGrid;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium
 {
@@ -424,7 +424,7 @@ namespace Applitools.Selenium
                 MatchWindowTask.CollectRegions(this, subScreenshot, checkSettingsInternal, ims);
                 Location location = subScreenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
                 AppOutput appOutput = new AppOutput(name, location, subScreenshot.Image);
-                         
+
                 MatchWindowData data = PrepareForMatch(checkSettingsInternal,
                     new Trigger[0], appOutput, name, false, ims, null, source);
 

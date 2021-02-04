@@ -51,7 +51,7 @@ namespace Applitools.Selenium
 
         public IWebDriver DefaultContent()
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             driver_.GetFrameChain().Clear();
             targetLocator_.DefaultContent();
             return driver_;
@@ -59,7 +59,7 @@ namespace Applitools.Selenium
 
         public IWebDriver Frame(IWebElement frameElement)
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             WillSwitchToFrame_(frameElement);
             targetLocator_.Frame(frameElement);
             return driver_;
@@ -67,7 +67,7 @@ namespace Applitools.Selenium
 
         public IWebDriver Frame(string nameOrId)
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called, new { nameOrId });
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called, new { nameOrId });
             // Finding the target element so we can report it.
             // We use find elements(plural) to avoid exception when the element
             // is not found.
@@ -89,7 +89,7 @@ namespace Applitools.Selenium
 
         public IWebDriver Frame(int frameIndex)
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called, new { frameIndex });
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called, new { frameIndex });
             // Finding the target element so and reporting it using onWillSwitch.
             ReadOnlyCollection<IWebElement> frames = driver_.FindElements(By.CssSelector("frame, iframe"));
             if (frameIndex >= frames.Count)
@@ -135,7 +135,7 @@ namespace Applitools.Selenium
 
         public IWebDriver ParentFrame()
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called, 
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called, 
                 new { frameChainSize = driver_.GetFrameChain().Count });
             if (driver_.GetFrameChain().Count != 0)
             {
@@ -149,7 +149,7 @@ namespace Applitools.Selenium
 
         public static void ParentFrame(Logger logger, ITargetLocator targetLocator, FrameChain frameChainToParent)
         {
-            logger.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
+            logger.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             try
             {
                 targetLocator.ParentFrame();
@@ -188,12 +188,12 @@ namespace Applitools.Selenium
 
             if (FrameChain.IsSameFrameChain(currentFrameChain, frameChain))
             {
-                logger_.Log(TraceLevel.Debug, null, Stage.General, 
+                logger_.Log(TraceLevel.Debug, Stage.General, 
                     new { message = "given frame chain equals current frame chain. returning." });
                 return driver_;
             }
 
-            logger_.Log(TraceLevel.Debug, null, Stage.General, new { frameChainSize = frameChain?.Count ?? 0 });
+            logger_.Log(TraceLevel.Debug, Stage.General, new { frameChainSize = frameChain?.Count ?? 0 });
             if (currentFrameChain.Count > 0)
             {
                 this.DefaultContent();
@@ -218,7 +218,7 @@ namespace Applitools.Selenium
         /// <returns>The WebDriver with the switched context.</returns>
         public IWebDriver Frames(string[] framesPath)
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             ITargetLocator targetLocator = driver_.SwitchTo();
             foreach (string frameNameOrId in framesPath)
             {
@@ -229,7 +229,7 @@ namespace Applitools.Selenium
 
         public IWebDriver FramesDoScroll(FrameChain frameChain)
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             ITargetLocator targetLocator = driver_.SwitchTo();
             targetLocator.DefaultContent();
             IPositionProvider scrollProvider = new ScrollPositionProvider(logger_, jsExecutor_, driver_.Eyes.GetCurrentFrameScrollRootElement());
@@ -249,7 +249,7 @@ namespace Applitools.Selenium
 
         internal void ResetScroll()
         {
-            logger_.Log(TraceLevel.Debug, null, Stage.General, StageType.Called);
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             if (defaultContentPositionMemento_ != null)
             {
                 scrollPositionProvider_?.RestoreState(defaultContentPositionMemento_);

@@ -107,7 +107,7 @@ namespace Applitools.Utils
                 long maxPosition = maxLength - bufferSize;
                 bool stillReading = true;
                 NetworkStream networkStream = stream as NetworkStream;
-                logger?.Log(TraceLevel.Debug, null, Stage.General, 
+                logger?.Log(TraceLevel.Debug, Stage.General, 
                     new { message = "start reading", streamType = stream.GetType().Name });
                 while (stillReading && (networkStream?.DataAvailable ?? true) && (count = stream.Read(array, 0, array.Length)) != 0)
                 {
@@ -119,7 +119,7 @@ namespace Applitools.Utils
                     ms.Write(array, 0, count);
                 }
                 byte[] bytes = ms.ToArray();
-                logger?.Log(TraceLevel.Debug, null, Stage.General,
+                logger?.Log(TraceLevel.Debug, Stage.General,
                     new { message = "done reading", streamType = stream.GetType().Name , bytesRead = bytes.Length});
 
                 return bytes;
