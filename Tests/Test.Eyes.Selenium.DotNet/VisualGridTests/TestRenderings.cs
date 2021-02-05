@@ -73,7 +73,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 numOfBrowsers++;
             }
             eyes.SetConfiguration(sconf);
-            
+
             ChromeDriver driver = SeleniumUtils.CreateChromeDriver();
             webdriverProvider.SetDriver(driver);
             try
@@ -133,13 +133,20 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
             eyes.SetConfiguration(sconf);
             ChromeDriver driver = SeleniumUtils.CreateChromeDriver();
-            eyes.Open(driver);
-            driver.Url = url;
-            Thread.Sleep(500);
-            eyes.Check(testName, Target.Window().Fully());
-            driver.Quit();
-            eyes.Close(false);
-            TestResultsSummary allResults = runner.GetAllTestResults(false);//TODO - this never ends!
+            try
+            {
+                eyes.Open(driver);
+                driver.Url = url;
+                Thread.Sleep(500);
+                eyes.Check(testName, Target.Window().Fully());
+                eyes.Close(false);
+                TestResultsSummary allResults = runner.GetAllTestResults(false);
+            }
+            finally
+            {
+                driver.Quit();
+                eyes.AbortIfNotClosed();
+            }
         }
 
         [Test]
