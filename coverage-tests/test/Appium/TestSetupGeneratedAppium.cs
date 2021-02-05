@@ -12,7 +12,7 @@ using Applitools.Tests.Utils;
 
 namespace Applitools.Generated.Appium.Tests
 {
-	public abstract class TestSetupGeneratedAppium
+	public abstract class TestSetupGeneratedAppium// : ReportingTestSuiteGenerratedAppium
 	{
 
 		protected RemoteWebDriver driver;
