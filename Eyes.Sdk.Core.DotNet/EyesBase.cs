@@ -1283,8 +1283,8 @@ namespace Applitools
                 DebugScreenshotProvider.Save(screenshot.Image, "base");
                 imageBytes = BasicImageUtils.EncodeAsPng(screenshot.Image);
             }
-
             MatchWindowTask.CollectRegions(this, screenshot, checkSettingsInternal, imageMatchSettings);
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.MatchStart, new { imageMatchSettings });
 
             if (imageBytes == null)
             {
