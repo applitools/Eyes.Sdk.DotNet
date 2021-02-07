@@ -77,7 +77,7 @@ namespace Applitools.Utils
 
         private void OnFail_(Exception ex)
         {
-            serverConnector_.Logger.Log("Error: {0}", ex);
+            CommonUtils.LogExceptionStackTrace(serverConnector_.Logger, Stage.General, StageType.UploadResource, ex);
             listener_.OnFail(ex);
         }
 

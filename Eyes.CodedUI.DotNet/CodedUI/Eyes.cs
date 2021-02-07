@@ -67,7 +67,7 @@ namespace Applitools.CodedUI
             {
                 var message = "Failed to obtain the process underlying window '{0}'"
                     .Fmt(mainWindow.WindowHandle);
-                Logger.Log("Open(): {0}", message);
+                Logger.Log(TraceLevel.Error, Stage.Open, StageType.Failed, new { message });
                 throw new EyesException(message);
             }
 

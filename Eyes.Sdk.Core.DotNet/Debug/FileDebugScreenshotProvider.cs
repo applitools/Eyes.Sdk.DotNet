@@ -58,12 +58,12 @@ namespace Applitools
             string filename = $"{Path}{prefix_}{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}_{suffix}.png";
             try
             {
-                logger_.Debug("Saving file: {0}", filename);
+                logger_.Log(TraceLevel.Debug, Stage.Check, StageType.CaptureScreenshot, new { filename });
                 image.Save(filename);
             }
             catch (Exception e)
             {
-                logger_.Log("ERROR: could not save file {0}:", filename, e);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.CaptureScreenshot, e);
             }
         }
     }

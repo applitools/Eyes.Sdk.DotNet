@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Applitools.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace Applitools
@@ -62,7 +63,7 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Error: {0}", ex);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.MatchStart, ex, id);
                     listener.OnFail(ex);
                 }
             };

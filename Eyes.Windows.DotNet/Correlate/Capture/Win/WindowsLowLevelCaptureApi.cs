@@ -221,13 +221,13 @@ namespace Applitools.Correlate.Capture.Win
 
                 if (IntPtr.Zero == window)
                 {
-                    logger.Log("{0}: Invalid window handle", traceMsg);
+                    logger.Log(TraceLevel.Error, Stage.General, new { message = "Invalid window handle" });
                     return null;
                 }
 
                 if (!WindowsGuiUtils.GetWindowRectangles(logger, window, out SafeNativeMethods.RECT wr, out SafeNativeMethods.RECT cr))
                 {
-                    logger.Log("{0}: GetWindowRectangles failed", traceMsg);
+                    logger.Log(TraceLevel.Error, Stage.General, new { message = "GetWindowRectangles failed" });
                     return null;
                 }
 
@@ -331,7 +331,7 @@ namespace Applitools.Correlate.Capture.Win
                 }
                 catch (Exception ex)
                 {
-                    logger_.Log("Fire Gui event handler failed: {0}", ex);
+                    CommonUtils.LogExceptionStackTrace(logger_, Stage.General, ex);
                 }
             }
         }

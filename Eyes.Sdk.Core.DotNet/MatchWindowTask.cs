@@ -381,7 +381,7 @@ namespace Applitools
                 floatingRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
             imageMatchSettings.Floating = floatingRegions.ToArray();
-            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check, 
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check,
                 new { type = "floating", regions = floatingRegions });
         }
 
@@ -468,17 +468,13 @@ namespace Applitools
         private EyesScreenshot TryTakingScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag, bool replaceLast, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings, string source)
         {
-            logger_.Verbose("enter");
             AppOutputWithScreenshot appOutputWithScreenshot = GetAppOutput_(region, checkSettingsInternal, imageMatchSettings);
             EyesScreenshot screenshot = appOutputWithScreenshot.Screenshot;
             AppOutput appOutput = appOutputWithScreenshot.AppOutput;
             string currentScreenshotHash = screenshot == null ? appOutput.ScreenshotUrl : CommonUtils.GetSha256Hash(appOutput.ScreenshotBytes);
-            logger_.Verbose("current screenshot hash: {0}", currentScreenshotHash);
-            if (lastScreenshotHash_ == currentScreenshotHash)
-            {
-                logger_.Log("second screenshot is the same as the first, no point in uploading to server.");
-            }
-            else
+            logger_.Log(TraceLevel.Info, Stage.Check, StageType.CaptureScreenshot, 
+                new { currentScreenshotHash , lastScreenshotHash_});
+            if (lastScreenshotHash_ != currentScreenshotHash)
             {
                 MatchWindowData data = eyes_.PrepareForMatch(checkSettingsInternal, userInputs, appOutput,
                     tag, replaceLast || (lastScreenshotHash_ != null), imageMatchSettings, null, source);
@@ -486,7 +482,6 @@ namespace Applitools
                 matchResult_ = eyes_.PerformMatch(data);
                 lastScreenshotHash_ = currentScreenshotHash;
             }
-            logger_.Verbose("exit");
             return screenshot;
         }
 

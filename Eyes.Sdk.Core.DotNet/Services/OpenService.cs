@@ -25,7 +25,7 @@ namespace Applitools
             while (inputQueue_.Count > 0 && !isServerConcurrencyLimitReached_ && eyesConcurrency_ > currentTestAmount_)
             {
                 Interlocked.Increment(ref currentTestAmount_);
-                Logger.Log(TraceLevel.Info, testIds: null, Stage.Open, null, new { testAmount = currentTestAmount_ });
+                Logger.Log(TraceLevel.Info, testIds: null, Stage.Open, new { testAmount = currentTestAmount_ });
 
                 Tuple<string, SessionStartInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;

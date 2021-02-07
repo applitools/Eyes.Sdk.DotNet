@@ -113,7 +113,7 @@ namespace Applitools
             LogInner_(level, testIds, stage, null, data);
         }
 
-        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type = null, object data = null)
+        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType type, object data = null)
         {
             LogInner_(level, testIds, stage, type, data);
         }
@@ -123,7 +123,7 @@ namespace Applitools
             LogInner_(level, testId == null ? null : new string[] { testId }, stage, null, data);
         }
 
-        public void Log(TraceLevel level, string testId, Stage stage, StageType? type = null, object data = null)
+        public void Log(TraceLevel level, string testId, Stage stage, StageType type, object data = null)
         {
             LogInner_(level, testId == null ? null : new string[] { testId }, stage, type, data);
         }

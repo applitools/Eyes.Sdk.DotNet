@@ -251,7 +251,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Open, StageType.Disabled);
                 return driver;
             }
             return activeEyes_.Open(driver);
@@ -271,7 +271,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
                 return driver;
             }
             return activeEyes_.Open(driver, appName, testName, viewportSize);
@@ -285,7 +285,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
                 return driver;
             }
             return activeEyes_.Open(driver, appName, testName, Size.Empty);
@@ -301,7 +301,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
                 return;
             }
             activeEyes_.Check(checkSettings);
@@ -323,7 +323,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
                 return;
             }
             activeEyes_.Check(checkSettings);
@@ -512,12 +512,11 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("CheckFrame(framePath, {0}, '{1}'): Ignored", matchTimeout, tag);
+                Logger.Log(TraceLevel.Warn, tag, Stage.Check, StageType.Disabled);
                 return;
             }
             ArgumentGuard.NotNull(framePath, nameof(framePath));
             ArgumentGuard.GreaterThan(framePath.Length, 0, nameof(framePath.Length));
-            Logger.Log("CheckFrame(framePath, {0}, '{1}')", matchTimeout, tag);
 
             Fluent.SeleniumCheckSettings settings = Target.Frame(framePath[0]);
             for (int i = 1; i < framePath.Length; i++)
@@ -526,8 +525,6 @@ namespace Applitools.Selenium
             }
 
             Check(tag, settings.Timeout(matchTimeout).Fully());
-
-            Logger.Verbose("Done!");
         }
 
         /// <summary>
@@ -566,7 +563,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
                 return;
             }
             Logger.Verbose("enter. visual grid? {0}", isVisualGridEyes_);
@@ -575,14 +572,14 @@ namespace Applitools.Selenium
 
         public void Log(string msg, params object[] args)
         {
-            activeEyes_.Logger.Log(msg, args);
+            activeEyes_.Logger.Log(TraceLevel.Notice, TestName, Stage.General, new { message = string.Format(msg, args) });
         }
 
         public void AddProperty(string name, string value)
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.General, StageType.Disabled);
                 return;
             }
             activeEyes_.AddProperty(name, value);
@@ -592,7 +589,7 @@ namespace Applitools.Selenium
         {
             if (IsDisabled)
             {
-                Logger.Log("Ignored");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.General, StageType.Disabled);
                 return;
             }
             activeEyes_.ClearProperties();

@@ -28,6 +28,7 @@ namespace Applitools
         Complete,
         Failed,
         Start,
-        Skipped
+        Skipped,
+        Disabled
     }
 }

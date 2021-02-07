@@ -231,7 +231,7 @@ namespace Applitools.Selenium
             else
             {
                 string errMsg = $"Driver is not a RemoteWebDriver ({driver.GetType().Name})";
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
                 throw new EyesException(errMsg);
             }
             Logger.Log(TraceLevel.Info, Stage.Open,

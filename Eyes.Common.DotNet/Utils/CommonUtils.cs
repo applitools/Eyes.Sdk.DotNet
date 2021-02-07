@@ -370,7 +370,7 @@ namespace Applitools.Utils
             LogExceptionStackTrace(logger, stage, null, ex, testIds);
         }
 
-        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, params string[] testIds)
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, params string[] testIds)
         {
             HashSet<string> ids = new HashSet<string>();
             if (testIds != null && testIds.Length > 0)
@@ -385,7 +385,14 @@ namespace Applitools.Utils
             try
             {
                 Console.Error.WriteLine(ex);
-                logger?.Log(TraceLevel.Error, testIds, stage, type, new { message = ex.ToString(), ex.StackTrace });
+                if (type.HasValue)
+                {
+                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { message = ex.ToString(), ex.StackTrace });
+                }
+                else
+                {
+                    logger?.Log(TraceLevel.Error, testIds, stage, new { message = ex.ToString(), ex.StackTrace });
+                }
             }
             catch (Exception e)
             {

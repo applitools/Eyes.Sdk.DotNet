@@ -107,7 +107,7 @@ namespace Applitools.VisualGrid
             Init(suiteName);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, 
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
             IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
         {
             ServerConnectorFactory = serverConnectorFactory;
@@ -130,7 +130,7 @@ namespace Applitools.VisualGrid
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Logger.Log("Error: {0}", e);
+            CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e.Exception);
         }
 
         private void Init(string suiteName)
@@ -215,7 +215,7 @@ namespace Applitools.VisualGrid
                 {
                     if (!eyes.IsCloseIssued)
                     {
-                        Logger.Log(TraceLevel.Warn, Stage.Close, StageType.TestResults, 
+                        Logger.Log(TraceLevel.Warn, Stage.Close, StageType.TestResults,
                             new { message = "called without closing eyes! Closing implicitly." });
                         eyes.CloseAsync();
                     }
@@ -272,7 +272,7 @@ namespace Applitools.VisualGrid
         }
 
         internal IEnumerable<IEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
-  
+
         internal Exception GetError()
         {
             return eyesServiceRunner_.Error;

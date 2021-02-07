@@ -619,7 +619,7 @@ namespace Applitools
             string hash = resource.Sha256;
             string contentType = resource.ContentType;
 
-            Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render, null,
+            Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render,
                 new { resourceHash = hash, resourceUrl = resource.Url, renderId });
 
             HttpWebRequest request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",

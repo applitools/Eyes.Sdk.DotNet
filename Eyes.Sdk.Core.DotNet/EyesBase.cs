@@ -390,8 +390,8 @@ namespace Applitools
 
                 if (runningSession_ == null)
                 {
-                    Logger.Verbose("Server session was not started");
-                    Logger.Log("--- Empty test ended.");
+                    //Logger.Verbose("Server session was not started");
+                    //Logger.Log("--- Empty test ended.");
                     return new TestResults() { ServerConnector = ServerConnector };
                 }
 
@@ -473,7 +473,7 @@ namespace Applitools
         /// </summary>
         public TestResults AbortIfNotClosed()
         {
-            Logger.Log(TestId, Stage.Close, StageType.Called);
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.Called);
             return Abort();
         }
 
@@ -866,10 +866,10 @@ namespace Applitools
 
             shouldMatchWindowRunOnceOnTimeout_ = true;
 
-            if (!runningSession_.IsNewSession)
-            {
-                Logger.Log("Mismatch!{0}", tag == null ? string.Empty : " (" + tag + ")");
-            }
+            //if (!runningSession_.IsNewSession)
+            //{
+            //    Logger.Log("Mismatch!{0}", tag == null ? string.Empty : " (" + tag + ")");
+            //}
 
 #pragma warning disable CS0612 // Type or member is obsolete
             if (FailureReports == FailureReports.Immediate)
@@ -975,7 +975,7 @@ namespace Applitools
             {
                 AbortIfNotClosed();
                 string errMsg = "A test is already running";
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { errMsg });
                 throw new EyesException(errMsg);
             }
         }
@@ -1148,7 +1148,7 @@ namespace Applitools
         {
             if (runningSession_ == null || !IsOpen)
             {
-                Logger.Log(TestId, Stage.Close, new { message = "Tried to close a non opened test" });
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Close, new { message = "Tried to close a non opened test" });
                 return null;
             }
 
