@@ -76,15 +76,22 @@ namespace Applitools.Tests.Utils
 
         public static void SetupLogging(Eyes eyes, [CallerMemberName] string testName = null)
         {
+            string path = InitLogPath(testName);
+            eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
+            {
+                Path = path,
+                Prefix = testName + "_"
+            };
+            Eyes.moveWindow_ = !Debugger.IsAttached;
+            SetupLogging(eyes.runner_, testName, path);
+        }
+
+        public static void SetupLogging(EyesRunner runner, [CallerMemberName] string testName = null, string path = null)
+        {
             ILogHandler logHandler;
             if (!RUNS_ON_CI)
             {
-                string path = InitLogPath(testName);
-                eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
-                {
-                    Path = path,
-                    Prefix = testName + "_"
-                };
+                path = path ?? InitLogPath(testName);
                 logHandler = new FileLogHandler(Path.Combine(path, testName + ".log"), true, true);
                 //if (eyes.runner_ is VisualGridRunner visualGridRunner)
                 //{
@@ -99,10 +106,10 @@ namespace Applitools.Tests.Utils
 
             if (logHandler != null)
             {
-                eyes.SetLogHandler(logHandler);
+                runner.SetLogHandler(logHandler);
+                logHandler.Open();
             }
 
-            Eyes.moveWindow_ = !Debugger.IsAttached;
         }
 
         public static string GetStepDom(EyesBase eyes, ActualAppOutput actualAppOutput)

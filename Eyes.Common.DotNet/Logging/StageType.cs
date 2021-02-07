@@ -24,6 +24,10 @@ namespace Applitools
         RequestFailed,
         CloseBatch,
         TestResults,
-        Timeout
+        Timeout,
+        Complete,
+        Failed,
+        Start,
+        Skipped
     }
 }

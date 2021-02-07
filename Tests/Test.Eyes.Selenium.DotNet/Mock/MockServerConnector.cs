@@ -31,7 +31,7 @@ namespace Applitools.Selenium.Tests.Mock
         internal List<string> SessionIds { get; } = new List<string>();
         private Dictionary<string, JToken> renderRequestsById_ = new Dictionary<string, JToken>();
         public bool AsExpected { get; set; } = true;
-        
+
         private WebDriverProvider driverProvider_;
 
         public List<string> RenderRequests { get; } = new List<string>();
@@ -78,7 +78,7 @@ namespace Applitools.Selenium.Tests.Mock
                 Logger.Verbose("add new step");
                 MatchWindowCalls.Add(data);
             }
-            
+
             base.MatchWindowImpl_(listener, data);
         }
 
@@ -87,7 +87,7 @@ namespace Applitools.Selenium.Tests.Mock
 
         protected override void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
         {
-            Logger.Log("starting session: {0}", sessionStartInfo);
+            Logger.Log(TraceLevel.Info, Stage.Open, StageType.Called, new { sessionStartInfo });
 
             RunningSession newSession = null;
             bool continueInvocation = true;
@@ -183,7 +183,7 @@ namespace Applitools.Selenium.Tests.Mock
             listener.OnComplete(jobs);
         }
 
-        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testId, 
+        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testId,
             string renderId, HashObject[] hashes)
         {
             bool?[] result = new bool?[hashes.Length];

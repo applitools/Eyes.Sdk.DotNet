@@ -63,6 +63,9 @@ namespace Applitools.Selenium.Tests.ApiTests
                .SetAppName(appName)
                .SetViewportSize(new Applitools.Utils.Geometry.RectangleSize(viewPortWidth, viewPortHeight));
 
+            // 6. Set up logging
+            TestUtils.SetupLogging(runner, TestContext.CurrentContext.Test.FullName);
+
         }
 
         public void BeforeEachTest()

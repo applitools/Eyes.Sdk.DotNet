@@ -89,7 +89,7 @@ namespace Applitools
             ServerConnector = serverConnector;
         }
 
-        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, null) { }
+        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, runner.Logger) { }
 
         protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), null, logger) { }
 
@@ -818,20 +818,11 @@ namespace Applitools
         public virtual void OpenCompleted(RunningSession result)
         {
             runningSession_ = result;
-            Logger.Verbose("Server session ID is {0}", runningSession_.Id);
+            Logger.Log(TraceLevel.Info, TestId, Stage.Open, StageType.Complete,
+                new { runningSessionId = runningSession_.Id });
 
-            string testName = "'" + TestName + "'";
             //Logger.SessionId = runningSession_.SessionId;
-            if (runningSession_.IsNewSession)
-            {
-                Logger.Log("--- New test started - " + testName);
-                shouldMatchWindowRunOnceOnTimeout_ = true;
-            }
-            else
-            {
-                Logger.Log("--- Test started - " + testName);
-                shouldMatchWindowRunOnceOnTimeout_ = false;
-            }
+            shouldMatchWindowRunOnceOnTimeout_ = runningSession_.IsNewSession;
 
             matchWindowTask_ = new MatchWindowTask(
                 Logger,
@@ -991,10 +982,14 @@ namespace Applitools
 
         private void LogOpenBase_()
         {
-            Logger.Log("Eyes Server URL is {0}", ServerConnector.ServerUrl);
-            Logger.Verbose("Timeout = {0}", ServerConnector.Timeout);
-            Logger.Log("MatchTimeout = {0}", Configuration.MatchTimeout);
-            Logger.Log("DefaultMatchSettings = {0}", DefaultMatchSettings);
+            Logger.Log(TraceLevel.Info, TestId, Stage.Open, StageType.Called,
+                new
+                {
+                    ServerConnector.ServerUrl,
+                    ServerConnectorTimeOut = ServerConnector.Timeout,
+                    Configuration.MatchTimeout,
+                    DefaultMatchSettings
+                });
         }
 
         protected abstract Size GetViewportSize();

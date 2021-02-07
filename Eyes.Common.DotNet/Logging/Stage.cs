@@ -12,6 +12,8 @@ namespace Applitools
         Close,
         Render,
         ResourceCollection,
-        Locate
+        Locate,
+        TestFramework,
+        Reporting
     }
 }

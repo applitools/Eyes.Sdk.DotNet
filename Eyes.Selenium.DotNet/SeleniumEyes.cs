@@ -234,15 +234,16 @@ namespace Applitools.Selenium
                 Logger.Log(errMsg);
                 throw new EyesException(errMsg);
             }
-            Logger.Log($"Initialized Web Driver. Selenium SessionId: {driver_.RemoteWebDriver.SessionId}");
+            Logger.Log(TraceLevel.Info, Stage.Open,
+                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
         }
 
         protected override string TryCaptureDom()
         {
-            Logger.Verbose("enter");
+            Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript);
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
             string domJson = domCapture.GetFullWindowDom();
-            Logger.Verbose("exit. DOM JSON length: {0}", domJson.Length);
+            Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
             return domJson;
         }
 
