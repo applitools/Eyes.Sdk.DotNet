@@ -251,7 +251,7 @@ namespace Applitools.VisualGrid
 
                 allResults.AddRange(eyesResults);
             }
-            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults, new { allResults });
+            Logger.Log(TraceLevel.Info, testIds, Stage.Close, StageType.TestResults, new { allResults });
 
             if (throwException && exception != null)
             {

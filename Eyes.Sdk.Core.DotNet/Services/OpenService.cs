@@ -53,7 +53,7 @@ namespace Applitools
 
         public void Operate(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener)
         {
-            Logger.Log("Calling start session with agentSessionId {0}", sessionStartInfo.AgentSessionId);
+            Logger.Log(TraceLevel.Info, Stage.Open, new { sessionStartInfo.AgentSessionId });
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             TaskListener<RunningSession> taskListener = new TaskListener<RunningSession>(

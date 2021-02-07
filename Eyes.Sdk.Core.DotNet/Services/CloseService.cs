@@ -50,7 +50,7 @@ namespace Applitools
             TaskListener<TestResults> taskListener = new TaskListener<TestResults>(
             (testResults) =>
             {
-                Logger.Log(TraceLevel.Notice, testId, Stage.Close, new { testResults });
+                Logger.Log(TraceLevel.Notice, testId, Stage.Close, new { testResults.Status });
                 testResults.IsNew = sessionStopInfo.RunningSession.IsNewSession;
                 testResults.Url = sessionStopInfo.RunningSession.Url;
                 Logger.Verbose(testResults.ToString());

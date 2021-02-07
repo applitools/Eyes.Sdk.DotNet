@@ -36,7 +36,7 @@ namespace Applitools
             {
                 DeleteAllBatches_();
             }
-            Logger.Log(TraceLevel.Notice, Stage.Close, StageType.TestResults, new { allTestResults });
+            Logger.Log(TraceLevel.Notice, Stage.Close, StageType.TestResults, new { allTestResults.Count });
             return allTestResults;
         }
 
