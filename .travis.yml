@@ -1,7 +1,7 @@
 language: csharp
 solution: Eyes.Sdk.DotNet_Travis.sln
 mono: none
-dotnet: 3.1.401
+dotnet: 5.0.2
 
 node_js:
   - "14"
