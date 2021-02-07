@@ -41,7 +41,7 @@ To learn more, visit https://applitools.com/ .</Description>
     </ItemGroup>
   </Target>
 
-  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
+  <ItemGroup Condition="!$(TargetFramework.Contains('.'))">
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   

@@ -54,17 +54,17 @@ To learn more, visit https://applitools.com/ .</Description>
     <PackageReference Include="BrotliSharpLib" Version="0.3.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore')) AND !$(TargetFramework.StartsWith('netstandard'))">
+  <ItemGroup Condition="!$(TargetFramework.Contains('.'))">
     <PackageReference Include="DotNetZip.Reduced" Version="1.9.1.8" />
   </ItemGroup>
   
-  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore')) AND !$(TargetFramework.StartsWith('netstandard'))">
+  <ItemGroup Condition="!$(TargetFramework.Contains('.'))">
     <Reference Include="System.Management" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore')) OR $(TargetFramework.StartsWith('netstandard'))">
+  <ItemGroup Condition="$(TargetFramework.Contains('.'))">
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
 
