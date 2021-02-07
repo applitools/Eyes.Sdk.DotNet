@@ -215,7 +215,8 @@ namespace Applitools.VisualGrid
                 {
                     if (!eyes.IsCloseIssued)
                     {
-                        Logger.Log($"WARNING! {nameof(GetAllTestResults)} called without closing eyes! Closing implicitly.");
+                        Logger.Log(TraceLevel.Warn, Stage.Close, StageType.TestResults, 
+                            new { message = "called without closing eyes! Closing implicitly." });
                         eyes.CloseAsync();
                     }
                     isRunning = isRunning || !eyes.IsCompleted();
@@ -232,6 +233,7 @@ namespace Applitools.VisualGrid
 
             Exception exception = null;
             List<TestResultContainer> allResults = new List<TestResultContainer>();
+            List<string> testIds = new List<string>();
             foreach (IEyes eyes in AllEyes)
             {
                 IList<TestResultContainer> eyesResults = eyes.GetAllTestResults();
@@ -241,10 +243,15 @@ namespace Applitools.VisualGrid
                     {
                         exception = result.Exception;
                     }
+                    if (result.TestResults != null)
+                    {
+                        testIds.Add(result.TestResults.Id);
+                    }
                 }
 
                 allResults.AddRange(eyesResults);
             }
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults, new { allResults });
 
             if (throwException && exception != null)
             {

@@ -1,5 +1,4 @@
 ﻿using Applitools.Utils;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;

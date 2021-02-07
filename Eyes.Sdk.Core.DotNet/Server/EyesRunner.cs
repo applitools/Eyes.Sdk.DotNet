@@ -24,7 +24,7 @@ namespace Applitools
 
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
-            Logger.Log(Stage.Close, StageType.Called);
+            Logger.Log(Stage.Close, StageType.TestResults);
 
             TestResultsSummary allTestResults;
             try
@@ -36,7 +36,7 @@ namespace Applitools
             {
                 DeleteAllBatches_();
             }
-            Logger.Verbose("Exit. Test results: {0}", allTestResults.Count);
+            Logger.Log(TraceLevel.Notice, Stage.Close, StageType.TestResults, new { allTestResults });
             return allTestResults;
         }
 
