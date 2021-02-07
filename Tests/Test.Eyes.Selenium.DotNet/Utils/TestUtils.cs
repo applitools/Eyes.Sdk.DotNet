@@ -77,11 +77,14 @@ namespace Applitools.Tests.Utils
         public static void SetupLogging(Eyes eyes, [CallerMemberName] string testName = null)
         {
             string path = InitLogPath(testName);
-            eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
+            if (!RUNS_ON_CI)
             {
-                Path = path,
-                Prefix = testName + "_"
-            };
+                eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
+                {
+                    Path = path,
+                    Prefix = testName + "_"
+                };
+            }
             Eyes.moveWindow_ = !Debugger.IsAttached;
             SetupLogging(eyes.runner_, testName, path);
         }
