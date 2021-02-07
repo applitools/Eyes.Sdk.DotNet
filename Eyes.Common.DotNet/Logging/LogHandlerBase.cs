@@ -42,7 +42,10 @@ namespace Applitools
         {
             if (@event.Level >= minLevel_)
             {
-                OnMessage(JsonConvert.SerializeObject(@event), @event.Level);
+                OnMessage(JsonConvert.SerializeObject(@event, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                }), @event.Level);
             }
         }
 
