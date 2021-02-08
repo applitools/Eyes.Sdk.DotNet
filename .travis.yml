@@ -64,15 +64,23 @@ jobs:
         - pushd coverage-tests
         - npm run dotnet:generate
         - popd
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh 'TestCategory=Generated'
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Eyes.Sdk.DotNet_Travis.sln --filter 'TestCategory=Generated'
 
-    - name: All Hand Written Tests But Selenium
+    - name: Images
       script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh "FullyQualifiedName~=Selenium & TestCategory!=Generated"
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Images.DotNet/*.csproj
   
-    - name: All Selenium Hand Written Tests
+    - name: Core
       script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh "Selenium & TestCategory!=Generated"
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
+  
+    - name: Appium
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
+  
+    - name: Selenium
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master
