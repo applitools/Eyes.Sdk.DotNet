@@ -664,6 +664,8 @@ namespace Applitools.Selenium.VisualGrid
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
             VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
+            string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllRunningTests().Select(t => t.Key)).ToArray();
+
             FrameChain frameChain = driver.GetFrameChain().Clone();
             foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
             {
@@ -681,9 +683,10 @@ namespace Applitools.Selenium.VisualGrid
                     frameData.Frames.Add(result);
                     frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    logger.Log("Failed finding cross frame with selector {0}. Reason: {1}", crossFrame.Selector, e);
+                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                        new { crossFrame.Selector }, testIds);
                 }
                 finally
                 {
@@ -705,9 +708,10 @@ namespace Applitools.Selenium.VisualGrid
                     switchTo.Frame(frameElement);
                     AnalyzeFrameData_(frame, userAgent, config, runner, switchTo, driver, logger);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    logger.Log("Failed finding cross frame with selector {0}. Reason: {1}", frame.Selector, e);
+                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                        new { frame.Selector }, testIds);
                 }
                 finally
                 {

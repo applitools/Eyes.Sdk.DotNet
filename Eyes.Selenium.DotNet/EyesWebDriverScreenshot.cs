@@ -55,17 +55,17 @@ namespace Applitools.Selenium
             {
                 IWebElement frameScrollRoot = driver.Eyes.GetCurrentFrameScrollRootElement();
                 positionProvider = SeleniumPositionProviderFactory.GetPositionProvider(logger, driver.Eyes.StitchMode, driver, frameScrollRoot);
-                logger_.Debug("position provider: using the current frame scroll root element's position provider: {0}", positionProvider);
+                logger_.Verbose("position provider: using the current frame scroll root element's position provider: {0}", positionProvider);
             }
             else if (driver.Eyes.CurrentFramePositionProvider != null)
             {
                 positionProvider = driver.Eyes.CurrentFramePositionProvider;
-                logger_.Debug("position provider: using CurrentFramePositionProvider: {0}", positionProvider);
+                logger_.Verbose("position provider: using CurrentFramePositionProvider: {0}", positionProvider);
             }
             else
             {
                 positionProvider = driver.Eyes.PositionProvider;
-                logger_.Debug("position provider: using PositionProvider: {0}", positionProvider);
+                logger_.Verbose("position provider: using PositionProvider: {0}", positionProvider);
             }
 
             //IPositionProvider positionProvider = driver.Eyes.CurrentFramePositionProvider ?? driver.Eyes.PositionProvider;

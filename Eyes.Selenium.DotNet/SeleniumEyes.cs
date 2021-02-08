@@ -1294,7 +1294,7 @@ namespace Applitools.Selenium
             IPositionProvider positionProvider = SeleniumPositionProviderFactory.TryGetPositionProviderForElement(scrollRootElement, stitchMode);
             if (positionProvider == null)
             {
-                logger.Debug("creating a new position provider.");
+                logger.Verbose("creating a new position provider.");
                 IWebElement defaultSRE = EyesSeleniumUtils.GetDefaultRootElement(driver);
                 if (scrollRootElement.Equals(defaultSRE))
                 {

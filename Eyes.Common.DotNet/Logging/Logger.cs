@@ -51,23 +51,23 @@ namespace Applitools
             return prefix;
         }
 
-        /// <summary>
-        /// Writes a verbose log message.
-        /// </summary>
-        /// <param name="message">The message to write to the log.</param>
-        /// <param name="args">Optional arguments to place inside the message.</param>
-        [Conditional("DEBUG")]
-        public void Debug([Localizable(false)] string message, params object[] args)
-        {
-            logHandler_.OnMessage(TraceLevel.Debug, () =>
-            {
-                if (args != null && args.Length > 0)
-                {
-                    message = string.Format(message, args);
-                }
-                return string.Format(lineFormat, DateTimeOffset.Now, GetPrefix_(), message, Thread.CurrentThread.ManagedThreadId, "DEBUG");
-            });
-        }
+        ///// <summary>
+        ///// Writes a verbose log message.
+        ///// </summary>
+        ///// <param name="message">The message to write to the log.</param>
+        ///// <param name="args">Optional arguments to place inside the message.</param>
+        //[Conditional("DEBUG")]
+        //public void Debug([Localizable(false)] string message, params object[] args)
+        //{
+        //    logHandler_.OnMessage(TraceLevel.Debug, () =>
+        //    {
+        //        if (args != null && args.Length > 0)
+        //        {
+        //            message = string.Format(message, args);
+        //        }
+        //        return string.Format(lineFormat, DateTimeOffset.Now, GetPrefix_(), message, Thread.CurrentThread.ManagedThreadId, "DEBUG");
+        //    });
+        //}
 
         /// <summary>
         /// Writes a verbose log message.
@@ -76,14 +76,11 @@ namespace Applitools
         /// <param name="args">Optional arguments to place inside the message.</param>
         public void Verbose([Localizable(false)] string message, params object[] args)
         {
-            logHandler_.OnMessage(TraceLevel.Info, () =>
+            if (args != null && args.Length > 0)
             {
-                if (args != null && args.Length > 0)
-                {
-                    message = string.Format(message, args);
-                }
-                return string.Format(lineFormat, DateTimeOffset.Now, GetPrefix_(), message, Thread.CurrentThread.ManagedThreadId, "VERBOSE");
-            });
+                message = string.Format(message, args);
+            }
+            LogInner_(TraceLevel.Info, null, Stage.General, null, new { message });
         }
 
         /// <summary>
@@ -93,14 +90,11 @@ namespace Applitools
         /// <param name="args">Optional arguments to place inside the message.</param>
         public void Log(string message, params object[] args)
         {
-            logHandler_.OnMessage(TraceLevel.Notice, () =>
+            if (args != null && args.Length > 0)
             {
-                if (args != null && args.Length > 0)
-                {
-                    message = string.Format(message, args);
-                }
-                return string.Format(lineFormat, DateTimeOffset.Now, GetPrefix_(), message, Thread.CurrentThread.ManagedThreadId, "LOG");
-            });
+                message = string.Format(message, args);
+            }
+            LogInner_(TraceLevel.Notice, null, Stage.General, null, new { message });
         }
 
         public void Log(Stage stage, StageType type)

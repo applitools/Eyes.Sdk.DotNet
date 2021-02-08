@@ -145,7 +145,6 @@ namespace Applitools.VisualGrid
                 suiteName_ = frame.GetMethod().DeclaringType.Name;
             }
 
-            Logger.Log("runner created");
             IDictionary<string, RGridResource> resourcesCacheMap = ((IVisualGridRunner)this).ResourcesCacheMap;
             IDictionary<string, HashSet<string>> cachedResourceMapping = ((IVisualGridRunner)this).CachedResourceMapping;
             Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);

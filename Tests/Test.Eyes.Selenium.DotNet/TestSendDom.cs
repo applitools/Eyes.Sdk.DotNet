@@ -44,7 +44,8 @@ namespace Applitools.Selenium.Tests
             }
             catch (Exception ex)
             {
-                logger.Log("Error: {0}", ex);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.TestFramework, StageType.Failed, ex,
+                  nameof(TestSendDom));
                 throw;
             }
             finally

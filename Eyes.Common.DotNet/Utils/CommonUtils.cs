@@ -367,7 +367,18 @@ namespace Applitools.Utils
 
         public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, params string[] testIds)
         {
-            LogExceptionStackTrace(logger, stage, null, ex, testIds);
+            LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, IEnumerable<string> testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, 
+            object data, params string[] testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, type, ex, data, testIds);
         }
 
         public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, params string[] testIds)
@@ -377,21 +388,21 @@ namespace Applitools.Utils
             {
                 ids.UnionWith(testIds);
             }
-            LogExceptionStackTrace(logger, stage, type, ex, ids);
+            LogExceptionStackTraceInner_(logger, stage, type, ex, null, ids);
         }
 
-        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType? type, Exception ex, IEnumerable<string> testIds)
+        private static void LogExceptionStackTraceInner_(Logger logger, Stage stage, StageType? type, Exception ex, object data, IEnumerable<string> testIds)
         {
             try
             {
                 Console.Error.WriteLine(ex);
                 if (type.HasValue)
                 {
-                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { message = ex.ToString(), ex.StackTrace });
+                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { data, message = ex.ToString(), ex.StackTrace });
                 }
                 else
                 {
-                    logger?.Log(TraceLevel.Error, testIds, stage, new { message = ex.ToString(), ex.StackTrace });
+                    logger?.Log(TraceLevel.Error, testIds, stage, new { data, message = ex.ToString(), ex.StackTrace });
                 }
             }
             catch (Exception e)

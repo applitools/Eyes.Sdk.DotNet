@@ -206,7 +206,7 @@ namespace Applitools.Selenium.Tests
 
             TestUtils.SetupLogging(eyes, testName);
 
-            eyes.Logger.Log(testName);
+            eyes.Logger.Log(TraceLevel.Info, testName, Stage.TestFramework, StageType.Start);
             IWebDriver driver = InitEyesSimulation_(deviceName, platformVersion, deviceOrientation, $"{testName} ({eyes.FullAgentId})", platformName, browserName);
 
             if (driver != null)
@@ -216,7 +216,8 @@ namespace Applitools.Selenium.Tests
             }
             else
             {
-                eyes.Logger.Log("Error: failed to create webdriver.");
+                eyes.Logger.Log(TraceLevel.Error, testName, Stage.TestFramework,
+                    new { message = "failed to create webdriver." });
             }
         }
 
