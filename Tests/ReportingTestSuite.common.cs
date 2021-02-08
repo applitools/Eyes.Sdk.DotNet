@@ -23,7 +23,7 @@ namespace Applitools.Tests.Utils
 
         static ReportingTestSuite()
         {
-            logger_.SetLogHandler(new NullLogHandler());
+            logger_.SetLogHandler(new NunitLogHandler());
             logger_.Log(TraceLevel.Notice, Stage.TestFramework,
                 new
                 {
@@ -78,7 +78,6 @@ namespace Applitools.Tests.Utils
         public void SetUp()
         {
             TestContext tc = TestContext.CurrentContext;
-
             if (!IS_FULL_COVERAGE && includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName))
             {
                 logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped, new { testName = tc.Test.FullName });
