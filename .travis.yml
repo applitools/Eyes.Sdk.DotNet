@@ -68,11 +68,11 @@ jobs:
 
     - name: All Hand Written Tests But Selenium
       script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh 'FullyQualifiedName~=Selenium & TestCategory!=Generated'
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh "FullyQualifiedName~=Selenium & TestCategory!=Generated"
   
     - name: All Selenium Hand Written Tests
       script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh 'Selenium & TestCategory!=Generated'
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh "Selenium & TestCategory!=Generated"
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master
