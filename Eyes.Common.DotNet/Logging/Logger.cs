@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using Applitools.Utils;
-using Applitools.VisualGrid;
 
 namespace Applitools
 {
@@ -15,7 +14,6 @@ namespace Applitools
     public class Logger
     {
         private ILogHandler logHandler_ = new NullLogHandler();
-        private const string lineFormat = "{0:yyyy'-'MM'-'dd HH':'mm':'ss.fff} [{4,-7}] [{3,4}] Eyes: {1} {2}";
 
         public string AgentId { get; set; }
 
@@ -37,37 +35,6 @@ namespace Applitools
 
             logHandler_ = handler;
         }
-
-        /// <summary>
-        /// Returns the name of the method which called the logger, if possible, or an empty string.
-        /// </summary>
-        /// <returns>The name of the method which called the logger, if possible, or an empty string.</returns>
-        private string GetPrefix_()
-        {
-            // getStackTrace()<-getPrefix()<-log()/verbose()<-"actual caller"
-            StackFrame stackFrame = new StackFrame(4);
-            MethodBase method = stackFrame.GetMethod();
-            string prefix = method.DeclaringType.Name + "." + method.Name + ": ";
-            return prefix;
-        }
-
-        ///// <summary>
-        ///// Writes a verbose log message.
-        ///// </summary>
-        ///// <param name="message">The message to write to the log.</param>
-        ///// <param name="args">Optional arguments to place inside the message.</param>
-        //[Conditional("DEBUG")]
-        //public void Debug([Localizable(false)] string message, params object[] args)
-        //{
-        //    logHandler_.OnMessage(TraceLevel.Debug, () =>
-        //    {
-        //        if (args != null && args.Length > 0)
-        //        {
-        //            message = string.Format(message, args);
-        //        }
-        //        return string.Format(lineFormat, DateTimeOffset.Now, GetPrefix_(), message, Thread.CurrentThread.ManagedThreadId, "DEBUG");
-        //    });
-        //}
 
         /// <summary>
         /// Writes a verbose log message.
