@@ -161,9 +161,9 @@ namespace Applitools
 
         public T Get()
         {
-            logger_?.Log(TraceLevel.Notice, Stage.General, new { message = $"Waiting for results", caller_ });
+            logger_?.Log(TraceLevel.Info, Stage.General, new { message = $"Waiting for results", caller_ });
             if (!sync_.WaitOne(0)) sync_.WaitOne();
-            logger_?.Log(TraceLevel.Notice, Stage.General, new { message = $"Results arrived", caller_, result_ });
+            logger_?.Log(TraceLevel.Info, Stage.General, new { message = $"Results arrived", caller_, result_ });
             return result_;
         }
 
