@@ -58,17 +58,21 @@ before_script:
 jobs:
   include:
     - stage: Test
-      name: Generic Tests
+      name: Generated Tests
       script:
         - echo "generating tests"
         - pushd coverage-tests
         - npm run dotnet:generate
         - popd
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh Generated
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh 'TestCategory=Generated'
 
-    - name: Hand Written Tests
+    - name: All Hand Written Tests But Selenium
       script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh FullyQualifiedName!~Generated
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh 'FullyQualifiedName~=Selenium & TestCategory!=Generated'
+  
+    - name: All Selenium Hand Written Tests
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh 'Selenium & TestCategory!=Generated'
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master
