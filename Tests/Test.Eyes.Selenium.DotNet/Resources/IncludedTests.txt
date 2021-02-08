@@ -1,7 +1,7 @@
 Applitools.Selenium.Tests.ApiTests.TestAbort(False).TestAbortIfNotClosed
 Applitools.Selenium.Tests.ApiTests.TestAbort(True).TestAbortIfNotClosed
 Applitools.Selenium.Tests.ApiTests.TestAbort2(False).Test_GetAllResults
-Applitools.Selenium.Tests.ApiTests.TestAbort2(True).Test_GetAllResults
+# Applitools.Selenium.Tests.ApiTests.TestAbort2(True).Test_GetAllResults
 Applitools.Selenium.Tests.ApiTests.TestApiMethods.TestCloseAsync(False)
 Applitools.Selenium.Tests.ApiTests.TestApiMethods.TestCloseAsync(True)
 Applitools.Selenium.Tests.TestAcme(Chrome, CSS).TestAcmeLogin
