@@ -15,18 +15,42 @@ if [ $? -ne 0 ]; then
 fi
 popd
 
-echo "running tests"
+echo "running tests selenium"
 pushd coverage-tests
-npm run dotnet:run:parallel
+npm run dotnet:run:parallel:selenium
 result=$?
 echo $result
 if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
-    npm run dotnet:run:parallel
+    npm run dotnet:run:parallel:selenium
 	if [ $? -ne 0 ]; then
       RESULT=1
-      echo "npm run dotnet:run:parallel have failed"
+      echo "npm run dotnet:run:parallel:selenium have failed"
     fi
+fi
+popd
+
+echo "running tests appium"
+pushd coverage-tests
+npm run dotnet:run:parallel:appium
+result=$?
+echo $result
+if [ $result -ne 0 ]; then
+    echo "Not all tests passed... Retrying."
+    npm run dotnet:run:parallel:appium
+	if [ $? -ne 0 ]; then
+      RESULT=1
+      echo "npm run dotnet:run:parallel:appium have failed"
+    fi
+fi
+popd
+
+echo "merge reports"
+pushd coverage-tests
+npm run dotnet:report:merge
+if [ $? -ne 0 ]; then
+    RESULT=1
+    echo "npm run dotnet:report:merge have failed"
 fi
 popd
 
