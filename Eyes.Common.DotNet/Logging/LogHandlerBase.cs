@@ -8,6 +8,7 @@ namespace Applitools
     {
         protected bool isOpen_;
         private readonly TraceLevel minLevel_;
+        private readonly static object lock_ = new object();
 
         protected LogHandlerBase(bool isVerbose)
         {
@@ -43,11 +44,14 @@ namespace Applitools
         {
             if (@event.Level >= minLevel_)
             {
-                OnMessage(JsonConvert.SerializeObject(@event, new JsonSerializerSettings
+                lock (lock_)
                 {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    Converters = new[] { new StringEnumConverter() }
-                }), @event.Level);
+                    OnMessage(JsonConvert.SerializeObject(@event, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        Converters = new[] { new StringEnumConverter() }
+                    }), @event.Level);
+                }
             }
         }
 
