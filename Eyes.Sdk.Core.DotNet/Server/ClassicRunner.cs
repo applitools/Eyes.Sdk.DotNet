@@ -14,12 +14,15 @@ namespace Applitools
 
         public EyesException Exception { get; set; }
 
-        public ClassicRunner()
+        public ClassicRunner(ILogHandler logHandler)
         {
+            Logger.SetLogHandler(logHandler);
             openService_ = new OpenService(Logger, ServerConnector, 1);
             checkService_ = new CheckService(Logger, ServerConnector);
             closeService_ = new CloseService(Logger, ServerConnector);
         }
+
+        public ClassicRunner() : this(NullLogHandler.Instance) { }
 
         public void UpdateServerConnector(IServerConnector serverConnector)
         {

@@ -1,5 +1,4 @@
-﻿using Applitools.Metadata;
-using Applitools.Selenium.Tests.Utils;
+﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
 using Applitools.VisualGrid;
 using NUnit.Framework;
@@ -17,8 +16,8 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestSuccess()
         {
-            VisualGridRunner visualGridRunner = new VisualGridRunner(10);
-            visualGridRunner.SetLogHandler(TestUtils.InitLogHandler());
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner visualGridRunner = new VisualGridRunner(10, logHandler);
 
             Size[] ViewportList = {
                 new Size(800, 600),
@@ -29,12 +28,11 @@ namespace Applitools.Selenium.Tests
 
             IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();
             webDriver.Url = "https://applitools.com/helloworld";
-            Eyes eyes = null;
             try
             {
                 foreach (Size viewport in ViewportList)
                 {
-                    eyes = InitEyes_(null, webDriver, viewport);
+                    Eyes eyes = InitEyes_(null, webDriver, viewport);
                     eyes.Check(Target.Window().Fully());
                     eyes.CloseAsync();
 
@@ -61,8 +59,8 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestFailure()
         {
-            VisualGridRunner visualGridRunner = new VisualGridRunner(10);
-            visualGridRunner.SetLogHandler(TestUtils.InitLogHandler());
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner visualGridRunner = new VisualGridRunner(10, logHandler);
 
             Size[] ViewportList = {
                 new Size(800, 600),
