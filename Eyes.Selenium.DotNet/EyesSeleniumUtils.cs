@@ -502,10 +502,10 @@ namespace Applitools.Selenium
             return r;
         }
 
-        internal static string RunDomScript(Logger logger, EyesWebDriver driver,
+        internal static string RunDomScript(Logger logger, EyesWebDriver driver, string[] testIds,
             string domScript, object domScriptArguments, object pollingScriptArguments, string pollingScript)
         {
-            logger.Log(TraceLevel.Info, Stage.General, StageType.DomScript, new { message = "Starting" });
+            logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Starting" });
             if (domScriptArguments == null)
             {
                 domScriptArguments = new { };
@@ -523,7 +523,7 @@ namespace Applitools.Selenium
                 while (status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
                     Thread.Sleep(200);
-                    logger.Log(TraceLevel.Info, Stage.General, StageType.DomScript, new { message = "Polling" });
+                    logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Polling" });
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
                     status = scriptResponse.Status;
@@ -548,7 +548,7 @@ namespace Applitools.Selenium
                 string chunk;
                 while (status == CaptureStatusEnum.SUCCESS_CHUNKED && !scriptResponse.Done && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
-                    logger.Log(TraceLevel.Info, Stage.General, StageType.DomScript, new { message = "Chunks Polling" });
+                    logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Chunks Polling" });
                     chunk = scriptResponse.Value.ToString();
                     value.Append(chunk);
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
@@ -572,7 +572,7 @@ namespace Applitools.Selenium
             }
             finally
             {
-                logger.Log(TraceLevel.Info, Stage.General, StageType.DomScript, new { message = "Done" });
+                logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Done" });
             }
         }
 

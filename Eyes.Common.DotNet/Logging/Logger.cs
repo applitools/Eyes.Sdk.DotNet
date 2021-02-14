@@ -94,7 +94,7 @@ namespace Applitools
             LogInner_(level, null, stage, null, data);
         }
 
-        public void Log(TraceLevel level, Stage stage, StageType? type = null, object data = null)
+        public void Log(TraceLevel level, Stage stage, StageType type, object data = null)
         {
             LogInner_(level, null, stage, type, data);
         }

@@ -45,10 +45,10 @@ namespace Applitools
             allTestResult_.Add(testResult);
         }
 
-        public RunningSession Open(SessionStartInfo sessionStartInfo)
+        public RunningSession Open(string testId, SessionStartInfo sessionStartInfo)
         {
             SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
-            openService_.Operate(sessionStartInfo, listener);
+            openService_.Operate(testId, sessionStartInfo, listener);
             return listener.Get();
         }
 

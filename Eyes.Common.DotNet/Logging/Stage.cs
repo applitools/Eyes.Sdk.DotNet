@@ -14,6 +14,7 @@ namespace Applitools
         ResourceCollection,
         Locate,
         TestFramework,
-        Reporting
+        Reporting,
+        Setup
     }
 }

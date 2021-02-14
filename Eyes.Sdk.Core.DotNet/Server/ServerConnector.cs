@@ -413,15 +413,16 @@ namespace Applitools
             }
         }
 
-        public virtual void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
+        public virtual void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> renderRequests)
         {
-            ArgumentGuard.NotNull(browserInfos, nameof(browserInfos));
-            Logger.Verbose("called with {0}", StringUtils.Concat(browserInfos, ","));
+            ArgumentGuard.NotNull(renderRequests, nameof(renderRequests));
+            string[] testIds = renderRequests.Select(bi => bi.TestId).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.JobInfo, new { renderRequests });
             try
             {
                 HttpWebRequest request = CreateUfgHttpWebRequest_("job-info");
-                Logger.Verbose("sending /job-info request to {0}", request.RequestUri);
-                serializer_.Serialize(browserInfos, request.GetRequestStream());
+                Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestSent, new { request.RequestUri });
+                serializer_.Serialize(renderRequests, request.GetRequestStream());
 
                 HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
                     response =>
@@ -437,7 +438,7 @@ namespace Applitools
                             };
                             jobInfos.Add(jobInfo);
                         }
-                        Logger.Verbose("request succeeded");
+                        Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestCompleted, new { request.RequestUri });
                         listener.OnComplete(jobInfos);
                     },
                     ex => listener.OnFail(ex)
@@ -445,7 +446,7 @@ namespace Applitools
             }
             catch (Exception e)
             {
-                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, StageType.JobInfo, e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, StageType.JobInfo, e, testIds);
                 throw;
             }
         }

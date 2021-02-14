@@ -151,9 +151,9 @@ namespace Applitools.VisualGrid
 
             eyesServiceRunner_ = new EyesServiceRunner(Logger, ServerConnector, allEyes_, concurrentOpenSessions,
                 drw, resourcesCacheMap, this);
+            Logger.Log(TraceLevel.Notice, suiteName_, Stage.Setup, StageType.Start,
+                new { message = $"starting runner thread {eyesServiceRunner_.ThreadId}" });
             eyesServiceRunner_.Start();
-
-            Logger.Verbose("rendering grid manager is built");
         }
 
         public void Open(IEyes eyes, IList<VisualGridRunningTest> newTests)

@@ -40,32 +40,32 @@ namespace Applitools.Selenium.Capture
             userAgent_ = userAgent;
         }
 
-        internal string GetFullWindowDom()
+        internal string GetFullWindowDom(params string[] testIds)
         {
             logger_.Verbose("enter");
             FrameChain originalFC = webDriver_.GetFrameChain().Clone();
             webDriver_.ExecuteScript("document.documentElement.setAttribute('data-applitools-active-frame', true)");
             webDriver_.SwitchTo().DefaultContent();
             Stopwatch stopwatch = Stopwatch.StartNew();
-            string domJson = GetDom_();
+            string domJson = GetDom_(testIds);
             logger_.Verbose(nameof(GetDom_) + " took {0} ms", stopwatch.Elapsed.TotalMilliseconds);
             ((EyesWebDriverTargetLocator)webDriver_.SwitchTo()).Frames(originalFC);
             logger_.Verbose("exit");
             return domJson;
         }
 
-        private string GetDom_()
+        private string GetDom_(string[] testIds)
         {
             FrameChain originalFC = webDriver_.GetFrameChain().Clone();
             logger_.Verbose("saving current frame chain - size: {0} ; frame: {1}", originalFC.Count, originalFC.Peek());
             string dom = "";
             try
             {
-                dom = GetFrameDom_();
+                dom = GetFrameDom_(testIds);
             }
             catch (Exception e)
             {
-                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.DomScript, e);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.DomScript, e, testIds);
             }
 
             logger_.Verbose("switching back to original frame");
@@ -80,7 +80,7 @@ namespace Applitools.Selenium.Capture
             return inlaidString;
         }
 
-        internal string GetDomCaptureAndPollingScriptResult_()
+        internal string GetDomCaptureAndPollingScriptResult_(string[] testIds)
         {
             string captureScript = userAgent_.IsInternetExplorer ? CAPTURE_DOM_FOR_IE : CAPTURE_DOM;
             string pollingScript = userAgent_.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
@@ -92,18 +92,18 @@ namespace Applitools.Selenium.Capture
             string result = null;
             try
             {
-                result = EyesSeleniumUtils.RunDomScript(logger_, webDriver_, captureScript, arguments, arguments, pollingScript);
+                result = EyesSeleniumUtils.RunDomScript(logger_, webDriver_, testIds, captureScript, arguments, arguments, pollingScript);
             }
             catch (Exception e)
             {
-                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.DomScript, e);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.DomScript, e, testIds);
             }
             return result;
         }
 
-        private string GetFrameDom_()
+        private string GetFrameDom_(string[] testIds)
         {
-            string scriptResult = GetDomCaptureAndPollingScriptResult_();
+            string scriptResult = GetDomCaptureAndPollingScriptResult_(testIds);
 
             List<string> missingCssList = new List<string>();
             List<string> missingFramesList = new List<string>();
@@ -114,7 +114,7 @@ namespace Applitools.Selenium.Capture
 
             FetchCssFiles_(missingCssList);
 
-            Dictionary<string, string> framesData = RecurseFrames_(missingFramesList);
+            Dictionary<string, string> framesData = RecurseFrames_(missingFramesList, testIds);
             string inlaidString = StringUtils.EfficientStringReplace(separators.IFrameStartToken, separators.IFrameEndToken, data[0], framesData);
 
             return inlaidString;
@@ -191,7 +191,7 @@ namespace Applitools.Selenium.Capture
             }
         }
 
-        private Dictionary<string, string> RecurseFrames_(List<string> missingFramesList)
+        private Dictionary<string, string> RecurseFrames_(List<string> missingFramesList, string[] testIds)
         {
             Dictionary<string, string> framesData = new Dictionary<string, string>();
             EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)webDriver_.SwitchTo();
@@ -217,7 +217,7 @@ namespace Applitools.Selenium.Capture
                         framesData.Add(missingFrameLine, string.Empty);
                         continue;
                     }
-                    string result = GetFrameDom_();
+                    string result = GetFrameDom_(testIds);
                     framesData.Add(missingFrameLine, result);
                 }
                 catch (Exception e)

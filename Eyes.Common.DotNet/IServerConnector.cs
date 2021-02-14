@@ -27,7 +27,7 @@ namespace Applitools
         void PostDomCapture(TaskListener<string> listener, string domJson);
         void StartSession(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo);
         void EndSession(TaskListener<TestResults> taskListener, SessionStopInfo sessionStopInfo);
-        void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos);
+        void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> renderRequests);
         void SendLogs(LogSessionsClientEvents clientEvents);
         void UploadImage(TaskListener<string> uploadListener, byte[] screenshotBytes);
         void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes);

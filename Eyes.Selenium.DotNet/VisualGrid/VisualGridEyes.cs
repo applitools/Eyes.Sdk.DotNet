@@ -409,7 +409,7 @@ namespace Applitools.Selenium.VisualGrid
 
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
 
-                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger);
+                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger, eyesId_);
 
                 Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
 
@@ -631,7 +631,7 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
-            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger)
+            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
         {
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
@@ -650,7 +650,7 @@ namespace Applitools.Selenium.VisualGrid
 
             object pollingArguments = new { chunkByteLength };
 
-            string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
+            string result = EyesSeleniumUtils.RunDomScript(logger, driver, testIds, domScript, arguments, pollingArguments, pollingScript);
             if (keepOriginalUrls)
             {
                 Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);
@@ -679,7 +679,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     IWebElement frame = driver.FindElement(By.CssSelector(crossFrame.Selector));
                     switchTo.Frame(frame);
-                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, runner, driver, logger);
+                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, runner, driver, logger, testIds);
                     frameData.Frames.Add(result);
                     frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
                 }

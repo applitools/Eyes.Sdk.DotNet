@@ -930,7 +930,7 @@ namespace Applitools
                 return;
             }
 
-            RunningSession runningSession = runner_.Open(startInfo);
+            RunningSession runningSession = runner_.Open(TestId, startInfo);
             if (runningSession == null)
             {
                 throw new EyesException("Failed starting session with the server");

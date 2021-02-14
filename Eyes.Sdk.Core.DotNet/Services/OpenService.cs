@@ -25,35 +25,35 @@ namespace Applitools
             while (inputQueue_.Count > 0 && !isServerConcurrencyLimitReached_ && eyesConcurrency_ > currentTestAmount_)
             {
                 Interlocked.Increment(ref currentTestAmount_);
-                Logger.Log(TraceLevel.Info, testIds: null, Stage.Open, new { testAmount = currentTestAmount_ });
 
                 Tuple<string, SessionStartInfo> nextInput = inputQueue_.Dequeue();
-                string id = nextInput.Item1;
-                inProgressTests_.Add(id);
-                Operate(nextInput.Item2, new TaskListener<RunningSession>(
+                string testId = nextInput.Item1;
+                inProgressTests_.Add(testId);
+                Logger.Log(TraceLevel.Info, testId, Stage.Open, StageType.Run, new { testAmount = currentTestAmount_ });
+                Operate(testId, nextInput.Item2, new TaskListener<RunningSession>(
                 (output) =>
                 {
                     lock (outputQueue_)
                     {
-                        inProgressTests_.Remove(id);
-                        outputQueue_.Add(Tuple.Create(id, output));
+                        inProgressTests_.Remove(testId);
+                        outputQueue_.Add(Tuple.Create(testId, output));
                     }
                 },
                 (ex) =>
                 {
-                    Logger.Log(TraceLevel.Error, id, Stage.Open, new { nextInput });
+                    Logger.Log(TraceLevel.Error, testId, Stage.Open, new { nextInput });
                     lock (errorQueue_)
                     {
-                        inProgressTests_.Remove(id);
-                        errorQueue_.Add(Tuple.Create(id, ex));
+                        inProgressTests_.Remove(testId);
+                        errorQueue_.Add(Tuple.Create(testId, ex));
                     }
                 }));
             }
         }
 
-        public void Operate(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener)
+        public void Operate(string testId, SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener)
         {
-            Logger.Log(TraceLevel.Info, Stage.Open, new { sessionStartInfo.AgentSessionId });
+            Logger.Log(TraceLevel.Info, testId, Stage.Open, new { sessionStartInfo.AgentSessionId });
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             TaskListener<RunningSession> taskListener = new TaskListener<RunningSession>(
