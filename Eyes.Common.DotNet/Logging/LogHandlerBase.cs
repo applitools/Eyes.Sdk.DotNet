@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 
 namespace Applitools
@@ -44,7 +45,8 @@ namespace Applitools
             {
                 OnMessage(JsonConvert.SerializeObject(@event, new JsonSerializerSettings
                 {
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = NullValueHandling.Ignore,
+                    Converters = new[] { new StringEnumConverter() }
                 }), @event.Level);
             }
         }
