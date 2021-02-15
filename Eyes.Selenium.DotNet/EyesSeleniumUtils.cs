@@ -40,18 +40,18 @@ namespace Applitools.Selenium
 
         private static Size GetViewportSize_(Logger logger, IJavaScriptExecutor jsExecutor)
         {
-            if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string jsonSize)
+            if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string sizeStr)
             {
                 try
                 {
-                    string[] widthAndHeight = jsonSize.Split(';');
+                    string[] widthAndHeight = sizeStr.Split(';');
                     int width = (int)Math.Round(Convert.ToDouble(widthAndHeight[0]));
                     int height = (int)Math.Round(Convert.ToDouble(widthAndHeight[1]));
                     return new Size(width, height);
                 }
                 catch
                 {
-                    logger.Log("Error: Failed parsing input size string: '{0}'", jsonSize);
+                    logger.Log(TraceLevel.Error, Stage.General, StageType.Parse, new { sizeStr });
                     throw;
                 }
             }
@@ -84,11 +84,11 @@ namespace Applitools.Selenium
                     return size;
                 }
 
-                logger.Log("Either the Width or Height value returned zero.");
+                logger.Log(TraceLevel.Warn, testId, Stage.General, new { message = "Either the Width or Height value returned zero." });
             }
             catch (Exception ex)
             {
-                CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex, testId);
             }
 
             logger.Log("Using browser size.");
@@ -574,30 +574,6 @@ namespace Applitools.Selenium
             {
                 logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Done" });
             }
-        }
-
-        internal static IWebElement GetScrollRootElement(Logger logger, IWebDriver driver,
-            IScrollRootElementContainer scrollRootElementContainer)
-        {
-            if (scrollRootElementContainer == null)
-            {
-                return GetDefaultRootElement(driver, logger);
-            }
-
-            IWebElement scrollRootElement = scrollRootElementContainer.GetScrollRootElement();
-            if (scrollRootElement != null)
-            {
-                return scrollRootElement;
-            }
-
-            By scrollRootSelector = scrollRootElementContainer.GetScrollRootSelector();
-            if (scrollRootSelector != null)
-            {
-                return driver.FindElement(scrollRootSelector);
-            }
-
-            logger.Log("Warning: Got an empty scroll root element container");
-            return EyesSeleniumUtils.GetDefaultRootElement(driver, logger);
         }
 
         internal static Ufg.IDebugResourceWriter ConvertDebugResourceWriter(IDebugResourceWriter drw)

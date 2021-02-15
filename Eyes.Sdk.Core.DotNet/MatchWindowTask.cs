@@ -428,7 +428,6 @@ namespace Applitools
         private EyesScreenshot RetryTakingScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag, bool replaceLast, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings, int retryTimeout, string source)
         {
-            logger_.Verbose("enter");
             // Retry matching and ignore mismatches while the retry timeout does not expires.
             var sw2 = Stopwatch.StartNew();
             EyesScreenshot screenshot = null;
@@ -448,7 +447,6 @@ namespace Applitools
                 // Try one last time...
                 screenshot = TryTakingScreenshot_(region, userInputs, tag, replaceLast, checkSettingsInternal, imageMatchSettings, source);
             }
-            logger_.Verbose("exit");
             return screenshot;
         }
 

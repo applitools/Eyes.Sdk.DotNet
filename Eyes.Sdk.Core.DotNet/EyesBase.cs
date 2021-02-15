@@ -840,8 +840,6 @@ namespace Applitools
         private MatchResult MatchWindow_(Rectangle? region, string tag, ICheckSettingsInternal checkSettingsInternal,
             string source)
         {
-            Logger.Verbose("enter");
-
             MatchResult result = matchWindowTask_.MatchWindow(region,
                 UserInputs, tag, shouldMatchWindowRunOnceOnTimeout_, checkSettingsInternal.GetReplaceLast(), checkSettingsInternal,
                 source);
@@ -1081,7 +1079,6 @@ namespace Applitools
 
         protected internal virtual object GetEnvironment_()
         {
-            Logger.Verbose("enter");
             AppEnvironment appEnv = new AppEnvironment();
 
             if (Configuration.HostOS != null)

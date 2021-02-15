@@ -30,6 +30,7 @@ namespace Applitools
         Start,
         Skipped,
         Disabled,
-        Run
+        Run,
+        Parse
     }
 }

@@ -416,7 +416,7 @@ namespace Applitools.Selenium
         {
             string name = checkSettingsInternal.GetName();
             string source = driver_.Url;
-            Logger.Log($"{nameof(MatchRegion)} - subScreenshots: {subScreenshots.Count}");
+            Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.MatchStart, new { subScreenshots = subScreenshots.Count });
             foreach (EyesScreenshot subScreenshot in subScreenshots)
             {
                 DebugScreenshotProvider.Save(subScreenshot.Image, $"subscreenshot_{name}");
@@ -431,7 +431,7 @@ namespace Applitools.Selenium
 
                 MatchResult matchResult = PerformMatch(data);
 
-                Logger.Log("matchResult.asExcepted: {0}", matchResult.AsExpected);
+                Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.MatchComplete, new { matchResult.AsExpected });
             }
         }
 
@@ -599,8 +599,10 @@ namespace Applitools.Selenium
                     }
                     else
                     {
-                        Logger.Log("Target.Frame(frame).Fully(false)");
-                        Logger.Log("WARNING: This shouldn't have been called, as it is covered by `CheckElement_(...)`");
+                        Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.Called,
+                            new { message = "Target.Frame(frame).Fully(false)" });
+                        Logger.Log(TraceLevel.Warn, TestId, Stage.Check, StageType.Called,
+                            new { message = "This shouldn't have been called, as it is covered by `CheckElement_(...)`" });
                     }
                 }
                 else

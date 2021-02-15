@@ -56,9 +56,8 @@
         /// <returns>The entire size of the current context.</returns>
         public Size GetEntireSize()
         {
-            logger_.Verbose("enter");
             Size size = JSBrowserCommands.WithReturn.GetEntirePageSize(Executor_);
-            logger_.Verbose(size.ToString());
+            logger_.Log(TraceLevel.Info, Stage.General, new { size });
             return size;
         }
 

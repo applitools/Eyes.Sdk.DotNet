@@ -42,7 +42,6 @@ namespace Applitools.Selenium.Capture
 
         internal string GetFullWindowDom(params string[] testIds)
         {
-            logger_.Verbose("enter");
             FrameChain originalFC = webDriver_.GetFrameChain().Clone();
             webDriver_.ExecuteScript("document.documentElement.setAttribute('data-applitools-active-frame', true)");
             webDriver_.SwitchTo().DefaultContent();
@@ -50,7 +49,6 @@ namespace Applitools.Selenium.Capture
             string domJson = GetDom_(testIds);
             logger_.Verbose(nameof(GetDom_) + " took {0} ms", stopwatch.Elapsed.TotalMilliseconds);
             ((EyesWebDriverTargetLocator)webDriver_.SwitchTo()).Frames(originalFC);
-            logger_.Verbose("exit");
             return domJson;
         }
 
@@ -73,7 +71,7 @@ namespace Applitools.Selenium.Capture
             FrameChain currentFC = webDriver_.GetFrameChain();
             logger_.Verbose("switched to frame chain - size: {0} ; frame: {1}", currentFC.Count, currentFC.Peek());
 
-            WaitForCssDownloadToFinish_();
+            WaitForCssDownloadToFinish_(testIds);
             logger_.Verbose("finished waiting for CSS files to download");
             string inlaidString = StringUtils.EfficientStringReplace(cssStartToken_, cssEndToken_, dom, cssData_);
             logger_.Verbose("inlaid string");
@@ -108,11 +106,11 @@ namespace Applitools.Selenium.Capture
             List<string> missingCssList = new List<string>();
             List<string> missingFramesList = new List<string>();
             List<string> data = new List<string>();
-            Separators separators = ParseScriptResult(scriptResult, missingCssList, missingFramesList, data);
+            Separators separators = ParseScriptResult(scriptResult, missingCssList, missingFramesList, data, testIds);
             cssStartToken_ = separators.CssStartToken;
             cssEndToken_ = separators.CssEndToken;
 
-            FetchCssFiles_(missingCssList);
+            FetchCssFiles_(missingCssList, testIds);
 
             Dictionary<string, string> framesData = RecurseFrames_(missingFramesList, testIds);
             string inlaidString = StringUtils.EfficientStringReplace(separators.IFrameStartToken, separators.IFrameEndToken, data[0], framesData);
@@ -120,7 +118,7 @@ namespace Applitools.Selenium.Capture
             return inlaidString;
         }
 
-        private void WaitForCssDownloadToFinish_()
+        private void WaitForCssDownloadToFinish_(string[] testIds)
         {
             AutoResetEvent[] whArr = null;
             lock (lockObject_)
@@ -128,7 +126,7 @@ namespace Applitools.Selenium.Capture
                 whArr = new AutoResetEvent[waitHandles_.Count];
                 waitHandles_.Values.CopyTo(whArr, 0);
             }
-            logger_.Log(TraceLevel.Notice, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript, 
+            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, 
                 new { message = $"Waiting on {whArr.Length} to finish download" });
 
             foreach (AutoResetEvent wh in whArr)
@@ -141,13 +139,14 @@ namespace Applitools.Selenium.Capture
                 bool allSignaled = WaitHandle.WaitAll(whArr, timeout);
                 if (!allSignaled)
                 {
-                    logger_.Log(TraceLevel.Warn, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript, 
+                    logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript, 
                         new { message = $"Not all wait handles recieved signal after {timeout} ms. aborting." });
                 }
             }
         }
 
-        private Separators ParseScriptResult(string scriptResult, List<string> missingCssList, List<string> missingFramesList, List<string> data)
+        private Separators ParseScriptResult(string scriptResult, List<string> missingCssList, 
+            List<string> missingFramesList, List<string> data, string[] testIds)
         {
             using (StringReader sr = new StringReader(scriptResult))
             {
@@ -168,21 +167,21 @@ namespace Applitools.Selenium.Capture
                     }
                     str = sr.ReadLine();
                 }
-                logger_.Log(TraceLevel.Notice, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript,
+                logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript,
                         new { missingCssCount = missingCssList.Count, missingFramesCount = missingFramesList.Count });
                 return separators;
             }
         }
 
-        private void FetchCssFiles_(List<string> missingCssList)
+        private void FetchCssFiles_(List<string> missingCssList, string[] testIds)
         {
-            logger_.Log(TraceLevel.Notice, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript, new { missingCssList });
+            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, new { missingCssList });
             List<CssTreeNode> cssTreeNodes = new List<CssTreeNode>();
             foreach (string missingCssUrl in missingCssList)
             {
                 if (missingCssUrl.StartsWith("blob:") || missingCssUrl.StartsWith("data:"))
                 {
-                    logger_.Log(TraceLevel.Warn, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript,
+                    logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
                         new { message = "trying to download something impossible", missingCssUrl });
                     cssData_.Add(missingCssUrl, string.Empty);
                     continue;
@@ -191,7 +190,7 @@ namespace Applitools.Selenium.Capture
                 cssTreeNodes.Add(cssTreeNode);
                 AutoResetEvent waitHandle = new AutoResetEvent(false);
                 waitHandles_[cssTreeNode] = waitHandle;
-                cssTreeNode.Run();
+                cssTreeNode.Run(testIds);
             }
         }
 
@@ -216,7 +215,7 @@ namespace Applitools.Selenium.Capture
                     string locationAfterSwitch = (string)webDriver_.ExecuteScript("return document.location.href");
                     if (locationAfterSwitch.Equals(originLocation, StringComparison.OrdinalIgnoreCase))
                     {
-                        logger_.Log(TraceLevel.Warn, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript,
+                        logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
                             new { message = "Failed switching into frame.", locationAfterSwitch });
                         framesData.Add(missingFrameLine, string.Empty);
                         continue;
@@ -226,7 +225,7 @@ namespace Applitools.Selenium.Capture
                 }
                 catch (Exception e)
                 {
-                    CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, e, webDriver_.Eyes.TestId);
+                    CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, e, testIds);
                     framesData.Add(missingFrameLine, string.Empty);
                 }
                 finally
@@ -287,9 +286,9 @@ namespace Applitools.Selenium.Capture
                 Href = href;
             }
 
-            public void Run()
+            public void Run(params string[] testIds)
             {
-                DownloadNodeCss_(this, this, Href);
+                DownloadNodeCss_(this, this, Href, testIds);
             }
 
             public string CalcCss()
@@ -330,7 +329,7 @@ namespace Applitools.Selenium.Capture
                 webClient.DownloadStringAsync(href, new WebClientUserData { href = href, stopwatch = Stopwatch.StartNew() });
             }
 
-            private void DownloadNodeCss_(CssTreeNode root, CssTreeNode targetCssTreeNode, string url)
+            private void DownloadNodeCss_(CssTreeNode root, CssTreeNode targetCssTreeNode, string url, string[] testIds)
             {
                 root.IncrementActiveDownloads();
                 DownloadCssAsync_(url, root.logger_,
@@ -347,24 +346,25 @@ namespace Applitools.Selenium.Capture
                                     logger_.Verbose("download took {0} ms", data.stopwatch.Elapsed.TotalMilliseconds);
                                     webClient.Dispose();
                                     ParseCss_(targetCssTreeNode, css);
-                                    targetCssTreeNode.DownloadNodeCss_(root);
+                                    targetCssTreeNode.DownloadNodeCss_(root, testIds);
                                 }
                                 else
                                 {
-                                    logger_.Log("error downloading css {1}: {0}", args.Error, data.href);
+                                    logger_.Log(TraceLevel.Error, testIds, Stage.Check, StageType.DownloadResource, 
+                                        new { args.Error, data.href });
                                     if (retriesCount_ > 0)
                                     {
                                         retriesCount_--;
-                                        logger_.Log("Retrying...");
+                                        logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.Retry);
                                         Thread.Sleep(100);
-                                        DownloadNodeCss_(root, this, Href);
+                                        DownloadNodeCss_(root, this, Href, testIds);
                                     }
                                 }
                                 root.DecrementActiveDownloads();
                             }
                             catch (Exception e)
                             {
-                                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, e);
+                                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, e, testIds);
                             }
                         });
             }
@@ -386,7 +386,7 @@ namespace Applitools.Selenium.Capture
                 }
             }
 
-            private void DownloadNodeCss_(CssTreeNode root)
+            private void DownloadNodeCss_(CssTreeNode root, string[] testIds)
             {
                 if (allImportRules_.Count > 0)
                 {
@@ -395,7 +395,7 @@ namespace Applitools.Selenium.Capture
                         CssTreeNode cssTreeNode = new CssTreeNode(logger_);
                         decendets_.Add(cssTreeNode);
                         string url = importRule.Href;
-                        DownloadNodeCss_(root, cssTreeNode, url);
+                        DownloadNodeCss_(root, cssTreeNode, url, testIds);
                     }
                 }
             }
