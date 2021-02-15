@@ -103,7 +103,7 @@ namespace Applitools
             try
             {
                 Logger.Log(TraceLevel.Notice, testId, Stage.Check, StageType.UploadStart,
-                    new { matchWindowData = matchWindowQueue_ });
+                    new { matchWindowQueue_ });
                 ServerConnector.UploadImage(uploadListener, appOutput.ScreenshotBytes);
             }
             catch (Exception ex)

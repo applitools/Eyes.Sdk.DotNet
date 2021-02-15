@@ -40,7 +40,7 @@ namespace Applitools
             caller_ = callingMember;
             callingThread_ = Thread.CurrentThread.ManagedThreadId;
             testIds_ = testIds;
-            logger_?.Log(TraceLevel.Notice, Stage.General, new { callingMember });
+            logger_?.Log(TraceLevel.Notice, testIds, Stage.General, new { callingMember });
             sync_ = new AutoResetEvent(false);
         }
 
@@ -53,7 +53,7 @@ namespace Applitools
 
         private void OnFail_(Exception e)
         {
-            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e);
+            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, testIds_);
             Exception = e;
             onFail_?.Invoke(e);
             result_ = false;
