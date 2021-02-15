@@ -128,7 +128,9 @@ namespace Applitools.Selenium.Capture
                 whArr = new AutoResetEvent[waitHandles_.Count];
                 waitHandles_.Values.CopyTo(whArr, 0);
             }
-            logger_.Verbose("waiting on {0} wait handles:", whArr.Length);
+            logger_.Log(TraceLevel.Notice, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript, 
+                new { message = $"Waiting on {whArr.Length} to finish download" });
+
             foreach (AutoResetEvent wh in whArr)
             {
                 logger_.Verbose("    " + wh.GetHashCode());
@@ -139,7 +141,8 @@ namespace Applitools.Selenium.Capture
                 bool allSignaled = WaitHandle.WaitAll(whArr, timeout);
                 if (!allSignaled)
                 {
-                    logger_.Log("Not all wait handles recieved signal after {0} ms. aborting.", timeout);
+                    logger_.Log(TraceLevel.Warn, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript, 
+                        new { message = $"Not all wait handles recieved signal after {timeout} ms. aborting." });
                 }
             }
         }
@@ -173,6 +176,7 @@ namespace Applitools.Selenium.Capture
 
         private void FetchCssFiles_(List<string> missingCssList)
         {
+            logger_.Log(TraceLevel.Notice, webDriver_.Eyes.TestId, Stage.Check, StageType.DomScript, new { missingCssList });
             List<CssTreeNode> cssTreeNodes = new List<CssTreeNode>();
             foreach (string missingCssUrl in missingCssList)
             {
