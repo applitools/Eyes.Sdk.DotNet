@@ -41,7 +41,7 @@ namespace Applitools.Selenium.VisualGrid
             "return '//*[@'+atName+'=\"'+id+'\"]';";
 
         internal readonly VisualGridRunner runner_;
-        private readonly Dictionary<string, RunningTest> testList_ = new Dictionary<string, RunningTest>();
+        private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private IJavaScriptExecutor jsExecutor_;
@@ -374,7 +374,7 @@ namespace Applitools.Selenium.VisualGrid
         {
             if (!ValidateEyes_()) return;
 
-            Logger.Log(TraceLevel.Info, eyesId_, Stage.Check, StageType.Called);
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Check, StageType.Called);
 
             try
             {
@@ -664,7 +664,7 @@ namespace Applitools.Selenium.VisualGrid
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
             VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
-            string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllRunningTests().Select(t => t.Key)).ToArray();
+            string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
 
             FrameChain frameChain = driver.GetFrameChain().Clone();
             foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
@@ -775,14 +775,14 @@ namespace Applitools.Selenium.VisualGrid
 
         public void CloseAsync()
         {
-            Logger.Verbose("enter");
             if (!ValidateEyes_())
             {
                 return;
             }
 
             isOpen_ = false;
-            Logger.Verbose("closing {0} running tests", testList_.Count);
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Close, StageType.Called,
+                new { message = $"closing {testList_.Count} running tests" });
             foreach (RunningTest runningTest in testList_.Values)
             {
                 VisualGridRunningTest vgRunningTest = (VisualGridRunningTest)runningTest;
@@ -877,9 +877,9 @@ namespace Applitools.Selenium.VisualGrid
             return allResults;
         }
 
-        IDictionary<string, RunningTest> IEyes.GetAllRunningTests()
+        public IDictionary<string, IRunningTest> GetAllTests()
         {
-            return testList_;
+            return new Dictionary<string, IRunningTest>(testList_);
         }
     }
 }

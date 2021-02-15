@@ -12,7 +12,15 @@ namespace Applitools
 
         private List<TestResultContainer> allTestResult_ = new List<TestResultContainer>();
 
+        private EyesBase eyes_;
+
         public EyesException Exception { get; set; }
+
+        protected override IEnumerable<IEyesBase> GetAllEyes() => new EyesBase[] { eyes_ };
+        internal void SetEyes(EyesBase eyes)
+        {
+            eyes_ = eyes;
+        }
 
         public ClassicRunner(ILogHandler logHandler)
         {

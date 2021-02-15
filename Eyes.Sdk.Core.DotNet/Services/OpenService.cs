@@ -28,12 +28,12 @@ namespace Applitools
 
                 Tuple<string, SessionStartInfo> nextInput = inputQueue_.Dequeue();
                 string testId = nextInput.Item1;
-                inProgressTests_.Add(testId);
+                lock (lockObject_) inProgressTests_.Add(testId);
                 Logger.Log(TraceLevel.Info, testId, Stage.Open, StageType.Run, new { testAmount = currentTestAmount_ });
                 Operate(testId, nextInput.Item2, new TaskListener<RunningSession>(
                 (output) =>
                 {
-                    lock (outputQueue_)
+                    lock (lockObject_)
                     {
                         inProgressTests_.Remove(testId);
                         outputQueue_.Add(Tuple.Create(testId, output));
@@ -42,7 +42,7 @@ namespace Applitools
                 (ex) =>
                 {
                     Logger.Log(TraceLevel.Error, testId, Stage.Open, new { nextInput });
-                    lock (errorQueue_)
+                    lock (lockObject_)
                     {
                         inProgressTests_.Remove(testId);
                         errorQueue_.Add(Tuple.Create(testId, ex));

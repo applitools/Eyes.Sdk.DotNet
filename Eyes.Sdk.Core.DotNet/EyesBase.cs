@@ -105,6 +105,8 @@ namespace Applitools
             runner_ = runner ?? new ClassicRunner();
             Logger = logger ?? new Logger();
 
+            runner_.SetEyes(this);
+
             //EnsureConfiguration_();
 
             UpdateActualAssembly_();
@@ -1314,6 +1316,8 @@ namespace Applitools
 
             return domUrl;
         }
+
+        public virtual IDictionary<string, IRunningTest> GetAllTests() { return null; }
 
         #endregion
 

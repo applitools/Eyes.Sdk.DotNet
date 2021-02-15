@@ -4,6 +4,7 @@ using Applitools.Utils.Cropping;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 
@@ -595,6 +596,11 @@ namespace Applitools.Selenium
                 return;
             }
             activeEyes_.ClearProperties();
+        }
+
+        IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
+        {
+            return activeEyes_.GetAllTests();
         }
     }
 }

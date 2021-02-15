@@ -42,7 +42,7 @@ namespace Applitools.Utils
         private const string RFC1123Format_ = "r";
         private const string RFC3339Format_ = "yyyy'-'MM'-'dd'T'HH':'mm':'ssK";
         private const string ISO8601Format_ = "o";
-        private const string ISO8601_Short_Format_ = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK";
+        private const string ISO8601_Short_Format_ = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffZ";
 
         #endregion
 

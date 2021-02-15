@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Applitools
 {
@@ -14,6 +15,8 @@ namespace Applitools
             ServerConnectorFactory = new ServerConnectorFactory();
             ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
         }
+
+        protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
         public Logger Logger { get; } = new Logger();
 
@@ -36,7 +39,8 @@ namespace Applitools
             {
                 DeleteAllBatches_();
             }
-            Logger.Log(TraceLevel.Notice, Stage.Close, StageType.TestResults, new { allTestResults.Count });
+            string[] testIds = GetAllEyes().SelectMany(e => e.GetAllTests().Keys).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults, new { allTestResults.Count });
             return allTestResults;
         }
 

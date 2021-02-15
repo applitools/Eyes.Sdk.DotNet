@@ -1479,9 +1479,9 @@ namespace Applitools.Selenium
             };
         }
 
-        public IDictionary<string, RunningTest> GetAllRunningTests()
+        public override IDictionary<string, IRunningTest> GetAllTests()
         {
-            return new Dictionary<string, RunningTest>() { { TestId, this } };
+            return new Dictionary<string, IRunningTest>() { { TestId, this } };
         }
 
         bool IEyes.IsCompleted()

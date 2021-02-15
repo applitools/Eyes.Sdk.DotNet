@@ -9,6 +9,7 @@ namespace Applitools
         protected readonly Queue<Tuple<string, TInput>> inputQueue_ = new Queue<Tuple<string, TInput>>();
         protected readonly List<Tuple<string, TOutput>> outputQueue_ = new List<Tuple<string, TOutput>>();
         protected readonly List<Tuple<string, Exception>> errorQueue_ = new List<Tuple<string, Exception>>();
+        protected readonly object lockObject_ = new object();
 
         protected Logger Logger { get; private set; }
         protected internal IServerConnector ServerConnector { get; set; }
@@ -28,7 +29,7 @@ namespace Applitools
 
         public IList<Tuple<string, TOutput>> GetSucceededTasks()
         {
-            lock (outputQueue_)
+            lock (lockObject_)
             {
                 Tuple<string, TOutput>[] array = outputQueue_.ToArray();
                 outputQueue_.Clear();
@@ -38,7 +39,7 @@ namespace Applitools
 
         public IList<Tuple<string, Exception>> GetFailedTasks()
         {
-            lock (errorQueue_)
+            lock (lockObject_)
             {
                 Tuple<string, Exception>[] array = errorQueue_.ToArray();
                 errorQueue_.Clear();

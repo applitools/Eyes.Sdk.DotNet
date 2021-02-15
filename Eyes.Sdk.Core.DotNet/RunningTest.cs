@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Applitools
 {
-    public abstract class RunningTest : EyesBase
+    public abstract class RunningTest : EyesBase, IRunningTest
     {
         protected Exception exception_;
         private bool? isAbortIssued_ = null;

@@ -58,7 +58,6 @@ namespace Applitools.VisualGrid
 
         internal readonly TestConcurrency testConcurrency_;
 
-        private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         internal readonly HashSet<IEyes> allEyes_ = new HashSet<IEyes>();
         private EyesServiceRunner eyesServiceRunner_;
 
@@ -271,7 +270,7 @@ namespace Applitools.VisualGrid
         }
 
         internal IEnumerable<IEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
-
+        protected override IEnumerable<IEyesBase> GetAllEyes() => AllEyes;
         internal Exception GetError()
         {
             return eyesServiceRunner_.Error;

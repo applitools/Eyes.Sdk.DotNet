@@ -17,17 +17,20 @@ namespace Applitools
             {
                 Tuple<string, SessionStopInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
-                inProgressTests_.Add(id);
+                lock (lockObject_) inProgressTests_.Add(id);
                 Operate(id, nextInput.Item2, new TaskListener<TestResults>(
                     (output) =>
                     {
-                        inProgressTests_.Remove(id);
-                        outputQueue_.Add(Tuple.Create(id, output));
+                        lock (lockObject_)
+                        {
+                            inProgressTests_.Remove(id);
+                            outputQueue_.Add(Tuple.Create(id, output));
+                        }
                     },
                     (ex) =>
                     {
                         Logger.Log(TraceLevel.Error, id, Stage.Close, new { nextInput });
-                        lock (errorQueue_)
+                        lock (lockObject_)
                         {
                             inProgressTests_.Remove(id);
                             errorQueue_.Add(Tuple.Create(id, ex));

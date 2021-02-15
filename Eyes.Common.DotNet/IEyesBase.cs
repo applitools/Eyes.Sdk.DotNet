@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 
 namespace Applitools
 {
@@ -29,6 +30,8 @@ namespace Applitools
         void AddProperty(string name, string value);
 
         void ClearProperties();
+        
+        IDictionary<string, IRunningTest> GetAllTests();
 
         string AgentId { get; set; }
 

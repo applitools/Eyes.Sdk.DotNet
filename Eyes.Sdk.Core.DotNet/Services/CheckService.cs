@@ -21,20 +21,26 @@ namespace Applitools
             {
                 Tuple<string, MatchWindowData> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
-                inUploadProcess_.Add(id);
+                lock (lockObject_) inUploadProcess_.Add(id);
                 MatchWindowData matchWindowData = nextInput.Item2;
                 TryUploadImage(id, matchWindowData,
                     new TaskListener(
                         () =>
                         {
-                            inUploadProcess_.Remove(id);
-                            matchWindowQueue_.Enqueue(Tuple.Create(id, matchWindowData));
+                            lock (lockObject_)
+                            {
+                                inUploadProcess_.Remove(id);
+                                matchWindowQueue_.Enqueue(Tuple.Create(id, matchWindowData));
+                            }
                         },
                         (e) =>
                         {
-                            inUploadProcess_.Remove(id);
-                            Logger.Log(TraceLevel.Error, id, Stage.Check, StageType.UploadComplete, new { nextInput });
-                            errorQueue_.Add(Tuple.Create(id, e));
+                            lock (lockObject_)
+                            {
+                                inUploadProcess_.Remove(id);
+                                Logger.Log(TraceLevel.Error, id, Stage.Check, StageType.UploadComplete, new { nextInput });
+                                errorQueue_.Add(Tuple.Create(id, e));
+                            }
                         }));
             }
 
@@ -42,19 +48,25 @@ namespace Applitools
             {
                 Tuple<string, MatchWindowData> nextInput = matchWindowQueue_.Dequeue();
                 string id = nextInput.Item1;
-                inMatchWindowProcess_.Add(id);
+                lock (lockObject_) inMatchWindowProcess_.Add(id);
                 MatchWindowData matchWindowData = nextInput.Item2;
                 TaskListener<MatchResult> listener = new TaskListener<MatchResult>(
                 (taskResponse) =>
                 {
-                    inMatchWindowProcess_.Remove(id);
-                    outputQueue_.Add(Tuple.Create(id, taskResponse));
+                    lock (lockObject_)
+                    {
+                        inMatchWindowProcess_.Remove(id);
+                        outputQueue_.Add(Tuple.Create(id, taskResponse));
+                    }
                 },
                 (e) =>
                 {
-                    inMatchWindowProcess_.Remove(id);
-                    Logger.Log(TraceLevel.Error, id, Stage.Check, StageType.MatchComplete, new { nextInput });
-                    errorQueue_.Add(new Tuple<string, Exception>(id, new EyesException("Match window failed")));
+                    lock (lockObject_)
+                    {
+                        inMatchWindowProcess_.Remove(id);
+                        Logger.Log(TraceLevel.Error, id, Stage.Check, StageType.MatchComplete, new { nextInput });
+                        errorQueue_.Add(new Tuple<string, Exception>(id, new EyesException("Match window failed")));
+                    }
                 });
 
                 try
