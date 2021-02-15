@@ -4,7 +4,6 @@ using Applitools.Utils.Cropping;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 
