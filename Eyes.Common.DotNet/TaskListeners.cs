@@ -24,10 +24,12 @@ namespace Applitools
         private AutoResetEvent sync_;
         private Logger logger_;
         private string caller_;
+        private int callingThread_;
+        private string[] testIds_;
         private bool? result_;
 
         public SyncTaskListener(Action onComplete = null, Action<Exception> onFail = null,
-            Logger logger = null, [CallerMemberName] string callingMember = null)
+            Logger logger = null, [CallerMemberName] string callingMember = null, params string[] testIds)
             : base(onComplete, onFail)
         {
             onComplete_ = onComplete;
@@ -36,6 +38,8 @@ namespace Applitools
             OnFail = OnFail_;
             logger_ = logger;
             caller_ = callingMember;
+            callingThread_ = Thread.CurrentThread.ManagedThreadId;
+            testIds_ = testIds;
             logger_?.Log(TraceLevel.Notice, Stage.General, new { callingMember });
             sync_ = new AutoResetEvent(false);
         }
@@ -58,9 +62,9 @@ namespace Applitools
 
         public bool? Get()
         {
-            logger_?.Log(TraceLevel.Notice, Stage.General, new { message = $"Waiting for finish...", caller_ });
+            logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"Waiting for finish...", caller_ });
             if (!sync_.WaitOne(0)) sync_.WaitOne();
-            logger_?.Log(TraceLevel.Notice, Stage.General, new { message = $"finished.", caller_ });
+            logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"finished.", caller_, callingThread_ });
             return result_;
         }
 
@@ -88,20 +92,24 @@ namespace Applitools
         private readonly Logger logger_;
         private readonly string message_;
         private readonly string caller_;
+        private int callingThread_;
+        private string[] testIds_;
 
         public LoggingListener(TaskListener<T> internalListener, Logger logger,
-            string message, [CallerMemberName] string caller = null)
-            : this(internalListener.OnComplete, internalListener.OnFail, logger, message)
+            string message, [CallerMemberName] string caller = null, params string[] testIds)
+            : this(internalListener.OnComplete, internalListener.OnFail, logger, caller, message, testIds)
         {
         }
 
         public LoggingListener(Action<T> onComplete, Action<Exception> onFail, Logger logger,
-            string message, [CallerMemberName] string caller = null)
+            string message, [CallerMemberName] string caller = null, params string[] testIds)
             : base(onComplete, onFail)
         {
             logger_ = logger;
             message_ = message;
             caller_ = caller;
+            callingThread_ = Thread.CurrentThread.ManagedThreadId;
+            testIds_ = testIds;
             onComplete_ = onComplete;
             OnComplete = OnComplete_;
             onFail_ = onFail;
@@ -110,13 +118,14 @@ namespace Applitools
 
         private void OnComplete_(T t)
         {
-            logger_?.Log(TraceLevel.Info, Stage.General, StageType.Complete, new { caller_, message_, t });
+            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete,
+                new { caller_, callingThread_, message_, t });
             onComplete_?.Invoke(t);
         }
 
         private void OnFail_(Exception e)
         {
-            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e);
+            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, new { caller_, callingThread_ }, testIds_);
             onFail_?.Invoke(e);
         }
     }
@@ -128,10 +137,12 @@ namespace Applitools
         private AutoResetEvent sync_;
         private Logger logger_;
         private string caller_;
+        private int callingThread_;
+        private string[] testIds_;
         private T result_;
 
         public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null,
-            Logger logger = null, [CallerMemberName] string callingMember = null)
+            Logger logger = null, [CallerMemberName] string callingMember = null, params string[] testIds)
             : base(onComplete, onFail)
         {
             onComplete_ = onComplete;
@@ -140,12 +151,14 @@ namespace Applitools
             OnFail = OnFail_;
             logger_ = logger;
             caller_ = callingMember;
+            callingThread_ = Thread.CurrentThread.ManagedThreadId;
+            testIds_ = testIds;
             sync_ = new AutoResetEvent(false);
         }
 
         private void OnComplete_(T t)
         {
-            logger_?.Log(TraceLevel.Info, Stage.General, StageType.Complete, new { caller_ });
+            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
             onComplete_?.Invoke(t);
             result_ = t;
             sync_.Set();
@@ -153,7 +166,7 @@ namespace Applitools
 
         private void OnFail_(Exception e)
         {
-            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e);
+            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, new { caller_, callingThread_ }, testIds_);
             Exception = e;
             onFail_?.Invoke(e);
             sync_.Set();
@@ -161,9 +174,9 @@ namespace Applitools
 
         public T Get()
         {
-            logger_?.Log(TraceLevel.Info, Stage.General, new { message = $"Waiting for results", caller_ });
+            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
             if (!sync_.WaitOne(0)) sync_.WaitOne();
-            logger_?.Log(TraceLevel.Info, Stage.General, new { message = $"Results arrived", caller_, result_ });
+            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, new { message = $"Results arrived", caller_, callingThread_, result_ });
             return result_;
         }
 

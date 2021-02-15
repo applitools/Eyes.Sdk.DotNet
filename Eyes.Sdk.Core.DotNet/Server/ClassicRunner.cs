@@ -50,14 +50,14 @@ namespace Applitools
 
         public RunningSession Open(string testId, SessionStartInfo sessionStartInfo)
         {
-            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger, testIds: testId);
             openService_.Operate(testId, sessionStartInfo, listener);
             return listener.Get();
         }
 
         public MatchResult Check(string testId, MatchWindowData matchWindowData)
         {
-            SyncTaskListener listener = new SyncTaskListener(logger: Logger);
+            SyncTaskListener listener = new SyncTaskListener(logger: Logger, testIds: testId);
             checkService_.TryUploadImage(testId, matchWindowData, listener);
 
             bool? result = listener.Get();
@@ -66,14 +66,14 @@ namespace Applitools
                 throw new EyesException("Failed performing match with the server", listener.Exception);
             }
 
-            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>(logger: Logger);
+            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>(logger: Logger, testIds: testId);
             checkService_.MatchWindow(testId, matchWindowData, matchListener);
             return matchListener.Get();
         }
 
         public TestResults Close(string testId, SessionStopInfo sessionStopInfo)
         {
-            SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger);
+            SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger, testIds: testId);
             closeService_.Operate(testId, sessionStopInfo, listener);
             return listener.Get();
         }

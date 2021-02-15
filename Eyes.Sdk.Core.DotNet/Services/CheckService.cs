@@ -89,8 +89,7 @@ namespace Applitools
                         taskListener.OnFail(new EyesException("Failed uploading image"));
                         return;
                     }
-                    Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadComplete,
-                        Tuple.Create("url", (object)url));
+                    Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadComplete, new { url });
                     appOutput.ScreenshotUrl = url;
                     taskListener.OnComplete();
                 },

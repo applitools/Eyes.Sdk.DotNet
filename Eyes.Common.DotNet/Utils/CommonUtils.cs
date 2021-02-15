@@ -370,6 +370,12 @@ namespace Applitools.Utils
             LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
         }
 
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, 
+            object data, params string[] testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, null, ex, data, testIds);
+        }
+
         public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, IEnumerable<string> testIds)
         {
             LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
