@@ -1,1 +1,1 @@
-﻿[assembly: NUnit.Framework.LevelOfParallelism(8)]
+﻿[assembly: NUnit.Framework.LevelOfParallelism(5)]
