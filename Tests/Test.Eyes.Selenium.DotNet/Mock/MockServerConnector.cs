@@ -171,12 +171,12 @@ namespace Applitools.Selenium.Tests.Mock
             taskListener.OnComplete(results);
         }
 
-        public override void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
+        public override void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> renderRequests)
         {
             IList<JobInfo> jobs = new List<JobInfo>();
-            for (int i = 0; i < browserInfos?.Count; ++i)
+            for (int i = 0; i < renderRequests?.Count; ++i)
             {
-                RenderRequest request = (RenderRequest)browserInfos[i];
+                RenderRequest request = (RenderRequest)renderRequests[i];
                 string renderer = request.Browser.Name.GetAttribute<System.Runtime.Serialization.EnumMemberAttribute>().Value;
                 jobs.Add(new JobInfo() { EyesEnvironment = "MockEnvironment", Renderer = renderer });
             }

@@ -33,14 +33,17 @@ namespace Applitools.Selenium.Tests.ApiTests
         [OneTimeSetUp]
         public void BeforeTestSuite()
         {
+            // 0. Set up logging
+            ILogHandler logHandler = TestUtils.InitLogHandler(TestContext.CurrentContext.Test.FullName);
+
             // 1. Create the runner that manages multiple tests
             if (useVisualGrid_)
             {
-                runner = new VisualGridRunner(concurrentSessions);
+                runner = new VisualGridRunner(concurrentSessions, logHandler);
             }
             else
             {
-                runner = new ClassicRunner();
+                runner = new ClassicRunner(logHandler);
             }
             // continued below.... 
             // 2. Create a configuration object, we will use this when setting up each test            
@@ -63,8 +66,7 @@ namespace Applitools.Selenium.Tests.ApiTests
                .SetAppName(appName)
                .SetViewportSize(new Applitools.Utils.Geometry.RectangleSize(viewPortWidth, viewPortHeight));
 
-            // 6. Set up logging
-            TestUtils.SetupLogging(runner, TestContext.CurrentContext.Test.FullName);
+
 
         }
 

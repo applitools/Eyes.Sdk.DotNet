@@ -14,7 +14,8 @@ namespace Applitools.Selenium.Tests
         public void TestDelete()
         {
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
-            Eyes eyes = new Eyes();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            Eyes eyes = new Eyes(logHandler);
             eyes.Batch = TestDataProvider.BatchInfo;
             try
             {

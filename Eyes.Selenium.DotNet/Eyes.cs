@@ -4,10 +4,8 @@ using Applitools.Utils.Cropping;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Applitools.Selenium
 {
@@ -22,18 +20,21 @@ namespace Applitools.Selenium
         internal readonly ISeleniumEyes activeEyes_;
 
         #region ctors
-        public Eyes()
+
+        public Eyes(ILogHandler logHandler = null)
         {
-            runner_ = new ClassicRunner();
+            if (logHandler == null) logHandler = NullLogHandler.Instance;
+            runner_ = new ClassicRunner(logHandler);
             configuration_.SetForceFullPageScreenshot(false);
             seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_);
             activeEyes_ = seleniumEyes_;
         }
 
-        public Eyes(Uri serverUrl)
+        public Eyes(Uri serverUrl, ILogHandler logHandler = null)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
-            runner_ = new ClassicRunner();
+            if (logHandler == null) logHandler = NullLogHandler.Instance;
+            runner_ = new ClassicRunner(logHandler);
             configuration_.SetForceFullPageScreenshot(false);
             seleniumEyes_ = new SeleniumEyes(this, serverUrl, (ClassicRunner)runner_);
             activeEyes_ = seleniumEyes_;
@@ -67,6 +68,7 @@ namespace Applitools.Selenium
             activeEyes_ = seleniumEyes_;
         }
 
+
         #endregion
 
         public Configuration GetConfiguration()
@@ -77,7 +79,7 @@ namespace Applitools.Selenium
         public void SetConfiguration(IConfiguration configuration)
         {
             configuration_ = new Configuration(configuration);
-    
+
             string serverUrl = configuration_.ServerUrl;
             if (serverUrl != null)
             {
