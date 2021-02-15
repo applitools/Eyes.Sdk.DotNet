@@ -3,6 +3,8 @@ using System;
 using OpenQA.Selenium.Chrome;
 using Applitools.Selenium;
 using System.Collections.Generic;
+using Applitools.Tests.Utils;
+using System.Runtime.CompilerServices;
 
 namespace Applitools.Generated.Selenium.Tests
 {
@@ -19,7 +21,9 @@ namespace Applitools.Generated.Selenium.Tests
 
         protected void initEyes(string page, ScreenOrientation deviceOrientation = ScreenOrientation.Portrait)
         {
-            eyes = new Eyes();
+            string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
+            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+            eyes = new Eyes(logHandler);
             initEyesSettings(false, true);
             eyes.AddProperty("Orientation", deviceOrientation.ToString());
             eyes.AddProperty("Page", page);
