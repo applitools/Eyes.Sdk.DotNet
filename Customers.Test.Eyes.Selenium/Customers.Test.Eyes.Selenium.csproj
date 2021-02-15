@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <StartupObject>Applitools.VisualGrid.Demo.MinimalVisualGridDemo</StartupObject>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj" />
     <ProjectReference Include="..\Tests\Test.Eyes.Images.DotNet\Test.Eyes.Images.DotNet.csproj" />
   </ItemGroup>
 
