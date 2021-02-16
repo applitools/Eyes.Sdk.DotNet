@@ -1,11 +1,10 @@
-﻿using OpenQA.Selenium;
-using System;
+﻿using System;
 
 namespace Applitools.Selenium.Tests.Mock
 {
     class MockServerConnectorFactory : IServerConnectorFactory
     {
-        private WebDriverProvider driverProvider_;
+        private readonly WebDriverProvider driverProvider_;
 
         public MockServerConnectorFactory(WebDriverProvider driverProvider)
         {

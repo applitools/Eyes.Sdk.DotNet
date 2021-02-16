@@ -115,7 +115,7 @@ namespace Applitools
             try
             {
                 Logger.Log(TraceLevel.Notice, testId, Stage.Check, StageType.UploadStart,
-                    new { matchWindowQueue_ });
+                    new { dataLength = appOutput.ScreenshotBytes.Length });
                 ServerConnector.UploadImage(uploadListener, appOutput.ScreenshotBytes);
             }
             catch (Exception ex)

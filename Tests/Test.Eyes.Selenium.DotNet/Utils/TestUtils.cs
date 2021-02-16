@@ -76,6 +76,13 @@ namespace Applitools.Tests.Utils
 
         public static void SetupLogging(Eyes eyes, [CallerMemberName] string testName = null)
         {
+            string path = SetupDebugScreenshotProvider(eyes, testName);
+            Eyes.moveWindow_ = !Debugger.IsAttached;
+            SetupLogging(eyes.runner_, testName, path);
+        }
+
+        public static string SetupDebugScreenshotProvider(Eyes eyes, string testName)
+        {
             string path = InitLogPath(testName);
             if (!RUNS_ON_CI)
             {
@@ -85,8 +92,8 @@ namespace Applitools.Tests.Utils
                     Prefix = testName + "_"
                 };
             }
-            Eyes.moveWindow_ = !Debugger.IsAttached;
-            SetupLogging(eyes.runner_, testName, path);
+
+            return path;
         }
 
         public static void SetupLogging(EyesRunner runner, [CallerMemberName] string testName = null, string path = null)

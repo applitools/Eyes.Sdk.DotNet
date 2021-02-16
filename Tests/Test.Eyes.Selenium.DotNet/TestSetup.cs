@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.Tests
@@ -168,10 +167,11 @@ namespace Applitools.Selenium.Tests
         {
             string testNameWithArguments = InitTestName_(ref testName);
 
+            ILogHandler logHandler = TestUtils.InitLogHandler(testNameWithArguments);
+            
             // Initialize the eyes SDK and set your private API key.
-            Eyes eyes = InitEyes_(testName);
+            Eyes eyes = InitEyes_(testName, logHandler);
 
-            TestUtils.SetupLogging(eyes, testNameWithArguments);
             eyes.Logger.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Start,
                 new { TestName = TestContext.CurrentContext.Test.FullName });
 
@@ -298,7 +298,7 @@ namespace Applitools.Selenium.Tests
             return driver;
         }
 
-        private Eyes InitEyes_(string testName, bool? forceFullPageScreenshot = null)
+        private Eyes InitEyes_(string testName, ILogHandler logHandler, bool? forceFullPageScreenshot = null)
         {
             EyesRunner runner = null;
             string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
@@ -317,15 +317,15 @@ namespace Applitools.Selenium.Tests
                         {
                             expectedVGOutput = reader.ReadToEnd();
                         }
-                        runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory(webDriverProvider));
+                        runner = new VisualGridRunner(10, null, new MockServerConnectorFactory(webDriverProvider), logHandler);
                     }
                 }
             }
 
-            runner = runner ?? (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner());
+            runner ??= (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler));
 
             Eyes eyes = new Eyes(runner);
-
+            TestUtils.SetupDebugScreenshotProvider(eyes, testName);
             SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
             testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
             testContextReqs.TestNameAsFilename = testNameAsFilename;
@@ -451,7 +451,7 @@ namespace Applitools.Selenium.Tests
                         }
                     }
 
-                    testData.Eyes.Logger.Log(TraceLevel.Notice, TestContext.CurrentContext.Test.ID, Stage.TestFramework, StageType.Complete, 
+                    testData.Eyes.Logger.Log(TraceLevel.Notice, TestContext.CurrentContext.Test.ID, Stage.TestFramework, StageType.Complete,
                         new { results.Mismatches });
                 }
                 if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes &&

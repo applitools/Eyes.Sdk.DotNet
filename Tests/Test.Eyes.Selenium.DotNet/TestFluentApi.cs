@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
+﻿using Applitools.Tests.Utils;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Drawing;
-using Region = Applitools.Utils.Geometry.Region;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
-using Applitools.Selenium.VisualGrid;
-using Applitools.Tests.Utils;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.Tests
 {
@@ -251,7 +250,7 @@ namespace Applitools.Selenium.Tests
             config.AccessibilityValidation = new AccessibilitySettings(AccessibilityLevel.AAA, AccessibilityGuidelinesVersion.WCAG_2_0);
             GetEyes().SetConfiguration(config);
             GetEyes().Check(Target.Window().Accessibility(By.ClassName("ignore"), AccessibilityRegionType.LargeText));
-            
+
             if (useVisualGrid_)
             {
                 SetExpectedAccessibilityRegions(

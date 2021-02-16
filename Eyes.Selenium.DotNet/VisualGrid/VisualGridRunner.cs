@@ -117,8 +117,9 @@ namespace Applitools.VisualGrid
             Init(suiteName);
         }
 
-        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, IServerConnectorFactory serverConnectorFactory)
-            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory)
+        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
+            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
+            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory, logHandler)
         {
         }
 
