@@ -4,7 +4,7 @@ pushd Eyes.Selenium.DotNet/Properties/NodeResources
 npm install
 popd
 
-echo "running tests"
+echo "running tests: $1 $2 $3"
 
 dotnet test -f net5.0 $1 $2 $3
 result=$?
