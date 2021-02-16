@@ -235,7 +235,7 @@ namespace Applitools.Selenium.Tests.Mock
 
         public WebRequest Create(Uri uri)
         {
-            Logger?.Verbose("creating mock request for URI: {0}", uri);
+            Logger?.Log(TraceLevel.Notice, Stage.General, new { uri });
             HttpWebRequest webRequest = Substitute.For<HttpWebRequest>();
             webRequest.RequestUri.Returns(uri);
             webRequest.Headers = new WebHeaderCollection();
@@ -245,7 +245,7 @@ namespace Applitools.Selenium.Tests.Mock
                        {
                            AsyncCallback cb = ci.Arg<AsyncCallback>();
                            HttpWebRequest req = ci.Arg<HttpWebRequest>();
-                           Logger?.Verbose("BeginGerResponse called with method {0} for URI: {1}", req.Method, req.RequestUri);
+                           Logger?.Verbose("BeginGetResponse called with method {0} for URI: {1}", req.Method, req.RequestUri);
                            cb.Invoke(new MockAsyncResult(req));
                            return null;
                        });
@@ -257,7 +257,7 @@ namespace Applitools.Selenium.Tests.Mock
                     HttpWebRequest webRequest = ((HttpWebRequest)mockAsyncResult.AsyncState);
                     string method = webRequest.Method;
                     Uri uri = webRequest.RequestUri;
-                    Logger?.Verbose("EndGerResponse called for request with method {0} for URI: {1}", method, uri);
+                    Logger?.Verbose("EndGetResponse called for request with method {0} for URI: {1}", method, uri);
                     HttpWebResponse webResponse = Substitute.For<HttpWebResponse>();
                     WebHeaderCollection headers = new WebHeaderCollection();
                     webResponse.Headers.Returns(headers);
