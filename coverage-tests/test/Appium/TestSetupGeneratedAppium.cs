@@ -31,7 +31,9 @@ namespace Applitools.Generated.Appium.Tests
 			eyes.Batch = BatchInfo;
 			eyes.BranchName = "master";
 			eyes.SaveNewTests = false;
-			eyes.SetLogHandler(TestUtils.InitLogHandler());
+            string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
+            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+			eyes.SetLogHandler(logHandler);
 		}
 
 		protected void initDriver(string device, string app)
