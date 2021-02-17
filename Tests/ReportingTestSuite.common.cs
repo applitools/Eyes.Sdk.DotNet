@@ -23,7 +23,7 @@ namespace Applitools.Tests.Utils
 
         static ReportingTestSuite()
         {
-            logger_.SetLogHandler(new NunitLogHandler());
+            //logger_.SetLogHandler(new NunitLogHandler());
             logger_.Log(TraceLevel.Notice, Stage.TestFramework,
                 new
                 {
