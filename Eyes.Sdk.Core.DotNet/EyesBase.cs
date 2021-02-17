@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Applitools
@@ -425,7 +426,7 @@ namespace Applitools
             }
         }
 
-        public void LogSessionResultsAndThrowException(bool throwEx, TestResults results)
+        public void LogSessionResultsAndThrowException(bool throwEx, TestResults results, [CallerMemberName] string caller = null)
         {
             TestResultsStatus status = results.Status;
             string sessionResultsUrl = results.Url;
@@ -433,7 +434,7 @@ namespace Applitools
             string appIdOrName = results.AppName;
 
             Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.TestResults,
-                new { status, url = sessionResultsUrl });
+                new { status, url = sessionResultsUrl, caller });
 
             switch (status)
             {

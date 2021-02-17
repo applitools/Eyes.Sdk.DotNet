@@ -206,6 +206,9 @@ namespace Applitools.VisualGrid
 
         protected override TestResultsSummary GetAllTestResultsImpl(bool throwException)
         {
+            string[] testIds = AllEyes.SelectMany(e => e.GetAllTests().Keys).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults);
+
             bool isRunning = true;
             while (isRunning && eyesServiceRunner_.Error == null)
             {
@@ -232,7 +235,6 @@ namespace Applitools.VisualGrid
 
             Exception exception = null;
             List<TestResultContainer> allResults = new List<TestResultContainer>();
-            List<string> testIds = new List<string>();
             foreach (IEyes eyes in AllEyes)
             {
                 IList<TestResultContainer> eyesResults = eyes.GetAllTestResults();
@@ -241,10 +243,6 @@ namespace Applitools.VisualGrid
                     if (exception == null && result.Exception != null)
                     {
                         exception = result.Exception;
-                    }
-                    if (result.TestResults != null)
-                    {
-                        testIds.Add(result.TestResults.Id);
                     }
                 }
 

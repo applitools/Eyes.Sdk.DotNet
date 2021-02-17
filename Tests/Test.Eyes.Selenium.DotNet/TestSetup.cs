@@ -451,7 +451,7 @@ namespace Applitools.Selenium.Tests
                         }
                     }
 
-                    testData.Eyes.Logger.Log(TraceLevel.Notice, TestContext.CurrentContext.Test.ID, Stage.TestFramework, StageType.Complete,
+                    testData.Eyes.Logger.Log(TraceLevel.Notice, testData.TestName, Stage.TestFramework, StageType.Complete,
                         new { results.Mismatches });
                 }
                 if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes &&
@@ -485,6 +485,7 @@ namespace Applitools.Selenium.Tests
             {
                 GetWebDriver()?.Quit();
                 GetEyes()?.Abort();
+                GetEyes()?.runner_.GetAllTestResults(false);
             }
         }
 
