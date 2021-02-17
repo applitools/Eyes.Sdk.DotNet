@@ -156,9 +156,9 @@ namespace Applitools.Generated.Selenium.Tests
 
         protected void initEyes(bool isVisualGrid, bool isCSSMode)
         {
-            string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
-            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
-            runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
+            //string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
+            //ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+            runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10)) : new ClassicRunner();
             eyes = new Eyes(runner);
             initEyesSettings(isVisualGrid, isCSSMode);
         }
