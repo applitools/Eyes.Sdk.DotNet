@@ -72,7 +72,8 @@ namespace Applitools.Selenium.Capture
             logger_.Verbose("switched to frame chain - size: {0} ; frame: {1}", currentFC.Count, currentFC.Peek());
 
             WaitForCssDownloadToFinish_(testIds);
-            logger_.Log("finished waiting for CSS files to download");
+            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, 
+                new { message = "finished waiting for CSS files to download" });
             string inlaidString = StringUtils.EfficientStringReplace(cssStartToken_, cssEndToken_, dom, cssData_);
             logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, new { inlaidStringLength = inlaidString.Length });
             return inlaidString;
