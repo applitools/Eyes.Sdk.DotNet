@@ -559,19 +559,15 @@ namespace Applitools
 
             httpClient.RequestCompleted += (s, args) =>
             {
-                if ((int)args.Response.StatusCode >= 300)
-                {
-                    Logger.Log(args.ToString());
-                }
-                else
-                {
-                    Logger.Verbose(args.ToString());
-                }
+                TraceLevel level = (int)args.Response.StatusCode >= 300 ? TraceLevel.Notice : TraceLevel.Info;
+                Logger.Log(level, Stage.General, StageType.RequestCompleted,
+                    new { args.Request.Method, args.Request.RequestUri, args.Response.StatusCode, args.Elapsed.TotalMilliseconds });
             };
 
             httpClient.RequestFailed += (s, args) =>
             {
-                Logger.Log(args.ToString());
+                Logger.Log(TraceLevel.Error, Stage.General, StageType.RequestFailed,
+                 new { args.Request.Method, args.Request.RequestUri, args.Exception, args.Elapsed.TotalMilliseconds });
             };
 
             httpClient_ = httpClient;

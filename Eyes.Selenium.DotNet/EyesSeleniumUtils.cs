@@ -91,7 +91,7 @@ namespace Applitools.Selenium
                 CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex, testId);
             }
 
-            logger.Log("Using browser size.");
+            logger.Log(TraceLevel.Notice, testId, Stage.General, new { message = "Using browser size." });
             size = driver.Manage().Window.Size;
 
             try
@@ -105,7 +105,7 @@ namespace Applitools.Selenium
             {
                 // Not every WebDriver supports querying for orientation.
             }
-            logger.Verbose("Done! Size: " + size);
+            logger.Log(TraceLevel.Info, testId, Stage.General, StageType.Complete, new { size });
 
             return size;
         }

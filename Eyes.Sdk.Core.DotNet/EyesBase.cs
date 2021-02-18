@@ -624,21 +624,21 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Writes the input message to this agent's log.
+        /// Writes the input message to this agent's log. Used by Eyes.qfl.
         /// </summary>
         public void Log(string message)
         {
             ArgumentGuard.NotNull(message, nameof(message));
 
-            Logger.Log(message);
+            Logger.Log(TraceLevel.Notice, Stage.General, new { message });
         }
 
         /// <summary>
-        /// Throws an <see cref="EyesException"/> with the input message.
+        /// Throws an <see cref="EyesException"/> with the input message. Used by Eyes.qfl.
         /// </summary>
         public void Throw(string message)
         {
-            Logger.Log(message);
+            Logger.Log(TraceLevel.Error, Stage.General, new { message });
             throw new EyesException(message);
         }
 
