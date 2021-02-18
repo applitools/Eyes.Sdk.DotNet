@@ -72,9 +72,9 @@ namespace Applitools.Selenium.Capture
             logger_.Verbose("switched to frame chain - size: {0} ; frame: {1}", currentFC.Count, currentFC.Peek());
 
             WaitForCssDownloadToFinish_(testIds);
-            logger_.Verbose("finished waiting for CSS files to download");
+            logger_.Log("finished waiting for CSS files to download");
             string inlaidString = StringUtils.EfficientStringReplace(cssStartToken_, cssEndToken_, dom, cssData_);
-            logger_.Verbose("inlaid string");
+            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, new { inlaidStringLength = inlaidString.Length });
             return inlaidString;
         }
 
@@ -126,7 +126,7 @@ namespace Applitools.Selenium.Capture
                 whArr = new AutoResetEvent[waitHandles_.Count];
                 waitHandles_.Values.CopyTo(whArr, 0);
             }
-            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, 
+            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript,
                 new { message = $"Waiting on {whArr.Length} to finish download" });
 
             foreach (AutoResetEvent wh in whArr)
@@ -139,13 +139,13 @@ namespace Applitools.Selenium.Capture
                 bool allSignaled = WaitHandle.WaitAll(whArr, timeout);
                 if (!allSignaled)
                 {
-                    logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript, 
+                    logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
                         new { message = $"Not all wait handles recieved signal after {timeout} ms. aborting." });
                 }
             }
         }
 
-        private Separators ParseScriptResult(string scriptResult, List<string> missingCssList, 
+        private Separators ParseScriptResult(string scriptResult, List<string> missingCssList,
             List<string> missingFramesList, List<string> data, string[] testIds)
         {
             using (StringReader sr = new StringReader(scriptResult))
@@ -179,7 +179,7 @@ namespace Applitools.Selenium.Capture
             List<CssTreeNode> cssTreeNodes = new List<CssTreeNode>();
             foreach (string missingCssUrl in missingCssList)
             {
-                if (missingCssUrl.StartsWith("blob:") || missingCssUrl.StartsWith("data:"))
+                if (!missingCssUrl.IsDownloadableUrl())
                 {
                     logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
                         new { message = "trying to download something impossible", missingCssUrl });
@@ -350,7 +350,7 @@ namespace Applitools.Selenium.Capture
                                 }
                                 else
                                 {
-                                    logger_.Log(TraceLevel.Error, testIds, Stage.Check, StageType.DownloadResource, 
+                                    logger_.Log(TraceLevel.Error, testIds, Stage.Check, StageType.DownloadResource,
                                         new { args.Error, data.href });
                                     if (retriesCount_ > 0)
                                     {
