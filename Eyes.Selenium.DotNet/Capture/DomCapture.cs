@@ -179,7 +179,7 @@ namespace Applitools.Selenium.Capture
             List<CssTreeNode> cssTreeNodes = new List<CssTreeNode>();
             foreach (string missingCssUrl in missingCssList)
             {
-                if (!missingCssUrl.IsDownloadableUrl())
+                if (missingCssUrl.StartsWith("blob:") || missingCssUrl.StartsWith("data:"))
                 {
                     logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
                         new { message = "trying to download something impossible", missingCssUrl });
