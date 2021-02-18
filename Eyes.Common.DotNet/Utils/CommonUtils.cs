@@ -107,7 +107,7 @@ namespace Applitools.Utils
                 long maxPosition = maxLength - bufferSize;
                 bool stillReading = true;
                 NetworkStream networkStream = stream as NetworkStream;
-                logger?.Log(TraceLevel.Debug, Stage.General, 
+                logger?.Log(TraceLevel.Debug, Stage.General,
                     new { message = "start reading", streamType = stream.GetType().Name });
                 while (stillReading && (networkStream?.DataAvailable ?? true) && (count = stream.Read(array, 0, array.Length)) != 0)
                 {
@@ -120,7 +120,7 @@ namespace Applitools.Utils
                 }
                 byte[] bytes = ms.ToArray();
                 logger?.Log(TraceLevel.Debug, Stage.General,
-                    new { message = "done reading", streamType = stream.GetType().Name , bytesRead = bytes.Length});
+                    new { message = "done reading", streamType = stream.GetType().Name, bytesRead = bytes.Length });
 
                 return bytes;
             }
@@ -370,7 +370,7 @@ namespace Applitools.Utils
             LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
         }
 
-        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, 
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex,
             object data, params string[] testIds)
         {
             LogExceptionStackTraceInner_(logger, stage, null, ex, data, testIds);
@@ -381,8 +381,14 @@ namespace Applitools.Utils
             LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
         }
 
-        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, 
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex,
             object data, params string[] testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, type, ex, data, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex,
+            object data, IEnumerable<string> testIds)
         {
             LogExceptionStackTraceInner_(logger, stage, type, ex, data, testIds);
         }
