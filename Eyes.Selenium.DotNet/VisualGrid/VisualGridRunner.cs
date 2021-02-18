@@ -150,9 +150,7 @@ namespace Applitools.VisualGrid
             Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
 
             eyesServiceRunner_ = new EyesServiceRunner(Logger, ServerConnector, allEyes_, concurrentOpenSessions,
-                drw, resourcesCacheMap, this);
-            Logger.Log(TraceLevel.Notice, suiteName_, Stage.Setup, StageType.Start,
-                new { message = $"starting runner thread {eyesServiceRunner_.ThreadId}" });
+                drw, resourcesCacheMap, this, suiteName_);
             eyesServiceRunner_.Start();
         }
 
