@@ -18,7 +18,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             driver.Url = "https://applitools.com/helloworld";
 
             BatchInfo batch = new BatchInfo("Visual Grid - Test bad webhook");
-            VisualGridRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestVGWithBadWebhook));
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
 
             Configuration config = new Configuration();

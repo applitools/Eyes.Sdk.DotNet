@@ -13,10 +13,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void TestRenderSpecialCharacters()
         {
-            VisualGridRunner runner = new VisualGridRunner(30);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(30, logHandler);
             Eyes eyes = new Eyes(runner);
-            eyes.SetLogHandler(TestUtils.InitLogHandler());
-
+            
             Configuration sconf = new Configuration();
             sconf.SetTestName("Special Characters");
             sconf.SetAppName("Special Characters Test");

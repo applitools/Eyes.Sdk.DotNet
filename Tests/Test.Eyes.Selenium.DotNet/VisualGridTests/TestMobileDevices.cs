@@ -13,9 +13,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void TestIosDeviceReportedResolutionOnFailure()
         {
-            EyesRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            EyesRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes);
 
             Configuration config = eyes.GetConfiguration();
             config.AddBrowser(new DesktopBrowserInfo(new RectangleSize(700, 460), BrowserType.CHROME));

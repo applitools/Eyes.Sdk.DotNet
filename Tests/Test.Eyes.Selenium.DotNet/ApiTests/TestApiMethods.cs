@@ -15,9 +15,9 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void TestCloseAsync(bool useVisualGrid)
         {
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
-            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
             string logPath = TestUtils.InitLogPath();
-            runner.SetLogHandler(TestUtils.InitLogHandler(logPath: logPath));
+            ILogHandler logHandler = TestUtils.InitLogHandler(logPath: logPath);
+            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
             if (useVisualGrid && !TestUtils.RUNS_ON_CI)
             {
                 ((VisualGridRunner)runner).DebugResourceWriter = new FileDebugResourceWriter(logPath);

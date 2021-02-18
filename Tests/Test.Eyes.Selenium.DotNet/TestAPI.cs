@@ -139,11 +139,11 @@ namespace Applitools.Selenium.Tests
         [TestCase(false)]
         public void TestAccessibility(bool useVisualGrid)
         {
-            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
             string suffix = useVisualGrid ? "_VG" : "";
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestAccessibility) + suffix);
+            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
             Eyes eyes = new Eyes(runner);
             eyes.Batch = TestDataProvider.BatchInfo;
-            TestUtils.SetupLogging(eyes, nameof(TestAccessibility) + suffix);
             AccessibilitySettings settings = new AccessibilitySettings(AccessibilityLevel.AA, AccessibilityGuidelinesVersion.WCAG_2_0);
             Configuration configuration = eyes.GetConfiguration();
             configuration.SetAccessibilityValidation(settings);
@@ -299,9 +299,16 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestFullAgentId_VG()
         {
-            EyesRunner runner = new VisualGridRunner(10);
-            Eyes eyes = new Eyes(runner);
-            StringAssert.StartsWith("Eyes.Selenium.VisualGrid.DotNet/", eyes.FullAgentId);
+            VisualGridRunner runner = new VisualGridRunner(10, TestUtils.InitLogHandler());
+            try
+            {
+                Eyes eyes = new Eyes(runner);
+                StringAssert.StartsWith("Eyes.Selenium.VisualGrid.DotNet/", eyes.FullAgentId);
+            }
+            finally
+            {
+                runner.StopServiceRunner();
+            }
         }
     }
 }

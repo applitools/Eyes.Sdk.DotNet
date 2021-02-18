@@ -1,5 +1,4 @@
-﻿using Applitools.Metadata;
-using Applitools.Selenium.Tests.Mock;
+﻿using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
@@ -22,10 +21,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void TestMobileOnly()
         {
-            VisualGridRunner runner = new VisualGridRunner(30);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(30, logHandler);
             Eyes eyes = new Eyes(runner);
-
-            eyes.SetLogHandler(TestUtils.InitLogHandler());
 
             Configuration sconf = new Configuration();
             sconf.SetTestName("Mobile Render Test");
@@ -49,10 +47,9 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             WebDriverProvider webdriverProvider = new WebDriverProvider();
             IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webdriverProvider);
-            VisualGridRunner runner = new VisualGridRunner(30, nameof(ViewportsTest), serverConnectorFactory);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(30, nameof(ViewportsTest), serverConnectorFactory, logHandler);
             Eyes eyes = new Eyes(runner);
-
-            eyes.SetLogHandler(TestUtils.InitLogHandler());
 
             Configuration sconf = new Configuration();
             sconf.SetBatch(TestDataProvider.BatchInfo);
@@ -107,13 +104,13 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [TestCase("https://applitools.github.io/demo/TestPages/VisualGridTestPage/canvastest.html", "Canvas Test")]
         public void TestSpecialRendering(string url, string testName)
         {
-            VisualGridRunner runner = new VisualGridRunner(30);
-
             string logsPath = TestUtils.InitLogPath();
+            ILogHandler logHandler = TestUtils.InitLogHandler(logPath: logsPath);
+            VisualGridRunner runner = new VisualGridRunner(30, logHandler);
+
             runner.DebugResourceWriter = new FileDebugResourceWriter(logsPath);
 
             Eyes eyes = new Eyes(runner);
-            eyes.SetLogHandler(TestUtils.InitLogHandler(logPath: logsPath));
 
             Configuration sconf = new Configuration();
             sconf.SetTestName(testName);
@@ -146,15 +143,16 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 driver.Quit();
                 eyes.AbortIfNotClosed();
+                runner.StopServiceRunner();
             }
         }
 
         [Test]
         public void IOSSimulatorUfgTest()
         {
-            VisualGridRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             try
             {

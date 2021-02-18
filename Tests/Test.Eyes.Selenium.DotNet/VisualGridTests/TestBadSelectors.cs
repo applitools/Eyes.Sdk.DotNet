@@ -91,6 +91,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 eyes.AbortIfNotClosed();
                 driver.Quit();
+                runner.GetAllTestResults();
             }
         }
     }
