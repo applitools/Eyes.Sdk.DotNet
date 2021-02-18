@@ -287,5 +287,10 @@ namespace Applitools.VisualGrid
                 { key, testConcurrency_.UserConcurrency }
             };
         }
+
+        internal void StopServiceRunner()
+        {
+            eyesServiceRunner_.StopServices();
+        }
     }
 }
