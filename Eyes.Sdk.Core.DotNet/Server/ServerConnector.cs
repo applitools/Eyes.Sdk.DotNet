@@ -293,6 +293,7 @@ namespace Applitools
                 UploadImage(new TaskListener<string>(
                     returnedUrl =>
                     {
+                        Logger.Log(TraceLevel.Notice, testIds, Stage.General, StageType.UploadComplete, new { returnedUrl });
                         if (returnedUrl == null)
                         {
                             listener.OnFail(new EyesException($"{nameof(MatchWindow)} failed: could not upload image to storage service."));
@@ -301,7 +302,7 @@ namespace Applitools
                         try
                         {
                             data.AppOutput.ScreenshotUrl = returnedUrl;
-                            MatchWindowImpl_(listener, data);
+                            MatchWindowImpl_(listener, data, testIds);
                         }
                         catch (Exception ex)
                         {
@@ -313,7 +314,7 @@ namespace Applitools
             }
             else if (data.AppOutput.ScreenshotUrl != null)
             {
-                MatchWindowImpl_(listener, data);
+                MatchWindowImpl_(listener, data, testIds);
             }
             else
             {
@@ -321,23 +322,28 @@ namespace Applitools
             }
         }
 
-        protected virtual void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        protected virtual void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data, string[] testIds)
         {
             string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchStart);
             httpClient_.PostJson(new TaskListener<HttpWebResponse>(
                 response =>
                 {
+                    Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete,
+                        new { response?.StatusCode });
                     if (response == null)
                     {
                         throw new NullReferenceException("response is null");
                     }
-                    listener.OnComplete(response.DeserializeBody<MatchResult>(true));
+                    MatchResult matchResult = response.DeserializeBody<MatchResult>(true);
+                    Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete, new { matchResult });
+                    listener.OnComplete(matchResult);
                 },
                 e => { throw e; }
                 ), url, data);
         }
 
-        private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType, 
+        private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType,
             string[] testIds)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
@@ -350,7 +356,7 @@ namespace Applitools
 
             Guid guid = Guid.NewGuid();
             targetUrl = targetUrl.Replace("__random__", guid.ToString());
-            Logger.Log("uploading {0} to {1}", mediaType, targetUrl);
+            Logger.Log(TraceLevel.Notice, testIds, Stage.General, StageType.UploadStart, new { mediaType, targetUrl });
 
             UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
             callback.UploadDataAsync();
@@ -532,10 +538,10 @@ namespace Applitools
                     }
                     binData = compressedStream.ToArray();
                 }
-                
+
                 Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadResource,
                     new { CompressedDataSize = binData.Length });
-                
+
                 UploadData_(new TaskListener<string>(
                     r => listener.OnComplete(r),
                     ex => listener.OnFail(ex)

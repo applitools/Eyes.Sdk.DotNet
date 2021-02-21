@@ -66,7 +66,7 @@ namespace Applitools.Selenium.Tests.Mock
             return renderingInfo;
         }
 
-        protected override void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        protected override void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data, string[] testIds)
         {
             if (data.Options.ReplaceLast)
             {
@@ -79,7 +79,7 @@ namespace Applitools.Selenium.Tests.Mock
                 MatchWindowCalls.Add(data);
             }
 
-            base.MatchWindowImpl_(listener, data);
+            base.MatchWindowImpl_(listener, data, testIds);
         }
 
         public delegate (bool, bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
