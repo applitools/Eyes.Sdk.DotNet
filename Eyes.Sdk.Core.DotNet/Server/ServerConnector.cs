@@ -284,7 +284,7 @@ namespace Applitools
             return httpClient;
         }
 
-        public void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData data)
+        public void MatchWindow(TaskListener<MatchResult> listener, MatchWindowData data, params string[] testIds)
         {
             ArgumentGuard.NotNull(data, nameof(data));
 
@@ -309,7 +309,7 @@ namespace Applitools
                         }
                     },
                     ex => listener.OnFail(ex)
-                ), data.AppOutput.ScreenshotBytes);
+                ), data.AppOutput.ScreenshotBytes, testIds);
             }
             else if (data.AppOutput.ScreenshotUrl != null)
             {
@@ -337,7 +337,8 @@ namespace Applitools
                 ), url, data);
         }
 
-        private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType)
+        private void UploadData_(TaskListener<string> listener, byte[] bytes, string contentType, string mediaType, 
+            string[] testIds)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
             string targetUrl = renderingInfo?.ResultsUrl?.AbsoluteUri;
@@ -349,9 +350,9 @@ namespace Applitools
 
             Guid guid = Guid.NewGuid();
             targetUrl = targetUrl.Replace("__random__", guid.ToString());
-            Logger.Verbose("uploading {0} to {1}", mediaType, targetUrl);
+            Logger.Log("uploading {0} to {1}", mediaType, targetUrl);
 
-            UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType);
+            UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
             callback.UploadDataAsync();
         }
 
@@ -515,12 +516,14 @@ namespace Applitools
             return member;
         }
 
-        public virtual void PostDomCapture(TaskListener<string> listener, string domJson)
+        public virtual void PostDomCapture(TaskListener<string> listener, string domJson, params string[] testIds)
         {
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadStart);
             try
             {
                 byte[] binData = Encoding.UTF8.GetBytes(domJson);
-
+                Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadResource,
+                    new { UncompressedDataSize = binData.Length });
                 using (MemoryStream compressedStream = new MemoryStream())
                 {
                     using (var zipStream = new GZipStream(compressedStream, CompressionMode.Compress))
@@ -529,15 +532,22 @@ namespace Applitools
                     }
                     binData = compressedStream.ToArray();
                 }
-
+                
+                Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadResource,
+                    new { CompressedDataSize = binData.Length });
+                
                 UploadData_(new TaskListener<string>(
                     r => listener.OnComplete(r),
                     ex => listener.OnFail(ex)
-                ), binData, "application/octet-stream", "application/json");
+                ), binData, "application/octet-stream", "application/json", testIds);
             }
             catch (Exception ex)
             {
                 throw new EyesException($"PostDomSnapshot failed: {ex.Message}", ex);
+            }
+            finally
+            {
+                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadComplete);
             }
         }
 
@@ -575,13 +585,13 @@ namespace Applitools
             apiKeyChanged_ = false;
         }
 
-        public void UploadImage(TaskListener<string> listener, byte[] screenshotBytes)
+        public void UploadImage(TaskListener<string> listener, byte[] screenshotBytes, string[] testIds)
         {
             UploadData_(new TaskListener<string>(
                     r => listener.OnComplete(r),
                     ex => listener.OnFail(ex)
                 ),
-                screenshotBytes, "image/png", "image/png");
+                screenshotBytes, "image/png", "image/png", testIds);
         }
 
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)

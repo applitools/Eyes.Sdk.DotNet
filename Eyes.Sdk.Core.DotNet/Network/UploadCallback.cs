@@ -16,12 +16,13 @@ namespace Applitools.Utils
         private readonly byte[] bytes_;
         private readonly string contentType_;
         private readonly string mediaType_;
+        private readonly string[] testIds_;
 
         private TimeSpan sleepDuration = TimeSpan.FromSeconds(5);
         private TimeSpan timePassed = TimeSpan.Zero;
 
         public UploadCallback(TaskListener<string> listener, ServerConnector serverConnector,
-                          string targetUrl, byte[] bytes, string contentType, string mediaType)
+                          string targetUrl, byte[] bytes, string contentType, string mediaType, string[] testIds)
         {
             ArgumentGuard.NotNull(bytes, nameof(bytes));
             OnComplete = OnComplete_;
@@ -32,11 +33,13 @@ namespace Applitools.Utils
             bytes_ = bytes;
             contentType_ = contentType;
             mediaType_ = mediaType;
+            testIds_ = testIds;
             HttpRestClient client = serverConnector.CreateHttpRestClient(new Uri(targetUrl));
             WebRequestCreator = client.WebRequestCreator;
         }
 
         internal IWebRequestCreate WebRequestCreator { get; set; } = DefaultWebRequestCreator.Instance;
+
 
         private void OnComplete_(HttpWebResponse response)
         {
@@ -102,7 +105,8 @@ namespace Applitools.Utils
                 HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
                 HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
                 HttpStatusCode statusCode = response.StatusCode;
-                serverConnector_.Logger.Verbose("Upload Status Code: {0}", statusCode);
+                serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadComplete,
+                    new { statusCode });
                 OnComplete_(response);
                 response.Close();
             }, request);

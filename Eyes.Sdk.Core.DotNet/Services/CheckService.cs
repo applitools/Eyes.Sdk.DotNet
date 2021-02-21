@@ -130,7 +130,7 @@ namespace Applitools
             {
                 Logger.Log(TraceLevel.Notice, testId, Stage.Check, StageType.MatchStart, new { matchWindowData = data });
                 LoggingListener<MatchResult> loggingListener = new LoggingListener<MatchResult>(listener, Logger, testId);
-                ServerConnector.MatchWindow(loggingListener, data);
+                ServerConnector.MatchWindow(loggingListener, data, testId);
             }
             catch (Exception ex)
             {

@@ -194,7 +194,7 @@ namespace Applitools.Selenium.Tests.Mock
             taskListener.OnComplete(result);
         }
 
-        public override void PostDomCapture(TaskListener<string> listener, string domJson)
+        public override void PostDomCapture(TaskListener<string> listener, string domJson, params string[] testIds)
         {
             listener.OnComplete("http://some.targeturl.com/dom");
         }

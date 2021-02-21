@@ -854,7 +854,7 @@ namespace Applitools
         {
             if (domJson == null) return null;
             SyncTaskListener<string> syncListener = new SyncTaskListener<string>(logger: Logger);
-            ServerConnector.PostDomCapture(syncListener, domJson);
+            ServerConnector.PostDomCapture(syncListener, domJson, TestId);
             return syncListener.Get();
         }
 
