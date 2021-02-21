@@ -1,5 +1,6 @@
 ﻿using Applitools.Utils;
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -63,8 +64,24 @@ namespace Applitools
         public bool? Get()
         {
             logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"Waiting for finish...", caller_ });
-            if (!sync_.WaitOne(0)) sync_.WaitOne();
-            logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"finished.", caller_, callingThread_ });
+            Stopwatch sw = Stopwatch.StartNew();
+            TimeSpan timeout = TimeSpan.FromMinutes(5);
+            bool result;
+            do
+            {
+                result = sync_.WaitOne(TimeSpan.FromMinutes(1));
+                if (!result) logger_?.Log(TraceLevel.Notice, testIds_, Stage.General,
+                        new { message = $"still waiting for finish...", caller_, sw.Elapsed });
+            } while (!result && sw.Elapsed < timeout);
+
+            if (result)
+            {
+                logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"finished.", caller_, callingThread_ });
+            }
+            else
+            {
+                throw new EyesException("Failed waiting for finish.");
+            }
             return result_;
         }
 
