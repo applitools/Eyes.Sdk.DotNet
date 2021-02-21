@@ -192,7 +192,24 @@ namespace Applitools
         public T Get()
         {
             logger_?.Log(TraceLevel.Info, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
-            if (!sync_.WaitOne(0)) sync_.WaitOne();
+            Stopwatch sw = Stopwatch.StartNew();
+            TimeSpan timeout = TimeSpan.FromMinutes(5);
+            bool result;
+            do
+            {
+                result = sync_.WaitOne(TimeSpan.FromMinutes(1));
+                if (!result) logger_?.Log(TraceLevel.Notice, testIds_, Stage.General,
+                        new { message = $"still waiting for finish...", caller_, sw.Elapsed });
+            } while (!result && sw.Elapsed < timeout);
+
+            if (result)
+            {
+                logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"finished.", caller_, callingThread_ });
+            }
+            else
+            {
+                throw new EyesException("Failed waiting for finish.");
+            }
             logger_?.Log(TraceLevel.Info, testIds_, Stage.General, new { message = $"Results arrived", caller_, callingThread_, result_ });
             return result_;
         }
