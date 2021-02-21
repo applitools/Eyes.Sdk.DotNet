@@ -128,7 +128,7 @@ namespace Applitools
         {
             try
             {
-                Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.MatchStart, new { matchWindowData = data });
+                Logger.Log(TraceLevel.Notice, testId, Stage.Check, StageType.MatchStart, new { matchWindowData = data });
                 LoggingListener<MatchResult> loggingListener = new LoggingListener<MatchResult>(listener, Logger, testId);
                 ServerConnector.MatchWindow(loggingListener, data, testId);
             }
