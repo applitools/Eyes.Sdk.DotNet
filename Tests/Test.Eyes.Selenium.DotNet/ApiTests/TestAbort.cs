@@ -49,6 +49,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void LocalTearDown()
         {
             driver_.Quit();
+            (runner_ as VisualGridRunner)?.StopServiceRunner();
         }
 
         [Test]

@@ -152,17 +152,19 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
             try
             {
-                Eyes eyes1 = new Eyes(runner);
-                eyes1.Batch = TestDataProvider.BatchInfo;
-                eyes1.Open(driver, "Applitools Eyes SDK", nameof(TestDoubleCheckDontGetAllResults) + suffix, new RectangleSize(1200, 800));
-                eyes1.Check(Target.Window().WithName("Step 1"));
-                eyes1.Check(Target.Window().WithName("Step 2"));
-                eyes1.Close(false);
+                Eyes eyes = new Eyes(runner);
+                eyes.Batch = TestDataProvider.BatchInfo;
+                eyes.Open(driver, "Applitools Eyes SDK", nameof(TestDoubleCheckDontGetAllResults) + suffix, new RectangleSize(1200, 800));
+                eyes.Check(Target.Window().WithName("Step 1"));
+                eyes.Check(Target.Window().WithName("Step 2"));
+                eyes.Close(false);
             }
             finally
             {
                 driver.Quit();
             }
+            Assert.IsFalse(runner.GetAllTestResultsAlreadyCalled);
+            (runner as VisualGridRunner)?.StopServiceRunner();
         }
     }
 }

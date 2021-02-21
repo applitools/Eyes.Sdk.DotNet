@@ -30,14 +30,20 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
             eyes.SetConfiguration(config);
             eyes.Open(driver);
-            eyes.Check(Target.Window().Fully().BeforeRenderScreenshotHook("gibberish uncompilable java script"));
-            driver.Quit();
-            Assert.That(() =>
+            try
             {
-                eyes.Close();
-                runner.GetAllTestResults();
-            }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.Property("Message").StartsWith("Render Failed for DesktopBrowserInfo {ViewportSize={Width=800, Height=600}, BrowserType=CHROME} "));
-
+                eyes.Check(Target.Window().Fully().BeforeRenderScreenshotHook("gibberish uncompilable java script"));
+                driver.Quit();
+                Assert.That(() =>
+                {
+                    eyes.Close();
+                    runner.GetAllTestResults();
+                }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.Property("Message").StartsWith("Render Failed for DesktopBrowserInfo {ViewportSize={Width=800, Height=600}, BrowserType=CHROME} "));
+            }
+            finally
+            {
+                runner.StopServiceRunner();
+            }
         }
     }
 }
