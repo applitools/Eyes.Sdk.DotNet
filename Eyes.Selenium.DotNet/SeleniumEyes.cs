@@ -243,7 +243,7 @@ namespace Applitools.Selenium
             Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript);
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
             string domJson = domCapture.GetFullWindowDom(TestId);
-            Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
             return domJson;
         }
 
