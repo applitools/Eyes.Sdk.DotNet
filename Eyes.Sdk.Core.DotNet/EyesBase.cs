@@ -928,6 +928,7 @@ namespace Applitools
             SessionStartInfo startInfo = PrepareForOpen();
             if (startInfo == null)
             {
+                Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { startInfo });
                 return;
             }
 

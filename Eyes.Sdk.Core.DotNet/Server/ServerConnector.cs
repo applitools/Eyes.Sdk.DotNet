@@ -362,6 +362,9 @@ namespace Applitools
             callback.UploadDataAsync();
         }
 
+
+        // Used only by IN-REGION
+
         /// <summary>
         /// Adds the input image to the running session and returns its id.
         /// </summary>

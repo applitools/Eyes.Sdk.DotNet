@@ -101,14 +101,25 @@ namespace Applitools.Utils
 
             request.BeginGetResponse(ar =>
             {
-                if (!ar.IsCompleted) return;
+                if (!ar.IsCompleted)
+                {
+                    serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
+                    new { message = "upload not complete" });
+                    return;
+                }
                 HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
                 HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
                 HttpStatusCode statusCode = response.StatusCode;
                 serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadComplete,
                     new { statusCode });
-                OnComplete_(response);
-                response.Close();
+                try
+                {
+                    OnComplete_(response);
+                }
+                finally
+                {
+                    response.Close();
+                }
             }, request);
         }
     }

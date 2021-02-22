@@ -145,14 +145,6 @@ namespace Applitools.Utils
         }
 
         /// <summary>
-        /// Sends a POST request to the input path under the base url.
-        /// </summary>
-        public HttpWebResponse Post(string path, string accept = null)
-        {
-            return SendHttpWebRequest_(path, "POST", null, null, accept, null);
-        }
-
-        /// <summary>
         /// Sends a POST request to the input path under the base url with a JSON body.
         /// </summary>
         public HttpWebResponse PostJson<T>(string path, T body, string accept = "application/json")
@@ -168,6 +160,8 @@ namespace Applitools.Utils
             SendLongJsonRequest_(listener, path, "POST", body, accept);
         }
 
+
+        // Used ONLY by IN-REGION
         /// <summary>
         /// Sends a POST request of the input body to the input path under the base url.
         /// </summary>
@@ -178,14 +172,6 @@ namespace Applitools.Utils
         }
 
         /// <summary>
-        /// Sends a PUT request to the input path under the base url.
-        /// </summary>
-        public HttpWebResponse Put(string path, string accept = null)
-        {
-            return SendHttpWebRequest_(path, "PUT", null, null, accept, null);
-        }
-
-        /// <summary>
         /// Sends a PUT request to the input path under the base url with a JSON body.
         /// </summary>
         public HttpWebResponse PutJson<T>(string path, T body, string accept = "application/json")
@@ -193,14 +179,8 @@ namespace Applitools.Utils
             return SendJsonHttpWebRequest_(path, "PUT", body, accept);
         }
 
-        /// <summary>
-        /// Sends a PUT request of the input body to the input path under the base url.
-        /// </summary>
-        public HttpWebResponse Put(
-            string path, MemoryStream body, string contentType = null, string accept = null, string contentEncoding = null)
-        {
-            return SendHttpWebRequest_(path, "PUT", body, contentType, accept, contentEncoding);
-        }
+
+        // Used ONLY by DeleteSession
 
         /// <summary>
         /// Sends a DELETE request to the input path under the base url.
