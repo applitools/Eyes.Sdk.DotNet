@@ -47,18 +47,31 @@ namespace Applitools
 
         private void OnComplete_()
         {
-            onComplete_?.Invoke();
-            result_ = true;
-            sync_.Set();
+            try
+            {
+                logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
+                onComplete_?.Invoke();
+            }
+            finally
+            {
+                result_ = true;
+                sync_.Set();
+            }
         }
 
         private void OnFail_(Exception e)
         {
-            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, testIds_);
-            Exception = e;
-            onFail_?.Invoke(e);
-            result_ = false;
-            sync_.Set();
+            try
+            {
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, testIds_);
+                Exception = e;
+                onFail_?.Invoke(e);
+            }
+            finally
+            {
+                result_ = false;
+                sync_.Set();
+            }
         }
 
         public bool? Get()
@@ -175,18 +188,30 @@ namespace Applitools
 
         private void OnComplete_(T t)
         {
-            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
-            onComplete_?.Invoke(t);
-            result_ = t;
-            sync_.Set();
+            try
+            {
+                logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
+                onComplete_?.Invoke(t);
+            }
+            finally
+            {
+                result_ = t;
+                sync_.Set();
+            }
         }
 
         private void OnFail_(Exception e)
         {
-            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, new { caller_, callingThread_ }, testIds_);
-            Exception = e;
-            onFail_?.Invoke(e);
-            sync_.Set();
+            try
+            {
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, new { caller_, callingThread_ }, testIds_);
+                Exception = e;
+                onFail_?.Invoke(e);
+            }
+            finally
+            {
+                sync_.Set();
+            }
         }
 
         public T Get()
