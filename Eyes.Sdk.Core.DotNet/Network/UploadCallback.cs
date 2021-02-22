@@ -104,7 +104,7 @@ namespace Applitools.Utils
                 if (!ar.IsCompleted)
                 {
                     serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
-                    new { message = "upload not complete" });
+                        new { message = "upload not complete" });
                     return;
                 }
                 HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
