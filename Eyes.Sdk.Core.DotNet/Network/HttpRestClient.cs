@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Collections.Specialized;
@@ -37,6 +36,7 @@ namespace Applitools.Utils
         /// </summary>
         /// <param name="jsonSerializer">The JSON serializer to use to <c>null</c> 
         /// to use the default serializer.</param>
+        /// <param name="logger"></param>
         /// <param name="agentId">The full agent ID of the SDK.</param>
         /// <param name="serverUrl">Server's base URL</param>
         public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null, Logger logger = null)
@@ -47,7 +47,7 @@ namespace Applitools.Utils
             json_ = jsonSerializer ?? JsonUtils.CreateSerializer(false, false);
             AgentId = agentId;
             ConnectionLimit = 10;
-            Logger = logger;
+            Logger = logger ?? new Logger();
             Timeout = TimeSpan.FromMinutes(10);
         }
 
@@ -271,33 +271,41 @@ namespace Applitools.Utils
         {
             Uri requestUri = new Uri(url);
             HttpWebRequest request = CreateHttpWebRequest_(requestUri, method, null, null, null, null);
-            SendAsyncRequest(listener, request);
+            SendAsyncRequest(listener, request, Logger);
         }
 
-        public static void SendAsyncRequest(TaskListener<HttpWebResponse> listener, HttpWebRequest request)
+        public static void SendAsyncRequest(TaskListener<HttpWebResponse> listener, HttpWebRequest request, Logger logger)
         {
-            request.BeginGetResponse(ar =>
+            IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
+            if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
-                if (!ar.IsCompleted) return;
-                HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
-                try
+                logger.Log(TraceLevel.Notice, Stage.General,
+                            new { message = "request.BeginGetResponse completed synchronously" });
+                GetResponseCallBack_(listener, asyncResult);
+            }
+        }
+
+        private static void GetResponseCallBack_(TaskListener<HttpWebResponse> listener, IAsyncResult ar)
+        {
+            if (!ar.IsCompleted) return;
+            HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+                if (response.StatusCode >= HttpStatusCode.Ambiguous)
                 {
-                    HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
-                    if (response.StatusCode >= HttpStatusCode.Ambiguous)
-                    {
-                        listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.StatusDescription}"));
-                    }
-                    else
-                    {
-                        listener.OnComplete(response);
-                    }
-                    response.Close();
+                    listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.StatusDescription}"));
                 }
-                catch (WebException ex)
+                else
                 {
-                    listener.OnFail(ex);
+                    listener.OnComplete(response);
                 }
-            }, request);
+                response.Close();
+            }
+            catch (WebException ex)
+            {
+                listener.OnFail(ex);
+            }
         }
 
         private HttpWebResponse SendHttpWebRequest_(
@@ -338,7 +346,13 @@ namespace Applitools.Utils
                     {
                         throw new NullReferenceException("request is null");
                     }
-                    request.BeginGetResponse(OnLongRequestResponse_, request);
+                    IAsyncResult asyncResult = request.BeginGetResponse(OnLongRequestResponse_, request);
+                    if (asyncResult != null && asyncResult.CompletedSynchronously)
+                    {
+                        Logger.Log(TraceLevel.Notice, Stage.General,
+                            new { message = "request.BeginGetResponse completed synchronously" });
+                        OnLongRequestResponse_(asyncResult);
+                    }
                 }
                 catch (WebException ex)
                 {
@@ -380,7 +394,6 @@ namespace Applitools.Utils
                 RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, statusUrl, listener);
                 SendAsyncRequest(requestPollingListener, statusUrl, "GET");
             }
-
         }
 
         private HttpWebRequest CreateHttpWebRequest_(

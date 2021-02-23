@@ -452,7 +452,7 @@ namespace Applitools
                         listener.OnComplete(jobInfos);
                     },
                     ex => listener.OnFail(ex)
-                    ), request);
+                    ), request, Logger);
             }
             catch (Exception e)
             {
@@ -623,7 +623,7 @@ namespace Applitools
                   }
                   taskListener.OnComplete(response.DeserializeBody<T>(true));
               },
-              ex => taskListener.OnFail(ex)), request);
+              ex => taskListener.OnFail(ex)), request, Logger);
         }
 
         public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)
