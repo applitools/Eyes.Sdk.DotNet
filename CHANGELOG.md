@@ -22,7 +22,8 @@
 ### Added
 - .NET 5.0 support
 ### Updated
-- `dom-snapshot` script updated to version 4.4.8
+- `dom-snapshot` script updated to version 4.4.11
+- `dom-capture` script updated to version 11.0.1
 - Ultrafast Grid: XPath to elements is much smaller now and more robust
 - Ultrafast Grid: Performance improvements in CSS resource collection
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
