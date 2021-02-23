@@ -6,6 +6,7 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
 
 namespace Applitools.Selenium
 {

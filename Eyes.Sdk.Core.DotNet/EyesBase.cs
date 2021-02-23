@@ -146,9 +146,9 @@ namespace Applitools
         /// </summary>
         public virtual bool IsDisabled { get; set; }
 
-        public bool IsCompleted => testResultContainer_ != null;
+        protected bool GetIsCompleted() => testResultContainer_ != null;
 
-        public virtual SessionStartInfo PrepareForOpen()
+        protected internal virtual SessionStartInfo PrepareForOpen()
         {
             Logger.GetILogHandler().Open();
 
@@ -544,7 +544,7 @@ namespace Applitools
             Abort();
         }
 
-        public virtual MatchWindowData PrepareForMatch(
+        protected internal virtual MatchWindowData PrepareForMatch(
                                     ICheckSettingsInternal checkSettingsInternal,
                                     IList<Trigger> userInputs,
                                     AppOutput appOutput,
@@ -818,7 +818,7 @@ namespace Applitools
         protected virtual void BeforeOpen() { }
         protected virtual void AfterOpen() { }
 
-        public virtual void OpenCompleted(RunningSession result)
+        protected internal virtual void OpenCompleted(RunningSession result)
         {
             runningSession_ = result;
             Logger.Log(TraceLevel.Info, TestId, Stage.Open, StageType.Complete,
@@ -1144,8 +1144,7 @@ namespace Applitools
             return sessionStartInfo_;
         }
 
-
-        public virtual SessionStopInfo PrepareStopSession(bool isAborted)
+        protected internal virtual SessionStopInfo PrepareStopSession(bool isAborted)
         {
             if (runningSession_ == null || !IsOpen)
             {

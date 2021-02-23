@@ -21,6 +21,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Region = Applitools.Utils.Geometry.Region;
+using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
+using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
 
 namespace Applitools.Selenium
 {
@@ -1499,18 +1501,18 @@ namespace Applitools.Selenium
             return new TestResultContainer[] { testResultContainer_ };
         }
 
-        public override MatchWindowData PrepareForMatch(ICheckTask checkTask)
+        protected internal override MatchWindowData PrepareForMatch(ICheckTask checkTask)
         {
             throw new NotImplementedException();
         }
 
-        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
-            string source, IList<IUserAction> userInputs)
+        protected internal override ICheckTask IssueCheck(ICheckSettings checkSettings,
+            IList<VisualGridSelector[]> regionSelectors, string source, IList<IUserAction> userInputs)
         {
             throw new NotImplementedException();
         }
 
-        public override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
+        protected internal override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
         {
             throw new NotImplementedException();
         }

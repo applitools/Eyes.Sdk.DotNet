@@ -16,24 +16,24 @@ namespace Applitools
 
         public static readonly int PARALLEL_STEPS_LIMIT = 1;
 
-        public override void OpenCompleted(RunningSession result)
+        protected internal override void OpenCompleted(RunningSession result)
         {
             inOpenProcess_ = false;
             base.OpenCompleted(result);
         }
 
-        public void OpenFailed(Exception e)
+        internal void OpenFailed(Exception e)
         {
             inOpenProcess_ = false;
             SetTestInExceptionMode(e);
         }
 
-        public abstract MatchWindowData PrepareForMatch(ICheckTask checkTask);
+        protected internal abstract MatchWindowData PrepareForMatch(ICheckTask checkTask);
 
-        public abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
+        protected internal abstract ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
             string source, IList<IUserAction> userInputs);
 
-        public abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
+        protected internal abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
 
         protected RunningTest(ClassicRunner runner) : base(runner)
         {
@@ -81,7 +81,7 @@ namespace Applitools
             }
         }
 
-        public override SessionStartInfo PrepareForOpen()
+        protected internal override SessionStartInfo PrepareForOpen()
         {
             inOpenProcess_ = true;
             return base.PrepareForOpen();
@@ -89,7 +89,9 @@ namespace Applitools
 
         public bool IsTestAborted => isAbortIssued_ ?? false;
 
-        public void IssueClose()
+        bool IRunningTest.IsCompleted => GetIsCompleted();
+
+        protected internal void IssueClose()
         {
             if (IsCloseTaskIssued)
             {
@@ -99,7 +101,7 @@ namespace Applitools
             isAbortIssued_ = false;
         }
 
-        public virtual void IssueAbort(Exception exception, bool forceAbort)
+        protected internal virtual void IssueAbort(Exception exception, bool forceAbort)
         {
             if (IsCloseTaskIssued && !forceAbort)
             {
@@ -113,7 +115,7 @@ namespace Applitools
             }
         }
 
-        public void CloseCompleted(TestResults testResults)
+        protected internal void CloseCompleted(TestResults testResults)
         {
             startedCloseProcess_ = true;
             if (!IsTestAborted)
@@ -132,7 +134,7 @@ namespace Applitools
             testResultContainer_ = new TestResultContainer(testResults, BrowserInfo, exception_);
         }
 
-        public void CloseFailed(Exception e)
+        protected internal void CloseFailed(Exception e)
         {
             startedCloseProcess_ = true;
             if (exception_ == null)
@@ -143,13 +145,13 @@ namespace Applitools
             testResultContainer_ = new TestResultContainer(null, BrowserInfo, exception_);
         }
 
-        public override SessionStopInfo PrepareStopSession(bool isAborted)
+        protected internal override SessionStopInfo PrepareStopSession(bool isAborted)
         {
             startedCloseProcess_ = true;
             return base.PrepareStopSession(isAborted);
         }
 
-        public void SetTestInExceptionMode(Exception e)
+        protected internal void SetTestInExceptionMode(Exception e)
         {
             CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e, TestId);
             if (IsTestAborted)

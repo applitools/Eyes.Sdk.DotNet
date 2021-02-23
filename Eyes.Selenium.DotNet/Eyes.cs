@@ -90,7 +90,7 @@ namespace Applitools.Selenium
             activeEyes_.ApiKey = configuration_.ApiKey;
         }
 
-        protected override Applitools.Configuration Config { get => configuration_; }
+        protected internal override Applitools.Configuration Config { get => configuration_; }
         Configuration ISeleniumConfigurationProvider.GetConfiguration() { return configuration_; }
 
 

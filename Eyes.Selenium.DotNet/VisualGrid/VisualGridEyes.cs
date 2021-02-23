@@ -790,7 +790,7 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("running test device info: {0}", vgRunningTest.BrowserInfo);
                 Logger.Verbose("is current running test open: {0}", vgRunningTest.IsOpen);
                 Logger.Verbose("is current running test ready to close: {0}", vgRunningTest.IsTestReadyToClose);
-                Logger.Verbose("is current running test closed: {0}", vgRunningTest.IsCompleted);
+                Logger.Verbose("is current running test closed: {0}", ((IRunningTest)vgRunningTest).IsCompleted);
                 Logger.Verbose("closing current running test");
                 vgRunningTest.IssueClose();
             }
@@ -862,7 +862,7 @@ namespace Applitools.Selenium.VisualGrid
             List<TestResultContainer> allResults = new List<TestResultContainer>();
             foreach (RunningTest runningTest in testList_.Values)
             {
-                if (!runningTest.IsCompleted)
+                if (!((IRunningTest)runningTest).IsCompleted)
                 {
                     if (runner_.GetError() != null)
                     {
