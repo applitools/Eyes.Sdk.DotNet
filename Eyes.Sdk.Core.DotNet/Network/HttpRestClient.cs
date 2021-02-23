@@ -471,43 +471,12 @@ namespace Applitools.Utils
 
                 req.ContentLength = body.Length;
                 body.Position = 0;
-                RequestData reqData = new RequestData(req, body);
-                req.BeginGetRequestStream(GetRequestStreamCallback, reqData);
-                reqData.Wait();
+                Stream reqStream = req.GetRequestStream();
+                body.CopyTo(reqStream);
+                reqStream.Close();
             }
 
             return req;
-        }
-
-        class RequestData
-        {
-            private readonly ManualResetEvent waitHandle_ = new ManualResetEvent(false);
-            public RequestData(HttpWebRequest request, Stream body)
-            {
-                Request = request;
-                Body = body;
-            }
-
-            public HttpWebRequest Request { get; set; }
-            public Stream Body { get; set; }
-            public void CopyTo(Stream stream)
-            {
-                Body.CopyTo(stream);
-                stream.Close();
-                waitHandle_.Set();
-            }
-            public void Wait()
-            {
-                waitHandle_.WaitOne();
-            }
-        }
-
-        private void GetRequestStreamCallback(IAsyncResult ar)
-        {
-            RequestData reqData = (RequestData)ar.AsyncState;
-            HttpWebRequest request = reqData.Request;
-            Stream postStream = request.EndGetRequestStream(ar);
-            reqData.CopyTo(postStream);
         }
 
         private static void SetLongRequestHeaders(HttpWebRequest req)
