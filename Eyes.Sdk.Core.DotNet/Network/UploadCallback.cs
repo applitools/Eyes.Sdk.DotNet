@@ -111,6 +111,8 @@ namespace Applitools.Utils
             }, request);
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
+                serverConnector_.Logger.Log(TraceLevel.Notice, Stage.General,
+                    new { message = "request.BeginGetResponse completed synchronously" });
                 HandleResult_(asyncResult);
             }
         }
