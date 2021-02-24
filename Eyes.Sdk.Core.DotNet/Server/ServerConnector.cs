@@ -130,7 +130,7 @@ namespace Applitools
         // for testing purposes only
         internal RunningSession StartSession(SessionStartInfo sessionStartInfo)
         {
-            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger, testIds: "TEST");
             StartSessionInternal(listener, sessionStartInfo);
             return listener.Get();
         }
