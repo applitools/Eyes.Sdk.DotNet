@@ -106,7 +106,7 @@ namespace Applitools
         private void LogInner_(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data)
         {
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
-            ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 3, data), level);
+            ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 3, data), level); // TODO pass something else instead of 3 in case of Error since there's more stack to it.
             logHandler_.OnMessage(@event);
         }
 
