@@ -119,7 +119,7 @@ namespace Applitools.Selenium.Tests.Mock
         {
             if (request.Method == HttpMethod.Post && request.RequestUri.PathAndQuery == "/render")
             {
-                Stream stream = request.GetRequestStream();
+                Stream stream = request.Content.ReadAsStream();
                 stream.Position = 0;
                 byte[] bytes = stream.ReadToEnd();
                 string requestJsonStr = Encoding.UTF8.GetString(bytes);

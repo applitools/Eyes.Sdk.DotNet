@@ -218,10 +218,6 @@
             }
         }
 
-        public static Stream GetRequestStream(this HttpRequestMessage request)
-        {
-            return request.Content.ReadAsStreamAsync().Result;
-        }
         #endregion
 
         #endregion
