@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Http;
     using System.Text;
     using System.Web;
 
@@ -31,7 +32,7 @@
             request.Headers["Authorization"] = "Basic " + token;
             return request;
         }
-        
+
         #region URLs
 
         /// <summary>
@@ -71,9 +72,9 @@
                 query = query + "&" + fragment;
             }
 
-            return new Uri(uri.GetLeftPart(UriPartial.Path) + query); 
+            return new Uri(uri.GetLeftPart(UriPartial.Path) + query);
         }
-        
+
         #endregion
 
         #region Json
@@ -87,7 +88,7 @@
         {
             return DeserializeBody<T>(response, dispose, null, new int[0]);
         }
-        
+
         /// <summary>
         /// Deserializes the body of the response if its status code is <c>200 OK</c> or any 
         /// of the specified status codes.
@@ -99,7 +100,7 @@
         public static T DeserializeBody<T>(
             this HttpWebResponse response,
             bool dispose,
-            JsonSerializer serializer, 
+            JsonSerializer serializer,
             params HttpStatusCode[] validStatuses)
         {
             var codes = new int[validStatuses.Length];
@@ -110,7 +111,7 @@
 
             return DeserializeBody<T>(response, dispose, serializer, codes);
         }
-        
+
         /// <summary>
         /// Deserializes the body of the response if its status code is <c>200 OK</c> or any 
         /// of the specified status codes.
@@ -120,20 +121,20 @@
         /// <param name="serializer">Json serializer to use</param>
         /// <param name="validStatuses">Valid status codes</param>
         public static T DeserializeBody<T>(
-            this HttpWebResponse response, 
-            bool dispose, 
-            JsonSerializer serializer, 
+            this HttpWebResponse response,
+            bool dispose,
+            JsonSerializer serializer,
             params int[] validStatuses)
         {
             ArgumentGuard.NotNull(response, nameof(response));
-            
+
             serializer = serializer ?? JsonUtils.Serializer;
 
-            if (response.StatusCode != HttpStatusCode.OK && 
+            if (response.StatusCode != HttpStatusCode.OK &&
                 !validStatuses.Contains((int)response.StatusCode))
             {
                 var msg = "Unexpected status: {0} {1}"
-                    .Fmt((int)response.StatusCode, response.StatusDescription); 
+                    .Fmt((int)response.StatusCode, response.StatusDescription);
                 throw new WebException(msg, null, WebExceptionStatus.ProtocolError, response);
             }
 
@@ -157,9 +158,72 @@
                 }
             }
         }
-        
+
+        public static T DeserializeBody<T>(
+            this HttpResponseMessage response,
+            bool dispose,
+            JsonSerializer serializer,
+            params HttpStatusCode[] validStatuses)
+        {
+            var codes = new int[validStatuses.Length];
+            for (int i = 0; i < codes.Length; ++i)
+            {
+                codes[i] = (int)validStatuses[i];
+            }
+
+            return DeserializeBody<T>(response, dispose, serializer, codes);
+        }
+
+        public static T DeserializeBody<T>(this HttpResponseMessage response, bool dispose)
+        {
+            return DeserializeBody<T>(response, dispose, null, new int[0]);
+        }
+
+        public static T DeserializeBody<T>(
+           this HttpResponseMessage response,
+           bool dispose,
+           JsonSerializer serializer,
+           params int[] validStatuses)
+        {
+            ArgumentGuard.NotNull(response, nameof(response));
+
+            serializer = serializer ?? JsonUtils.Serializer;
+
+            if (response.StatusCode != HttpStatusCode.OK &&
+                !validStatuses.Contains((int)response.StatusCode))
+            {
+                var msg = "Unexpected status: {0} {1}"
+                    .Fmt((int)response.StatusCode, response.ReasonPhrase);
+                throw new WebException(msg, WebExceptionStatus.ProtocolError);
+            }
+
+            using (var s = response.Content.ReadAsStreamAsync().Result)
+            {
+                var json = new StreamReader(s).ReadToEnd();
+
+                try
+                {
+                    var body = serializer.Deserialize<T>(json);
+                    if (dispose)
+                    {
+                        response.Dispose();
+                    }
+
+                    return body;
+                }
+                catch (Exception ex)
+                {
+                    throw new FormatException("Failed to deserialize '{0}'".Fmt(json), ex);
+                }
+            }
+        }
+
+        public static Stream GetRequestStream(this HttpRequestMessage request)
+        {
+            return request.Content.ReadAsStreamAsync().Result;
+        }
         #endregion
-        
+
         #endregion
     }
 }

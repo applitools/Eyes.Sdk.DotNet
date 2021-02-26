@@ -2,6 +2,7 @@
 {
     using System;
     using System.Net;
+    using System.Net.Http;
 
     /// <summary>
     /// Http request failed (with exception) event arguments.
@@ -9,7 +10,7 @@
     public class HttpRequestFailedEventArgs : EventArgs
     {
         public HttpRequestFailedEventArgs(
-            TimeSpan elapsed, HttpWebRequest request, Exception exception)
+            TimeSpan elapsed, HttpRequestMessage request, Exception exception)
         {
             ArgumentGuard.NotNull(request, nameof(request));
             ArgumentGuard.NotNull(exception, nameof(exception));
@@ -27,7 +28,7 @@
         /// <summary>
         /// The HTTP request.
         /// </summary>
-        public HttpWebRequest Request { get; private set; }
+        public HttpRequestMessage Request { get; private set; }
 
         /// <summary>
         /// The exception thrown.

@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Region = Applitools.Utils.Geometry.Region;
@@ -156,7 +157,7 @@ namespace Applitools
             {
                 EnsureHttpClient_();
                 httpClient_.PostJson(
-                    new TaskListener<HttpWebResponse>(
+                    new TaskListener<HttpResponseMessage>(
                         response =>
                         {
                             if (response == null)
@@ -224,7 +225,7 @@ namespace Applitools
             ArgumentGuard.NotNull(sessionStopInfo, nameof(sessionStopInfo));
             ArgumentGuard.NotNull(sessionStopInfo.RunningSession, nameof(sessionStopInfo.RunningSession));
 
-            httpClient_.DeleteJson(new TaskListener<HttpWebResponse>(
+            httpClient_.DeleteJson(new TaskListener<HttpResponseMessage>(
                 response =>
                 {
                     if (response == null)
@@ -326,7 +327,7 @@ namespace Applitools
         {
             string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
             Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchStart);
-            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+            httpClient_.PostJson(new TaskListener<HttpResponseMessage>(
                 response =>
                 {
                     Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete,
@@ -430,11 +431,11 @@ namespace Applitools
             Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.JobInfo, new { renderRequests });
             try
             {
-                HttpWebRequest request = CreateUfgHttpWebRequest_("job-info");
+                HttpRequestMessage request = CreateUfgHttpWebRequest_("job-info");
                 Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestSent, new { request.RequestUri });
                 serializer_.Serialize(renderRequests, request.GetRequestStream());
 
-                HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+                HttpRestClient.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
                     response =>
                     {
                         JObject[] jobInfosUnparsed = response.DeserializeBody<JObject[]>(true);
@@ -467,26 +468,23 @@ namespace Applitools
             using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
         }
 
-        public HttpWebRequest CreateUfgHttpWebRequest_(string url, WebProxy proxy = null, string fullAgentId = null,
-            string method = "POST", string contentType = "application/json", string mediaType = "application/json")
+        public HttpRequestMessage CreateUfgHttpWebRequest_(string url, string fullAgentId = null,
+            string method = "POST", string contentType = "application/json", string mediaType = "application/json",
+            byte[] content = null)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
-            return CreateUfgHttpWebRequest_(url, renderingInfo, proxy ?? Proxy, fullAgentId ?? AgentId, method, contentType, mediaType);
+            return CreateUfgHttpWebRequest_(url, renderingInfo, fullAgentId ?? AgentId, method,
+                contentType, mediaType, content);
         }
 
-        public HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy,
-            string fullAgentId, string method = "POST", string contentType = "application/json", string mediaType = "application/json")
+        public HttpRequestMessage CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo,
+            string fullAgentId, string method = "POST", string contentType = "application/json",
+            string mediaType = "application/json", byte[] content = null)
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
-            HttpRestClient restClient = CreateHttpRestClient(uri);
-            HttpWebRequest request = (HttpWebRequest)restClient.WebRequestCreator.Create(uri);
-            //HttpWebRequest request =  WebRequest.CreateHttp(uri); // TODO - replace with factory
-            if (proxy != null) request.Proxy = proxy;
-            request.ContentType = contentType;
-            request.MediaType = mediaType;
-            request.Method = method;
+            Stream contentStream = content != null ? new MemoryStream(content) : null;
+            HttpRequestMessage request = httpClient_.CreateHttpRequestMessage(uri, method, contentStream, contentType, mediaType);
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             if (fullAgentId != null)
             {
                 request.Headers.Add("x-applitools-eyes-client", fullAgentId);
@@ -606,16 +604,16 @@ namespace Applitools
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
             renderId = renderId ?? "NONE";
-            HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
+            HttpRequestMessage request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, Tuple.Create("hashes", (object)hashes));
             serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }
 
-        protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
+        protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) where T : class
         {
-            HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+            HttpRestClient.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
               response =>
               {
                   if (response == null)
@@ -627,7 +625,7 @@ namespace Applitools
               ex => taskListener.OnFail(ex)), request, Logger);
         }
 
-        public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)
+        public void RenderPutResource(TaskListener<HttpResponseMessage> listener, string renderId, IVGResource resource)
         {
             ArgumentGuard.NotNull(resource, nameof(resource));
             byte[] content = resource.Content;
@@ -639,16 +637,12 @@ namespace Applitools
             Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render,
                 new { resourceHash = hash, resourceUrl = resource.Url, renderId });
 
-            HttpWebRequest request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
-                method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream");
-            request.ContentLength = content.Length;
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(content, 0, content.Length);
-            dataStream.Close();
+            HttpRequestMessage request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
+                method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream",
+                content: content);
 
-            Task<WebResponse> task = request.GetResponseAsync();
+            HttpRestClient.SendAsyncRequest(listener, request, Logger);
             Logger.Verbose("future created.");
-            return task;
         }
 
         public virtual void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
@@ -661,8 +655,9 @@ namespace Applitools
                 Logger.Log(TraceLevel.Info, renderRequest.TestId, Stage.Render, new { renderRequest });
             }
 
-            HttpWebRequest request = CreateUfgHttpWebRequest_("render");
-            serializer_.Serialize(requests, request.GetRequestStream());
+            string json = serializer_.Serialize(requests);
+            byte[] content = Encoding.UTF8.GetBytes(json);
+            HttpRequestMessage request = CreateUfgHttpWebRequest_("render", content: content);
 
             SendUFGAsyncRequest_(renderListener, request);
         }
@@ -679,8 +674,8 @@ namespace Applitools
                     new { renderId = renderIds[i] });
             }
 
-            HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");
-            request.ContinueTimeout = 1000;
+            HttpRequestMessage request = CreateUfgHttpWebRequest_("render-status");
+            // request.Timeout = 1000;
             serializer_.Serialize(renderIds, request.GetRequestStream());
 
             SendUFGAsyncRequest_(taskListener, request);

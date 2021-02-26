@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 
 namespace Applitools.Selenium.Tests.Mock
@@ -114,9 +115,9 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
-        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
+        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) where T : class
         {
-            if (request.Method == "POST" && request.RequestUri.PathAndQuery == "/render")
+            if (request.Method == HttpMethod.Post && request.RequestUri.PathAndQuery == "/render")
             {
                 Stream stream = request.GetRequestStream();
                 stream.Position = 0;
