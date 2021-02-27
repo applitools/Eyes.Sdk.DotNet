@@ -128,7 +128,7 @@ namespace Applitools.Utils
             uriBuilder.Query = query.ToString();
 
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
-            HttpWebResponse metaResults = client.Get(uriBuilder.ToString());
+            var metaResults = client.Get(uriBuilder.ToString());
             SessionResults sessionResults = metaResults.DeserializeBody<SessionResults>(false);
             return sessionResults;
         }

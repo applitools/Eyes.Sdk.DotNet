@@ -169,7 +169,7 @@ namespace Applitools
 
             internal class MockHttpClientProvider : IHttpClientProvider
             {
-                private static HttpClient httpClient_;
+                private readonly HttpClient httpClient_;
 
                 public MockHttpClientProvider(bool? isNew, HttpStatusCode? statusCode, int?[] retryAfter, string[] pollingUrls)
                 {
@@ -224,8 +224,9 @@ namespace Applitools
                         HttpResponseMessage response = new HttpResponseMessage();
                         response.RequestMessage = request;
                         tcs.SetResult(response);
-
+                      
                         Uri uri = request.RequestUri;
+                        
                         if (request.Method == HttpMethod.Post &&
                             uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
                         {
@@ -283,6 +284,10 @@ namespace Applitools
                             }
                             response.Content = new ByteArrayContent(responseBytes_);
                         }
+                        
+                        RequestUrls.Add(uri.AbsoluteUri);
+                        Timings.Add(stopwatch_.Elapsed);
+                        stopwatch_.Restart();
 
                         return tcs.Task;
                     }

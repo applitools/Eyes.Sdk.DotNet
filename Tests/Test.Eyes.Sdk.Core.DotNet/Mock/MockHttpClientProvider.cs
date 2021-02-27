@@ -8,8 +8,8 @@ namespace Applitools
 {
     internal class MockHttpClientProvider : IHttpClientProvider
     {
-        private readonly static HttpClient httpClient_;
-        static MockHttpClientProvider()
+        private readonly HttpClient httpClient_;
+        public MockHttpClientProvider()
         {
             HttpMessageHandler handler = new MockMessageProcessingHandler();
             httpClient_ = new HttpClient(handler);
