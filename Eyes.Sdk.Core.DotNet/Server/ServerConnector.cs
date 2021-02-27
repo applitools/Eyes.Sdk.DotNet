@@ -591,11 +591,7 @@ namespace Applitools
 
         public void UploadImage(TaskListener<string> listener, byte[] screenshotBytes, string[] testIds)
         {
-            UploadData_(new TaskListener<string>(
-                    r => listener.OnComplete(r),
-                    ex => listener.OnFail(ex)
-                ),
-                screenshotBytes, "image/png", "image/png", testIds);
+            UploadData_(listener, screenshotBytes, "image/png", "image/png", testIds);
         }
 
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
