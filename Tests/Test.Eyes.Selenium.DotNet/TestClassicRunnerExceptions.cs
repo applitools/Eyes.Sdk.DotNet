@@ -13,7 +13,8 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestExceptionInGetAllTestResults()
         {
-            EyesRunner runner = new ClassicRunner();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            EyesRunner runner = new ClassicRunner(logHandler);
             Eyes eyes = new Eyes(runner);
             eyes.SaveNewTests = false;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();

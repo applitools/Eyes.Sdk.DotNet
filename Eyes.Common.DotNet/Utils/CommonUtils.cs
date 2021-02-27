@@ -10,7 +10,6 @@ using System.Runtime.Versioning;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using Microsoft.Win32;
 using System.Threading.Tasks;
 
 namespace Applitools.Utils
@@ -411,11 +410,11 @@ namespace Applitools.Utils
                 Console.Error.WriteLine(ex);
                 if (type.HasValue)
                 {
-                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { data, message = ex.ToString(), ex.StackTrace });
+                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { data, message = ex.ToString(), ex.StackTrace }, 5);
                 }
                 else
                 {
-                    logger?.Log(TraceLevel.Error, testIds, stage, new { data, message = ex.ToString(), ex.StackTrace });
+                    logger?.Log(TraceLevel.Error, testIds, stage, new { data, message = ex.ToString(), ex.StackTrace }, 5);
                 }
             }
             catch (Exception e)

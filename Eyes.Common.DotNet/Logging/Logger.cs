@@ -73,14 +73,14 @@ namespace Applitools
             LogInner_(TraceLevel.Notice, null, stage, type, null);
         }
 
-        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, object data = null)
+        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, object data = null, int methodsBack = 3)
         {
-            LogInner_(level, testIds, stage, null, data);
+            LogInner_(level, testIds, stage, null, data, methodsBack);
         }
 
-        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType type, object data = null)
+        public void Log(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType type, object data = null, int methodsBack = 3)
         {
-            LogInner_(level, testIds, stage, type, data);
+            LogInner_(level, testIds, stage, type, data, methodsBack);
         }
 
         public void Log(TraceLevel level, string testId, Stage stage, object data = null)
@@ -103,23 +103,20 @@ namespace Applitools
             LogInner_(level, null, stage, type, data);
         }
 
-        private void LogInner_(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data)
+        private void LogInner_(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data,
+            int methodsBack = 3)
         {
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
-            ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, 3, data), level); // TODO pass something else instead of 3 in case of Error since there's more stack to it.
+            ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, methodsBack, data), level);
             logHandler_.OnMessage(@event);
         }
 
         private Message CreateMessageFromLog(IEnumerable<string> testIds, Stage stage, StageType? type, int methodsBack,
             object data)
         {
-            StackFrame[] stackFrames = new StackTrace().GetFrames();
-            string stackTrace = "";
-            if (stackFrames.Length > methodsBack)
-            {
-                MethodBase method = stackFrames[methodsBack].GetMethod();
-                stackTrace += $"{method.DeclaringType.Name}.{method.Name}()";
-            }
+            StackFrame stackFrame = new StackTrace(methodsBack, true).GetFrame(StackTrace.METHODS_TO_SKIP);
+            MethodBase method = stackFrame.GetMethod();
+            string stackTrace = $"{method.DeclaringType.Name}.{method.Name}()";
 
             return new Message(AgentId, stage, type, testIds, Thread.CurrentThread.ManagedThreadId, stackTrace, data);
         }
