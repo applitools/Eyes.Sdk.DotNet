@@ -158,7 +158,7 @@ namespace Applitools.Utils
             GetHttpClient().DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
         }
 
-        private HttpClient GetHttpClient()
+        internal HttpClient GetHttpClient()
         {
             if (httpClient_ == null)
                 httpClient_ = httpClientProvider_.GetClient();
@@ -302,7 +302,6 @@ namespace Applitools.Utils
         {
             if (!result.IsCompleted) return;
 
-            HttpRequestMessage resultRequest = (HttpRequestMessage)result.AsyncState;
             try
             {
                 HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;
@@ -398,7 +397,6 @@ namespace Applitools.Utils
                     Logger.Log(TraceLevel.Notice, Stage.General, new { message = "long request not complete" });
                     return;
                 }
-                HttpRequestMessage resultRequest = (HttpRequestMessage)result.AsyncState;
                 try
                 {
                     HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;

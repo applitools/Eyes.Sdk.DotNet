@@ -1,17 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Applitools.Utils
 {
-    internal class UploadCallback : TaskListener<HttpWebResponse>
+    internal class UploadCallback : TaskListener<HttpResponseMessage>
     {
         private static readonly TimeSpan UPLOAD_TIMEOUT = TimeSpan.FromSeconds(60);
         private static readonly TimeSpan TIME_THRESHOLD = TimeSpan.FromSeconds(20);
 
         private readonly TaskListener<string> listener_;
         private readonly ServerConnector serverConnector_;
+        private readonly Logger logger_;
         private readonly string targetUrl_;
         private readonly byte[] bytes_;
         private readonly string contentType_;
@@ -29,23 +33,19 @@ namespace Applitools.Utils
             OnFail = OnFail_;
             listener_ = listener;
             serverConnector_ = serverConnector;
+            logger_ = serverConnector.Logger;
             targetUrl_ = targetUrl;
             bytes_ = bytes;
             contentType_ = contentType;
             mediaType_ = mediaType;
             testIds_ = testIds;
-            HttpRestClient client = serverConnector.CreateHttpRestClient(new Uri(targetUrl));
-            WebRequestCreator = client.WebRequestCreator;
         }
 
-        internal IWebRequestCreate WebRequestCreator { get; set; } = DefaultWebRequestCreator.Instance;
-
-
-        private void OnComplete_(HttpWebResponse response)
+        private void OnComplete_(HttpResponseMessage response)
         {
             HttpStatusCode statusCode = response.StatusCode;
-            string statusPhrase = response.StatusDescription;
-            response.Close();
+            string statusPhrase = response.ReasonPhrase;
+            response.Dispose();
 
             if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.Created)
             {
@@ -86,29 +86,25 @@ namespace Applitools.Utils
 
         public void UploadDataAsync()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequestCreator.Create(new Uri(targetUrl_));
-            if (serverConnector_.Proxy != null) request.Proxy = serverConnector_.Proxy;
-            request.ContentType = contentType_;
-            request.MediaType = mediaType_;
-            request.Method = "PUT";
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, new Uri(targetUrl_));
+            request.Content = new ByteArrayContent(bytes_);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType_);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType_));
             request.Headers.Add("X-Auth-Token", serverConnector_.GetRenderingInfo().AccessToken);
             request.Headers.Add("x-ms-blob-type", "BlockBlob");
 
-            request.ContentLength = bytes_.Length;
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(bytes_, 0, bytes_.Length);
-            dataStream.Close();
-
-            IAsyncResult asyncResult = request.BeginGetResponse(ar =>
-            {
-                if (!ar.IsCompleted)
+            IAsyncResult asyncResult = serverConnector_.httpClient_.GetHttpClient().SendAsync(request).AsApm(
+                ar =>
                 {
-                    serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
-                        new { message = "upload not complete" });
-                    return;
-                }
-                HandleResult_(ar);
-            }, request);
+                    if (!ar.IsCompleted)
+                    {
+                        serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
+                            new { message = "upload not complete" });
+                        return;
+                    }
+                    HandleResult_(ar);
+                }, request);
+
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
                 serverConnector_.Logger.Log(TraceLevel.Notice, Stage.General,
@@ -117,10 +113,9 @@ namespace Applitools.Utils
             }
         }
 
-        private void HandleResult_(IAsyncResult ar)
+        private void HandleResult_(IAsyncResult result)
         {
-            HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
-            HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+            HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;
             HttpStatusCode statusCode = response.StatusCode;
             serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadComplete,
                 new { statusCode });
@@ -130,7 +125,7 @@ namespace Applitools.Utils
             }
             finally
             {
-                response.Close();
+                response.Dispose();
             }
         }
     }
