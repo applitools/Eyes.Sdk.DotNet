@@ -59,7 +59,7 @@ namespace Applitools.Utils
             int timeToWait = sleepDuration_;
             if (secondsToWait != null)
             {
-                timeToWait = (int)secondsToWait.Delta.Value.TotalSeconds;
+                timeToWait = (int)secondsToWait.Delta.Value.TotalMilliseconds;
             }
             else if (requestCount_++ >= 5)
             {
