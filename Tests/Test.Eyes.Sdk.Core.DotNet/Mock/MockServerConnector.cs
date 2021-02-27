@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
+using System.Net.Http;
 
 namespace Applitools
 {
@@ -24,10 +24,10 @@ namespace Applitools
 
         public List<Uri> CloseBatchRequestUris { get; } = new List<Uri>();
 
-        protected override HttpWebResponse CloseBatchImpl_(string batchId, HttpRestClient httpClient)
+        protected override HttpResponseMessage CloseBatchImpl_(string batchId, HttpRestClient httpClient)
         {
-            HttpWebResponse response = base.CloseBatchImpl_(batchId, httpClient);
-            CloseBatchRequestUris.Add(response.ResponseUri);
+            HttpResponseMessage response = base.CloseBatchImpl_(batchId, httpClient);
+            CloseBatchRequestUris.Add(response.RequestMessage.RequestUri);
             return response;
         }
     }
@@ -43,8 +43,8 @@ namespace Applitools
 
         public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
         {
-            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger);
-            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator(Logger);
+            IHttpClientProvider mockProvider = new MockHttpClientProvider();
+            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger, mockProvider);
             return mockedHttpRestClient;
         }
     }

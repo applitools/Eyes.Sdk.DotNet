@@ -25,8 +25,8 @@ namespace Applitools.Utils
         private readonly JsonSerializer json_;
         private string authUser_;
         private string authPassword_;
-        private static HttpClient httpClient_;
-
+        private HttpClient httpClient_;
+        private IHttpClientProvider httpClientProvider_ = new HttpClientProvider();
 
         #endregion
 
@@ -34,11 +34,6 @@ namespace Applitools.Utils
 
         static HttpRestClient()
         {
-            HttpClientHandler handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            httpClient_ = new HttpClient(handler);
             ServicePointManager.ServerCertificateValidationCallback +=
                 new RemoteCertificateValidationCallback(ValidateRemoteCertificate_);
         }
@@ -49,9 +44,11 @@ namespace Applitools.Utils
         /// <param name="jsonSerializer">The JSON serializer to use to <c>null</c> 
         /// to use the default serializer.</param>
         /// <param name="logger"></param>
+        /// <param name="httpClientProvider"></param>
         /// <param name="agentId">The full agent ID of the SDK.</param>
         /// <param name="serverUrl">Server's base URL</param>
-        public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null, Logger logger = null)
+        public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null,
+            Logger logger = null, IHttpClientProvider httpClientProvider = null)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
 
@@ -61,6 +58,7 @@ namespace Applitools.Utils
             ConnectionLimit = 10;
             Logger = logger ?? new Logger();
             Timeout = TimeSpan.FromMinutes(10);
+            httpClientProvider_ = httpClientProvider ?? HttpClientProvider.Instance;
         }
 
         private HttpRestClient(HttpRestClient other)
@@ -80,6 +78,8 @@ namespace Applitools.Utils
             RequestCompleted = other.RequestCompleted;
             RequestFailed = other.RequestFailed;
             WebRequestCreator = other.WebRequestCreator;
+            httpClientProvider_ = other.httpClientProvider_;
+            httpClient_ = other.httpClient_;
         }
         #endregion
 
@@ -155,13 +155,20 @@ namespace Applitools.Utils
             authUser_ = userName;
             authPassword_ = password;
             byte[] byteArray = Encoding.ASCII.GetBytes($"{userName}:{password}");
-            httpClient_.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            GetHttpClient().DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            if (httpClient_ == null)
+                httpClient_ = httpClientProvider_.GetClient();
+            return httpClient_;
         }
 
         /// <summary>
         /// Sends a POST request to the input path under the base url with a JSON body.
         /// </summary>
-        public HttpWebResponse PostJson<T>(string path, T body, string accept = "application/json")
+        public HttpResponseMessage PostJson<T>(string path, T body, string accept = "application/json")
         {
             return SendJsonHttpWebRequest_(path, "POST", body, accept);
         }
@@ -179,7 +186,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Sends a POST request of the input body to the input path under the base url.
         /// </summary>
-        public HttpWebResponse Post(
+        public HttpResponseMessage Post(
             string path, MemoryStream body, string contentType = null, string accept = null, string contentEncoding = null)
         {
             return SendHttpWebRequest_(path, "POST", body, contentType, accept, contentEncoding);
@@ -188,7 +195,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Sends a PUT request to the input path under the base url with a JSON body.
         /// </summary>
-        public HttpWebResponse PutJson<T>(string path, T body, string accept = "application/json")
+        public HttpResponseMessage PutJson<T>(string path, T body, string accept = "application/json")
         {
             return SendJsonHttpWebRequest_(path, "PUT", body, accept);
         }
@@ -199,7 +206,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Sends a DELETE request to the input path under the base url.
         /// </summary>
-        public HttpWebResponse Delete(string path, string accept = null)
+        public HttpResponseMessage Delete(string path, string accept = null)
         {
             return SendHttpWebRequest_(path, "DELETE", null, null, accept, null);
         }
@@ -224,7 +231,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Sends a GET request to the input path under the base url.
         /// </summary>
-        public HttpWebResponse Get(string path, string accept = null)
+        public HttpResponseMessage Get(string path, string accept = null)
         {
             return SendHttpWebRequest_(path, "GET", null, null, accept, null);
         }
@@ -232,7 +239,7 @@ namespace Applitools.Utils
         /// <summary>
         /// Sends a GET request accepting a Json response to the input path under the base url.
         /// </summary>
-        public HttpWebResponse GetJson(string path)
+        public HttpResponseMessage GetJson(string path)
         {
             return Get(path, "application/json");
         }
@@ -256,16 +263,10 @@ namespace Applitools.Utils
             return true;
         }
 
-        private HttpWebResponse SendJsonHttpWebRequest_<T>(
+        private HttpResponseMessage SendJsonHttpWebRequest_<T>(
             string path, string method, T body, string accept)
         {
-            using (var s = new MemoryStream())
-            {
-                json_.Serialize(body, s);
-                s.Position = 0;
-
-                return SendHttpWebRequest_(path, method, s, "application/json", accept, null);
-            }
+            return SendHttpWebRequest_(path, method, body, "application/json", accept, null);
         }
 
         private void SendLongJsonRequest_<T>(
@@ -285,9 +286,9 @@ namespace Applitools.Utils
             SendAsyncRequest(listener, request, Logger);
         }
 
-        public static void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, HttpRequestMessage request, Logger logger)
+        public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, HttpRequestMessage request, Logger logger)
         {
-            IAsyncResult asyncResult = httpClient_.SendAsync(request).AsApm(ar => GetResponseCallBack_(listener, ar), request);
+            IAsyncResult asyncResult = GetHttpClient().SendAsync(request).AsApm(ar => GetResponseCallBack_(listener, ar), request);
             //IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
@@ -321,12 +322,12 @@ namespace Applitools.Utils
             }
         }
 
-        private HttpWebResponse SendHttpWebRequest_(
-            string path, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
+        private HttpResponseMessage SendHttpWebRequest_(
+            string path, string method, object body, string contentType, string accept, string contentEncoding)
         {
             Uri requestUri = string.IsNullOrEmpty(path) ? ServerUrl : new Uri(ServerUrl, path);
 
-            HttpWebRequest request = CreateHttpWebRequest_(
+            HttpRequestMessage request = CreateHttpRequestMessage(
                requestUri, method, body, contentType, accept, contentEncoding);
 
             if (request == null)
@@ -334,7 +335,10 @@ namespace Applitools.Utils
                 throw new NullReferenceException("request is null");
             }
 
-            return (HttpWebResponse)request.GetResponse();
+            CancellationTokenSource cts = new CancellationTokenSource(Timeout);
+            HttpResponseMessage response = GetHttpClient().SendAsync(request, cts.Token).Result;
+
+            return response;
         }
 
         private void SendLongRequest_(TaskListener<HttpResponseMessage> listener,
@@ -357,7 +361,7 @@ namespace Applitools.Utils
                         throw new NullReferenceException("request is null");
                     }
                     CancellationTokenSource cts = new CancellationTokenSource(Timeout);
-                    IAsyncResult asyncResult = httpClient_.SendAsync(request, cts.Token).AsApm(OnLongRequestResponse_, request);
+                    IAsyncResult asyncResult = GetHttpClient().SendAsync(request, cts.Token).AsApm(OnLongRequestResponse_, request);
 
                     if (asyncResult != null && asyncResult.CompletedSynchronously)
                     {
@@ -417,7 +421,7 @@ namespace Applitools.Utils
         }
 
         internal HttpRequestMessage CreateHttpRequestMessage(Uri requestUri, string method,
-            Stream body, string contentType, string accept = null, string contentEncoding = null)
+            object body, string contentType, string accept = null, string contentEncoding = null)
         {
             if (FormatRequestUri != null)
             {
@@ -452,8 +456,25 @@ namespace Applitools.Utils
 
             if (body != null)
             {
-                body.Position = 0;
-                message.Content = new StreamContent(body);
+                byte[] bytes = null;
+                if (body != null)
+                {
+                    if (body is byte[] contentBytes)
+                    {
+                        bytes = contentBytes;
+                    }
+                    else if (body is MemoryStream memoryStream)
+                    {
+                        bytes = memoryStream.ReadToEnd();
+                    }
+                    else
+                    {
+                        string json = json_.Serialize(body);
+                        bytes = Encoding.UTF8.GetBytes(json);
+                    }
+                }
+                message.Content = new ByteArrayContent(bytes);
+
 
                 if (contentType != null)
                 {

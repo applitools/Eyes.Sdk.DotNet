@@ -11,7 +11,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools
@@ -197,7 +196,7 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(testResults, nameof(testResults));
 
-            HttpWebResponse response = null;
+            HttpResponseMessage response = null;
             try
             {
                 response = httpClient_.Delete($"api/sessions/batches/{testResults.BatchId}/{testResults.Id}?AccessToken={testResults.SecretToken}");
@@ -208,7 +207,7 @@ namespace Applitools
             }
             finally
             {
-                response?.Close();
+                response?.Dispose();
             }
         }
 
@@ -253,7 +252,7 @@ namespace Applitools
                 EnsureHttpClient_(url);
             }
             HttpRestClient httpClient = CloneHttpClient_(url);
-            HttpWebResponse response = null;
+            HttpResponseMessage response = null;
             try
             {
                 response = CloseBatchImpl_(batchId, httpClient);
@@ -264,11 +263,11 @@ namespace Applitools
             }
             finally
             {
-                response?.Close();
+                response?.Dispose();
             }
         }
 
-        protected virtual HttpWebResponse CloseBatchImpl_(string batchId, HttpRestClient httpClient)
+        protected virtual HttpResponseMessage CloseBatchImpl_(string batchId, HttpRestClient httpClient)
         {
             return httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
         }
@@ -382,9 +381,8 @@ namespace Applitools
                     "application/octet-stream",
                     "application/json"))
                 {
-                    string locationUrlStr = response.Headers[HttpResponseHeader.Location];
-                    Uri uri = new Uri(locationUrlStr);
-                    return uri.Segments.Last();
+                    Uri locationUri = response.Headers.Location;
+                    return locationUri.Segments.Last();
                 }
             }
             catch (Exception ex)
@@ -435,7 +433,7 @@ namespace Applitools
                 Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestSent, new { request.RequestUri });
                 serializer_.Serialize(renderRequests, request.GetRequestStream());
 
-                HttpRestClient.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
+                httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
                     response =>
                     {
                         JObject[] jobInfosUnparsed = response.DeserializeBody<JObject[]>(true);
@@ -479,11 +477,10 @@ namespace Applitools
 
         public HttpRequestMessage CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo,
             string fullAgentId, string method = "POST", string contentType = "application/json",
-            string mediaType = "application/json", byte[] content = null)
+            string mediaType = "application/json", object content = null)
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
-            Stream contentStream = content != null ? new MemoryStream(content) : null;
-            HttpRequestMessage request = httpClient_.CreateHttpRequestMessage(uri, method, contentStream, contentType, mediaType);
+            HttpRequestMessage request = httpClient_.CreateHttpRequestMessage(uri, method, content, contentType, mediaType);
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
             if (fullAgentId != null)
             {
@@ -507,7 +504,7 @@ namespace Applitools
             try
             {
                 EnsureHttpClient_();
-                using (HttpWebResponse response = httpClient_.GetJson(path))
+                using (HttpResponseMessage response = httpClient_.GetJson(path))
                 {
                     if (response == null)
                     {
@@ -613,7 +610,7 @@ namespace Applitools
 
         protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) where T : class
         {
-            HttpRestClient.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
+            httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
               response =>
               {
                   if (response == null)
@@ -641,7 +638,7 @@ namespace Applitools
                 method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream",
                 content: content);
 
-            HttpRestClient.SendAsyncRequest(listener, request, Logger);
+            httpClient_.SendAsyncRequest(listener, request, Logger);
             Logger.Verbose("future created.");
         }
 

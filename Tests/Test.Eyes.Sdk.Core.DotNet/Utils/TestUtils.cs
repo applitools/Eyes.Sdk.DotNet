@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Web;
 
@@ -101,7 +102,7 @@ namespace Applitools.Tests.Utils
             uriBuilder.Query = query.ToString();
 
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
-            HttpWebResponse metaResults = client.Get(uriBuilder.ToString());
+            HttpResponseMessage metaResults = client.Get(uriBuilder.ToString());
             SessionResults sessionResults = metaResults.DeserializeBody<SessionResults>(false);
             return sessionResults;
         }

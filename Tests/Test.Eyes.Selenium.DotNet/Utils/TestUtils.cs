@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
@@ -135,7 +136,7 @@ namespace Applitools.Tests.Utils
             uriBuilder.Query = query.ToString();
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
             client.ConfigureRequest += Client_ConfigureRequest;
-            HttpWebResponse response = client.GetJson(uriBuilder.ToString());
+            HttpResponseMessage response = client.GetJson(uriBuilder.ToString());
             Stream stream = response.GetResponseStream();
             string result;
             using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))

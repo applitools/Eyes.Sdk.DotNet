@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Web;
 
@@ -78,7 +79,7 @@ namespace Applitools.Tests.Utils
             TimeSpan timeout = TimeSpan.FromSeconds(40);
             while (sessionResults == null && stopwatch.Elapsed < timeout)
             {
-                using (HttpWebResponse metaResults = client.Get(uriBuilder.ToString()))
+                using (HttpResponseMessage metaResults = client.Get(uriBuilder.ToString()))
                 {
                     sessionResults = metaResults.DeserializeBody<SessionResults>(false);
                 }
@@ -99,7 +100,7 @@ namespace Applitools.Tests.Utils
             uriBuilder.Path = $"/api/images/dom/{domId}/";
 
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
-            using (HttpWebResponse response = client.Get(uriBuilder.ToString()))
+            using (HttpResponseMessage response = client.Get(uriBuilder.ToString()))
             using (Stream s = response.GetResponseStream())
             {
                 var json = new StreamReader(s).ReadToEnd();
@@ -115,7 +116,7 @@ namespace Applitools.Tests.Utils
             query["apiKey"] = eyes.ApiKey;
             uriBuilder.Query = query.ToString();
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
-            using (HttpWebResponse batchInfoResponse = client.Get(uriBuilder.ToString()))
+            using (HttpResponseMessage batchInfoResponse = client.Get(uriBuilder.ToString()))
             {
                 BatchInfo batchInfo = batchInfoResponse.DeserializeBody<BatchInfo>(false);
                 return batchInfo;
