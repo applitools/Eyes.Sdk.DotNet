@@ -339,7 +339,7 @@ namespace Applitools
                     Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete, new { matchResult });
                     listener.OnComplete(matchResult);
                 },
-                e => { throw e; }
+                e => listener.OnFail(e)
                 ), url, data);
         }
 
@@ -540,10 +540,7 @@ namespace Applitools
                 Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadResource,
                     new { CompressedDataSize = binData.Length });
 
-                UploadData_(new TaskListener<string>(
-                    r => listener.OnComplete(r),
-                    ex => listener.OnFail(ex)
-                ), binData, "application/octet-stream", "application/json", testIds);
+                UploadData_(listener, binData, "application/octet-stream", "application/json", testIds);
             }
             catch (Exception ex)
             {

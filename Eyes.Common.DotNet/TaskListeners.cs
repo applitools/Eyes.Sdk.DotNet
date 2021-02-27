@@ -20,13 +20,13 @@ namespace Applitools
 
     public class SyncTaskListener : TaskListener
     {
-        private Action onComplete_;
-        private Action<Exception> onFail_;
-        private AutoResetEvent sync_;
-        private Logger logger_;
-        private string caller_;
-        private int callingThread_;
-        private string[] testIds_;
+        private readonly Action onComplete_;
+        private readonly Action<Exception> onFail_;
+        private readonly AutoResetEvent sync_;
+        private readonly Logger logger_;
+        private readonly string caller_;
+        private readonly int callingThread_;
+        private readonly string[] testIds_;
         private bool? result_;
 
         public SyncTaskListener(Action onComplete = null, Action<Exception> onFail = null,
