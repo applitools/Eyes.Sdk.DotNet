@@ -15,6 +15,7 @@ namespace Applitools
     public class Logger
     {
         private ILogHandler logHandler_ = new NullLogHandler();
+        private bool skipLog_ = true;
 
         public string AgentId { get; set; }
 
@@ -38,6 +39,7 @@ namespace Applitools
             ArgumentGuard.NotNull(handler, nameof(handler));
 
             logHandler_ = handler;
+            skipLog_ = logHandler_ is NullLogHandler;
         }
 
         /// <summary>
@@ -47,6 +49,7 @@ namespace Applitools
         /// <param name="args">Optional arguments to place inside the message.</param>
         public void Verbose([Localizable(false)] string message, params object[] args)
         {
+            if (skipLog_) return;
             if (args != null && args.Length > 0)
             {
                 message = string.Format(message, args);
@@ -61,6 +64,7 @@ namespace Applitools
         /// <param name="args">Optional arguments to place inside the message.</param>
         public void Log(string message, params object[] args)
         {
+            if (skipLog_) return;
             if (args != null && args.Length > 0)
             {
                 message = string.Format(message, args);
@@ -106,6 +110,7 @@ namespace Applitools
         private void LogInner_(TraceLevel level, IEnumerable<string> testIds, Stage stage, StageType? type, object data,
             int methodsBack = 3)
         {
+            if (skipLog_ || level < logHandler_.MinimumTraceLevel) return;
             string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
             ClientEvent @event = new ClientEvent(currentTime, CreateMessageFromLog(testIds, stage, type, methodsBack, data), level);
             logHandler_.OnMessage(@event);

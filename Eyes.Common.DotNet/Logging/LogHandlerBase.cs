@@ -7,19 +7,25 @@ namespace Applitools
     public abstract class LogHandlerBase : ILogHandler
     {
         protected bool isOpen_;
-        private readonly TraceLevel minLevel_;
         private readonly static object lock_ = new object();
 
         protected LogHandlerBase(bool isVerbose)
         {
-            minLevel_ = isVerbose ? TraceLevel.Debug : TraceLevel.Notice;
+            MinimumTraceLevel = isVerbose ? TraceLevel.Debug : TraceLevel.Notice;
         }
+
+        protected LogHandlerBase(TraceLevel minimumTraceLevel)
+        {
+            MinimumTraceLevel = minimumTraceLevel;
+        }
+
+        public TraceLevel MinimumTraceLevel { get; }
 
         public virtual void Open() { }
 
         public virtual void OnMessage(TraceLevel level, string message, params object[] args)
         {
-            if (level >= minLevel_)
+            if (level >= MinimumTraceLevel)
             {
                 if (args != null && args.Length > 0)
                 {
@@ -31,7 +37,7 @@ namespace Applitools
 
         public virtual void OnMessage(TraceLevel level, Func<string> messageProvider)
         {
-            if (level >= minLevel_)
+            if (level >= MinimumTraceLevel)
             {
                 OnMessage(messageProvider(), level);
             }
@@ -42,7 +48,7 @@ namespace Applitools
 
         public virtual void OnMessage(ClientEvent @event)
         {
-            if (@event.Level >= minLevel_)
+            if (@event.Level >= MinimumTraceLevel)
             {
                 lock (lock_)
                 {
