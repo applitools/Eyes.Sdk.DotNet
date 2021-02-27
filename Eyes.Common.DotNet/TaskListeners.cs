@@ -49,7 +49,7 @@ namespace Applitools
         {
             try
             {
-                logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
+                logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
                 onComplete_?.Invoke();
             }
             finally
