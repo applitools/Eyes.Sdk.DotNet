@@ -541,14 +541,12 @@ namespace Applitools
                     new { CompressedDataSize = binData.Length });
 
                 UploadData_(listener, binData, "application/octet-stream", "application/json", testIds);
+                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadComplete);
             }
             catch (Exception ex)
             {
-                throw new EyesException($"PostDomSnapshot failed: {ex.Message}", ex);
-            }
-            finally
-            {
-                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadComplete);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.UploadResource, ex, testIds);
+                listener.OnFail(new EyesException($"PostDomSnapshot failed: {ex.Message}", ex));
             }
         }
 
