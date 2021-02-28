@@ -216,7 +216,7 @@ namespace Applitools
 
         public T Get()
         {
-            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
+            logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
             Stopwatch sw = Stopwatch.StartNew();
             TimeSpan timeout = TimeSpan.FromMinutes(5);
             bool result;
