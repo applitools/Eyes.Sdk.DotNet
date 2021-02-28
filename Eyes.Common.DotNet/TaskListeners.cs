@@ -122,8 +122,8 @@ namespace Applitools
         private readonly Logger logger_;
         private readonly string message_;
         private readonly string caller_;
-        private int callingThread_;
-        private string[] testIds_;
+        private readonly int callingThread_;
+        private readonly string[] testIds_;
 
         public LoggingListener(TaskListener<T> internalListener, Logger logger,
             string message, [CallerMemberName] string caller = null, params string[] testIds)
@@ -162,13 +162,13 @@ namespace Applitools
 
     public class SyncTaskListener<T> : TaskListener<T>
     {
-        private Action<T> onComplete_;
-        private Action<Exception> onFail_;
-        private AutoResetEvent sync_;
-        private Logger logger_;
-        private string caller_;
-        private int callingThread_;
-        private string[] testIds_;
+        private readonly Action<T> onComplete_;
+        private readonly Action<Exception> onFail_;
+        private readonly AutoResetEvent sync_;
+        private readonly Logger logger_;
+        private readonly string caller_;
+        private readonly int callingThread_;
+        private readonly string[] testIds_;
         private T result_;
 
         public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null,
@@ -190,7 +190,7 @@ namespace Applitools
         {
             try
             {
-                logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
+                logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
                 onComplete_?.Invoke(t);
             }
             finally
