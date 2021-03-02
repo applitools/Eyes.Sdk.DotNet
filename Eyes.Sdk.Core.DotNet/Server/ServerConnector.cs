@@ -24,10 +24,14 @@ namespace Applitools
         #region Fields
 
         internal HttpRestClient httpClient_;
+        
         private bool apiKeyChanged_ = true;
         private string apiKey_;
+        
         private bool proxyChanged_ = false;
-        private WebProxy proxy;
+        private WebProxy proxy_;
+        private readonly string proxyStr_ = CommonUtils.GetEnvVar("APPLITOOLS_PROXY");
+
         private RenderingInfo renderingInfo_;
         internal readonly JsonSerializer serializer_;
 
@@ -110,10 +114,18 @@ namespace Applitools
         /// </summary>
         public WebProxy Proxy
         {
-            get => proxy;
+            get
+            {
+                if (proxy_ == null && !string.IsNullOrWhiteSpace(proxyStr_))
+                {
+                    proxy_ = new WebProxy(proxyStr_);
+                    proxyChanged_ = true;
+                }
+                return proxy_;
+            }
             set
             {
-                proxy = value;
+                proxy_ = value;
                 proxyChanged_ = true;
             }
         }
