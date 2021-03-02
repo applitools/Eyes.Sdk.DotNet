@@ -42,6 +42,7 @@ before_script:
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
+  - sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
   - echo "Travis event type is $TRAVIS_EVENT_TYPE"
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
       export APPLITOOLS_FULL_COVERAGE=true;
@@ -49,6 +50,10 @@ before_script:
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
       python updateChangelogAndProjectFiles.py;
     fi
+
+after_script:
+  - curl -T commit_${TRAVIS_COMMIT:0:7}_network.log -u ${FTP_USER}@${FTP_HOST}:${FTP_PASSWORD} ftp://ftp.${FTP_HOST}/
+
 
 # env variables
 # $RELEASE_BRANCH
