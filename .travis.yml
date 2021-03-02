@@ -52,7 +52,7 @@ before_script:
     fi
 
 after_script:
-  - curl -T commit_${TRAVIS_COMMIT:0:7}_network.log -u ${FTP_USER}@${FTP_HOST}:${FTP_PASSWORD} ftp://ftp.${FTP_HOST}/
+  - curl -T network.log -u ${FTP_USER}@${FTP_HOST}:${FTP_PASSWORD} ftp://ftp.${FTP_HOST}/${APPLITOOLS_REPORT_ID}_network.log
 
 
 # env variables

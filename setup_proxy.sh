@@ -5,5 +5,5 @@ sudo mkdir /usr/share/ca-certificates/extra
 sudo cp DO_NOT_TRUST.crt /usr/share/ca-certificates/extra
 sudo update-ca-certificates
 sudo apt-get install mitmproxy
-sudo mitmdump --showhost --cert=cert.pem -k > "commit_${TRAVIS_COMMIT:0:7}_network.log"
+sudo mitmdump --showhost --cert=cert.pem -k > network.log
 export APPLITOOLS_PROXY=http://127.0.0.1:8080
