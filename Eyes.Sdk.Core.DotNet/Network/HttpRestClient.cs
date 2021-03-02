@@ -290,11 +290,17 @@ namespace Applitools.Utils
         {
             IAsyncResult asyncResult = GetHttpClient().SendAsync(request).AsApm(ar => GetResponseCallBack_(listener, ar), request);
             //IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
-            if (asyncResult != null && asyncResult.CompletedSynchronously)
+            if (asyncResult != null)
             {
-                logger.Log(TraceLevel.Notice, Stage.General,
-                            new { message = "request.BeginGetResponse completed synchronously" });
-                GetResponseCallBack_(listener, asyncResult);
+                Logger.Log(TraceLevel.Notice, Stage.General,
+                    new { message = "request.BeginGetResponse returned immediately", asyncResult });
+
+                if (asyncResult.CompletedSynchronously)
+                {
+                    logger.Log(TraceLevel.Notice, Stage.General,
+                                new { message = "request.BeginGetResponse completed synchronously" });
+                    GetResponseCallBack_(listener, asyncResult);
+                }
             }
         }
 
@@ -362,11 +368,18 @@ namespace Applitools.Utils
                     CancellationTokenSource cts = new CancellationTokenSource(Timeout);
                     IAsyncResult asyncResult = GetHttpClient().SendAsync(request, cts.Token).AsApm(OnLongRequestResponse_, request);
 
-                    if (asyncResult != null && asyncResult.CompletedSynchronously)
+                    if (asyncResult != null)
                     {
                         Logger.Log(TraceLevel.Notice, Stage.General,
-                            new { message = "request.BeginGetResponse completed synchronously" });
-                        OnLongRequestResponse_(asyncResult);
+                            new { message = "request.BeginGetResponse returned immediately", asyncResult });
+
+                        if (asyncResult.CompletedSynchronously)
+                        {
+
+                            Logger.Log(TraceLevel.Notice, Stage.General,
+                                new { message = "request.BeginGetResponse completed synchronously" });
+                            OnLongRequestResponse_(asyncResult);
+                        }
                     }
                 }
                 catch (WebException ex)
