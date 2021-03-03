@@ -52,8 +52,8 @@ before_script:
     fi
 
 after_script:
-  - curl -T network.log -u ${FTP_USER}@${FTP_HOST}:${FTP_PASSWORD} ftp://ftp.${FTP_HOST}/${TRAVIS_JOB_NUMBER}.network.log
-
+  - ls -la network.log
+  - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure
 
 # env variables
 # $RELEASE_BRANCH
