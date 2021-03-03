@@ -286,9 +286,13 @@ namespace Applitools.Utils
             SendAsyncRequest(listener, request, Logger);
         }
 
-        public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, HttpRequestMessage request, Logger logger)
+        public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, HttpRequestMessage request, Logger logger,
+            TimeSpan? timeout = null)
         {
-            IAsyncResult asyncResult = GetHttpClient().SendAsync(request).AsApm(ar => GetResponseCallBack_(listener, ar), request);
+            //int timeoutMS = timeout == null ? (int)Timeout.TotalMilliseconds : (int)timeout.Value.TotalMilliseconds;
+            //CancellationToken timeoutCancelationToken = new CancellationTokenSource(timeoutMS).Token;
+            IAsyncResult asyncResult = GetHttpClient().SendAsync(request/*, timeoutCancelationToken*/)
+                .AsApm(ar => GetResponseCallBack_(listener, ar), request);
             //IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {

@@ -166,13 +166,15 @@ namespace Applitools
         private readonly Action<Exception> onFail_;
         private readonly AutoResetEvent sync_;
         private readonly Logger logger_;
+        private readonly TimeSpan timeout_;
         private readonly string caller_;
         private readonly int callingThread_;
         private readonly string[] testIds_;
         private T result_;
 
         public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null,
-            Logger logger = null, [CallerMemberName] string callingMember = null, params string[] testIds)
+            Logger logger = null, TimeSpan? timeout = null,
+            [CallerMemberName] string callingMember = null, params string[] testIds)
             : base(onComplete, onFail)
         {
             onComplete_ = onComplete;
@@ -180,6 +182,7 @@ namespace Applitools
             onFail_ = onFail;
             OnFail = OnFail_;
             logger_ = logger;
+            timeout_ = timeout.HasValue ? timeout.Value : TimeSpan.FromMinutes(5);
             caller_ = callingMember;
             callingThread_ = Thread.CurrentThread.ManagedThreadId;
             testIds_ = testIds;
@@ -218,14 +221,13 @@ namespace Applitools
         {
             logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
             Stopwatch sw = Stopwatch.StartNew();
-            TimeSpan timeout = TimeSpan.FromMinutes(5);
             bool result;
             do
             {
-                result = sync_.WaitOne(TimeSpan.FromMinutes(1));
+                result = sync_.WaitOne(Math.Min((int)timeout_.TotalMilliseconds, 60000));
                 if (!result) logger_?.Log(TraceLevel.Notice, testIds_, Stage.General,
                         new { message = $"still waiting for finish...", caller_, sw.Elapsed });
-            } while (!result && sw.Elapsed < timeout);
+            } while (!result && sw.Elapsed < timeout_);
 
             if (result)
             {
