@@ -53,7 +53,7 @@ before_script:
 
 after_script:
   - ls -la network.log
-  - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure
+  - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh
 
 # env variables
 # $RELEASE_BRANCH
