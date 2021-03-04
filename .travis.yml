@@ -42,8 +42,8 @@ before_script:
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
-  - # export APPLITOOLS_PROXY=http://127.0.0.1:8080
-  - # sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
+  - export APPLITOOLS_PROXY=http://127.0.0.1:8080
+  - sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
   - echo "Travis event type is $TRAVIS_EVENT_TYPE"
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
       export APPLITOOLS_FULL_COVERAGE=true;
@@ -53,8 +53,8 @@ before_script:
     fi
 
 after_script:
-  - # pkill mitmdump
-  - # ls -la network.log.har
+  - pkill mitmdump
+  - ls -la network.log.har
   - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_SIG}
 
 # env variables

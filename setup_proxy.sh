@@ -5,4 +5,5 @@ sudo mkdir /usr/share/ca-certificates/extra
 sudo cp DO_NOT_TRUST.crt /usr/share/ca-certificates/extra
 sudo update-ca-certificates
 sudo apt-get install mitmproxy
-mitmdump --cert=DO_NOT_TRUST.pem -s /usr/share/doc/mitmproxy/examples/complex/har_dump.py --set hardump=./network.log.har &
+ls -la `locate har_dump.py`
+mitmdump --cert=DO_NOT_TRUST.pem -s `locate har_dump.py` --set hardump=./network.log.har &
