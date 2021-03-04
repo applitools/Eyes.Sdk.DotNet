@@ -43,7 +43,6 @@ before_script:
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
   - export APPLITOOLS_PROXY=http://127.0.0.1:8080
-  - alias python=python3
   - sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
   - echo "Travis event type is $TRAVIS_EVENT_TYPE"
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then

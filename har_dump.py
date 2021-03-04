@@ -13,10 +13,8 @@ import json
 import base64
 import zlib
 import os
-import typing  # noqa
 
 from datetime import datetime
-from datetime import timezone
 
 import mitmproxy
 
@@ -26,11 +24,11 @@ from mitmproxy import ctx
 from mitmproxy.utils import strutils
 from mitmproxy.net.http import cookies
 
-HAR: typing.Dict = {}
+HAR = {}
 
 # A list of server seen till now is maintained so we can avoid
 # using 'connect' time for entries that use an existing connection.
-SERVERS_SEEN: typing.Set[connections.ServerConnection] = set()
+SERVERS_SEEN = set()
 
 
 def load(l):
@@ -93,7 +91,7 @@ def response(flow):
     # Timings set to -1 will be ignored as per spec.
     full_time = sum(v for v in timings.values() if v > -1)
 
-    started_date_time = datetime.fromtimestamp(flow.request.timestamp_start, timezone.utc).isoformat()
+    started_date_time = datetime.utcfromtimestamp(flow.request.timestamp_start).isoformat()
 
     # Response body size and encoding
     response_body_size = len(flow.response.raw_content)
@@ -161,12 +159,12 @@ def done():
         Called once on script shutdown, after any other events.
     """
     if ctx.options.hardump:
-        json_dump: str = json.dumps(HAR, indent=2)
+        json_dump = json.dumps(HAR, indent=2)
 
         if ctx.options.hardump == '-':
             mitmproxy.ctx.log(json_dump)
         else:
-            raw: bytes = json_dump.encode()
+            raw = json_dump.encode()
             if ctx.options.hardump.endswith('.zhar'):
                 raw = zlib.compress(raw, 9)
 
@@ -197,7 +195,7 @@ def format_cookies(cookie_list):
         # Expiration time needs to be formatted
         expire_ts = cookies.get_expiration_ts(attrs)
         if expire_ts is not None:
-            cookie_har["expires"] = datetime.fromtimestamp(expire_ts, timezone.utc).isoformat()
+            cookie_har["expires"] = datetime.utcfromtimestamp(expire_ts).isoformat()
 
         rv.append(cookie_har)
 
