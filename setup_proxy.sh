@@ -8,4 +8,4 @@ sudo apt-get install mitmproxy
 alias python=python3
 python --version
 python3 --version
-mitmdump --cert=DO_NOT_TRUST.pem -s ./har_dump.py --set hardump=./network.log.zhar &
+mitmdump --cert=DO_NOT_TRUST.pem -s ./har_dump.py --set hardump=./network.log.har &

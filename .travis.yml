@@ -7,7 +7,7 @@ node_js:
   - "14"
 
 os: linux
-dist: xenial
+dist: focal
 
 services:
   - docker
@@ -54,7 +54,7 @@ before_script:
 
 after_script:
   - pkill mitmdump
-  - ls -la network.log.zhar
+  - ls -la network.log.har
   - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_SIG}
 
 # env variables
