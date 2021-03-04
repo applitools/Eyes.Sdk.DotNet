@@ -54,7 +54,7 @@ before_script:
 
 after_script:
   - pkill mitmdump
-  - ls -la network.log.har
+  - ls -la network.log.zhar
   - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_SIG}
 
 # env variables

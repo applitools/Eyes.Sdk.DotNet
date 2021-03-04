@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CHANGELOG.md = CHANGELOG.md
 		deploy.sh = deploy.sh
 		extractChangeLog.sh = extractChangeLog.sh
+		har_dump.py = har_dump.py
 		LICENSE.txt = LICENSE.txt
 		loopChangeLog.sh = loopChangeLog.sh
 		README.md = README.md
