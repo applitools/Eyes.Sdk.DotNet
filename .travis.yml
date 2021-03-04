@@ -73,7 +73,7 @@ jobs:
 #        - popd
 #        - chmod +x ./buildProjects.sh && ./buildProjects.sh Eyes.Sdk.DotNet_Travis.sln --filter 'TestCategory=Generated'
 
-    - name: Images
+      name: Images
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Images.DotNet/*.csproj
   
