@@ -5,4 +5,6 @@ sudo mkdir /usr/share/ca-certificates/extra
 sudo cp DO_NOT_TRUST.crt /usr/share/ca-certificates/extra
 sudo update-ca-certificates
 sudo apt-get install mitmproxy
+alias python=python3
+python --version
 mitmdump --cert=DO_NOT_TRUST.pem -s ./har_dump.py --set hardump=./network.log.zhar &

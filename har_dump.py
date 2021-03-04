@@ -13,6 +13,7 @@ import json
 import base64
 import zlib
 import os
+import platform
 
 from datetime import datetime
 
@@ -32,6 +33,7 @@ SERVERS_SEEN = set()
 
 
 def load(l):
+    print(platform.python_version())
     l.add_option(
         "hardump", str, "", "HAR dump path.",
     )
