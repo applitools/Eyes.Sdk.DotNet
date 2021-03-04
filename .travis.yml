@@ -55,7 +55,7 @@ before_script:
 after_script:
   - pkill mitmdump
   - ls -la network.log.har
-  - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh
+  - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_TOKEN}
 
 # env variables
 # $RELEASE_BRANCH
