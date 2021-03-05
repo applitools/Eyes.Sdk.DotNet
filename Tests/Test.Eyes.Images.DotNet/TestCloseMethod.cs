@@ -14,7 +14,10 @@ namespace Applitools.Images.Tests
         public void TestClose()
         {
             BatchInfo batch = new BatchInfo();
-            Eyes eyes = new Eyes();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            Logger logger = new Logger();
+            logger.SetLogHandler(logHandler);
+            Eyes eyes = new Eyes(logger);
             eyes.Batch = batch;
 
             eyes.Open(nameof(TestCloseMethod), nameof(TestClose));

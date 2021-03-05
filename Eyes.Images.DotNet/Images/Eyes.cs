@@ -33,8 +33,7 @@ namespace Applitools.Images
         /// specified url.
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
-        public Eyes(Uri serverUrl)
-            : base(serverUrl)
+        public Eyes(Uri serverUrl) : base(serverUrl)
         {
             // No need to retry since we are providing the image to match.
             MatchTimeout = TimeSpan.Zero;
@@ -43,9 +42,20 @@ namespace Applitools.Images
         /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
-        public Eyes()
-            : base()
+        /// <param name="logger">The logger to use.</param>
+        public Eyes(Logger logger) : base(logger)
         {
+            // No need to retry since we are providing the image to match.
+            MatchTimeout = TimeSpan.Zero;
+        }
+
+        /// <summary>
+        /// Creates a new Eyes instance that interacts with the Eyes cloud service.
+        /// </summary>
+        public Eyes() : base()
+        {
+            // No need to retry since we are providing the image to match.
+            MatchTimeout = TimeSpan.Zero;
         }
 
         #endregion
