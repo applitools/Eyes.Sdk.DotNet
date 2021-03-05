@@ -179,7 +179,7 @@ namespace Applitools
 
                 public MockMessageProcessingHandler Handler { get; }
 
-                public HttpClient GetClient()
+                public HttpClient GetClient(IWebProxy proxy)
                 {
                     return httpClient_;
                 }

@@ -1,9 +1,10 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 
 namespace Applitools.Utils
 {
     public interface IHttpClientProvider
     {
-        HttpClient GetClient();
+        HttpClient GetClient(IWebProxy proxy);
     }
 }

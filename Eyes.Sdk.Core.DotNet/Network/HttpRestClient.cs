@@ -161,7 +161,7 @@ namespace Applitools.Utils
         internal HttpClient GetHttpClient()
         {
             if (httpClient_ == null)
-                httpClient_ = httpClientProvider_.GetClient();
+                httpClient_ = httpClientProvider_.GetClient(Proxy);
             return httpClient_;
         }
 
@@ -490,102 +490,6 @@ namespace Applitools.Utils
             }
 
             return message;
-        }
-
-        private HttpWebRequest CreateHttpWebRequest_(
-            Uri requestUri, string method, MemoryStream body, string contentType, string accept, string contentEncoding)
-        {
-            if (FormatRequestUri != null)
-            {
-                requestUri = FormatRequestUri(requestUri);
-            }
-
-            //var req = (HttpWebRequest)WebRequest.Create(requestUri);
-            var req = (HttpWebRequest)WebRequestCreator.Create(requestUri);
-
-            if (Proxy != null)
-            {
-                req.Proxy = Proxy;
-            }
-            else
-            {
-#if NET45
-                // Apply system web proxy configuration.
-                var proxy = WebRequest.GetSystemWebProxy();
-                if (proxy != null)
-                {
-                    var proxyUri = proxy.GetProxy(req.RequestUri).ToString();
-                    if (proxyUri != requestUri.ToString())
-                    {
-                        req.Proxy = new WebProxy(proxyUri, false);
-                        req.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                }
-#endif
-            }
-
-#if NET45
-            req.ServicePoint.ConnectionLimit = ConnectionLimit;
-#endif
-
-            if (accept != null)
-            {
-                req.Accept = accept;
-            }
-
-            req.Method = method;
-            if (authUser_ != null || authPassword_ != null)
-            {
-                req.BasicAuthentication(authUser_, authPassword_);
-            }
-
-            if (Timeout != TimeSpan.Zero)
-            {
-                req.Timeout = (int)Timeout.TotalMilliseconds;
-            }
-
-            if (ConfigureRequest != null)
-            {
-                var args = new HttpWebRequestEventArgs(req);
-                CommonUtils.DontThrow(() => ConfigureRequest(this, args));
-            }
-
-            if (Headers.Count > 0)
-            {
-                req.Headers.Add(Headers);
-            }
-
-            ConfigureHttpWebRequest(req);
-
-            if (AgentId != null)
-            {
-                req.Headers["x-applitools-eyes-client"] = AgentId;
-            }
-
-            req.Headers["x-applitools-eyes-client-request-id"] = Guid.NewGuid().ToString();
-
-            SetLongRequestHeaders(req);
-
-            if (body != null)
-            {
-                if (contentType != null)
-                {
-                    req.ContentType = contentType;
-                }
-
-                if (contentEncoding != null)
-                {
-                    req.Headers["Content-Encoding"] = contentEncoding;
-                }
-
-                req.ContentLength = body.Length;
-                body.Position = 0;
-                Stream reqStream = req.GetRequestStream();
-                body.CopyTo(reqStream);
-                reqStream.Close();
-            }
-
-            return req;
         }
 
         private static void SetLongRequestHeaders(HttpWebRequest req)

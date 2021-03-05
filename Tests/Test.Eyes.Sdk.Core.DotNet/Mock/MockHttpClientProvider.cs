@@ -15,7 +15,7 @@ namespace Applitools
             httpClient_ = new HttpClient(handler);
         }
 
-        public HttpClient GetClient()
+        public HttpClient GetClient(IWebProxy proxy)
         {
             return httpClient_;
         }

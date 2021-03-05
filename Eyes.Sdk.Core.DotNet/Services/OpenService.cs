@@ -73,7 +73,7 @@ namespace Applitools
             }
         }
 
-        private void OnComplete_(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener, 
+        private void OnComplete_(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener,
             RunningSession runningSession, Stopwatch stopwatch, string testId)
         {
             if (runningSession.ConcurrencyFull)
@@ -118,7 +118,15 @@ namespace Applitools
                 ServerConnector.StartSession(
                     new TaskListener<RunningSession>(
                         (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch, testId),
-                        (ex) => OnFail_(stopwatch, sessionStartInfo, listener, testId)
+                        (ex) =>
+                        {
+                            if (ex.InnerException is System.Net.Http.HttpRequestException reqEx &&
+                                reqEx.InnerException is System.Net.Sockets.SocketException socketEx &&
+                                socketEx.SocketErrorCode == System.Net.Sockets.SocketError.ConnectionRefused)
+                                throw ex;
+
+                            OnFail_(stopwatch, sessionStartInfo, listener, testId);
+                        }
                     ),
                     sessionStartInfo);
             }
