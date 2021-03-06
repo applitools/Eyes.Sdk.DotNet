@@ -67,29 +67,29 @@ after_script:
 jobs:
   include:
     - stage: Test
-#      name: Generated Tests
-#      script:
-#        - echo "generating tests"
-#        - pushd coverage-tests
-#        - npm run dotnet:generate
-#        - popd
-#        - chmod +x ./buildProjects.sh && ./buildProjects.sh Eyes.Sdk.DotNet_Travis.sln --filter 'TestCategory=Generated'
+      name: Generated Tests
+      script:
+        - echo "generating tests"
+        - pushd coverage-tests
+        - npm run dotnet:generate
+        - popd
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Eyes.Sdk.DotNet_Travis.sln --filter 'TestCategory=Generated'
 
-      name: Images
+    - name: Images
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Images.DotNet/*.csproj
   
-#    - name: Core
-#      script:
-#        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
+    - name: Core
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
   
-#    - name: Appium
-#      script:
-#        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
+    - name: Appium
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
   
-#    - name: Selenium
-#      script:
-#        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
+    - name: Selenium
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master
