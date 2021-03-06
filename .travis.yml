@@ -54,9 +54,8 @@ before_script:
 
 after_script:
   - pkill mitmdump
-  - sleep 1
-  - fg
-  - ls -la network.log.har
+  - sleep 5
+  - ls -la network.log*
   - gzip network.log.har
   - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_SIG}
 
