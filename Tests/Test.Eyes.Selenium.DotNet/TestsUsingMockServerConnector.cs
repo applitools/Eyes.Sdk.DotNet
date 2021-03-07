@@ -45,7 +45,8 @@ namespace Applitools.Selenium.Tests
                 finalImageHash != "5E771AB31BA0D3232E370FDA5E630A649E0E03FA704243BBD288303B4D9064B3" && // Windows with different Antialiasing
                 finalImageHash != "35D38A5CE5571F4D2AB4C543FB7CDB2EDC85A82C2472A8F062700637DE8BCF30" && // Windows, Chrome >= 87
                 finalImageHash != "CAE9ADB9A45932BF9DEA51972A6B69908D012324E0CB4B2A93368CDD3C8E56D2" && // Linux, Chrome >=85
-                finalImageHash != "993DB6CB4EC9D93AB5A7F0F598F179DADBB562A5E6A31BFAA6211C809BA5C9BB")   // Linux, Chrome >=87
+                finalImageHash != "993DB6CB4EC9D93AB5A7F0F598F179DADBB562A5E6A31BFAA6211C809BA5C9BB" && // Linux, Chrome >=87
+                finalImageHash != "53CD94D4450FF82825C8B36A04E0BC68B32BACFB4F09019294D907AF0080F6E5")   // Linux, Chrome >=89
             {
                 Assert.Fail("Different image than expected. Hash: {0}\nBase64:\n{1}\n", finalImageHash,
                     string.Join('\n', Convert.ToBase64String(screenshotBytes).Split(160)));
