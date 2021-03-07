@@ -8,10 +8,10 @@ namespace Applitools.Utils
 {
     internal class RequestPollingTaskListener : TaskListener<HttpResponseMessage>
     {
-        private HttpRestClient restClient_;
-        private Logger logger_;
+        private readonly HttpRestClient restClient_;
+        private readonly Logger logger_;
         private Uri pollingUrl_;
-        private TaskListener<HttpResponseMessage> listener_;
+        private readonly TaskListener<HttpResponseMessage> listener_;
         private int sleepDuration_ = 500;
         private int requestCount_;
 

@@ -192,6 +192,7 @@ namespace Applitools.Utils
             return SendHttpWebRequest_(path, "POST", body, contentType, accept, contentEncoding);
         }
 
+        // Used ONLY from test code to notify SauceLabs of test results.
         /// <summary>
         /// Sends a PUT request to the input path under the base url with a JSON body.
         /// </summary>
@@ -202,7 +203,6 @@ namespace Applitools.Utils
 
 
         // Used ONLY by DeleteSession
-
         /// <summary>
         /// Sends a DELETE request to the input path under the base url.
         /// </summary>
@@ -283,35 +283,44 @@ namespace Applitools.Utils
         public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, Uri url, string method)
         {
             HttpRequestMessage request = CreateHttpRequestMessage(url, method, null, null, null, null);
-            SendAsyncRequest(listener, request, Logger);
+            SendAsyncRequest(listener, request, Logger, 1);
         }
 
         public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, HttpRequestMessage request, Logger logger,
-            TimeSpan? timeout = null)
+            int attempts = 2, TimeSpan? timeout = null)
         {
             //int timeoutMS = timeout == null ? (int)Timeout.TotalMilliseconds : (int)timeout.Value.TotalMilliseconds;
             //CancellationToken timeoutCancelationToken = new CancellationTokenSource(timeoutMS).Token;
             IAsyncResult asyncResult = GetHttpClient().SendAsync(request/*, timeoutCancelationToken*/)
-                .AsApm(ar => GetResponseCallBack_(listener, ar), request);
+                .AsApm(ar => GetResponseCallBack_(listener, ar, request, logger, attempts), request);
             //IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
                 logger.Log(TraceLevel.Notice, Stage.General,
                             new { message = "request.BeginGetResponse completed synchronously" });
-                GetResponseCallBack_(listener, asyncResult);
+                GetResponseCallBack_(listener, asyncResult, request, logger, attempts);
             }
         }
 
-        private static void GetResponseCallBack_(TaskListener<HttpResponseMessage> listener, IAsyncResult result)
+        private void GetResponseCallBack_(TaskListener<HttpResponseMessage> listener, IAsyncResult result,
+            HttpRequestMessage originalRequest, Logger logger, int attemptsLeft)
         {
             if (!result.IsCompleted) return;
-
+            --attemptsLeft;
             try
             {
                 HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;
                 if (response.StatusCode >= HttpStatusCode.Ambiguous)
                 {
-                    listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.ReasonPhrase}"));
+                    if (attemptsLeft > 0)
+                    {
+                        logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
+                        SendAsyncRequest(listener, originalRequest, logger, attemptsLeft);
+                    }
+                    else
+                    {
+                        listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.ReasonPhrase}"));
+                    }
                 }
                 else
                 {
@@ -321,6 +330,11 @@ namespace Applitools.Utils
             }
             catch (WebException ex)
             {
+                if (attemptsLeft > 0)
+                {
+                    logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
+                    SendAsyncRequest(listener, originalRequest, logger, attemptsLeft);
+                }
                 listener.OnFail(ex);
             }
         }
@@ -364,7 +378,8 @@ namespace Applitools.Utils
                         throw new NullReferenceException("request is null");
                     }
                     CancellationTokenSource cts = new CancellationTokenSource(Timeout);
-                    IAsyncResult asyncResult = GetHttpClient().SendAsync(request, cts.Token).AsApm(OnLongRequestResponse_, request);
+                    IAsyncResult asyncResult = GetHttpClient().SendAsync(request, cts.Token).
+                        AsApm(OnLongRequestResponse_, request);
 
                     if (asyncResult != null && asyncResult.CompletedSynchronously)
                     {

@@ -16,6 +16,7 @@ namespace Applitools.Utils
         private readonly TaskListener<string> listener_;
         private readonly ServerConnector serverConnector_;
         private readonly Logger logger_;
+        private int retriesLeft_ = 2;
         private readonly string targetUrl_;
         private readonly byte[] bytes_;
         private readonly string contentType_;
@@ -80,7 +81,12 @@ namespace Applitools.Utils
 
         private void OnFail_(Exception ex)
         {
-            CommonUtils.LogExceptionStackTrace(serverConnector_.Logger, Stage.General, StageType.UploadResource, ex);
+            if (retriesLeft_-- > 0)
+            {
+                logger_.Log(TraceLevel.Warn, testIds_, Stage.Check, StageType.Retry);
+                UploadDataAsync(); return;
+            }
+            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, StageType.UploadResource, ex, testIds_);
             listener_.OnFail(ex);
         }
 
@@ -92,13 +98,14 @@ namespace Applitools.Utils
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType_));
             request.Headers.Add("X-Auth-Token", serverConnector_.GetRenderingInfo().AccessToken);
             request.Headers.Add("x-ms-blob-type", "BlockBlob");
-
+            logger_.Log(TraceLevel.Notice, testIds_, Stage.Check, StageType.UploadStart,
+                new { proxyAddress = serverConnector_.httpClient_.Proxy?.Address });
             IAsyncResult asyncResult = serverConnector_.httpClient_.GetHttpClient().SendAsync(request).AsApm(
                 ar =>
                 {
                     if (!ar.IsCompleted)
                     {
-                        serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
+                        logger_.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
                             new { message = "upload not complete" });
                         return;
                     }
@@ -107,7 +114,7 @@ namespace Applitools.Utils
 
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
-                serverConnector_.Logger.Log(TraceLevel.Notice, Stage.General,
+                logger_.Log(TraceLevel.Notice, testIds_, Stage.General, 
                     new { message = "request.BeginGetResponse completed synchronously" });
                 HandleResult_(asyncResult);
             }
@@ -117,7 +124,7 @@ namespace Applitools.Utils
         {
             HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;
             HttpStatusCode statusCode = response.StatusCode;
-            serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadComplete,
+            logger_.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadComplete,
                 new { statusCode });
             try
             {
