@@ -9,4 +9,4 @@ sudo mkdir /usr/share/ca-certificates/extra
 sudo cp ~/.mitmproxy/mitmproxy-ca-cert.cer /usr/share/ca-certificates/extra
 echo "extra/mitmproxy-ca-cert.cer" | sudo tee -a /etc/ca-certificates.conf
 sudo update-ca-certificates
-mitmdump -s ./har_dump.py --set hardump=./network.log.har > ./network.log &
+mitmdump -w ./network.dump > ./network.log &
