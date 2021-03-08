@@ -4,6 +4,7 @@ using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -14,8 +15,8 @@ namespace Applitools.Tests.Utils
     {
         private static readonly TestResultReportSummary reportSummary_ = new TestResultReportSummary();
         protected readonly Dictionary<string, object> suiteArgs_ = new Dictionary<string, object>();
-        private static readonly IList<string> includedTestsList = null;
-        private static readonly string includedTestsListFilename;
+        private static readonly HashSet<string> includedTestsList = null;
+        private static readonly string excludedTestsListFilename;
         public static readonly bool IS_FULL_COVERAGE = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_FULL_COVERAGE"), StringComparison.OrdinalIgnoreCase);
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
@@ -36,35 +37,35 @@ namespace Applitools.Tests.Utils
             {
                 Assembly asm = Assembly.GetExecutingAssembly();
                 string asmName = asm.GetName().Name;
-                includedTestsListFilename = "failed_tests_" + asmName + ".txt";
-                if (!RUNS_ON_CI || includedTestsListFilename == null || !File.Exists(includedTestsListFilename))
-                {
-                    logger_.Log(TraceLevel.Notice, Stage.TestFramework,
-                        new
-                        {
-                            message = "Reading regression list from embedded resource",
-                            resourceName = $"{asmName}.Resources.IncludedTests.txt"
-                        });
+                excludedTestsListFilename = "passed_tests_" + asmName + ".txt";
 
-                    Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
-                    if (includedTestsListStream != null)
-                    {
-                        includedTestsList = CommonUtils.ReadStreamAsLines(includedTestsListStream);
-                    }
-                    else
-                    {
-                        includedTestsList = null;
-                    }
+                Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
+                logger_.Log(TraceLevel.Notice, Stage.TestFramework,
+                       new
+                       {
+                           message = "Reading regression list from embedded resource",
+                           resourceName = $"{asmName}.Resources.IncludedTests.txt"
+                       });
+                
+                if (includedTestsListStream != null)
+                {
+                    includedTestsList = new HashSet<string>(CommonUtils.ReadStreamAsLines(includedTestsListStream));
                 }
                 else
                 {
+                    includedTestsList = null;
+                }
+
+                if (RUNS_ON_CI && excludedTestsListFilename != null && File.Exists(excludedTestsListFilename))
+                {
                     logger_.Log(TraceLevel.Notice, Stage.TestFramework,
                         new
                         {
-                            message = "Reading regression list from file",
-                            includedTestsListFilename
+                            message = "Reading exclusion list from file and filtering regression list",
+                            excludedTestsListFilename
                         });
-                    includedTestsList = File.ReadAllLines(includedTestsListFilename);
+                    HashSet<string> excludedTestsList = new HashSet<string>(File.ReadAllLines(excludedTestsListFilename));
+                    includedTestsList.RemoveWhere(item => excludedTestsList.Contains(item));
                 }
             }
         }
@@ -101,7 +102,7 @@ namespace Applitools.Tests.Utils
             {
                 return;
             }
-            if (includedTestsListFilename != null)
+            if (excludedTestsListFilename != null)
             {
                 int attemptsLeft = 3;
                 while (attemptsLeft-- > 0 && !WriteFailedTestsToFile_(tc, status)) { Thread.Sleep(100); }
@@ -114,10 +115,10 @@ namespace Applitools.Tests.Utils
         {
             try
             {
-                File.AppendAllText(includedTestsListFilename, "");
-                if (status != TestStatus.Passed)
+                File.AppendAllText(excludedTestsListFilename, "");
+                if (status == TestStatus.Passed)
                 {
-                    File.AppendAllLines(includedTestsListFilename, new string[] { tc.Test.FullName });
+                    File.AppendAllLines(excludedTestsListFilename, new string[] { tc.Test.FullName });
                 }
                 return true;
             }

@@ -264,10 +264,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ExcludedTests.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="VisualGridTests\TestVGCloseAsync.cs" />
     <None Include="VisualGridTests\TestVGNoMissingSteps.cs" />
     <None Include="VisualGridTests\TestVGServerConfigs.cs" />
