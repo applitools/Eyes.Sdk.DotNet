@@ -465,7 +465,7 @@ namespace Applitools
                         listener.OnComplete(jobInfos);
                     },
                     ex => listener.OnFail(ex)
-                    ), request, Logger);
+                    ), request, Logger, new BackoffProvider());
             }
             catch (Exception e)
             {
@@ -624,7 +624,7 @@ namespace Applitools
                   }
                   taskListener.OnComplete(response.DeserializeBody<T>(true));
               },
-              ex => taskListener.OnFail(ex)), request, Logger);
+              ex => taskListener.OnFail(ex)), request, Logger, new BackoffProvider());
         }
 
         public void RenderPutResource(TaskListener<HttpResponseMessage> listener, string renderId, IVGResource resource)
@@ -643,7 +643,7 @@ namespace Applitools
                 method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream",
                 content: content);
 
-            httpClient_.SendAsyncRequest(listener, request, Logger);
+            httpClient_.SendAsyncRequest(listener, request, Logger, new BackoffProvider());
             Logger.Verbose("future created.");
         }
 

@@ -283,44 +283,47 @@ namespace Applitools.Utils
         public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, Uri url, string method)
         {
             HttpRequestMessage request = CreateHttpRequestMessage(url, method, null, null, null, null);
-            SendAsyncRequest(listener, request, Logger, 1);
+            SendAsyncRequest(listener, request, Logger, new BackoffProvider(0));
         }
 
         public void SendAsyncRequest(TaskListener<HttpResponseMessage> listener, HttpRequestMessage request, Logger logger,
-            int attempts = 2, TimeSpan? timeout = null)
+            BackoffProvider backoffProvider, TimeSpan? timeout = null)
         {
-            //int timeoutMS = timeout == null ? (int)Timeout.TotalMilliseconds : (int)timeout.Value.TotalMilliseconds;
-            //CancellationToken timeoutCancelationToken = new CancellationTokenSource(timeoutMS).Token;
-            IAsyncResult asyncResult = GetHttpClient().SendAsync(request/*, timeoutCancelationToken*/)
-                .AsApm(ar => GetResponseCallBack_(listener, ar, request, logger, attempts), request);
-            //IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
+            int timeoutMS = timeout == null ? (int)Timeout.TotalMilliseconds : (int)timeout.Value.TotalMilliseconds;
+            CancellationToken timeoutCancelationToken = new CancellationTokenSource(timeoutMS).Token;
+            IAsyncResult asyncResult = GetHttpClient().SendAsync(request, timeoutCancelationToken)
+                .AsApm(ar => GetResponseCallBack_(listener, ar, request, logger, backoffProvider), request);
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
                 logger.Log(TraceLevel.Notice, Stage.General,
                             new { message = "request.BeginGetResponse completed synchronously" });
-                GetResponseCallBack_(listener, asyncResult, request, logger, attempts);
+                GetResponseCallBack_(listener, asyncResult, request, logger, backoffProvider);
             }
         }
 
         private void GetResponseCallBack_(TaskListener<HttpResponseMessage> listener, IAsyncResult result,
-            HttpRequestMessage originalRequest, Logger logger, int attemptsLeft)
+            HttpRequestMessage originalRequest, Logger logger, BackoffProvider backoffProvider)
         {
             if (!result.IsCompleted) return;
-            --attemptsLeft;
             try
             {
-                HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;
-                if (response.StatusCode >= HttpStatusCode.Ambiguous)
+                Task<HttpResponseMessage> resultAsTask = (Task<HttpResponseMessage>)result;
+                if (resultAsTask.IsCanceled)
                 {
-                    if (attemptsLeft > 0)
+                    if (backoffProvider.ShouldWait)
                     {
                         logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
-                        SendAsyncRequest(listener, originalRequest, logger, attemptsLeft);
+                        backoffProvider.Wait();
+                        SendAsyncRequest(listener, originalRequest, logger, backoffProvider);
+                        return;
                     }
-                    else
-                    {
-                        listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.ReasonPhrase}"));
-                    }
+                    listener.OnFail(new TimeoutException($"HttpRequestMessage request timed out: {originalRequest.Method} {originalRequest.RequestUri}"));
+                    return;
+                }
+                HttpResponseMessage response = resultAsTask.Result;
+                if (response.StatusCode >= HttpStatusCode.Ambiguous)
+                {
+                    listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.ReasonPhrase}"));
                 }
                 else
                 {
@@ -330,10 +333,12 @@ namespace Applitools.Utils
             }
             catch (WebException ex)
             {
-                if (attemptsLeft > 0)
+                if (backoffProvider.ShouldWait)
                 {
                     logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
-                    SendAsyncRequest(listener, originalRequest, logger, attemptsLeft);
+                    backoffProvider.Wait();
+                    SendAsyncRequest(listener, originalRequest, logger, backoffProvider);
+                    return;
                 }
                 listener.OnFail(ex);
             }
