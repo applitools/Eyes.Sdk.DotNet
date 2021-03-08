@@ -130,10 +130,13 @@ namespace Applitools
                         var proxy = WebRequest.GetSystemWebProxy();
                         if (proxy != null)
                         {
-                            string proxyUri = proxy.GetProxy(new Uri("http://example.com")).ToString();
-                            proxy_ = new WebProxy(proxyUri);
-                            proxy_.Credentials = CredentialCache.DefaultCredentials;
-                            proxyChanged_ = true;
+                            Uri proxyUri = proxy.GetProxy(new Uri("http://example.com"));
+                            if (proxyUri != null)
+                            {
+                                proxy_ = new WebProxy(proxyUri);
+                                proxy_.Credentials = CredentialCache.DefaultCredentials;
+                                proxyChanged_ = true;
+                            }
                         }
                     }
                 }
