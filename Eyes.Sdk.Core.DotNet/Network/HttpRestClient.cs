@@ -512,14 +512,6 @@ namespace Applitools.Utils
             return message;
         }
 
-        private static void SetLongRequestHeaders(HttpWebRequest req)
-        {
-            req.Headers["Eyes-Expect"] = "202+location";
-            req.Headers["Eyes-Expect-Version"] = "2";
-            req.Headers["Eyes-Date"] =
-                TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.RFC1123);
-        }
-
         #endregion
 
         #endregion
