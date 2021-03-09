@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Applitools.Tests.Utils
 {
@@ -46,7 +47,7 @@ namespace Applitools.Tests.Utils
                            message = "Reading regression list from embedded resource",
                            resourceName = $"{asmName}.Resources.IncludedTests.txt"
                        });
-                
+
                 if (includedTestsListStream != null)
                 {
                     includedTestsList = new HashSet<string>(CommonUtils.ReadStreamAsLines(includedTestsListStream));
@@ -94,19 +95,8 @@ namespace Applitools.Tests.Utils
         [TearDown]
         public void TearDown()
         {
-            string chromedriverPIDs = null;
-            if (RUNS_ON_CI) 
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo("/bin/bash", "-c \"pgrep chromedriver\"")
-                {
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                Process p = Process.Start(startInfo);
-                chromedriverPIDs = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-            }
+            Process[] chromedriverProcesses = Process.GetProcessesByName("chromedriver");
+            int[] chromedriverPIDs = chromedriverProcesses.Select(p => p.Id).ToArray();
 
             TestContext tc = TestContext.CurrentContext;
             TestStatus status = tc.Result.Outcome.Status;
