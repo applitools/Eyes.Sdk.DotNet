@@ -4,7 +4,6 @@ using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -105,13 +104,13 @@ namespace Applitools.Tests.Utils
             if (excludedTestsListFilename != null)
             {
                 int attemptsLeft = 3;
-                while (attemptsLeft-- > 0 && !WriteFailedTestsToFile_(tc, status)) { Thread.Sleep(100); }
+                while (attemptsLeft-- > 0 && !WritePassedTestsToFile_(tc, status)) { Thread.Sleep(100); }
             }
             TestResult testResult = GetTestResult();
             reportSummary_.AddResult(testResult);
         }
 
-        private static bool WriteFailedTestsToFile_(TestContext tc, TestStatus status)
+        private static bool WritePassedTestsToFile_(TestContext tc, TestStatus status)
         {
             try
             {
