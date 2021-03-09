@@ -154,7 +154,9 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckLongIFrameModal()
         {
+            // Use GetWebDriver on the next line so the Click action won't be recorded as User Input
             GetWebDriver().FindElement(By.Id("stretched")).Click();
+
             IWebElement frame = GetDriver().FindElement(By.CssSelector("#modal2 iframe"));
             GetDriver().SwitchTo().Frame(frame);
             IWebElement element = GetDriver().FindElement(By.TagName("html"));
@@ -182,7 +184,9 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckLongOutOfBoundsIFrameModal()
         {
-            GetDriver().FindElement(By.Id("hidden_click")).Click();
+            // Use GetWebDriver on the next line so the Click action won't be recorded as User Input
+            GetWebDriver().FindElement(By.Id("hidden_click")).Click();
+
             IWebElement frame = GetDriver().FindElement(By.CssSelector("#modal3 iframe"));
             GetDriver().SwitchTo().Frame(frame);
             IWebElement element = GetDriver().FindElement(By.TagName("html"));
