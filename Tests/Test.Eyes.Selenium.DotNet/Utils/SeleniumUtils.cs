@@ -1,21 +1,23 @@
-﻿namespace Applitools.Selenium.Tests.Utils
-{
-    using System;
-    using System.Drawing;
-    using System.Runtime.CompilerServices;
-    using System.Threading;
-    using Applitools.Tests.Utils;
-    using Applitools.Utils;
-    using Applitools.VisualGrid;
-    using OpenQA.Selenium;
-    using OpenQA.Selenium.Chrome;
-    using OpenQA.Selenium.Edge;
-    using OpenQA.Selenium.Firefox;
-    using OpenQA.Selenium.IE;
-    using OpenQA.Selenium.Interactions;
-    using OpenQA.Selenium.Safari;
-    using OpenQA.Selenium.Support.UI;
+﻿using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using Applitools.Tests.Utils;
+using Applitools.Utils;
+using Applitools.VisualGrid;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Safari;
+using OpenQA.Selenium.Support.UI;
 
+namespace Applitools.Selenium.Tests.Utils
+{
     /// <summary>
     /// Selenium WebDriver related utilities.
     /// </summary>
@@ -25,6 +27,12 @@
         private const string TestApiIndicatorsContainerId_ = "Test";
 
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        private readonly static Logger logger_ = new Logger();
+
+        static SeleniumUtils()
+        {
+            logger_.SetLogHandler(new NullLogHandler());
+        }
 
         public static ChromeDriver CreateChromeDriver(ChromeOptions options = null)
         {
@@ -43,6 +51,9 @@
                 return driver;
 
             });
+
+            LogChromeDriverProcesses_();
+
             return webDriver;
         }
 
@@ -61,6 +72,9 @@
                 }
                 return driver;
             });
+
+            LogChromeDriverProcesses_();
+
             return webDriver;
         }
 
@@ -84,6 +98,13 @@
                 wait = Math.Min(10000, wait);
             }
             return null;
+        }
+        
+        private static void LogChromeDriverProcesses_()
+        {
+            Process[] chromedriverProcesses = Process.GetProcessesByName("chromedriver");
+            int[] chromedriverPIDs = chromedriverProcesses.Select(p => p.Id).ToArray();
+            logger_.Log(TraceLevel.Notice, Stage.Setup, new { chromedriverPIDs });
         }
 
         /// <summary>
