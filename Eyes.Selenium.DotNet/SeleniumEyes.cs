@@ -242,10 +242,9 @@ namespace Applitools.Selenium
 
         protected override string TryCaptureDom()
         {
-            Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript);
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
             string domJson = domCapture.GetFullWindowDom(TestId);
-            Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
+            Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
             return domJson;
         }
 

@@ -368,7 +368,7 @@ namespace Applitools
                         throw new NullReferenceException("response is null");
                     }
                     MatchResult matchResult = response.DeserializeBody<MatchResult>(true);
-                    Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete, new { matchResult });
+                    Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.MatchComplete, new { matchResult });
                     listener.OnComplete(matchResult);
                 },
                 e => listener.OnFail(e)
@@ -388,7 +388,7 @@ namespace Applitools
 
             Guid guid = Guid.NewGuid();
             targetUrl = targetUrl.Replace("__random__", guid.ToString());
-            Logger.Log(TraceLevel.Notice, testIds, Stage.General, StageType.UploadStart, new { mediaType, targetUrl });
+            Logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.UploadStart, new { mediaType, targetUrl });
 
             UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
             callback.UploadDataAsync();
@@ -554,7 +554,7 @@ namespace Applitools
 
         public virtual void PostDomCapture(TaskListener<string> listener, string domJson, params string[] testIds)
         {
-            Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadStart);
+            Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadStart);
             try
             {
                 byte[] binData = Encoding.UTF8.GetBytes(domJson);

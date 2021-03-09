@@ -114,7 +114,7 @@ namespace Applitools
 
             try
             {
-                Logger.Log(TraceLevel.Notice, testId, Stage.Check, StageType.UploadStart,
+                Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadStart,
                     new { dataLength = appOutput.ScreenshotBytes.Length });
                 ServerConnector.UploadImage(uploadListener, appOutput.ScreenshotBytes, testId);
             }

@@ -1307,7 +1307,7 @@ namespace Applitools
                 {
                     string domJson = TryCaptureDom();
                     domUrl = TryPostDomCapture_(domJson);
-                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domUrl });
+                    Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.DomScript, new { domUrl });
                 }
                 catch (Exception ex)
                 {

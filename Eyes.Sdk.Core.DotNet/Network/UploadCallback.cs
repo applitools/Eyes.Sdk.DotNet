@@ -98,7 +98,7 @@ namespace Applitools.Utils
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType_));
             request.Headers.Add("X-Auth-Token", serverConnector_.GetRenderingInfo().AccessToken);
             request.Headers.Add("x-ms-blob-type", "BlockBlob");
-            logger_.Log(TraceLevel.Notice, testIds_, Stage.Check, StageType.UploadStart,
+            logger_.Log(TraceLevel.Info, testIds_, Stage.Check, StageType.UploadStart,
                 new { proxyAddress = serverConnector_.httpClient_.Proxy?.Address });
             IAsyncResult asyncResult = serverConnector_.httpClient_.GetHttpClient().SendAsync(request).AsApm(
                 ar =>
