@@ -94,24 +94,24 @@ namespace Applitools.Tests.Utils
         [TearDown]
         public void TearDown()
         {
-            string chromedriverCount = null;
+            string chromedriverPIDs = null;
             if (RUNS_ON_CI) 
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo("/bin/bash", "-c \"pgrep chromedriver | wc -l\"")
+                ProcessStartInfo startInfo = new ProcessStartInfo("/bin/bash", "-c \"pgrep chromedriver\"")
                 {
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
                 Process p = Process.Start(startInfo);
-                chromedriverCount = p.StandardOutput.ReadToEnd();
+                chromedriverPIDs = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
             }
 
             TestContext tc = TestContext.CurrentContext;
             TestStatus status = tc.Result.Outcome.Status;
             logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Complete,
-                new { testName = tc.Test.FullName, status, chromedriverCount });
+                new { testName = tc.Test.FullName, status, chromedriverPIDs });
             if (status == TestStatus.Inconclusive)
             {
                 return;
