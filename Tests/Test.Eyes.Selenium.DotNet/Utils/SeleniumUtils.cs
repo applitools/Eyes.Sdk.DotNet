@@ -27,11 +27,11 @@ namespace Applitools.Selenium.Tests.Utils
         private const string TestApiIndicatorsContainerId_ = "Test";
 
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
-        private readonly static Logger logger_ = new Logger();
+        private static readonly Logger logger_ = new Logger();
 
         static SeleniumUtils()
         {
-            logger_.SetLogHandler(new NullLogHandler());
+            logger_.SetLogHandler(new NunitLogHandler());
         }
 
         public static ChromeDriver CreateChromeDriver(ChromeOptions options = null)
@@ -99,7 +99,7 @@ namespace Applitools.Selenium.Tests.Utils
             }
             return null;
         }
-        
+
         private static void LogChromeDriverProcesses_()
         {
             Process[] chromedriverProcesses = Process.GetProcessesByName("chromedriver");
