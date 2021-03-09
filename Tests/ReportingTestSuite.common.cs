@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Applitools.Tests.Utils
 {
@@ -93,10 +94,24 @@ namespace Applitools.Tests.Utils
         [TearDown]
         public void TearDown()
         {
+            string chromedriverCount = null;
+            if (RUNS_ON_CI) 
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo("/bin/bash", "-c \"pgrep chromedriver | wc -l\"")
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                Process p = Process.Start(startInfo);
+                chromedriverCount = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+            }
+
             TestContext tc = TestContext.CurrentContext;
             TestStatus status = tc.Result.Outcome.Status;
             logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Complete,
-                new { testName = tc.Test.FullName, status });
+                new { testName = tc.Test.FullName, status, chromedriverCount });
             if (status == TestStatus.Inconclusive)
             {
                 return;
