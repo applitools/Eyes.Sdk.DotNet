@@ -15,7 +15,7 @@ using ScreenOrientation = OpenQA.Selenium.ScreenOrientation;
 namespace Applitools.Selenium.Tests
 {
     [TestFixture]
-    [Parallelizable(ParallelScope.All)]
+    [Parallelizable]
     [TestFixtureSource(nameof(TestsMobilePages))]
     public class TestMobileDevices : ReportingTestSuite
     {
