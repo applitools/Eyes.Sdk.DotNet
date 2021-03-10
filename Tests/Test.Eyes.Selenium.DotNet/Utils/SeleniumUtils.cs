@@ -44,7 +44,7 @@ namespace Applitools.Selenium.Tests.Utils
             {
                 options.AddArgument("--headless");
             }
-
+            options.AddArgument("--no-sandbox");
             ChromeDriver webDriver = RetryCreateWebDriver(() =>
             {
                 ChromeDriver driver = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options) : new ChromeDriver(options);
