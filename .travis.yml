@@ -7,7 +7,7 @@ node_js:
   - "14"
 
 os: linux
-dist: xenial
+dist: focal
 
 services:
   - docker
