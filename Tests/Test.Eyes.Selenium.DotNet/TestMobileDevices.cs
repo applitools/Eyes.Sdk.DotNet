@@ -14,9 +14,9 @@ using ScreenOrientation = OpenQA.Selenium.ScreenOrientation;
 
 namespace Applitools.Selenium.Tests
 {
-    //[TestFixture]
-    //[Parallelizable]
-    //[TestFixtureSource(nameof(TestsMobilePages))]
+    [TestFixture]
+    [Parallelizable]
+    [TestFixtureSource(nameof(TestsMobilePages))]
     public class TestMobileDevices : ReportingTestSuite
     {
         private readonly string page_;
@@ -177,15 +177,15 @@ namespace Applitools.Selenium.Tests
             }
         }
 
-        //[Test]
-        //[TestCaseSource(nameof(IOSDeviceFixtureArgs))]
+        [Test]
+        [TestCaseSource(nameof(IOSDeviceFixtureArgs))]
         public void TestIOSSafariStitch(string deviceName, string platformVersion, ScreenOrientation deviceOrientation)
         {
             InitEyes_(deviceName, platformVersion, deviceOrientation, "iOS", "Safari", page_);
         }
 
-        //[Test]
-        //[TestCaseSource(nameof(AndroidDeviceFixtureArgs))]
+        [Test]
+        [TestCaseSource(nameof(AndroidDeviceFixtureArgs))]
         public void TestAndroidStitch(string deviceName, string platformVersion, ScreenOrientation deviceOrientation)
         {
             InitEyes_(deviceName, platformVersion, deviceOrientation, "Android", "Chrome", page_);
@@ -576,8 +576,8 @@ namespace Applitools.Selenium.Tests
             }
             finally
             {
-                driver.Quit();
                 eyes.Abort();
+                driver.Quit();
             }
         }
 
