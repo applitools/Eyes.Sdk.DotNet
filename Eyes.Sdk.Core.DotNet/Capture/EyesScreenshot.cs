@@ -93,7 +93,8 @@ namespace Applitools
 
         public override string ToString()
         {
-            return $"{GetType()} - {Image.Width}x{Image.Height}";
+            if (Image != null) return $"{GetType()} - {Image.Width}x{Image.Height}";
+            return GetType().ToString();
         }
 
         internal void DisposeImage()
