@@ -7,7 +7,7 @@ node_js:
   - "14"
 
 os: linux
-dist: trusty
+dist: xenial
 
 services:
   - docker
