@@ -576,8 +576,8 @@ namespace Applitools.Selenium.Tests
             }
             finally
             {
-                eyes.Abort();
                 driver.Quit();
+                eyes.Abort();
             }
         }
 
