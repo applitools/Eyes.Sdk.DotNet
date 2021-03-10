@@ -95,5 +95,11 @@ namespace Applitools
         {
             return $"{GetType()} - {Image.Width}x{Image.Height}";
         }
+
+        internal void DisposeImage()
+        {
+            Image?.Dispose();
+            Image = null;
+        }
     }
 }

@@ -466,10 +466,8 @@ namespace Applitools
         private EyesScreenshot TryTakingScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag, bool replaceLast, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings, string source)
         {
-            AppOutputWithScreenshot appOutputWithScreenshot = GetAppOutput_(region, checkSettingsInternal, imageMatchSettings);
-            EyesScreenshot screenshot = appOutputWithScreenshot.Screenshot;
-            AppOutput appOutput = appOutputWithScreenshot.AppOutput;
-            string currentScreenshotHash = screenshot == null ? appOutput.ScreenshotUrl : CommonUtils.GetSha256Hash(appOutput.ScreenshotBytes);
+            AppOutput appOutput = GetAppOutput_(region, checkSettingsInternal, imageMatchSettings);
+            string currentScreenshotHash = appOutput.ScreenshotUrl ?? CommonUtils.GetSha256Hash(appOutput.ScreenshotBytes);
             logger_.Log(TraceLevel.Info, Stage.Check, StageType.CaptureScreenshot, 
                 new { currentScreenshotHash , lastScreenshotHash_});
             if (lastScreenshotHash_ != currentScreenshotHash)
@@ -480,7 +478,7 @@ namespace Applitools
                 matchResult_ = eyes_.PerformMatch(data);
                 lastScreenshotHash_ = currentScreenshotHash;
             }
-            return screenshot;
+            return (EyesScreenshot)appOutput.Screenshot;
         }
 
         private void DisposeLastScreenshot_()
@@ -497,7 +495,7 @@ namespace Applitools
             DisposeLastScreenshot_();
         }
 
-        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
+        private AppOutput GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings)
         {
             try
