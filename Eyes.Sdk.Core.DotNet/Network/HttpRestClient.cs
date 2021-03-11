@@ -292,7 +292,7 @@ namespace Applitools.Utils
             int timeoutMS = timeout == null ? (int)Timeout.TotalMilliseconds : (int)timeout.Value.TotalMilliseconds;
             CancellationToken timeoutCancelationToken = new CancellationTokenSource(timeoutMS).Token;
             IAsyncResult asyncResult = GetHttpClient().SendAsync(request, timeoutCancelationToken)
-                .AsApm(ar => GetResponseCallBack_(listener, ar, request, logger, backoffProvider), request);
+                .AsApm(ar => GetResponseCallBack_(listener, ar, request, logger, backoffProvider), request, logger);
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
                 logger.Log(TraceLevel.Notice, Stage.General,
@@ -384,7 +384,7 @@ namespace Applitools.Utils
                     }
                     CancellationTokenSource cts = new CancellationTokenSource(Timeout);
                     IAsyncResult asyncResult = GetHttpClient().SendAsync(request, cts.Token).
-                        AsApm(OnLongRequestResponse_, request);
+                        AsApm(OnLongRequestResponse_, request, Logger);
 
                     if (asyncResult != null && asyncResult.CompletedSynchronously)
                     {

@@ -593,7 +593,7 @@ namespace Applitools
                     binData = compressedStream.ToArray();
                 }
 
-                Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadResource,
+                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadResource,
                     new { CompressedDataSize = binData.Length });
 
                 UploadData_(listener, binData, "application/octet-stream", "application/json", testIds);

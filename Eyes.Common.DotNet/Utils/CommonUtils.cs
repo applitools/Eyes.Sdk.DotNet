@@ -423,23 +423,34 @@ namespace Applitools.Utils
             }
         }
 
-        // Taken AS-IS from https://docs.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/interop-with-other-asynchronous-patterns-and-types#from-tap-to-apm
+        // Based on code from https://docs.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/interop-with-other-asynchronous-patterns-and-types#from-tap-to-apm
         public static IAsyncResult AsApm<T>(this Task<T> task,
                                     AsyncCallback callback,
-                                    object state)
+                                    object state,
+                                    Logger logger)
         {
             if (task == null)
                 throw new ArgumentNullException("task");
 
+            int callingThreadId = Thread.CurrentThread.ManagedThreadId;
             var tcs = new TaskCompletionSource<T>(state);
             task.ContinueWith(t =>
             {
                 if (t.IsFaulted)
+                {
+                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task is faluted", callingThreadId });
                     tcs.TrySetException(t.Exception.InnerExceptions);
+                }
                 else if (t.IsCanceled)
+                {
+                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task is canceled", callingThreadId });
                     tcs.TrySetCanceled();
+                }
                 else
+                {
+                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task completed", callingThreadId });
                     tcs.TrySetResult(t.Result);
+                }
 
                 if (callback != null)
                     callback(tcs.Task);
