@@ -438,7 +438,8 @@ namespace Applitools.Utils
             {
                 if (t.IsFaulted)
                 {
-                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task is faluted", callingThreadId });
+                    LogExceptionStackTrace(logger, Stage.General, t.Exception,
+                        new { message = "task is faluted", callingThreadId });
                     tcs.TrySetException(t.Exception.InnerExceptions);
                 }
                 else if (t.IsCanceled)
