@@ -17,6 +17,7 @@ namespace Applitools.Tests.Utils
         private static readonly TestResultReportSummary reportSummary_ = new TestResultReportSummary();
         protected readonly Dictionary<string, object> suiteArgs_ = new Dictionary<string, object>();
         private static readonly HashSet<string> includedTestsList = null;
+        private static readonly HashSet<string> excludedTestsList = null;
         private static readonly string excludedTestsListFilename;
         public static readonly bool IS_FULL_COVERAGE = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_FULL_COVERAGE"), StringComparison.OrdinalIgnoreCase);
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
@@ -57,7 +58,10 @@ namespace Applitools.Tests.Utils
                     includedTestsList = null;
                 }
 
-                if (RUNS_ON_CI && excludedTestsListFilename != null && File.Exists(excludedTestsListFilename))
+                if (RUNS_ON_CI && 
+                    includedTestsList != null && 
+                    excludedTestsListFilename != null && 
+                    File.Exists(excludedTestsListFilename))
                 {
                     logger_.Log(TraceLevel.Notice, Stage.TestFramework,
                         new
@@ -65,7 +69,7 @@ namespace Applitools.Tests.Utils
                             message = "Reading exclusion list from file and filtering regression list",
                             excludedTestsListFilename
                         });
-                    HashSet<string> excludedTestsList = new HashSet<string>(File.ReadAllLines(excludedTestsListFilename));
+                    excludedTestsList = new HashSet<string>(File.ReadAllLines(excludedTestsListFilename));
                     includedTestsList.RemoveWhere(item => excludedTestsList.Contains(item));
                 }
             }
@@ -80,7 +84,10 @@ namespace Applitools.Tests.Utils
         public void SetUp()
         {
             TestContext tc = TestContext.CurrentContext;
-            if (!IS_FULL_COVERAGE && includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName))
+            if (!IS_FULL_COVERAGE && 
+                ((includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName)) ||
+                 (excludedTestsList != null && excludedTestsList.Contains(tc.Test.FullName)))
+               )
             {
                 logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped, new { testName = tc.Test.FullName });
                 Assert.Inconclusive();
