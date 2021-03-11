@@ -103,6 +103,7 @@ namespace Applitools
                     }
                     Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadComplete, new { url });
                     appOutput.ScreenshotUrl = url;
+                    appOutput.ClearScreenshotBytes();
                     taskListener.OnComplete();
                 },
                 (ex) =>

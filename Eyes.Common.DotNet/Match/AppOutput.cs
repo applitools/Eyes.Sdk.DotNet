@@ -1,5 +1,6 @@
 ﻿using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
+using System;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -36,7 +37,7 @@ namespace Applitools
         }
 
         [JsonIgnore]
-        public byte[] ScreenshotBytes { get; }
+        public byte[] ScreenshotBytes { get; private set; }
 
         [JsonIgnore]
         public IEyesScreenshot Screenshot { get; }
@@ -50,5 +51,10 @@ namespace Applitools
         public string ScreenshotUrl { get; set; }
 
         public string DomUrl { get; set; }
+
+        internal void ClearScreenshotBytes()
+        {
+            ScreenshotBytes = null;
+        }
     }
 }
