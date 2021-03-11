@@ -16,9 +16,9 @@ namespace Applitools.Tests.Utils
     {
         private static readonly TestResultReportSummary reportSummary_ = new TestResultReportSummary();
         protected readonly Dictionary<string, object> suiteArgs_ = new Dictionary<string, object>();
-        private static readonly HashSet<string> includedTestsList = null;
-        private static readonly HashSet<string> excludedTestsList = null;
-        private static readonly string excludedTestsListFilename;
+        private static readonly HashSet<string> includedTestsList_ = null;
+        private static readonly HashSet<string> excludedTestsList_ = null;
+        private static readonly string excludedTestsListFilename_;
         public static readonly bool IS_FULL_COVERAGE = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_FULL_COVERAGE"), StringComparison.OrdinalIgnoreCase);
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
@@ -39,7 +39,7 @@ namespace Applitools.Tests.Utils
             {
                 Assembly asm = Assembly.GetExecutingAssembly();
                 string asmName = asm.GetName().Name;
-                excludedTestsListFilename = "passed_tests_" + asmName + ".txt";
+                excludedTestsListFilename_ = "passed_tests_" + asmName + ".txt";
 
                 Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
                 logger_.Log(TraceLevel.Notice, Stage.TestFramework,
@@ -51,26 +51,25 @@ namespace Applitools.Tests.Utils
 
                 if (includedTestsListStream != null)
                 {
-                    includedTestsList = new HashSet<string>(CommonUtils.ReadStreamAsLines(includedTestsListStream));
+                    includedTestsList_ = new HashSet<string>(CommonUtils.ReadStreamAsLines(includedTestsListStream));
                 }
                 else
                 {
-                    includedTestsList = null;
+                    includedTestsList_ = null;
                 }
 
                 if (RUNS_ON_CI && 
-                    includedTestsList != null && 
-                    excludedTestsListFilename != null && 
-                    File.Exists(excludedTestsListFilename))
+                    excludedTestsListFilename_ != null && 
+                    File.Exists(excludedTestsListFilename_))
                 {
                     logger_.Log(TraceLevel.Notice, Stage.TestFramework,
                         new
                         {
                             message = "Reading exclusion list from file and filtering regression list",
-                            excludedTestsListFilename
+                            excludedTestsListFilename_
                         });
-                    excludedTestsList = new HashSet<string>(File.ReadAllLines(excludedTestsListFilename));
-                    includedTestsList.RemoveWhere(item => excludedTestsList.Contains(item));
+                    excludedTestsList_ = new HashSet<string>(File.ReadAllLines(excludedTestsListFilename_));
+                    includedTestsList_?.RemoveWhere(item => excludedTestsList_.Contains(item));
                 }
             }
         }
@@ -85,8 +84,8 @@ namespace Applitools.Tests.Utils
         {
             TestContext tc = TestContext.CurrentContext;
             if (!IS_FULL_COVERAGE && 
-                ((includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName)) ||
-                 (excludedTestsList != null && excludedTestsList.Contains(tc.Test.FullName)))
+                ((includedTestsList_ != null && !includedTestsList_.Contains(tc.Test.FullName)) ||
+                 (excludedTestsList_ != null && excludedTestsList_.Contains(tc.Test.FullName)))
                )
             {
                 logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped, new { testName = tc.Test.FullName });
@@ -113,7 +112,7 @@ namespace Applitools.Tests.Utils
             {
                 return;
             }
-            if (excludedTestsListFilename != null)
+            if (excludedTestsListFilename_ != null)
             {
                 int attemptsLeft = 3;
                 while (attemptsLeft-- > 0 && !WritePassedTestsToFile_(tc, status)) { Thread.Sleep(100); }
@@ -126,10 +125,10 @@ namespace Applitools.Tests.Utils
         {
             try
             {
-                File.AppendAllText(excludedTestsListFilename, "");
+                File.AppendAllText(excludedTestsListFilename_, "");
                 if (status == TestStatus.Passed)
                 {
-                    File.AppendAllLines(excludedTestsListFilename, new string[] { tc.Test.FullName });
+                    File.AppendAllLines(excludedTestsListFilename_, new string[] { tc.Test.FullName });
                 }
                 return true;
             }
