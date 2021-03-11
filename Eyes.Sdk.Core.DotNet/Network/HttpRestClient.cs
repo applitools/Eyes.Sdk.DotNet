@@ -304,20 +304,30 @@ namespace Applitools.Utils
         private void GetResponseCallBack_(TaskListener<HttpResponseMessage> listener, IAsyncResult result,
             HttpRequestMessage originalRequest, Logger logger, BackoffProvider backoffProvider)
         {
-            if (!result.IsCompleted) return;
+            if (!result.IsCompleted)
+            {
+                logger.Log(TraceLevel.Warn, Stage.General, StageType.RequestFailed,
+                    new { message = "result is not complete.", result });
+                return;
+            }
             try
             {
                 Task<HttpResponseMessage> resultAsTask = (Task<HttpResponseMessage>)result;
+                if (resultAsTask.IsFaulted)
+                {
+                    if (MakeAnotherAttempt_(listener, originalRequest, logger, backoffProvider)) return;
+
+                    listener.OnFail(
+                        new EyesException($"HttpRequestMessage request failed: {originalRequest.Method} {originalRequest.RequestUri}",
+                            resultAsTask.Exception));
+                    return;
+                }
                 if (resultAsTask.IsCanceled)
                 {
-                    if (backoffProvider.ShouldWait)
-                    {
-                        logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
-                        backoffProvider.Wait();
-                        SendAsyncRequest(listener, originalRequest, logger, backoffProvider);
-                        return;
-                    }
-                    listener.OnFail(new TimeoutException($"HttpRequestMessage request timed out: {originalRequest.Method} {originalRequest.RequestUri}"));
+                    if (MakeAnotherAttempt_(listener, originalRequest, logger, backoffProvider)) return;
+
+                    listener.OnFail(
+                        new TimeoutException($"HttpRequestMessage request timed out: {originalRequest.Method} {originalRequest.RequestUri}"));
                     return;
                 }
                 HttpResponseMessage response = resultAsTask.Result;
@@ -333,15 +343,19 @@ namespace Applitools.Utils
             }
             catch (WebException ex)
             {
-                if (backoffProvider.ShouldWait)
-                {
-                    logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
-                    backoffProvider.Wait();
-                    SendAsyncRequest(listener, originalRequest, logger, backoffProvider);
-                    return;
-                }
+                if (MakeAnotherAttempt_(listener, originalRequest, logger, backoffProvider)) return;
                 listener.OnFail(ex);
             }
+        }
+
+        private bool MakeAnotherAttempt_(TaskListener<HttpResponseMessage> listener, HttpRequestMessage originalRequest, Logger logger, BackoffProvider backoffProvider)
+        {
+            if (!backoffProvider.ShouldWait) return false;
+
+            logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
+            backoffProvider.Wait();
+            SendAsyncRequest(listener, originalRequest, logger, backoffProvider);
+            return true;
         }
 
         private HttpResponseMessage SendHttpWebRequest_(
