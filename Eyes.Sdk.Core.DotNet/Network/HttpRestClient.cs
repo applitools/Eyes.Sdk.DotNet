@@ -354,8 +354,42 @@ namespace Applitools.Utils
 
             logger.Log(TraceLevel.Warn, Stage.General, StageType.Retry);
             backoffProvider.Wait();
-            SendAsyncRequest(listener, originalRequest, logger, backoffProvider);
+            HttpRequestMessage request = CloneRequest_(originalRequest);
+            SendAsyncRequest(listener, request, logger, backoffProvider);
             return true;
+        }
+
+        private static HttpRequestMessage CloneRequest_(HttpRequestMessage originalRequest)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(originalRequest.Method, originalRequest.RequestUri);
+            request.Content = CloneRequestContent_(originalRequest.Content);
+            request.Version = originalRequest.Version;
+
+            foreach (var prop in originalRequest.Properties)
+            {
+                request.Properties.Add(prop);
+            }
+            foreach (var header in originalRequest.Headers)
+            {
+                request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+            return request;
+        }
+
+        private static HttpContent CloneRequestContent_(HttpContent content)
+        {
+            if (content == null) return null;
+
+            var ms = new MemoryStream();
+            content.CopyToAsync(ms).Wait();
+            ms.Position = 0;
+
+            var clone = new StreamContent(ms);
+            foreach (var header in content.Headers)
+            {
+                clone.Headers.Add(header.Key, header.Value);
+            }
+            return clone;
         }
 
         private HttpResponseMessage SendHttpWebRequest_(
