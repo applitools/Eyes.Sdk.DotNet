@@ -4,7 +4,7 @@ namespace Applitools.Tests
 {
     internal class MockEyesRunner : EyesRunner
     {
-        protected override IEnumerable<EyesBase> GetAllEyes()
+        protected override IEnumerable<IEyesBase> GetAllEyes()
         {
             return null;
         }
