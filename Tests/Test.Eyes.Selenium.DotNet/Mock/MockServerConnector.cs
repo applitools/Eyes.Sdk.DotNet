@@ -26,6 +26,7 @@ namespace Applitools.Selenium.Tests.Mock
             driverProvider_ = driverProvider;
         }
 
+        internal List<byte[]> ImagesAsByteArrays { get; } = new List<byte[]>();
         internal List<MatchWindowData> MatchWindowCalls { get; } = new List<MatchWindowData>();
         internal List<MatchWindowData> ReplaceMatchedStepCalls { get; } = new List<MatchWindowData>();
         internal Dictionary<string, RunningSession> Sessions { get; } = new Dictionary<string, RunningSession>();
@@ -280,6 +281,12 @@ namespace Applitools.Selenium.Tests.Mock
                 byte[] bytes = Encoding.UTF8.GetBytes($"{{\"AsExpected\":{connector_.AsExpected.ToString().ToLower()}}}");
                 response.Content = new ByteArrayContent(bytes);
                 response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
+            }
+            else if (request.Method == HttpMethod.Put)
+            {
+                response.StatusCode = HttpStatusCode.OK;
+                byte[] bytes = request.Content.ReadAsByteArrayAsync().Result;
+                connector_.ImagesAsByteArrays.Add(bytes);
             }
             else
             {

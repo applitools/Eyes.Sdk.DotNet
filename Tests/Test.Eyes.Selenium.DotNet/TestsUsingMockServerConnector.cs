@@ -39,7 +39,7 @@ namespace Applitools.Selenium.Tests
             }
             Assert.AreEqual(1, mockServerConnector.MatchWindowCalls.Count, "Matches");
             Assert.AreEqual(0, mockServerConnector.ReplaceMatchedStepCalls.Count, "Replacements");
-            byte[] screenshotBytes = mockServerConnector.MatchWindowCalls[0].AppOutput.ScreenshotBytes;
+            byte[] screenshotBytes = mockServerConnector.ImagesAsByteArrays[0];
             string finalImageHash = screenshotBytes.GetSha256Hash();
             if (finalImageHash != "0EEBFD0FCDE40BA1FB5D4B8C4DA535F3C846B2E1685C84488E43FC6DC6ECD88A" && // Windows
                 finalImageHash != "5E771AB31BA0D3232E370FDA5E630A649E0E03FA704243BBD288303B4D9064B3" && // Windows with different Antialiasing
