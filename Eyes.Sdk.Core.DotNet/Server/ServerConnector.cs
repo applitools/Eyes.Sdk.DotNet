@@ -10,6 +10,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using Region = Applitools.Utils.Geometry.Region;
 
@@ -390,10 +391,33 @@ namespace Applitools
             targetUrl = targetUrl.Replace("__random__", guid.ToString());
             Logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.UploadStart, new { mediaType, targetUrl });
 
-            UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
-            callback.UploadDataAsync();
+            HttpRequestMessage request = CreateHttpRequestMessageForUpload_(targetUrl, bytes, contentType, mediaType);
+            httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
+                response =>
+                {
+                    if (response == null)
+                    {
+                        throw new NullReferenceException("response is null");
+                    }
+                    listener.OnComplete(targetUrl);
+                },
+                ex => listener.OnFail(ex)),
+                request, Logger, new BackoffProvider(2), TimeSpan.FromMinutes(2));
+            //UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
+            //callback.UploadDataAsync();
         }
 
+        private HttpRequestMessage CreateHttpRequestMessageForUpload_(string targetUrl, byte[] bytes,
+            string contentType, string mediaType)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, new Uri(targetUrl));
+            request.Content = new ByteArrayContent(bytes);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType));
+            request.Headers.Add("X-Auth-Token", GetRenderingInfo().AccessToken);
+            request.Headers.Add("x-ms-blob-type", "BlockBlob");
+            return request;
+        }
 
         // Used only by IN-REGION
 
@@ -573,7 +597,6 @@ namespace Applitools
                     new { CompressedDataSize = binData.Length });
 
                 UploadData_(listener, binData, "application/octet-stream", "application/json", testIds);
-                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadComplete);
             }
             catch (Exception ex)
             {

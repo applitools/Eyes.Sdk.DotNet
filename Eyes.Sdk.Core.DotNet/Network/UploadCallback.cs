@@ -84,7 +84,8 @@ namespace Applitools.Utils
             if (retriesLeft_-- > 0)
             {
                 logger_.Log(TraceLevel.Warn, testIds_, Stage.Check, StageType.Retry);
-                UploadDataAsync(); return;
+                UploadDataAsync(); 
+                return;
             }
             CommonUtils.LogExceptionStackTrace(logger_, Stage.General, StageType.UploadResource, ex, testIds_);
             listener_.OnFail(ex);
@@ -92,12 +93,7 @@ namespace Applitools.Utils
 
         public void UploadDataAsync()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, new Uri(targetUrl_));
-            request.Content = new ByteArrayContent(bytes_);
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType_);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType_));
-            request.Headers.Add("X-Auth-Token", serverConnector_.GetRenderingInfo().AccessToken);
-            request.Headers.Add("x-ms-blob-type", "BlockBlob");
+            HttpRequestMessage request = CreateHttpRequestMessage_();
             logger_.Log(TraceLevel.Info, testIds_, Stage.Check, StageType.UploadStart,
                 new { proxyAddress = serverConnector_.httpClient_.Proxy?.Address });
             IAsyncResult asyncResult = serverConnector_.httpClient_.GetHttpClient().SendAsync(request).AsApm(
@@ -114,10 +110,21 @@ namespace Applitools.Utils
 
             if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
-                logger_.Log(TraceLevel.Notice, testIds_, Stage.General, 
+                logger_.Log(TraceLevel.Notice, testIds_, Stage.General,
                     new { message = "request.BeginGetResponse completed synchronously" });
                 HandleResult_(asyncResult);
             }
+        }
+
+        private HttpRequestMessage CreateHttpRequestMessage_()
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, new Uri(targetUrl_));
+            request.Content = new ByteArrayContent(bytes_);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType_);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType_));
+            request.Headers.Add("X-Auth-Token", serverConnector_.GetRenderingInfo().AccessToken);
+            request.Headers.Add("x-ms-blob-type", "BlockBlob");
+            return request;
         }
 
         private void HandleResult_(IAsyncResult result)
