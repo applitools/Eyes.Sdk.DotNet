@@ -170,9 +170,13 @@ namespace Applitools.Selenium
                 webElement = new EyesRemoteWebElement(Logger_, this, remoteWebElement);
                 id = ((EyesRemoteWebElement)webElement).IdForDictionary;
             }
-            else
+            else if (webElement != null)
             {
                 id = EyesSeleniumUtils.GetElementIdForDictionary(webElement, RemoteWebDriver);
+            }
+            else
+            {
+                throw new EyesException($"Element not found: {by}");
             }
             elementsFoundSinceLastNavigation_[id] = webElement;
             return webElement;
