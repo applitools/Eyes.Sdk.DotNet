@@ -44,7 +44,7 @@ namespace Applitools.Selenium.Tests.Utils
             {
                 options.AddArgument("--headless");
             }
-            options.AddArgument("--no-sandbox");
+            options.AddArguments("--no-sandbox", "--verbose", "--disable-gpu");
             ChromeDriver webDriver = RetryCreateWebDriver(() =>
             {
                 ChromeDriver driver = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options) : new ChromeDriver(options);
