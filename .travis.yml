@@ -74,7 +74,9 @@ jobs:
         - pushd coverage-tests
         - npm run dotnet:generate
         - popd
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh Eyes.Sdk.DotNet_Travis.sln --filter 'TestCategory=Generated'
+        - chmod +x ./buildProjects.sh
+        - ./buildProjects.sh coverage-tests/test/Appium/*.csproj
+        - ./buildProjects.sh coverage-tests/test/Selenium/*.csproj
 
     - name: Images
       script:
