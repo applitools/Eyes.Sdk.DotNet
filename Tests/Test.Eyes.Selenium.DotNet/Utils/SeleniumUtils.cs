@@ -321,11 +321,13 @@
         {
             driver = CreateChromeDriver();
             string logPath;
+            ILogHandler logHandler;
             if (useVisualGrid)
             {
                 testName += "_VG";
                 logPath = TestUtils.InitLogPath(testName);
-                VisualGridRunner visualGridRunner = new VisualGridRunner(10);
+                logHandler = TestUtils.InitLogHandler(testName, logPath);
+                VisualGridRunner visualGridRunner = new VisualGridRunner(10, logHandler);
                 if (!TestUtils.RUNS_ON_CI)
                 {
                     visualGridRunner.DebugResourceWriter = new FileDebugResourceWriter(logPath);
@@ -335,10 +337,10 @@
             else
             {
                 logPath = TestUtils.InitLogPath(testName);
-                runner = new ClassicRunner();
+                logHandler = TestUtils.InitLogHandler(testName, logPath);
+                runner = new ClassicRunner(logHandler);
             }
             eyes = new Eyes(runner);
-            eyes.SetLogHandler(TestUtils.InitLogHandler(testName, logPath));
             eyes.Batch = TestDataProvider.BatchInfo;
         }
 

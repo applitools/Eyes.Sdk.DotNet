@@ -12,9 +12,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
     public class TestBatchClose : ReportingTestSuite
     {
 
-        private VisualGridRunner InitRunnerWithBatches_(Dictionary<string, IBatchCloser> batchClosers)
+        private VisualGridRunner InitRunnerWithBatches_(Dictionary<string, IBatchCloser> batchClosers, string testName)
         {
-            VisualGridRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             foreach (var pair in batchClosers)
             {
                 runner.AddBatch(pair.Key, pair.Value);
@@ -36,7 +37,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             batchCloserMap.Add("third", third);
 
             // default
-            VisualGridRunner runner = InitRunnerWithBatches_(batchCloserMap);
+            VisualGridRunner runner = InitRunnerWithBatches_(batchCloserMap, nameof(TestBatchCloseFlag) + "_default");
             runner.GetAllTestResults();
             first.Received().CloseBatch("first");
             second.Received().CloseBatch("second");
@@ -47,7 +48,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             second.ClearReceivedCalls();
             third.ClearReceivedCalls();
 
-            runner = InitRunnerWithBatches_(batchCloserMap);
+            runner = InitRunnerWithBatches_(batchCloserMap, nameof(TestBatchCloseFlag) + "_true");
             runner.DontCloseBatches = true;
             runner.GetAllTestResults();
             first.DidNotReceive().CloseBatch("first");
@@ -58,7 +59,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             first.ClearReceivedCalls();
             second.ClearReceivedCalls();
             third.ClearReceivedCalls();
-            runner = InitRunnerWithBatches_(batchCloserMap);
+            runner = InitRunnerWithBatches_(batchCloserMap, nameof(TestBatchCloseFlag) + "_false");
             runner.DontCloseBatches = false;
             runner.GetAllTestResults();
             first.Received().CloseBatch("first");

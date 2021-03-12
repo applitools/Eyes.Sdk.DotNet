@@ -1,12 +1,12 @@
-﻿using Applitools.VisualGrid;
-using Applitools.Fluent;
+﻿using Applitools.Fluent;
+using Applitools.Utils;
+using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
-using Applitools.Utils;
-using Applitools.Utils.Geometry;
 using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools
@@ -55,7 +55,7 @@ namespace Applitools
             ArgumentGuard.NotNull(eyes, nameof(eyes));
             //ArgumentGuard.NotNull(appOutputProvider, nameof(appOutputProvider));
 
-            Logger_ = logger;
+            logger_ = logger;
             serverConnector_ = serverConnector;
             runningSession_ = runningSession;
             defaultRetryTimeout_ = (int)retryTimeout.TotalMilliseconds;
@@ -72,7 +72,7 @@ namespace Applitools
             ArgumentGuard.NotNull(serverConnector, nameof(serverConnector));
             ArgumentGuard.NotNull(runningSession, nameof(runningSession));
 
-            Logger_ = logger;
+            logger_ = logger;
             serverConnector_ = serverConnector;
             runningSession_ = runningSession;
             defaultRetryTimeout_ = (int)retryTimeout.TotalMilliseconds;
@@ -88,10 +88,7 @@ namespace Applitools
         /// </summary>
         public Rectangle LastScreenshotBounds { get; private set; }
 
-        /// <summary>
-        /// Message logger.
-        /// </summary>
-        private Logger Logger_ { get; set; }
+        private Logger logger_;
 
         #endregion
 
@@ -124,7 +121,7 @@ namespace Applitools
                 retryTimeout = defaultRetryTimeout_;
             }
 
-            Logger_.Verbose("retryTimeout: {0} ; replaceLast: {1}", retryTimeout, replaceLast);
+            //Logger_.Verbose("retryTimeout: {0} ; replaceLast: {1}", retryTimeout, replaceLast);
             EyesScreenshot screenshot = TakeScreenshot_(
                 region, userInputs, tag, shouldRunOnceOnRetryTimeout,
                 replaceLast, checkSettingsInternal, imageMatchSettings, retryTimeout, source);
@@ -142,12 +139,12 @@ namespace Applitools
         public static void CollectRegions(EyesBase eyes, EyesScreenshot screenshot,
             ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings)
         {
-            eyes.Logger.Verbose("enter");
+            //eyes.Logger.Verbose("enter");
             CollectSimpleRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
             CollectFloatingRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
             CollectAccessibilityRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
-            LogRegions_(eyes.Logger, imageMatchSettings);
-            eyes.Logger.Verbose("exit");
+            //LogRegions_(eyes.Logger, imageMatchSettings);
+            //eyes.Logger.Verbose("exit");
         }
 
         public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
@@ -356,24 +353,21 @@ namespace Applitools
                                              ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                              EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             imageMatchSettings.Ignore = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetIgnoreRegions(), "Ignore");
             imageMatchSettings.Strict = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetStrictRegions(), "Strict");
             imageMatchSettings.Layout = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetLayoutRegions(), "Layout");
             imageMatchSettings.Content = CollectSimpleRegions_(eyes, screenshot, checkSettingsInternal.GetContentRegions(), "Content");
-            eyes.Logger.Verbose("exit");
         }
 
         private static IMutableRegion[] CollectSimpleRegions_(EyesBase eyes,
                                           EyesScreenshot screenshot, IGetRegions[] regionProviders, string type)
         {
-            eyes.Logger.Verbose("enter - region type: {0}", type);
             List<IMutableRegion> mutableRegions = new List<IMutableRegion>();
             foreach (IGetRegions regionProvider in regionProviders)
             {
                 mutableRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check, new { type, regions = mutableRegions });
             return mutableRegions.ToArray();
         }
 
@@ -381,28 +375,29 @@ namespace Applitools
                                              ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                              EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             List<FloatingMatchSettings> floatingRegions = new List<FloatingMatchSettings>();
             foreach (IGetFloatingRegion regionProvider in checkSettingsInternal.GetFloatingRegions())
             {
                 floatingRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
             imageMatchSettings.Floating = floatingRegions.ToArray();
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check,
+                new { type = "floating", regions = floatingRegions });
         }
 
         private static void CollectAccessibilityRegions_(ICheckSettingsInternal checkSettingsInternal,
-                                       ImageMatchSettings imageMatchSettings, IEyesBase eyes,
+                                       ImageMatchSettings imageMatchSettings, EyesBase eyes,
                                        EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             List<AccessibilityRegionByRectangle> accessibilityRegions = new List<AccessibilityRegionByRectangle>();
             foreach (IGetAccessibilityRegion regionProvider in checkSettingsInternal.GetAccessibilityRegions())
             {
                 accessibilityRegions.AddRange(regionProvider.GetRegions(eyes, screenshot));
             }
             imageMatchSettings.Accessibility = accessibilityRegions.ToArray();
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Debug, eyes.TestId, Stage.Check,
+                new { type = "accessibility", regions = accessibilityRegions });
+
         }
 
         private EyesScreenshot TakeScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag,
@@ -426,14 +421,13 @@ namespace Applitools
                 screenshot = RetryTakingScreenshot_(region, userInputs, tag, replacLast, checkSettingsInternal, imageMatchSettings, retryTimeout, source);
             }
 
-            Logger_.Verbose("Completed in {0}", sw.Elapsed);
+            logger_.Verbose("Completed in {0}", sw.Elapsed);
             return screenshot;
         }
 
         private EyesScreenshot RetryTakingScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag, bool replaceLast, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings, int retryTimeout, string source)
         {
-            Logger_.Verbose("enter");
             // Retry matching and ignore mismatches while the retry timeout does not expires.
             var sw2 = Stopwatch.StartNew();
             EyesScreenshot screenshot = null;
@@ -453,7 +447,6 @@ namespace Applitools
                 // Try one last time...
                 screenshot = TryTakingScreenshot_(region, userInputs, tag, replaceLast, checkSettingsInternal, imageMatchSettings, source);
             }
-            Logger_.Verbose("exit");
             return screenshot;
         }
 
@@ -473,17 +466,13 @@ namespace Applitools
         private EyesScreenshot TryTakingScreenshot_(Rectangle? region, IList<Trigger> userInputs, string tag, bool replaceLast, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings, string source)
         {
-            Logger_.Verbose("enter");
             AppOutputWithScreenshot appOutputWithScreenshot = GetAppOutput_(region, checkSettingsInternal, imageMatchSettings);
             EyesScreenshot screenshot = appOutputWithScreenshot.Screenshot;
             AppOutput appOutput = appOutputWithScreenshot.AppOutput;
             string currentScreenshotHash = screenshot == null ? appOutput.ScreenshotUrl : CommonUtils.GetSha256Hash(appOutput.ScreenshotBytes);
-            Logger_.Verbose("current screenshot hash: {0}", currentScreenshotHash);
-            if (lastScreenshotHash_ == currentScreenshotHash)
-            {
-                Logger_.Log("second screenshot is the same as the first, no point in uploading to server.");
-            }
-            else
+            logger_.Log(TraceLevel.Info, Stage.Check, StageType.CaptureScreenshot, 
+                new { currentScreenshotHash , lastScreenshotHash_});
+            if (lastScreenshotHash_ != currentScreenshotHash)
             {
                 MatchWindowData data = eyes_.PrepareForMatch(checkSettingsInternal, userInputs, appOutput,
                     tag, replaceLast || (lastScreenshotHash_ != null), imageMatchSettings, null, source);
@@ -491,7 +480,6 @@ namespace Applitools
                 matchResult_ = eyes_.PerformMatch(data);
                 lastScreenshotHash_ = currentScreenshotHash;
             }
-            Logger_.Verbose("exit");
             return screenshot;
         }
 
@@ -509,20 +497,17 @@ namespace Applitools
             DisposeLastScreenshot_();
         }
 
-        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings)
+        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
+            ImageMatchSettings imageMatchSettings)
         {
-            var sw = Stopwatch.StartNew();
-
             try
             {
                 var appOutput = getAppOutput_(region, checkSettingsInternal, imageMatchSettings);
-                Logger_.Verbose("completed in {0}ms", sw.ElapsedMilliseconds);
-
                 return appOutput;
             }
             catch (Exception ex)
             {
-                Logger_.Log("failed in {0}ms - {1}", sw.ElapsedMilliseconds, ex);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, ex, eyes_.TestId);
                 throw;
             }
         }
@@ -545,41 +530,15 @@ namespace Applitools
 
         public static ImageMatchSettings CreateImageMatchSettings(ICheckSettingsInternal checkSettingsInternal, EyesBase eyes, EyesScreenshot screenshot)
         {
-            eyes.Logger.Verbose("enter");
             ImageMatchSettings imageMatchSettings = CreateImageMatchSettings(checkSettingsInternal, eyes);
             if (imageMatchSettings != null)
             {
                 CollectSimpleRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
                 CollectFloatingRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
                 CollectAccessibilityRegions_(checkSettingsInternal, imageMatchSettings, eyes, screenshot);
-                LogRegions_(eyes.Logger, imageMatchSettings);
             }
-            eyes.Logger.Verbose("exit");
+            eyes.Logger.Log(TraceLevel.Info, eyes.TestId, Stage.Check, new { regions = imageMatchSettings });
             return imageMatchSettings;
-        }
-
-        private static void LogRegions_(Logger logger, ImageMatchSettings ims)
-        {
-            LogTypedRegions_(logger, "Ignore", ims.Ignore);
-            LogTypedRegions_(logger, "Strict", ims.Strict);
-            LogTypedRegions_(logger, "Content", ims.Content);
-            LogTypedRegions_(logger, "Layout", ims.Layout);
-            LogTypedRegions_(logger, "Floating", ims.Floating);
-            LogTypedRegions_(logger, "Accessibility", ims.Accessibility);
-        }
-
-        private static void LogTypedRegions_(Logger logger, string regionType, object[] regions)
-        {
-            if (regions == null || regions.Length == 0)
-            {
-                logger.Verbose("{0} Regions list is null or empty", regionType);
-                return;
-            }
-            logger.Verbose("{0} Regions:", regionType);
-            foreach (object region in regions)
-            {
-                logger.Verbose("    {0}", region);
-            }
         }
 
         #endregion

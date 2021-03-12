@@ -40,18 +40,18 @@ namespace Applitools.Selenium
 
         private static Size GetViewportSize_(Logger logger, IJavaScriptExecutor jsExecutor)
         {
-            if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string jsonSize)
+            if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string sizeStr)
             {
                 try
                 {
-                    string[] widthAndHeight = jsonSize.Split(';');
+                    string[] widthAndHeight = sizeStr.Split(';');
                     int width = (int)Math.Round(Convert.ToDouble(widthAndHeight[0]));
                     int height = (int)Math.Round(Convert.ToDouble(widthAndHeight[1]));
                     return new Size(width, height);
                 }
                 catch
                 {
-                    logger.Log("Error: Failed parsing input size string: '{0}'", jsonSize);
+                    logger.Log(TraceLevel.Error, Stage.General, StageType.Parse, new { sizeStr });
                     throw;
                 }
             }
@@ -70,11 +70,10 @@ namespace Applitools.Selenium
             {
                 size = GetViewportSize_(logger, (IJavaScriptExecutor)driver);
             }
-            logger.Verbose("viewport size: {0}", size);
             return size;
         }
 
-        public static Size GetViewportSizeOrDisplaySize(Logger logger, IWebDriver driver)
+        public static Size GetViewportSizeOrDisplaySize(Logger logger, string testId, IWebDriver driver)
         {
             Size size;
             try
@@ -85,14 +84,14 @@ namespace Applitools.Selenium
                     return size;
                 }
 
-                logger.Log("Either the Width or Height value returned zero.");
+                logger.Log(TraceLevel.Warn, testId, Stage.General, new { message = "Either the Width or Height value returned zero." });
             }
             catch (Exception ex)
             {
-                logger.Log("inner width / height not supported: {0}", ex.Message);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex, testId);
             }
 
-            logger.Log("Using browser size.");
+            logger.Log(TraceLevel.Notice, testId, Stage.General, new { message = "Using browser size." });
             size = driver.Manage().Window.Size;
 
             try
@@ -106,7 +105,7 @@ namespace Applitools.Selenium
             {
                 // Not every WebDriver supports querying for orientation.
             }
-            logger.Verbose("Done! Size: " + size);
+            logger.Log(TraceLevel.Info, testId, Stage.General, StageType.Complete, new { size });
 
             return size;
         }
@@ -415,7 +414,7 @@ namespace Applitools.Selenium
             }
             catch (Exception e)
             {
-                logger?.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.Check, e);
                 scrollingElement = null;
             }
 
@@ -503,10 +502,10 @@ namespace Applitools.Selenium
             return r;
         }
 
-        internal static string RunDomScript(Logger logger, EyesWebDriver driver,
+        internal static string RunDomScript(Logger logger, EyesWebDriver driver, string[] testIds,
             string domScript, object domScriptArguments, object pollingScriptArguments, string pollingScript)
         {
-            logger.Verbose("Starting dom extraction");
+            logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Starting" });
             if (domScriptArguments == null)
             {
                 domScriptArguments = new { };
@@ -524,7 +523,7 @@ namespace Applitools.Selenium
                 while (status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
                     Thread.Sleep(200);
-                    logger.Verbose("Dom script polling...");
+                    logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Polling" });
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
                     scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
                     status = scriptResponse.Status;
@@ -549,7 +548,7 @@ namespace Applitools.Selenium
                 string chunk;
                 while (status == CaptureStatusEnum.SUCCESS_CHUNKED && !scriptResponse.Done && stopwatch.Elapsed < CAPTURE_TIMEOUT)
                 {
-                    logger.Verbose("Dom script chunks polling...");
+                    logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Chunks Polling" });
                     chunk = scriptResponse.Value.ToString();
                     value.Append(chunk);
                     resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
@@ -573,32 +572,8 @@ namespace Applitools.Selenium
             }
             finally
             {
-                logger.Verbose("Finished dom extraction");
+                logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Done" });
             }
-        }
-
-        internal static IWebElement GetScrollRootElement(Logger logger, IWebDriver driver, 
-            IScrollRootElementContainer scrollRootElementContainer)
-        {
-            if (scrollRootElementContainer == null)
-            {
-                return GetDefaultRootElement(driver, logger);
-            }
-
-            IWebElement scrollRootElement = scrollRootElementContainer.GetScrollRootElement();
-            if (scrollRootElement != null)
-            {
-                return scrollRootElement;
-            }
-
-            By scrollRootSelector = scrollRootElementContainer.GetScrollRootSelector();
-            if (scrollRootSelector != null)
-            {
-                return driver.FindElement(scrollRootSelector);
-            }
-
-            logger.Log("Warning: Got an empty scroll root element container");
-            return EyesSeleniumUtils.GetDefaultRootElement(driver, logger);
         }
 
         internal static Ufg.IDebugResourceWriter ConvertDebugResourceWriter(IDebugResourceWriter drw)

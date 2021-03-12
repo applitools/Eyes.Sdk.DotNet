@@ -17,17 +17,20 @@ namespace Applitools
             {
                 Tuple<string, SessionStopInfo> nextInput = inputQueue_.Dequeue();
                 string id = nextInput.Item1;
-                inProgressTests_.Add(id);
-                Operate(nextInput.Item2, new TaskListener<TestResults>(
+                lock (lockObject_) inProgressTests_.Add(id);
+                Operate(id, nextInput.Item2, new TaskListener<TestResults>(
                     (output) =>
                     {
-                        inProgressTests_.Remove(id);
-                        outputQueue_.Add(Tuple.Create(id, output));
+                        lock (lockObject_)
+                        {
+                            inProgressTests_.Remove(id);
+                            outputQueue_.Add(Tuple.Create(id, output));
+                        }
                     },
                     (ex) =>
                     {
-                        Logger.Log("Failed completing task on input {0}", nextInput);
-                        lock (errorQueue_)
+                        Logger.Log(TraceLevel.Error, id, Stage.Close, new { nextInput });
+                        lock (lockObject_)
                         {
                             inProgressTests_.Remove(id);
                             errorQueue_.Add(Tuple.Create(id, ex));
@@ -37,7 +40,7 @@ namespace Applitools
             }
         }
 
-        public void Operate(SessionStopInfo sessionStopInfo, TaskListener<TestResults> listener)
+        public void Operate(string testId, SessionStopInfo sessionStopInfo, TaskListener<TestResults> listener)
         {
             if (sessionStopInfo == null)
             {
@@ -50,11 +53,11 @@ namespace Applitools
             TaskListener<TestResults> taskListener = new TaskListener<TestResults>(
             (testResults) =>
             {
-                Logger.Log("Session stopped successfully");
+                Logger.Log(TraceLevel.Notice, testId, Stage.Close, new { testResults.Status });
                 testResults.IsNew = sessionStopInfo.RunningSession.IsNewSession;
                 testResults.Url = sessionStopInfo.RunningSession.Url;
                 Logger.Verbose(testResults.ToString());
-                testResults.ServerConnector = ServerConnector as IDeleteSession;
+                testResults.ServerConnector = ServerConnector;
                 listener.OnComplete(testResults);
             },
             (ex) =>
@@ -64,6 +67,7 @@ namespace Applitools
 
             try
             {
+                Logger.Log(TraceLevel.Notice, testId, Stage.Close, new { sessionStopInfo });
                 ServerConnector.EndSession(taskListener, sessionStopInfo);
             }
             catch (Exception e)

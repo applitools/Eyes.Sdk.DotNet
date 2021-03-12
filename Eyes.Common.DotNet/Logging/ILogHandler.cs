@@ -27,5 +27,7 @@ namespace Applitools
         void OnMessage(TraceLevel level, string message, params object[] args);
 
         void OnMessage(TraceLevel level, Func<string> messageProvider);
+
+        void OnMessage(ClientEvent @event);
     }
 }

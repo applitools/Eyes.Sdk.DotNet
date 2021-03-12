@@ -18,7 +18,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void Test_VG_RCA_Config()
         {
-            EyesRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
             eyes.Batch = batch_;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
@@ -38,20 +39,23 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             finally
             {
                 driver.Quit();
+                eyes.AbortIfNotClosed();
+                runner.StopServiceRunner();
             }
         }
 
         [Test]
         public void Test_VG_RCA_Fluent()
         {
-            EyesRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
             eyes.Batch = batch_;
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             try
             {
                 driver.Url = "https://applitools.github.io/demo/TestPages/VisualGridTestPage";
-                
+
                 driver.SwitchTo().Frame("iframe");
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
                 wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#p2")));
@@ -66,6 +70,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             finally
             {
                 driver.Quit();
+                eyes.AbortIfNotClosed();
+                runner.StopServiceRunner();
             }
         }
     }

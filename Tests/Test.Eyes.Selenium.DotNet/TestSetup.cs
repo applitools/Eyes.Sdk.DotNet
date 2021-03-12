@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium.Tests
@@ -168,11 +167,13 @@ namespace Applitools.Selenium.Tests
         {
             string testNameWithArguments = InitTestName_(ref testName);
 
+            ILogHandler logHandler = TestUtils.InitLogHandler(testNameWithArguments);
+            
             // Initialize the eyes SDK and set your private API key.
-            Eyes eyes = InitEyes_(testName);
+            Eyes eyes = InitEyes_(testName, logHandler);
 
-            TestUtils.SetupLogging(eyes, testNameWithArguments);
-            eyes.Logger.Log("initializing test: {0}", TestContext.CurrentContext.Test.FullName);
+            eyes.Logger.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Start,
+                new { TestName = TestContext.CurrentContext.Test.FullName });
 
             string seleniumServerUrl = SetupSeleniumServer(testName);
             bool isWellFormedUri = Uri.IsWellFormedUriString(seleniumServerUrl, UriKind.Absolute);
@@ -184,13 +185,14 @@ namespace Applitools.Selenium.Tests
                 {
                     try
                     {
-                        eyes.Logger.Log("Trying to create RemoteWebDriver on {0}", seleniumServerUrl);
+                        eyes.Logger.Log(TraceLevel.Info, Stage.TestFramework, StageType.Start,
+                            new { message = $"Trying to create RemoteWebDriver on {seleniumServerUrl}" });
                         driver = new RemoteWebDriver(new Uri(seleniumServerUrl), options_.ToCapabilities(), TimeSpan.FromMinutes(4));
                     }
                     catch (Exception e)
                     {
-                        eyes.Logger.Log("Failed creating RemoteWebDriver on {0}. Creating local WebDriver.", seleniumServerUrl);
-                        eyes.Logger.Log("Exception: " + e);
+                        CommonUtils.LogExceptionStackTrace(eyes.Logger, Stage.TestFramework, StageType.Start, e,
+                            testName, seleniumServerUrl);
                     }
                 }
 
@@ -201,13 +203,11 @@ namespace Applitools.Selenium.Tests
                     if (options_.BrowserName.Equals(BrowserNames.Chrome, StringComparison.OrdinalIgnoreCase) ||
                         options_.BrowserName.Equals(BrowserNames.Firefox, StringComparison.OrdinalIgnoreCase))
                     {
-                        eyes.Logger.Log("webdriver is null, running on a CI and trying to initialize {0} browser.", options_.BrowserName);
                         driver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
                     }
                 }
                 else
                 {
-                    eyes.Logger.Log("webdriver is null, running locally and trying to initialize {0}.", options_.BrowserName);
                     driver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
                 }
 
@@ -220,8 +220,6 @@ namespace Applitools.Selenium.Tests
             eyes.AddProperty("Agent ID", eyes.FullAgentId);
 
             //IWebDriver webDriver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), capabilities_);
-
-            eyes.Logger.Log("navigating to URL: " + testedPageUrl);
 
             IWebDriver driver;
             try
@@ -300,7 +298,7 @@ namespace Applitools.Selenium.Tests
             return driver;
         }
 
-        private Eyes InitEyes_(string testName, bool? forceFullPageScreenshot = null)
+        private Eyes InitEyes_(string testName, ILogHandler logHandler, bool? forceFullPageScreenshot = null)
         {
             EyesRunner runner = null;
             string testNameAsFilename = TestUtils.SanitizeForFilename(TestContext.CurrentContext.Test.FullName);
@@ -319,15 +317,15 @@ namespace Applitools.Selenium.Tests
                         {
                             expectedVGOutput = reader.ReadToEnd();
                         }
-                        runner = new VisualGridRunner(10, null, new Mock.MockServerConnectorFactory(webDriverProvider));
+                        runner = new VisualGridRunner(10, null, new MockServerConnectorFactory(webDriverProvider), logHandler);
                     }
                 }
             }
 
-            runner = runner ?? (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner());
+            runner ??= (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler));
 
             Eyes eyes = new Eyes(runner);
-
+            TestUtils.SetupDebugScreenshotProvider(eyes, testName);
             SpecificTestContextRequirements testContextReqs = new SpecificTestContextRequirements(eyes, testName);
             testDataByTestId_.Add(TestContext.CurrentContext.Test.ID, testContextReqs);
             testContextReqs.TestNameAsFilename = testNameAsFilename;
@@ -452,7 +450,9 @@ namespace Applitools.Selenium.Tests
                             CompareProperties_(ims, i);
                         }
                     }
-                    testData.Eyes.Logger.Log("Mismatches: " + results.Mismatches);
+
+                    testData.Eyes.Logger.Log(TraceLevel.Notice, testData.TestName, Stage.TestFramework, StageType.Complete,
+                        new { results.Mismatches });
                 }
                 if (testData?.Eyes.activeEyes_ is VisualGridEyes visualGridEyes &&
                     visualGridEyes.runner_.ServerConnector is Mock.MockServerConnector mockServerConnector)
@@ -477,21 +477,15 @@ namespace Applitools.Selenium.Tests
             catch (Exception ex)
             {
                 GetEyes()?.Logger?.GetILogHandler()?.Open();
-                GetEyes()?.Logger?.Log("Exception: {0}", ex);
+                CommonUtils.LogExceptionStackTrace(GetEyes()?.Logger, Stage.TestFramework, StageType.Failed, ex,
+                    TestContext.CurrentContext.Test.ID);
                 throw;
             }
             finally
             {
                 GetWebDriver()?.Quit();
-                Logger logger = GetEyes()?.Logger;
-                if (logger != null)
-                {
-                    logger.GetILogHandler()?.Open();
-                    logger.Log("Test finished.");
-                    logger.GetILogHandler()?.Close();
-                    Thread.Sleep(1000);
-                }
                 GetEyes()?.Abort();
+                GetEyes()?.runner_.GetAllTestResults(false);
             }
         }
 

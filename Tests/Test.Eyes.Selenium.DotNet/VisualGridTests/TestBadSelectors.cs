@@ -1,5 +1,6 @@
 ﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
+using Applitools.VisualGrid;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using OpenQA.Selenium;
@@ -91,6 +92,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 eyes.AbortIfNotClosed();
                 driver.Quit();
+                if (runner is VisualGridRunner vgr) vgr.StopServiceRunner();
             }
         }
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Applitools
 {
@@ -15,6 +16,8 @@ namespace Applitools
             ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
         }
 
+        protected abstract IEnumerable<IEyesBase> GetAllEyes();
+
         public Logger Logger { get; } = new Logger();
 
         public TestResultsSummary GetAllTestResults()
@@ -24,7 +27,8 @@ namespace Applitools
 
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
-            Logger.Verbose("Enter");
+            Logger.Log(Stage.Close, StageType.TestResults);
+
             TestResultsSummary allTestResults;
             try
             {
@@ -35,13 +39,15 @@ namespace Applitools
             {
                 DeleteAllBatches_();
             }
-            Logger.Verbose("Exit. Test results: {0}", allTestResults.Count);
+            string[] testIds = GetAllEyes().SelectMany(e => e.GetAllTests().Keys).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults, new { allTestResults.Count });
             return allTestResults;
         }
 
         private void DeleteAllBatches_()
         {
             if (DontCloseBatches) return;
+            Logger.Log(TraceLevel.Notice, Stage.Close, StageType.CloseBatch, new { batches = batchClosers_.Keys });
             foreach (KeyValuePair<string, IBatchCloser> kvp in batchClosers_)
             {
                 IBatchCloser connector = kvp.Value;

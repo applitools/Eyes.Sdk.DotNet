@@ -36,7 +36,7 @@ namespace Applitools.VisualGrid
             };
             bool sendDom = true;
 
-            RenderRequest request = new RenderRequest(webHook, url, stitchingServiceUrl, dom, resources,
+            RenderRequest request = new RenderRequest("id", webHook, url, stitchingServiceUrl, dom, resources,
                 renderInfo, platform, browserName, scriptHooks, selectorsToFindRegionsFor, sendDom, null, null, null);
 
             JsonSerializerSettings settings = JsonUtils.CreateSerializerSettings();
@@ -62,7 +62,7 @@ namespace Applitools.VisualGrid
             bool sendDom = true;
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
 
-            RenderRequest request = new RenderRequest(null, url, stitchingServiceUrl, dom, resources, renderInfo,
+            RenderRequest request = new RenderRequest("id", null, url, stitchingServiceUrl, dom, resources, renderInfo,
                 browserInfo.Platform, browserInfo.BrowserType, null, selectorsToFindRegionsFor, sendDom, null, null, null);
 
             JsonSerializerSettings settings = JsonUtils.CreateSerializerSettings();

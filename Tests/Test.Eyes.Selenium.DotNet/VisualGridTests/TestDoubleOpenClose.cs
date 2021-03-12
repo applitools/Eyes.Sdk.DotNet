@@ -79,10 +79,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.github.io/demo/TestPages/VisualGridTestPage/";
 
-            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
-            runner.SetLogHandler(TestUtils.InitLogHandler());
-
             string suffix = useVisualGrid ? "_VG" : "";
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestDoubleOpenCheckCloseWithDifferentInstances) + suffix);
+            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
+
             try
             {
                 Eyes eyes1 = new Eyes(runner);
@@ -112,10 +112,10 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.github.io/demo/TestPages/VisualGridTestPage/";
 
-            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
-            runner.SetLogHandler(TestUtils.InitLogHandler());
-
             string suffix = useVisualGrid ? "_VG" : "";
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestDoubleOpenCheckCloseAsyncWithDifferentInstances) + suffix);
+            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
+
             try
             {
                 Eyes eyes1 = new Eyes(runner);
@@ -139,29 +139,32 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             Assert.AreEqual(2, allTestResults.Count);
         }
 
+        //TODO - what do I actually try to check here?
         [TestCase(true)]
         public void TestDoubleCheckDontGetAllResults(bool useVisualGrid)
         {
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.com/helloworld";
 
-            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
-            runner.SetLogHandler(TestUtils.InitLogHandler());
-
             string suffix = useVisualGrid ? "_VG" : "";
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestDoubleCheckDontGetAllResults) + suffix);
+            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
+
             try
             {
-                Eyes eyes1 = new Eyes(runner);
-                eyes1.Batch = TestDataProvider.BatchInfo;
-                eyes1.Open(driver, "Applitools Eyes SDK", nameof(TestDoubleCheckDontGetAllResults) + suffix, new RectangleSize(1200, 800));
-                eyes1.Check(Target.Window().WithName("Step 1"));
-                eyes1.Check(Target.Window().WithName("Step 2"));
-                eyes1.Close(false);
+                Eyes eyes = new Eyes(runner);
+                eyes.Batch = TestDataProvider.BatchInfo;
+                eyes.Open(driver, "Applitools Eyes SDK", nameof(TestDoubleCheckDontGetAllResults) + suffix, new RectangleSize(1200, 800));
+                eyes.Check(Target.Window().WithName("Step 1"));
+                eyes.Check(Target.Window().WithName("Step 2"));
+                eyes.Close(false);
             }
             finally
             {
                 driver.Quit();
             }
+            Assert.IsFalse(runner.GetAllTestResultsAlreadyCalled);
+            (runner as VisualGridRunner)?.StopServiceRunner();
         }
     }
 }

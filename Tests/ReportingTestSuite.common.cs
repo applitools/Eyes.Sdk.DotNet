@@ -1,5 +1,4 @@
 ﻿using Applitools.Utils;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;
@@ -20,11 +19,19 @@ namespace Applitools.Tests.Utils
         public static readonly bool IS_FULL_COVERAGE = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_FULL_COVERAGE"), StringComparison.OrdinalIgnoreCase);
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
+        private readonly static Logger logger_ = new Logger();
+
         static ReportingTestSuite()
         {
-            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: TRAVIS_TAG: '{Environment.GetEnvironmentVariable("TRAVIS_TAG") ?? "<null>"}'");
-            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: IS_FULL_COVERAGE: {IS_FULL_COVERAGE}");
-            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Send to sandbox: {TestResultReportSummary.SendToSandbox()}");
+            logger_.SetLogHandler(new NunitLogHandler());
+            logger_.Log(TraceLevel.Notice, Stage.TestFramework,
+                new
+                {
+                    TRAVIS_TAG = Environment.GetEnvironmentVariable("TRAVIS_TAG") ?? "<null>",
+                    IS_FULL_COVERAGE,
+                    SendToSandbox = TestResultReportSummary.SendToSandbox()
+                });
+
             if (!IS_FULL_COVERAGE)
             {
                 Assembly asm = Assembly.GetExecutingAssembly();
@@ -32,7 +39,13 @@ namespace Applitools.Tests.Utils
                 includedTestsListFilename = "failed_tests_" + asmName + ".txt";
                 if (!RUNS_ON_CI || includedTestsListFilename == null || !File.Exists(includedTestsListFilename))
                 {
-                    TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Reading regression list from embedded resource: {asmName}.Resources.IncludedTests.txt");
+                    logger_.Log(TraceLevel.Notice, Stage.TestFramework,
+                        new
+                        {
+                            message = "Reading regression list from embedded resource",
+                            resourceName = $"{asmName}.Resources.IncludedTests.txt"
+                        });
+
                     Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
                     if (includedTestsListStream != null)
                     {
@@ -45,7 +58,12 @@ namespace Applitools.Tests.Utils
                 }
                 else
                 {
-                    TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Reading regression list from file: {includedTestsListFilename}");
+                    logger_.Log(TraceLevel.Notice, Stage.TestFramework,
+                        new
+                        {
+                            message = "Reading regression list from file",
+                            includedTestsListFilename
+                        });
                     includedTestsList = File.ReadAllLines(includedTestsListFilename);
                 }
             }
@@ -60,15 +78,15 @@ namespace Applitools.Tests.Utils
         public void SetUp()
         {
             TestContext tc = TestContext.CurrentContext;
-
             if (!IS_FULL_COVERAGE && includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName))
             {
-                TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Skipping Test (will be marked as Inconclusive): {tc.Test.FullName}");
+                logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped, new { testName = tc.Test.FullName });
                 Assert.Inconclusive();
             }
             else
             {
-                TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test Starting: {tc.Test.FullName}");
+                logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Start,
+                    new { testName = tc.Test.FullName });
             }
         }
 
@@ -77,7 +95,8 @@ namespace Applitools.Tests.Utils
         {
             TestContext tc = TestContext.CurrentContext;
             TestStatus status = tc.Result.Outcome.Status;
-            TestContext.Progress.WriteLine($"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test {status}: {tc.Test.FullName}");
+            logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Complete,
+                new { testName = tc.Test.FullName, status });
             if (status == TestStatus.Inconclusive)
             {
                 return;
@@ -104,8 +123,7 @@ namespace Applitools.Tests.Utils
             }
             catch (Exception ex)
             {
-                string s = $"{DateTimeOffset.Now:yyyy'-'MM'-'dd HH':'mm':'ss.fff} - Eyes: Test Report Error: {ex}";
-                TestContext.Progress.WriteLine(s);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.TestFramework, ex);
                 return false;
             }
         }

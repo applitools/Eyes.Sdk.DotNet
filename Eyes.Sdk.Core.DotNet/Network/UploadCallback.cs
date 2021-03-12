@@ -16,12 +16,13 @@ namespace Applitools.Utils
         private readonly byte[] bytes_;
         private readonly string contentType_;
         private readonly string mediaType_;
+        private readonly string[] testIds_;
 
-        private TimeSpan sleepDuration = TimeSpan.FromSeconds(5);
-        private TimeSpan timePassed = TimeSpan.Zero;
+        private TimeSpan sleepDuration_ = TimeSpan.FromSeconds(5);
+        private TimeSpan timePassed_ = TimeSpan.Zero;
 
         public UploadCallback(TaskListener<string> listener, ServerConnector serverConnector,
-                          string targetUrl, byte[] bytes, string contentType, string mediaType)
+                          string targetUrl, byte[] bytes, string contentType, string mediaType, string[] testIds)
         {
             ArgumentGuard.NotNull(bytes, nameof(bytes));
             OnComplete = OnComplete_;
@@ -32,11 +33,13 @@ namespace Applitools.Utils
             bytes_ = bytes;
             contentType_ = contentType;
             mediaType_ = mediaType;
+            testIds_ = testIds;
             HttpRestClient client = serverConnector.CreateHttpRestClient(new Uri(targetUrl));
             WebRequestCreator = client.WebRequestCreator;
         }
 
         internal IWebRequestCreate WebRequestCreator { get; set; } = DefaultWebRequestCreator.Instance;
+
 
         private void OnComplete_(HttpWebResponse response)
         {
@@ -58,26 +61,26 @@ namespace Applitools.Utils
                 return;
             }
 
-            if (timePassed >= UPLOAD_TIMEOUT)
+            if (timePassed_ >= UPLOAD_TIMEOUT)
             {
                 OnFail_(new IOException("Failed uploading image"));
                 return;
             }
 
-            if (timePassed >= TIME_THRESHOLD)
+            if (timePassed_ >= TIME_THRESHOLD)
             {
-                sleepDuration = TimeSpan.FromSeconds(10);
+                sleepDuration_ = TimeSpan.FromSeconds(10);
             }
 
-            Thread.Sleep(sleepDuration);
+            Thread.Sleep(sleepDuration_);
 
-            timePassed += sleepDuration;
+            timePassed_ += sleepDuration_;
             UploadDataAsync();
         }
 
         private void OnFail_(Exception ex)
         {
-            serverConnector_.Logger.Log("Error: {0}", ex);
+            CommonUtils.LogExceptionStackTrace(serverConnector_.Logger, Stage.General, StageType.UploadResource, ex);
             listener_.OnFail(ex);
         }
 
@@ -96,16 +99,39 @@ namespace Applitools.Utils
             dataStream.Write(bytes_, 0, bytes_.Length);
             dataStream.Close();
 
-            request.BeginGetResponse(ar =>
+            IAsyncResult asyncResult = request.BeginGetResponse(ar =>
             {
-                if (!ar.IsCompleted) return;
-                HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
-                HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
-                HttpStatusCode statusCode = response.StatusCode;
-                serverConnector_.Logger.Verbose("Upload Status Code: {0}", statusCode);
-                OnComplete_(response);
-                response.Close();
+                if (!ar.IsCompleted)
+                {
+                    serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadResource,
+                        new { message = "upload not complete" });
+                    return;
+                }
+                HandleResult_(ar);
             }, request);
+            if (asyncResult != null && asyncResult.CompletedSynchronously)
+            {
+                serverConnector_.Logger.Log(TraceLevel.Notice, Stage.General,
+                    new { message = "request.BeginGetResponse completed synchronously" });
+                HandleResult_(asyncResult);
+            }
+        }
+
+        private void HandleResult_(IAsyncResult ar)
+        {
+            HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
+            HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+            HttpStatusCode statusCode = response.StatusCode;
+            serverConnector_.Logger.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.UploadComplete,
+                new { statusCode });
+            try
+            {
+                OnComplete_(response);
+            }
+            finally
+            {
+                response.Close();
+            }
         }
     }
 }

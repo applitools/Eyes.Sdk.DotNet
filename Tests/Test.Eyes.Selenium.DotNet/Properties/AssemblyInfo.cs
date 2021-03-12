@@ -1,3 +1,1 @@
-﻿using NUnit.Framework;
-
-[assembly: LevelOfParallelism(10)]
+﻿[assembly: NUnit.Framework.LevelOfParallelism(5)]

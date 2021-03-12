@@ -1,26 +1,28 @@
 ﻿using Applitools.Capture;
+using Applitools.Cropping;
 using Applitools.Fluent;
 using Applitools.Positioning;
-using Applitools.Selenium.Fluent;
-using Applitools.Selenium.Scrolling;
 using Applitools.Selenium.Capture;
-using Applitools.Cropping;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Positioning;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using System.Threading;
+using Applitools.Selenium.Scrolling;
 using Applitools.Utils;
 using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
-using Region = Applitools.Utils.Geometry.Region;
-using System.Linq;
 using Applitools.VisualGrid;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
+using Region = Applitools.Utils.Geometry.Region;
+using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
+using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
 
 namespace Applitools.Selenium
 {
@@ -231,18 +233,19 @@ namespace Applitools.Selenium
             else
             {
                 string errMsg = $"Driver is not a RemoteWebDriver ({driver.GetType().Name})";
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
                 throw new EyesException(errMsg);
             }
-            Logger.Log($"Initialized Web Driver. Selenium SessionId: {driver_.RemoteWebDriver.SessionId}");
+            Logger.Log(TraceLevel.Info, Stage.Open,
+                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
         }
 
         protected override string TryCaptureDom()
         {
-            Logger.Verbose("enter");
+            Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript);
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
-            string domJson = domCapture.GetFullWindowDom();
-            Logger.Verbose("exit. DOM JSON length: {0}", domJson.Length);
+            string domJson = domCapture.GetFullWindowDom(TestId);
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
             return domJson;
         }
 
@@ -415,7 +418,7 @@ namespace Applitools.Selenium
         {
             string name = checkSettingsInternal.GetName();
             string source = driver_.Url;
-            Logger.Log($"{nameof(MatchRegion)} - subScreenshots: {subScreenshots.Count}");
+            Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.MatchStart, new { subScreenshots = subScreenshots.Count });
             foreach (EyesScreenshot subScreenshot in subScreenshots)
             {
                 DebugScreenshotProvider.Save(subScreenshot.Image, $"subscreenshot_{name}");
@@ -424,13 +427,13 @@ namespace Applitools.Selenium
                 MatchWindowTask.CollectRegions(this, subScreenshot, checkSettingsInternal, ims);
                 Location location = subScreenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
                 AppOutput appOutput = new AppOutput(name, location, subScreenshot.Image);
-                         
+
                 MatchWindowData data = PrepareForMatch(checkSettingsInternal,
                     new Trigger[0], appOutput, name, false, ims, null, source);
 
                 MatchResult matchResult = PerformMatch(data);
 
-                Logger.Log("matchResult.asExcepted: {0}", matchResult.AsExpected);
+                Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.MatchComplete, new { matchResult.AsExpected });
             }
         }
 
@@ -482,7 +485,7 @@ namespace Applitools.Selenium
         {
             ISizeAdjuster sizeAdjuster = ImageProviderFactory.GetImageSizeAdjuster(userAgent_, jsExecutor_);
             return new FullPageCaptureAlgorithm(
-                Logger, regionPositionCompensation_, WaitBeforeScreenshots,
+                Logger, TestId, regionPositionCompensation_, WaitBeforeScreenshots,
                 DebugScreenshotProvider,
                 (image) => new EyesWebDriverScreenshot(Logger, driver_, image,
                     EyesWebDriverScreenshot.ScreenshotTypeEnum.VIEWPORT, Point.Empty),
@@ -598,8 +601,10 @@ namespace Applitools.Selenium
                     }
                     else
                     {
-                        Logger.Log("Target.Frame(frame).Fully(false)");
-                        Logger.Log("WARNING: This shouldn't have been called, as it is covered by `CheckElement_(...)`");
+                        Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.Called,
+                            new { message = "Target.Frame(frame).Fully(false)" });
+                        Logger.Log(TraceLevel.Warn, TestId, Stage.Check, StageType.Called,
+                            new { message = "This shouldn't have been called, as it is covered by `CheckElement_(...)`" });
                     }
                 }
                 else
@@ -621,7 +626,7 @@ namespace Applitools.Selenium
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception: " + ex);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex);
                 throw new EyesException("Error", ex);
             }
         }
@@ -1293,7 +1298,7 @@ namespace Applitools.Selenium
             IPositionProvider positionProvider = SeleniumPositionProviderFactory.TryGetPositionProviderForElement(scrollRootElement, stitchMode);
             if (positionProvider == null)
             {
-                logger.Debug("creating a new position provider.");
+                logger.Verbose("creating a new position provider.");
                 IWebElement defaultSRE = EyesSeleniumUtils.GetDefaultRootElement(driver);
                 if (scrollRootElement.Equals(defaultSRE))
                 {
@@ -1345,7 +1350,7 @@ namespace Applitools.Selenium
                 }
                 catch (Exception ex)
                 {
-                    Logger.Verbose("failed ({0})", ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
                     dontGetTitle_ = true;
                 }
             }
@@ -1384,7 +1389,7 @@ namespace Applitools.Selenium
             }
             catch (Exception e)
             {
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, e, TestId);
                 CloseFailed(e);
                 throw;
             }
@@ -1394,12 +1399,11 @@ namespace Applitools.Selenium
                 throw new Exception("Error", exception_);
             }
 
-            if (runner_ != null && results != null)
+            if (runner_ != null)
             {
-                runner_.AggregateResult(results);
+                runner_.AggregateResult(testResultContainer_);
             }
             return results;
-
         }
 
         protected override object GetAgentSetup()
@@ -1477,9 +1481,9 @@ namespace Applitools.Selenium
             };
         }
 
-        public IDictionary<string, RunningTest> GetAllRunningTests()
+        public override IDictionary<string, IRunningTest> GetAllTests()
         {
-            return new Dictionary<string, RunningTest>() { { TestId, this } };
+            return new Dictionary<string, IRunningTest>() { { TestId, this } };
         }
 
         bool IEyes.IsCompleted()
@@ -1497,18 +1501,18 @@ namespace Applitools.Selenium
             return new TestResultContainer[] { testResultContainer_ };
         }
 
-        public override MatchWindowData PrepareForMatch(ICheckTask checkTask)
+        protected internal override MatchWindowData PrepareForMatch(ICheckTask checkTask)
         {
             throw new NotImplementedException();
         }
 
-        public override ICheckTask IssueCheck(ICheckSettings checkSettings, IList<VisualGridSelector[]> regionSelectors,
-            string source, IList<IUserAction> userInputs)
+        protected internal override ICheckTask IssueCheck(ICheckSettings checkSettings,
+            IList<VisualGridSelector[]> regionSelectors, string source, IList<IUserAction> userInputs)
         {
             throw new NotImplementedException();
         }
 
-        public override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
+        protected internal override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
         {
             throw new NotImplementedException();
         }

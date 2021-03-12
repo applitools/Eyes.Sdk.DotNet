@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Applitools.Metadata;
-using Applitools.Selenium.Tests.Utils;
-using Applitools.Selenium.VisualGrid;
+﻿using Applitools.Metadata;
 using Applitools.Tests.Utils;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using ScreenOrientation = Applitools.VisualGrid.ScreenOrientation;
+using System;
+using System.Collections.Generic;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -29,7 +26,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             runner_.ApiKey = API_KEY;
         }
 
-        public TestIEyesVG() : this("visual_grid") {
+        public TestIEyesVG() : this("visual_grid")
+        {
         }
 
         protected virtual BatchInfo BatchInfo { get => batchInfo_; }

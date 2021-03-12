@@ -16,16 +16,15 @@ namespace Applitools.Selenium.Tests
         {
             IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();
             webDriver.Url = "https://applitools.com/helloworld";
-            VisualGridRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes, testName);
             eyes.SendDom = false;
             TestObjects testObjects = new TestObjects(webDriver, runner, eyes);
             return testObjects;
         }
 
         [Test]
-        [Retry(3)]
         public void Test_VGTestsCount_1()
         {
             TestObjects testObjects = InitEyes_();
@@ -46,7 +45,6 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
-        [Retry(3)]
         public void Test_VGTestsCount_2()
         {
             TestObjects testObjects = InitEyes_();
@@ -71,7 +69,6 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
-        [Retry(3)]
         public void Test_VGTestsCount_3()
         {
             TestObjects testObjects = InitEyes_();
@@ -97,7 +94,6 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
-        [Retry(3)]
         public void Test_VGTestsCount_4()
         {
             TestObjects testObjects = InitEyes_();
@@ -121,7 +117,6 @@ namespace Applitools.Selenium.Tests
         }
 
         [Test]
-        [Retry(3)]
         public void Test_VGTestsCount_5()
         {
             TestObjects testObjects = InitEyes_();

@@ -225,7 +225,7 @@
                     result.Dispose();
                 }
 
-                logger_.Log("{0} failed: {1}", traceMsg, ex);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.General, ex);
                 return null;
             }
         }

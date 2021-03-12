@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Collections.Specialized;
@@ -37,6 +36,7 @@ namespace Applitools.Utils
         /// </summary>
         /// <param name="jsonSerializer">The JSON serializer to use to <c>null</c> 
         /// to use the default serializer.</param>
+        /// <param name="logger"></param>
         /// <param name="agentId">The full agent ID of the SDK.</param>
         /// <param name="serverUrl">Server's base URL</param>
         public HttpRestClient(Uri serverUrl, string agentId = null, JsonSerializer jsonSerializer = null, Logger logger = null)
@@ -47,7 +47,7 @@ namespace Applitools.Utils
             json_ = jsonSerializer ?? JsonUtils.CreateSerializer(false, false);
             AgentId = agentId;
             ConnectionLimit = 10;
-            Logger = logger;
+            Logger = logger ?? new Logger();
             Timeout = TimeSpan.FromMinutes(10);
         }
 
@@ -145,14 +145,6 @@ namespace Applitools.Utils
         }
 
         /// <summary>
-        /// Sends a POST request to the input path under the base url.
-        /// </summary>
-        public HttpWebResponse Post(string path, string accept = null)
-        {
-            return SendHttpWebRequest_(path, "POST", null, null, accept, null);
-        }
-
-        /// <summary>
         /// Sends a POST request to the input path under the base url with a JSON body.
         /// </summary>
         public HttpWebResponse PostJson<T>(string path, T body, string accept = "application/json")
@@ -168,6 +160,8 @@ namespace Applitools.Utils
             SendLongJsonRequest_(listener, path, "POST", body, accept);
         }
 
+
+        // Used ONLY by IN-REGION
         /// <summary>
         /// Sends a POST request of the input body to the input path under the base url.
         /// </summary>
@@ -178,14 +172,6 @@ namespace Applitools.Utils
         }
 
         /// <summary>
-        /// Sends a PUT request to the input path under the base url.
-        /// </summary>
-        public HttpWebResponse Put(string path, string accept = null)
-        {
-            return SendHttpWebRequest_(path, "PUT", null, null, accept, null);
-        }
-
-        /// <summary>
         /// Sends a PUT request to the input path under the base url with a JSON body.
         /// </summary>
         public HttpWebResponse PutJson<T>(string path, T body, string accept = "application/json")
@@ -193,14 +179,8 @@ namespace Applitools.Utils
             return SendJsonHttpWebRequest_(path, "PUT", body, accept);
         }
 
-        /// <summary>
-        /// Sends a PUT request of the input body to the input path under the base url.
-        /// </summary>
-        public HttpWebResponse Put(
-            string path, MemoryStream body, string contentType = null, string accept = null, string contentEncoding = null)
-        {
-            return SendHttpWebRequest_(path, "PUT", body, contentType, accept, contentEncoding);
-        }
+
+        // Used ONLY by DeleteSession
 
         /// <summary>
         /// Sends a DELETE request to the input path under the base url.
@@ -291,26 +271,41 @@ namespace Applitools.Utils
         {
             Uri requestUri = new Uri(url);
             HttpWebRequest request = CreateHttpWebRequest_(requestUri, method, null, null, null, null);
-            SendAsyncRequest(listener, request);
+            SendAsyncRequest(listener, request, Logger);
         }
 
-        public static void SendAsyncRequest(TaskListener<HttpWebResponse> listener, HttpWebRequest request)
+        public static void SendAsyncRequest(TaskListener<HttpWebResponse> listener, HttpWebRequest request, Logger logger)
         {
-            request.BeginGetResponse(ar =>
+            IAsyncResult asyncResult = request.BeginGetResponse(ar => GetResponseCallBack_(listener, ar), request);
+            if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
-                if (!ar.IsCompleted) return;
-                HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
-                try
+                logger.Log(TraceLevel.Notice, Stage.General,
+                            new { message = "request.BeginGetResponse completed synchronously" });
+                GetResponseCallBack_(listener, asyncResult);
+            }
+        }
+
+        private static void GetResponseCallBack_(TaskListener<HttpWebResponse> listener, IAsyncResult ar)
+        {
+            if (!ar.IsCompleted) return;
+            HttpWebRequest resultRequest = (HttpWebRequest)ar.AsyncState;
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+                if (response.StatusCode >= HttpStatusCode.Ambiguous)
                 {
-                    HttpWebResponse response = (HttpWebResponse)resultRequest.EndGetResponse(ar);
+                    listener.OnFail(new EyesException($"Wrong response status: {response.StatusCode} {response.StatusDescription}"));
+                }
+                else
+                {
                     listener.OnComplete(response);
-                    response.Close();
                 }
-                catch (WebException ex)
-                {
-                    listener.OnFail(ex);
-                }
-            }, request);
+                response.Close();
+            }
+            catch (WebException ex)
+            {
+                listener.OnFail(ex);
+            }
         }
 
         private HttpWebResponse SendHttpWebRequest_(
@@ -351,7 +346,13 @@ namespace Applitools.Utils
                     {
                         throw new NullReferenceException("request is null");
                     }
-                    request.BeginGetResponse(OnLongRequestResponse_, request);
+                    IAsyncResult asyncResult = request.BeginGetResponse(OnLongRequestResponse_, request);
+                    if (asyncResult != null && asyncResult.CompletedSynchronously)
+                    {
+                        Logger.Log(TraceLevel.Notice, Stage.General,
+                            new { message = "request.BeginGetResponse completed synchronously" });
+                        OnLongRequestResponse_(asyncResult);
+                    }
                 }
                 catch (WebException ex)
                 {
@@ -376,7 +377,11 @@ namespace Applitools.Utils
 
             void OnLongRequestResponse_(IAsyncResult result)
             {
-                if (!result.IsCompleted) return;
+                if (!result.IsCompleted)
+                {
+                    Logger.Log(TraceLevel.Notice, Stage.General, new { message = "long request not complete" });
+                    return;
+                }
                 HttpWebRequest resultRequest = (HttpWebRequest)result.AsyncState;
                 response = (HttpWebResponse)resultRequest.EndGetResponse(result);
 
@@ -389,7 +394,6 @@ namespace Applitools.Utils
                 RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, statusUrl, listener);
                 SendAsyncRequest(requestPollingListener, statusUrl, "GET");
             }
-
         }
 
         private HttpWebRequest CreateHttpWebRequest_(
@@ -480,7 +484,9 @@ namespace Applitools.Utils
 
                 req.ContentLength = body.Length;
                 body.Position = 0;
-                body.CopyTo(req.GetRequestStream());
+                Stream reqStream = req.GetRequestStream();
+                body.CopyTo(reqStream);
+                reqStream.Close();
             }
 
             return req;

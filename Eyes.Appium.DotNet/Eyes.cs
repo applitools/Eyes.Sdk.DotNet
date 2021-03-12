@@ -161,9 +161,13 @@ namespace Applitools.Appium
 
             if (CachedSessionDetails == null)
             {
-                Logger.Log("WARNING: could not get viewportRect in session details from appium server! " +
-                    "Using default device size instead, this might create incorrect images." +
-                    JsonConvert.SerializeObject(getSessionDetails_.Invoke(driver_, null), Formatting.Indented));
+                Logger.Log(TraceLevel.Warn, Stage.Open,
+                    new
+                    {
+                        message = "could not get viewportRect in session details from appium server! " +
+                                  "Using default device size instead, this might create incorrect images.",
+                        sessionDetails = getSessionDetails_.Invoke(driver_, null)
+                    });
             }
         }
 
@@ -188,7 +192,7 @@ namespace Applitools.Appium
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception: " + ex);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
                 throw;
             }
         }

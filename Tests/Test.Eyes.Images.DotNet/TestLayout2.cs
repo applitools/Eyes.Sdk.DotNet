@@ -47,7 +47,7 @@
                 eyes.SaveDiffs = true;
             }
 
-            eyes.Logger.Log("running test: " + TestContext.CurrentContext.Test.Name);
+            eyes.Logger.Log(TraceLevel.Info, TestContext.CurrentContext.Test.Name, Stage.TestFramework, StageType.Start);
 
             return eyes;
         }

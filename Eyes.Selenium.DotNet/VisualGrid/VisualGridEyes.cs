@@ -41,10 +41,9 @@ namespace Applitools.Selenium.VisualGrid
             "return '//*[@'+atName+'=\"'+id+'\"]';";
 
         internal readonly VisualGridRunner runner_;
-        private readonly Dictionary<string, RunningTest> testList_ = new Dictionary<string, RunningTest>();
+        private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
         private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
-        private RenderingInfo renderingInfo_;
         private IJavaScriptExecutor jsExecutor_;
         private string url_;
 #pragma warning disable CS0414
@@ -60,6 +59,7 @@ namespace Applitools.Selenium.VisualGrid
         private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
         private RectangleSize viewportSize_;
         private bool isOpen_;
+        private readonly string eyesId_ = Guid.NewGuid().ToString();
 
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
         {
@@ -149,8 +149,8 @@ namespace Applitools.Selenium.VisualGrid
 
             Logger.GetILogHandler()?.Open();
 
-            Logger.Log("Agent = {0}", FullAgentId);
-            Logger.Verbose(".NET Framework = {0}", Environment.Version);
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called,
+                new { FullAgentId, DotNetVersion = CommonUtils.GetDotNetVersion() });
 
             ArgumentGuard.NotNull(webDriver, nameof(webDriver));
 
@@ -161,7 +161,8 @@ namespace Applitools.Selenium.VisualGrid
             ArgumentGuard.NotEmpty(Config_.TestName, "testName");
             if (isOpen_)
             {
-                Logger.Log("WARNING: called open more than once! Ignoring");
+                Logger.Log(TraceLevel.Warn, eyesId_, Stage.Open, StageType.Called,
+                    new { message = "called open more than once! Ignoring" });
                 return webDriver_ != null ? webDriver_ : webDriver;
             }
 
@@ -171,11 +172,14 @@ namespace Applitools.Selenium.VisualGrid
             string uaString = driver_.GetUserAgent();
             if (uaString != null)
             {
-                Logger.Verbose("User-Agent: {0}", uaString);
+                Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called, new { userAgent = uaString });
                 userAgent_ = UserAgent.ParseUserAgentString(uaString, true);
             }
 
             EnsureViewportSize_();
+
+            Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called,
+                new { appName = Config_.AppName, testName = Config_.TestName, viewportSize = viewportSize_ });
 
             closeFutures_.Clear();
 
@@ -184,7 +188,6 @@ namespace Applitools.Selenium.VisualGrid
                 Config_.SetBatch(Batch);
             }
 
-            Logger.Verbose("getting all browsers info...");
             List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
             if (browserInfoList.Count == 0)
             {
@@ -199,21 +202,18 @@ namespace Applitools.Selenium.VisualGrid
 
             configAtOpen_ = GetConfigClone_();
 
-            Logger.Verbose("creating test descriptors for each browser info...");
             List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
             IServerConnector serverConnector = runner_.ServerConnector;
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
-                Logger.Verbose("creating test descriptor");
                 VisualGridRunningTest test = new VisualGridRunningTest(
-                    browserInfo, Logger, configProvider_, serverConnector);
+                    eyesId_, browserInfo, Logger, configProvider_, serverConnector);
                 testList_.Add(test.TestId, test);
                 newTests.Add(test);
             }
 
-            Logger.Verbose("opening {0} tests...", testList_.Count);
+            Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called, new { testCount = testList_.Count });
             runner_.Open(this, newTests);
-            Logger.Verbose("done");
             return driver_ ?? webDriver;
         }
 
@@ -291,7 +291,7 @@ namespace Applitools.Selenium.VisualGrid
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Error: {0}", e);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, e, eyesId_);
                 }
             }
             result.Add(xpaths.ToArray());
@@ -374,7 +374,7 @@ namespace Applitools.Selenium.VisualGrid
         {
             if (!ValidateEyes_()) return;
 
-            Logger.Verbose("enter (#{0})", GetHashCode());
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Check, StageType.Called);
 
             try
             {
@@ -386,7 +386,7 @@ namespace Applitools.Selenium.VisualGrid
             }
             catch (JsonException e)
             {
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, e, eyesId_);
             }
 
             FrameChain originalFC = driver_.GetFrameChain().Clone();
@@ -408,14 +408,13 @@ namespace Applitools.Selenium.VisualGrid
                 //checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo, switchedToCount);
 
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
-                Logger.Verbose("regionXPaths : {0}", regionsXPaths);
 
-                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger);
+                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger, eyesId_);
 
                 Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
-                Logger.Verbose("Cdt length: {0}", scriptResult.Cdt.Count);
-                Logger.Verbose("Blobs urls: {0}", StringUtils.Concat(blobsUrls, ", "));
-                Logger.Verbose("Resources urls: {0}", StringUtils.Concat(scriptResult.ResourceUrls, ", "));
+
+                Logger.Log(TraceLevel.Info, testList_.Keys, Stage.Check, StageType.DomScript,
+                    new { regionsXPaths, blobsUrls, scriptResult.ResourceUrls, cdtCount = scriptResult.Cdt.Count });
 
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
 
@@ -435,7 +434,7 @@ namespace Applitools.Selenium.VisualGrid
                 scriptResult.UserAgent = userAgent_;
                 //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
                 runner_.Check(scriptResult, checkTasks);
-                Logger.Verbose("created renderTask  ({0})", checkSettings);
+                //Logger.Verbose("created renderTask  ({0})", checkSettings);
             }
             catch (Exception e)
             {
@@ -443,7 +442,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     runningTest.SetTestInExceptionMode(e);
                 }
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, e, testList_.Keys.ToArray());
             }
             finally
             {
@@ -483,13 +482,6 @@ namespace Applitools.Selenium.VisualGrid
             return isFullPage;
         }
 
-        //private void UpdateFrameScrollRoot_(IScrollRootElementContainer frameTarget)
-        //{
-        //    IWebElement rootElement = EyesSeleniumUtils.GetScrollRootElement(Logger, webDriver_, frameTarget);
-        //    Frame frame = driver_.GetFrameChain().Peek();
-        //    frame.ScrollRootElement = rootElement;
-        //}
-
         private int SwitchToFrame_(ISeleniumCheckTarget checkTarget)
         {
             if (checkTarget == null)
@@ -516,7 +508,6 @@ namespace Applitools.Selenium.VisualGrid
             if (frameIndex != null)
             {
                 switchTo.Frame(frameIndex.Value);
-                //UpdateFrameScrollRoot_(frameTarget);
                 return true;
             }
 
@@ -524,7 +515,6 @@ namespace Applitools.Selenium.VisualGrid
             if (frameNameOrId != null)
             {
                 switchTo.Frame(frameNameOrId);
-                //UpdateFrameScrollRoot_(frameTarget);
                 return true;
             }
 
@@ -532,7 +522,6 @@ namespace Applitools.Selenium.VisualGrid
             if (frameReference != null)
             {
                 switchTo.Frame(frameReference);
-                //UpdateFrameScrollRoot_(frameTarget);
                 return true;
             }
 
@@ -543,7 +532,6 @@ namespace Applitools.Selenium.VisualGrid
                 if (frameElement != null)
                 {
                     switchTo.Frame(frameElement);
-                    //UpdateFrameScrollRoot_(frameTarget);
                     return true;
                 }
             }
@@ -643,13 +631,13 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
-            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger)
+            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
         {
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
             bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
-            
+
             int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {
@@ -662,7 +650,7 @@ namespace Applitools.Selenium.VisualGrid
 
             object pollingArguments = new { chunkByteLength };
 
-            string result = EyesSeleniumUtils.RunDomScript(logger, driver, domScript, arguments, pollingArguments, pollingScript);
+            string result = EyesSeleniumUtils.RunDomScript(logger, driver, testIds, domScript, arguments, pollingArguments, pollingScript);
             if (keepOriginalUrls)
             {
                 Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);
@@ -676,6 +664,8 @@ namespace Applitools.Selenium.VisualGrid
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
             VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
+            string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
+
             FrameChain frameChain = driver.GetFrameChain().Clone();
             foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
             {
@@ -689,13 +679,14 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     IWebElement frame = driver.FindElement(By.CssSelector(crossFrame.Selector));
                     switchTo.Frame(frame);
-                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, runner, driver, logger);
+                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, runner, driver, logger, testIds);
                     frameData.Frames.Add(result);
                     frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    logger.Log("Failed finding cross frame with selector {0}. Reason: {1}", crossFrame.Selector, e);
+                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                        new { crossFrame.Selector }, testIds);
                 }
                 finally
                 {
@@ -717,9 +708,10 @@ namespace Applitools.Selenium.VisualGrid
                     switchTo.Frame(frameElement);
                     AnalyzeFrameData_(frame, userAgent, config, runner, switchTo, driver, logger);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    logger.Log("Failed finding cross frame with selector {0}. Reason: {1}", frame.Selector, e);
+                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                        new { frame.Selector }, testIds);
                 }
                 finally
                 {
@@ -783,14 +775,14 @@ namespace Applitools.Selenium.VisualGrid
 
         public void CloseAsync()
         {
-            Logger.Verbose("enter");
             if (!ValidateEyes_())
             {
                 return;
             }
 
             isOpen_ = false;
-            Logger.Verbose("closing {0} running tests", testList_.Count);
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Close, StageType.Called,
+                new { message = $"closing {testList_.Count} running tests" });
             foreach (RunningTest runningTest in testList_.Values)
             {
                 VisualGridRunningTest vgRunningTest = (VisualGridRunningTest)runningTest;
@@ -798,7 +790,7 @@ namespace Applitools.Selenium.VisualGrid
                 Logger.Verbose("running test device info: {0}", vgRunningTest.BrowserInfo);
                 Logger.Verbose("is current running test open: {0}", vgRunningTest.IsOpen);
                 Logger.Verbose("is current running test ready to close: {0}", vgRunningTest.IsTestReadyToClose);
-                Logger.Verbose("is current running test closed: {0}", vgRunningTest.IsCompleted);
+                Logger.Verbose("is current running test closed: {0}", ((IRunningTest)vgRunningTest).IsCompleted);
                 Logger.Verbose("closing current running test");
                 vgRunningTest.IssueClose();
             }
@@ -847,7 +839,7 @@ namespace Applitools.Selenium.VisualGrid
 
         public IBatchCloser GetBatchCloser()
         {
-            return testList_.Values.FirstOrDefault() as IBatchCloser;
+            return testList_.Values.FirstOrDefault();
         }
 
         internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
@@ -870,7 +862,7 @@ namespace Applitools.Selenium.VisualGrid
             List<TestResultContainer> allResults = new List<TestResultContainer>();
             foreach (RunningTest runningTest in testList_.Values)
             {
-                if (!runningTest.IsCompleted)
+                if (!((IRunningTest)runningTest).IsCompleted)
                 {
                     if (runner_.GetError() != null)
                     {
@@ -885,9 +877,9 @@ namespace Applitools.Selenium.VisualGrid
             return allResults;
         }
 
-        IDictionary<string, RunningTest> IEyes.GetAllRunningTests()
+        public IDictionary<string, IRunningTest> GetAllTests()
         {
-            return testList_;
+            return new Dictionary<string, IRunningTest>(testList_);
         }
     }
 }

@@ -181,7 +181,7 @@ return getVisibleElementRect(arguments[0])";
             {
                 string errMsg = "The input web element is not a RemoteWebElement ({0})"
                     .Fmt(webElement.GetType().Name);
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, Stage.General, new { errMsg });
                 throw new EyesException(errMsg);
             }
 
@@ -241,7 +241,8 @@ return getVisibleElementRect(arguments[0])";
                 }
                 catch
                 {
-                    Logger.Log("error parsing response: " + response.Value);
+                    Logger.Log(TraceLevel.Error, Stage.General, 
+                        new { errMsg = "error parsing response: " + response.Value });
                     throw;
                 }
             }

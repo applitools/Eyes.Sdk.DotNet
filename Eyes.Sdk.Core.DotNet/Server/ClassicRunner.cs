@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Applitools
 {
@@ -9,16 +10,27 @@ namespace Applitools
         private readonly CheckService checkService_;
         private readonly CloseService closeService_;
 
-        private List<TestResults> allTestResult_ = new List<TestResults>();
+        private List<TestResultContainer> allTestResult_ = new List<TestResultContainer>();
+
+        private EyesBase eyes_;
 
         public EyesException Exception { get; set; }
 
-        public ClassicRunner()
+        protected override IEnumerable<IEyesBase> GetAllEyes() => new EyesBase[] { eyes_ };
+        internal void SetEyes(EyesBase eyes)
         {
+            eyes_ = eyes;
+        }
+
+        public ClassicRunner(ILogHandler logHandler)
+        {
+            Logger.SetLogHandler(logHandler);
             openService_ = new OpenService(Logger, ServerConnector, 1);
             checkService_ = new CheckService(Logger, ServerConnector);
             closeService_ = new CloseService(Logger, ServerConnector);
         }
+
+        public ClassicRunner() : this(NullLogHandler.Instance) { }
 
         public void UpdateServerConnector(IServerConnector serverConnector)
         {
@@ -30,35 +42,30 @@ namespace Applitools
 
         protected override TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)
         {
-            if (shouldThrowException && Exception != null)
+            TestResultContainer resultInException = allTestResult_.FirstOrDefault(tr => tr.Exception != null);
+            Exception ex = resultInException?.Exception ?? Exception;
+            if (shouldThrowException && ex != null)
             {
-                throw new EyesException("Error", Exception);
+                throw new EyesException("Error", ex);
             }
-            List<TestResultContainer> result = new List<TestResultContainer>();
-            foreach (TestResults testResults in allTestResult_)
-            {
-                result.Add(new TestResultContainer(testResults, null, null));
-                EyesBase.LogSessionResultsAndThrowException(Logger, shouldThrowException, testResults);
-            }
-
-            return new TestResultsSummary(result);
+            return new TestResultsSummary(allTestResult_);
         }
 
-        public void AggregateResult(TestResults testResult)
+        public void AggregateResult(TestResultContainer testResult)
         {
             allTestResult_.Add(testResult);
         }
 
-        public RunningSession Open(SessionStartInfo sessionStartInfo)
+        public RunningSession Open(string testId, SessionStartInfo sessionStartInfo)
         {
-            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger);
-            openService_.Operate(sessionStartInfo, listener);
+            SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger, testIds: testId);
+            openService_.Operate(testId, sessionStartInfo, listener);
             return listener.Get();
         }
 
         public MatchResult Check(string testId, MatchWindowData matchWindowData)
         {
-            SyncTaskListener listener = new SyncTaskListener(logger: Logger);
+            SyncTaskListener listener = new SyncTaskListener(logger: Logger, testIds: testId);
             checkService_.TryUploadImage(testId, matchWindowData, listener);
 
             bool? result = listener.Get();
@@ -67,15 +74,15 @@ namespace Applitools
                 throw new EyesException("Failed performing match with the server", listener.Exception);
             }
 
-            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>(logger: Logger);
+            SyncTaskListener<MatchResult> matchListener = new SyncTaskListener<MatchResult>(logger: Logger, testIds: testId);
             checkService_.MatchWindow(testId, matchWindowData, matchListener);
             return matchListener.Get();
         }
 
-        public TestResults Close(SessionStopInfo sessionStopInfo)
+        public TestResults Close(string testId, SessionStopInfo sessionStopInfo)
         {
-            SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger);
-            closeService_.Operate(sessionStopInfo, listener);
+            SyncTaskListener<TestResults> listener = new SyncTaskListener<TestResults>(logger: Logger, testIds: testId);
+            closeService_.Operate(testId, sessionStopInfo, listener);
             return listener.Get();
         }
     }

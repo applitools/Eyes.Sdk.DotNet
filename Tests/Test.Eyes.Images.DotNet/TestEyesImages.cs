@@ -24,8 +24,8 @@ namespace Applitools.Images.Tests
         {
             Eyes eyes = new Eyes();
             eyes.Batch = batch_;
-            eyes.SetLogHandler(new NunitLogHandler(true));
-            eyes.Logger.Log("running test: " + TestContext.CurrentContext.Test.Name);
+            string testName = TestContext.CurrentContext.Test.Name;
+            TestUtils.SetupLogging(eyes, testName);
             return eyes;
         }
 

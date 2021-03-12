@@ -31,7 +31,7 @@ namespace Applitools.Selenium.Tests.Mock
         internal List<string> SessionIds { get; } = new List<string>();
         private Dictionary<string, JToken> renderRequestsById_ = new Dictionary<string, JToken>();
         public bool AsExpected { get; set; } = true;
-        
+
         private WebDriverProvider driverProvider_;
 
         public List<string> RenderRequests { get; } = new List<string>();
@@ -66,7 +66,7 @@ namespace Applitools.Selenium.Tests.Mock
             return renderingInfo;
         }
 
-        protected override void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data)
+        protected override void MatchWindowImpl_(TaskListener<MatchResult> listener, MatchWindowData data, string[] testIds)
         {
             if (data.Options.ReplaceLast)
             {
@@ -78,8 +78,8 @@ namespace Applitools.Selenium.Tests.Mock
                 Logger.Verbose("add new step");
                 MatchWindowCalls.Add(data);
             }
-            
-            base.MatchWindowImpl_(listener, data);
+
+            base.MatchWindowImpl_(listener, data, testIds);
         }
 
         public delegate (bool, bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
@@ -87,7 +87,7 @@ namespace Applitools.Selenium.Tests.Mock
 
         protected override void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
         {
-            Logger.Log("starting session: {0}", sessionStartInfo);
+            Logger.Log(TraceLevel.Info, Stage.Open, StageType.Called, new { sessionStartInfo });
 
             RunningSession newSession = null;
             bool continueInvocation = true;
@@ -139,7 +139,8 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
-        public override void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener, IList<string> renderIds)
+        public override void RenderStatusById(TaskListener<List<RenderStatusResults>> taskListener,
+            IList<string> testIds, IList<string> renderIds)
         {
             List<RenderStatusResults> results = new List<RenderStatusResults>();
             foreach (string renderId in renderIds)
@@ -170,19 +171,20 @@ namespace Applitools.Selenium.Tests.Mock
             taskListener.OnComplete(results);
         }
 
-        public override void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> browserInfos)
+        public override void GetJobInfo(TaskListener<IList<JobInfo>> listener, IList<IRenderRequest> renderRequests)
         {
             IList<JobInfo> jobs = new List<JobInfo>();
-            for (int i = 0; i < browserInfos?.Count; ++i)
+            for (int i = 0; i < renderRequests?.Count; ++i)
             {
-                RenderRequest request = (RenderRequest)browserInfos[i];
+                RenderRequest request = (RenderRequest)renderRequests[i];
                 string renderer = request.Browser.Name.GetAttribute<System.Runtime.Serialization.EnumMemberAttribute>().Value;
                 jobs.Add(new JobInfo() { EyesEnvironment = "MockEnvironment", Renderer = renderer });
             }
             listener.OnComplete(jobs);
         }
 
-        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, string renderId, HashObject[] hashes)
+        public override void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testId,
+            string renderId, HashObject[] hashes)
         {
             bool?[] result = new bool?[hashes.Length];
             for (int i = 0; i < hashes.Length; ++i)
@@ -192,7 +194,7 @@ namespace Applitools.Selenium.Tests.Mock
             taskListener.OnComplete(result);
         }
 
-        public override void PostDomCapture(TaskListener<string> listener, string domJson)
+        public override void PostDomCapture(TaskListener<string> listener, string domJson, params string[] testIds)
         {
             listener.OnComplete("http://some.targeturl.com/dom");
         }
@@ -233,7 +235,7 @@ namespace Applitools.Selenium.Tests.Mock
 
         public WebRequest Create(Uri uri)
         {
-            Logger?.Verbose("creating mock request for URI: {0}", uri);
+            Logger?.Log(TraceLevel.Notice, Stage.General, new { uri });
             HttpWebRequest webRequest = Substitute.For<HttpWebRequest>();
             webRequest.RequestUri.Returns(uri);
             webRequest.Headers = new WebHeaderCollection();
@@ -243,7 +245,7 @@ namespace Applitools.Selenium.Tests.Mock
                        {
                            AsyncCallback cb = ci.Arg<AsyncCallback>();
                            HttpWebRequest req = ci.Arg<HttpWebRequest>();
-                           Logger?.Verbose("BeginGerResponse called with method {0} for URI: {1}", req.Method, req.RequestUri);
+                           Logger?.Verbose("BeginGetResponse called with method {0} for URI: {1}", req.Method, req.RequestUri);
                            cb.Invoke(new MockAsyncResult(req));
                            return null;
                        });
@@ -255,7 +257,7 @@ namespace Applitools.Selenium.Tests.Mock
                     HttpWebRequest webRequest = ((HttpWebRequest)mockAsyncResult.AsyncState);
                     string method = webRequest.Method;
                     Uri uri = webRequest.RequestUri;
-                    Logger?.Verbose("EndGerResponse called for request with method {0} for URI: {1}", method, uri);
+                    Logger?.Verbose("EndGetResponse called for request with method {0} for URI: {1}", method, uri);
                     HttpWebResponse webResponse = Substitute.For<HttpWebResponse>();
                     WebHeaderCollection headers = new WebHeaderCollection();
                     webResponse.Headers.Returns(headers);

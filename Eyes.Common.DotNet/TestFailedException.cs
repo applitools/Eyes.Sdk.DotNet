@@ -9,11 +9,11 @@
     /// failed or is a new test).
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Microsoft.Usage", 
+        "Microsoft.Usage",
         "CA2240:ImplementISerializableCorrectly",
         Justification = "Will not be serialized")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Microsoft.Design", 
+        "Microsoft.Design",
         "CA1032:ImplementStandardExceptionConstructors",
         Justification = "Not needed for this exception")]
     [ComVisible(true)]
@@ -25,6 +25,15 @@
         /// </summary>
         public TestFailedException()
         {
+        }
+
+        public TestFailedException(TestResults testResults, string scenarioIdOrName, string appIdOrName)
+            : base(string.Format("'{0}' of '{1}'. See details at {2}",
+                scenarioIdOrName,
+                appIdOrName,
+                testResults.Url))
+        {
+
         }
 
         /// <summary>

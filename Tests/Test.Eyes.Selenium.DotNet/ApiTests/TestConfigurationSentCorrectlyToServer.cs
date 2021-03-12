@@ -20,10 +20,10 @@ namespace Applitools.Selenium.Tests.ApiTests
         //[TestCase(true, null, null)]
         public void TestEyesConfiguration(bool useVisualGrid, string sequenceName, string sequenceNameEnvVar)
         {
-            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
             Eyes eyes = new Eyes(runner);
-            TestUtils.SetupLogging(eyes);
-            
+
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
 
@@ -84,7 +84,7 @@ namespace Applitools.Selenium.Tests.ApiTests
             Assert.NotNull(sessionResults, "SessionResults");
 
             Assert.AreEqual("someHostOs", sessionResults.Env.Os, "OS");
-            Assert.AreEqual("someHostApp", sessionResults.Env.HostingApp,"Hosting App");
+            Assert.AreEqual("someHostApp", sessionResults.Env.HostingApp, "Hosting App");
 
             Assert.AreEqual(batchInfo.SequenceName, sessionResults.StartInfo.BatchInfo.SequenceName, "Sequence Name");
             //Assert.AreEqual("baseline branch", sessionResults.BaselineBranchName);

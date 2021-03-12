@@ -125,7 +125,7 @@
             else
             {
                 string errMsg = "Expecting either a top level object for desktop AUT or IBrowser for web AUT ({0})".Fmt(topLevelObject.GetType().Name);
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, Stage.Open, StageType.Failed, new { errMsg });
                 throw new EyesException(errMsg);
             }
 
@@ -252,15 +252,15 @@
                     }
                     else
                     {
-                        Logger.Log("GetViewportSize(): Got null width/height.");
+                        //Logger.Log("GetViewportSize(): Got null width/height.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("GetViewportSize(): inner width / height not supported: {0}", ex);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, ex);
                 }
 
-                Logger.Log("GetViewportSize(): Using page size.");
+                //Logger.Log("GetViewportSize(): Using page size.");
                 return browser.Page.Size;
             }
 
@@ -300,9 +300,9 @@
 
             if (browserSize != requiredSize)
             {
-                string errMsg = "Failed to set browser size! Browser size: {0}";
-                Logger.Log(errMsg, browserSize);
-                throw new TestFailedException(string.Format(errMsg, browserSize));
+                string errMsg = $"Failed to set browser size! Browser size: {browserSize}";
+                Logger.Log(TraceLevel.Error, Stage.Open, StageType.Failed, new { errMsg });
+                throw new TestFailedException(errMsg);
             }
 
             var viewportSize = GetViewportSize();
@@ -350,7 +350,7 @@
             if (viewportSize != requiredSize)
             {
                 string errMsg = "Failed to set the viewport size.";
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, Stage.Open, StageType.Failed, new { errMsg });
                 throw new TestFailedException(errMsg);
             }
         }
@@ -507,7 +507,7 @@
             IImageProvider imageProvider = new LeanFTImageProvider(this.topLevelObject_);
             
             RenderingInfo renderingInfo = ServerConnector.GetRenderingInfo();
-            FullPageCaptureAlgorithm algo = new FullPageCaptureAlgorithm(Logger, null, WaitBeforeScreenshots, DebugScreenshotProvider,
+            FullPageCaptureAlgorithm algo = new FullPageCaptureAlgorithm(Logger, TestId, null, WaitBeforeScreenshots, DebugScreenshotProvider,
             (image) => new EyesLeanFTScreenshot(image), scaleProviderFactory, CutProvider, 0, imageProvider,
             renderingInfo.MaxImageHeight, renderingInfo.MaxImageArea);
 

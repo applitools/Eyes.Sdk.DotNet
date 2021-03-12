@@ -220,7 +220,7 @@
                 }
                 catch (Exception ex)
                 {
-                    logger_.Log("{0} failed: {1}", traceMsg, ex);
+                    CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.CaptureScreenshot, ex);
                     throw;
                 }
             }
@@ -272,7 +272,7 @@
             }
             catch (Exception ex)
             {
-                logger_.Log("{0} failed: {1}", traceMsg, ex);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.Check, StageType.CaptureScreenshot, ex);
                 throw;
             }
         }
@@ -314,7 +314,7 @@
             }
             catch (Exception ex)
             {
-                logger_.Log("Capture event handler failed: {0}", ex);
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.General, ex);
                 throw;
             }
             finally

@@ -31,6 +31,8 @@ namespace Applitools
         private readonly int maxHeight_;
         private readonly int maxArea_;
 
+        public string TestId { get; private set; }
+
         private void SaveDebugScreenshotPart_(Bitmap image, Rectangle region, string name)
         {
             if (debugScreenshotsProvider_ is NullDebugScreenshotProvider) return;
@@ -43,6 +45,7 @@ namespace Applitools
         /// Create a new instance of <see cref="FullPageCaptureAlgorithm"/>.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
+        /// <param name="testId">The test id.</param>
         /// <param name="regionPositionCompensation">A class used to compensate for region offsets in various browsers.</param>
         /// <param name="waitBeforeScreenshots">The time to wait before a call for capturing a screenshot. Used mainly for allowing the page to stabilize after a position was set.</param>
         /// <param name="debugScreenshotsProvider">An object responsible for storing the intermediate images created in the process, for debugging purposes.</param>
@@ -54,7 +57,7 @@ namespace Applitools
         /// <param name="maxHeight">The maximum image height acceptable by the server.</param>
         /// <param name="maxArea">The maximum image area (height x width) acceptable by the server.</param>
         /// <param name="sizeAdjuster">A size adjuster for the image. Needed for mobile devices that render desktop web pages.</param>
-        public FullPageCaptureAlgorithm(Logger logger, IRegionPositionCompensation regionPositionCompensation,
+        public FullPageCaptureAlgorithm(Logger logger, string testId, IRegionPositionCompensation regionPositionCompensation,
                                   int waitBeforeScreenshots, IDebugScreenshotProvider debugScreenshotsProvider,
                                   Func<Bitmap, EyesScreenshot> getEyesScreenshot,
                                   ScaleProviderFactory scaleProviderFactory, ICutProvider cutProvider,
@@ -65,6 +68,7 @@ namespace Applitools
             ArgumentGuard.NotNull(logger, nameof(logger));
 
             logger_ = logger;
+            TestId = testId;
             waitBeforeScreenshots_ = waitBeforeScreenshots;
             debugScreenshotsProvider_ = debugScreenshotsProvider;
             getEyesScreenshot_ = getEyesScreenshot;
@@ -104,14 +108,18 @@ namespace Applitools
             ArgumentGuard.NotNull(region, nameof(region));
             ArgumentGuard.NotNull(positionProvider, nameof(positionProvider));
 
-            logger_.Verbose("region: {0} ; fullarea: {1} ; positionProvider: {2}",
-                region, fullarea, positionProvider.GetType().Name);
-
             Point originalStitchedState = positionProvider.GetCurrentPosition();
-            logger_.Verbose("region size: {0}, originalStitchedState: {1}", region, originalStitchedState);
-
             PositionMemento originProviderState = originProvider.GetState();
-            logger_.Verbose("originProviderState: {0}", originProviderState);
+
+            logger_.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.CaptureScreenshot,
+                new
+                {
+                    region,
+                    fullarea,
+                    positionProvider = positionProvider.GetType().Name,
+                    originalStitchedState,
+                    originProviderState
+                });
 
             originProvider.SetPosition(Point.Empty);
 
@@ -135,6 +143,7 @@ namespace Applitools
             }
 
             Region regionInScreenshot = GetRegionInScreenshot_(region, initialScreenshot, pixelRatio);
+            logger_.Log(TraceLevel.Info, TestId, Stage.Check, StageType.CaptureScreenshot, new { regionInScreenshot });
             Bitmap croppedInitialScreenshot = CropScreenshot_(initialScreenshot, regionInScreenshot);
             debugScreenshotsProvider_.Save(croppedInitialScreenshot, "cropped");
 
@@ -154,8 +163,13 @@ namespace Applitools
                 }
                 catch (EyesException e)
                 {
-                    logger_.Log("WARNING: Failed to extract entire size of region context" + e.Message);
-                    logger_.Log("Using image size instead: " + scaledInitialScreenshot.Width + "x" + scaledInitialScreenshot.Height);
+                    logger_.Log(TraceLevel.Warn, TestId, Stage.Check, StageType.CaptureScreenshot,
+                        new
+                        {
+                            message = "Failed to extract entire size of region context. Using image size instead.",
+                            exception = e,
+                            imageSize = scaledInitialScreenshot
+                        });
                     entireSize = new Size(scaledInitialScreenshot.Width, scaledInitialScreenshot.Height);
                 }
 
@@ -163,7 +177,8 @@ namespace Applitools
                 // "getImagePart", since "entirePageSize" might be that of a frame.
                 if (scaledInitialScreenshot.Width >= entireSize.Width && scaledInitialScreenshot.Height >= entireSize.Height)
                 {
-                    logger_.Log("WARNING: Seems the image is already a full page screenshot.");
+                    logger_.Log(TraceLevel.Warn, TestId, Stage.Check, StageType.CaptureScreenshot,
+                        new { message = "Seems the image is already a full page screenshot." });
                     if (!object.ReferenceEquals(scaledInitialScreenshot, initialScreenshot))
                     {
                         initialScreenshot.Dispose();
@@ -177,7 +192,9 @@ namespace Applitools
             float currentFullWidth = fullarea.Width;
             fullarea = sizeAdjuster_.AdjustRegion(fullarea, initialSizeScaled);
             float sizeRatio = currentFullWidth / fullarea.Width;
-            logger_.Verbose("adjusted fullarea: {0}", fullarea);
+
+            logger_.Log(TraceLevel.Info, TestId, Stage.Check, StageType.CaptureScreenshot,
+                new { adjustedFullArea = fullarea });
 
             Point scaledCropLocation = fullarea.Location;
 
@@ -214,7 +231,7 @@ namespace Applitools
                 Math.Max(scaledCropSize.Height, MinScreenshotPartSize_)
                 );
 
-            logger_.Verbose("Screenshot part size: {0}", screenshotPartSize);
+            logger_.Log(TraceLevel.Info, TestId, Stage.Check, StageType.CaptureScreenshot, new { screenshotPartSize });
 
             // Getting the list of viewport regions composing the page (we'll take screenshot for each one).
             Rectangle rectInScreenshot;
@@ -254,13 +271,11 @@ namespace Applitools
         {
             if (fullarea.Height < maxHeight_ && fullarea.Area < maxArea_)
             {
-                logger_.Verbose("full area fits server limits.");
                 return fullarea;
             }
 
             if (maxArea_ == 0 || maxHeight_ == 0)
             {
-                logger_.Verbose("server limits unspecified.");
                 return fullarea;
             }
 
@@ -268,10 +283,8 @@ namespace Applitools
             Region newRegion = new Region(fullarea.Left, fullarea.Top, fullarea.Width, trimmedHeight, fullarea.CoordinatesType);
             if (newRegion.IsSizeEmpty)
             {
-                logger_.Verbose("empty region after coerce. returning original.");
                 return fullarea;
             }
-            logger_.Verbose("coerced region: {0}", newRegion);
             return newRegion;
         }
 
@@ -337,19 +350,21 @@ namespace Applitools
             ICutProvider scaledCutProvider, float sizeRatio)
         {
             int index = 0;
-            logger_.Verbose($"enter: {nameof(stitchOffset)}: {{0}} ; {nameof(screenshotParts)}.Count: {{1}}, {nameof(scaleRatio)}: {{2}}",
-                stitchOffset, screenshotParts.Count, scaleRatio);
+            logger_.Log(TraceLevel.Info, TestId, Stage.Check, StageType.CaptureScreenshot,
+                new { stitchOffset, partCount = screenshotParts.Count, scaleRatio });
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             foreach (SubregionForStitching partRegion in screenshotParts)
             {
                 if (stopwatch.Elapsed > TimeSpan.FromMinutes(5))
                 {
-                    logger_.Log("Still Running..."); // this is so CI systems won't kill the build due to lack of activity.
+                    logger_.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.CaptureScreenshot,
+                        new { message = "still running" }); // this is so CI systems won't kill the build due to lack of activity.
                     stopwatch.Restart();
                 }
 
-                logger_.Verbose("Part: {0}", partRegion);
+                logger_.Log(TraceLevel.Debug, TestId, Stage.Check, StageType.CaptureScreenshot, new { partRegion });
+                
                 // Scroll to the part's top/left
                 Point partAbsoluteLocationInCurrentFrame = partRegion.ScrollTo;
                 partAbsoluteLocationInCurrentFrame += stitchOffset;
@@ -396,7 +411,8 @@ namespace Applitools
                         debugScreenshotsProvider_.Save(croppedPart, "croppedPart-" + originPosition.X + "_" + originPosition.Y);
                         debugScreenshotsProvider_.Save(scaledPartImage, "scaledPartImage-" + originPosition.X + "_" + originPosition.Y);
                         debugScreenshotsProvider_.Save(scaledCroppedPartImage, "scaledCroppedPartImage-" + partPastePosition.X + "_" + partPastePosition.Y);
-                        logger_.Verbose("pasting part at {0}", partPastePosition);
+                        logger_.Log(TraceLevel.Debug, TestId, Stage.Check, StageType.CaptureScreenshot, 
+                            new { partPastePosition });
                         g.DrawImage(scaledCroppedPartImage, partPastePosition);
                     }
                     if (!object.ReferenceEquals(croppedPart, cutPart))

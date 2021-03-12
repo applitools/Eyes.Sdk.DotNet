@@ -12,6 +12,7 @@ using OpenQA.Selenium.Safari;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Applitools.Generated.Selenium.Tests
@@ -155,7 +156,9 @@ namespace Applitools.Generated.Selenium.Tests
 
         protected void initEyes(bool isVisualGrid, bool isCSSMode)
         {
-            runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10)) : new ClassicRunner();
+            string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
+            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+            runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
             eyes = new Eyes(runner);
             initEyesSettings(isVisualGrid, isCSSMode);
         }
@@ -170,9 +173,7 @@ namespace Applitools.Generated.Selenium.Tests
             //eyes.AddProperty("ForceFPS", eyes.ForceFullPageScreenshot ? "true" : "false");
             //eyes.AddProperty("Agent ID", eyes.FullAgentId);
             eyes.HideScrollbars = true;
-            eyes.SetLogHandler(TestUtils.InitLogHandler());
         }
-
 
         protected bool isStaleElementError(Exception errorObj)
         {

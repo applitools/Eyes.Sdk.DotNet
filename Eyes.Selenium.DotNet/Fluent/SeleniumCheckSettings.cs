@@ -106,7 +106,8 @@ namespace Applitools.Selenium.Fluent
                 frameChain_.RemoveAt(frameChain_.Count - 1);
                 targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
                 state.FrameToSwitchTo = targetElement_;
-                logger.Log("Using Target.Frame() for the purpose of Target.Region()");
+                logger.Log(TraceLevel.Notice, Stage.Check, 
+                    new { message = "Using Target.Frame() for the purpose of Target.Region()" });
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Applitools.Selenium.Tests.Utils;
+using Applitools.Tests.Utils;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -48,7 +49,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void TestEyesExceptions_VG()
         {
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
-            VisualGridRunner runner = new VisualGridRunner(10);
+            VisualGridRunner runner = new VisualGridRunner(10, TestUtils.InitLogHandler());
             Eyes eyes = new Eyes(runner);
             try
             {

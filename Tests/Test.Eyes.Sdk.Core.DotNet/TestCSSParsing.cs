@@ -67,16 +67,8 @@ namespace Applitools.Tests
 
             ConcurrentDictionary<string, HashSet<string>> cache = new ConcurrentDictionary<string, HashSet<string>>();
             DomAnalyzer.ParseCSS_(data, extraResources, logger, cache);
-            logger.Log("expected:");
-            foreach (string url in expectedResources)
-            {
-                logger.Log(url);
-            }
-            logger.Log("actual:");
-            foreach (string url in extraResources.Keys)
-            {
-                logger.Log(url);
-            }
+            logger.Log(TraceLevel.Info, Stage.General, new { expectedResources });
+            logger.Log(TraceLevel.Info, Stage.General, new { actualResources = extraResources.Keys });
 
             Thread.Sleep(2000);
             logHandler.Close();

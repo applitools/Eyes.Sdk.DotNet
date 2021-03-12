@@ -18,7 +18,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             driver.Url = "https://applitools.com/helloworld";
 
             BatchInfo batch = new BatchInfo("Visual Grid - Test bad webhook");
-            VisualGridRunner runner = new VisualGridRunner(10);
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestVGWithBadWebhook));
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
 
             Configuration config = new Configuration();
@@ -29,14 +30,20 @@ namespace Applitools.Selenium.Tests.VisualGridTests
 
             eyes.SetConfiguration(config);
             eyes.Open(driver);
-            eyes.Check(Target.Window().Fully().BeforeRenderScreenshotHook("gibberish uncompilable java script"));
-            driver.Quit();
-            Assert.That(() =>
+            try
             {
-                eyes.Close();
-                runner.GetAllTestResults();
-            }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.Property("Message").StartsWith("Render Failed for DesktopBrowserInfo {ViewportSize={Width=800, Height=600}, BrowserType=CHROME} "));
-
+                eyes.Check(Target.Window().Fully().BeforeRenderScreenshotHook("gibberish uncompilable java script"));
+                driver.Quit();
+                Assert.That(() =>
+                {
+                    eyes.Close();
+                    runner.GetAllTestResults();
+                }, Throws.Exception.With.InstanceOf<EyesException>().With.InnerException.With.Property("Message").StartsWith("Render Failed for DesktopBrowserInfo {ViewportSize={Width=800, Height=600}, BrowserType=CHROME} "));
+            }
+            finally
+            {
+                runner.StopServiceRunner();
+            }
         }
     }
 }

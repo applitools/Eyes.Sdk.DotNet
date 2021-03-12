@@ -3,23 +3,56 @@
 - `SaveFailedTests` Configuration property
 - `SessionStartInfo` moved here and was added `AgentSessionId` property
 - `TestStatusResult` enum was added `NotOpened`
-### Updates
+- .NET 5.0 support
+### Updated
 - `MatchWindow` is now async also in `ClassicRunner` [Trello 2092](https://trello.com/c/gulak9SJ)
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 
 ## [Eyes.Sdk.Core vNext]
+### Added
+- .NET 5.0 support
 ### Updated
 - Made most communication calls asynchronous
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 ### Fixed
 - `BatchClose` now support `ApiKey` and `Proxy` [Trello 2435](https://trello.com/c/Dnszwwld)
 - Fixed a bug in the stitching algorithm. [Trello 2223](https://trello.com/c/bHwlpmuX) [Trello 2416](https://trello.com/c/4NDa6Vxl) [Trello 2392](https://trello.com/c/PC2vRlqV)
 
 ## [Eyes.Selenium vNext]
+### Added
+- .NET 5.0 support
 ### Updated
-- `dom-snapshot` script updated to version 4.4.8
+- `dom-snapshot` script updated to version 4.4.11
+- `dom-capture` script updated to version 11.0.1
 - Ultrafast Grid: XPath to elements is much smaller now and more robust
 - Ultrafast Grid: Performance improvements in CSS resource collection
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 ### Fixed
 - `GetClientVisibleRect` now works on IE11 [Trello 2431](https://trello.com/c/rsgJoiIb)
+
+## [Eyes.CodedUI vNext]
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+
+## [Eyes.LeanFT vNext]
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+
+## [Eyes.Windows vNext]
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+
+## [Eyes.Appium vNext]
+### Added
+- .NET 5.0 support
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+
+## [Eyes.Images vNext]
+### Added
+- .NET 5.0 support
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 
 ## [Eyes.Images 2.21] - 2021-01-12
 ### Updated

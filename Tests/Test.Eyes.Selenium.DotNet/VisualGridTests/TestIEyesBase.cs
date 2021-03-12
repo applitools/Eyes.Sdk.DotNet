@@ -1,6 +1,5 @@
 ﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
-using Applitools.Ufg;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -47,7 +46,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         public string LogPath { get; }
         public ILogHandler LogHandler { get; }
 
-        [TestCaseSource(nameof(MethodArgs)), Parallelizable(ParallelScope.All)]
+        //[TestCaseSource(nameof(MethodArgs)), Parallelizable(ParallelScope.All)]
         public void TestEyesDifferentRunners(string testedUrl, MatchLevel matchLevel)
         {
             IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();

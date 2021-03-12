@@ -1,4 +1,5 @@
 ﻿using Applitools.Capture;
+using Applitools.Utils;
 using Applitools.Utils.Images;
 using OpenQA.Selenium;
 using System;
@@ -32,9 +33,8 @@ namespace Applitools.Appium.Capture
                     string screenshot64 = (string)jsExecutor_.ExecuteScript("mobile: viewportScreenshot");
                     screenshotBytes = Convert.FromBase64String(screenshot64);
                 }
-                catch (Exception e)
+                catch
                 {
-                    logger_.Log("Warning: " + e);
                     screenshotBytes = tsInstance_.GetScreenshot().AsByteArray;
                 }
                 result = BasicImageUtils.CreateBitmap(screenshotBytes);

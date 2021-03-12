@@ -1,11 +1,9 @@
-﻿namespace Applitools.Utils.Gui.Win
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Security;
-    using System.Windows.Forms;
-    using Applitools.Utils;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
+namespace Applitools.Utils.Gui.Win
+{
     /// <summary>
     /// Windows GUI utils.
     /// </summary>
@@ -67,7 +65,7 @@
             }
             catch (Exception ex)
             {
-                logger.Log("{0} failed: {1}", traceMsg, ex);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex);
                 throw;
             }
         }
@@ -128,7 +126,7 @@
             }
             catch (Exception ex)
             {
-                logger.Log("{0} failed {1}", traceMsg, ex);
+                CommonUtils.LogExceptionStackTrace(logger, Stage.General, ex);
                 throw;
             }
         }

@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Applitools
@@ -60,7 +61,6 @@ namespace Applitools
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         private IServerConnector serverConnector_;
         protected TestResultContainer testResultContainer_;
-        private EyesScreenshot lastScreenshot_;
         private readonly Queue<Trigger> userInputs_ = new Queue<Trigger>();
 
         #endregion
@@ -90,7 +90,7 @@ namespace Applitools
             ServerConnector = serverConnector;
         }
 
-        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, null) { }
+        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, runner.Logger) { }
 
         protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), null, logger) { }
 
@@ -105,6 +105,8 @@ namespace Applitools
         {
             runner_ = runner ?? new ClassicRunner();
             Logger = logger ?? new Logger();
+
+            runner_.SetEyes(this);
 
             //EnsureConfiguration_();
 
@@ -144,9 +146,9 @@ namespace Applitools
         /// </summary>
         public virtual bool IsDisabled { get; set; }
 
-        public bool IsCompleted => testResultContainer_ != null;
+        protected bool GetIsCompleted() => testResultContainer_ != null;
 
-        public virtual SessionStartInfo PrepareForOpen()
+        protected internal virtual SessionStartInfo PrepareForOpen()
         {
             Logger.GetILogHandler().Open();
 
@@ -154,12 +156,11 @@ namespace Applitools
             {
                 if (IsDisabled)
                 {
-                    Logger.Verbose("Ignored");
                     return null;
                 }
 
-                Logger.Log("Agent = {0}", FullAgentId);
-                Logger.Verbose(".NET Framework = {0}", Environment.Version);
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Open, StageType.Called,
+                           new { FullAgentId, DotNetVersion = CommonUtils.GetDotNetVersion() });
 
                 ValidateAPIKey(ApiKey);
                 UpdateServerConnector_();
@@ -178,7 +179,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log("PrepareForOpen(): {0}", Tracer.FormatException(ex));
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, ex, TestId);
                 Logger.GetILogHandler().Close();
                 throw;
             }
@@ -366,11 +367,10 @@ namespace Applitools
             {
                 if (IsDisabled)
                 {
-                    Logger.Verbose("Ignored");
                     return new TestResults() { ServerConnector = ServerConnector };
                 }
 
-                Logger.Verbose("enter (hashcode: {0})", GetHashCode());
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.Called);
 
                 ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
 
@@ -388,23 +388,22 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Close failed: {0}", ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, ex);
                 }
 
                 if (runningSession_ == null)
                 {
-                    Logger.Verbose("Server session was not started");
-                    Logger.Log("--- Empty test ended.");
+                    //Logger.Verbose("Server session was not started");
+                    //Logger.Log("--- Empty test ended.");
                     return new TestResults() { ServerConnector = ServerConnector };
                 }
 
                 bool isNewSession = runningSession_.IsNewSession;
 
-                Logger.Verbose("Ending server session...");
                 var save = (isNewSession && Configuration.SaveNewTests) || (!isNewSession && (Configuration.SaveDiffs ?? false));
 
                 SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, false, save);
-                SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger);
+                SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger, testIds: TestId);
                 ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
                 TestResults results = syncTaskListener.Get();
                 results.IsNew = isNewSession;
@@ -412,10 +411,9 @@ namespace Applitools
 
                 Logger.Verbose(results.ToString());
 
-                LogSessionResultsAndThrowException(Logger, throwEx, results);
+                LogSessionResultsAndThrowException(throwEx, results);
 
                 results.ServerConnector = ServerConnector;
-                Logger.Verbose("exit");
                 return results;
             }
             finally
@@ -428,50 +426,48 @@ namespace Applitools
             }
         }
 
-        public static void LogSessionResultsAndThrowException(Logger logger, bool throwEx, TestResults results)
+        public void LogSessionResultsAndThrowException(bool throwEx, TestResults results, [CallerMemberName] string caller = null)
         {
-            if (results.Status == TestResultsStatus.Unresolved)
-            {
-                if (results.IsNew)
-                {
-                    string instructions = "Please approve the new baseline at " + results.Url;
-                    logger.Log("--- New test ended. " + instructions);
+            TestResultsStatus status = results.Status;
+            string sessionResultsUrl = results.Url;
+            string scenarioIdOrName = results.Name;
+            string appIdOrName = results.AppName;
 
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.TestResults,
+                new { status, url = sessionResultsUrl, caller });
+
+            switch (status)
+            {
+                case TestResultsStatus.Failed:
                     if (throwEx)
                     {
-                        string message = "'" + results.Name
-                                + "' of '" + results.AppName
-                                + "'. " + instructions;
-                        throw new NewTestException(results, message);
+                        throw new TestFailedException(results, scenarioIdOrName, appIdOrName);
                     }
-                }
-                else
-                {
-                    logger.Log("--- Differences found. See details at " + results.Url);
-
+                    break;
+                case TestResultsStatus.Passed:
+                    break;
+                case TestResultsStatus.NotOpened:
                     if (throwEx)
                     {
-                        throw new DiffsFoundException(results, results.Name, results.AppName, results.Url);
+                        throw new EyesException("Called close before calling open");
                     }
-                }
-            }
-            else if (results.Status == TestResultsStatus.Failed)
-            {
-                logger.Log("--- Failed test ended. See details at " + results.Url);
-
-                if (throwEx)
-                {
-                    string message = "'" + results.Name
-                             + "' of '" + results.AppName
-                             + "'. See details at " + results.Url;
-
-                    throw new TestFailedException(results, message);
-                }
-            }
-            else
-            {
-                // Test passed
-                logger.Log("--- Test passed. See details at " + results.Url);
+                    break;
+                case TestResultsStatus.Unresolved:
+                    if (results.IsNew)
+                    {
+                        if (throwEx)
+                        {
+                            throw new NewTestException(results, scenarioIdOrName, appIdOrName);
+                        }
+                    }
+                    else
+                    {
+                        if (throwEx)
+                        {
+                            throw new DiffsFoundException(results, scenarioIdOrName, appIdOrName);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -480,6 +476,7 @@ namespace Applitools
         /// </summary>
         public TestResults AbortIfNotClosed()
         {
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.Called);
             return Abort();
         }
 
@@ -492,11 +489,10 @@ namespace Applitools
             {
                 if (IsDisabled)
                 {
-                    Logger.Verbose("Ignored");
                     return null;
                 }
 
-                Logger.Verbose("enter (hashcode: {0})", GetHashCode());
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Close, StageType.Called);
 
                 IsOpen = false;
 
@@ -517,24 +513,22 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Close failed: {0}", ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, ex);
                 }
 
-                Logger.Verbose("Aborting server session...");
                 try
                 {
                     SessionStopInfo sessionStopInfo = new SessionStopInfo(runningSession_, true, false);
-                    SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger);
+                    SyncTaskListener<TestResults> syncTaskListener = new SyncTaskListener<TestResults>(logger: Logger, testIds: TestId);
                     ServerConnector.EndSession(syncTaskListener, sessionStopInfo);
                     TestResults results = syncTaskListener.Get();
                     results.IsNew = runningSession_.IsNewSession;
                     results.Url = runningSession_.Url;
-                    Logger.Log("Test aborted");
                     return results;
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Failed to abort server session: " + ex.Message);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, ex);
                 }
             }
             finally
@@ -550,7 +544,7 @@ namespace Applitools
             Abort();
         }
 
-        public virtual MatchWindowData PrepareForMatch(
+        protected internal virtual MatchWindowData PrepareForMatch(
                                     ICheckSettingsInternal checkSettingsInternal,
                                     IList<Trigger> userInputs,
                                     AppOutput appOutput,
@@ -630,21 +624,21 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Writes the input message to this agent's log.
+        /// Writes the input message to this agent's log. Used by Eyes.qfl.
         /// </summary>
         public void Log(string message)
         {
             ArgumentGuard.NotNull(message, nameof(message));
 
-            Logger.Log(message);
+            Logger.Log(TraceLevel.Notice, Stage.General, new { message });
         }
 
         /// <summary>
-        /// Throws an <see cref="EyesException"/> with the input message.
+        /// Throws an <see cref="EyesException"/> with the input message. Used by Eyes.qfl.
         /// </summary>
         public void Throw(string message)
         {
-            Logger.Log(message);
+            Logger.Log(TraceLevel.Error, Stage.General, new { message });
             throw new EyesException(message);
         }
 
@@ -680,14 +674,14 @@ namespace Applitools
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("{0} failed: {1}", traceMsg, Tracer.FormatException(ex));
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.General, ex, TestId);
                     throw;
                 }
             };
 
             return new InRegionBase(null, region, CreateImage_, getText);
         }
-        public string TestId { get; private set; } = Guid.NewGuid().ToString();
+        public string TestId { get; protected internal set; } = Guid.NewGuid().ToString();
 
         protected internal MatchResult PerformMatch(MatchWindowData data)
         {
@@ -730,7 +724,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log("{0} failed: {1}", traceMsg, Tracer.FormatException(ex));
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.General, ex, TestId);
                 throw;
             }
         }
@@ -807,7 +801,7 @@ namespace Applitools
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception: {0}", Tracer.FormatException(ex));
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
                 throw;
             }
         }
@@ -824,23 +818,14 @@ namespace Applitools
         protected virtual void BeforeOpen() { }
         protected virtual void AfterOpen() { }
 
-        public virtual void OpenCompleted(RunningSession result)
+        protected internal virtual void OpenCompleted(RunningSession result)
         {
             runningSession_ = result;
-            Logger.Verbose("Server session ID is {0}", runningSession_.Id);
+            Logger.Log(TraceLevel.Info, TestId, Stage.Open, StageType.Complete,
+                new { runningSessionId = runningSession_.Id });
 
-            string testName = "'" + TestName + "'";
             //Logger.SessionId = runningSession_.SessionId;
-            if (runningSession_.IsNewSession)
-            {
-                Logger.Log("--- New test started - " + testName);
-                shouldMatchWindowRunOnceOnTimeout_ = true;
-            }
-            else
-            {
-                Logger.Log("--- Test started - " + testName);
-                shouldMatchWindowRunOnceOnTimeout_ = false;
-            }
+            shouldMatchWindowRunOnceOnTimeout_ = runningSession_.IsNewSession;
 
             matchWindowTask_ = new MatchWindowTask(
                 Logger,
@@ -858,8 +843,6 @@ namespace Applitools
         private MatchResult MatchWindow_(Rectangle? region, string tag, ICheckSettingsInternal checkSettingsInternal,
             string source)
         {
-            Logger.Verbose("enter");
-
             MatchResult result = matchWindowTask_.MatchWindow(region,
                 UserInputs, tag, shouldMatchWindowRunOnceOnTimeout_, checkSettingsInternal.GetReplaceLast(), checkSettingsInternal,
                 source);
@@ -870,8 +853,8 @@ namespace Applitools
         private string TryPostDomCapture_(string domJson)
         {
             if (domJson == null) return null;
-            SyncTaskListener<string> syncListener = new SyncTaskListener<string>(logger: Logger);
-            ServerConnector.PostDomCapture(syncListener, domJson);
+            SyncTaskListener<string> syncListener = new SyncTaskListener<string>(logger: Logger, testIds: TestId);
+            ServerConnector.PostDomCapture(syncListener, domJson, TestId);
             return syncListener.Get();
         }
 
@@ -884,10 +867,10 @@ namespace Applitools
 
             shouldMatchWindowRunOnceOnTimeout_ = true;
 
-            if (!runningSession_.IsNewSession)
-            {
-                Logger.Log("Mismatch!{0}", tag == null ? string.Empty : " (" + tag + ")");
-            }
+            //if (!runningSession_.IsNewSession)
+            //{
+            //    Logger.Log("Mismatch!{0}", tag == null ? string.Empty : " (" + tag + ")");
+            //}
 
 #pragma warning disable CS0612 // Type or member is obsolete
             if (FailureReports == FailureReports.Immediate)
@@ -931,7 +914,8 @@ namespace Applitools
             Configuration.SetAppName(appName ?? Configuration.AppName);
             Configuration.SetViewportSize(viewportSize);
 
-            Logger.Verbose("Open({0}, {1}, {2})", appName, testName, viewportSize);
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Open, StageType.Called,
+                new { testName, appName, viewportSize });
 
             OpenBase();
         }
@@ -944,10 +928,11 @@ namespace Applitools
             SessionStartInfo startInfo = PrepareForOpen();
             if (startInfo == null)
             {
+                Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { startInfo });
                 return;
             }
 
-            RunningSession runningSession = runner_.Open(startInfo);
+            RunningSession runningSession = runner_.Open(TestId, startInfo);
             if (runningSession == null)
             {
                 throw new EyesException("Failed starting session with the server");
@@ -992,17 +977,21 @@ namespace Applitools
             {
                 AbortIfNotClosed();
                 string errMsg = "A test is already running";
-                Logger.Log(errMsg);
+                Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { errMsg });
                 throw new EyesException(errMsg);
             }
         }
 
         private void LogOpenBase_()
         {
-            Logger.Log("Eyes Server URL is {0}", ServerConnector.ServerUrl);
-            Logger.Verbose("Timeout = {0}", ServerConnector.Timeout);
-            Logger.Log("MatchTimeout = {0}", Configuration.MatchTimeout);
-            Logger.Log("DefaultMatchSettings = {0}", DefaultMatchSettings);
+            Logger.Log(TraceLevel.Info, TestId, Stage.Open, StageType.Called,
+                new
+                {
+                    ServerConnector.ServerUrl,
+                    ServerConnectorTimeOut = ServerConnector.Timeout,
+                    Configuration.MatchTimeout,
+                    DefaultMatchSettings
+                });
         }
 
         protected abstract Size GetViewportSize();
@@ -1094,7 +1083,6 @@ namespace Applitools
 
         protected internal virtual object GetEnvironment_()
         {
-            Logger.Verbose("enter");
             AppEnvironment appEnv = new AppEnvironment();
 
             if (Configuration.HostOS != null)
@@ -1118,25 +1106,19 @@ namespace Applitools
 
         private SessionStartInfo PrepareStartSession_()
         {
-            Logger.Verbose("enter");
-
             EnsureViewportSize_();
 
             BatchInfo testBatch;
             if (Configuration.Batch == null)
             {
-                Logger.Verbose("No batch set");
                 testBatch = new BatchInfo(null);
             }
             else
             {
-                Logger.Verbose("Batch is {0}", Configuration.Batch);
                 testBatch = Configuration.Batch;
             }
 
-            Logger.Verbose("getting environment...");
             object appEnv = GetEnvironment_();
-            Logger.Verbose("Application environment is {0}", appEnv);
             string agentSessionId = Guid.NewGuid().ToString();
 
             sessionStartInfo_ = new SessionStartInfo(
@@ -1158,28 +1140,27 @@ namespace Applitools
                 Configuration.AbortIdleTestTimeout,
                 properties_);
 
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Open, new { sessionStartInfo = sessionStartInfo_ });
             return sessionStartInfo_;
         }
 
-
-        public virtual SessionStopInfo PrepareStopSession(bool isAborted)
+        protected internal virtual SessionStopInfo PrepareStopSession(bool isAborted)
         {
             if (runningSession_ == null || !IsOpen)
             {
-                Logger.Log("Server session was not started --- Empty test ended.");
+                Logger.Log(TraceLevel.Notice, TestId, Stage.Close, new { message = "Tried to close a non opened test" });
                 return null;
             }
 
             IsOpen = false;
-            lastScreenshot_ = null;
             ClearUserInputs_();
             InitProviders_();
 
             bool isNewSession = runningSession_.IsNewSession;
-            Logger.Verbose("Ending server session...");
+            //Logger.Verbose("Ending server session...");
             bool save = (isNewSession && Configuration.SaveNewTests)
                     || (!isNewSession && Configuration.SaveFailedTests);
-            Logger.Verbose("Automatically save test? " + save);
+            //Logger.Verbose("Automatically save test? " + save);
             return new SessionStopInfo(runningSession_, isAborted, save);
         }
 
@@ -1187,7 +1168,6 @@ namespace Applitools
         {
             if (IsDisabled)
             {
-                Logger.Verbose("Ignored");
                 return new TestResults();
             }
             TestResults testResults;
@@ -1199,11 +1179,11 @@ namespace Applitools
                 return testResults;
             }
 
-            testResults = runner_.Close(sessionStopInfo);
+            testResults = runner_.Close(TestId, sessionStopInfo);
             runningSession_ = null;
             if (testResults == null)
             {
-                Logger.Log("Failed stopping session");
+                Logger.Log(TraceLevel.Error, TestId, Stage.Close, new { message = "Failed stopping session" });
                 throw new EyesException(string.Format("Failed stopping session. SessionStopInfo: {0}", sessionStopInfo));
             }
             return testResults;
@@ -1249,13 +1229,13 @@ namespace Applitools
         {
             if (!isViewportSizeSet_)
             {
-                Logger.Verbose("viewportSize_: {0} ({1})", viewportSize_, GetHashCode());
+                //Logger.Verbose("viewportSize_: {0} ({1})", viewportSize_, GetHashCode());
                 if (viewportSize_ == null || viewportSize_.IsEmpty())
                 {
                     try
                     {
                         viewportSize_ = GetViewportSize();
-                        Logger.Verbose("viewport size: {0} ({1})", viewportSize_, GetHashCode());
+                        //Logger.Verbose("viewport size: {0} ({1})", viewportSize_, GetHashCode());
                         SetEffectiveViewportSize(viewportSize_);
                     }
                     catch (EyesException)
@@ -1267,7 +1247,7 @@ namespace Applitools
                 {
                     try
                     {
-                        Logger.Verbose("Setting viewport size to {0} ({1})", viewportSize_, GetHashCode());
+                        //Logger.Verbose("Setting viewport size to {0} ({1})", viewportSize_, GetHashCode());
                         SetViewportSize(viewportSize_);
                         isViewportSizeSet_ = true;
                     }
@@ -1287,7 +1267,8 @@ namespace Applitools
         /// <param name="region">The region of the screenshot which will be set in the application output.</param>
         /// <param name="checkSettingsInternal">The check settings object of the current test.</param>
         /// <param name="imageMatchSettings">The image match settings object in which to collect the coded-regions.</param>
-        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings)
+        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
+            ImageMatchSettings imageMatchSettings)
         {
             string url = null;
             byte[] imageBytes = null;
@@ -1297,8 +1278,8 @@ namespace Applitools
                 DebugScreenshotProvider.Save(screenshot.Image, "base");
                 imageBytes = BasicImageUtils.EncodeAsPng(screenshot.Image);
             }
-
             MatchWindowTask.CollectRegions(this, screenshot, checkSettingsInternal, imageMatchSettings);
+            Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.MatchStart, new { imageMatchSettings });
 
             if (imageBytes == null)
             {
@@ -1307,13 +1288,14 @@ namespace Applitools
                 {
                     throw new NullReferenceException("Screenshot URL is null");
                 }
-                Logger.Verbose("Screenshot URL is {0}", url);
+                //Logger.Verbose("Screenshot URL is {0}", url);
             }
 
             string title = GetTitle();
 
             Location location = screenshot?.OriginLocation;
-            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl), screenshot);
+            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl),
+                screenshot);
         }
 
         protected string TryCaptureAndPostDom(ICheckSettingsInternal checkSettingsInternal)
@@ -1325,16 +1307,18 @@ namespace Applitools
                 {
                     string domJson = TryCaptureDom();
                     domUrl = TryPostDomCapture_(domJson);
-                    Logger.Verbose("domUrl: {0}", domUrl);
+                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domUrl });
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Error: {0}", ex);
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.DomScript, ex, TestId);
                 }
             }
 
             return domUrl;
         }
+
+        public virtual IDictionary<string, IRunningTest> GetAllTests() { return null; }
 
         #endregion
 

@@ -58,7 +58,6 @@ namespace Applitools.VisualGrid
 
         internal readonly TestConcurrency testConcurrency_;
 
-        private readonly List<IVisualGridEyes> eyesToOpenList_ = new List<IVisualGridEyes>(200);
         internal readonly HashSet<IEyes> allEyes_ = new HashSet<IEyes>();
         private EyesServiceRunner eyesServiceRunner_;
 
@@ -107,7 +106,7 @@ namespace Applitools.VisualGrid
             Init(suiteName);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, 
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
             IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
         {
             ServerConnectorFactory = serverConnectorFactory;
@@ -118,8 +117,9 @@ namespace Applitools.VisualGrid
             Init(suiteName);
         }
 
-        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, IServerConnectorFactory serverConnectorFactory)
-            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory)
+        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
+            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
+            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory, logHandler)
         {
         }
 
@@ -130,7 +130,7 @@ namespace Applitools.VisualGrid
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Logger.Log("Error: {0}", e);
+            CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e.Exception);
         }
 
         private void Init(string suiteName)
@@ -145,21 +145,19 @@ namespace Applitools.VisualGrid
                 suiteName_ = frame.GetMethod().DeclaringType.Name;
             }
 
-            Logger.Log("runner created");
             IDictionary<string, RGridResource> resourcesCacheMap = ((IVisualGridRunner)this).ResourcesCacheMap;
             IDictionary<string, HashSet<string>> cachedResourceMapping = ((IVisualGridRunner)this).CachedResourceMapping;
             Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
 
             eyesServiceRunner_ = new EyesServiceRunner(Logger, ServerConnector, allEyes_, concurrentOpenSessions,
-                drw, resourcesCacheMap, this);
+                drw, resourcesCacheMap, this, suiteName_);
             eyesServiceRunner_.Start();
-
-            Logger.Verbose("rendering grid manager is built");
         }
 
         public void Open(IEyes eyes, IList<VisualGridRunningTest> newTests)
         {
-            Logger.Verbose("enter");
+            string[] testIds = newTests.Select(t => t.TestId).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.Called);
 
             ApiKey = eyes.ApiKey;
             ServerUrl = eyes.ServerUrl;
@@ -187,7 +185,12 @@ namespace Applitools.VisualGrid
             }
             catch (JsonException e)
             {
-                Logger.Log("Error: {0}", e);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, e, testIds);
+            }
+            catch (Exception ex)
+            {
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, ex, testIds);
+                throw;
             }
 
             AddBatch(eyes.Batch.Id, ((IVisualGridEyes)eyes).GetBatchCloser());
@@ -201,6 +204,9 @@ namespace Applitools.VisualGrid
 
         protected override TestResultsSummary GetAllTestResultsImpl(bool throwException)
         {
+            string[] testIds = AllEyes.SelectMany(e => e.GetAllTests().Keys).ToArray();
+            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults);
+
             bool isRunning = true;
             while (isRunning && eyesServiceRunner_.Error == null)
             {
@@ -209,7 +215,8 @@ namespace Applitools.VisualGrid
                 {
                     if (!eyes.IsCloseIssued)
                     {
-                        Logger.Log($"WARNING! {nameof(GetAllTestResults)} called without closing eyes! Closing implicitly.");
+                        Logger.Log(TraceLevel.Warn, Stage.Close, StageType.TestResults,
+                            new { message = "called without closing eyes! Closing implicitly." });
                         eyes.CloseAsync();
                     }
                     isRunning = isRunning || !eyes.IsCompleted();
@@ -239,6 +246,7 @@ namespace Applitools.VisualGrid
 
                 allResults.AddRange(eyesResults);
             }
+            Logger.Log(TraceLevel.Info, testIds, Stage.Close, StageType.TestResults, new { allResults });
 
             if (throwException && exception != null)
             {
@@ -259,7 +267,7 @@ namespace Applitools.VisualGrid
         }
 
         internal IEnumerable<IEyes> AllEyes { get { lock (LockObject) return allEyes_.ToArray(); } }
-  
+        protected override IEnumerable<IEyesBase> GetAllEyes() => AllEyes;
         internal Exception GetError()
         {
             return eyesServiceRunner_.Error;
@@ -278,6 +286,11 @@ namespace Applitools.VisualGrid
                 { "type", "runnerStarted" },
                 { key, testConcurrency_.UserConcurrency }
             };
+        }
+
+        internal void StopServiceRunner()
+        {
+            eyesServiceRunner_.StopServices();
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Runtime.Versioning;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using Microsoft.Win32;
 
 namespace Applitools.Utils
 {
@@ -106,7 +107,8 @@ namespace Applitools.Utils
                 long maxPosition = maxLength - bufferSize;
                 bool stillReading = true;
                 NetworkStream networkStream = stream as NetworkStream;
-                logger?.Log("start reading from {0}", stream.GetType().Name);
+                logger?.Log(TraceLevel.Debug, Stage.General,
+                    new { message = "start reading", streamType = stream.GetType().Name });
                 while (stillReading && (networkStream?.DataAvailable ?? true) && (count = stream.Read(array, 0, array.Length)) != 0)
                 {
                     if (maxLength > 0 && ms.Position >= maxPosition)
@@ -117,7 +119,8 @@ namespace Applitools.Utils
                     ms.Write(array, 0, count);
                 }
                 byte[] bytes = ms.ToArray();
-                logger?.Log("done reading {0} bytes", bytes.Length);
+                logger?.Log(TraceLevel.Debug, Stage.General,
+                    new { message = "done reading", streamType = stream.GetType().Name, bytesRead = bytes.Length });
 
                 return bytes;
             }
@@ -196,6 +199,40 @@ namespace Applitools.Utils
             }
         }
 
+        public static string GetDotNetVersion()
+        {
+#if NET45
+            return ".NET Framework 4.5";
+#elif NET451
+            return ".NET Framework 4.5.1";
+#elif NET452
+            return ".NET Framework 4.5.2";
+#elif NET46
+            return ".NET Framework 4.6";
+#elif NET461
+            return ".NET Framework 4.6.1";
+#elif NET462
+            return ".NET Framework 4.6.2";
+#elif NET47
+            return ".NET Framework 4.7";
+#elif NET471
+            return ".NET Framework 4.7.1";
+#elif NET472
+            return ".NET Framework 4.7.2";
+#elif NET48
+            return ".NET Framework 4.8";
+#elif NETCOREAPP3_1
+            return ".NET Core 3.1";
+#elif NETCOREAPP3_0
+            return ".NET Core 3.0";
+#elif NETCOREAPP2_1 
+            return ".NET Core 2.1";
+#elif NETSTANDARD2_0
+            return ".NET Core 2.0";
+#else
+            return ".NET " + Environment.Version.ToString();
+#endif
+        }
         #endregion
 
         #region Hash
@@ -327,5 +364,64 @@ namespace Applitools.Utils
             get => dontCloseBatches_ ?? "true".Equals(GetEnvVar("APPLITOOLS_DONT_CLOSE_BATCHES"), StringComparison.OrdinalIgnoreCase);
             internal set => dontCloseBatches_ = value;
         }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, params string[] testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex,
+            object data, params string[] testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, null, ex, data, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, Exception ex, IEnumerable<string> testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, null, ex, null, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex,
+            object data, params string[] testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, type, ex, data, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex,
+            object data, IEnumerable<string> testIds)
+        {
+            LogExceptionStackTraceInner_(logger, stage, type, ex, data, testIds);
+        }
+
+        public static void LogExceptionStackTrace(Logger logger, Stage stage, StageType type, Exception ex, params string[] testIds)
+        {
+            HashSet<string> ids = new HashSet<string>();
+            if (testIds != null && testIds.Length > 0)
+            {
+                ids.UnionWith(testIds);
+            }
+            LogExceptionStackTraceInner_(logger, stage, type, ex, null, ids);
+        }
+
+        private static void LogExceptionStackTraceInner_(Logger logger, Stage stage, StageType? type, Exception ex, object data, IEnumerable<string> testIds)
+        {
+            try
+            {
+                Console.Error.WriteLine(ex);
+                if (type.HasValue)
+                {
+                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { data, message = ex.ToString(), ex.StackTrace });
+                }
+                else
+                {
+                    logger?.Log(TraceLevel.Error, testIds, stage, new { data, message = ex.ToString(), ex.StackTrace });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+        }
+
     }
 }

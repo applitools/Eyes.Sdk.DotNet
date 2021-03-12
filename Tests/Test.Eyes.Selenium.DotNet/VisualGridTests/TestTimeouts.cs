@@ -31,11 +31,11 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             //RenderingTask.pollTimeout_ = TimeSpan.FromSeconds(100);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             try
             {
-                EyesRunner runner = new VisualGridRunner(10);
                 Eyes eyes = new Eyes(runner);
-                eyes.SetLogHandler(TestUtils.InitLogHandler());
                 driver.Url = "https://applitools.com/helloworld";
                 eyes.Batch = TestDataProvider.BatchInfo;
                 eyes.Open(driver, "Timeout Test", "Visual Grid Timeout Test", new Size(1200, 800));
@@ -46,6 +46,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             finally
             {
                 driver.Quit();
+                runner.StopServiceRunner();
             }
         }
 
@@ -54,11 +55,11 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             EyesSeleniumUtils.CAPTURE_TIMEOUT = TimeSpan.FromTicks(1);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             try
             {
-                EyesRunner runner = new VisualGridRunner(10);
                 Eyes eyes = new Eyes(runner);
-                eyes.SetLogHandler(TestUtils.InitLogHandler());
                 driver.Url = "https://applitools.com/helloworld";
                 eyes.Batch = TestDataProvider.BatchInfo;
 
@@ -78,6 +79,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             finally
             {
                 driver.Quit();
+                runner.StopServiceRunner();
             }
         }
     }

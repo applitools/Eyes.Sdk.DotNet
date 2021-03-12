@@ -42,6 +42,7 @@ namespace Applitools.Utils
         private const string RFC1123Format_ = "r";
         private const string RFC3339Format_ = "yyyy'-'MM'-'dd'T'HH':'mm':'ssK";
         private const string ISO8601Format_ = "o";
+        private const string ISO8601_Short_Format_ = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffZ";
 
         #endregion
 
@@ -277,7 +278,7 @@ namespace Applitools.Utils
 
             if (format == StandardDateTimeFormat.ISO8601)
             {
-                return ISO8601Format_;
+                return ISO8601_Short_Format_;
             }
 
             throw new NotImplementedException("Unknown format: {0}".Fmt(format));

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Applitools.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace Applitools
@@ -25,40 +27,40 @@ namespace Applitools
             while (inputQueue_.Count > 0 && !isServerConcurrencyLimitReached_ && eyesConcurrency_ > currentTestAmount_)
             {
                 Interlocked.Increment(ref currentTestAmount_);
-                Logger.Log("A new test was added. Current amount of tests: {0}", currentTestAmount_);
 
                 Tuple<string, SessionStartInfo> nextInput = inputQueue_.Dequeue();
-                string id = nextInput.Item1;
-                inProgressTests_.Add(id);
-                Operate(nextInput.Item2, new TaskListener<RunningSession>(
+                string testId = nextInput.Item1;
+                lock (lockObject_) inProgressTests_.Add(testId);
+                Logger.Log(TraceLevel.Info, testId, Stage.Open, StageType.Run, new { testAmount = currentTestAmount_ });
+                Operate(testId, nextInput.Item2, new TaskListener<RunningSession>(
                 (output) =>
                 {
-                    lock (outputQueue_)
+                    lock (lockObject_)
                     {
-                        inProgressTests_.Remove(id);
-                        outputQueue_.Add(Tuple.Create(id, output));
+                        inProgressTests_.Remove(testId);
+                        outputQueue_.Add(Tuple.Create(testId, output));
                     }
                 },
                 (ex) =>
                 {
-                    Logger.Log("Failed completing task on input {0}", nextInput);
-                    lock (errorQueue_)
+                    Logger.Log(TraceLevel.Error, testId, Stage.Open, new { nextInput });
+                    lock (lockObject_)
                     {
-                        inProgressTests_.Remove(id);
-                        errorQueue_.Add(Tuple.Create(id, ex));
+                        inProgressTests_.Remove(testId);
+                        errorQueue_.Add(Tuple.Create(testId, ex));
                     }
                 }));
             }
         }
 
-        public void Operate(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener)
+        public void Operate(string testId, SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener)
         {
-            Logger.Log("Calling start session with agentSessionId {0}", sessionStartInfo.AgentSessionId);
+            Logger.Log(TraceLevel.Notice, testId, Stage.Open, new { sessionStartInfo.AgentSessionId });
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             TaskListener<RunningSession> taskListener = new TaskListener<RunningSession>(
-                (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch),
-                (ex) => OnFail_(stopwatch, sessionStartInfo, listener)
+                (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch, testId),
+                (ex) => OnFail_(stopwatch, sessionStartInfo, listener, testId)
             );
 
             try
@@ -71,23 +73,26 @@ namespace Applitools
             }
         }
 
-        private void OnComplete_(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener, RunningSession runningSession, Stopwatch stopwatch)
+        private void OnComplete_(SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener, 
+            RunningSession runningSession, Stopwatch stopwatch, string testId)
         {
             if (runningSession.ConcurrencyFull)
             {
                 isServerConcurrencyLimitReached_ = true;
-                Logger.Verbose("Failed starting test, concurrency is fully used. Trying again.");
-                OnFail_(stopwatch, sessionStartInfo, listener);
+                Logger.Log(TraceLevel.Warn, testId, Stage.Open, StageType.Retry,
+                    new { message = "Failed starting test, concurrency is fully used. Trying again." });
+                OnFail_(stopwatch, sessionStartInfo, listener, testId);
                 return;
             }
 
             isServerConcurrencyLimitReached_ = false;
-            Logger.Verbose("Server session ID is {0}", runningSession.Id);
+            Logger.Log(TraceLevel.Notice, testId, Stage.Open, StageType.Complete,
+                    new { message = $"Server session ID is {runningSession.Id}" });
             //Logger.SessionId(runningSession.SessionId);
             listener.OnComplete(runningSession);
         }
 
-        private void OnFail_(Stopwatch stopwatch, SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener)
+        private void OnFail_(Stopwatch stopwatch, SessionStartInfo sessionStartInfo, TaskListener<RunningSession> listener, string testId)
         {
             TimeSpan sleepDuration = TimeSpan.FromSeconds(2);
             if (stopwatch.Elapsed > TIME_TO_WAIT_FOR_OPEN)
@@ -112,13 +117,14 @@ namespace Applitools
                 Logger.Verbose("Trying startSession again");
                 ServerConnector.StartSession(
                     new TaskListener<RunningSession>(
-                        (runningSession)=>OnComplete_(sessionStartInfo, listener, runningSession, stopwatch),
-                        (ex)=>OnFail_(stopwatch, sessionStartInfo, listener)
+                        (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch, testId),
+                        (ex) => OnFail_(stopwatch, sessionStartInfo, listener, testId)
                     ),
                     sessionStartInfo);
             }
             catch (Exception e)
             {
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, StageType.Retry, e, testId);
                 listener.OnFail(e);
             }
         }

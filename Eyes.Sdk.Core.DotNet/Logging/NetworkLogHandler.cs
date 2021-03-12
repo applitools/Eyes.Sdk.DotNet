@@ -21,21 +21,26 @@ namespace Applitools
 
         public void OnEvent(object @event, TraceLevel level = default)
         {
-            lock (clientEvents_)
-            {
-                string currentTime = TimeUtils.ToString(DateTimeOffset.Now, StandardDateTimeFormat.ISO8601);
-                ClientEvent clientEvent = new ClientEvent(currentTime, @event, level);
-                clientEvents_.Add(clientEvent);
-                if (clientEvents_.Count >= MAX_EVENTS_SIZE)
-                {
-                    SendLogs_();
-                }
-            }
+            string currentTime = DateTimeOffset.UtcNow.ToString(StandardDateTimeFormat.ISO8601);
+            ClientEvent clientEvent = new ClientEvent(currentTime, @event, level);
+            OnMessage(clientEvent);
         }
 
         public override void OnMessage(string message, TraceLevel level = default)
         {
             OnEvent(message, level);
+        }
+
+        public override void OnMessage(ClientEvent @event)
+        {
+            lock (clientEvents_)
+            {
+                clientEvents_.Add(@event);
+                if (clientEvents_.Count >= MAX_EVENTS_SIZE)
+                {
+                    SendLogs_();
+                }
+            }
         }
 
         public override void Close()

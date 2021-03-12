@@ -32,10 +32,11 @@ namespace Applitools.Selenium.Tests.ApiTests
         {
             driver_ = SeleniumUtils.CreateChromeDriver();
             driver_.Url = "data:text/html,<p>Test</p>";
-            runner_ = useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10) : new ClassicRunner();
+            string testName = useVisualGrid_ ? "Test Abort_VG" : "Test Abort";
+            ILogHandler logHandler = TestUtils.InitLogHandler(testName);
+            runner_ = useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
             eyes_ = new Eyes(runner_);
             eyes_.Batch = TestDataProvider.BatchInfo;
-            string testName = useVisualGrid_ ? "Test Abort_VG" : "Test Abort";
 
             Configuration config = eyes_.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
@@ -48,6 +49,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void LocalTearDown()
         {
             driver_.Quit();
+            (runner_ as VisualGridRunner)?.StopServiceRunner();
         }
 
         [Test]
