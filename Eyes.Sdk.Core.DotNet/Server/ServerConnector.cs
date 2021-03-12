@@ -483,7 +483,7 @@ namespace Applitools
             Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.JobInfo, new { renderRequests });
             try
             {
-                HttpRequestMessage request = CreateUfgHttpWebRequest_("job-info");
+                HttpRequestMessage request = CreateUfgHttpWebRequest_("job-info", content: renderRequests);
                 Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestSent, new { request.RequestUri });
 
                 httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
@@ -521,7 +521,7 @@ namespace Applitools
 
         public HttpRequestMessage CreateUfgHttpWebRequest_(string url, string fullAgentId = null,
             string method = "POST", string contentType = "application/json", string mediaType = "application/json",
-            byte[] content = null)
+            object content = null)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
             return CreateUfgHttpWebRequest_(url, renderingInfo, fullAgentId ?? AgentId, method,
@@ -644,7 +644,7 @@ namespace Applitools
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
             renderId = renderId ?? "NONE";
-            HttpRequestMessage request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
+            HttpRequestMessage request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}", content: hashes);
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
             SendUFGAsyncRequest_(taskListener, request);
         }
@@ -693,9 +693,7 @@ namespace Applitools
                 Logger.Log(TraceLevel.Info, renderRequest.TestId, Stage.Render, new { renderRequest });
             }
 
-            string json = serializer_.Serialize(requests);
-            byte[] content = Encoding.UTF8.GetBytes(json);
-            HttpRequestMessage request = CreateUfgHttpWebRequest_("render", content: content);
+            HttpRequestMessage request = CreateUfgHttpWebRequest_("render", content: requests);
 
             SendUFGAsyncRequest_(renderListener, request);
         }
@@ -712,7 +710,7 @@ namespace Applitools
                     new { renderId = renderIds[i] });
             }
 
-            HttpRequestMessage request = CreateUfgHttpWebRequest_("render-status");
+            HttpRequestMessage request = CreateUfgHttpWebRequest_("render-status", content: renderIds);
             // request.Timeout = 1000;
 
             SendUFGAsyncRequest_(taskListener, request);
