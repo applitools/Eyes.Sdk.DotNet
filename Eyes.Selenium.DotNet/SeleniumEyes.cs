@@ -242,10 +242,9 @@ namespace Applitools.Selenium
 
         protected override string TryCaptureDom()
         {
-            Logger.Log(TraceLevel.Info, Stage.Check, StageType.DomScript);
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
             string domJson = domCapture.GetFullWindowDom(TestId);
-            Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
+            Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.DomScript, new { domJsonLength = domJson.Length });
             return domJson;
         }
 
@@ -426,7 +425,7 @@ namespace Applitools.Selenium
                 ImageMatchSettings ims = MatchWindowTask.CreateImageMatchSettings(checkSettingsInternal, this, subScreenshot);
                 MatchWindowTask.CollectRegions(this, subScreenshot, checkSettingsInternal, ims);
                 Location location = subScreenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-                AppOutput appOutput = new AppOutput(name, location, subScreenshot.Image);
+                AppOutput appOutput = new AppOutput(name, location, subScreenshot);
 
                 MatchWindowData data = PrepareForMatch(checkSettingsInternal,
                     new Trigger[0], appOutput, name, false, ims, null, source);

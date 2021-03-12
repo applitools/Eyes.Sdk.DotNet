@@ -11,6 +11,8 @@ namespace Applitools
     {
         bool IsOpen { get; }
 
+        TraceLevel MinimumTraceLevel { get; }
+
         /// <summary>
         /// Invoked when a new test starts (after Eyes.Open is called)
         /// </summary>

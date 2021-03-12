@@ -46,9 +46,6 @@ namespace Applitools.Selenium.VisualGrid
         private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
         private IJavaScriptExecutor jsExecutor_;
         private string url_;
-#pragma warning disable CS0414
-        private bool hasEyesIssuedOpenTasks_;  // for debugging
-#pragma warning restore CS0414
         internal Ufg.IDebugResourceWriter debugResourceWriter_;
         private bool? isDisabled_;
         private ISeleniumConfigurationProvider configProvider_;
@@ -841,9 +838,6 @@ namespace Applitools.Selenium.VisualGrid
         {
             return testList_.Values.FirstOrDefault();
         }
-
-        internal delegate void AfterServerConcurrencyLimitReachedQueriedDelegate(bool value);
-        internal event AfterServerConcurrencyLimitReachedQueriedDelegate AfterServerConcurrencyLimitReachedQueried;
 
         void IUserActionsEyes.AddKeyboardTrigger(IWebElement element, string text)
         {

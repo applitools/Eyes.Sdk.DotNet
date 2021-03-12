@@ -1,7 +1,7 @@
 language: csharp
 solution: Eyes.Sdk.DotNet_Travis.sln
 mono: none
-dotnet: 5.0.102
+dotnet: 3.1.407
 
 node_js:
   - "14"
@@ -42,6 +42,9 @@ before_script:
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
+  - dotnet --list-sdks
+  - #export APPLITOOLS_PROXY=http://127.0.0.1:8080
+  - #sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
   - echo "Travis event type is $TRAVIS_EVENT_TYPE"
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
       export APPLITOOLS_FULL_COVERAGE=true;
@@ -49,6 +52,13 @@ before_script:
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
       python updateChangelogAndProjectFiles.py;
     fi
+
+# after_script:
+#   - pkill mitmdump
+#   - sleep 5
+#   - ls -la network*
+#   - gzip network.dump
+#   - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_SIG}
 
 # env variables
 # $RELEASE_BRANCH
@@ -64,7 +74,9 @@ jobs:
         - pushd coverage-tests
         - npm run dotnet:generate
         - popd
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh Eyes.Sdk.DotNet_Travis.sln --filter 'TestCategory=Generated'
+        - chmod +x ./buildProjects.sh
+        - ./buildProjects.sh coverage-tests/test/Appium/*.csproj
+        - ./buildProjects.sh coverage-tests/test/Selenium/*.csproj
 
     - name: Images
       script:

@@ -13,6 +13,7 @@
 - .NET 5.0 support
 ### Updated
 - Made most communication calls asynchronous
+- Added retries for all async communication calls
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 ### Fixed
 - `BatchClose` now support `ApiKey` and `Proxy` [Trello 2435](https://trello.com/c/Dnszwwld)

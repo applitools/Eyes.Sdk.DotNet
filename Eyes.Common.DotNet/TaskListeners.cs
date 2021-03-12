@@ -20,13 +20,13 @@ namespace Applitools
 
     public class SyncTaskListener : TaskListener
     {
-        private Action onComplete_;
-        private Action<Exception> onFail_;
-        private AutoResetEvent sync_;
-        private Logger logger_;
-        private string caller_;
-        private int callingThread_;
-        private string[] testIds_;
+        private readonly Action onComplete_;
+        private readonly Action<Exception> onFail_;
+        private readonly AutoResetEvent sync_;
+        private readonly Logger logger_;
+        private readonly string caller_;
+        private readonly int callingThread_;
+        private readonly string[] testIds_;
         private bool? result_;
 
         public SyncTaskListener(Action onComplete = null, Action<Exception> onFail = null,
@@ -49,7 +49,7 @@ namespace Applitools
         {
             try
             {
-                logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
+                logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
                 onComplete_?.Invoke();
             }
             finally
@@ -122,8 +122,8 @@ namespace Applitools
         private readonly Logger logger_;
         private readonly string message_;
         private readonly string caller_;
-        private int callingThread_;
-        private string[] testIds_;
+        private readonly int callingThread_;
+        private readonly string[] testIds_;
 
         public LoggingListener(TaskListener<T> internalListener, Logger logger,
             string message, [CallerMemberName] string caller = null, params string[] testIds)
@@ -162,17 +162,19 @@ namespace Applitools
 
     public class SyncTaskListener<T> : TaskListener<T>
     {
-        private Action<T> onComplete_;
-        private Action<Exception> onFail_;
-        private AutoResetEvent sync_;
-        private Logger logger_;
-        private string caller_;
-        private int callingThread_;
-        private string[] testIds_;
+        private readonly Action<T> onComplete_;
+        private readonly Action<Exception> onFail_;
+        private readonly AutoResetEvent sync_;
+        private readonly Logger logger_;
+        private readonly TimeSpan timeout_;
+        private readonly string caller_;
+        private readonly int callingThread_;
+        private readonly string[] testIds_;
         private T result_;
 
         public SyncTaskListener(Action<T> onComplete = null, Action<Exception> onFail = null,
-            Logger logger = null, [CallerMemberName] string callingMember = null, params string[] testIds)
+            Logger logger = null, TimeSpan? timeout = null,
+            [CallerMemberName] string callingMember = null, params string[] testIds)
             : base(onComplete, onFail)
         {
             onComplete_ = onComplete;
@@ -180,6 +182,7 @@ namespace Applitools
             onFail_ = onFail;
             OnFail = OnFail_;
             logger_ = logger;
+            timeout_ = timeout.HasValue ? timeout.Value : TimeSpan.FromMinutes(5);
             caller_ = callingMember;
             callingThread_ = Thread.CurrentThread.ManagedThreadId;
             testIds_ = testIds;
@@ -190,7 +193,7 @@ namespace Applitools
         {
             try
             {
-                logger_?.Log(TraceLevel.Info, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
+                logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, StageType.Complete, new { caller_, callingThread_ });
                 onComplete_?.Invoke(t);
             }
             finally
@@ -216,16 +219,15 @@ namespace Applitools
 
         public T Get()
         {
-            logger_?.Log(TraceLevel.Info, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
+            logger_?.Log(TraceLevel.Notice, testIds_, Stage.General, new { message = $"Waiting for results", caller_ });
             Stopwatch sw = Stopwatch.StartNew();
-            TimeSpan timeout = TimeSpan.FromMinutes(5);
             bool result;
             do
             {
-                result = sync_.WaitOne(TimeSpan.FromMinutes(1));
+                result = sync_.WaitOne(Math.Min((int)timeout_.TotalMilliseconds, 60000));
                 if (!result) logger_?.Log(TraceLevel.Notice, testIds_, Stage.General,
                         new { message = $"still waiting for finish...", caller_, sw.Elapsed });
-            } while (!result && sw.Elapsed < timeout);
+            } while (!result && sw.Elapsed < timeout_);
 
             if (result)
             {

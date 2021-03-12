@@ -1,12 +1,11 @@
-﻿using Applitools.Selenium.Tests.Utils;
-using Applitools.Tests.Utils;
+﻿using Applitools.Tests.Utils;
 using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Applitools.Selenium.Tests.ApiTests
 {
     [TestFixture, Parallelizable(ParallelScope.All)]
-    public class TestResultEqualityTest
+    public class TestResultEqualityTest : ReportingTestSuite
     {
         [Test]
         public void Test_TestResult_Equal()

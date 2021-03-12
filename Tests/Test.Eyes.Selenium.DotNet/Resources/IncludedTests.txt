@@ -427,3 +427,8 @@ Applitools.Selenium.Tests.VisualGridTests.TestBatchClose.TestBatchCloseFlag
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, Scroll).TestCorsIframe
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, CSS).TestCorsIframe
 Applitools.Selenium.Tests.TestSpecialCases(Chrome, VG).TestCorsIframe
+Applitools.Selenium.Tests.ApiTests.TestExceptions.TestEyesExceptions_VG
+Applitools.Selenium.Tests.ApiTests.TestExceptions.TestEyesExceptions
+Applitools.Selenium.Tests.ApiTests.TestResultEqualityTest.Test_TestResult_Equal
+Applitools.Selenium.Tests.ApiTests.TestResultEqualityTest.Test_TestResult_NotEqual
+Applitools.Selenium.Tests.ApiTests.TestApiExists.TestApiProperties

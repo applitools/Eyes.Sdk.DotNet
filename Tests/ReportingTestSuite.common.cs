@@ -7,6 +7,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Applitools.Tests.Utils
 {
@@ -14,8 +16,9 @@ namespace Applitools.Tests.Utils
     {
         private static readonly TestResultReportSummary reportSummary_ = new TestResultReportSummary();
         protected readonly Dictionary<string, object> suiteArgs_ = new Dictionary<string, object>();
-        private static readonly IList<string> includedTestsList = null;
-        private static readonly string includedTestsListFilename;
+        private static readonly HashSet<string> includedTestsList_ = null;
+        private static readonly HashSet<string> excludedTestsList_ = null;
+        private static readonly string excludedTestsListFilename_;
         public static readonly bool IS_FULL_COVERAGE = "true".Equals(Environment.GetEnvironmentVariable("APPLITOOLS_FULL_COVERAGE"), StringComparison.OrdinalIgnoreCase);
         public static readonly bool RUNS_ON_CI = Environment.GetEnvironmentVariable("CI") != null;
         public static readonly bool USE_MOCK_VG = "true".Equals(Environment.GetEnvironmentVariable("USE_MOCK_VG"), StringComparison.OrdinalIgnoreCase);
@@ -36,35 +39,37 @@ namespace Applitools.Tests.Utils
             {
                 Assembly asm = Assembly.GetExecutingAssembly();
                 string asmName = asm.GetName().Name;
-                includedTestsListFilename = "failed_tests_" + asmName + ".txt";
-                if (!RUNS_ON_CI || includedTestsListFilename == null || !File.Exists(includedTestsListFilename))
-                {
-                    logger_.Log(TraceLevel.Notice, Stage.TestFramework,
-                        new
-                        {
-                            message = "Reading regression list from embedded resource",
-                            resourceName = $"{asmName}.Resources.IncludedTests.txt"
-                        });
+                excludedTestsListFilename_ = "passed_tests_" + asmName + ".txt";
 
-                    Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
-                    if (includedTestsListStream != null)
-                    {
-                        includedTestsList = CommonUtils.ReadStreamAsLines(includedTestsListStream);
-                    }
-                    else
-                    {
-                        includedTestsList = null;
-                    }
+                Stream includedTestsListStream = CommonUtils.ReadResourceStream(asmName + ".Resources.IncludedTests.txt");
+                logger_.Log(TraceLevel.Notice, Stage.TestFramework,
+                       new
+                       {
+                           message = "Reading regression list from embedded resource",
+                           resourceName = $"{asmName}.Resources.IncludedTests.txt"
+                       });
+
+                if (includedTestsListStream != null)
+                {
+                    includedTestsList_ = new HashSet<string>(CommonUtils.ReadStreamAsLines(includedTestsListStream));
                 }
                 else
                 {
+                    includedTestsList_ = null;
+                }
+
+                if (RUNS_ON_CI && 
+                    excludedTestsListFilename_ != null && 
+                    File.Exists(excludedTestsListFilename_))
+                {
                     logger_.Log(TraceLevel.Notice, Stage.TestFramework,
                         new
                         {
-                            message = "Reading regression list from file",
-                            includedTestsListFilename
+                            message = "Reading exclusion list from file and filtering regression list",
+                            excludedTestsListFilename_
                         });
-                    includedTestsList = File.ReadAllLines(includedTestsListFilename);
+                    excludedTestsList_ = new HashSet<string>(File.ReadAllLines(excludedTestsListFilename_));
+                    includedTestsList_?.RemoveWhere(item => excludedTestsList_.Contains(item));
                 }
             }
         }
@@ -78,7 +83,10 @@ namespace Applitools.Tests.Utils
         public void SetUp()
         {
             TestContext tc = TestContext.CurrentContext;
-            if (!IS_FULL_COVERAGE && includedTestsList != null && !includedTestsList.Contains(tc.Test.FullName))
+            if (!IS_FULL_COVERAGE && 
+                ((includedTestsList_ != null && !includedTestsList_.Contains(tc.Test.FullName)) ||
+                 (excludedTestsList_ != null && excludedTestsList_.Contains(tc.Test.FullName)))
+               )
             {
                 logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped, new { testName = tc.Test.FullName });
                 Assert.Inconclusive();
@@ -93,31 +101,34 @@ namespace Applitools.Tests.Utils
         [TearDown]
         public void TearDown()
         {
+            Process[] chromedriverProcesses = Process.GetProcessesByName("chromedriver");
+            int[] chromedriverPIDs = chromedriverProcesses.Select(p => p.Id).ToArray();
+
             TestContext tc = TestContext.CurrentContext;
             TestStatus status = tc.Result.Outcome.Status;
             logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Complete,
-                new { testName = tc.Test.FullName, status });
+                new { testName = tc.Test.FullName, status, chromedriverPIDs });
             if (status == TestStatus.Inconclusive)
             {
                 return;
             }
-            if (includedTestsListFilename != null)
+            if (excludedTestsListFilename_ != null)
             {
                 int attemptsLeft = 3;
-                while (attemptsLeft-- > 0 && !WriteFailedTestsToFile_(tc, status)) { Thread.Sleep(100); }
+                while (attemptsLeft-- > 0 && !WritePassedTestsToFile_(tc, status)) { Thread.Sleep(100); }
             }
             TestResult testResult = GetTestResult();
             reportSummary_.AddResult(testResult);
         }
 
-        private static bool WriteFailedTestsToFile_(TestContext tc, TestStatus status)
+        private static bool WritePassedTestsToFile_(TestContext tc, TestStatus status)
         {
             try
             {
-                File.AppendAllText(includedTestsListFilename, "");
-                if (status != TestStatus.Passed)
+                File.AppendAllText(excludedTestsListFilename_, "");
+                if (status == TestStatus.Passed)
                 {
-                    File.AppendAllLines(includedTestsListFilename, new string[] { tc.Test.FullName });
+                    File.AppendAllLines(excludedTestsListFilename_, new string[] { tc.Test.FullName });
                 }
                 return true;
             }

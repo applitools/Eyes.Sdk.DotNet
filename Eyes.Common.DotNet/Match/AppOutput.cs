@@ -1,6 +1,6 @@
 ﻿using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
-using System.Drawing;
+using System;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -11,16 +11,17 @@ namespace Applitools
     /// </summary>
     public sealed class AppOutput
     {
-        public AppOutput(string title, Location location, Bitmap image, string domUrl = null, RectangleSize viewport = null)
+        public AppOutput(string title, Location location, IEyesScreenshot screenshot, string domUrl = null, RectangleSize viewport = null)
         {
             Title = title;
             Location = location;
             ScreenshotUrl = null;
             DomUrl = domUrl;
             Viewport = viewport;
+            Screenshot = screenshot;
             using (MemoryStream stream = new MemoryStream())
             {
-                image.Save(stream, ImageFormat.Png);
+                screenshot.Image.Save(stream, ImageFormat.Png);
                 ScreenshotBytes = stream.ToArray();
             }
         }
@@ -35,10 +36,13 @@ namespace Applitools
             Viewport = viewport;
         }
 
-        public string Title { get; private set; }
+        [JsonIgnore]
+        public byte[] ScreenshotBytes { get; private set; }
 
         [JsonIgnore]
-        public byte[] ScreenshotBytes { get; set; }
+        public IEyesScreenshot Screenshot { get; }
+
+        public string Title { get; private set; }
 
         public Location Location { get; set; }
 
@@ -47,5 +51,10 @@ namespace Applitools
         public string ScreenshotUrl { get; set; }
 
         public string DomUrl { get; set; }
+
+        internal void ClearScreenshotBytes()
+        {
+            ScreenshotBytes = null;
+        }
     }
 }

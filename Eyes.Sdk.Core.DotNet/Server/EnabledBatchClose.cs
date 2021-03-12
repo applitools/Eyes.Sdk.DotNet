@@ -1,7 +1,6 @@
 ﻿using Applitools.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Applitools
 {

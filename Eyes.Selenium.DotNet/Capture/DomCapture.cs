@@ -72,10 +72,10 @@ namespace Applitools.Selenium.Capture
             logger_.Verbose("switched to frame chain - size: {0} ; frame: {1}", currentFC.Count, currentFC.Peek());
 
             WaitForCssDownloadToFinish_(testIds);
-            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, 
+            logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript, 
                 new { message = "finished waiting for CSS files to download" });
             string inlaidString = StringUtils.EfficientStringReplace(cssStartToken_, cssEndToken_, dom, cssData_);
-            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, new { inlaidStringLength = inlaidString.Length });
+            logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript, new { inlaidStringLength = inlaidString.Length });
             return inlaidString;
         }
 
@@ -127,7 +127,7 @@ namespace Applitools.Selenium.Capture
                 whArr = new AutoResetEvent[waitHandles_.Count];
                 waitHandles_.Values.CopyTo(whArr, 0);
             }
-            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript,
+            logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript,
                 new { message = $"Waiting on {whArr.Length} to finish download" });
 
             foreach (AutoResetEvent wh in whArr)
@@ -168,7 +168,7 @@ namespace Applitools.Selenium.Capture
                     }
                     str = sr.ReadLine();
                 }
-                logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript,
+                logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript,
                         new { missingCssCount = missingCssList.Count, missingFramesCount = missingFramesList.Count });
                 return separators;
             }
@@ -176,7 +176,7 @@ namespace Applitools.Selenium.Capture
 
         private void FetchCssFiles_(List<string> missingCssList, string[] testIds)
         {
-            logger_.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.DomScript, new { missingCssList });
+            logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript, new { missingCssList });
             List<CssTreeNode> cssTreeNodes = new List<CssTreeNode>();
             foreach (string missingCssUrl in missingCssList)
             {

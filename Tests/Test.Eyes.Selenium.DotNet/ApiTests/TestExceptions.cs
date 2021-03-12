@@ -7,7 +7,7 @@ using OpenQA.Selenium;
 namespace Applitools.Selenium.Tests.ApiTests
 {
     [TestFixture, Parallelizable(ParallelScope.All)]
-    public class TestExceptions
+    public class TestExceptions : ReportingTestSuite
     {
         [Test]
         public void TestEyesExceptions()

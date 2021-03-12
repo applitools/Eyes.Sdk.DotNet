@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Tests
             }
             finally
             {
-                webDriver.Close();
+                webDriver.Quit();
             }
         }
     }

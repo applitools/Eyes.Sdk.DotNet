@@ -62,7 +62,7 @@ namespace Applitools
             },
             (ex) =>
             {
-                listener.OnFail(new EyesException("Failed closing test"));
+                listener.OnFail(new EyesException("Failed closing test", ex));
             });
 
             try

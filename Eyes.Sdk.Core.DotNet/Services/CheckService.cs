@@ -103,6 +103,7 @@ namespace Applitools
                     }
                     Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadComplete, new { url });
                     appOutput.ScreenshotUrl = url;
+                    appOutput.ClearScreenshotBytes();
                     taskListener.OnComplete();
                 },
                 (ex) =>
@@ -114,9 +115,9 @@ namespace Applitools
 
             try
             {
-                Logger.Log(TraceLevel.Notice, testId, Stage.Check, StageType.UploadStart,
+                Logger.Log(TraceLevel.Info, testId, Stage.Check, StageType.UploadStart,
                     new { dataLength = appOutput.ScreenshotBytes.Length });
-                ServerConnector.UploadImage(uploadListener, appOutput.ScreenshotBytes);
+                ServerConnector.UploadImage(uploadListener, appOutput.ScreenshotBytes, testId);
             }
             catch (Exception ex)
             {

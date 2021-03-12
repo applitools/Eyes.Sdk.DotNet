@@ -1,4 +1,5 @@
-﻿using Applitools.Utils.Geometry;
+﻿using Applitools.Tests.Utils;
+using Applitools.Utils.Geometry;
 using NUnit.Framework;
 using System;
 using System.Drawing;
@@ -6,7 +7,7 @@ using System.Drawing;
 namespace Applitools.Selenium.Tests.ApiTests
 {
     [TestFixture, Parallelizable(ParallelScope.All)]
-    public class TestApiExists
+    public class TestApiExists : ReportingTestSuite
     {
         [Test]
         public void TestApiProperties()

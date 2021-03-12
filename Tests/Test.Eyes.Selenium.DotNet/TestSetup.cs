@@ -90,9 +90,9 @@ namespace Applitools.Selenium.Tests
 
         #region expected regions
 
-        private Expectations GetExpectationsAtIndex(int index)
+        private Expectations GetExpectationsAtIndex(int index, SpecificTestContextRequirements testData = null)
         {
-            SpecificTestContextRequirements testData = testDataByTestId_[TestContext.CurrentContext.Test.ID];
+            if (testData == null) testData = testDataByTestId_[TestContext.CurrentContext.Test.ID];
             if (!testData.Expectations.TryGetValue(index, out Expectations expectations))
             {
                 expectations = new Expectations();
@@ -168,7 +168,7 @@ namespace Applitools.Selenium.Tests
             string testNameWithArguments = InitTestName_(ref testName);
 
             ILogHandler logHandler = TestUtils.InitLogHandler(testNameWithArguments);
-            
+
             // Initialize the eyes SDK and set your private API key.
             Eyes eyes = InitEyes_(testName, logHandler);
 
@@ -432,13 +432,17 @@ namespace Applitools.Selenium.Tests
         [TearDown]
         public void Teardown()
         {
+            string testId = TestContext.CurrentContext.Test.ID;
+            testDataByTestId_.TryGetValue(testId, out SpecificTestContextRequirements testData);
+            testDataByTestId_.Remove(testId);
+            Eyes eyes = testData?.Eyes;
+            IWebDriver driver = testData?.WebDriver;
             try
             {
-                testDataByTestId_.TryGetValue(TestContext.CurrentContext.Test.ID, out SpecificTestContextRequirements testData);
-                TestResults results = testData?.Eyes.Close();
+                TestResults results = eyes.Close();
                 if (results != null)
                 {
-                    SessionResults sessionResults = TestUtils.GetSessionResults(GetEyes().ApiKey, results);
+                    SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
 
                     if (sessionResults != null)
                     {
@@ -446,8 +450,8 @@ namespace Applitools.Selenium.Tests
                         for (int i = 0; i < actualAppOutput.Length; i++)
                         {
                             Metadata.ImageMatchSettings ims = actualAppOutput[i].ImageMatchSettings;
-                            CompareRegions_(ims, i);
-                            CompareProperties_(ims, i);
+                            CompareRegions_(testData, ims, i);
+                            CompareProperties_(testData, ims, i);
                         }
                     }
 
@@ -476,16 +480,15 @@ namespace Applitools.Selenium.Tests
             }
             catch (Exception ex)
             {
-                GetEyes()?.Logger?.GetILogHandler()?.Open();
-                CommonUtils.LogExceptionStackTrace(GetEyes()?.Logger, Stage.TestFramework, StageType.Failed, ex,
-                    TestContext.CurrentContext.Test.ID);
+                eyes?.Logger?.GetILogHandler()?.Open();
+                CommonUtils.LogExceptionStackTrace(GetEyes()?.Logger, Stage.TestFramework, StageType.Failed, ex, testId);
                 throw;
             }
             finally
             {
-                GetWebDriver()?.Quit();
-                GetEyes()?.Abort();
-                GetEyes()?.runner_.GetAllTestResults(false);
+                driver?.Quit();
+                eyes?.Abort();
+                eyes?.runner_.GetAllTestResults(false);
             }
         }
 
@@ -494,9 +497,9 @@ namespace Applitools.Selenium.Tests
             return testDataByTestId_[TestContext.CurrentContext.Test.ID].TestName;
         }
 
-        private void CompareProperties_(Metadata.ImageMatchSettings ims, int index)
+        private void CompareProperties_(SpecificTestContextRequirements testData, Metadata.ImageMatchSettings ims, int index)
         {
-            Dictionary<string, object> expectedProps = GetExpectationsAtIndex(index).ExpectedProperties;
+            Dictionary<string, object> expectedProps = GetExpectationsAtIndex(index, testData).ExpectedProperties;
 
             Type imsType = typeof(Metadata.ImageMatchSettings);
             foreach (KeyValuePair<string, object> kvp in expectedProps)
@@ -518,14 +521,14 @@ namespace Applitools.Selenium.Tests
             }
         }
 
-        private void CompareRegions_(Metadata.ImageMatchSettings ims, int index)
+        private void CompareRegions_(SpecificTestContextRequirements testData, Metadata.ImageMatchSettings ims, int index)
         {
             if (!CompareExpectedRegion)
             {
                 return;
             }
 
-            Expectations expectations = GetExpectationsAtIndex(index);
+            Expectations expectations = GetExpectationsAtIndex(index, testData);
             CompareAccessibilityRegionsList_(ims.Accessibility, expectations.ExpectedAccessibilityRegions, "Accessibility");
             CompareFloatingRegionsList_(ims.Floating, expectations.ExpectedFloatingRegions, "Floating");
             TestUtils.CompareSimpleRegionsList_(ims.Ignore, expectations.ExpectedIgnoreRegions, "Ignore");

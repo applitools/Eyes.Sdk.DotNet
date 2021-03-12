@@ -9,8 +9,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools
@@ -24,10 +25,14 @@ namespace Applitools
         #region Fields
 
         internal HttpRestClient httpClient_;
+
         private bool apiKeyChanged_ = true;
         private string apiKey_;
+
         private bool proxyChanged_ = false;
-        private WebProxy proxy;
+        private WebProxy proxy_;
+        private readonly string proxyStr_ = CommonUtils.GetEnvVar("APPLITOOLS_PROXY");
+
         private RenderingInfo renderingInfo_;
         internal readonly JsonSerializer serializer_;
 
@@ -110,10 +115,38 @@ namespace Applitools
         /// </summary>
         public WebProxy Proxy
         {
-            get => proxy;
+            get
+            {
+                if (proxy_ == null)
+                {
+                    if (!string.IsNullOrWhiteSpace(proxyStr_))
+                    {
+                        Logger.Log(TraceLevel.Notice, Stage.General, new { proxyStr_ });
+                        proxy_ = new WebProxy(proxyStr_);
+                        proxyChanged_ = true;
+                    }
+                    else
+                    {
+                        // Apply system web proxy configuration.
+                        var proxy = WebRequest.GetSystemWebProxy();
+                        if (proxy != null)
+                        {
+                            Uri proxyUri = proxy.GetProxy(new Uri("http://example.com"));
+                            if (proxyUri != null)
+                            {
+                                proxy_ = new WebProxy(proxyUri);
+                                proxy_.Credentials = CredentialCache.DefaultCredentials;
+                                proxyChanged_ = true;
+                            }
+                        }
+                    }
+                }
+                return proxy_;
+            }
             set
             {
-                proxy = value;
+                proxy_ = value;
+                Logger.Log(TraceLevel.Notice, Stage.General, new { proxy_ });
                 proxyChanged_ = true;
             }
         }
@@ -156,7 +189,7 @@ namespace Applitools
             {
                 EnsureHttpClient_();
                 httpClient_.PostJson(
-                    new TaskListener<HttpWebResponse>(
+                    new TaskListener<HttpResponseMessage>(
                         response =>
                         {
                             if (response == null)
@@ -196,7 +229,7 @@ namespace Applitools
         {
             ArgumentGuard.NotNull(testResults, nameof(testResults));
 
-            HttpWebResponse response = null;
+            HttpResponseMessage response = null;
             try
             {
                 response = httpClient_.Delete($"api/sessions/batches/{testResults.BatchId}/{testResults.Id}?AccessToken={testResults.SecretToken}");
@@ -207,7 +240,7 @@ namespace Applitools
             }
             finally
             {
-                response?.Close();
+                response?.Dispose();
             }
         }
 
@@ -224,7 +257,7 @@ namespace Applitools
             ArgumentGuard.NotNull(sessionStopInfo, nameof(sessionStopInfo));
             ArgumentGuard.NotNull(sessionStopInfo.RunningSession, nameof(sessionStopInfo.RunningSession));
 
-            httpClient_.DeleteJson(new TaskListener<HttpWebResponse>(
+            httpClient_.DeleteJson(new TaskListener<HttpResponseMessage>(
                 response =>
                 {
                     if (response == null)
@@ -252,7 +285,7 @@ namespace Applitools
                 EnsureHttpClient_(url);
             }
             HttpRestClient httpClient = CloneHttpClient_(url);
-            HttpWebResponse response = null;
+            HttpResponseMessage response = null;
             try
             {
                 response = CloseBatchImpl_(batchId, httpClient);
@@ -263,11 +296,11 @@ namespace Applitools
             }
             finally
             {
-                response?.Close();
+                response?.Dispose();
             }
         }
 
-        protected virtual HttpWebResponse CloseBatchImpl_(string batchId, HttpRestClient httpClient)
+        protected virtual HttpResponseMessage CloseBatchImpl_(string batchId, HttpRestClient httpClient)
         {
             return httpClient.Delete($"api/sessions/batches/{batchId}/close/bypointerid");
         }
@@ -326,7 +359,7 @@ namespace Applitools
         {
             string url = string.Format("api/sessions/running/{0}", data.RunningSession.Id);
             Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchStart);
-            httpClient_.PostJson(new TaskListener<HttpWebResponse>(
+            httpClient_.PostJson(new TaskListener<HttpResponseMessage>(
                 response =>
                 {
                     Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete,
@@ -336,10 +369,10 @@ namespace Applitools
                         throw new NullReferenceException("response is null");
                     }
                     MatchResult matchResult = response.DeserializeBody<MatchResult>(true);
-                    Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.MatchComplete, new { matchResult });
+                    Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.MatchComplete, new { matchResult });
                     listener.OnComplete(matchResult);
                 },
-                e => { throw e; }
+                e => listener.OnFail(e)
                 ), url, data);
         }
 
@@ -356,12 +389,33 @@ namespace Applitools
 
             Guid guid = Guid.NewGuid();
             targetUrl = targetUrl.Replace("__random__", guid.ToString());
-            Logger.Log(TraceLevel.Notice, testIds, Stage.General, StageType.UploadStart, new { mediaType, targetUrl });
+            Logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.UploadStart, new { mediaType, targetUrl });
 
-            UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
-            callback.UploadDataAsync();
+            HttpRequestMessage request = CreateHttpRequestMessageForUpload_(targetUrl, bytes, contentType, mediaType);
+            httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
+                response =>
+                {
+                    if (response == null)
+                    {
+                        throw new NullReferenceException("response is null");
+                    }
+                    listener.OnComplete(targetUrl);
+                },
+                ex => listener.OnFail(ex)),
+                request, Logger, new BackoffProvider(2), TimeSpan.FromMinutes(2));
         }
 
+        private HttpRequestMessage CreateHttpRequestMessageForUpload_(string targetUrl, byte[] bytes,
+            string contentType, string mediaType)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, new Uri(targetUrl));
+            request.Content = new ByteArrayContent(bytes);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType));
+            request.Headers.Add("X-Auth-Token", GetRenderingInfo().AccessToken);
+            request.Headers.Add("x-ms-blob-type", "BlockBlob");
+            return request;
+        }
 
         // Used only by IN-REGION
 
@@ -381,9 +435,8 @@ namespace Applitools
                     "application/octet-stream",
                     "application/json"))
                 {
-                    string locationUrlStr = response.Headers[HttpResponseHeader.Location];
-                    Uri uri = new Uri(locationUrlStr);
-                    return uri.Segments.Last();
+                    Uri locationUri = response.Headers.Location;
+                    return locationUri.Segments.Last();
                 }
             }
             catch (Exception ex)
@@ -430,11 +483,10 @@ namespace Applitools
             Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.JobInfo, new { renderRequests });
             try
             {
-                HttpWebRequest request = CreateUfgHttpWebRequest_("job-info");
+                HttpRequestMessage request = CreateUfgHttpWebRequest_("job-info", content: renderRequests);
                 Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestSent, new { request.RequestUri });
-                serializer_.Serialize(renderRequests, request.GetRequestStream());
 
-                HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+                httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
                     response =>
                     {
                         JObject[] jobInfosUnparsed = response.DeserializeBody<JObject[]>(true);
@@ -452,12 +504,12 @@ namespace Applitools
                         listener.OnComplete(jobInfos);
                     },
                     ex => listener.OnFail(ex)
-                    ), request, Logger);
+                    ), request, Logger, new BackoffProvider());
             }
             catch (Exception e)
             {
                 CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, StageType.JobInfo, e, testIds);
-                throw;
+                listener.OnFail(e);
             }
         }
 
@@ -467,26 +519,22 @@ namespace Applitools
             using (httpClient_.PostJson("api/sessions/log", clientEvents)) { }
         }
 
-        public HttpWebRequest CreateUfgHttpWebRequest_(string url, WebProxy proxy = null, string fullAgentId = null,
-            string method = "POST", string contentType = "application/json", string mediaType = "application/json")
+        public HttpRequestMessage CreateUfgHttpWebRequest_(string url, string fullAgentId = null,
+            string method = "POST", string contentType = "application/json", string mediaType = "application/json",
+            object content = null)
         {
             RenderingInfo renderingInfo = GetRenderingInfo();
-            return CreateUfgHttpWebRequest_(url, renderingInfo, proxy ?? Proxy, fullAgentId ?? AgentId, method, contentType, mediaType);
+            return CreateUfgHttpWebRequest_(url, renderingInfo, fullAgentId ?? AgentId, method,
+                contentType, mediaType, content);
         }
 
-        public HttpWebRequest CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo, WebProxy proxy,
-            string fullAgentId, string method = "POST", string contentType = "application/json", string mediaType = "application/json")
+        public HttpRequestMessage CreateUfgHttpWebRequest_(string url, RenderingInfo renderingInfo,
+            string fullAgentId, string method = "POST", string contentType = "application/json",
+            string mediaType = "application/json", object content = null)
         {
             Uri uri = new Uri(renderingInfo.ServiceUrl, url);
-            HttpRestClient restClient = CreateHttpRestClient(uri);
-            HttpWebRequest request = (HttpWebRequest)restClient.WebRequestCreator.Create(uri);
-            //HttpWebRequest request =  WebRequest.CreateHttp(uri); // TODO - replace with factory
-            if (proxy != null) request.Proxy = proxy;
-            request.ContentType = contentType;
-            request.MediaType = mediaType;
-            request.Method = method;
+            HttpRequestMessage request = httpClient_.CreateHttpRequestMessage(uri, method, content, contentType, mediaType);
             request.Headers.Add("X-Auth-Token", renderingInfo.AccessToken);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             if (fullAgentId != null)
             {
                 request.Headers.Add("x-applitools-eyes-client", fullAgentId);
@@ -509,7 +557,7 @@ namespace Applitools
             try
             {
                 EnsureHttpClient_();
-                using (HttpWebResponse response = httpClient_.GetJson(path))
+                using (HttpResponseMessage response = httpClient_.GetJson(path))
                 {
                     if (response == null)
                     {
@@ -527,7 +575,7 @@ namespace Applitools
 
         public virtual void PostDomCapture(TaskListener<string> listener, string domJson, params string[] testIds)
         {
-            Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadStart);
+            Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadStart);
             try
             {
                 byte[] binData = Encoding.UTF8.GetBytes(domJson);
@@ -542,21 +590,15 @@ namespace Applitools
                     binData = compressedStream.ToArray();
                 }
 
-                Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.UploadResource,
+                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadResource,
                     new { CompressedDataSize = binData.Length });
 
-                UploadData_(new TaskListener<string>(
-                    r => listener.OnComplete(r),
-                    ex => listener.OnFail(ex)
-                ), binData, "application/octet-stream", "application/json", testIds);
+                UploadData_(listener, binData, "application/octet-stream", "application/json", testIds);
             }
             catch (Exception ex)
             {
-                throw new EyesException($"PostDomSnapshot failed: {ex.Message}", ex);
-            }
-            finally
-            {
-                Logger.Log(TraceLevel.Notice, testIds, Stage.Check, StageType.UploadComplete);
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.UploadResource, ex, testIds);
+                listener.OnFail(new EyesException($"PostDomSnapshot failed: {ex.Message}", ex));
             }
         }
 
@@ -596,25 +638,20 @@ namespace Applitools
 
         public void UploadImage(TaskListener<string> listener, byte[] screenshotBytes, string[] testIds)
         {
-            UploadData_(new TaskListener<string>(
-                    r => listener.OnComplete(r),
-                    ex => listener.OnFail(ex)
-                ),
-                screenshotBytes, "image/png", "image/png", testIds);
+            UploadData_(listener, screenshotBytes, "image/png", "image/png", testIds);
         }
 
         public virtual void CheckResourceStatus(TaskListener<bool?[]> taskListener, HashSet<string> testIds, string renderId, HashObject[] hashes)
         {
             renderId = renderId ?? "NONE";
-            HttpWebRequest request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
+            HttpRequestMessage request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}", content: hashes);
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
-            serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }
 
-        protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
+        protected virtual void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) where T : class
         {
-            HttpRestClient.SendAsyncRequest(new TaskListener<HttpWebResponse>(
+            httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
               response =>
               {
                   if (response == null)
@@ -623,10 +660,10 @@ namespace Applitools
                   }
                   taskListener.OnComplete(response.DeserializeBody<T>(true));
               },
-              ex => taskListener.OnFail(ex)), request, Logger);
+              ex => taskListener.OnFail(ex)), request, Logger, new BackoffProvider());
         }
 
-        public Task<WebResponse> RenderPutResourceAsTask(string renderId, IVGResource resource)
+        public void RenderPutResource(TaskListener<HttpResponseMessage> listener, string renderId, IVGResource resource)
         {
             ArgumentGuard.NotNull(resource, nameof(resource));
             byte[] content = resource.Content;
@@ -638,16 +675,12 @@ namespace Applitools
             Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render,
                 new { resourceHash = hash, resourceUrl = resource.Url, renderId });
 
-            HttpWebRequest request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
-                method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream");
-            request.ContentLength = content.Length;
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(content, 0, content.Length);
-            dataStream.Close();
+            HttpRequestMessage request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
+                method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream",
+                content: content);
 
-            Task<WebResponse> task = request.GetResponseAsync();
+            httpClient_.SendAsyncRequest(listener, request, Logger, new BackoffProvider());
             Logger.Verbose("future created.");
-            return task;
         }
 
         public virtual void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests)
@@ -660,8 +693,7 @@ namespace Applitools
                 Logger.Log(TraceLevel.Info, renderRequest.TestId, Stage.Render, new { renderRequest });
             }
 
-            HttpWebRequest request = CreateUfgHttpWebRequest_("render");
-            serializer_.Serialize(requests, request.GetRequestStream());
+            HttpRequestMessage request = CreateUfgHttpWebRequest_("render", content: requests);
 
             SendUFGAsyncRequest_(renderListener, request);
         }
@@ -678,9 +710,8 @@ namespace Applitools
                     new { renderId = renderIds[i] });
             }
 
-            HttpWebRequest request = CreateUfgHttpWebRequest_("render-status");
-            request.ContinueTimeout = 1000;
-            serializer_.Serialize(renderIds, request.GetRequestStream());
+            HttpRequestMessage request = CreateUfgHttpWebRequest_("render-status", content: renderIds);
+            // request.Timeout = 1000;
 
             SendUFGAsyncRequest_(taskListener, request);
         }

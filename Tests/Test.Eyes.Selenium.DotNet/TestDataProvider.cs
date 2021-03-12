@@ -91,8 +91,9 @@ namespace Applitools.Selenium.Tests
             ChromeOptions options = new ChromeOptions();
             if (TestUtils.RUN_HEADLESS)
             {
-                options.AddArgument("headless");
+                options.AddArgument("--headless");
             }
+            options.AddArguments("--no-sandbox", "--verbose", "--disable-gpu");
             //options.AddArgument("--force-device-scale-factor=1.5");
             return options;
         }

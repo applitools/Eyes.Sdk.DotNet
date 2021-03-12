@@ -257,14 +257,24 @@ namespace Applitools
             ICollection<SubregionForStitching> screenshotParts = fullarea.GetSubRegions(screenshotPartSize, stitchOverlap_, pixelRatio, rectInScreenshot, logger_);
 
             Bitmap stitchedImage = new Bitmap(fullarea.Width, fullarea.Height);
-            // Take screenshot and stitch for each screenshot part.
-            StitchScreenshot_(stitchOffset, positionProvider, screenshotParts, stitchedImage, scaleProvider.ScaleRatio, scaledCutProvider, sizeRatio);
+            try
+            {
+                // Take screenshot and stitch for each screenshot part.
+                StitchScreenshot_(stitchOffset, positionProvider, screenshotParts, stitchedImage, scaleProvider.ScaleRatio, scaledCutProvider, sizeRatio);
 
-            positionProvider.SetPosition(originalStitchedState);
-            originProvider.RestoreState(originProviderState);
-
-            croppedInitialScreenshot.Dispose();
-            return stitchedImage;
+                positionProvider.SetPosition(originalStitchedState);
+                originProvider.RestoreState(originProviderState);
+                return stitchedImage;
+            }
+            catch
+            {
+                stitchedImage.Dispose();
+                throw;
+            }
+            finally
+            {
+                croppedInitialScreenshot.Dispose();
+            }
         }
 
         private Region CoerceImageSize_(Region fullarea)
@@ -364,7 +374,7 @@ namespace Applitools
                 }
 
                 logger_.Log(TraceLevel.Debug, TestId, Stage.Check, StageType.CaptureScreenshot, new { partRegion });
-                
+
                 // Scroll to the part's top/left
                 Point partAbsoluteLocationInCurrentFrame = partRegion.ScrollTo;
                 partAbsoluteLocationInCurrentFrame += stitchOffset;
@@ -411,7 +421,7 @@ namespace Applitools
                         debugScreenshotsProvider_.Save(croppedPart, "croppedPart-" + originPosition.X + "_" + originPosition.Y);
                         debugScreenshotsProvider_.Save(scaledPartImage, "scaledPartImage-" + originPosition.X + "_" + originPosition.Y);
                         debugScreenshotsProvider_.Save(scaledCroppedPartImage, "scaledCroppedPartImage-" + partPastePosition.X + "_" + partPastePosition.Y);
-                        logger_.Log(TraceLevel.Debug, TestId, Stage.Check, StageType.CaptureScreenshot, 
+                        logger_.Log(TraceLevel.Debug, TestId, Stage.Check, StageType.CaptureScreenshot,
                             new { partPastePosition });
                         g.DrawImage(scaledCroppedPartImage, partPastePosition);
                     }

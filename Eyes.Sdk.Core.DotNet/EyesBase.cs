@@ -1267,7 +1267,7 @@ namespace Applitools
         /// <param name="region">The region of the screenshot which will be set in the application output.</param>
         /// <param name="checkSettingsInternal">The check settings object of the current test.</param>
         /// <param name="imageMatchSettings">The image match settings object in which to collect the coded-regions.</param>
-        private AppOutputWithScreenshot GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
+        private AppOutput GetAppOutput_(Rectangle? region, ICheckSettingsInternal checkSettingsInternal,
             ImageMatchSettings imageMatchSettings)
         {
             string url = null;
@@ -1277,6 +1277,7 @@ namespace Applitools
             {
                 DebugScreenshotProvider.Save(screenshot.Image, "base");
                 imageBytes = BasicImageUtils.EncodeAsPng(screenshot.Image);
+                screenshot.DisposeImage();
             }
             MatchWindowTask.CollectRegions(this, screenshot, checkSettingsInternal, imageMatchSettings);
             Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.MatchStart, new { imageMatchSettings });
@@ -1294,8 +1295,7 @@ namespace Applitools
             string title = GetTitle();
 
             Location location = screenshot?.OriginLocation;
-            return new AppOutputWithScreenshot(new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl),
-                screenshot);
+            return new AppOutput(title, location, imageBytes, url, screenshot?.DomUrl);
         }
 
         protected string TryCaptureAndPostDom(ICheckSettingsInternal checkSettingsInternal)
@@ -1307,7 +1307,7 @@ namespace Applitools
                 {
                     string domJson = TryCaptureDom();
                     domUrl = TryPostDomCapture_(domJson);
-                    Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.DomScript, new { domUrl });
+                    Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.DomScript, new { domUrl });
                 }
                 catch (Exception ex)
                 {

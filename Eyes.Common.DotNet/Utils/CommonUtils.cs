@@ -10,7 +10,7 @@ using System.Runtime.Versioning;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using Microsoft.Win32;
+using System.Threading.Tasks;
 
 namespace Applitools.Utils
 {
@@ -410,11 +410,11 @@ namespace Applitools.Utils
                 Console.Error.WriteLine(ex);
                 if (type.HasValue)
                 {
-                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { data, message = ex.ToString(), ex.StackTrace });
+                    logger?.Log(TraceLevel.Error, testIds, stage, type.Value, new { data, message = ex.ToString(), ex.StackTrace }, 5);
                 }
                 else
                 {
-                    logger?.Log(TraceLevel.Error, testIds, stage, new { data, message = ex.ToString(), ex.StackTrace });
+                    logger?.Log(TraceLevel.Error, testIds, stage, new { data, message = ex.ToString(), ex.StackTrace }, 5);
                 }
             }
             catch (Exception e)
@@ -423,5 +423,40 @@ namespace Applitools.Utils
             }
         }
 
+        // Based on code from https://docs.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/interop-with-other-asynchronous-patterns-and-types#from-tap-to-apm
+        public static IAsyncResult AsApm<T>(this Task<T> task,
+                                    AsyncCallback callback,
+                                    object state,
+                                    Logger logger)
+        {
+            if (task == null)
+                throw new ArgumentNullException("task");
+
+            int callingThreadId = Thread.CurrentThread.ManagedThreadId;
+            var tcs = new TaskCompletionSource<T>(state);
+            task.ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                {
+                    LogExceptionStackTrace(logger, Stage.General, t.Exception,
+                        new { message = "task is faluted", callingThreadId });
+                    tcs.TrySetException(t.Exception.InnerExceptions);
+                }
+                else if (t.IsCanceled)
+                {
+                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task is canceled", callingThreadId });
+                    tcs.TrySetCanceled();
+                }
+                else
+                {
+                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task completed", callingThreadId });
+                    tcs.TrySetResult(t.Result);
+                }
+
+                if (callback != null)
+                    callback(tcs.Task);
+            }, TaskScheduler.Default);
+            return tcs.Task;
+        }
     }
 }

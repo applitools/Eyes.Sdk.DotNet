@@ -3,14 +3,16 @@ using Applitools.Utils;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NSubstitute;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Applitools.Selenium.Tests.Mock
 {
@@ -24,6 +26,7 @@ namespace Applitools.Selenium.Tests.Mock
             driverProvider_ = driverProvider;
         }
 
+        internal List<byte[]> ImagesAsByteArrays { get; } = new List<byte[]>();
         internal List<MatchWindowData> MatchWindowCalls { get; } = new List<MatchWindowData>();
         internal List<MatchWindowData> ReplaceMatchedStepCalls { get; } = new List<MatchWindowData>();
         internal Dictionary<string, RunningSession> Sessions { get; } = new Dictionary<string, RunningSession>();
@@ -114,13 +117,12 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
-        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpWebRequest request) where T : class
+        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) where T : class
         {
-            if (request.Method == "POST" && request.RequestUri.PathAndQuery == "/render")
+            if (request.Method == HttpMethod.Post &&
+                request.RequestUri.PathAndQuery.StartsWith("/render", StringComparison.OrdinalIgnoreCase))
             {
-                Stream stream = request.GetRequestStream();
-                stream.Position = 0;
-                byte[] bytes = stream.ReadToEnd();
+                byte[] bytes = request.Content.ReadAsByteArrayAsync().Result;
                 string requestJsonStr = Encoding.UTF8.GetString(bytes);
                 RenderRequests.Add(requestJsonStr);
                 List<RunningRender> response = new List<RunningRender>();
@@ -212,84 +214,85 @@ namespace Applitools.Selenium.Tests.Mock
 
         private readonly MockServerConnector connector_;
 
+        public MockHttpClientProvider Provider { get; set; }
+
         public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
         {
-            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger);
-            mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator(Logger, connector_);
+            Provider = new MockHttpClientProvider(Logger, connector_);
+            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger, Provider);
+            //mockedHttpRestClient.WebRequestCreator = new MockWebRequestCreator(Logger, connector_);
             return mockedHttpRestClient;
         }
     }
 
-    class MockWebRequestCreator : IWebRequestCreate
+    class MockHttpClientProvider : IHttpClientProvider
+    {
+        private readonly HttpClient httpClient_;
+        public MockHttpClientProvider(Logger logger, MockServerConnector connector)
+        {
+            HttpMessageHandler handler = new MockMessageProcessingHandler(logger, connector);
+            httpClient_ = new HttpClient(handler);
+        }
+
+        public HttpClient GetClient(IWebProxy proxy)
+        {
+            return httpClient_;
+        }
+    }
+
+    class MockMessageProcessingHandler : HttpMessageHandler
     {
         private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
         private readonly MockServerConnector connector_;
+        public Logger Logger { get; }
 
-        public MockWebRequestCreator(Logger logger, MockServerConnector connector)
+        public MockMessageProcessingHandler(Logger logger, MockServerConnector connector)
         {
             Logger = logger;
             connector_ = connector;
         }
 
-        public Logger Logger { get; }
-
-        public WebRequest Create(Uri uri)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            Logger?.Log(TraceLevel.Notice, Stage.General, new { uri });
-            HttpWebRequest webRequest = Substitute.For<HttpWebRequest>();
-            webRequest.RequestUri.Returns(uri);
-            webRequest.Headers = new WebHeaderCollection();
-            webRequest.GetRequestStream().Returns(new MemoryStream(new byte[1000000]));
-            webRequest.BeginGetResponse(default, default)
-                       .ReturnsForAnyArgs(ci =>
-                       {
-                           AsyncCallback cb = ci.Arg<AsyncCallback>();
-                           HttpWebRequest req = ci.Arg<HttpWebRequest>();
-                           Logger?.Verbose("BeginGetResponse called with method {0} for URI: {1}", req.Method, req.RequestUri);
-                           cb.Invoke(new MockAsyncResult(req));
-                           return null;
-                       });
+            Uri uri = request.RequestUri;
+            Logger?.Verbose("EndGetResponse called for request with method {0} for URI: {1}", request.Method, uri);
 
-            webRequest.EndGetResponse(default)
-                .ReturnsForAnyArgs(ci =>
-                {
-                    MockAsyncResult mockAsyncResult = ci.Arg<MockAsyncResult>();
-                    HttpWebRequest webRequest = ((HttpWebRequest)mockAsyncResult.AsyncState);
-                    string method = webRequest.Method;
-                    Uri uri = webRequest.RequestUri;
-                    Logger?.Verbose("EndGetResponse called for request with method {0} for URI: {1}", method, uri);
-                    HttpWebResponse webResponse = Substitute.For<HttpWebResponse>();
-                    WebHeaderCollection headers = new WebHeaderCollection();
-                    webResponse.Headers.Returns(headers);
-                    if (method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
-                        uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
-                    {
-                        webResponse.StatusCode.Returns(HttpStatusCode.Accepted);
-                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "status");
-                    }
-                    else if (method.Equals("GET", StringComparison.OrdinalIgnoreCase) &&
-                        uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
-                    {
-                        webResponse.StatusCode.Returns(HttpStatusCode.Created);
-                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "created");
-                    }
-                    else if (method.Equals("DELETE", StringComparison.OrdinalIgnoreCase) &&
-                        uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "created", StringComparison.OrdinalIgnoreCase))
-                    {
-                        webResponse.StatusCode.Returns(HttpStatusCode.OK);
-                        Stream stream = new MemoryStream(Encoding.UTF8.GetBytes($"{{\"AsExpected\":{connector_.AsExpected.ToString().ToLower()}}}"));
-                        webResponse.GetResponseStream().Returns(stream);
-                        headers.Add(HttpResponseHeader.Location, CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
-                    }
-                    else
-                    {
-                        webResponse.ResponseUri.Returns(uri);
-                        webResponse.StatusCode.Returns(HttpStatusCode.OK);
-                    }
-                    return webResponse;
-                });
+            TaskCompletionSource<HttpResponseMessage> tcs = new TaskCompletionSource<HttpResponseMessage>();
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.RequestMessage = request;
+            tcs.SetResult(response);
 
-            return webRequest;
+            if (request.Method == HttpMethod.Post &&
+                uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
+            {
+                response.StatusCode = HttpStatusCode.Accepted;
+                response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "status");
+            }
+            else if (request.Method == HttpMethod.Get &&
+                uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
+            {
+                response.StatusCode = HttpStatusCode.Created;
+                response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "created");
+            }
+            else if (request.Method == HttpMethod.Delete &&
+                uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "created", StringComparison.OrdinalIgnoreCase))
+            {
+                response.StatusCode = HttpStatusCode.OK;
+                byte[] bytes = Encoding.UTF8.GetBytes($"{{\"AsExpected\":{connector_.AsExpected.ToString().ToLower()}}}");
+                response.Content = new ByteArrayContent(bytes);
+                response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
+            }
+            else if (request.Method == HttpMethod.Put)
+            {
+                response.StatusCode = HttpStatusCode.OK;
+                byte[] bytes = request.Content.ReadAsByteArrayAsync().Result;
+                connector_.ImagesAsByteArrays.Add(bytes);
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            return tcs.Task;
         }
     }
 }

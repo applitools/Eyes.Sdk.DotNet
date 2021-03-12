@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 
 namespace Applitools.Utils
 {
-    internal class RequestPollingTaskListener : TaskListener<HttpWebResponse>
+    internal class RequestPollingTaskListener : TaskListener<HttpResponseMessage>
     {
-        private HttpRestClient restClient_;
-        private Logger logger_;
-        private string pollingUrl_;
-        private TaskListener<HttpWebResponse> listener_;
+        private readonly HttpRestClient restClient_;
+        private readonly Logger logger_;
+        private Uri pollingUrl_;
+        private readonly TaskListener<HttpResponseMessage> listener_;
         private int sleepDuration_ = 500;
         private int requestCount_;
 
-        public RequestPollingTaskListener(HttpRestClient restClient, string pollingUrl, 
-            TaskListener<HttpWebResponse> listener, Logger logger = null)
+        public RequestPollingTaskListener(HttpRestClient restClient, Uri pollingUrl,
+            TaskListener<HttpResponseMessage> listener, Logger logger = null)
         {
             restClient_ = restClient;
             logger_ = logger;
@@ -24,10 +26,10 @@ namespace Applitools.Utils
             OnFail = OnFail_;
         }
 
-        private void OnComplete_(HttpWebResponse response)
+        private void OnComplete_(HttpResponseMessage response)
         {
-            string location = response.Headers[HttpResponseHeader.Location];
-            string secondsToWait = response.Headers[HttpResponseHeader.RetryAfter];
+            Uri location = response.Headers.Location;
+            RetryConditionHeaderValue secondsToWait = response.Headers.RetryAfter;
             try
             {
                 HttpStatusCode status = response.StatusCode;
@@ -46,7 +48,7 @@ namespace Applitools.Utils
             }
             finally
             {
-                response.Close();
+                response.Dispose();
             }
 
             if (location != null)
@@ -57,7 +59,7 @@ namespace Applitools.Utils
             int timeToWait = sleepDuration_;
             if (secondsToWait != null)
             {
-                timeToWait = int.Parse(secondsToWait) * 1000;
+                timeToWait = (int)secondsToWait.Delta.Value.TotalMilliseconds;
             }
             else if (requestCount_++ >= 5)
             {

@@ -144,38 +144,35 @@ namespace Applitools.Selenium.Tests
         public void TestIOSSafariCrop(string deviceName, string platformVersion, ScreenOrientation deviceOrientation, int vpWidth, int vpHeight)
         {
             string testName = GetResourceName_(deviceName, platformVersion, deviceOrientation);
-            Bitmap input = null, expected = null;
             using (Stream inputStream = CommonUtils.ReadResourceStream("Test.Eyes.Selenium.DotNet.Resources.IOSImages.Input." + testName + ".png"))
-            {
-                if (inputStream != null)
-                {
-                    input = new Bitmap(inputStream);
-                }
-            }
             using (Stream expectedStream = CommonUtils.ReadResourceStream("Test.Eyes.Selenium.DotNet.Resources.IOSImages.Expected." + testName + ".png"))
             {
-                if (expectedStream != null)
+                Assert.NotNull(inputStream, nameof(inputStream));
+                Assert.NotNull(expectedStream, nameof(expectedStream));
+                if (inputStream != null && expectedStream != null)
                 {
-                    expected = new Bitmap(expectedStream);
+                    using (Bitmap input = new Bitmap(inputStream))
+                    using (Bitmap expected = new Bitmap(expectedStream))
+                    {
+                        Assert.NotNull(input, nameof(input));
+                        Assert.NotNull(expected, nameof(expected));
+
+                        Bitmap output = SafariScreenshotImageProvider.CropIOSImage(input, new Size(vpWidth, vpHeight));
+                        if (!TestUtils.RUNS_ON_CI)
+                        {
+                            string path = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "IOSCrop");
+                            Directory.CreateDirectory(path);
+                            input.Save(Path.Combine(path, testName + "_input.png"));
+                            output.Save(Path.Combine(path, testName + "_output.png"));
+                        }
+                        Assert.AreEqual(expected.Width, output.Width, "Width");
+                        Assert.AreEqual(expected.Height, output.Height, "Height");
+                        Assert.IsTrue(AreBitmapsSame_(output, expected), "Bitmap comparison");
+                    }
                 }
-            }
-            if (input != null && expected != null)
-            {
-                Bitmap output = SafariScreenshotImageProvider.CropIOSImage(input, new Size(vpWidth, vpHeight));
-                if (!TestUtils.RUNS_ON_CI)
-                {
-                    string path = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "IOSCrop");
-                    Directory.CreateDirectory(path);
-                    input.Save(Path.Combine(path, testName + "_input.png"));
-                    output.Save(Path.Combine(path, testName + "_output.png"));
-                }
-                Assert.AreEqual(expected.Width, output.Width, "Width");
-                Assert.AreEqual(expected.Height, output.Height, "Height");
-                Assert.IsTrue(AreBitmapsSame_(output, expected), "Bitmap comparison");
             }
         }
-
-        private string GetResourceName_(string deviceName, string platformVersion, ScreenOrientation deviceOrientation)
+        private static string GetResourceName_(string deviceName, string platformVersion, ScreenOrientation deviceOrientation)
         {
             return $"{deviceName} {platformVersion} {deviceOrientation}";
         }

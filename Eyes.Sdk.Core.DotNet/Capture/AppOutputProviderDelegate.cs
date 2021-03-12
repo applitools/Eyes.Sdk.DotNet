@@ -3,5 +3,5 @@ using System.Drawing;
 
 namespace Applitools
 {
-    public delegate AppOutputWithScreenshot AppOutputProviderDelegate(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings);
+    public delegate AppOutput AppOutputProviderDelegate(Rectangle? region, ICheckSettingsInternal checkSettingsInternal, ImageMatchSettings imageMatchSettings);
 }

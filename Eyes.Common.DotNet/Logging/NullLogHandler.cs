@@ -2,9 +2,9 @@
 {
     public class NullLogHandler : LogHandlerBase
     {
-        public static NullLogHandler Instance = new NullLogHandler();
+        public readonly static NullLogHandler Instance = new NullLogHandler();
 
-        public NullLogHandler() : base(false) { }
+        public NullLogHandler() : base(TraceLevel.None) { }
 
         public override void OnMessage(string message, TraceLevel level) { }
     }
