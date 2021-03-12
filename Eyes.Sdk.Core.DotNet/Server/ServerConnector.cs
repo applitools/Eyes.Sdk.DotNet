@@ -403,8 +403,6 @@ namespace Applitools
                 },
                 ex => listener.OnFail(ex)),
                 request, Logger, new BackoffProvider(2), TimeSpan.FromMinutes(2));
-            //UploadCallback callback = new UploadCallback(listener, this, targetUrl, bytes, contentType, mediaType, testIds);
-            //callback.UploadDataAsync();
         }
 
         private HttpRequestMessage CreateHttpRequestMessageForUpload_(string targetUrl, byte[] bytes,
@@ -487,7 +485,6 @@ namespace Applitools
             {
                 HttpRequestMessage request = CreateUfgHttpWebRequest_("job-info");
                 Logger.Log(TraceLevel.Info, testIds, Stage.Open, StageType.RequestSent, new { request.RequestUri });
-                serializer_.Serialize(renderRequests, request.GetRequestStream());
 
                 httpClient_.SendAsyncRequest(new TaskListener<HttpResponseMessage>(
                     response =>
@@ -512,7 +509,7 @@ namespace Applitools
             catch (Exception e)
             {
                 CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, StageType.JobInfo, e, testIds);
-                throw;
+                listener.OnFail(e);
             }
         }
 
@@ -649,8 +646,6 @@ namespace Applitools
             renderId = renderId ?? "NONE";
             HttpRequestMessage request = CreateUfgHttpWebRequest_($"/query/resources-exist?rg_render-id={renderId}");
             Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, new { hashes, renderId });
-            Logger.Log(TraceLevel.Info, testIds, Stage.ResourceCollection, StageType.CheckResource, Tuple.Create("hashes", (object)hashes));
-            serializer_.Serialize(hashes, request.GetRequestStream());
             SendUFGAsyncRequest_(taskListener, request);
         }
 
@@ -719,7 +714,6 @@ namespace Applitools
 
             HttpRequestMessage request = CreateUfgHttpWebRequest_("render-status");
             // request.Timeout = 1000;
-            serializer_.Serialize(renderIds, request.GetRequestStream());
 
             SendUFGAsyncRequest_(taskListener, request);
         }
