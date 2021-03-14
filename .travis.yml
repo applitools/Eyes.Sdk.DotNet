@@ -68,15 +68,9 @@ before_script:
 jobs:
   include:
     - stage: Test
-      name: Generated Tests
+      name: Generic Tests
       script:
-        - echo "generating tests"
-        - pushd coverage-tests
-        - npm run dotnet:generate
-        - popd
-        - chmod +x ./buildProjects.sh
-        - ./buildProjects.sh coverage-tests/test/Appium/*.csproj
-        - ./buildProjects.sh coverage-tests/test/Selenium/*.csproj
+        - chmod +x ./genericTests.sh && ./genericTests.sh
 
     - name: Images
       script:
