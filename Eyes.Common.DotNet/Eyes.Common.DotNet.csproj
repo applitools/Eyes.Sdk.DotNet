@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
@@ -10,13 +10,19 @@
     </Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>1.4</Version>
+    <Version>1.5</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes common</PackageTags>
     <PackageReleaseNotes>### Added
-- Fluent Command logging.
+- `SaveFailedTests` Configuration property
+- `SessionStartInfo` moved here and was added `AgentSessionId` property
+- `TestStatusResult` enum was added `NotOpened`
+- .NET 5.0 support
+### Updated
+- `MatchWindow` is now async also in `ClassicRunner` [Trello 2092](https://trello.com/c/gulak9SJ)
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Common</PackageId>

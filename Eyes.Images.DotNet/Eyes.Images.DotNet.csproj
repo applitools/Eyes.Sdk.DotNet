@@ -8,13 +8,15 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.21</Version>
+    <Version>2.22</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes images</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Match to latest Eyes.Sdk.Core
+    <PackageReleaseNotes>### Added
+- .NET 5.0 support
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Images</PackageId>

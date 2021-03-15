@@ -1,25 +1,20 @@
-## [Eyes.Common vNext]
-### Added
-- `SaveFailedTests` Configuration property
-- `SessionStartInfo` moved here and was added `AgentSessionId` property
-- `TestStatusResult` enum was added `NotOpened`
-- .NET 5.0 support
-### Updated
-- `MatchWindow` is now async also in `ClassicRunner` [Trello 2092](https://trello.com/c/gulak9SJ)
-- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
-
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Appium 4.19] - 2021-03-15
 ### Added
 - .NET 5.0 support
 ### Updated
-- Made most communication calls asynchronous
-- Added retries for all async communication calls
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
-### Fixed
-- `BatchClose` now support `ApiKey` and `Proxy` [Trello 2435](https://trello.com/c/Dnszwwld)
-- Fixed a bug in the stitching algorithm. [Trello 2223](https://trello.com/c/bHwlpmuX) [Trello 2416](https://trello.com/c/4NDa6Vxl) [Trello 2392](https://trello.com/c/PC2vRlqV)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Images 2.22] - 2021-03-15
+### Added
+- .NET 5.0 support
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+
+## [Eyes.CodedUI 2.18] - 2021-03-15
+### Updated
+- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+
+## [Eyes.Selenium 2.41] - 2021-03-15
 ### Added
 - .NET 5.0 support
 ### Updated
@@ -31,28 +26,33 @@
 ### Fixed
 - `GetClientVisibleRect` now works on IE11 [Trello 2431](https://trello.com/c/rsgJoiIb)
 
-## [Eyes.CodedUI vNext]
+## [Eyes.LeanFT 2.24] - 2021-03-15
 ### Updated
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 
-## [Eyes.LeanFT vNext]
+## [Eyes.Windows 2.23] - 2021-03-15
 ### Updated
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 
-## [Eyes.Windows vNext]
-### Updated
-- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
-
-## [Eyes.Appium vNext]
+## [Eyes.Sdk.Core 2.41] - 2021-03-15
 ### Added
 - .NET 5.0 support
 ### Updated
+- Made most communication calls asynchronous
+- Added retries for all async communication calls
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+### Fixed
+- `BatchClose` now support `ApiKey` and `Proxy` [Trello 2435](https://trello.com/c/Dnszwwld)
+- Fixed a bug in the stitching algorithm. [Trello 2223](https://trello.com/c/bHwlpmuX) [Trello 2416](https://trello.com/c/4NDa6Vxl) [Trello 2392](https://trello.com/c/PC2vRlqV)
 
-## [Eyes.Images vNext]
+## [Eyes.Common 1.5] - 2021-03-15
 ### Added
+- `SaveFailedTests` Configuration property
+- `SessionStartInfo` moved here and was added `AgentSessionId` property
+- `TestStatusResult` enum was added `NotOpened`
 - .NET 5.0 support
 ### Updated
+- `MatchWindow` is now async also in `ClassicRunner` [Trello 2092](https://trello.com/c/gulak9SJ)
 - New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
 
 ## [Eyes.Images 2.21] - 2021-01-12
