@@ -115,6 +115,7 @@ namespace Applitools.Images
 
         public AppImage Check(string name, ICheckSettings checkSettings)
         {
+            ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
             return this.Check(checkSettings.WithName(name));
         }
 
@@ -125,6 +126,7 @@ namespace Applitools.Images
                 return new AppImage(false);
             }
 
+            ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
             checkSettings = checkSettings.Timeout(TimeSpan.Zero); // no need for automatic retry when dealing with images.
             IImagesCheckTarget imagesCheckTarget = checkSettings as IImagesCheckTarget;
             ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;

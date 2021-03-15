@@ -53,6 +53,8 @@ namespace Applitools
                 subregion = new Region(Point.Empty, workingArea_.Size);
             }
             Bitmap subScreenshotImage = BasicImageUtils.Crop(Image, subregion.ToRectangle());
+            DisposeImage();
+
             subregion = subregion.Offset(workingArea_.Left, workingArea_.Top);
             EyesAppiumScreenshot result = new EyesAppiumScreenshot(logger_, subScreenshotImage, subregion, eyes_);
 

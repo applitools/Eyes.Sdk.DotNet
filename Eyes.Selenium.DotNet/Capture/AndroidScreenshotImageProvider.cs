@@ -36,9 +36,10 @@ namespace Applitools.Selenium.Capture
             float widthRatio = image.Width / (float)originalViewportSize.Width;
             float height = widthRatio * originalViewportSize.Height;
             Rectangle cropRect = new Rectangle(0, 0, imageWidth, (int)Math.Round(height));
-            image = BasicImageUtils.Crop(image, cropRect);
+            Bitmap croppedImage = BasicImageUtils.Crop(image, cropRect);
+            image.Dispose();
 
-            return image;
+            return croppedImage;
         }
     }
 }

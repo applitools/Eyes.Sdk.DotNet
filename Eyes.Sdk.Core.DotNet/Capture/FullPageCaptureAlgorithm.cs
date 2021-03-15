@@ -138,7 +138,9 @@ namespace Applitools
             ICutProvider scaledCutProvider = cutProvider_.Scale(pixelRatio);
             if (pixelRatio != 1 && !(scaledCutProvider is NullCutProvider))
             {
-                initialScreenshot = cutProvider_.Cut(initialScreenshot);
+                Bitmap cutScreenshot = cutProvider_.Cut(initialScreenshot);
+                initialScreenshot.Dispose();
+                initialScreenshot = cutScreenshot;
                 debugScreenshotsProvider_.Save(initialScreenshot, "original-cut");
             }
 

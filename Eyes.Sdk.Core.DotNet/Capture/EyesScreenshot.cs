@@ -97,7 +97,7 @@ namespace Applitools
             return GetType().ToString();
         }
 
-        internal void DisposeImage()
+        protected internal void DisposeImage()
         {
             Image?.Dispose();
             Image = null;

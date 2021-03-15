@@ -39,9 +39,10 @@ namespace Applitools.Selenium.Capture
 
             logger_.Verbose("logical viewport size: " + originalViewportSize);
 
+            Bitmap croppedImage = null;
             if (userAgent_.OS.Equals(OSNames.IOS))
             {
-                image = CropIOSImage(image, originalViewportSize, logger_);
+                croppedImage = CropIOSImage(image, originalViewportSize, logger_);
             }
             else if (!eyes_.ForceFullPageScreenshot)
             {
@@ -61,7 +62,12 @@ namespace Applitools.Selenium.Capture
 
                 loc = new Point((int)Math.Ceiling(loc.X * scaleRatio), (int)Math.Ceiling(loc.Y * scaleRatio));
 
-                image = BasicImageUtils.Crop(image, new Rectangle(loc, viewportSize));
+                croppedImage = BasicImageUtils.Crop(image, new Rectangle(loc, viewportSize));
+            }
+            if (croppedImage != null && !ReferenceEquals(croppedImage, image))
+            {
+                image.Dispose();
+                image = croppedImage;
             }
             eyes_.DebugScreenshotProvider.Save(image, "SAFARI_CROPPED");
 

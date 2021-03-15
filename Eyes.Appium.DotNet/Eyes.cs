@@ -328,8 +328,10 @@ namespace Applitools.Appium
             if (!(CutProvider is NullCutProvider))
             {
                 updatedRegion = CutProvider.ToRectangle(screenshotImage.Size);
-                screenshotImage = CutProvider.Cut(screenshotImage);
-                DebugScreenshotProvider.Save(screenshotImage, "cropped");
+                Bitmap croppedScreenshotImage = CutProvider.Cut(screenshotImage);
+                DebugScreenshotProvider.Save(croppedScreenshotImage, "cropped");
+                screenshotImage.Dispose();
+                screenshotImage = croppedScreenshotImage;
             }
             EyesAppiumScreenshot result = new EyesAppiumScreenshot(Logger, screenshotImage, updatedRegion, this);
             if (targetRegion != null && !targetRegion.Value.IsEmpty)
