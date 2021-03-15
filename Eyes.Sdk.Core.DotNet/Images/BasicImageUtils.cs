@@ -79,12 +79,13 @@
             Bitmap resizedImage;
             if (targetWidth > image.Width || targetHeight > image.Height)
             {
-                resizedImage = ScaleImageBicubic_((Bitmap)image, targetWidth, targetHeight);
+                resizedImage = ScaleImageBicubic_(image, targetWidth, targetHeight);
             }
             else
             {
-                resizedImage = ScaleImageIncrementally_((Bitmap)image, targetWidth, targetHeight);
+                resizedImage = ScaleImageIncrementally_(image, targetWidth, targetHeight);
             }
+            image.Dispose();
             #endregion
 
             return resizedImage;

@@ -440,9 +440,11 @@ namespace Applitools.Selenium
         {
             Size rectSize = GetViewportSize();
 
-            EyesScreenshot screenshot = new EyesWebDriverScreenshot(Logger, driver_, new Bitmap(rectSize.Width, rectSize.Height));
-
-            return FindBoundingBox(getRegions, checkSettings, screenshot);
+            using (Bitmap dummyImage = new Bitmap(rectSize.Width, rectSize.Height))
+            {
+                EyesScreenshot screenshot = new EyesWebDriverScreenshot(Logger, driver_, dummyImage);
+                return FindBoundingBox(getRegions, checkSettings, screenshot);
+            }
         }
 
         private Region FindBoundingBox(Dictionary<int, IGetRegions> getRegions, ICheckSettings[] checkSettings, EyesScreenshot screenshot)
@@ -1103,7 +1105,10 @@ namespace Applitools.Selenium
             Size vpSize;
             if (ImageProvider is MobileScreenshotImageProvider mobileScreenshotProvider)
             {
-                vpSize = mobileScreenshotProvider.GetImage().Size;
+                using (Bitmap mobileScreenshot = mobileScreenshotProvider.GetImage())
+                {
+                    vpSize = mobileScreenshot.Size;
+                }
                 vpSize.Width = (int)Math.Round(vpSize.Width / DevicePixelRatio);
                 vpSize.Height = (int)Math.Round(vpSize.Height / DevicePixelRatio);
             }

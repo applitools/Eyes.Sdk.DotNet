@@ -52,7 +52,9 @@ namespace Applitools.Selenium.Capture
                 eyes_.DebugScreenshotProvider.Save(image, "IE");
                 if (!eyes_.IsCutProviderExplicitlySet)
                 {
-                    image = BasicImageUtils.Crop(image, new Rectangle(scaledLoc, viewportSize));
+                    Bitmap croppedImage = BasicImageUtils.Crop(image, new Rectangle(scaledLoc, viewportSize));
+                    image.Dispose();
+                    image = croppedImage;
                 }
             }
 
