@@ -52,6 +52,11 @@ before_script:
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
       python updateChangelogAndProjectFiles.py;
     fi
+  - if [[ tag =~ ^RELEASE_CANDIDATE AND fork == false ]]; then
+      export TEST_REPORT_SANDBOX=false;
+    else
+      export TEST_REPORT_SANDBOX=true;
+    fi
 
 # after_script:
 #   - pkill mitmdump

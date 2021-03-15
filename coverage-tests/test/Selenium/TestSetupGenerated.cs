@@ -17,7 +17,7 @@ using System.Threading;
 
 namespace Applitools.Generated.Selenium.Tests
 {
-    public abstract class TestSetupGenerated// : ReportingTestSuiteGenerrated
+    public abstract class TestSetupGenerated : ReportingTestSuiteGenerrated
     {
 
         protected IWebDriver driver;
