@@ -36,6 +36,7 @@
             }
 
             Bitmap subScreenshotImage = BasicImageUtils.Crop(Image, asIsSubScreenshotRegion.ToRectangle());
+            DisposeImage();
 
             EyesImagesScreenshot result = new EyesImagesScreenshot(subScreenshotImage);
             return result;
