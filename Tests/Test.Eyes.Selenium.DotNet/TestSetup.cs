@@ -475,7 +475,8 @@ namespace Applitools.Selenium.Tests
                         Directory.CreateDirectory(directory);
                         File.WriteAllText(Path.Combine(directory, testData.TestNameAsFilename + ".json"), serializedRequests);
                     }
-                    Assert.AreEqual(testData.ExpectedVGOutput, serializedRequests, "VG Request DOM JSON");
+                    string expectedVGOutput = testData.ExpectedVGOutput?.Replace("{{agentId}}", eyes.FullAgentId);
+                    Assert.AreEqual(expectedVGOutput, serializedRequests, "VG Request DOM JSON");
                 }
             }
             catch (Exception ex)
