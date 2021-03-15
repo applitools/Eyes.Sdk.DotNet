@@ -375,6 +375,8 @@ namespace Applitools.Selenium
                 MatchRegion(checkSettingsInternal, mwt, subScreenshots);
             }
 
+            screenshot.DisposeImage();
+
             if (Config_.HideCaret && activeElement != null)
             {
                 driver_.ExecuteScript("arguments[0].focus();", activeElement);
@@ -1219,7 +1221,10 @@ namespace Applitools.Selenium
                 Logger.Verbose($"{nameof(state.EffectiveViewport)}: {{0}} ; {nameof(state.FullRegion)}: {{1}}",
                     state.EffectiveViewport, state.FullRegion);
                 result = GetViewportScreenshot_(scaleProviderFactory, state);
-                result = (EyesWebDriverScreenshot)result.GetSubScreenshot(state.FullRegion, true);
+                EyesWebDriverScreenshot fullRegionResult = (EyesWebDriverScreenshot)result.GetSubScreenshot(
+                    state.FullRegion, true);
+                result.DisposeImage();
+                result = fullRegionResult;
             }
             else if (targetElement != null || stitchContent)
             {
@@ -1232,7 +1237,10 @@ namespace Applitools.Selenium
 
             if (targetRegion.HasValue)
             {
-                result = (EyesWebDriverScreenshot)result.GetSubScreenshot(targetRegion.Value, false);
+                EyesWebDriverScreenshot targetRegionResult = (EyesWebDriverScreenshot)result.GetSubScreenshot(
+                    targetRegion.Value, false);
+                result.DisposeImage();
+                result = targetRegionResult;
             }
 
             result.DomUrl = TryCaptureAndPostDom(checkSettingsInternal);
