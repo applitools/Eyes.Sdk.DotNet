@@ -438,20 +438,20 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        private Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(SeleniumCheckSettings seleniumCheckSettings)
+        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(SeleniumCheckSettings seleniumCheckSettings)
         {
             IList<int> layoutBreakpoint;
-            bool isDefaultLayoutBreakpointsSet;
+            bool isLayoutBreakpointsEnabled;
             if (seleniumCheckSettings.GetLayoutBreakpoints().Count > 0 ||
-                seleniumCheckSettings.GetDefaultLayoutBreakpoints())
+                seleniumCheckSettings.GetLayoutBreakpointsEnabled())
             {
                 layoutBreakpoint = seleniumCheckSettings.GetLayoutBreakpoints();
-                isDefaultLayoutBreakpointsSet = seleniumCheckSettings.GetDefaultLayoutBreakpoints();
+                isLayoutBreakpointsEnabled = seleniumCheckSettings.GetLayoutBreakpointsEnabled();
             }
             else
             {
                 layoutBreakpoint = GetConfigClone_().LayoutBreakpoints;
-                isDefaultLayoutBreakpointsSet = GetConfigClone_().DefaultLayoutBreakpoints;
+                isLayoutBreakpointsEnabled = GetConfigClone_().LayoutBreakpointsEnabled;
             }
 
             HashSet<string> testIds = new HashSet<string>();
@@ -461,7 +461,7 @@ namespace Applitools.Selenium.VisualGrid
             }
 
             Dictionary<int, List<RunningTest>> requiredWidths = new Dictionary<int, List<RunningTest>>();
-            if (isDefaultLayoutBreakpointsSet || layoutBreakpoint.Count > 0)
+            if (isLayoutBreakpointsEnabled || layoutBreakpoint.Count > 0)
             {
                 foreach (RunningTest runningTest in testList_.Values)
                 {

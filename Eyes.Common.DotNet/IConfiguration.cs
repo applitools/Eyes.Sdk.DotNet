@@ -60,7 +60,7 @@ namespace Applitools
         AccessibilitySettings AccessibilityValidation { get; set; }
         int? AbortIdleTestTimeout { get; set; }
 
-        bool DefaultLayoutBreakpoints { get; set; }
+        bool LayoutBreakpointsEnabled { get; set; }
 
         IList<int> LayoutBreakpoints { get; set; }
 
@@ -92,7 +92,7 @@ namespace Applitools
         IConfiguration SetEnablePatterns(bool value);
         IConfiguration SetAccessibilityValidation(AccessibilitySettings value);
         IConfiguration SetAbortIdleTestTimeout(int? value);
-        IConfiguration SetDefaultLayoutBreakpoints(bool shouldSet);
+        IConfiguration SetLayoutBreakpointsEnabled(bool shouldSet);
         IConfiguration SetLayoutBreakpoints(params int[] breakpoints);
     }
 }

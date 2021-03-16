@@ -176,7 +176,7 @@ namespace Applitools.Selenium
         public new IConfiguration SetIgnoreDisplacements(bool value) => (IConfiguration)base.SetIgnoreDisplacements(value);
         public new IConfiguration SetAccessibilityValidation(AccessibilitySettings value) => (IConfiguration)base.SetAccessibilityValidation(value);
         public new IConfiguration SetAbortIdleTestTimeout(int? value) => (IConfiguration)base.SetAbortIdleTestTimeout(value);
-        public new IConfiguration SetDefaultLayoutBreakpoints(bool value) => (IConfiguration)base.SetDefaultLayoutBreakpoints(value);
+        public new IConfiguration SetLayoutBreakpointsEnabled(bool value) => (IConfiguration)base.SetLayoutBreakpointsEnabled(value);
         public new IConfiguration SetLayoutBreakpoints(params int[] value) => (IConfiguration)base.SetLayoutBreakpoints(value);
         #endregion
 

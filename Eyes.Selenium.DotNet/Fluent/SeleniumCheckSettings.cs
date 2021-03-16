@@ -547,7 +547,7 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
+        public SeleniumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             SeleniumCheckSettings clone = Clone_();
             clone.defaultLayoutBreakpoints_ = shouldSet;
@@ -572,16 +572,16 @@ namespace Applitools.Selenium.Fluent
             }
 
             clone.layoutBreakpoints_.Sort();
-            return this;
+            return clone;
         }
 
-        private List<int> layoutBreakpoints_ = new List<int>();
+        private readonly List<int> layoutBreakpoints_ = new List<int>();
         public List<int> GetLayoutBreakpoints()
         {
             return layoutBreakpoints_;
         }
 
-        public bool GetDefaultLayoutBreakpoints()
+        public bool GetLayoutBreakpointsEnabled()
         {
             return defaultLayoutBreakpoints_;
         }

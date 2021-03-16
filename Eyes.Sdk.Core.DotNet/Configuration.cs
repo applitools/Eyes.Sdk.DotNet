@@ -41,7 +41,7 @@ namespace Applitools
             TestName = configuration.TestName;
             ViewportSize = configuration.ViewportSize;
             AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
-            DefaultLayoutBreakpoints = configuration.DefaultLayoutBreakpoints;
+            LayoutBreakpointsEnabled = configuration.LayoutBreakpointsEnabled;
             layoutBreakpoints_ = new List<int>(configuration.LayoutBreakpoints);
         }
 
@@ -405,14 +405,14 @@ namespace Applitools
             return this;
         }
 
-        public IConfiguration SetDefaultLayoutBreakpoints(bool shouldSet)
+        public IConfiguration SetLayoutBreakpointsEnabled(bool shouldSet)
         {
-            DefaultLayoutBreakpoints = shouldSet;
+            LayoutBreakpointsEnabled = shouldSet;
             LayoutBreakpoints.Clear();
             return this;
         }
 
-        public bool DefaultLayoutBreakpoints { get; set; }
+        public bool LayoutBreakpointsEnabled { get; set; }
 
         public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
         {
@@ -421,7 +421,7 @@ namespace Applitools
 
         private IConfiguration SetLayoutBreakpoints_(IList<int> breakpoints)
         {
-            DefaultLayoutBreakpoints = false;
+            LayoutBreakpointsEnabled = false;
             LayoutBreakpoints.Clear();
             if (breakpoints == null || breakpoints.Count == 0)
             {
@@ -438,7 +438,7 @@ namespace Applitools
             return this;
         }
 
-        private IList<int> layoutBreakpoints_ = new List<int>();
+        private readonly IList<int> layoutBreakpoints_ = new List<int>();
         public IList<int> LayoutBreakpoints
         {
             get => layoutBreakpoints_;
