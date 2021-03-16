@@ -62,8 +62,7 @@ namespace Applitools
 
         bool DefaultLayoutBreakpoints { get; set; }
 
-        [GetterOnly]
-        IList<int> LayoutBreakpoints { get; }
+        IList<int> LayoutBreakpoints { get; set; }
 
         IConfiguration SetAgentId(string value);
         IConfiguration SetAppName(string value);

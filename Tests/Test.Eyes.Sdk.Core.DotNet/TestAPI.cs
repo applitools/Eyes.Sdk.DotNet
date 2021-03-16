@@ -23,12 +23,7 @@ namespace Applitools.Tests
             PropertyInfo[] properties = configType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in properties)
             {
-                bool isGetterOnly = pi.GetCustomAttribute<GetterOnlyAttribute>() != null;
-                if (!isGetterOnly)
-                {
-                    Assert.NotNull(pi.GetSetMethod(), $"Property {pi.Name} doesn't have SET method");
-                }
-
+                Assert.NotNull(pi.GetSetMethod(), $"Property {pi.Name} doesn't have SET method");
                 Assert.NotNull(pi.GetGetMethod(), $"Property {pi.Name} doesn't have GET method");
                 {
                     MethodInfo mi = configType.GetMethod("Set" + pi.Name, BindingFlags.Public | BindingFlags.Instance);
@@ -36,11 +31,11 @@ namespace Applitools.Tests
                     Assert.AreEqual(configType, mi.ReturnType);
                     ParameterInfo[] paramsInfo = mi.GetParameters();
                     Assert.AreEqual(1, paramsInfo.Length);
-                    Assert.IsTrue(pi.PropertyType.IsAssignableFrom(paramsInfo[0].ParameterType), 
+                    Assert.IsTrue(pi.PropertyType.IsAssignableFrom(paramsInfo[0].ParameterType),
                         "Setter method parameter type {0} is not assignable from {1}", paramsInfo[0].ParameterType, pi.PropertyType);
                     //Assert.AreEqual(pi.PropertyType, paramsInfo[0].ParameterType);
                 }
-               
+
                 {
                     MethodInfo mi = seleniumConfigType.GetMethod("Set" + pi.Name, BindingFlags.Public | BindingFlags.Instance);
                     Assert.NotNull(mi, "method 'Set{0}' isn't overriden in Selenium.Configuration", pi.Name);
@@ -369,6 +364,15 @@ namespace Applitools.Tests
                     list.Add(new VisualGridOption("option2", true));
                 }
                 modifiedValue = list.ToArray();
+            }
+            else if (type == typeof(IList<int>))
+            {
+                var list = new int[] { 1, 2, 3 };
+                if (origValue != null && list.Length == ((IList<int>)origValue).Count)
+                {
+                    list = new int[] { 1, 2, 3, 4 };
+                }
+                modifiedValue = list;
             }
             return modifiedValue;
         }
