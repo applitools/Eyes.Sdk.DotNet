@@ -1,6 +1,7 @@
 ﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using System;
+using System.Collections.Generic;
 
 namespace Applitools
 {
@@ -40,6 +41,7 @@ namespace Applitools
             TestName = configuration.TestName;
             ViewportSize = configuration.ViewportSize;
             AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
+            IsDefaultLayoutBreakpointsSet = configuration.IsDefaultLayoutBreakpointsSet;
         }
 
 
@@ -401,6 +403,36 @@ namespace Applitools
             AbortIdleTestTimeout = value;
             return this;
         }
+
+        public IConfiguration SetLayoutBreakpoints(bool shouldSet)
+        {
+            IsDefaultLayoutBreakpointsSet = shouldSet;
+            LayoutBreakpoints.Clear();
+            return this;
+        }
+
+        public bool IsDefaultLayoutBreakpointsSet { get; set; }
+
+        public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
+        {
+            IsDefaultLayoutBreakpointsSet = false;
+            LayoutBreakpoints.Clear();
+            if (breakpoints == null || breakpoints.Length == 0)
+            {
+                return this;
+            }
+
+            foreach (int breakpoint in breakpoints)
+            {
+                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
+                LayoutBreakpoints.Add(breakpoint);
+            }
+
+            ((List<int>)LayoutBreakpoints).Sort();
+            return this;
+        }
+
+        public IList<int> LayoutBreakpoints { get; } = new List<int>();
 
         public virtual Configuration Clone()
         {
