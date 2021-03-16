@@ -41,7 +41,7 @@ namespace Applitools
             TestName = configuration.TestName;
             ViewportSize = configuration.ViewportSize;
             AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
-            IsDefaultLayoutBreakpointsSet = configuration.IsDefaultLayoutBreakpointsSet;
+            DefaultLayoutBreakpoints = configuration.DefaultLayoutBreakpoints;
         }
 
 
@@ -404,18 +404,18 @@ namespace Applitools
             return this;
         }
 
-        public IConfiguration SetLayoutBreakpoints(bool shouldSet)
+        public IConfiguration SetDefaultLayoutBreakpoints(bool shouldSet)
         {
-            IsDefaultLayoutBreakpointsSet = shouldSet;
+            DefaultLayoutBreakpoints = shouldSet;
             LayoutBreakpoints.Clear();
             return this;
         }
 
-        public bool IsDefaultLayoutBreakpointsSet { get; set; }
+        public bool DefaultLayoutBreakpoints { get; set; }
 
         public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
         {
-            IsDefaultLayoutBreakpointsSet = false;
+            DefaultLayoutBreakpoints = false;
             LayoutBreakpoints.Clear();
             if (breakpoints == null || breakpoints.Length == 0)
             {
