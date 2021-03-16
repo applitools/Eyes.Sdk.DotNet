@@ -55,7 +55,7 @@ before_script:
   - if [[ tag =~ ^RELEASE_CANDIDATE && fork == false ]]; then
       export TEST_REPORT_SANDBOX=false;
     else
-      export TEST_REPORT_SANDBOX=false;
+      export TEST_REPORT_SANDBOX=true;
     fi
 
 # after_script:
