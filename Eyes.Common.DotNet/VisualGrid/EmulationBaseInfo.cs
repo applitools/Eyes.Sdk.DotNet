@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Applitools.Utils.Geometry;
+using System;
 
 namespace Applitools.VisualGrid
 {
@@ -10,6 +11,7 @@ namespace Applitools.VisualGrid
         }
 
         public ScreenOrientation ScreenOrientation { get; set; }
+        public RectangleSize Size { get; set; }
 
         public bool Equals(EmulationBaseInfo other)
         {

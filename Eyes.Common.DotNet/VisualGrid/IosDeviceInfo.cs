@@ -1,5 +1,6 @@
 ﻿using Applitools.Selenium;
 using Applitools.Utils;
+using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
@@ -20,6 +21,9 @@ namespace Applitools.VisualGrid
 
         [JsonProperty("name")]
         public IosDeviceName DeviceName { get; }
+
+        [JsonIgnore]
+        public RectangleSize Size { get; set; }
 
         [JsonIgnore]
         public string SerializedDeviceName
