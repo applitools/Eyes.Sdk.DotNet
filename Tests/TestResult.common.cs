@@ -23,7 +23,7 @@ namespace Applitools.Tests.Utils
         [JsonProperty("passed")]
         public bool Passed { get; set; }
 
-        public bool Equals([AllowNull] TestResult other)
+        public bool Equals(TestResult other)
         {
             if (other == null) return false;
             return TestName.Equals(other.TestName) &&
