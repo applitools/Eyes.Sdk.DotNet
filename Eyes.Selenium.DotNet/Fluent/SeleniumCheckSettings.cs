@@ -15,6 +15,7 @@ namespace Applitools.Selenium.Fluent
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_ = null;
+        private bool defaultLayoutBreakpoints_;
 
         internal SeleniumCheckSettings()
         {
@@ -546,6 +547,45 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
+        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
+        {
+            SeleniumCheckSettings clone = Clone_();
+            clone.defaultLayoutBreakpoints_ = shouldSet;
+            clone.layoutBreakpoints_.Clear();
+            return clone;
+        }
+
+        public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
+        {
+            SeleniumCheckSettings clone = Clone_();
+            clone.defaultLayoutBreakpoints_ = false;
+            clone.layoutBreakpoints_.Clear();
+            if (breakpoints == null || breakpoints.Length == 0)
+            {
+                return clone;
+            }
+
+            foreach (int breakpoint in breakpoints)
+            {
+                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
+                clone.layoutBreakpoints_.Add(breakpoint);
+            }
+
+            clone.layoutBreakpoints_.Sort();
+            return this;
+        }
+
+        private List<int> layoutBreakpoints_ = new List<int>();
+        public List<int> GetLayoutBreakpoints()
+        {
+            return layoutBreakpoints_;
+        }
+
+        public bool GetDefaultLayoutBreakpoints()
+        {
+            return defaultLayoutBreakpoints_;
+        }
+
         public new SeleniumCheckSettings Accessibility(AccessibilityRegionByRectangle region)
         {
             return (SeleniumCheckSettings)base.Accessibility(region);
@@ -722,6 +762,8 @@ namespace Applitools.Selenium.Fluent
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
+            clone.defaultLayoutBreakpoints_ = defaultLayoutBreakpoints_;
+            clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             return clone;
         }
 
