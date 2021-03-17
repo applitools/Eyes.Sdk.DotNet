@@ -84,6 +84,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configuration", "configuration", "{6F0429F3-5C65-4C4D-84C2-7498F1DD2B28}"
 	ProjectSection(SolutionItems) = preProject
 		coverage-tests\configuration\index.js = coverage-tests\configuration\index.js
+		coverage-tests\configuration\overrides.js = coverage-tests\configuration\overrides.js
 	EndProjectSection
 EndProject
 Global

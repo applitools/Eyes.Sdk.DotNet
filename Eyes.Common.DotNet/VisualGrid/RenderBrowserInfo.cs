@@ -33,7 +33,7 @@ namespace Applitools.VisualGrid
         {
             return ViewportSize ??
                    EmulationInfo?.Size ??
-                   IosDeviceInfo.Size ??
+                   IosDeviceInfo?.Size ??
                    Size.Empty;
         }
 

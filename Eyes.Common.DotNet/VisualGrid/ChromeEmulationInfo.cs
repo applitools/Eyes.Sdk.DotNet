@@ -17,7 +17,8 @@ namespace Applitools.VisualGrid
             }
         }
 
-        public ChromeEmulationInfo(DeviceName deviceName, ScreenOrientation screenOrientation) : base(screenOrientation)
+        public ChromeEmulationInfo(DeviceName deviceName, 
+            ScreenOrientation screenOrientation = ScreenOrientation.Portrait) : base(screenOrientation)
         {
             DeviceName = deviceName;
         }

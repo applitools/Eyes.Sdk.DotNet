@@ -5,6 +5,7 @@ using Applitools.Ufg.Model;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -203,6 +204,19 @@ namespace Applitools.Selenium.VisualGrid
             IServerConnector serverConnector = runner_.ServerConnector;
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
+                if (browserInfo.EmulationInfo as ChromeEmulationInfo != null)
+                {
+                    ChromeEmulationInfo emulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo;
+                    Dictionary<DeviceName, DeviceSize> deviceSizes = serverConnector.GetEmulatedDevicesSizes();
+                    deviceSizes.TryGetValue(emulationInfo.DeviceName, out DeviceSize size);
+                    browserInfo.SetEmulationDeviceSize(size);
+                }
+                if (browserInfo.IosDeviceInfo != null)
+                {
+                    Dictionary<IosDeviceName, DeviceSize> deviceSizes = serverConnector.GetIosDevicesSizes();
+                    deviceSizes.TryGetValue(browserInfo.IosDeviceInfo.DeviceName, out DeviceSize size);
+                    browserInfo.SetIosDeviceSize(size);
+                }
                 VisualGridRunningTest test = new VisualGridRunningTest(
                     eyesId_, browserInfo, Logger, configProvider_, serverConnector);
                 testList_.Add(test.TestId, test);
@@ -417,12 +431,6 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     CaptureDomForResourceCollection_(entry.Key, entry.Value, switchTo, checkSettingsInternal, regionsXPaths, source);
                 }
-
-
-
-
-
-
             }
             catch (Exception e)
             {
