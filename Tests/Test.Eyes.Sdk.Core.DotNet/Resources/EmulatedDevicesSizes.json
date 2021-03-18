@@ -1,0 +1,1100 @@
+﻿{
+  "BlackBerry Z30": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Blackberry PlayBook": {
+    "landscape": {
+      "height": 600,
+      "width": 1024
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 1
+    },
+    "portrait": {
+      "height": 1024,
+      "width": 600
+    }
+  },
+  "Galaxy A5": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy Note 10": {
+    "landscape": {
+      "height": 412,
+      "width": 787
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 787,
+      "width": 412
+    }
+  },
+  "Galaxy Note 10 Plus": {
+    "landscape": {
+      "height": 412,
+      "width": 789
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 789,
+      "width": 412
+    }
+  },
+  "Galaxy Note 2": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy Note 3": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy Note 4": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 4
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy Note 8": {
+    "landscape": {
+      "height": 412,
+      "width": 798
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 798,
+      "width": 412
+    }
+  },
+  "Galaxy Note 9": {
+    "landscape": {
+      "height": 412,
+      "width": 798
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 798,
+      "width": 412
+    }
+  },
+  "Galaxy Note II": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy S III": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy S10": {
+    "landscape": {
+      "height": 412,
+      "width": 778
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 778,
+      "width": 412
+    }
+  },
+  "Galaxy S10 Plus": {
+    "landscape": {
+      "height": 412,
+      "width": 780
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 780,
+      "width": 412
+    }
+  },
+  "Galaxy S20": {
+    "landscape": {
+      "height": 360,
+      "width": 800
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 4
+    },
+    "portrait": {
+      "height": 800,
+      "width": 360
+    }
+  },
+  "Galaxy S3": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy S5": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Galaxy S8": {
+    "landscape": {
+      "height": 360,
+      "width": 692
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 692,
+      "width": 360
+    }
+  },
+  "Galaxy S8 Plus": {
+    "landscape": {
+      "height": 412,
+      "width": 798
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 798,
+      "width": 412
+    }
+  },
+  "Galaxy S9": {
+    "landscape": {
+      "height": 360,
+      "width": 692
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 692,
+      "width": 360
+    }
+  },
+  "Galaxy S9 Plus": {
+    "landscape": {
+      "height": 412,
+      "width": 798
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 798,
+      "width": 412
+    }
+  },
+  "Kindle Fire HDX": {
+    "landscape": {
+      "height": 800,
+      "width": 1280
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1280,
+      "width": 800
+    }
+  },
+  "LG G6": {
+    "landscape": {
+      "height": 360,
+      "width": 720
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 4
+    },
+    "portrait": {
+      "height": 720,
+      "width": 360
+    }
+  },
+  "LG Optimus L70": {
+    "landscape": {
+      "height": 384,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 1.25
+    },
+    "portrait": {
+      "height": 640,
+      "width": 384
+    }
+  },
+  "Laptop with HiDPI screen": {
+    "landscape": {
+      "height": 900,
+      "width": 1440
+    },
+    "metadata": {
+      "capabilities": [],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1440,
+      "width": 900
+    }
+  },
+  "Laptop with MDPI screen": {
+    "landscape": {
+      "height": 800,
+      "width": 1280
+    },
+    "metadata": {
+      "capabilities": [],
+      "pixelRatio": 1
+    },
+    "portrait": {
+      "height": 1280,
+      "width": 800
+    }
+  },
+  "Laptop with touch": {
+    "landscape": {
+      "height": 950,
+      "width": 1280
+    },
+    "metadata": {
+      "capabilities": [
+        "touch"
+      ],
+      "pixelRatio": 1
+    },
+    "portrait": {
+      "height": 1280,
+      "width": 950
+    }
+  },
+  "Microsoft Lumia 550": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 360,
+      "width": 640
+    }
+  },
+  "Microsoft Lumia 950": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 4
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Nexus 10": {
+    "landscape": {
+      "height": 968,
+      "width": 1296
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1296,
+      "width": 968
+    }
+  },
+  "Nexus 4": {
+    "landscape": {
+      "height": 384,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 384
+    }
+  },
+  "Nexus 5": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Nexus 5X": {
+    "landscape": {
+      "height": 412,
+      "width": 732
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 732,
+      "width": 412
+    }
+  },
+  "Nexus 6": {
+    "landscape": {
+      "height": 412,
+      "width": 732
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3.5
+    },
+    "portrait": {
+      "height": 732,
+      "width": 412
+    }
+  },
+  "Nexus 6P": {
+    "landscape": {
+      "height": 412,
+      "width": 732
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3.5
+    },
+    "portrait": {
+      "height": 732,
+      "width": 412
+    }
+  },
+  "Nexus 7": {
+    "landscape": {
+      "height": 600,
+      "width": 960
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 960,
+      "width": 600
+    }
+  },
+  "Nokia Lumia 520": {
+    "landscape": {
+      "height": 320,
+      "width": 533
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 1.5
+    },
+    "portrait": {
+      "height": 533,
+      "width": 320
+    }
+  },
+  "Nokia N9": {
+    "landscape": {
+      "height": 480,
+      "width": 854
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 1
+    },
+    "portrait": {
+      "height": 854,
+      "width": 480
+    }
+  },
+  "OnePlus 7T": {
+    "landscape": {
+      "height": 412,
+      "width": 841
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 841,
+      "width": 412
+    }
+  },
+  "OnePlus 7T Pro": {
+    "landscape": {
+      "height": 412,
+      "width": 892
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3.5
+    },
+    "portrait": {
+      "height": 892,
+      "width": 412
+    }
+  },
+  "Pixel 2": {
+    "landscape": {
+      "height": 411,
+      "width": 731
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.625
+    },
+    "portrait": {
+      "height": 731,
+      "width": 411
+    }
+  },
+  "Pixel 2 XL": {
+    "landscape": {
+      "height": 411,
+      "width": 823
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3.5
+    },
+    "portrait": {
+      "height": 823,
+      "width": 411
+    }
+  },
+  "Pixel 3": {
+    "landscape": {
+      "height": 393,
+      "width": 738
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.75
+    },
+    "portrait": {
+      "height": 738,
+      "width": 393
+    }
+  },
+  "Pixel 3 XL": {
+    "landscape": {
+      "height": 412,
+      "width": 749
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3.5
+    },
+    "portrait": {
+      "height": 749,
+      "width": 412
+    }
+  },
+  "Pixel 4": {
+    "landscape": {
+      "height": 393,
+      "width": 830
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2.75
+    },
+    "portrait": {
+      "height": 830,
+      "width": 393
+    }
+  },
+  "Pixel 4 XL": {
+    "landscape": {
+      "height": 412,
+      "width": 869
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3.5
+    },
+    "portrait": {
+      "height": 869,
+      "width": 412
+    }
+  },
+  "Samsung Galaxy A5": {
+    "landscape": {
+      "height": 360,
+      "width": 640
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 640,
+      "width": 360
+    }
+  },
+  "Samsung Galaxy S8": {
+    "landscape": {
+      "height": 360,
+      "width": 692
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 692,
+      "width": 360
+    }
+  },
+  "iPad": {
+    "landscape": {
+      "height": 768,
+      "width": 1024
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1024,
+      "width": 768
+    }
+  },
+  "iPad 6th Gen": {
+    "landscape": {
+      "height": 768,
+      "width": 1024
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1024,
+      "width": 768
+    }
+  },
+  "iPad 7th Gen": {
+    "landscape": {
+      "height": 810,
+      "width": 1080
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1080,
+      "width": 810
+    }
+  },
+  "iPad Air 2": {
+    "landscape": {
+      "height": 768,
+      "width": 1024
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1024,
+      "width": 768
+    }
+  },
+  "iPad Mini": {
+    "landscape": {
+      "height": 768,
+      "width": 1024
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1024,
+      "width": 768
+    }
+  },
+  "iPad Pro": {
+    "landscape": {
+      "height": 1024,
+      "width": 1366
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 1366,
+      "width": 1024
+    }
+  },
+  "iPhone 11": {
+    "landscape": {
+      "height": 414,
+      "width": 808
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 808,
+      "width": 414
+    }
+  },
+  "iPhone 11 Pro": {
+    "landscape": {
+      "height": 375,
+      "width": 724
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 724,
+      "width": 375
+    }
+  },
+  "iPhone 11 Pro Max": {
+    "landscape": {
+      "height": 414,
+      "width": 808
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 808,
+      "width": 414
+    }
+  },
+  "iPhone 4": {
+    "landscape": {
+      "height": 320,
+      "width": 480
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 480,
+      "width": 320
+    }
+  },
+  "iPhone 5/SE": {
+    "landscape": {
+      "height": 320,
+      "width": 568
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 568,
+      "width": 320
+    }
+  },
+  "iPhone 6/7/8": {
+    "landscape": {
+      "height": 375,
+      "width": 667
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 667,
+      "width": 375
+    }
+  },
+  "iPhone 6/7/8 Plus": {
+    "landscape": {
+      "height": 414,
+      "width": 736
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 736,
+      "width": 414
+    }
+  },
+  "iPhone X": {
+    "landscape": {
+      "height": 375,
+      "width": 812
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 812,
+      "width": 375
+    }
+  },
+  "iPhone XR": {
+    "landscape": {
+      "height": 414,
+      "width": 808
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 2
+    },
+    "portrait": {
+      "height": 808,
+      "width": 414
+    }
+  },
+  "iPhone XS": {
+    "landscape": {
+      "height": 375,
+      "width": 724
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 724,
+      "width": 375
+    }
+  },
+  "iPhone XS Max": {
+    "landscape": {
+      "height": 414,
+      "width": 808
+    },
+    "metadata": {
+      "capabilities": [
+        "touch",
+        "mobile"
+      ],
+      "pixelRatio": 3
+    },
+    "portrait": {
+      "height": 808,
+      "width": 414
+    }
+  }
+}

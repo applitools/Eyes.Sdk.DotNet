@@ -16,7 +16,7 @@ namespace Applitools.Selenium
         bool HideScrollbars { get; set; }
 
         bool HideCaret { get; set; }
-       
+
         bool DisableBrowserFetching { get; set; }
 
         List<RenderBrowserInfo> GetBrowsersInfo();
@@ -77,6 +77,8 @@ namespace Applitools.Selenium
         new IConfiguration SetUseDom(bool value);
         new IConfiguration SetAccessibilityValidation(AccessibilitySettings value);
         new IConfiguration SetAbortIdleTestTimeout(int? value);
+        new IConfiguration SetLayoutBreakpointsEnabled(bool value);
+        new IConfiguration SetLayoutBreakpoints(params int[] value);
         #endregion
     }
 }

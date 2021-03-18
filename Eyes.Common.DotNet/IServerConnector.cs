@@ -1,4 +1,5 @@
 ﻿using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -35,5 +36,7 @@ namespace Applitools
         void Render(TaskListener<List<RunningRender>> renderListener, IList<IRenderRequest> requests);
         void RenderStatusById(TaskListener<List<RenderStatusResults>> pollingListener,
             IList<string> testIds, IList<string> renderIds);
+        Dictionary<DeviceName, DeviceSize> GetEmulatedDevicesSizes();
+        Dictionary<IosDeviceName, DeviceSize> GetIosDevicesSizes();
     }
 }

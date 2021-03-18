@@ -1,0 +1,388 @@
+﻿{
+    "iPhone 12 Pro Max": {
+        "portrait": {
+            "height": 926,
+            "width": 428
+        },
+        "landscapeLeft": {
+            "height": 428,
+            "width": 926
+        },
+        "landscapeRight": {
+            "height": 428,
+            "width": 926
+        },
+        "landscape": {
+            "height": 428,
+            "width": 926
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone 12 Pro": {
+        "portrait": {
+            "height": 844,
+            "width": 390
+        },
+        "landscapeLeft": {
+            "height": 390,
+            "width": 844
+        },
+        "landscapeRight": {
+            "height": 390,
+            "width": 844
+        },
+        "landscape": {
+            "height": 390,
+            "width": 844
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone 12": {
+        "portrait": {
+            "height": 844,
+            "width": 390
+        },
+        "landscapeLeft": {
+            "height": 390,
+            "width": 844
+        },
+        "landscapeRight": {
+            "height": 390,
+            "width": 844
+        },
+        "landscape": {
+            "height": 390,
+            "width": 844
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone 12 mini": {
+        "portrait": {
+            "height": 780,
+            "width": 360
+        },
+        "landscapeLeft": {
+            "height": 360,
+            "width": 780
+        },
+        "landscapeRight": {
+            "height": 360,
+            "width": 780
+        },
+        "landscape": {
+            "height": 360,
+            "width": 780
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone 11 Pro Max": {
+        "portrait": {
+            "height": 896,
+            "width": 414
+        },
+        "landscapeLeft": {
+            "height": 414,
+            "width": 896
+        },
+        "landscapeRight": {
+            "height": 414,
+            "width": 896
+        },
+        "landscape": {
+            "height": 414,
+            "width": 896
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone 11 Pro": {
+        "portrait": {
+            "height": 812,
+            "width": 375
+        },
+        "landscapeLeft": {
+            "height": 375,
+            "width": 812
+        },
+        "landscapeRight": {
+            "height": 375,
+            "width": 812
+        },
+        "landscape": {
+            "height": 375,
+            "width": 812
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone 11": {
+        "portrait": {
+            "height": 896,
+            "width": 414
+        },
+        "landscapeLeft": {
+            "height": 414,
+            "width": 896
+        },
+        "landscapeRight": {
+            "height": 414,
+            "width": 896
+        },
+        "landscape": {
+            "height": 414,
+            "width": 896
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    },
+    "iPhone Xs": {
+        "portrait": {
+            "height": 812,
+            "width": 375
+        },
+        "landscapeLeft": {
+            "height": 375,
+            "width": 812
+        },
+        "landscapeRight": {
+            "height": 375,
+            "width": 812
+        },
+        "landscape": {
+            "height": 375,
+            "width": 812
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone X": {
+        "portrait": {
+            "height": 812,
+            "width": 375
+        },
+        "landscapeLeft": {
+            "height": 375,
+            "width": 812
+        },
+        "landscapeRight": {
+            "height": 375,
+            "width": 812
+        },
+        "landscape": {
+            "height": 375,
+            "width": 812
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 3
+        }
+    },
+    "iPhone XR": {
+        "portrait": {
+            "height": 896,
+            "width": 414
+        },
+        "landscapeLeft": {
+            "height": 414,
+            "width": 896
+        },
+        "landscapeRight": {
+            "height": 414,
+            "width": 896
+        },
+        "landscape": {
+            "height": 414,
+            "width": 896
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    },
+    "iPhone 8": {
+        "portrait": {
+            "height": 667,
+            "width": 375
+        },
+        "landscapeLeft": {
+            "height": 375,
+            "width": 667
+        },
+        "landscapeRight": {
+            "height": 375,
+            "width": 667
+        },
+        "landscape": {
+            "height": 375,
+            "width": 667
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    },
+    "iPhone 7": {
+        "portrait": {
+            "height": 667,
+            "width": 375
+        },
+        "landscapeLeft": {
+            "height": 375,
+            "width": 667
+        },
+        "landscapeRight": {
+            "height": 375,
+            "width": 667
+        },
+        "landscape": {
+            "height": 375,
+            "width": 667
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    },
+    "iPad Air (2nd generation)": {
+        "portrait": {
+            "height": 1024,
+            "width": 768
+        },
+        "landscapeLeft": {
+            "height": 768,
+            "width": 1024
+        },
+        "landscapeRight": {
+            "height": 768,
+            "width": 1024
+        },
+        "landscape": {
+            "height": 768,
+            "width": 1024
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    },
+    "iPad Pro (12.9-inch) (3rd generation)": {
+        "portrait": {
+            "height": 1366,
+            "width": 1024
+        },
+        "landscapeLeft": {
+            "height": 1024,
+            "width": 1366
+        },
+        "landscapeRight": {
+            "height": 1024,
+            "width": 1366
+        },
+        "landscape": {
+            "height": 1024,
+            "width": 1366
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    },
+    "iPad (7th generation)": {
+        "portrait": {
+            "height": 1080,
+            "width": 810
+        },
+        "landscapeLeft": {
+            "height": 810,
+            "width": 1080
+        },
+        "landscapeRight": {
+            "height": 810,
+            "width": 1080
+        },
+        "landscape": {
+            "height": 810,
+            "width": 1080
+        },
+        "metadata": {
+            "supportedIosVersions": [
+                "latest",
+                "latest-1",
+                "canary"
+            ],
+            "pixelRatio": 2
+        }
+    }
+}

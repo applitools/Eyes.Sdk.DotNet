@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Applitools.Utils
 {
@@ -342,6 +343,35 @@ namespace Applitools.Utils
             var enumType = value.GetType();
             var name = Enum.GetName(enumType, value);
             return enumType.GetField(name).GetCustomAttributes(false).OfType<TAttribute>().SingleOrDefault();
+        }
+        public static TAttribute GetAttribute<TAttribute>(this object value) where TAttribute : Attribute
+        {
+            var enumType = value.GetType();
+            var name = Enum.GetName(enumType, value);
+            return enumType.GetField(name).GetCustomAttributes(false).OfType<TAttribute>().SingleOrDefault();
+        }
+
+        public static Dictionary<TKey, TVal> ConvertDictionaryKeys<TKey, TVal>(Dictionary<string, TVal> obj) where TKey : struct
+        {
+            Dictionary<TKey, TVal> result = new Dictionary<TKey, TVal>();
+            TKey[] collection = (TKey[])Enum.GetValues(typeof(TKey));
+            HashSet<TKey> values = new HashSet<TKey>(collection);
+            foreach (var entry in obj)
+            {
+                TKey? success = null;
+                foreach (TKey val in values)
+                {
+                    string name = val.GetAttribute<EnumMemberAttribute>().Value;
+                    if (entry.Key.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(val, entry.Value);
+                        success = val;
+                        break;
+                    }
+                }
+                if (success != null) values.Remove(success.Value);
+            }
+            return result;
         }
 
         public static string GetEnvVar(string envVarName)

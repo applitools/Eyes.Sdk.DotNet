@@ -432,3 +432,4 @@ Applitools.Selenium.Tests.ApiTests.TestExceptions.TestEyesExceptions
 Applitools.Selenium.Tests.ApiTests.TestResultEqualityTest.Test_TestResult_Equal
 Applitools.Selenium.Tests.ApiTests.TestResultEqualityTest.Test_TestResult_NotEqual
 Applitools.Selenium.Tests.ApiTests.TestApiExists.TestApiProperties
+Applitools.Selenium.Tests.VisualGridTests.TestRenderings.TestMapRunningTestsToRequiredBrowserWidth

@@ -5,6 +5,7 @@ using Applitools.Ufg.Model;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -203,6 +204,19 @@ namespace Applitools.Selenium.VisualGrid
             IServerConnector serverConnector = runner_.ServerConnector;
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
+                if (browserInfo.EmulationInfo as ChromeEmulationInfo != null)
+                {
+                    ChromeEmulationInfo emulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo;
+                    Dictionary<DeviceName, DeviceSize> deviceSizes = serverConnector.GetEmulatedDevicesSizes();
+                    deviceSizes.TryGetValue(emulationInfo.DeviceName, out DeviceSize size);
+                    browserInfo.SetEmulationDeviceSize(size);
+                }
+                if (browserInfo.IosDeviceInfo != null)
+                {
+                    Dictionary<IosDeviceName, DeviceSize> deviceSizes = serverConnector.GetIosDevicesSizes();
+                    deviceSizes.TryGetValue(browserInfo.IosDeviceInfo.DeviceName, out DeviceSize size);
+                    browserInfo.SetIosDeviceSize(size);
+                }
                 VisualGridRunningTest test = new VisualGridRunningTest(
                     eyesId_, browserInfo, Logger, configProvider_, serverConnector);
                 testList_.Add(test.TestId, test);
@@ -401,37 +415,22 @@ namespace Applitools.Selenium.VisualGrid
                 int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 checkSettings = UpdateCheckSettings_(checkSettings);
-
-                //checkSettings = SwitchFramesAsNeeded_(checkSettings, switchTo, switchedToCount);
-
                 IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
-
-                FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger, eyesId_);
-
-                Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
-
-                Logger.Log(TraceLevel.Info, testList_.Keys, Stage.Check, StageType.DomScript,
-                    new { regionsXPaths, blobsUrls, scriptResult.ResourceUrls, cdtCount = scriptResult.Cdt.Count });
-
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-
+                SeleniumCheckSettings seleniumCheckSettings = (SeleniumCheckSettings)checkSettings;
                 string source = webDriver_.Url;
-                List<CheckTask> checkTasks = new List<CheckTask>();
-                foreach (RunningTest runningTest in testList_.Values)
-                {
-                    if (runningTest.IsCloseTaskIssued)
-                    {
-                        continue;
-                    }
 
-                    checkTasks.Add((CheckTask)runningTest.IssueCheck(
-                        (ICheckSettings)checkSettingsInternal, regionsXPaths, source, UserInputs));
+                Dictionary<int, List<RunningTest>> requiredWidths = MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                if (requiredWidths.Count == 0)
+                {
+                    CaptureDomForResourceCollection_(0, testList_.Values, switchTo, checkSettingsInternal, regionsXPaths, source);
+                    return;
                 }
 
-                scriptResult.UserAgent = userAgent_;
-                //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
-                runner_.Check(scriptResult, checkTasks);
-                //Logger.Verbose("created renderTask  ({0})", checkSettings);
+                foreach (KeyValuePair<int, List<RunningTest>> entry in requiredWidths)
+                {
+                    CaptureDomForResourceCollection_(entry.Key, entry.Value, switchTo, checkSettingsInternal, regionsXPaths, source);
+                }
             }
             catch (Exception e)
             {
@@ -445,6 +444,128 @@ namespace Applitools.Selenium.VisualGrid
             {
                 switchTo.Frames(originalFC);
             }
+        }
+
+        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(SeleniumCheckSettings seleniumCheckSettings)
+        {
+            IList<int> layoutBreakpoint;
+            bool isLayoutBreakpointsEnabled;
+            if (seleniumCheckSettings.GetLayoutBreakpoints().Count > 0 ||
+                seleniumCheckSettings.GetLayoutBreakpointsEnabled())
+            {
+                layoutBreakpoint = seleniumCheckSettings.GetLayoutBreakpoints();
+                isLayoutBreakpointsEnabled = seleniumCheckSettings.GetLayoutBreakpointsEnabled();
+            }
+            else
+            {
+                layoutBreakpoint = GetConfigClone_().LayoutBreakpoints;
+                isLayoutBreakpointsEnabled = GetConfigClone_().LayoutBreakpointsEnabled;
+            }
+
+            HashSet<string> testIds = new HashSet<string>();
+            foreach (string runningTestId in testList_.Keys)
+            {
+                testIds.Add(runningTestId);
+            }
+
+            Dictionary<int, List<RunningTest>> requiredWidths = new Dictionary<int, List<RunningTest>>();
+            if (isLayoutBreakpointsEnabled || layoutBreakpoint.Count > 0)
+            {
+                foreach (RunningTest runningTest in testList_.Values)
+                {
+                    int width = runningTest.BrowserInfo.GetDeviceSize().Width;
+                    if (width <= 0)
+                    {
+                        width = viewportSize_.Width;
+                    }
+
+                    if (layoutBreakpoint.Count > 0)
+                    {
+                        for (int i = layoutBreakpoint.Count - 1; i >= 0; i--)
+                        {
+                            if (width >= layoutBreakpoint[i])
+                            {
+                                width = layoutBreakpoint[i];
+                                break;
+                            }
+                        }
+
+                        if (width < layoutBreakpoint[0])
+                        {
+                            width = layoutBreakpoint[0] - 1;
+                            Logger.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
+                                new { message = $"Device width is smaller than the smallest breakpoint {layoutBreakpoint[0]}" });
+                        }
+                    }
+
+                    if (requiredWidths.TryGetValue(width, out List<RunningTest> tests))
+                    {
+                        tests.Add(runningTest);
+                    }
+                    else
+                    {
+                        List<RunningTest> list = new List<RunningTest> { runningTest };
+                        requiredWidths.Add(width, list);
+                    }
+                }
+            }
+
+            return requiredWidths;
+        }
+
+        private void CaptureDomForResourceCollection_(int requiredWidth, IEnumerable<IRunningTest> tests,
+            EyesWebDriverTargetLocator switchTo, ICheckSettingsInternal checkSettingsInternal,
+            IList<VisualGridSelector[]> regionsXPaths, string source)
+        {
+            HashSet<string> testIds = new HashSet<string>();
+            foreach (RunningTest runningTest in tests)
+            {
+                testIds.Add(runningTest.TestId);
+            }
+            if (requiredWidth != 0)
+            {
+                try
+                {
+                    EyesSeleniumUtils.SetViewportSize(Logger, webDriver_, new RectangleSize(requiredWidth, viewportSize_.Height));
+                    Thread.Sleep(300);
+                }
+                catch (Exception ex)
+                {
+                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, StageType.DomScript, ex, testIds);
+                }
+            }
+
+            if (requiredWidth != 0)
+            {
+                Size viewportSize = EyesSeleniumUtils.GetViewportSize(Logger, webDriver_);
+                Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript, new { requiredWidth, viewportSize });
+                //Bitmap bufferedImage = imageProvider.getImage();
+                //debugScreenshotsProvider.save(bufferedImage, $"snapshot_{viewportSize}");
+            }
+
+            FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger, eyesId_);
+
+            Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
+
+            Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript,
+                new { regionsXPaths, blobsUrls, scriptResult.ResourceUrls, cdtCount = scriptResult.Cdt.Count });
+
+            List<CheckTask> checkTasks = new List<CheckTask>();
+            foreach (RunningTest runningTest in tests)
+            {
+                if (runningTest.IsCloseTaskIssued)
+                {
+                    continue;
+                }
+
+                checkTasks.Add((CheckTask)runningTest.IssueCheck(
+                    (ICheckSettings)checkSettingsInternal, regionsXPaths, source, UserInputs));
+            }
+
+            scriptResult.UserAgent = userAgent_;
+            //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
+            runner_.Check(scriptResult, checkTasks);
+            //Logger.Verbose("created renderTask  ({0})", checkSettings);
         }
 
         private ICheckSettings SwitchFramesAsNeeded_(ICheckSettings checkSettings, EyesWebDriverTargetLocator switchTo,

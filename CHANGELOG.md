@@ -1,3 +1,16 @@
+## [Eyes.Common vNext]
+### Added
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
+- More mobile devices to `DeviceName` enum.
+
+# [Eyes.Sdk.Core vNext]
+### Added
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
+
+## [Eyes.Selenium vNext]
+### Added
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
+
 ## [Eyes.Appium 4.19] - 2021-03-15
 ### Added
 - .NET 5.0 support

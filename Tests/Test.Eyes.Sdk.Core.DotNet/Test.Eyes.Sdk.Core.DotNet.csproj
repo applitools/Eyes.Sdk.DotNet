@@ -85,9 +85,11 @@
     <None Remove="Resources\BrotliTestData\zeros.compressed" />
     <None Remove="Resources\chevron.svg" />
     <None Remove="Resources\clientlibs_all.default.css" />
+    <None Remove="Resources\EmulatedDevicesSizes.json" />
     <None Remove="Resources\fa-regular-400.svg" />
     <None Remove="Resources\IncludedTests.txt" />
     <None Remove="Resources\ios.svg" />
+    <None Remove="Resources\IosDevicesSizes.json" />
     <None Remove="Resources\ScaledDownImage.png" />
     <None Remove="Resources\ScaledDownTo540x768Image.png" />
     <None Remove="Resources\ScaledUpImage.png" />
@@ -194,9 +196,11 @@
     <EmbeddedResource Include="Resources\BrotliTestData\zeros.compressed" />
     <EmbeddedResource Include="Resources\chevron.svg" />
     <EmbeddedResource Include="Resources\clientlibs_all.default.css" />
+    <EmbeddedResource Include="Resources\EmulatedDevicesSizes.json" />
     <EmbeddedResource Include="Resources\fa-regular-400.svg" />
     <EmbeddedResource Include="Resources\IncludedTests.txt" />
     <EmbeddedResource Include="Resources\ios.svg" />
+    <EmbeddedResource Include="Resources\IosDevicesSizes.json" />
     <EmbeddedResource Include="Resources\ScaledDownImage.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

@@ -1,5 +1,6 @@
 ﻿using Applitools.Utils;
 using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -35,6 +36,9 @@ namespace Applitools
 
         private RenderingInfo renderingInfo_;
         internal readonly JsonSerializer serializer_;
+
+        private static Dictionary<DeviceName, DeviceSize> emulatedDevicesSizes_;
+        private static Dictionary<IosDeviceName, DeviceSize> iosDevicesSizes_;
 
         #endregion
 
@@ -714,6 +718,41 @@ namespace Applitools
             // request.Timeout = 1000;
 
             SendUFGAsyncRequest_(taskListener, request);
+        }
+
+        private Dictionary<T, DeviceSize> GetDevicesSizes_<T>(string path) where T : struct
+        {
+            HttpRequestMessage request = CreateUfgHttpWebRequest_(path, method: "GET");
+            Dictionary<string, DeviceSize> sizes = null;
+            SyncTaskListener<HttpResponseMessage> syncTaskListener = new SyncTaskListener<HttpResponseMessage>(
+                response =>
+                {
+                    sizes = response.DeserializeBody<Dictionary<string, DeviceSize>>(true);
+                });
+            httpClient_.SendAsyncRequest(syncTaskListener, request, Logger, new BackoffProvider());
+            Logger.Log(TraceLevel.Info, Stage.Open, StageType.RequestCompleted, new { request.RequestUri });
+            syncTaskListener.Get();
+            return CommonUtils.ConvertDictionaryKeys<T, DeviceSize>(sizes);
+        }
+
+        public Dictionary<DeviceName, DeviceSize> GetEmulatedDevicesSizes()
+        {
+            if (emulatedDevicesSizes_ == null)
+            {
+                emulatedDevicesSizes_ = GetDevicesSizes_<DeviceName>("emulated-devices-sizes");
+            }
+
+            return emulatedDevicesSizes_;
+        }
+
+        public Dictionary<IosDeviceName, DeviceSize> GetIosDevicesSizes()
+        {
+            if (iosDevicesSizes_ == null)
+            {
+                iosDevicesSizes_ = GetDevicesSizes_<IosDeviceName>("ios-devices-sizes");
+            }
+
+            return iosDevicesSizes_;
         }
 
         #endregion

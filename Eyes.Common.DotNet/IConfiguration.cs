@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Applitools.Utils.Geometry;
 
 namespace Applitools
@@ -59,6 +60,10 @@ namespace Applitools
         AccessibilitySettings AccessibilityValidation { get; set; }
         int? AbortIdleTestTimeout { get; set; }
 
+        bool LayoutBreakpointsEnabled { get; set; }
+
+        IList<int> LayoutBreakpoints { get; set; }
+
         IConfiguration SetAgentId(string value);
         IConfiguration SetAppName(string value);
         IConfiguration SetBaselineBranchName(string value);
@@ -87,5 +92,7 @@ namespace Applitools
         IConfiguration SetEnablePatterns(bool value);
         IConfiguration SetAccessibilityValidation(AccessibilitySettings value);
         IConfiguration SetAbortIdleTestTimeout(int? value);
+        IConfiguration SetLayoutBreakpointsEnabled(bool shouldSet);
+        IConfiguration SetLayoutBreakpoints(params int[] breakpoints);
     }
 }

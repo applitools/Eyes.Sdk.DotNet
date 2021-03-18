@@ -179,3 +179,5 @@ Applitools.VisualGrid.TestRenderRequestSerialization.TestSerializationIosSimulat
 Test.Eyes.Sdk.DotNet.Core.TestCommonUtils.TestReadToEnd
 Test.Eyes.Sdk.DotNet.Core.TestCommonUtils.TestReadToEndWithMaximumLength(3000)
 Test.Eyes.Sdk.DotNet.Core.TestCommonUtils.TestReadToEndWithMaximumLength(50)
+Applitools.VisualGrid.TestRenderRequestSerialization.TestEmulatedDeviceSizesDeserialization
+Applitools.VisualGrid.TestRenderRequestSerialization.TestIosDeviceSizesDeserialization

@@ -1,5 +1,6 @@
 ﻿using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
+using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.VisualGrid;
@@ -172,6 +173,102 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.AbortIfNotClosed();
                 driver.Quit();
                 runner.GetAllTestResults();
+            }
+        }
+
+
+        [Test]
+        public void TestMapRunningTestsToRequiredBrowserWidth()
+        {
+            WebDriverProvider webdriverProvider = new WebDriverProvider();
+            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webdriverProvider);
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(30, nameof(TestMapRunningTestsToRequiredBrowserWidth),
+                serverConnectorFactory, logHandler);
+            
+            Eyes wrappingEyes = new Eyes(runner);
+
+            Configuration configuration = wrappingEyes.GetConfiguration();
+            configuration.AddBrowser(new DesktopBrowserInfo(1000, 500, BrowserType.CHROME));
+            configuration.AddBrowser(new DesktopBrowserInfo(1000, 700, BrowserType.CHROME));
+            configuration.AddBrowser(new DesktopBrowserInfo(700, 500, BrowserType.CHROME));
+            wrappingEyes.SetConfiguration(configuration);
+
+            VisualGridEyes eyes = wrappingEyes.visualGridEyes_;
+            
+            //doNothing().when(eyes).setViewportSize(ArgumentMatchers.< EyesSeleniumDriver > any());
+            //eyes.ServerConnector(new MockServerConnector());
+
+            //RemoteWebDriver driver = mock(RemoteWebDriver.class);
+            //when(driver.getSessionId()).thenReturn(mock(SessionId.class));
+            ChromeDriver driver = SeleniumUtils.CreateChromeDriver();
+            webdriverProvider.SetDriver(driver);
+            try
+            {
+                driver.Url = "data:text/html,<html><body><h1>Hello, world!</h1></body></html>";
+                eyes.Open(driver, "app", "test", new Size(800, 800));
+
+                Fluent.SeleniumCheckSettings seleniumCheckSettings = Target.Window();
+                Dictionary<int, List<RunningTest>> map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.IsEmpty(map);
+
+                seleniumCheckSettings = Target.Window().LayoutBreakpointsEnabled(false);
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.IsEmpty(map);
+
+                seleniumCheckSettings = Target.Window().LayoutBreakpointsEnabled(true);
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 700, 1000 }, map.Keys);
+                Assert.AreEqual(1, map[700].Count);
+                Assert.AreEqual(2, map[1000].Count);
+
+                seleniumCheckSettings = Target.Window().LayoutBreakpoints(750, 1200);
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 749, 750 }, map.Keys);
+                Assert.AreEqual(1, map[749].Count);
+                Assert.AreEqual(2, map[750].Count);
+
+                seleniumCheckSettings = Target.Window().LayoutBreakpoints(700);
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 700 }, map.Keys);
+                Assert.AreEqual(3, map[700].Count);
+
+                wrappingEyes.SetConfiguration(configuration.SetLayoutBreakpointsEnabled(false));
+                seleniumCheckSettings = Target.Window();
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.IsEmpty(map);
+
+                wrappingEyes.SetConfiguration(configuration.SetLayoutBreakpointsEnabled(true));
+                seleniumCheckSettings = Target.Window();
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 700, 1000 }, map.Keys);
+                Assert.AreEqual(1, map[700].Count);
+                Assert.AreEqual(2, map[1000].Count);
+
+                wrappingEyes.SetConfiguration(configuration.SetLayoutBreakpoints(750, 1200));
+                seleniumCheckSettings = Target.Window();
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 749, 750 }, map.Keys);
+                Assert.AreEqual(1, map[749].Count);
+                Assert.AreEqual(2, map[750].Count);
+
+                wrappingEyes.SetConfiguration(configuration.SetLayoutBreakpoints(750, 1200));
+                seleniumCheckSettings = Target.Window().LayoutBreakpointsEnabled(true);
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 700, 1000 }, map.Keys);
+                Assert.AreEqual(1, map[700].Count);
+                Assert.AreEqual(2, map[1000].Count);
+
+                wrappingEyes.SetConfiguration(configuration.SetLayoutBreakpoints(750, 1200));
+                seleniumCheckSettings = Target.Window().LayoutBreakpoints(700);
+                map = eyes.MapRunningTestsToRequiredBrowserWidth_(seleniumCheckSettings);
+                CollectionAssert.AreEquivalent(new int[] { 700 }, map.Keys);
+                Assert.AreEqual(3, map[700].Count);
+            }
+            finally
+            {
+                driver.Quit();
+                runner.StopServiceRunner();
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Applitools.Selenium;
+using Applitools.Utils.Geometry;
+using Applitools.VisualGrid.Model;
 using System.Drawing;
 
 namespace Applitools.VisualGrid
@@ -10,8 +12,7 @@ namespace Applitools.VisualGrid
             DesktopBrowserInfo = desktopBrowserInfo;
             BaselineEnvName = baselineEnvName;
             BrowserType = desktopBrowserInfo.BrowserType;
-            Width = desktopBrowserInfo.Width;
-            Height = desktopBrowserInfo.Height;
+            ViewportSize = new RectangleSize(desktopBrowserInfo.ViewportSize);
         }
 
         public RenderBrowserInfo(IosDeviceInfo deviceInfo, string baselineEnvName = null)
@@ -28,6 +29,43 @@ namespace Applitools.VisualGrid
             BrowserType = BrowserType.CHROME;
         }
 
+        public RectangleSize GetDeviceSize()
+        {
+            return ViewportSize ??
+                   EmulationInfo?.Size ??
+                   IosDeviceInfo?.Size ??
+                   Size.Empty;
+        }
+
+        public void SetEmulationDeviceSize(DeviceSize size)
+        {
+            if (size != null && EmulationInfo != null)
+            {
+                if (EmulationInfo.ScreenOrientation == ScreenOrientation.Portrait)
+                {
+                    EmulationInfo.Size = size.Portrait;
+                }
+                else
+                {
+                    EmulationInfo.Size = size.Landscape;
+                }
+            }
+        }
+
+        public void SetIosDeviceSize(DeviceSize size)
+        {
+            if (size != null && IosDeviceInfo != null)
+            {
+                if (IosDeviceInfo.ScreenOrientation == ScreenOrientation.Portrait)
+                {
+                    IosDeviceInfo.Size = size.Portrait;
+                }
+                else
+                {
+                    IosDeviceInfo.Size = size.Landscape;
+                }
+            }
+        }
 
         public DesktopBrowserInfo DesktopBrowserInfo { get; }
         public EmulationBaseInfo EmulationInfo { get; }
@@ -37,9 +75,9 @@ namespace Applitools.VisualGrid
         public SizeMode Target { get; } = SizeMode.FullPage;
         public BrowserType BrowserType { get; }
 
-        public int Width { get; }
-        public int Height { get; }
-        public Size ViewportSize => new Size(Width, Height);
+        public int Width => ViewportSize?.Width ?? 0;
+        public int Height => ViewportSize?.Height ?? 0;
+        public RectangleSize ViewportSize { get; set; }
 
         public string Platform
         {

@@ -1,10 +1,12 @@
 ﻿using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.Utils;
+using Applitools.VisualGrid.Model;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Applitools.VisualGrid
 {
@@ -70,6 +72,24 @@ namespace Applitools.VisualGrid
             string json = JsonConvert.SerializeObject(request, settings);
             string expectedJson = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.TestRenderRequestSerializationIosDevice.json");
             Assert.AreEqual(expectedJson, json);
+        }
+
+        //[Test]
+        public void TestEmulatedDeviceSizesDeserialization()
+        {
+            string sourceJson = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.EmulatedDevicesSizes.json");
+            var obj = JsonConvert.DeserializeObject<Dictionary<string, DeviceSize>>(sourceJson);
+            Dictionary<DeviceName, DeviceSize> result = CommonUtils.ConvertDictionaryKeys<DeviceName, DeviceSize>(obj);
+            Assert.AreEqual(Enum.GetValues(typeof(DeviceName)).Length, result.Keys.Count);
+        }
+
+        [Test]
+        public void TestIosDeviceSizesDeserialization()
+        {
+            string sourceJson = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.IosDevicesSizes.json");
+            var obj = JsonConvert.DeserializeObject<Dictionary<string, DeviceSize>>(sourceJson);
+            Dictionary<IosDeviceName, DeviceSize> result = CommonUtils.ConvertDictionaryKeys<IosDeviceName, DeviceSize>(obj);
+            Assert.AreEqual(Enum.GetValues(typeof(IosDeviceName)).Length, result.Keys.Count);
         }
     }
 }
