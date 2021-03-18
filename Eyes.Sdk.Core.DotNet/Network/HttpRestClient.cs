@@ -365,7 +365,7 @@ namespace Applitools.Utils
             request.Content = CloneRequestContent_(originalRequest.Content);
             request.Version = originalRequest.Version;
 
-            foreach (var prop in originalRequest.Properties)
+            foreach (var prop in originalRequest.Properties) // TODO - in .net 5 use Options.
             {
                 request.Properties.Add(prop);
             }
