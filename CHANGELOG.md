@@ -2,6 +2,7 @@
 ### Added
 - Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 - More mobile devices to `DeviceName` enum.
+- Added `Properties` member to `BatchInfo`. [Trello 2514] (https://trello.com/c/ltvR74JM)
 
 # [Eyes.Sdk.Core vNext]
 ### Added
