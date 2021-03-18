@@ -24,9 +24,9 @@
     "dotnet:report:merge": "junit-merge -d test -o coverage-test-report.xml",
     "dotnet:report": "[ \"$TEST_REPORT_SANDBOX\" = false ] && npm run dotnet:report:prod || npm run dotnet:report:sandbox ",
     "dotnet:report:sandboxOLD": "coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium && coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Appium",
-    "dotnet:report:sandbox": "coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID && coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID",
+    "dotnet:report:sandbox": "coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID",
     "dotnet:report:prodOLD": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium && coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium",
-    "dotnet:report:prod": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID && coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID",
+    "dotnet:report:prod": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID",
     "dotnet:tests": "./dotNet/dotnet_tests.sh"
   },
   "dependencies": {
