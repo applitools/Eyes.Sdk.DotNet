@@ -72,5 +72,19 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "Laptop with touch")] Laptop_with_touch,
         [EnumMember(Value = "Laptop with HiDPI screen")] Laptop_with_HiDPI_screen,
         [EnumMember(Value = "Laptop with MDPI screen")] Laptop_with_MDPI_screen
+
+
+        //TODO - add the following devices:
+        //iphone xr
+        //iphone xs
+        //iphone xs max
+        //iphone 11
+        //iphone 11 pro
+        //iphone 11 pro max
+        //ipad 6th gen
+        //ipad 7th gen
+        //ipad air 2
+        //galaxy s10 plus
+        //galaxy s20
     }
 }

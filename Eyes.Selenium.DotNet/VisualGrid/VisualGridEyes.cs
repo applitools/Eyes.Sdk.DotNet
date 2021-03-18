@@ -504,8 +504,7 @@ namespace Applitools.Selenium.VisualGrid
                     }
                     else
                     {
-                        List<RunningTest> list = new List<RunningTest>();
-                        list.Add(runningTest);
+                        List<RunningTest> list = new List<RunningTest> { runningTest };
                         requiredWidths.Add(width, list);
                     }
                 }
@@ -548,12 +547,11 @@ namespace Applitools.Selenium.VisualGrid
 
             Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
 
-            Logger.Log(TraceLevel.Info, testList_.Keys, Stage.Check, StageType.DomScript,
+            Logger.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript,
                 new { regionsXPaths, blobsUrls, scriptResult.ResourceUrls, cdtCount = scriptResult.Cdt.Count });
 
-
             List<CheckTask> checkTasks = new List<CheckTask>();
-            foreach (RunningTest runningTest in testList_.Values)
+            foreach (RunningTest runningTest in tests)
             {
                 if (runningTest.IsCloseTaskIssued)
                 {
