@@ -68,6 +68,8 @@ namespace Applitools
         [JsonIgnore]
         public bool IsCompleted { get; set; }
 
+        public PropertiesCollection Properties { get; } = new PropertiesCollection();
+
         /// <inheritdoc />
         public override string ToString()
         {
