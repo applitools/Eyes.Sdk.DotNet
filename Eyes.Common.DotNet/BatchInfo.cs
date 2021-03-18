@@ -66,7 +66,14 @@ namespace Applitools
         public bool IsCompletedSetter { set => IsCompleted = value; }
 
         [JsonIgnore]
-        public bool IsCompleted { get; set; }
+        public bool IsCompleted { get; private set; }
+
+        public PropertiesCollection Properties { get; set; } = new PropertiesCollection();
+
+        public void AddProperty(string name, string value)
+        {
+            Properties.Add(name, value);
+        }
 
         /// <inheritdoc />
         public override string ToString()

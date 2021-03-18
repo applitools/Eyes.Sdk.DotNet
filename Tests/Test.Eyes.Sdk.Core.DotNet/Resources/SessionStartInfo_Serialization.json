@@ -9,7 +9,17 @@
     "Name": "some batch",
     "StartedAt": "2017-06-29T11:01:00+00:00",
     "BatchSequenceName": null,
-    "NotifyOnCompletion": false
+    "NotifyOnCompletion": false,
+    "Properties": [
+      {
+        "Name": "prop 1",
+        "Value": "val 1"
+      },
+      {
+        "Name": "prop 2",
+        "Value": null
+      }
+    ]
   },
   "BaselineEnvName": "baseline",
   "EnvironmentName": "some environment",
