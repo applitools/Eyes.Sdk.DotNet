@@ -1,14 +1,37 @@
-## [Eyes.Common vNext]
+## [Eyes.Appium 4.20] - 2021-03-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.23] - 2021-03-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.19] - 2021-03-18
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.42] - 2021-03-18
+### Added
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
+
+## [Eyes.LeanFT 2.25] - 2021-03-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.24] - 2021-03-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.42] - 2021-03-18
+### Updated
+- Match to latest Eyes.Common
+
+## [Eyes.Common 1.6] - 2021-03-18
 ### Added
 - Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 - More mobile devices to `DeviceName` enum.
 - Added `Properties` member to `BatchInfo`. [Trello 2514] (https://trello.com/c/ltvR74JM)
-
 # [Eyes.Sdk.Core vNext]
-### Added
-- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
-
-## [Eyes.Selenium vNext]
 ### Added
 - Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 

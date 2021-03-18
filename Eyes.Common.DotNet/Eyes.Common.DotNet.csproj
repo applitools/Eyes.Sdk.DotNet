@@ -10,19 +10,18 @@
     </Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>1.5</Version>
+    <Version>1.6</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes common</PackageTags>
     <PackageReleaseNotes>### Added
-- `SaveFailedTests` Configuration property
-- `SessionStartInfo` moved here and was added `AgentSessionId` property
-- `TestStatusResult` enum was added `NotOpened`
-- .NET 5.0 support
-### Updated
-- `MatchWindow` is now async also in `ClassicRunner` [Trello 2092](https://trello.com/c/gulak9SJ)
-- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
+- More mobile devices to `DeviceName` enum.
+- Added `Properties` member to `BatchInfo`. [Trello 2514] (https://trello.com/c/ltvR74JM)
+# [Eyes.Sdk.Core vNext]
+### Added
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Common</PackageId>

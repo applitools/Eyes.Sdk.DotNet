@@ -8,21 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.41</Version>
+    <Version>2.42</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Added
-- .NET 5.0 support
-### Updated
-- `dom-snapshot` script updated to version 4.4.11
-- `dom-capture` script updated to version 11.0.1
-- Ultrafast Grid: XPath to elements is much smaller now and more robust
-- Ultrafast Grid: Performance improvements in CSS resource collection
-- New logging system [Trello 2395] (https://trello.com/c/NuhnOCD6)
-### Fixed
-- `GetClientVisibleRect` now works on IE11 [Trello 2431](https://trello.com/c/rsgJoiIb)
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
