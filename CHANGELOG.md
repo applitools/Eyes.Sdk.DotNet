@@ -24,16 +24,13 @@
 
 ## [Eyes.Sdk.Core 2.42] - 2021-03-18
 ### Updated
-- Match to latest Eyes.Common
+- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 
 ## [Eyes.Common 1.6] - 2021-03-18
 ### Added
 - Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 - More mobile devices to `DeviceName` enum.
 - Added `Properties` member to `BatchInfo`. [Trello 2514] (https://trello.com/c/ltvR74JM)
-# [Eyes.Sdk.Core vNext]
-### Added
-- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
 
 ## [Eyes.Appium 4.19] - 2021-03-15
 ### Added
