@@ -181,3 +181,4 @@ Test.Eyes.Sdk.DotNet.Core.TestCommonUtils.TestReadToEndWithMaximumLength(3000)
 Test.Eyes.Sdk.DotNet.Core.TestCommonUtils.TestReadToEndWithMaximumLength(50)
 Applitools.VisualGrid.TestRenderRequestSerialization.TestEmulatedDeviceSizesDeserialization
 Applitools.VisualGrid.TestRenderRequestSerialization.TestIosDeviceSizesDeserialization
+Applitools.TestBatchInfo.TestDeserialization

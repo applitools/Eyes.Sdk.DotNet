@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using Applitools.Utils;
+using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Applitools
 {
+    [JsonConverter(typeof(PropertiesCollectionConverter))]
     public class PropertiesCollection : IEnumerable<PropertyData>
     {
-        private List<PropertyData> properties_ = new List<PropertyData>();
+        private readonly List<PropertyData> properties_ = new List<PropertyData>();
 
         public void Add(string name, string value)
         {
