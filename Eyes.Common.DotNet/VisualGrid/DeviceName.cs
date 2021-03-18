@@ -12,11 +12,20 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "iPhone 6/7/8")] iPhone_6_7_8,
         [EnumMember(Value = "iPhone 6/7/8 Plus")] iPhone_6_7_8_Plus,
         [EnumMember(Value = "iPhone X")] iPhone_X,
+        [EnumMember(Value = "iPhone XR")] iPhone_XR,
+        [EnumMember(Value = "iPhone XS")] iPhone_XS,
+        [EnumMember(Value = "iPhone XS Max")] iPhone_XS_Max,
+        [EnumMember(Value = "iPhone 11")] iPhone_11,
+        [EnumMember(Value = "iPhone 11 Pro")] iPhone_11_Pro,
+        [EnumMember(Value = "iPhone 11 Pro Max")] iPhone_11_Pro_Max,
 
         [EnumMember(Value = "iPad")] iPad,
         [EnumMember(Value = "iPad Mini")] iPad_Mini,
         [EnumMember(Value = "iPad Pro")] iPad_Pro,
-        
+        [EnumMember(Value = "iPad 6th Gen")] iPad_6th_Gen,
+        [EnumMember(Value = "iPad 7th Gen")] iPad_7th_Gen,
+        [EnumMember(Value = "iPad Air 2")] iPad_Air_2,
+
         [EnumMember(Value = "Nexus 4")] Nexus_4,
         [EnumMember(Value = "Nexus 5")] Nexus_5,
         [EnumMember(Value = "Nexus 6")] Nexus_6,
@@ -42,6 +51,8 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "Galaxy S9")] Galaxy_S9,
         [EnumMember(Value = "Galaxy S9 Plus")] Galaxy_S9_Plus,
         [EnumMember(Value = "Galaxy S10")] Galaxy_S10,
+        [EnumMember(Value = "Galaxy S10 Plus")] Galaxy_S10_Plus,
+        [EnumMember(Value = "Galaxy S20")] Galaxy_S20,
 
         [EnumMember(Value = "Galaxy Note II")] Galaxy_Note_2,
         [EnumMember(Value = "Galaxy Note 3")] Galaxy_Note_3,
@@ -73,18 +84,5 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "Laptop with HiDPI screen")] Laptop_with_HiDPI_screen,
         [EnumMember(Value = "Laptop with MDPI screen")] Laptop_with_MDPI_screen
 
-
-        //TODO - add the following devices:
-        //iphone xr
-        //iphone xs
-        //iphone xs max
-        //iphone 11
-        //iphone 11 pro
-        //iphone 11 pro max
-        //ipad 6th gen
-        //ipad 7th gen
-        //ipad air 2
-        //galaxy s10 plus
-        //galaxy s20
     }
 }
