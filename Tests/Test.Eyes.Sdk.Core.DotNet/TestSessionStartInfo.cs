@@ -23,6 +23,8 @@ namespace Applitools
 
             BatchInfo batchInfo = new BatchInfo("some batch", new DateTimeOffset(new DateTime(2017, 6, 29, 11, 1, 0, DateTimeKind.Utc)));
             batchInfo.Id = "someBatchId";
+            batchInfo.Properties.Add("prop 1", "val 1");
+            batchInfo.Properties.Add("prop 2", null);
 
             SessionStartInfo sessionStartInfo = new SessionStartInfo(
                 "agent",
