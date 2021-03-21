@@ -21,7 +21,7 @@ namespace Applitools.Selenium
             HideCaret = configuration.HideCaret;
             DisableBrowserFetching = configuration.DisableBrowserFetching;
             VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
-
+            UseCookies = configuration.UseCookies;
             if (configuration is Configuration config)
             {
                 browsersInfo_.AddRange(config.browsersInfo_);
@@ -145,6 +145,16 @@ namespace Applitools.Selenium
             VisualGridOptions = (VisualGridOption[])options?.Clone();
             return this;
         }
+
+
+        public bool UseCookies { get; set; } = false;
+
+        public IConfiguration SetUseCookies(bool useCookies)
+        {
+            UseCookies = useCookies;
+            return this;
+        }
+
         #region override setters
 
         public new IConfiguration SetAgentId(string value) => (IConfiguration)base.SetAgentId(value);
