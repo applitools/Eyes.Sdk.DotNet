@@ -364,11 +364,17 @@ namespace Applitools.Utils
             HttpRequestMessage request = new HttpRequestMessage(originalRequest.Method, originalRequest.RequestUri);
             request.Content = CloneRequestContent_(originalRequest.Content);
             request.Version = originalRequest.Version;
-
-            foreach (var prop in originalRequest.Properties) // TODO - in .net 5 use Options.
+#if NET5_0
+            foreach (var option in originalRequest.Options)
+            {
+                request.Options.Set(new HttpRequestOptionsKey<object>(option.Key), option.Value);
+            }
+#else
+            foreach (var prop in originalRequest.Properties)
             {
                 request.Properties.Add(prop);
             }
+#endif
             foreach (var header in originalRequest.Headers)
             {
                 request.Headers.TryAddWithoutValidation(header.Key, header.Value);
