@@ -7,7 +7,7 @@ namespace Applitools.Utils
     {
         private static HttpClient httpClient_;
         private static IWebProxy proxy_;
-      
+
         static HttpClientProvider()
         {
             Instance = new HttpClientProvider();
@@ -15,12 +15,13 @@ namespace Applitools.Utils
 
         private static void CreateHttpClient()
         {
-            HttpClientHandler handler = new HttpClientHandler()
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            if (proxy_ != null)
             {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-                Proxy = proxy_,
-                UseProxy = proxy_ != null
-            };
+                handler.Proxy = proxy_;
+                handler.UseProxy = true;
+            }
             httpClient_ = new HttpClient(handler);
         }
 
