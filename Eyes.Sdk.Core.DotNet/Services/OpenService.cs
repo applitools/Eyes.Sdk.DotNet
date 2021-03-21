@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace Applitools
@@ -59,7 +61,18 @@ namespace Applitools
 
             TaskListener<RunningSession> taskListener = new TaskListener<RunningSession>(
                 (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch, testId),
-                (ex) => OnFail_(stopwatch, sessionStartInfo, listener, testId)
+                (ex) =>
+                {
+                    var webEx = CommonUtils.GetInnerException<WebException>(ex);
+                    if (webEx != null && webEx.Status != WebExceptionStatus.Success)
+                    {
+                        CommonUtils.LogExceptionStackTrace(Logger, Stage.Open, ex,
+                            new { webExceptionStatus = webEx.Status }, testId);
+                        listener.OnFail(ex.InnerException);
+                        return;
+                    }
+                    OnFail_(stopwatch, sessionStartInfo, listener, testId);
+                }
             );
 
             try
@@ -119,10 +132,12 @@ namespace Applitools
                         (runningSession) => OnComplete_(sessionStartInfo, listener, runningSession, stopwatch, testId),
                         (ex) =>
                         {
-                            if (ex.InnerException is System.Net.Http.HttpRequestException reqEx &&
-                                reqEx.InnerException is System.Net.Sockets.SocketException socketEx &&
-                                socketEx.SocketErrorCode == System.Net.Sockets.SocketError.ConnectionRefused)
-                                throw ex;
+                            var socketEx = CommonUtils.GetInnerException<SocketException>(ex);
+                            if (socketEx != null && socketEx.SocketErrorCode == SocketError.ConnectionRefused)
+                            {
+                                listener.OnFail(ex.InnerException);
+                                return;
+                            }
 
                             OnFail_(stopwatch, sessionStartInfo, listener, testId);
                         }

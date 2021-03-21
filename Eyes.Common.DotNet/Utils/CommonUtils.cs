@@ -200,6 +200,19 @@ namespace Applitools.Utils
             }
         }
 
+        public static T GetInnerException<T>(Exception ex) where T : class
+        {
+            Exception exception = ex;
+            if (exception is T wantedException) return wantedException;
+            while (exception.InnerException != null)
+            {
+                exception = exception.InnerException;
+                wantedException = exception as T;
+                if (wantedException != null) return wantedException;
+            }
+            return exception as T;
+        }
+
         public static string GetDotNetVersion()
         {
 #if NET45
