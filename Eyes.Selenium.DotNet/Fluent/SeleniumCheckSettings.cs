@@ -15,7 +15,8 @@ namespace Applitools.Selenium.Fluent
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_ = null;
-        private bool defaultLayoutBreakpoints_;
+        private bool layoutBreakpointsEnabled_;
+        private readonly List<int> layoutBreakpoints_ = new List<int>();
 
         internal SeleniumCheckSettings()
         {
@@ -107,7 +108,7 @@ namespace Applitools.Selenium.Fluent
                 frameChain_.RemoveAt(frameChain_.Count - 1);
                 targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
                 state.FrameToSwitchTo = targetElement_;
-                logger.Log(TraceLevel.Notice, Stage.Check, 
+                logger.Log(TraceLevel.Notice, Stage.Check,
                     new { message = "Using Target.Frame() for the purpose of Target.Region()" });
             }
         }
@@ -550,7 +551,7 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.defaultLayoutBreakpoints_ = shouldSet;
+            clone.layoutBreakpointsEnabled_ = shouldSet;
             clone.layoutBreakpoints_.Clear();
             return clone;
         }
@@ -558,7 +559,7 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.defaultLayoutBreakpoints_ = false;
+            clone.layoutBreakpointsEnabled_ = false;
             clone.layoutBreakpoints_.Clear();
             if (breakpoints == null || breakpoints.Length == 0)
             {
@@ -575,15 +576,14 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        private readonly List<int> layoutBreakpoints_ = new List<int>();
-        public List<int> GetLayoutBreakpoints()
+        List<int> ISeleniumCheckTarget.GetLayoutBreakpoints()
         {
             return layoutBreakpoints_;
         }
 
-        public bool GetLayoutBreakpointsEnabled()
+        bool ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
         {
-            return defaultLayoutBreakpoints_;
+            return layoutBreakpointsEnabled_;
         }
 
         public new SeleniumCheckSettings Accessibility(AccessibilityRegionByRectangle region)
@@ -762,7 +762,7 @@ namespace Applitools.Selenium.Fluent
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
-            clone.defaultLayoutBreakpoints_ = defaultLayoutBreakpoints_;
+            clone.layoutBreakpointsEnabled_ = layoutBreakpointsEnabled_;
             clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             return clone;
         }

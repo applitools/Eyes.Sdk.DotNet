@@ -446,19 +446,19 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(SeleniumCheckSettings seleniumCheckSettings)
+        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(ISeleniumCheckTarget seleniumCheckSettings)
         {
-            IList<int> layoutBreakpoint;
+            IList<int> layoutBreakpoints;
             bool isLayoutBreakpointsEnabled;
             if (seleniumCheckSettings.GetLayoutBreakpoints().Count > 0 ||
                 seleniumCheckSettings.GetLayoutBreakpointsEnabled())
             {
-                layoutBreakpoint = seleniumCheckSettings.GetLayoutBreakpoints();
+                layoutBreakpoints = seleniumCheckSettings.GetLayoutBreakpoints();
                 isLayoutBreakpointsEnabled = seleniumCheckSettings.GetLayoutBreakpointsEnabled();
             }
             else
             {
-                layoutBreakpoint = GetConfigClone_().LayoutBreakpoints;
+                layoutBreakpoints = GetConfigClone_().LayoutBreakpoints;
                 isLayoutBreakpointsEnabled = GetConfigClone_().LayoutBreakpointsEnabled;
             }
 
@@ -469,7 +469,7 @@ namespace Applitools.Selenium.VisualGrid
             }
 
             Dictionary<int, List<RunningTest>> requiredWidths = new Dictionary<int, List<RunningTest>>();
-            if (isLayoutBreakpointsEnabled || layoutBreakpoint.Count > 0)
+            if (isLayoutBreakpointsEnabled || layoutBreakpoints.Count > 0)
             {
                 foreach (RunningTest runningTest in testList_.Values)
                 {
@@ -479,22 +479,22 @@ namespace Applitools.Selenium.VisualGrid
                         width = viewportSize_.Width;
                     }
 
-                    if (layoutBreakpoint.Count > 0)
+                    if (layoutBreakpoints.Count > 0)
                     {
-                        for (int i = layoutBreakpoint.Count - 1; i >= 0; i--)
+                        for (int i = layoutBreakpoints.Count - 1; i >= 0; i--)
                         {
-                            if (width >= layoutBreakpoint[i])
+                            if (width >= layoutBreakpoints[i])
                             {
-                                width = layoutBreakpoint[i];
+                                width = layoutBreakpoints[i];
                                 break;
                             }
                         }
 
-                        if (width < layoutBreakpoint[0])
+                        if (width < layoutBreakpoints[0])
                         {
-                            width = layoutBreakpoint[0] - 1;
+                            width = layoutBreakpoints[0] - 1;
                             Logger.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
-                                new { message = $"Device width is smaller than the smallest breakpoint {layoutBreakpoint[0]}" });
+                                new { message = $"Device width is smaller than the smallest breakpoint {layoutBreakpoints[0]}" });
                         }
                     }
 

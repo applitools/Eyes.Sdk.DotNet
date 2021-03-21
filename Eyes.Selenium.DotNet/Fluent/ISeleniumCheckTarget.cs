@@ -12,5 +12,8 @@ namespace Applitools.Selenium.Fluent
         IList<FrameLocator> GetFrameChain();
 
         CheckState State { get; set; }
+
+        List<int> GetLayoutBreakpoints();
+        bool GetLayoutBreakpointsEnabled();
     }
 }
