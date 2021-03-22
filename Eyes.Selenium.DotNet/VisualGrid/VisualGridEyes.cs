@@ -793,7 +793,16 @@ namespace Applitools.Selenium.VisualGrid
                     var cookieCollection = new CookieCollection();
                     foreach (var cookie in allCookies)
                     {
-                        cookieCollection.Add(new System.Net.Cookie(cookie.Name, cookie.Value));
+                        System.Net.Cookie snCookie = new System.Net.Cookie()
+                        {
+                            Name = cookie.Name,
+                            Value = cookie.Value,
+                            Path = cookie.Path,
+                            Domain = cookie.Domain,
+                            Secure = cookie.Secure,
+                            HttpOnly = cookie.IsHttpOnly
+                        };
+                        cookieCollection.Add(snCookie);
                     }
                     frameData.Cookies = cookieCollection;
                 }
