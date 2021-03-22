@@ -121,29 +121,11 @@ namespace Applitools
         {
             get
             {
-                if (proxy_ == null)
+                if (proxy_ == null && !string.IsNullOrWhiteSpace(proxyStr_))
                 {
-                    if (!string.IsNullOrWhiteSpace(proxyStr_))
-                    {
-                        Logger.Log(TraceLevel.Notice, Stage.General, new { proxyStr_ });
-                        proxy_ = new WebProxy(proxyStr_);
-                        proxyChanged_ = true;
-                    }
-                    else
-                    {
-                        // Apply system web proxy configuration.
-                        var proxy = WebRequest.GetSystemWebProxy();
-                        if (proxy != null)
-                        {
-                            Uri proxyUri = proxy.GetProxy(new Uri("http://example.com"));
-                            if (proxyUri != null)
-                            {
-                                proxy_ = new WebProxy(proxyUri);
-                                proxy_.Credentials = CredentialCache.DefaultCredentials;
-                                proxyChanged_ = true;
-                            }
-                        }
-                    }
+                    Logger.Log(TraceLevel.Notice, Stage.General, new { proxyStr_ });
+                    proxy_ = new WebProxy(proxyStr_);
+                    proxyChanged_ = true;
                 }
                 return proxy_;
             }

@@ -364,11 +364,17 @@ namespace Applitools.Utils
             HttpRequestMessage request = new HttpRequestMessage(originalRequest.Method, originalRequest.RequestUri);
             request.Content = CloneRequestContent_(originalRequest.Content);
             request.Version = originalRequest.Version;
-
-            foreach (var prop in originalRequest.Properties) // TODO - in .net 5 use Options.
+#if NET5_0
+            foreach (var option in originalRequest.Options)
+            {
+                request.Options.Set(new HttpRequestOptionsKey<object>(option.Key), option.Value);
+            }
+#else
+            foreach (var prop in originalRequest.Properties)
             {
                 request.Properties.Add(prop);
             }
+#endif
             foreach (var header in originalRequest.Headers)
             {
                 request.Headers.TryAddWithoutValidation(header.Key, header.Value);
@@ -432,13 +438,13 @@ namespace Applitools.Utils
                     }
                     CancellationTokenSource cts = new CancellationTokenSource(Timeout);
                     IAsyncResult asyncResult = GetHttpClient().SendAsync(request, cts.Token).
-                        AsApm(OnLongRequestResponse_, request, Logger);
+                        AsApm(ar => OnLongRequestResponse_(ar, request), request, Logger);
 
                     if (asyncResult != null && asyncResult.CompletedSynchronously)
                     {
                         Logger.Log(TraceLevel.Notice, Stage.General,
                             new { message = "request.BeginGetResponse completed synchronously" });
-                        OnLongRequestResponse_(asyncResult);
+                        OnLongRequestResponse_(asyncResult, request);
                     }
                 }
                 catch (WebException ex)
@@ -462,7 +468,7 @@ namespace Applitools.Utils
                 throw;
             }
 
-            void OnLongRequestResponse_(IAsyncResult result)
+            void OnLongRequestResponse_(IAsyncResult result, HttpRequestMessage originalRequest)
             {
                 if (!result.IsCompleted)
                 {
@@ -471,11 +477,18 @@ namespace Applitools.Utils
                 }
                 try
                 {
-                    HttpResponseMessage response = ((Task<HttpResponseMessage>)result).Result;
+                    Task<HttpResponseMessage> resultAsTask = (Task<HttpResponseMessage>)result;
+                    if (resultAsTask.IsFaulted)
+                    {
+                        listener.OnFail(
+                            new EyesException($"HttpRequestMessage request failed: {originalRequest.Method} {originalRequest.RequestUri}",
+                                resultAsTask.Exception));
+                        return;
+                    }
+                    HttpResponseMessage response = resultAsTask.Result;
                     if (response == null)
                     {
                         throw new NullReferenceException("response is null");
-
                     }
 
                     Uri statusUrl = response.Headers.Location;

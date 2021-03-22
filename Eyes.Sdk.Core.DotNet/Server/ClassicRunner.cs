@@ -60,7 +60,12 @@ namespace Applitools
         {
             SyncTaskListener<RunningSession> listener = new SyncTaskListener<RunningSession>(logger: Logger, testIds: testId);
             openService_.Operate(testId, sessionStartInfo, listener);
-            return listener.Get();
+            RunningSession result = listener.Get();
+            if (result == null)
+            {
+                throw new EyesException("Failed starting session with the server", listener.Exception);
+            }
+            return result;
         }
 
         public MatchResult Check(string testId, MatchWindowData matchWindowData)

@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Fixed `Eyes.Open` on .NET Framework versions <= 4.8 [Trello 2508] (https://trello.com/c/VYEdbQkM)
+
 ## [Eyes.Appium 4.20] - 2021-03-18
 ### Updated
 - Match to latest Eyes.Sdk.Core
