@@ -784,6 +784,21 @@ namespace Applitools.Selenium.VisualGrid
         {
             string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
 
+            if (config.UseCookies)
+            {
+                ICookieJar cookieJar = driver.RemoteWebDriver.Manage().Cookies;
+                var allCookies = cookieJar?.AllCookies;
+                if (allCookies != null && allCookies.Count > 0)
+                {
+                    var cookieCollection = new CookieCollection();
+                    foreach (var cookie in allCookies)
+                    {
+                        cookieCollection.Add(new System.Net.Cookie(cookie.Name, cookie.Value));
+                    }
+                    frameData.Cookies = cookieCollection;
+                }
+            }
+
             FrameChain frameChain = driver.GetFrameChain().Clone();
             foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
             {
