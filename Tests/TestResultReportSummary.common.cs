@@ -23,7 +23,7 @@ namespace Applitools.Tests.Utils
             // not a release build and 
             bool b2 = !(Environment.GetEnvironmentVariable("TRAVIS_TAG")?.Contains("RELEASE_CANDIDATE") ?? false);
             // not full coverage
-            bool b3 = !ReportingTestSuite.IS_FULL_COVERAGE;
+            bool b3 = !FilteringTestSuite.IS_FULL_COVERAGE;
 
             bool endResult = b1 || (b2 && b3);
             return endResult;
@@ -34,13 +34,14 @@ namespace Applitools.Tests.Utils
 
         public void AddResult(TestResult result)
         {
-            if (!Results.TryGetValue(result, out TestResult testResult))
+            if (!Results.Contains(result))
             {
                 Results.Add(result);
             }
             else
             {
-                testResult.Passed = result.Passed;
+                Results.Remove(result);
+                Results.Add(result);
             }
         }
     }

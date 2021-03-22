@@ -131,11 +131,10 @@ namespace Applitools.Tests.Utils
             UriBuilder uriBuilder = new UriBuilder(eyes.ServerUrl);
             uriBuilder.Path = $"/api/images/dom/{actualAppOutput.Image.DomId}";
 
-            NameValueCollection query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            NameValueCollection query = UrlUtility.ParseQueryString(uriBuilder.Query);
             query["apiKey"] = eyes.ApiKey;
             uriBuilder.Query = query.ToString();
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
-            client.ConfigureRequest += Client_ConfigureRequest;
             HttpResponseMessage response = client.GetJson(uriBuilder.ToString());
             Stream stream = response.GetResponseStream();
             string result;
@@ -143,13 +142,7 @@ namespace Applitools.Tests.Utils
             {
                 result = reader.ReadToEnd();
             }
-            client.ConfigureRequest -= Client_ConfigureRequest;
             return result;
-        }
-
-        private static void Client_ConfigureRequest(object sender, HttpWebRequestEventArgs e)
-        {
-            e.HttpWebRequest.AutomaticDecompression = DecompressionMethods.All;
         }
 
         public static string SanitizeForFilename(string testName)

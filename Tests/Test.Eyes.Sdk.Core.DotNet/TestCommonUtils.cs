@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System.IO;
 
-namespace Test.Eyes.Sdk.DotNet.Core
+namespace Applitools.Utils
 {
     [TestFixture]
     [Parallelizable(ParallelScope.All)]

@@ -180,14 +180,14 @@ namespace Applitools.Selenium.Tests
 
             RemoteWebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
             {
-                RemoteWebDriver driver = null;
+                RemoteWebDriver rwDriver = null;
                 if (isWellFormedUri)
                 {
                     try
                     {
                         eyes.Logger.Log(TraceLevel.Info, Stage.TestFramework, StageType.Start,
                             new { message = $"Trying to create RemoteWebDriver on {seleniumServerUrl}" });
-                        driver = new RemoteWebDriver(new Uri(seleniumServerUrl), options_.ToCapabilities(), TimeSpan.FromMinutes(4));
+                        rwDriver = new RemoteWebDriver(new Uri(seleniumServerUrl), options_.ToCapabilities(), TimeSpan.FromMinutes(4));
                     }
                     catch (Exception e)
                     {
@@ -196,22 +196,22 @@ namespace Applitools.Selenium.Tests
                     }
                 }
 
-                if (driver != null) return driver;
+                if (rwDriver != null) return rwDriver;
 
                 if (TestUtils.RUNS_ON_CI)
                 {
                     if (options_.BrowserName.Equals(BrowserNames.Chrome, StringComparison.OrdinalIgnoreCase) ||
                         options_.BrowserName.Equals(BrowserNames.Firefox, StringComparison.OrdinalIgnoreCase))
                     {
-                        driver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
+                        rwDriver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
                     }
                 }
                 else
                 {
-                    driver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
+                    rwDriver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
                 }
 
-                return driver;
+                return rwDriver;
             });
 
             eyes.AddProperty("Selenium Session ID", webDriver.SessionId.ToString());
@@ -322,7 +322,7 @@ namespace Applitools.Selenium.Tests
                 }
             }
 
-            runner ??= (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler));
+            runner = runner ?? (useVisualGrid_ ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler));
 
             Eyes eyes = new Eyes(runner);
             TestUtils.SetupDebugScreenshotProvider(eyes, testName);
@@ -383,7 +383,7 @@ namespace Applitools.Selenium.Tests
             string seleniumServerUrl = this.seleniumServerUrl ?? Environment.GetEnvironmentVariable("SELENIUM_SERVER_URL");
             if (seleniumServerUrl != null)
             {
-                if (seleniumServerUrl.Contains("ondemand.saucelabs.com", StringComparison.OrdinalIgnoreCase))
+                if (seleniumServerUrl.ToLower().Contains("ondemand.saucelabs.com"))
                 {
                     Dictionary<string, object> sauceOptions = new Dictionary<string, object>
                     {
@@ -399,7 +399,7 @@ namespace Applitools.Selenium.Tests
                         chromeOptions.AddAdditionalCapability("sauce:options", sauceOptions, true);
                     }
                 }
-                else if (seleniumServerUrl.Contains("hub-cloud.browserstack.com", StringComparison.OrdinalIgnoreCase))
+                else if (seleniumServerUrl.ToLower().Contains("hub-cloud.browserstack.com"))
                 {
                     Dictionary<string, object> browserstackOptions = new Dictionary<string, object>
                     {

@@ -140,7 +140,7 @@ namespace Applitools.Tests.Utils
         }
 
         //copied from System.Web.HttpUtility code (renamed here) to remove dependency on System.Web.dll
-        static class UrlUtility
+        public static class UrlUtility
         {
             //  Query string parsing support
             public static NameValueCollection ParseQueryString(string query)

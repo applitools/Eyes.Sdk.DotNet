@@ -49,7 +49,7 @@ namespace Applitools.Selenium.Tests
                 finalImageHash != "53CD94D4450FF82825C8B36A04E0BC68B32BACFB4F09019294D907AF0080F6E5")   // Linux, Chrome >=89
             {
                 Assert.Fail("Different image than expected. Hash: {0}\nBase64:\n{1}\n", finalImageHash,
-                    string.Join('\n', Convert.ToBase64String(screenshotBytes).Split(160)));
+                    string.Join("\n", Convert.ToBase64String(screenshotBytes).Split(160)));
             }
         }
     }
