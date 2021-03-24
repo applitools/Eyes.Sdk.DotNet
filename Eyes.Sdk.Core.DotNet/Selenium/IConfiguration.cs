@@ -23,6 +23,8 @@ namespace Applitools.Selenium
 
         VisualGridOption[] VisualGridOptions { get; set; }
 
+        bool UseCookies { get; set; }
+
         IConfiguration SetWaitBeforeScreenshots(int waitBeforeScreenshots);
 
         IConfiguration SetStitchMode(StitchModes stitchMode);
@@ -47,6 +49,8 @@ namespace Applitools.Selenium
             string baselineEnvName = null);
 
         IConfiguration SetVisualGridOptions(params VisualGridOption[] options);
+
+        IConfiguration SetUseCookies(bool useCookies);
         #region override setters
 
         new IConfiguration SetAgentId(string value);

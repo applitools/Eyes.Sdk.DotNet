@@ -85,9 +85,6 @@ namespace Applitools.Selenium.Tests.Mock
             base.MatchWindowImpl_(listener, data, testIds);
         }
 
-        public delegate (bool, bool, RunningSession) OnStartSessionDelegate(SessionStartInfo sessionStartInfo);
-        public event OnStartSessionDelegate OnStartSession;
-
         protected override void StartSessionInternal(TaskListener<RunningSession> taskListener, SessionStartInfo sessionStartInfo)
         {
             Logger.Log(TraceLevel.Info, Stage.Open, StageType.Called, new { sessionStartInfo });
@@ -95,10 +92,6 @@ namespace Applitools.Selenium.Tests.Mock
             RunningSession newSession = null;
             bool continueInvocation = true;
             bool callBase = false;
-            if (OnStartSession != null)
-            {
-                (callBase, continueInvocation, newSession) = OnStartSession(sessionStartInfo);
-            }
             if (continueInvocation)
             {
                 newSession = new RunningSession() { isNewSession_ = false, SessionId = Guid.NewGuid().ToString() };
@@ -117,7 +110,7 @@ namespace Applitools.Selenium.Tests.Mock
             }
         }
 
-        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) where T : class
+        protected override void SendUFGAsyncRequest_<T>(TaskListener<T> taskListener, HttpRequestMessage request) //where T : class
         {
             if (request.Method == HttpMethod.Post &&
                 request.RequestUri.PathAndQuery.StartsWith("/render", StringComparison.OrdinalIgnoreCase))
