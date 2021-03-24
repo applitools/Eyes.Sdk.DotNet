@@ -1,12 +1,12 @@
-﻿namespace Applitools.Images.Tests
-{
-    using System.Drawing;
-    using System.IO;
-    using Applitools.Images;
-    using Applitools.Tests.Utils;
-    using Applitools.Utils;
-    using NUnit.Framework;
+﻿using Applitools.Images;
+using Applitools.Tests.Utils;
+using Applitools.Utils;
+using NUnit.Framework;
+using System.Drawing;
+using System.IO;
 
+namespace Applitools.Images.Tests
+{
     [TestFixture]
     [Parallelizable(ParallelScope.All)]
     public class TestLayout2 : ReportingTestSuite
@@ -260,7 +260,7 @@
 
         private static string Path_(string name)
         {
-            return Path.GetFullPath(Path.Combine("Content", name));
+            return Path.Combine(TestContext.CurrentContext.TestDirectory, "Content", name);
         }
 
         private static byte[] Bytes_(string name)

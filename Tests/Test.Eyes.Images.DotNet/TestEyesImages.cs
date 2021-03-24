@@ -220,7 +220,7 @@ namespace Applitools.Images.Tests
 
         internal static string Path_(string name)
         {
-            return Path.GetFullPath(Path.Combine("Content", name));
+            return Path.Combine(TestContext.CurrentContext.TestDirectory, "Content", name);
         }
 
         internal static byte[] Bytes_(string name)
