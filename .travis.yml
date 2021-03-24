@@ -69,13 +69,16 @@ before_script:
 # $SDK
 jobs:
   include:
-    #- stage: Test
-    #  name: Generic Tests
-    #  script:
-    #    - chmod +x ./genericTests.sh && ./genericTests.sh
-
     - stage: Test
-      name: Images
+      name: Generic Tests
+      mono: none
+      dotnet: 3.1.407
+      addons:
+        chrome: stable
+      script:
+        - chmod +x ./genericTests.sh && ./genericTests.sh
+
+    - name: Images
       mono: latest
       install:
         - nuget restore Eyes.Sdk.DotNet_Travis.sln
@@ -83,7 +86,6 @@ jobs:
       script:
         - msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.8 ./Tests/Test.Eyes.Images.DotNet/Test.Eyes.Images.DotNet.csproj
         - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./Tests/Test.Eyes.Images.DotNet/bin/Release/net48/Test.Eyes.Images.DotNet.dll
-     #   - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Images.DotNet/*.csproj
   
     - name: Core
       mono: none
@@ -91,16 +93,22 @@ jobs:
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
   
-    #- name: Appium
-    #  script:
-    #    - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
-    #
-    #- name: Selenium
-    #  script:
-    #    - pushd Eyes.Selenium.DotNet/Properties/NodeResources
-    #    - npm install
-    #    - popd
-    #    - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
+    - name: Appium
+      mono: none
+      dotnet: 3.1.407
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
+    
+    - name: Selenium
+      mono: none
+      dotnet: 3.1.407
+      addons:
+        chrome: stable
+      script:
+        - pushd Eyes.Selenium.DotNet/Properties/NodeResources
+        - npm install
+        - popd
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master
