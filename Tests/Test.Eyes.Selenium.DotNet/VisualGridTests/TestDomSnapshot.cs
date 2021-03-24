@@ -2,12 +2,14 @@
 using Applitools.Selenium.Tests.Utils;
 using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
+using Applitools.Ufg;
 using Applitools.Ufg.Model;
 using Applitools.Utils;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using System.Collections.Generic;
+using System;
+using Cookie = System.Net.Cookie;
 
 namespace Applitools.Selenium.Tests.VisualGridTests
 {
@@ -36,39 +38,39 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
                     switchTo, userAgent, config, runner, eyesDriver, runner.Logger);
 
-                CollectionAssert.AreEquivalent(new System.Net.Cookie[] {
-                    new System.Net.Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                CollectionAssert.AreEquivalent(new Cookie[] {
+                    new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                    new Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     } },
                     scriptResult.Cookies);
 
 
-                CollectionAssert.AreEquivalent(new System.Net.Cookie[] {
-                    new System.Net.Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                CollectionAssert.AreEquivalent(new Cookie[] {
+                    new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                    new Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     } },
                     scriptResult.Frames[0].Cookies);
 
-                CollectionAssert.AreEquivalent(new System.Net.Cookie[] {
-                    new System.Net.Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                CollectionAssert.AreEquivalent(new Cookie[] {
+                    new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                    new Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("frame2", "1", "/demo/TestPages/CookiesTestPage/subdir", "applitools.github.io"){
+                    new Cookie("frame2", "1", "/demo/TestPages/CookiesTestPage/subdir", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     } },
@@ -81,77 +83,6 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 runner.StopServiceRunner();
             }
         }
-        /*
-
-def test_create_dom_snapshot_collects_cookies_when_handling_cors_frames(driver):
-    driver = EyesWebDriver(driver, None)
-    driver.get("http://applitools.github.io/demo/TestPages/CookiesTestPage/")
-
-    dom = create_dom_snapshot(driver, logger, False, [], 10000, True, True)
-
-    assert dom["cookies"] == [
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame1",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "index",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-    ]
-    assert dom["frames"][0]["cookies"] == [
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame1",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "index",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-    ]
-    assert dom["frames"][0]["frames"][0]["cookies"] == [
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame1",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "index",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame2",
-            "path": "/demo/TestPages/CookiesTestPage/subdir",
-            "secure": False,
-            "value": "1",
-        },
-    ]
-        */
 
         [Test]
         public void TestCreateDomSnapshotCollectsCookiesWhenNotHandlingCorsFrames()
@@ -174,39 +105,39 @@ def test_create_dom_snapshot_collects_cookies_when_handling_cors_frames(driver):
                 FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
                     switchTo, userAgent, config, runner, eyesDriver, runner.Logger);
 
-                CollectionAssert.AreEquivalent(new System.Net.Cookie[] {
-                    new System.Net.Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                CollectionAssert.AreEquivalent(new Cookie[] {
+                    new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                    new Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     } },
                     scriptResult.Cookies);
 
 
-                CollectionAssert.AreEquivalent(new System.Net.Cookie[] {
-                    new System.Net.Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                CollectionAssert.AreEquivalent(new Cookie[] {
+                    new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                    new Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     } },
                     scriptResult.Frames[0].Cookies);
 
-                CollectionAssert.AreEquivalent(new System.Net.Cookie[] {
-                    new System.Net.Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                CollectionAssert.AreEquivalent(new Cookie[] {
+                    new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
+                    new Cookie("index", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     },
-                    new System.Net.Cookie("frame2", "1", "/demo/TestPages/CookiesTestPage/subdir", "applitools.github.io"){
+                    new Cookie("frame2", "1", "/demo/TestPages/CookiesTestPage/subdir", "applitools.github.io"){
                         HttpOnly = false,
                         Secure = false
                     } },
@@ -219,76 +150,6 @@ def test_create_dom_snapshot_collects_cookies_when_handling_cors_frames(driver):
                 runner.StopServiceRunner();
             }
         }
-        /*
-def test_create_dom_snapshot_collects_cookies_when_not_handling_cors_frames(driver):
-    driver = EyesWebDriver(driver, None)
-    driver.get("http://applitools.github.io/demo/TestPages/CookiesTestPage/")
-
-    dom = create_dom_snapshot(driver, logger, True, [], 10000, False, True)
-
-    assert dom["cookies"] == [
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame1",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "index",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-    ]
-    assert dom["frames"][0]["cookies"] == [
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame1",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "index",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-    ]
-    assert dom["frames"][0]["frames"][0]["cookies"] == [
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame1",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "index",
-            "path": "/demo/TestPages/CookiesTestPage",
-            "secure": False,
-            "value": "1",
-        },
-        {
-            "domain": "applitools.github.io",
-            "httpOnly": False,
-            "name": "frame2",
-            "path": "/demo/TestPages/CookiesTestPage/subdir",
-            "secure": False,
-            "value": "1",
-        },
-    ]
-        */
 
         [Test]
         public void TestCreateDomSnapshotCollectsCookiesWhenDisabled()
@@ -331,16 +192,157 @@ def test_create_dom_snapshot_collects_cookies_when_not_handling_cors_frames(driv
             return eyes;
         }
 
-        /*
-def test_create_dom_snapshot_doesnt_collect_cookies_when_disabled(driver):
-    driver = EyesWebDriver(driver, None)
-    driver.get("http://applitools.github.io/demo/TestPages/CookiesTestPage/")
+        [Test]
+        public void TestIsCookieForUrlNonExpiredWithDottedCorrectDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Expires = DateTime.MaxValue,
+                Secure = false
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
+        }
 
-    dom = create_dom_snapshot(driver, logger, True, [], 10000, True, False)
+        [Test]
+        public void TestNotIsCookieForUrlExpiredWithDottedCorrectDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Expires = new DateTime(1),
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
+        }
 
-    assert "cookies" not in dom
-    assert "cookies" not in dom["frames"][0]
-    assert "cookies" not in dom["frames"][0]["frames"][0]
-         */
+        [Test]
+        public void TestIsCookieForUrlWithDottedCorrectDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Secure = false
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithDottedCorrectDomainIgnorePort()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Secure = false
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com:8080/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithDottedCorrectSubdomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Secure = false
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://b.a.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithNotDottedCorrectDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", "a.com")
+            {
+                Secure = false
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
+        }
+
+
+        [Test]
+        public void TestNotIsCookieForUrlWithNotDottedCorrectSubdomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", "a.com")
+            {
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://b.a.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithDottedIncorrectDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://b.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithNotDottedIncorrectDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", "a.com")
+            {
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://b.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithNotDottedIncorrectSuffixedDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", "a.com")
+            {
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://ba.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithDottedIncorrectSuffixedDomain()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
+            {
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://ba.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithSecureCookieNonSecureUrl()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", "a.com")
+            {
+                Secure = true
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/subdir")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithSecureCookieSecureUrl()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/", "a.com")
+            {
+                Secure = true
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("https://a.com/subdir")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithPathCookieIncorrectUrl()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/b", "a.com")
+            {
+                Secure = false
+            };
+            Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
+        }
+
+        [Test]
+        public void TestIsCookieForUrlWithPathCookieCorrectSubdirUrl()
+        {
+            Cookie cookie = new Cookie("subdir", "1", "/b", "a.com")
+            {
+                Secure = false
+            };
+            Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/b/c")));
+        }
     }
 }
