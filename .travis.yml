@@ -14,9 +14,9 @@ branches:
   except:
   - /^[a-zA-Z]+_\d+(\.\d+)+$/
 
-addons:
-  chrome: stable
-  firefox: latest
+#addons:
+#  chrome: stable
+#  firefox: latest
 
 git:
   depth: 3
