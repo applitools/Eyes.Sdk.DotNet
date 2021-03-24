@@ -1,5 +1,6 @@
 language: csharp
 solution: Eyes.Sdk.DotNet_Travis.sln
+dotnet: 3.1.407
 
 node_js:
   - "14"
@@ -83,7 +84,6 @@ jobs:
   
     - name: Core
       mono: none
-      dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
   
