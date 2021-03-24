@@ -54,7 +54,7 @@ before_script:
       #python updateChangelogAndProjectFiles.py;
       export TEST_REPORT_SANDBOX=false;
     fi
-  - echo "TEST_REPORT_SANDBOX = $TEST_REPORT_SANDBOX"
+  - echo "TEST_REPORT_SANDBOX = $TEST_REPORT_SANDBOX "
 
 # after_script:
 #   - pkill mitmdump
