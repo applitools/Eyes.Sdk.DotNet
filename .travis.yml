@@ -50,8 +50,7 @@ before_script:
       export APPLITOOLS_FULL_COVERAGE=true;
     fi
   - export TEST_REPORT_SANDBOX=true;
-  - if [[ $TRAVIS_TAG =~ ^YURII_TEST_TAG ]]; then #[[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
-      #python updateChangelogAndProjectFiles.py;
+  - if [[ $TRAVIS_TAG =~ ^YURII_TEST_TAG ]]; then
       export TEST_REPORT_SANDBOX=false;
     fi
   - echo "TEST_REPORT_SANDBOX = $TEST_REPORT_SANDBOX "
