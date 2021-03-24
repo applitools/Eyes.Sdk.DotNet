@@ -82,6 +82,7 @@ jobs:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Images.DotNet/*.csproj
   
     - name: Core
+      mono: none
       dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
