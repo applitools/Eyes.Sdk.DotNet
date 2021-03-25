@@ -118,7 +118,7 @@ def create_send_mail_json(reported_version, recent_changes):
 		"testCoverageGap": testCoverageGap
 	}
 
-    specificRecipient = os.environ.get('SPECIFIC_RECIPIENT')
+    specificRecipient = "yurii.cherepovskiy@applitools.com"
     if specificRecipient is not None:
         sendMailObj["specificRecipient"] = specificRecipient
 

@@ -38,7 +38,7 @@ before_script:
       export APPLITOOLS_FULL_COVERAGE=true;
     fi
   - export TEST_REPORT_SANDBOX=true;
-  - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
+  - if [[ $TRAVIS_TAG =~ ^YURII_TEST ]]; then
       python updateChangelogAndProjectFiles.py;
       export TEST_REPORT_SANDBOX=false;
     fi
@@ -109,7 +109,6 @@ jobs:
         - chmod +x ./sendFullCoverageReport.sh && ./sendFullCoverageReport.sh
 
     - stage: Deploy
-      if: tag =~ ^RELEASE_CANDIDATE AND fork == false
+      if: tag =~ ^YURII_TEST AND fork == false
       script:
-        - chmod +x ./deploy.sh && ./deploy.sh
         - chmod +x ./sendMail.sh && ./sendMail.sh
