@@ -37,14 +37,12 @@ before_script:
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
       export APPLITOOLS_FULL_COVERAGE=true;
     fi
+  - export TEST_REPORT_SANDBOX=true;
   - if [[ $TRAVIS_TAG =~ ^RELEASE_CANDIDATE ]]; then
       python updateChangelogAndProjectFiles.py;
-    fi
-  - if [[ tag =~ ^RELEASE_CANDIDATE && fork == false ]]; then
       export TEST_REPORT_SANDBOX=false;
-    else
-      export TEST_REPORT_SANDBOX=true;
     fi
+  - echo "TEST_REPORT_SANDBOX = $TEST_REPORT_SANDBOX"
 
 # after_script:
 #   - pkill mitmdump
