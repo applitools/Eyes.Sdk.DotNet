@@ -1,7 +1,5 @@
 language: csharp
 solution: Eyes.Sdk.DotNet_Travis.sln
-mono: none
-dotnet: 3.1.407
 
 node_js:
   - "14"
@@ -16,9 +14,9 @@ branches:
   except:
   - /^[a-zA-Z]+_\d+(\.\d+)+$/
 
-addons:
-  chrome: stable
-  firefox: latest
+#addons:
+#  chrome: stable
+#  firefox: latest
 
 git:
   depth: 3
@@ -30,21 +28,11 @@ before_install:
   - nvm install node
 
 before_script:
-  - latestChromeDriverURL=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -q -O -)
-  - wget "http://chromedriver.storage.googleapis.com/${latestChromeDriverURL}/chromedriver_linux64.zip"
-  - unzip chromedriver_linux64.zip -d /home/travis/build/
-  - wget -N https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz -P ~/
-  - tar -xzf ~/geckodriver-v0.26.0-linux64.tar.gz -C ~/
-  - rm ~/geckodriver-v0.26.0-linux64.tar.gz
-  - sudo mv -f ~/geckodriver /home/travis/build/
-  - sudo chmod +x /home/travis/build/geckodriver
-  - export CHROME_BIN=chromium-browser
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
   - sudo apt-get install -y libgdiplus
-  - dotnet --list-sdks
-  - #export APPLITOOLS_PROXY=http://127.0.0.1:8080
-  - #sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
+  #- export APPLITOOLS_PROXY=http://127.0.0.1:8080
+  #- sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh
   - echo "Travis event type is $TRAVIS_EVENT_TYPE"
   - if [[ $TRAVIS_EVENT_TYPE = cron ]]; then
       export APPLITOOLS_FULL_COVERAGE=true;
@@ -74,23 +62,47 @@ jobs:
   include:
     - stage: Test
       name: Generic Tests
+      mono: none
+      dotnet: 3.1.407
+      addons:
+        chrome: stable
+        firefox: latest
       script:
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./genericTests.sh && ./genericTests.sh
 
     - name: Images
+      mono: latest
+      install:
+        - nuget restore Eyes.Sdk.DotNet_Travis.sln
+        - nuget install NUnit.Console -Version 3.9.0 -OutputDirectory testrunner
       script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Images.DotNet/*.csproj
+        - msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.8 ./Tests/Test.Eyes.Images.DotNet/Test.Eyes.Images.DotNet.csproj
+        - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./Tests/Test.Eyes.Images.DotNet/bin/Release/net48/Test.Eyes.Images.DotNet.dll
   
     - name: Core
+      mono: none
+      dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
   
     - name: Appium
+      mono: none
+      dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
-  
+    
     - name: Selenium
+      mono: none
+      dotnet: 3.1.407
+      addons:
+        chrome: stable
       script:
+        - pushd Eyes.Selenium.DotNet/Properties/NodeResources
+        - npm install
+        - popd
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
 
     - stage: Full Regression Mail

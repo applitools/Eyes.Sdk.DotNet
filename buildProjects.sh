@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-pushd Eyes.Selenium.DotNet/Properties/NodeResources
-npm install
-popd
-
 echo "running tests: $1 $2 $3"
 
 dotnet test -c Release $1 $2 $3
