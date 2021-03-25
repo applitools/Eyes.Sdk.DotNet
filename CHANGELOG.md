@@ -7,6 +7,8 @@
 ## [Eyes.Selenium vNext]
 ### Added
 - Ultrafast Grid: Cookies support when downloading resources from another domain [Trello 2460] (https://trello.com/c/pR7tpNWu)
+### Fixed
+- Ultrafast Grid: Return browser window to its original size after changed by the Layout Breakpoints feature [Trello 2519] (https://trello.com/c/sg3Pcio6)
 
 ## [Eyes.Appium 4.20] - 2021-03-18
 ### Updated

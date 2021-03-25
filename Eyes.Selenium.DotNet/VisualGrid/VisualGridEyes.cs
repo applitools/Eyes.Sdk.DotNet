@@ -426,11 +426,12 @@ namespace Applitools.Selenium.VisualGrid
                     CaptureDomForResourceCollection_(0, testList_.Values, switchTo, checkSettingsInternal, regionsXPaths, source);
                     return;
                 }
-
+                Size originalSize = driver_.Manage().Window.Size;
                 foreach (KeyValuePair<int, List<RunningTest>> entry in requiredWidths)
                 {
                     CaptureDomForResourceCollection_(entry.Key, entry.Value, switchTo, checkSettingsInternal, regionsXPaths, source);
                 }
+                driver_.Manage().Window.Size = originalSize;
             }
             catch (Exception e)
             {
