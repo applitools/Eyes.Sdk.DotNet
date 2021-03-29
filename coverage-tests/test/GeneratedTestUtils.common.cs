@@ -1,9 +1,8 @@
-using Applitools.Utils.Geometry;
-using NUnit.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using Applitools.Tests.Utils;
+using Applitools.Utils.Geometry;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Applitools.Generated.Utils
 {
@@ -49,6 +48,11 @@ namespace Applitools.Generated.Utils
             }
         }
 
+        public static void compareProcedure(Dictionary<string, object> actual, Dictionary<string, object> expected, string type)
+        {
+            CollectionAssert.AreEquivalent(expected, actual, type);
+        }
+
         public static void compareProcedure(AccessibilityRegionByRectangle actualRegion, AccessibilityRegionByRectangle expectedRegion, string type = "")
         {
             AccessibilityRegionByRectangle[] actualRegions = new AccessibilityRegionByRectangle[] { actualRegion };
@@ -89,5 +93,5 @@ namespace Applitools.Generated.Utils
         {
             Assert.AreEqual(expected, (string)actual);
         }
-	}
+    }
 }
