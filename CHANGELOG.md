@@ -1,14 +1,34 @@
-## [Eyes.Sdk.Core vNext]
-### Added
-- `UseCookies` configuration option [Trello 2460] (https://trello.com/c/pR7tpNWu)
-### Fixed
-- Fixed `Eyes.Open` on .NET Framework versions <= 4.8 [Trello 2508] (https://trello.com/c/VYEdbQkM)
+## [Eyes.Appium 4.21] - 2021-03-29
+### Updated
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Images 2.24] - 2021-03-29
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.20] - 2021-03-29
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.43] - 2021-03-29
 ### Added
 - Ultrafast Grid: Cookies support when downloading resources from another domain [Trello 2460] (https://trello.com/c/pR7tpNWu)
 ### Fixed
 - Ultrafast Grid: Return browser window to its original size after changed by the Layout Breakpoints feature [Trello 2519] (https://trello.com/c/sg3Pcio6)
+
+## [Eyes.LeanFT 2.26] - 2021-03-29
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.25] - 2021-03-29
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.43] - 2021-03-29
+### Added
+- `UseCookies` configuration option [Trello 2460] (https://trello.com/c/pR7tpNWu)
+### Fixed
+- Fixed `Eyes.Open` on .NET Framework versions <= 4.8 [Trello 2508] (https://trello.com/c/VYEdbQkM)
 
 ## [Eyes.Appium 4.20] - 2021-03-18
 ### Updated

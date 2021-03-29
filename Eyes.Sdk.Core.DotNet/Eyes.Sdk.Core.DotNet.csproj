@@ -8,13 +8,15 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.42</Version>
+    <Version>2.43</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Match to latest Eyes.Common
+    <PackageReleaseNotes>### Added
+- `UseCookies` configuration option [Trello 2460] (https://trello.com/c/pR7tpNWu)
+### Fixed
+- Fixed `Eyes.Open` on .NET Framework versions &lt;= 4.8 [Trello 2508] (https://trello.com/c/VYEdbQkM)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Sdk.Core</PackageId>
