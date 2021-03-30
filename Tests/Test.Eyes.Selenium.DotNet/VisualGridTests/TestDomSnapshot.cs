@@ -36,7 +36,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
                 FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
-                    switchTo, userAgent, config, null, runner, eyesDriver, runner.Logger);
+                    switchTo, userAgent, config, Target.Window(), runner, eyesDriver, runner.Logger);
 
                 CollectionAssert.AreEquivalent(new Cookie[] {
                     new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
@@ -103,7 +103,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
                 FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
-                    switchTo, userAgent, config, null, runner, eyesDriver, runner.Logger);
+                    switchTo, userAgent, config, Target.Window(), runner, eyesDriver, runner.Logger);
 
                 CollectionAssert.AreEquivalent(new Cookie[] {
                     new Cookie("frame1", "1", "/demo/TestPages/CookiesTestPage", "applitools.github.io"){
@@ -170,7 +170,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
                 FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
-                    switchTo, userAgent, config, null, runner, eyesDriver, runner.Logger);
+                    switchTo, userAgent, config, Target.Window(), runner, eyesDriver, runner.Logger);
 
                 Assert.IsNull(scriptResult.Cookies);
                 Assert.IsNull(scriptResult.Frames[0].Cookies);

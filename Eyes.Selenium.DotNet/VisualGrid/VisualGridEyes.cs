@@ -795,7 +795,7 @@ namespace Applitools.Selenium.VisualGrid
         {
             string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
 
-            if (seleniumCheckTarget.GetUseCookies() ?? config.UseCookies)
+            if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
             {
                 ICookieJar cookieJar = driver.RemoteWebDriver.Manage().Cookies;
                 var allCookies = cookieJar?.AllCookies;
