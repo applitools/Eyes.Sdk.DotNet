@@ -11,11 +11,12 @@ namespace Applitools.Selenium.Fluent
     {
         private By targetSelector_;
         private IWebElement targetElement_;
-        private List<FrameLocator> frameChain_ = new List<FrameLocator>();
+        private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_ = null;
         private bool layoutBreakpointsEnabled_;
+        private bool? useCookies_;
         private readonly List<int> layoutBreakpoints_ = new List<int>();
 
         internal SeleniumCheckSettings()
@@ -586,6 +587,20 @@ namespace Applitools.Selenium.Fluent
             return layoutBreakpointsEnabled_;
         }
 
+
+        public SeleniumCheckSettings UseCookies(bool useCookies)
+        {
+            SeleniumCheckSettings clone = Clone_();
+            clone.useCookies_ = useCookies;
+            return clone;
+        }
+
+        bool? ISeleniumCheckTarget.GetUseCookies()
+        {
+            return useCookies_;
+        }
+        
+        #region overrides
         public new SeleniumCheckSettings Accessibility(AccessibilityRegionByRectangle region)
         {
             return (SeleniumCheckSettings)base.Accessibility(region);
@@ -735,6 +750,7 @@ namespace Applitools.Selenium.Fluent
         {
             return (SeleniumCheckSettings)base.VisualGridOptions(options);
         }
+        #endregion
 
         private SeleniumCheckSettings Clone_()
         {
@@ -764,6 +780,7 @@ namespace Applitools.Selenium.Fluent
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
             clone.layoutBreakpointsEnabled_ = layoutBreakpointsEnabled_;
             clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
+            clone.useCookies_ = useCookies_;
             return clone;
         }
 
@@ -776,6 +793,9 @@ namespace Applitools.Selenium.Fluent
             dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
             dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
             dict.Add("VGTargetSelector", vgTargetSelector_);
+            dict.Add("LayoutBreakpointsEnabled", layoutBreakpointsEnabled_);
+            dict.Add("LayoutBreakpoints", layoutBreakpoints_);
+            dict.Add("UseCookies", useCookies_);
 
             return dict;
         }

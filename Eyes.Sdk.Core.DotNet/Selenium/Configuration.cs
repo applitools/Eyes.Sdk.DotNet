@@ -147,7 +147,7 @@ namespace Applitools.Selenium
         }
 
 
-        public bool UseCookies { get; set; } = false;
+        public bool UseCookies { get; set; } = true;
 
         public IConfiguration SetUseCookies(bool useCookies)
         {

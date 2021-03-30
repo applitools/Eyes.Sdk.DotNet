@@ -544,7 +544,8 @@ namespace Applitools.Selenium.VisualGrid
                 //debugScreenshotsProvider.save(bufferedImage, $"snapshot_{viewportSize}");
             }
 
-            FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_, runner_, driver_, Logger, eyesId_);
+            FrameData scriptResult = CaptureDomSnapshot_(switchTo, userAgent_, configAtOpen_,
+                (ISeleniumCheckTarget)checkSettingsInternal, runner_, driver_, Logger, eyesId_);
 
             Uri[] blobsUrls = scriptResult.Blobs.Select(b => b.Url).ToArray();
 
@@ -699,10 +700,12 @@ namespace Applitools.Selenium.VisualGrid
         private ICheckSettings UpdateCheckSettings_(ICheckSettings checkSettings)
         {
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
 
             MatchLevel? matchLevel = checkSettingsInternal.GetMatchLevel();
             bool? fully = checkSettingsInternal.GetStitchContent();
             bool? sendDom = checkSettingsInternal.GetSendDom();
+            bool? useCookies = seleniumCheckTarget.GetUseCookies();
             var visualGridOptions = checkSettingsInternal.GetVisualGridOptions();
 
             if (matchLevel == null)
@@ -718,6 +721,11 @@ namespace Applitools.Selenium.VisualGrid
             if (sendDom == null)
             {
                 checkSettings = checkSettings.SendDom(Config_.SendDom);
+            }
+
+            if (useCookies == null)
+            {
+                checkSettings = checkSettings.UseDom(Config_.UseCookies);
             }
 
             List<VisualGridOption> options = new List<VisualGridOption>();
@@ -750,7 +758,8 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
-            IConfiguration config, VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
+            IConfiguration config, ISeleniumCheckTarget seleniumCheckTarget,
+            VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
         {
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
@@ -762,7 +771,7 @@ namespace Applitools.Selenium.VisualGrid
             {
                 serializeResources = true,
                 //skipResources = runner.CachedBlobsURLs.Keys,
-                dontFetchResources = config.DisableBrowserFetching,
+                dontFetchResources = config.DisableBrowserFetching || (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies),
                 chunkByteLength,
                 //uniqueUrl = "(url, query) => url"
             };
@@ -776,16 +785,17 @@ namespace Applitools.Selenium.VisualGrid
                 result = removeQueryParameter.Replace(result, string.Empty);
             }
             FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
-            AnalyzeFrameData_(frameData, userAgent, config, runner, switchTo, driver, logger);
+            AnalyzeFrameData_(frameData, userAgent, config, seleniumCheckTarget, runner, switchTo, driver, logger);
             return frameData;
         }
 
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
+            ISeleniumCheckTarget seleniumCheckTarget,
             VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
             string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
 
-            if (config.UseCookies)
+            if (seleniumCheckTarget.GetUseCookies() ?? config.UseCookies)
             {
                 ICookieJar cookieJar = driver.RemoteWebDriver.Manage().Cookies;
                 var allCookies = cookieJar?.AllCookies;
@@ -822,7 +832,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     IWebElement frame = driver.FindElement(By.CssSelector(crossFrame.Selector));
                     switchTo.Frame(frame);
-                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, runner, driver, logger, testIds);
+                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, seleniumCheckTarget, runner, driver, logger, testIds);
                     frameData.Frames.Add(result);
                     frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
                 }
@@ -849,7 +859,7 @@ namespace Applitools.Selenium.VisualGrid
                 {
                     IWebElement frameElement = driver.FindElement(By.CssSelector(frame.Selector));
                     switchTo.Frame(frameElement);
-                    AnalyzeFrameData_(frame, userAgent, config, runner, switchTo, driver, logger);
+                    AnalyzeFrameData_(frame, userAgent, config, seleniumCheckTarget, runner, switchTo, driver, logger);
                 }
                 catch (Exception ex)
                 {
