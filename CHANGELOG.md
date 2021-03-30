@@ -1,4 +1,6 @@
 ## [Eyes.Selenium vNext]
+### Fixed
+- Pass potentially updated `ApiKey` and `ServerUrl` properties to ServerConnector. [Trello 2525] (https://trello.com/c/VyLMGf0K)
 ### Updated
 - Cookies now support fluent API.
 
