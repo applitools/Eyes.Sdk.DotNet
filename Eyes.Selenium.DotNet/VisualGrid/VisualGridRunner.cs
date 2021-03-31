@@ -160,7 +160,9 @@ namespace Applitools.VisualGrid
             Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.Called);
 
             ApiKey = eyes.ApiKey;
+            ServerConnector.ApiKey = ApiKey;
             ServerUrl = eyes.ServerUrl;
+            ServerConnector.ServerUrl = new Uri(ServerUrl);
             ServerConnector.Proxy = eyes.Proxy;
 
             if (renderingInfo_ == null)
