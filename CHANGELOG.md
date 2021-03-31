@@ -1,3 +1,11 @@
+## [Eyes.Selenium vNext]
+### Updated
+- Cookies now support fluent API.
+
+## [Eyes.Sdk.Core vNext]
+### Updated
+- `UseCookies` default changed from `false` to `true`.
+
 ## [Eyes.Appium 4.21] - 2021-03-29
 ### Updated
 - Match to latest Eyes.Sdk.Core
