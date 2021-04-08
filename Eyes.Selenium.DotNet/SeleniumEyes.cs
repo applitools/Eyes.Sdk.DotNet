@@ -1296,7 +1296,26 @@ namespace Applitools.Selenium
             {
                 jsExecutor_.ExecuteScript(SET_DATA_APPLITOOLS_SCROLL_ATTR, scrolledElement);
             }
+
+            Frame frame;
+            FrameChain frameChain = driver_.GetFrameChain();
+            FrameChain originalFrameChain = frameChain.Clone();
+            while ((frame = frameChain.Peek()) != null)
+            {
+                Rectangle frameBounds = new Rectangle(frame.Location, frame.InnerSize);
+                if (!effectiveViewport_.Contains(frameBounds))
+                {
+                    driver_.SwitchTo().ParentFrame();
+                    frameBounds = BringRegionToView(frameBounds, effectiveViewport_.Location);
+                    effectiveViewport_.Intersect(frameBounds);
+                }
+            }
             EyesWebDriverScreenshot result = GetScaledAndCroppedScreenshot_(scaleProviderFactory);
+            if (effectiveViewport_.Width < result.Image.Width || effectiveViewport_.Height < result.Image.Height)
+            {
+                result = (EyesWebDriverScreenshot)result.GetSubScreenshot(effectiveViewport_, false);
+            }
+            ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(originalFrameChain);
             return result;
         }
 
