@@ -26,12 +26,14 @@ namespace Applitools.Selenium.Fluent
         internal SeleniumCheckSettings(By targetSelector)
         {
             targetSelector_ = targetSelector;
+            fluentCode_.Clear();
             fluentCode_.Append($"Target.Region({targetSelector})");
         }
 
         internal SeleniumCheckSettings(IWebElement targetElement)
         {
             targetElement_ = targetElement;
+            fluentCode_.Clear();
             fluentCode_.Append($"Target.Region({targetElement})");
         }
 
