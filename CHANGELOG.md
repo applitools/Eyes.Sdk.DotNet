@@ -3,6 +3,7 @@
 - Pass potentially updated `ApiKey` and `ServerUrl` properties to ServerConnector. [Trello 2525] (https://trello.com/c/VyLMGf0K)
 ### Updated
 - Cookies now support fluent API.
+- Ultrafast Grid: Added ability to force put resources using an environment variable.
 
 ## [Eyes.Sdk.Core vNext]
 ### Updated
