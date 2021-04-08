@@ -210,5 +210,13 @@ namespace Applitools.Selenium.Tests
             }
             GetEyes().Check(targets.ToArray());
         }
+
+        [Test]
+        public void TestCheckWindowAfterManualSwitchToFrame_Fluent()
+        {
+            GetDriver().SwitchTo().Frame("frame1");
+            GetEyes().Check(Target.Window().Fully(false));
+        }
+
     }
 }
