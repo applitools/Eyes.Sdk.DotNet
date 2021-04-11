@@ -218,5 +218,11 @@ namespace Applitools.Selenium.Tests
             GetEyes().Check(Target.Window().Fully(false));
         }
 
+        [Test]
+        public void TestCheckWindowAfterManualSwitchToFrame_Fully_Fluent()
+        {
+            GetDriver().SwitchTo().Frame("frame1");
+            GetEyes().Check(Target.Window().Fully(true));
+        }
     }
 }

@@ -884,7 +884,7 @@ namespace Applitools.Selenium
             return crop;
         }
 
-        private Rectangle BringRegionToView(Rectangle bounds, Point viewportLocation)
+        private Rectangle BringRegionToView(Rectangle bounds, Point viewportLocation, bool compensateSRE = true)
         {
             IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
             IPositionProvider currentFramePositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(
@@ -894,7 +894,7 @@ namespace Applitools.Selenium
             Point newFramePosition = boundsLocation - (Size)viewportLocation;
 
             // This comes to compensate scrolling of SRE.
-            if (StitchMode == StitchModes.Scroll)
+            if (StitchMode == StitchModes.Scroll && compensateSRE)
             {
                 newFramePosition += (Size)initialFramePosition;
             }
@@ -1257,10 +1257,32 @@ namespace Applitools.Selenium
 
         private EyesWebDriverScreenshot GetFrameOrElementScreenshot_(ScaleProviderFactory scaleProviderFactory, CheckState state)
         {
+            EyesWebDriverScreenshot result;
+            bool switchedFrame = false;
+            FrameChain originalFrameChain = driver_.GetFrameChain().Clone();
+            Point originalViewportLocation = effectiveViewport_.Location;
+            if (state.EffectiveViewport.IsEmpty)
+            {
+                switchedFrame = true;
+                Frame frame;
+                FrameChain frameChain = driver_.GetFrameChain();
+                while ((frame = frameChain.Peek()) != null)
+                {
+                    Rectangle frameBounds = new Rectangle(frame.Location, frame.InnerSize);
+                    if (!effectiveViewport_.Contains(frameBounds))
+                    {
+                        driver_.SwitchTo().ParentFrame();
+                        frameBounds = BringRegionToView(frameBounds, effectiveViewport_.Location);
+                        effectiveViewport_.Intersect(frameBounds);
+                    }
+                }
+                ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(originalFrameChain);
+                state.EffectiveViewport = effectiveViewport_.ToRectangle();
+            }
+
             RenderingInfo renderingInfo = ServerConnector.GetRenderingInfo();
             FullPageCaptureAlgorithm algo = CreateFullPageCaptureAlgorithm(scaleProviderFactory, renderingInfo);
 
-            EyesWebDriverScreenshot result;
             Logger.Verbose("Check frame/element requested");
 
             IPositionProvider positionProvider = state.StitchPositionProvider;
@@ -1285,6 +1307,17 @@ namespace Applitools.Selenium
             Point frameLocationInScreenshot = new Point(-state.FullRegion.Left, -state.FullRegion.Top);
             result = new EyesWebDriverScreenshot(Logger, driver_, entireFrameOrElement, entireFrameOrElement.Size, frameLocationInScreenshot);
             state.OriginLocation = state.FullRegion.Location;
+            if (switchedFrame)
+            {
+                Frame frame;
+                FrameChain frameChain = driver_.GetFrameChain();
+                while ((frame = frameChain.Peek()) != null)
+                {
+                    driver_.SwitchTo().ParentFrame();
+                    BringRegionToView(new Rectangle(frame.OriginalLocation, frame.InnerSize), originalViewportLocation, false);
+                }
+                ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(originalFrameChain);
+            }
             return result;
         }
 
@@ -1301,8 +1334,9 @@ namespace Applitools.Selenium
             if (state.EffectiveViewport.IsEmpty)
             {
                 Frame frame;
+                FrameChain originalFrameChain = driver_.GetFrameChain().Clone();
                 FrameChain frameChain = driver_.GetFrameChain();
-                FrameChain originalFrameChain = frameChain.Clone();
+                Point originalViewportLocation = effectiveViewport_.Location;
                 while ((frame = frameChain.Peek()) != null)
                 {
                     Rectangle frameBounds = new Rectangle(frame.Location, frame.InnerSize);
@@ -1317,6 +1351,13 @@ namespace Applitools.Selenium
                 if (effectiveViewport_.Width < result.Image.Width || effectiveViewport_.Height < result.Image.Height)
                 {
                     result = (EyesWebDriverScreenshot)result.GetSubScreenshot(effectiveViewport_, false);
+                }
+                ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(originalFrameChain);
+                frameChain = driver_.GetFrameChain();
+                while ((frame = frameChain.Peek()) != null)
+                {
+                    driver_.SwitchTo().ParentFrame();
+                    BringRegionToView(new Rectangle(frame.OriginalLocation, frame.InnerSize), originalViewportLocation, false);
                 }
                 ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(originalFrameChain);
             }
