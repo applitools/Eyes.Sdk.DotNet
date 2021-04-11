@@ -3,6 +3,7 @@
 - Support for check window after manually switch to frame [Trello 2384] (https://trello.com/c/ncwPReVX)
 ### Fixed
 - Pass potentially updated `ApiKey` and `ServerUrl` properties to ServerConnector [Trello 2525] (https://trello.com/c/VyLMGf0K)
+- Ultrafast Grid: `ContentType` containing semicolon followed by encoding failed to upload [Trello 2541] (https://trello.com/c/OIfuk1hm)
 ### Updated
 - Cookies now support fluent API
 - Ultrafast Grid: Added ability to force put resources using an environment variable
