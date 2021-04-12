@@ -59,6 +59,7 @@ namespace Applitools.Selenium
                 seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner);
                 activeEyes_ = seleniumEyes_;
             }
+            ServerConnector = runner.ServerConnector;
         }
 
         internal Eyes(IServerConnectorFactory serverConnectorFactory)

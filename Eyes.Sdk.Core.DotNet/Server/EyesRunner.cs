@@ -9,8 +9,6 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private readonly ConcurrentDictionary<string, IBatchCloser> batchClosers_ = new ConcurrentDictionary<string, IBatchCloser>();
-        private string serverUrl_ = CommonUtils.ServerUrl;
-        private string apiKey_ = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
 
         public EyesRunner()
         {
@@ -78,22 +76,16 @@ namespace Applitools
 
         public string ApiKey
         {
-            get => apiKey_;
-            set
-            {
-                apiKey_ = value;
-                ServerConnector.ApiKey = value;
-            }
+            get => ServerConnector.ApiKey;
+            set => ServerConnector.ApiKey = value;
         }
+
         public string ServerUrl
         {
-            get => serverUrl_;
-            set
-            {
-                serverUrl_ = value;
-                ServerConnector.ServerUrl = new Uri(value);
-            }
+            get => ServerConnector?.ServerUrl.AbsoluteUri ?? CommonUtils.ServerUrl;
+            set => ServerConnector.ServerUrl = new Uri(value);
         }
+
         public bool IsDisabled { get; set; }
         public bool DontCloseBatches { get; set; } = CommonUtils.DontCloseBatches;
         public string AgentId

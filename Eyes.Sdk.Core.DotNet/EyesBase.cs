@@ -85,6 +85,7 @@ namespace Applitools
         protected EyesBase(Logger logger, IServerConnector serverConnector)
         {
             Init_(null, logger);
+            runner_.ServerConnector = serverConnector;
             ServerConnector = serverConnector;
         }
 
@@ -97,6 +98,7 @@ namespace Applitools
             Init_(runner, logger);
             ServerConnectorFactory = serverConnectorFactory;
             ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
+            runner_.ServerConnector = ServerConnector;
         }
 
         private void Init_(ClassicRunner runner, Logger logger)

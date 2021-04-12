@@ -159,7 +159,7 @@ namespace Applitools.VisualGrid
             string[] testIds = newTests.Select(t => t.TestId).ToArray();
             Logger.Log(TraceLevel.Notice, testIds, Stage.Open, StageType.Called);
 
-            ApiKey = eyes.ApiKey;
+            ApiKey = ServerConnector.ApiKey;
             ServerConnector.ApiKey = ApiKey;
             ServerUrl = eyes.ServerUrl;
             ServerConnector.ServerUrl = new Uri(ServerUrl);
