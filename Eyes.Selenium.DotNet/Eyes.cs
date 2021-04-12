@@ -79,15 +79,26 @@ namespace Applitools.Selenium
 
         public void SetConfiguration(IConfiguration configuration)
         {
+            ArgumentGuard.NotNull(configuration, nameof(configuration));
             configuration_ = new Configuration(configuration);
 
             string serverUrl = configuration_.ServerUrl;
             if (serverUrl != null)
             {
-                activeEyes_.ServerUrl = serverUrl;
+                ServerUrl = serverUrl;
             }
 
-            activeEyes_.ApiKey = configuration_.ApiKey;
+            string apiKey = configuration_.ApiKey;
+            if (apiKey != null)
+            {
+                ApiKey = apiKey;
+            }
+
+            WebProxy proxy = configuration_.Proxy;
+            if (proxy != null)
+            {
+                Proxy = proxy;
+            }
         }
 
         protected internal override Applitools.Configuration Config { get => configuration_; }
@@ -132,11 +143,6 @@ namespace Applitools.Selenium
         {
             get => activeEyes_.IsDisabled;
             set => activeEyes_.IsDisabled = value;
-        }
-
-        public string FullAgentId
-        {
-            get => activeEyes_.FullAgentId;
         }
 
         public bool IsOpen { get => activeEyes_.IsOpen; }
@@ -189,13 +195,6 @@ namespace Applitools.Selenium
         }
 
         #endregion
-
-
-        public WebProxy Proxy
-        {
-            get => activeEyes_.Proxy;
-            set => activeEyes_.Proxy = value;
-        }
 
         public double DevicePixelRatio
         {

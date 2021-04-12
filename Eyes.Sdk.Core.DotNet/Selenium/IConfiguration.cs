@@ -2,6 +2,7 @@
 using Applitools.VisualGrid;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Applitools.Selenium
 {
@@ -76,6 +77,7 @@ namespace Applitools.Selenium
         new IConfiguration SetMatchLevel(MatchLevel value);
         new IConfiguration SetServerUrl(string value);
         new IConfiguration SetApiKey(string value);
+        new IConfiguration SetProxy(WebProxy value);
         new IConfiguration SetEnablePatterns(bool value);
         new IConfiguration SetIgnoreDisplacements(bool value);
         new IConfiguration SetUseDom(bool value);

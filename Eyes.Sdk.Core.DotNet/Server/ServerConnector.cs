@@ -30,6 +30,9 @@ namespace Applitools
         private bool apiKeyChanged_ = true;
         private string apiKey_;
 
+        private bool serverUrlChanged_ = true;
+        private Uri serverUrl_;
+
         private bool proxyChanged_ = false;
         private WebProxy proxy_;
         private readonly string proxyStr_ = CommonUtils.GetEnvVar("APPLITOOLS_PROXY");
@@ -101,7 +104,23 @@ namespace Applitools
         /// <summary>
         /// Gets the Eyes server URL.
         /// </summary>
-        public Uri ServerUrl { get; set; }
+        public Uri ServerUrl
+        {
+            get
+            {
+                if (serverUrl_ == null)
+                {
+                    serverUrl_ = new Uri(CommonUtils.ServerUrl);
+                    serverUrlChanged_ = true;
+                }
+                return serverUrl_;
+            }
+            set
+            {
+                serverUrl_ = value;
+                serverUrlChanged_ = true;
+            }
+        }
 
         /// <summary>
         /// The SDK name.

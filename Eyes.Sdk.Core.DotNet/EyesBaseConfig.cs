@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Net;
+using System.Reflection;
 using Applitools.Utils.Geometry;
 
 namespace Applitools
@@ -6,6 +9,8 @@ namespace Applitools
     public abstract class EyesBaseConfig
     {
         internal protected abstract Configuration Config { get; }
+        private IServerConnector serverConnector_;
+        protected Assembly actualAssembly_;
 
         #region configuration properties
 
@@ -16,8 +21,15 @@ namespace Applitools
         /// <param name="value">The API key.</param>
         public virtual string ApiKey
         {
-            get => Config.ApiKey;
-            set => Config.SetApiKey(value);
+            get => ServerConnector?.ApiKey ?? Config.ApiKey;
+            set
+            {
+                Config.ApiKey = value;
+                if (serverConnector_ != null)
+                {
+                    serverConnector_.ApiKey = value;
+                }
+            }
         }
 
         /// <summary>
@@ -25,8 +37,32 @@ namespace Applitools
         /// </summary>
         public virtual string ServerUrl
         {
-            get => Config.ServerUrl;
-            set => Config.SetServerUrl(value);
+            get => ServerConnector?.ServerUrl.AbsoluteUri ?? Config.ServerUrl;
+            set
+            {
+                Config.ServerUrl = value;
+                if (serverConnector_ != null)
+                {
+                    serverConnector_.ServerUrl = new Uri(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy used to access the Eyes server or <c>null</c> to use the system 
+        /// proxy.
+        /// </summary>
+        public WebProxy Proxy
+        {
+            get => ServerConnector?.Proxy ?? Config.Proxy;
+            set
+            {
+                Config.Proxy = value;
+                if (serverConnector_ != null)
+                {
+                    serverConnector_.Proxy = value;
+                }
+            }
         }
 
         /// <summary>
@@ -226,6 +262,42 @@ namespace Applitools
         {
             get => Config.EnablePatterns;
             set => Config.SetEnablePatterns(value);
+        }
+        protected virtual string BaseAgentId => GetBaseAgentId();
+
+        protected FileVersionInfo GetActualAssemblyVersionInfo()
+        {
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(actualAssembly_.Location);
+            return versionInfo;
+        }
+
+        internal string GetBaseAgentId()
+        {
+            FileVersionInfo versionInfo = GetActualAssemblyVersionInfo();
+            return $"{versionInfo.FileDescription}/{versionInfo.ProductVersion}";
+        }
+
+        public virtual string FullAgentId
+        {
+            get
+            {
+                string agentId = Config.AgentId;
+                return (agentId == null) ? BaseAgentId : $"{agentId} [{BaseAgentId}]";
+            }
+        }
+
+        public IServerConnector ServerConnector
+        {
+            get
+            {
+                if (serverConnector_ != null && serverConnector_.AgentId == null)
+                {
+                    serverConnector_.AgentId = FullAgentId;
+                }
+                return serverConnector_;
+            }
+
+            set => serverConnector_ = value;
         }
 
         #endregion
