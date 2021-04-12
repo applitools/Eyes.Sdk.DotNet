@@ -1,12 +1,16 @@
 ## [Eyes.Selenium vNext]
+### Added
+- Support for check window after manually switch to frame [Trello 2384] (https://trello.com/c/ncwPReVX)
 ### Fixed
-- Pass potentially updated `ApiKey` and `ServerUrl` properties to ServerConnector. [Trello 2525] (https://trello.com/c/VyLMGf0K)
+- Pass potentially updated `ApiKey` and `ServerUrl` properties to ServerConnector [Trello 2525] (https://trello.com/c/VyLMGf0K)
+- Ultrafast Grid: `ContentType` containing semicolon followed by encoding failed to upload [Trello 2541] (https://trello.com/c/OIfuk1hm)
 ### Updated
-- Cookies now support fluent API.
+- Cookies now support fluent API
+- Ultrafast Grid: Added ability to force put resources using an environment variable
 
 ## [Eyes.Sdk.Core vNext]
 ### Updated
-- `UseCookies` default changed from `false` to `true`.
+- `UseCookies` default changed from `false` to `true`
 
 ## [Eyes.Appium 4.21] - 2021-03-29
 ### Updated

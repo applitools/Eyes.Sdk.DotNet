@@ -656,7 +656,7 @@ namespace Applitools
             ArgumentGuard.NotNull(content, nameof(resource.Content));
 
             string hash = resource.Sha256;
-            string contentType = resource.ContentType;
+            string contentType = resource.ContentType?.Split(';')[0];
 
             Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render,
                 new { resourceHash = hash, resourceUrl = resource.Url, renderId });
