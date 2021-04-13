@@ -56,14 +56,20 @@ namespace Applitools.Tests
             IServerConnector serverConnector = testEyes.ServerConnector;
 
             Environment.SetEnvironmentVariable("APPLITOOLS_API_KEY", "ApiKeyTest1234");
+            testEyes = new TestEyes();
+            serverConnector = testEyes.ServerConnector;
             testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
             Assert.AreEqual("ApiKeyTest1234", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
             
             Environment.SetEnvironmentVariable("bamboo_APPLITOOLS_API_KEY", "bambooApiKeyTest1234");
+            testEyes = new TestEyes();
+            serverConnector = testEyes.ServerConnector;
             testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
             Assert.AreEqual("ApiKeyTest1234", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
             
             Environment.SetEnvironmentVariable("APPLITOOLS_API_KEY", null);
+            testEyes = new TestEyes();
+            serverConnector = testEyes.ServerConnector;
             testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
             Assert.AreEqual("bambooApiKeyTest1234", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
         }
