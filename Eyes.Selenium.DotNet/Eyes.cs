@@ -86,6 +86,7 @@ namespace Applitools.Selenium
         protected internal override Applitools.Configuration Config { get => configuration_; }
         Configuration ISeleniumConfigurationProvider.GetConfiguration() { return configuration_; }
 
+        public override string FullAgentId => activeEyes_.FullAgentId;
 
         #region configuration properties
 

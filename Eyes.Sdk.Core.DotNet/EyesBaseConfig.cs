@@ -264,10 +264,14 @@ namespace Applitools
         }
         protected virtual string BaseAgentId => GetBaseAgentId();
 
+        private FileVersionInfo versionInfo_;
         protected FileVersionInfo GetActualAssemblyVersionInfo()
         {
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(actualAssembly_.Location);
-            return versionInfo;
+            if (versionInfo_ == null)
+            {
+                versionInfo_ = FileVersionInfo.GetVersionInfo(actualAssembly_.Location);
+            }
+            return versionInfo_;
         }
 
         internal string GetBaseAgentId()
