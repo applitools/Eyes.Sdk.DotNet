@@ -460,5 +460,9 @@ Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckWindowAfter
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckWindowAfterManualSwitchToFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckWindowAfterManualSwitchToFrame_Fully_Fluent
 
+Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInConfig(False)
+Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInConfig(True)
+Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInEyes(False)
+Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInEyes(True)
 Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(False)
 Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(True)
