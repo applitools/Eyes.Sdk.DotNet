@@ -9,7 +9,7 @@ namespace Applitools
     public abstract class EyesBaseConfig
     {
         internal protected abstract Configuration Config { get; }
-        private IServerConnector serverConnector_;
+
         protected Assembly actualAssembly_;
 
         #region configuration properties
@@ -25,9 +25,9 @@ namespace Applitools
             set
             {
                 Config.ApiKey = value;
-                if (serverConnector_ != null)
+                if (ServerConnector != null)
                 {
-                    serverConnector_.ApiKey = value;
+                    ServerConnector.ApiKey = value;
                 }
             }
         }
@@ -41,9 +41,9 @@ namespace Applitools
             set
             {
                 Config.ServerUrl = value;
-                if (serverConnector_ != null)
+                if (ServerConnector != null)
                 {
-                    serverConnector_.ServerUrl = new Uri(value);
+                    ServerConnector.ServerUrl = new Uri(value);
                 }
             }
         }
@@ -58,9 +58,9 @@ namespace Applitools
             set
             {
                 Config.Proxy = value;
-                if (serverConnector_ != null)
+                if (ServerConnector != null)
                 {
-                    serverConnector_.Proxy = value;
+                    ServerConnector.Proxy = value;
                 }
             }
         }
@@ -286,19 +286,7 @@ namespace Applitools
             }
         }
 
-        public IServerConnector ServerConnector
-        {
-            get
-            {
-                if (serverConnector_ != null && serverConnector_.AgentId == null)
-                {
-                    serverConnector_.AgentId = FullAgentId;
-                }
-                return serverConnector_;
-            }
-
-            set => serverConnector_ = value;
-        }
+        public IServerConnector ServerConnector { get; set; }
 
         #endregion
 
