@@ -1597,6 +1597,11 @@ namespace Applitools.Selenium
             throw new NotImplementedException();
         }
 
+        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion Methods
     }
 }

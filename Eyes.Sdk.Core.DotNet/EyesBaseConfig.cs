@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
+using Applitools.Utils;
 using Applitools.Utils.Geometry;
 
 namespace Applitools
@@ -11,8 +12,6 @@ namespace Applitools
         internal protected abstract Configuration Config { get; }
 
         protected Assembly actualAssembly_;
-
-        #region configuration properties
 
         /// <summary>
         /// Sets the API key of your applitools Eyes account.
@@ -288,7 +287,30 @@ namespace Applitools
 
         public IServerConnector ServerConnector { get; set; }
 
-        #endregion
+        public void SetConfiguration(IConfiguration configuration)
+        {
+            ArgumentGuard.NotNull(configuration, nameof(configuration));
+            SetConfigImpl(configuration);
 
+            string serverUrl = configuration.ServerUrl;
+            if (serverUrl != null)
+            {
+                ServerUrl = serverUrl;
+            }
+
+            string apiKey = configuration.ApiKey;
+            if (apiKey != null)
+            {
+                ApiKey = apiKey;
+            }
+
+            WebProxy proxy = configuration.Proxy;
+            if (proxy != null)
+            {
+                Proxy = proxy;
+            }
+        }
+
+        protected abstract void SetConfigImpl(IConfiguration configuration);
     }
 }

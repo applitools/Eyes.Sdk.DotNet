@@ -78,28 +78,9 @@ namespace Applitools.Selenium
             return new Configuration(configuration_);
         }
 
-        public void SetConfiguration(IConfiguration configuration)
+        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
         {
-            ArgumentGuard.NotNull(configuration, nameof(configuration));
-            configuration_ = new Configuration(configuration);
-
-            string serverUrl = configuration_.ServerUrl;
-            if (serverUrl != null)
-            {
-                ServerUrl = serverUrl;
-            }
-
-            string apiKey = configuration_.ApiKey;
-            if (apiKey != null)
-            {
-                ApiKey = apiKey;
-            }
-
-            WebProxy proxy = configuration_.Proxy;
-            if (proxy != null)
-            {
-                Proxy = proxy;
-            }
+            configuration_ = new Configuration((IConfiguration)configuration);
         }
 
         protected internal override Applitools.Configuration Config { get => configuration_; }
