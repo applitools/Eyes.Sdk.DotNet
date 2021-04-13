@@ -97,7 +97,7 @@ namespace Applitools
         {
             Init_(runner, logger);
             ServerConnectorFactory = serverConnectorFactory;
-            if (runner.ServerConnector != null)
+            if (runner_.ServerConnector != null)
             {
                 ServerConnector = runner_.ServerConnector;
             }
