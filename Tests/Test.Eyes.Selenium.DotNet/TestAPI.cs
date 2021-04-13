@@ -9,6 +9,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 
@@ -36,8 +37,8 @@ namespace Applitools.Selenium.Tests
                     {
                         parameters.Add(pi.ParameterType);
                     }
-                    MethodInfo smi = seleniumCheckSettings.GetMethod(mi.Name, 
-                        BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly, 
+                    MethodInfo smi = seleniumCheckSettings.GetMethod(mi.Name,
+                        BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
                         null, parameters.ToArray(), null);
                     if (smi == null)
                     {
@@ -309,6 +310,81 @@ namespace Applitools.Selenium.Tests
             {
                 runner.StopServiceRunner();
             }
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestSetServerUrlAndApiKeyInRunner(bool useVG)
+        {
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            WebDriverProvider webDriverProvider = new WebDriverProvider();
+            webDriverProvider.SetDriver(driver);
+            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webDriverProvider);
+            EyesRunner runner = useVG
+                ? (EyesRunner)new VisualGridRunner(10, null, serverConnectorFactory, logHandler)
+                : new ClassicRunner(logHandler, serverConnectorFactory);
+            runner.ServerUrl = "https://some.server.url.com";
+            runner.ApiKey = "someApiKey";
+            Eyes eyes = new Eyes(runner);
+            try
+            {
+                eyes.Open(driver, "app", "test");
+                eyes.CheckWindow();
+                eyes.Close();
+            }
+            finally
+            {
+                driver.Quit();
+            }
+            MockServerConnector serverConnector = (MockServerConnector)runner.ServerConnector;
+            MockMessageProcessingHandler handler = ((MockHttpRestClientFactory)serverConnector.HttpRestClientFactory).Provider.Handler;
+            int i = 0;
+            foreach (HttpRequestMessage req in handler.Requests)
+            {
+                if (req.Method == HttpMethod.Put) continue;
+                ++i;
+                StringAssert.Contains("apiKey=someApiKey", req.RequestUri.AbsoluteUri);
+                StringAssert.StartsWith("https://some.server.url.com", req.RequestUri.AbsoluteUri);
+            }
+            Assert.Greater(i, 0);
+            Assert.AreEqual("someApiKey", serverConnector.ApiKey);
+            Assert.AreEqual("https://some.server.url.com/", serverConnector.ServerUrl.AbsoluteUri);
+        }
+
+
+        [Test]
+        public void TestSetServerUrlAndApiKeyInClassicRunner()
+        {
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            WebDriverProvider webDriverProvider = new WebDriverProvider();
+            webDriverProvider.SetDriver(driver);
+            IServerConnectorFactory serverConnectorFactory = new MockServerConnectorFactory(webDriverProvider);
+            EyesRunner runner = new ClassicRunner(logHandler, serverConnectorFactory);
+            runner.ServerUrl = "https://some.server.url.com";
+            runner.ApiKey = "someApiKey";
+            Eyes eyes = new Eyes(runner);
+            try
+            {
+                eyes.Open(driver, "app", "test");
+                eyes.CheckWindow();
+                eyes.Close();
+            }
+            finally
+            {
+                driver.Quit();
+            }
+            MockServerConnector serverConnector = (MockServerConnector)runner.ServerConnector;
+            MockMessageProcessingHandler handler = ((MockHttpRestClientFactory)serverConnector.HttpRestClientFactory).Provider.Handler;
+            Assert.Greater(handler.Requests.Count, 1);
+            foreach (var req in handler.Requests)
+            {
+                StringAssert.Contains("apiKey=someApiKey", req.RequestUri.AbsoluteUri);
+                StringAssert.StartsWith("https://some.server.url.com", req.RequestUri.AbsoluteUri);
+            }
+            Assert.AreEqual("someApiKey", serverConnector.ApiKey);
+            Assert.AreEqual("https://some.server.url.com/", serverConnector.ServerUrl.AbsoluteUri);
         }
     }
 }

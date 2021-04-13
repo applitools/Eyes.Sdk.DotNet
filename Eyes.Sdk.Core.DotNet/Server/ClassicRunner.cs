@@ -22,8 +22,13 @@ namespace Applitools
             eyes_ = eyes;
         }
 
-        public ClassicRunner(ILogHandler logHandler)
+        public ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory = null)
         {
+            if (serverConnectorFactory != null)
+            {
+                ServerConnectorFactory = serverConnectorFactory;
+                ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
+            }
             Logger.SetLogHandler(logHandler);
             openService_ = new OpenService(Logger, ServerConnector, 1);
             checkService_ = new CheckService(Logger, ServerConnector);

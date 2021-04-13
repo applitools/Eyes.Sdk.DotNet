@@ -223,9 +223,11 @@ namespace Applitools.Selenium.Tests.Mock
         private readonly HttpClient httpClient_;
         public MockHttpClientProvider(Logger logger, MockServerConnector connector)
         {
-            HttpMessageHandler handler = new MockMessageProcessingHandler(logger, connector);
-            httpClient_ = new HttpClient(handler);
+            Handler = new MockMessageProcessingHandler(logger, connector);
+            httpClient_ = new HttpClient(Handler);
         }
+
+        public MockMessageProcessingHandler Handler { get; }
 
         public HttpClient GetClient(IWebProxy proxy)
         {
@@ -238,6 +240,7 @@ namespace Applitools.Selenium.Tests.Mock
         private static readonly string BASE_LOCATION = "api/tasks/123412341234/";
         private readonly MockServerConnector connector_;
         public Logger Logger { get; }
+        public List<HttpRequestMessage> Requests { get; } = new List<HttpRequestMessage>(32);
 
         public MockMessageProcessingHandler(Logger logger, MockServerConnector connector)
         {
@@ -255,17 +258,19 @@ namespace Applitools.Selenium.Tests.Mock
             response.RequestMessage = request;
             tcs.SetResult(response);
 
+            Requests.Add(request);
+            string serverUrl = uri.Scheme + "://" + uri.Host + "/";
             if (request.Method == HttpMethod.Post &&
                 uri.PathAndQuery.StartsWith("/api/sessions/running", StringComparison.OrdinalIgnoreCase))
             {
                 response.StatusCode = HttpStatusCode.Accepted;
-                response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "status");
+                response.Headers.Location = new Uri(serverUrl + BASE_LOCATION + "status");
             }
             else if (request.Method == HttpMethod.Get &&
                 uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "status", StringComparison.OrdinalIgnoreCase))
             {
                 response.StatusCode = HttpStatusCode.Created;
-                response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "created");
+                response.Headers.Location = new Uri(serverUrl + BASE_LOCATION + "created");
             }
             else if (request.Method == HttpMethod.Delete &&
                 uri.PathAndQuery.StartsWith("/" + BASE_LOCATION + "created", StringComparison.OrdinalIgnoreCase))
@@ -273,7 +278,7 @@ namespace Applitools.Selenium.Tests.Mock
                 response.StatusCode = HttpStatusCode.OK;
                 byte[] bytes = Encoding.UTF8.GetBytes($"{{\"AsExpected\":{connector_.AsExpected.ToString().ToLower()}}}");
                 response.Content = new ByteArrayContent(bytes);
-                response.Headers.Location = new Uri(CommonData.DefaultServerUrl + BASE_LOCATION + "ok");
+                response.Headers.Location = new Uri(serverUrl + BASE_LOCATION + "ok");
             }
             else if (request.Method == HttpMethod.Put)
             {

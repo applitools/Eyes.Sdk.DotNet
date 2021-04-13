@@ -459,3 +459,6 @@ Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckWindowAfterM
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, CSS).TestCheckWindowAfterManualSwitchToFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, Scroll).TestCheckWindowAfterManualSwitchToFrame_Fully_Fluent
 Applitools.Selenium.Tests.TestFluentApi_Frames(Chrome, VG).TestCheckWindowAfterManualSwitchToFrame_Fully_Fluent
+
+Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(False)
+Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(True)

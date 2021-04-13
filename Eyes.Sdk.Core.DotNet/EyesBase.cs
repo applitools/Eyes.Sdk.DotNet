@@ -89,7 +89,7 @@ namespace Applitools
             ServerConnector = serverConnector;
         }
 
-        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, runner.Logger) { }
+        public EyesBase(ClassicRunner runner) : this(runner.ServerConnectorFactory, runner, runner.Logger) { }
 
         protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), null, logger) { }
 
@@ -97,8 +97,15 @@ namespace Applitools
         {
             Init_(runner, logger);
             ServerConnectorFactory = serverConnectorFactory;
-            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
-            runner_.ServerConnector = ServerConnector;
+            if (runner.ServerConnector != null)
+            {
+                ServerConnector = runner_.ServerConnector;
+            }
+            else
+            {
+                ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
+                runner_.ServerConnector = ServerConnector;
+            }
         }
 
         private void Init_(ClassicRunner runner, Logger logger)
