@@ -80,15 +80,6 @@ namespace Applitools.Selenium
             Init_();
         }
 
-        internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner,
-            IServerConnectorFactory serverConnectorFactory)
-            : base(runner, serverConnectorFactory)
-        {
-            configProvider_ = configurationProvider;
-            runner_ = runner;
-            Init_();
-        }
-
         private void Init_()
         {
             Config_.SetHideScrollbars(true);

@@ -63,9 +63,9 @@ namespace Applitools.Selenium
 
         internal Eyes(IServerConnectorFactory serverConnectorFactory)
         {
-            runner_ = new ClassicRunner();
+            runner_ = new ClassicRunner(NullLogHandler.Instance, serverConnectorFactory);
             configuration_.SetForceFullPageScreenshot(false);
-            seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_, serverConnectorFactory);
+            seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_);
             activeEyes_ = seleniumEyes_;
         }
 
