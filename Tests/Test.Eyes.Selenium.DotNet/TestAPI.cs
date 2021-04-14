@@ -322,7 +322,7 @@ namespace Applitools.Selenium.Tests
 
             runner.ServerUrl = "https://some.server.url.com";
             runner.ApiKey = "someApiKey";
-            
+
             Eyes eyes = new Eyes(runner);
 
             ValidateServerUrlAndApiKey_(driver, runner, eyes);
@@ -336,7 +336,7 @@ namespace Applitools.Selenium.Tests
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             ILogHandler logHandler = TestUtils.InitLogHandler();
             EyesRunner runner = CreateEyesRunnerWithMockServerConnector_(useVG, driver, logHandler);
-           
+
             Eyes eyes = new Eyes(runner);
 
             IConfiguration config = eyes.GetConfiguration();
@@ -345,6 +345,7 @@ namespace Applitools.Selenium.Tests
             eyes.SetConfiguration(config);
 
             ValidateServerUrlAndApiKey_(driver, runner, eyes);
+            ValidateConfiguration_(eyes);
         }
 
         [TestCase(true)]
@@ -356,11 +357,12 @@ namespace Applitools.Selenium.Tests
             EyesRunner runner = CreateEyesRunnerWithMockServerConnector_(useVG, driver, logHandler);
 
             Eyes eyes = new Eyes(runner);
-            
+
             eyes.ServerUrl = "https://some.server.url.com";
             eyes.ApiKey = "someApiKey";
 
             ValidateServerUrlAndApiKey_(driver, runner, eyes);
+            ValidateConfiguration_(eyes);
         }
 
         private static EyesRunner CreateEyesRunnerWithMockServerConnector_(bool useVG, IWebDriver driver, ILogHandler logHandler)
@@ -397,8 +399,22 @@ namespace Applitools.Selenium.Tests
                 StringAssert.StartsWith("https://some.server.url.com", req.RequestUri.AbsoluteUri);
             }
             Assert.Greater(i, 0);
+
             Assert.AreEqual("someApiKey", serverConnector.ApiKey);
             Assert.AreEqual("https://some.server.url.com/", serverConnector.ServerUrl.AbsoluteUri);
+
+            Assert.AreEqual("someApiKey", eyes.ApiKey);
+            Assert.AreEqual("https://some.server.url.com/", eyes.ServerUrl);
+
+            Assert.AreEqual("someApiKey", runner.ApiKey);
+            Assert.AreEqual("https://some.server.url.com/", runner.ServerUrl);
+        }
+
+        private static void ValidateConfiguration_(Eyes eyes)
+        {
+            IConfiguration configuration = eyes.GetConfiguration();
+            Assert.AreEqual("someApiKey", configuration.ApiKey);
+            Assert.AreEqual("https://some.server.url.com", configuration.ServerUrl);
         }
     }
 }

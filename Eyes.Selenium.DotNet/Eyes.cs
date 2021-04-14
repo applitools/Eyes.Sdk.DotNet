@@ -6,6 +6,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 
 namespace Applitools.Selenium
 {
@@ -86,6 +87,12 @@ namespace Applitools.Selenium
         Configuration ISeleniumConfigurationProvider.GetConfiguration() { return configuration_; }
 
         public override string FullAgentId => activeEyes_.FullAgentId;
+
+        public override string ApiKey { get => runner_.ApiKey; set { runner_.ApiKey = value; configuration_.ApiKey = value; } }
+
+        public override string ServerUrl { get => runner_.ServerUrl; set { runner_.ServerUrl = value; configuration_.ServerUrl = value; } }
+
+        public override WebProxy Proxy { get => runner_.Proxy; set { runner_.Proxy = value; configuration_.Proxy = value; } }
 
         #region configuration properties
 
