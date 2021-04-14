@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-chromeVersion=`google-chrome -- product-version | sed 's/\..*//'`
+chromeVersion=`google-chrome --product-version | sed 's/\..*//'`
 echo $schromeVersion
 latestChromeDriverURL=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE_$chromeVersion -q -O -)
 echo $latestChromeDriverURL
