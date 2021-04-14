@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Applitools
 {
@@ -84,6 +85,12 @@ namespace Applitools
         {
             get => ServerConnector?.ServerUrl.AbsoluteUri ?? CommonUtils.ServerUrl;
             set => ServerConnector.ServerUrl = new Uri(value);
+        }
+
+        public WebProxy Proxy
+        {
+            get => ServerConnector.Proxy;
+            set => ServerConnector.Proxy = value;
         }
 
         public bool IsDisabled { get; set; }

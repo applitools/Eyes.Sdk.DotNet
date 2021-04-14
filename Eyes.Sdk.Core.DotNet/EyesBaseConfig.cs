@@ -51,7 +51,7 @@ namespace Applitools
         /// Gets or sets the proxy used to access the Eyes server or <c>null</c> to use the system 
         /// proxy.
         /// </summary>
-        public WebProxy Proxy
+        public virtual WebProxy Proxy
         {
             get => ServerConnector?.Proxy ?? Config.Proxy;
             set

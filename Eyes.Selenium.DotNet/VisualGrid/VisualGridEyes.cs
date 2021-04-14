@@ -79,17 +79,21 @@ namespace Applitools.Selenium.VisualGrid
 
         public string ApiKey
         {
-            get => Config_.ApiKey ?? runner_.ApiKey;
-            set => Config_.ApiKey = value;
+            get => runner_.ApiKey ?? Config_.ApiKey;
+            set { runner_.ApiKey = value; Config_.ApiKey = value; }
         }
 
         public string ServerUrl
         {
-            get => Config_.ServerUrl ?? runner_.ServerUrl;
-            set => Config_.ServerUrl = value;
+            get => runner_.ServerUrl ?? Config_.ServerUrl;
+            set { runner_.ServerUrl = value; Config_.ServerUrl = value; }
         }
 
-        public WebProxy Proxy { get; set; }
+        public WebProxy Proxy
+        {
+            get => runner_.Proxy ?? Config_.Proxy;
+            set { runner_.Proxy = value; Config_.Proxy = value; }
+        }
 
         public Logger Logger { get; }
 
@@ -167,7 +171,7 @@ namespace Applitools.Selenium.VisualGrid
             isOpen_ = true;
             InitDriver(webDriver);
 
-            string uaString = driver_.GetUserAgent();
+            string uaString = webDriver.GetUserAgent();
             if (uaString != null)
             {
                 Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called, new { userAgent = uaString });
