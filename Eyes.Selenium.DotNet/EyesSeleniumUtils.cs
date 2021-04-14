@@ -587,5 +587,10 @@ namespace Applitools.Selenium
             return ufgDrw;
         }
 
+        public static string GetUserAgent(this IWebDriver driver) {
+            IJavaScriptExecutor executor = (IJavaScriptExecutor)driver;
+            string ua = (string)executor.ExecuteScript("return navigator.userAgent;");
+            return ua;
+        }
     }
 }
