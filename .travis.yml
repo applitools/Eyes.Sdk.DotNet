@@ -100,8 +100,6 @@ jobs:
         - pushd Eyes.Selenium.DotNet/Properties/NodeResources
         - npm install
         - popd
-        - which chrome
-        - chrome --version
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
 
