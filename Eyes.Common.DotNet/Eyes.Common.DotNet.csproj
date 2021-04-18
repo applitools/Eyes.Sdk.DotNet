@@ -10,18 +10,15 @@
     </Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>1.6</Version>
+    <Version>1.7</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes common</PackageTags>
     <PackageReleaseNotes>### Added
-- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
-- More mobile devices to `DeviceName` enum.
-- Added `Properties` member to `BatchInfo`. [Trello 2514] (https://trello.com/c/ltvR74JM)
-# [Eyes.Sdk.Core vNext]
-### Added
-- Ultrafast Grid: Layout Breakpoints Support [Trello 2505] (https://trello.com/c/1fC0fKNb)
+- Proxy settings in `IConfiguration`
+### Updated
+- Renamed user facing `appIdOrName` to `appName` and `scenarioIdOrName` to `testName`.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Common</PackageId>

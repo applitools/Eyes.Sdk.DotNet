@@ -1,3 +1,9 @@
+## [Eyes.Common 1.7] - 2021-04-18
+### Added
+- Proxy settings in `IConfiguration`
+### Updated
+- Renamed user facing `appIdOrName` to `appName` and `scenarioIdOrName` to `testName`.
+
 ## [Eyes.Appium 4.22] - 2021-04-18
 ### Updated
 - Match to latest Eyes.Sdk.Core
