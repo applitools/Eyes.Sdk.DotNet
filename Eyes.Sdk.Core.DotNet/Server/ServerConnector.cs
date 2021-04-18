@@ -609,7 +609,7 @@ namespace Applitools
 
         protected void EnsureHttpClient_(Uri url = null)
         {
-            if (httpClient_ != null && httpClient_.ServerUrl.Equals(ServerUrl) && !apiKeyChanged_ && !proxyChanged_)
+            if (httpClient_ != null && serverUrlChanged_ && !apiKeyChanged_ && !proxyChanged_)
             {
                 return;
             }
