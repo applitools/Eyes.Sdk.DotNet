@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Applitools.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,6 +26,17 @@ namespace Applitools
         public ClassicRunner(ILogHandler logHandler)
         {
             Logger.SetLogHandler(logHandler);
+            openService_ = new OpenService(Logger, ServerConnector, 1);
+            checkService_ = new CheckService(Logger, ServerConnector);
+            closeService_ = new CloseService(Logger, ServerConnector);
+        }
+
+        internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory)
+        {
+            ArgumentGuard.NotNull(serverConnectorFactory, nameof(serverConnectorFactory));
+            Logger.SetLogHandler(logHandler);
+            ServerConnectorFactory = serverConnectorFactory;
+            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
             openService_ = new OpenService(Logger, ServerConnector, 1);
             checkService_ = new CheckService(Logger, ServerConnector);
             closeService_ = new CloseService(Logger, ServerConnector);

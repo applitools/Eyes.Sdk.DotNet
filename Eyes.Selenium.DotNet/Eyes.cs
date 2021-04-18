@@ -59,13 +59,14 @@ namespace Applitools.Selenium
                 seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner);
                 activeEyes_ = seleniumEyes_;
             }
+            ServerConnector = runner.ServerConnector;
         }
 
         internal Eyes(IServerConnectorFactory serverConnectorFactory)
         {
-            runner_ = new ClassicRunner();
+            runner_ = new ClassicRunner(NullLogHandler.Instance, serverConnectorFactory);
             configuration_.SetForceFullPageScreenshot(false);
-            seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_, serverConnectorFactory);
+            seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_);
             activeEyes_ = seleniumEyes_;
         }
 
@@ -77,22 +78,21 @@ namespace Applitools.Selenium
             return new Configuration(configuration_);
         }
 
-        public void SetConfiguration(IConfiguration configuration)
+        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
         {
-            configuration_ = new Configuration(configuration);
-
-            string serverUrl = configuration_.ServerUrl;
-            if (serverUrl != null)
-            {
-                activeEyes_.ServerUrl = serverUrl;
-            }
-
-            activeEyes_.ApiKey = configuration_.ApiKey;
+            configuration_ = new Configuration((IConfiguration)configuration);
         }
 
         protected internal override Applitools.Configuration Config { get => configuration_; }
         Configuration ISeleniumConfigurationProvider.GetConfiguration() { return configuration_; }
 
+        public override string FullAgentId => activeEyes_.FullAgentId;
+
+        public override string ApiKey { get => runner_.ApiKey; set { runner_.ApiKey = value; configuration_.ApiKey = value; } }
+
+        public override string ServerUrl { get => runner_.ServerUrl; set { runner_.ServerUrl = value; configuration_.ServerUrl = value; } }
+
+        public override WebProxy Proxy { get => runner_.Proxy; set { runner_.Proxy = value; configuration_.Proxy = value; } }
 
         #region configuration properties
 
@@ -132,11 +132,6 @@ namespace Applitools.Selenium
         {
             get => activeEyes_.IsDisabled;
             set => activeEyes_.IsDisabled = value;
-        }
-
-        public string FullAgentId
-        {
-            get => activeEyes_.FullAgentId;
         }
 
         public bool IsOpen { get => activeEyes_.IsOpen; }
@@ -189,13 +184,6 @@ namespace Applitools.Selenium
         }
 
         #endregion
-
-
-        public WebProxy Proxy
-        {
-            get => activeEyes_.Proxy;
-            set => activeEyes_.Proxy = value;
-        }
 
         public double DevicePixelRatio
         {

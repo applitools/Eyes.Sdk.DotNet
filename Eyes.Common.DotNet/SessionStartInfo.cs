@@ -9,9 +9,9 @@ namespace Applitools
     {
         public SessionStartInfo(
             string agentId,
-            string appIdOrName,
+            string appName,
             string verId,
-            string scenarioIdOrName,
+            string testName,
             BatchInfo batchInfo,
             string baselineEnvName,
             object environment,
@@ -27,16 +27,16 @@ namespace Applitools
             PropertiesCollection properties)
         {
             ArgumentGuard.NotEmpty(agentId, nameof(agentId));
-            ArgumentGuard.NotEmpty(appIdOrName, nameof(appIdOrName));
-            ArgumentGuard.NotEmpty(scenarioIdOrName, nameof(scenarioIdOrName));
+            ArgumentGuard.NotEmpty(appName, nameof(appName));
+            ArgumentGuard.NotEmpty(testName, nameof(testName));
             ArgumentGuard.NotNull(batchInfo, nameof(batchInfo));
             ArgumentGuard.NotNull(environment, nameof(environment));
             ArgumentGuard.NotNull(defaultMatchSettings, nameof(defaultMatchSettings));
 
             AgentId = agentId;
-            AppIdOrName = appIdOrName;
+            AppIdOrName = appName;
             VerId = verId;
-            ScenarioIdOrName = scenarioIdOrName;
+            ScenarioIdOrName = testName;
             BatchInfo = batchInfo;
             BaselineEnvName = baselineEnvName;
             Environment = environment;

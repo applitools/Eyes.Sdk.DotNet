@@ -52,14 +52,12 @@ namespace Applitools
         private IScaleProvider scaleProvider_;
         private SetScaleProviderHandler setScaleProvider_;
         private ICutProvider cutProvider_;
-        private Assembly actualAssembly_;
         private PropertiesCollection properties_;
         private static readonly object screenshotLock_ = new object();
         private bool isViewportSizeSet_;
         private IDebugScreenshotProvider debugScreenshotProvider_ = NullDebugScreenshotProvider.Instance;
         protected RectangleSize viewportSize_;
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
-        private IServerConnector serverConnector_;
         protected TestResultContainer testResultContainer_;
         private readonly Queue<Trigger> userInputs_ = new Queue<Trigger>();
 
@@ -87,10 +85,11 @@ namespace Applitools
         protected EyesBase(Logger logger, IServerConnector serverConnector)
         {
             Init_(null, logger);
+            runner_.ServerConnector = serverConnector;
             ServerConnector = serverConnector;
         }
 
-        public EyesBase(ClassicRunner runner) : this(new ServerConnectorFactory(), runner, runner.Logger) { }
+        public EyesBase(ClassicRunner runner) : this(runner.ServerConnectorFactory, runner, runner.Logger) { }
 
         protected EyesBase(Logger logger) : this(new ServerConnectorFactory(), null, logger) { }
 
@@ -98,7 +97,15 @@ namespace Applitools
         {
             Init_(runner, logger);
             ServerConnectorFactory = serverConnectorFactory;
-            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
+            if (runner_.ServerConnector != null)
+            {
+                ServerConnector = runner_.ServerConnector;
+            }
+            else
+            {
+                ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger);
+                runner_.ServerConnector = ServerConnector;
+            }
         }
 
         private void Init_(ClassicRunner runner, Logger logger)
@@ -226,46 +233,6 @@ namespace Applitools
         /// Message logger.
         /// </summary>
         public Logger Logger { get; private set; }
-
-        /// <summary>
-        /// The agent id.
-        /// </summary>
-        protected virtual string BaseAgentId => GetBaseAgentId();
-
-        protected FileVersionInfo GetActualAssemblyVersionInfo()
-        {
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(actualAssembly_.Location);
-            return versionInfo;
-        }
-
-        internal string GetBaseAgentId()
-        {
-            FileVersionInfo versionInfo = GetActualAssemblyVersionInfo();
-            return $"{versionInfo.FileDescription}/{versionInfo.ProductVersion}";
-        }
-
-        /// <summary>
-        /// Gets the full agent id including both <see cref="EyesBaseConfig.AgentId"/> and 
-        /// <see cref="BaseAgentId"/>.
-        /// </summary>
-        public string FullAgentId
-        {
-            get
-            {
-                string agentId = Configuration?.AgentId;
-                return (agentId == null) ? BaseAgentId : $"{agentId} [{BaseAgentId}]";
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the proxy used to access the Eyes server or <c>null</c> to use the system 
-        /// proxy.
-        /// </summary>
-        public WebProxy Proxy
-        {
-            get { return ServerConnector.Proxy; }
-            set { ServerConnector.Proxy = value; }
-        }
 
         protected SetScaleProviderHandler SetScaleProvider
         {
@@ -1043,20 +1010,6 @@ namespace Applitools
         }
 
         protected ILastScreenshotBounds LastScreenshotBoundsProvider { get { return matchWindowTask_; } }
-
-        public IServerConnector ServerConnector
-        {
-            get
-            {
-                if (serverConnector_ != null && serverConnector_.AgentId == null)
-                {
-                    serverConnector_.AgentId = FullAgentId;
-                }
-                return serverConnector_;
-            }
-
-            set => serverConnector_ = value;
-        }
 
         public bool IsOpen { get; private set; }
         protected virtual bool ViewportSizeRequired => true;

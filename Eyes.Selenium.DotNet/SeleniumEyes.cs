@@ -23,6 +23,7 @@ using System.Threading;
 using Region = Applitools.Utils.Geometry.Region;
 using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
 using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
+using System.Net;
 
 namespace Applitools.Selenium
 {
@@ -80,15 +81,6 @@ namespace Applitools.Selenium
             Init_();
         }
 
-        internal SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner,
-            IServerConnectorFactory serverConnectorFactory)
-            : base(runner, serverConnectorFactory)
-        {
-            configProvider_ = configurationProvider;
-            runner_ = runner;
-            Init_();
-        }
-
         private void Init_()
         {
             Config_.SetHideScrollbars(true);
@@ -119,6 +111,7 @@ namespace Applitools.Selenium
 
         public override string ApiKey { get => base.ApiKey ?? runner_.ApiKey; set => base.ApiKey = value; }
         public override string ServerUrl { get => base.ServerUrl ?? runner_.ServerUrl; set => base.ServerUrl = value; }
+        public override WebProxy Proxy { get => base.Proxy ?? runner_.Proxy; set => base.Proxy = value; }
 
         private bool? isDisabled_;
         private object lastCheckSettings_;
@@ -1593,6 +1586,11 @@ namespace Applitools.Selenium
         }
 
         protected internal override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
         {
             throw new NotImplementedException();
         }

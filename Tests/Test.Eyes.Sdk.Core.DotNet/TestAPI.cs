@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using Applitools.VisualGrid;
+using System.Net;
 
 namespace Applitools.Tests
 {
@@ -373,6 +374,17 @@ namespace Applitools.Tests
                     list = new int[] { 1, 2, 3, 4 };
                 }
                 modifiedValue = list;
+            }
+            else if (type == typeof(WebProxy))
+            {
+                if (origValue == null)
+                {
+                    modifiedValue = new WebProxy("http://127.0.0.1:8888");
+                }
+                else
+                {
+                    modifiedValue = null;
+                }
             }
             return modifiedValue;
         }

@@ -2,6 +2,7 @@
 using Applitools.Utils.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Applitools
 {
@@ -37,6 +38,7 @@ namespace Applitools
             SaveFailedTests = configuration.SaveFailedTests;
             SendDom = configuration.SendDom;
             ServerUrl = configuration.ServerUrl;
+            Proxy = configuration.Proxy;
             StitchOverlap = configuration.StitchOverlap;
             TestName = configuration.TestName;
             ViewportSize = configuration.ViewportSize;
@@ -312,12 +314,8 @@ namespace Applitools
             return this;
         }
 
-        private string serverUrl_;
-        public string ServerUrl
-        {
-            get => serverUrl_ ?? CommonUtils.GetEnvVar("APPLITOOLS_SERVER_URL") ?? CommonData.DefaultServerUrl;
-            set => serverUrl_ = value;
-        }
+        
+        public string ServerUrl { get; set; }
 
         public IConfiguration SetServerUrl(string value)
         {
@@ -325,12 +323,8 @@ namespace Applitools
             return this;
         }
 
-        private string apiKey_;
-        public string ApiKey
-        {
-            get => apiKey_ ?? CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
-            set => apiKey_ = value;
-        }
+
+        public string ApiKey { get; set; }
 
         public IConfiguration SetApiKey(string value)
         {
@@ -338,6 +332,14 @@ namespace Applitools
             return this;
         }
 
+
+        public WebProxy Proxy { get; set; }
+
+        public IConfiguration SetProxy(WebProxy proxy)
+        {
+            Proxy = proxy;
+            return this;
+        }
 
         public bool UseDom
         {

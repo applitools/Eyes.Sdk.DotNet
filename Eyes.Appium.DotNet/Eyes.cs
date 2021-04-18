@@ -78,7 +78,7 @@ namespace Applitools.Appium
             return new Configuration(configuration_);
         }
 
-        public void SetConfiguration(IConfiguration configuration)
+        protected override void SetConfigImpl(IConfiguration configuration)
         {
             configuration_ = new Configuration(configuration);
         }

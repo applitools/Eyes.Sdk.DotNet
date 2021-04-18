@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Applitools.Utils.Geometry;
 
 namespace Applitools
@@ -64,6 +65,8 @@ namespace Applitools
 
         IList<int> LayoutBreakpoints { get; set; }
 
+        WebProxy Proxy { get; set; }
+
         IConfiguration SetAgentId(string value);
         IConfiguration SetAppName(string value);
         IConfiguration SetBaselineBranchName(string value);
@@ -87,6 +90,8 @@ namespace Applitools
         IConfiguration SetMatchLevel(MatchLevel value);
         IConfiguration SetServerUrl(string value);
         IConfiguration SetApiKey(string value);
+
+        IConfiguration SetProxy(WebProxy value);
         IConfiguration SetIgnoreDisplacements(bool value);
         IConfiguration SetUseDom(bool value);
         IConfiguration SetEnablePatterns(bool value);

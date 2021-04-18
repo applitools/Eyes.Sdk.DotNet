@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Applitools
 {
@@ -74,8 +75,24 @@ namespace Applitools
         public IServerConnector ServerConnector { get; set; }
         public IServerConnectorFactory ServerConnectorFactory { get; set; }
 
-        public string ApiKey { get; set; } = CommonUtils.GetEnvVar("APPLITOOLS_API_KEY");
-        public string ServerUrl { get; set; } = CommonUtils.ServerUrl;
+        public string ApiKey
+        {
+            get => ServerConnector.ApiKey;
+            set => ServerConnector.ApiKey = value;
+        }
+
+        public string ServerUrl
+        {
+            get => ServerConnector?.ServerUrl.AbsoluteUri ?? CommonUtils.ServerUrl;
+            set => ServerConnector.ServerUrl = new Uri(value);
+        }
+
+        public WebProxy Proxy
+        {
+            get => ServerConnector.Proxy;
+            set => ServerConnector.Proxy = value;
+        }
+
         public bool IsDisabled { get; set; }
         public bool DontCloseBatches { get; set; } = CommonUtils.DontCloseBatches;
         public string AgentId
