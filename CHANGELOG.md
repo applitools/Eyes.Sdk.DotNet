@@ -1,4 +1,16 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 4.22] - 2021-04-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.25] - 2021-04-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.21] - 2021-04-18
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.44] - 2021-04-18
 ### Added
 - Support for check window after manually switch to frame [Trello 2384] (https://trello.com/c/ncwPReVX)
 ### Fixed
@@ -8,7 +20,15 @@
 - Cookies now support fluent API
 - Ultrafast Grid: Added ability to force put resources using an environment variable
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.LeanFT 2.27] - 2021-04-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.26] - 2021-04-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.44] - 2021-04-18
 ### Updated
 - `UseCookies` default changed from `false` to `true`
 
