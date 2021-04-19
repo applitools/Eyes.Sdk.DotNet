@@ -808,16 +808,23 @@ namespace Applitools.Selenium.VisualGrid
                     var cookieCollection = new CookieCollection();
                     foreach (var cookie in allCookies)
                     {
-                        System.Net.Cookie snCookie = new System.Net.Cookie()
+                        try
                         {
-                            Name = cookie.Name,
-                            Value = cookie.Value,
-                            Path = cookie.Path,
-                            Domain = cookie.Domain,
-                            Secure = cookie.Secure,
-                            HttpOnly = cookie.IsHttpOnly
-                        };
-                        cookieCollection.Add(snCookie);
+                            System.Net.Cookie snCookie = new System.Net.Cookie()
+                            {
+                                Name = cookie.Name,
+                                Value = cookie.Value,
+                                Path = cookie.Path,
+                                Domain = cookie.Domain,
+                                Secure = cookie.Secure,
+                                HttpOnly = cookie.IsHttpOnly
+                            };
+                            cookieCollection.Add(snCookie);
+                        }
+                        catch (CookieException cookieEx)
+                        {
+                            CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, cookieEx, testIds);
+                        }
                     }
                     frameData.Cookies = cookieCollection;
                 }
