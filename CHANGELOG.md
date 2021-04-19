@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Don't download `about:` URLs [Trello 2460] (https://trello.com/c/pR7tpNWu)
+
 ## [Eyes.Common 1.7] - 2021-04-18
 ### Added
 - Proxy settings in `IConfiguration`
