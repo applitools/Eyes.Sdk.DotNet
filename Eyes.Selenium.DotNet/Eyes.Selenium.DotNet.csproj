@@ -8,19 +8,14 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.44</Version>
+    <Version>2.45</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Added
-- Support for check window after manually switch to frame [Trello 2384] (https://trello.com/c/ncwPReVX)
-### Fixed
-- Pass potentially updated `ApiKey` and `ServerUrl` properties to ServerConnector [Trello 2525] (https://trello.com/c/VyLMGf0K)
-- Ultrafast Grid: `ContentType` containing semicolon followed by encoding failed to upload [Trello 2541] (https://trello.com/c/OIfuk1hm)
-### Updated
-- Cookies now support fluent API
-- Ultrafast Grid: Added ability to force put resources using an environment variable
+    <PackageReleaseNotes>### Fixed
+- Ultrafast Grid: Don't download `about:` URLs [Trello 2460] (https://trello.com/c/pR7tpNWu)
+- Ultrafast Grid: Collect all cookies and don't crash if encountered a bad one [Trello 2525] (https://trello.com/c/VyLMGf0K)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

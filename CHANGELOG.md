@@ -1,4 +1,4 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.45] - 2021-04-20
 ### Fixed
 - Ultrafast Grid: Don't download `about:` URLs [Trello 2460] (https://trello.com/c/pR7tpNWu)
 - Ultrafast Grid: Collect all cookies and don't crash if encountered a bad one [Trello 2525] (https://trello.com/c/VyLMGf0K)
