@@ -21,6 +21,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Cookie = Applitools.Selenium.Cookie;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -805,20 +806,22 @@ namespace Applitools.Selenium.VisualGrid
                 var allCookies = cookieJar?.AllCookies;
                 if (allCookies != null && allCookies.Count > 0)
                 {
-                    var cookieCollection = new CookieCollection();
-                    foreach (var cookie in allCookies)
+                    var cookieCollection = new List<ICookie>();
+                    foreach (var seleniumCookie in allCookies)
                     {
-                        System.Net.Cookie snCookie = new System.Net.Cookie()
+                        Cookie cookie = new Cookie()
                         {
-                            Name = cookie.Name,
-                            Value = cookie.Value,
-                            Path = cookie.Path,
-                            Domain = cookie.Domain,
-                            Secure = cookie.Secure,
-                            HttpOnly = cookie.IsHttpOnly
+                            Name = seleniumCookie.Name,
+                            Value = seleniumCookie.Value,
+                            Path = seleniumCookie.Path,
+                            Domain = seleniumCookie.Domain,
+                            Secure = seleniumCookie.Secure,
+                            HttpOnly = seleniumCookie.IsHttpOnly,
+                            Expiry = seleniumCookie.Expiry
                         };
-                        cookieCollection.Add(snCookie);
+                        cookieCollection.Add(cookie);
                     }
+                    
                     frameData.Cookies = cookieCollection;
                 }
             }

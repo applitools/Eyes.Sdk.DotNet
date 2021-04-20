@@ -232,7 +232,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
             {
-                Expires = DateTime.MaxValue,
+                Expiry = DateTime.MaxValue,
                 Secure = false
             };
             Assert.IsTrue(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
@@ -243,7 +243,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             Cookie cookie = new Cookie("subdir", "1", "/", ".a.com")
             {
-                Expires = new DateTime(1),
+                Expiry = new DateTime(1),
                 Secure = false
             };
             Assert.IsFalse(ResourceFetcher.IsCookieForUrl_(cookie, new Uri("http://a.com/")));
