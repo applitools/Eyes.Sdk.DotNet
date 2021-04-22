@@ -135,6 +135,7 @@ namespace Applitools
             {
                 Type callingType = stackFrame.GetMethod().DeclaringType;
                 if (callingType.IsAbstract) continue;
+                if (callingType.Assembly.GetCustomAttribute<PrivateAssemblyAttribute>() != null) continue;
                 actualAssembly_ = callingType.Assembly;
                 break;
             }
