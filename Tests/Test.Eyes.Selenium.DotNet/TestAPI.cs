@@ -312,6 +312,33 @@ namespace Applitools.Selenium.Tests
             }
         }
 
+
+        [Test]
+        public void TestFullAgentId_VG_Match_Selenium()
+        {
+            string vgAgentId;
+            string seleniumAgentId;
+            VisualGridRunner vgRunner = new VisualGridRunner(10, TestUtils.InitLogHandler());
+            try
+            {
+                Eyes eyes = new Eyes(vgRunner);
+                vgAgentId = eyes.FullAgentId;
+            }
+            finally
+            {
+                vgRunner.StopServiceRunner();
+            }
+
+            ClassicRunner cRunner = new ClassicRunner();
+            {
+                Eyes eyes = new Eyes(cRunner);
+                seleniumAgentId = eyes.FullAgentId;
+            }
+            string vgVersion = vgAgentId.Split('/')[1];
+            string selVersion = seleniumAgentId.Split('/')[1];
+            Assert.AreEqual(vgVersion, selVersion);
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void TestSetServerUrlAndApiKeyInRunner(bool useVG)

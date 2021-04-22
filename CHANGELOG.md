@@ -1,3 +1,11 @@
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Ensured UFG report the same version as Selenium.
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Ensured UFG report the same version as Selenium.
+
 ## [Eyes.Selenium 2.45] - 2021-04-20
 ### Fixed
 - Ultrafast Grid: Don't download `about:` URLs [Trello 2460] (https://trello.com/c/pR7tpNWu)
