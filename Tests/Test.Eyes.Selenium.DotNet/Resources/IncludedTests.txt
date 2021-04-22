@@ -416,6 +416,7 @@ Applitools.Selenium.Tests.TestAPI.TestFullAgentId_1
 Applitools.Selenium.Tests.TestAPI.TestFullAgentId_2
 Applitools.Selenium.Tests.TestAPI.TestFullAgentId_3
 Applitools.Selenium.Tests.TestAPI.TestFullAgentId_VG
+Applitools.Selenium.Tests.TestAPI.TestFullAgentId_VG_Match_Selenium
 Applitools.Selenium.Tests.TestCodedRegions.TestSimpleCodedRegions
 Applitools.Selenium.Tests.TestDom.TestDomSerialization
 Applitools.Selenium.Tests.VisualGridTests.TestDeviceInfo.TestIosDeviceInfo
