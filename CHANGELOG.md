@@ -1,3 +1,7 @@
+## [Eyes.Common vNext]
+### Added
+- Support for `AgentRunId` and `VariantId`. [Trello 2561] (https://trello.com/c/7PIfHaqk)
+
 ## [Eyes.Sdk.Core vNext]
 ### Fixed
 - Ensured UFG report the same version as Selenium.
@@ -5,6 +9,8 @@
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Ensured UFG report the same version as Selenium.
+### Added
+- Support for `AgentRunId` and `VariantId`. [Trello 2561] (https://trello.com/c/7PIfHaqk)
 
 ## [Eyes.Selenium 2.45] - 2021-04-20
 ### Fixed

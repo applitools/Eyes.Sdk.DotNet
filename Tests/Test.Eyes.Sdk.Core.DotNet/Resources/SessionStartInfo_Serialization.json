@@ -85,5 +85,6 @@
       "Name": null,
       "Value": null
     }
-  ]
+  ],
+  "AgentRunId": "some-agent-run-id"
 }

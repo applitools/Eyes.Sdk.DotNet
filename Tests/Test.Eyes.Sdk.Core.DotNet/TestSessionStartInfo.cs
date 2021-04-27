@@ -21,6 +21,8 @@ namespace Applitools
                 { null, null }
             };
 
+            string agentRunId = "some-agent-run-id";
+
             BatchInfo batchInfo = new BatchInfo("some batch", new DateTimeOffset(new DateTime(2017, 6, 29, 11, 1, 0, DateTimeKind.Utc)));
             batchInfo.Id = "someBatchId";
             batchInfo.Properties.Add("prop 1", "val 1");
@@ -48,7 +50,8 @@ namespace Applitools
                 render: null,
                 agentSessionId: "59436361-2782-45EF-9DC5-5633F15150CE",
                 timeout: 10,
-                properties: sessionProperties);
+                properties: sessionProperties,
+                agentRunId);
 
             string json = JsonConvert.SerializeObject(sessionStartInfo, Formatting.Indented);
             string expectedJson = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.SessionStartInfo_Serialization.json");

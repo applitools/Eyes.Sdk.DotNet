@@ -36,7 +36,7 @@ namespace Applitools.Selenium.Tests
             );
         }
 
-        [Test]
+        //[Test]
         public void TestAcmeLogin()
         {
             GetDriver().Url = "https://afternoon-savannah-68940.herokuapp.com/#";
