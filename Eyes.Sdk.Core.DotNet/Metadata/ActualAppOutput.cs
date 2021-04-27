@@ -26,6 +26,8 @@ namespace Applitools.Metadata
         public string Tag { get; set; }
 
         public bool IsPrimary { get; set; }
+
+        public string KnownVariationId { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

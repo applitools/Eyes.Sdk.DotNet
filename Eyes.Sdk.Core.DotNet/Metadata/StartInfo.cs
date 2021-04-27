@@ -37,6 +37,9 @@ namespace Applitools.Metadata
 
         [JsonProperty("render")]
         public bool Render { get; set; }
+
+        [JsonProperty("agentRunId")]
+        public string AgentRunId { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

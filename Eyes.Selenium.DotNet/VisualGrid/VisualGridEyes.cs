@@ -21,7 +21,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Cookie = Applitools.Selenium.Cookie;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -207,6 +206,7 @@ namespace Applitools.Selenium.VisualGrid
 
             List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
             IServerConnector serverConnector = runner_.ServerConnector;
+            string agentRunId = configAtOpen_.TestName + "_" + Guid.NewGuid();
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
                 if (browserInfo.EmulationInfo as ChromeEmulationInfo != null)
@@ -223,7 +223,7 @@ namespace Applitools.Selenium.VisualGrid
                     browserInfo.SetIosDeviceSize(size);
                 }
                 VisualGridRunningTest test = new VisualGridRunningTest(
-                    eyesId_, browserInfo, Logger, configProvider_, serverConnector);
+                    eyesId_, browserInfo, Logger, configProvider_, serverConnector, agentRunId);
                 testList_.Add(test.TestId, test);
                 newTests.Add(test);
             }

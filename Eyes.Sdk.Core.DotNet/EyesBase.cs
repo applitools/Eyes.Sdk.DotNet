@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -34,10 +33,6 @@ namespace Applitools
     /// <summary>
     /// Applitools Eyes base class.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Microsoft.Design",
-        "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
-        Justification = "Cleanup performed by Close or AbortIfNotClosed")]
     [ComVisible(true)]
     public abstract class EyesBase : EyesBaseConfig, IEyesBase, IBatchCloser
     {
@@ -59,6 +54,7 @@ namespace Applitools
         protected RectangleSize viewportSize_;
         public static string DefaultServerUrl = CommonData.DefaultServerUrl;
         protected TestResultContainer testResultContainer_;
+        protected string agentRunId_;
         private readonly Queue<Trigger> userInputs_ = new Queue<Trigger>();
 
         #endregion
@@ -537,6 +533,7 @@ namespace Applitools
             data.Options.Source = source;
             data.Options.RenderId = renderId;
             data.Options.ReplaceLast = replaceLast;
+            data.Options.VariantId = checkSettingsInternal.GetVariationGroupId();
             data.RenderId = renderId;
             return data;
         }
@@ -1088,7 +1085,8 @@ namespace Applitools
                 null,
                 agentSessionId,
                 Configuration.AbortIdleTestTimeout,
-                properties_);
+                properties_,
+                agentRunId_);
 
             Logger.Log(TraceLevel.Notice, TestId, Stage.Open, new { sessionStartInfo = sessionStartInfo_ });
             return sessionStartInfo_;
