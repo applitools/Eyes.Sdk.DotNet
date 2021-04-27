@@ -23,6 +23,7 @@ namespace Applitools
         public bool IgnoreMatch { get; set; }
         public bool IgnoreMismatch { get; set; }
         public bool ReplaceLast { get; set; }
+        public string VariantId { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
