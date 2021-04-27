@@ -1,4 +1,5 @@
 ﻿using Applitools.Utils;
+using Newtonsoft.Json;
 
 namespace Applitools
 {
@@ -24,7 +25,8 @@ namespace Applitools
             bool? render,
             string agentSessionId,
             int? timeout,
-            PropertiesCollection properties)
+            PropertiesCollection properties,
+            string agentRunId)
         {
             ArgumentGuard.NotEmpty(agentId, nameof(agentId));
             ArgumentGuard.NotEmpty(appName, nameof(appName));
@@ -50,6 +52,7 @@ namespace Applitools
             AgentSessionId = agentSessionId;
             Timeout = timeout;
             Properties = properties;
+            AgentRunId = agentRunId;
         }
 
         public int ConcurrencyVersion => 2;
@@ -87,5 +90,8 @@ namespace Applitools
         public int? Timeout { get; private set; }
         
         public PropertiesCollection Properties { get; private set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string AgentRunId { get; }
     }
 }
