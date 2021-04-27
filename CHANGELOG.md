@@ -1,14 +1,34 @@
-## [Eyes.Common vNext]
+## [Eyes.Appium 4.23] - 2021-04-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.26] - 2021-04-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.22] - 2021-04-27
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.46] - 2021-04-27
+### Fixed
+- Ensured UFG report the same version as Selenium.
 ### Added
 - Support for `AgentRunId` and `VariantId`. [Trello 2561] (https://trello.com/c/7PIfHaqk)
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.LeanFT 2.28] - 2021-04-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.27] - 2021-04-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.45] - 2021-04-27
 ### Fixed
 - Ensured UFG report the same version as Selenium.
 
-## [Eyes.Selenium vNext]
-### Fixed
-- Ensured UFG report the same version as Selenium.
+## [Eyes.Common 1.8] - 2021-04-27
 ### Added
 - Support for `AgentRunId` and `VariantId`. [Trello 2561] (https://trello.com/c/7PIfHaqk)
 
