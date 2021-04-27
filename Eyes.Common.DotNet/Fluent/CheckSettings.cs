@@ -31,6 +31,7 @@ namespace Applitools
         private bool replaceLast_;
         private Dictionary<string, string> scriptHooks_ = new Dictionary<string, string>();
         private VisualGridOption[] visualGridOptions_;
+        private string variationGroupId_;
 
         private static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
@@ -103,6 +104,10 @@ namespace Applitools
 
         bool? Fluent.ICheckSettingsInternal.GetIgnoreCaret() { return ignoreCaret_; }
 
+        string ICheckSettingsInternal.GetVariationGroupId()
+        {
+            return variationGroupId_;
+        }
         #endregion
 
         protected void Floating_(IGetFloatingRegion floatingRegionProvider)
@@ -597,6 +602,7 @@ namespace Applitools
             }
 
             clone.fluentCode_ = fluentCode_;
+            clone.variationGroupId_ = variationGroupId_;
         }
 
         protected virtual CheckSettings Clone()
@@ -676,7 +682,13 @@ namespace Applitools
                 return stitchContent ? SizeMode.FullSelector : SizeMode.Selector;
             }
         }
-
+        
+        public ICheckSettings VariationGroupId(string variationGroupId)
+        {
+            CheckSettings clone = Clone();
+            clone.variationGroupId_ = variationGroupId;
+            return clone;
+        }
 
         public virtual VisualGridSelector GetTargetSelector()
         {
@@ -713,5 +725,6 @@ namespace Applitools
         {
             return fluentCode_.ToString();
         }
+
     }
 }

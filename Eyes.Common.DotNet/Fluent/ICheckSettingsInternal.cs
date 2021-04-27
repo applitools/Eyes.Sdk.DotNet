@@ -34,5 +34,6 @@ namespace Applitools.Fluent
         Dictionary<string, object> ToSerializableDictionary();
 
         string GetFluentCommandString();
+        string GetVariationGroupId();
     }
 }

@@ -184,6 +184,8 @@ namespace Applitools
 
         ICheckSettings VisualGridOptions(params VisualGridOption[] options);
 
+        ICheckSettings VariationGroupId(string variationGroupId);
+
         ICheckSettings Clone();
     }
 }
