@@ -48,7 +48,8 @@ namespace Applitools
                 render: null,
                 agentSessionId: "59436361-2782-45EF-9DC5-5633F15150CE",
                 timeout: 10,
-                properties: sessionProperties);
+                properties: sessionProperties,
+                null);
 
             string json = JsonConvert.SerializeObject(sessionStartInfo, Formatting.Indented);
             string expectedJson = CommonUtils.ReadResourceFile("Test.Eyes.Sdk.Core.DotNet.Resources.SessionStartInfo_Serialization.json");

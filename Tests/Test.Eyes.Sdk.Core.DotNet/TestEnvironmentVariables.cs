@@ -8,8 +8,6 @@ namespace Applitools.Tests
     [TestFixture]
     public class TestEnvironmentVariables : ReportingTestSuite
     {
-        private readonly Logger logger_ = new Logger();
-
         private Dictionary<string, string> originalValues_ = new Dictionary<string, string>();
 
 

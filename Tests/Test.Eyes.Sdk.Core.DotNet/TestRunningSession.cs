@@ -78,7 +78,8 @@ namespace Applitools
                 render: null,
                 agentSessionId: "59436361-2782-45EF-9DC5-5633F15150CE",
                 timeout: null,
-                properties: sessionProperties);
+                properties: sessionProperties,
+                null);
 
             return sessionStartInfo;
         }
@@ -187,7 +188,6 @@ namespace Applitools
                 internal class MockMessageProcessingHandler : HttpMessageHandler
                 {
                     private readonly byte[] responseBytes_;
-                    private readonly Stream responseStream_;
                     private readonly HttpStatusCode? statusCode_;
                     private readonly string[] pollingUrls_;
                     private readonly int?[] retryAfter_;
