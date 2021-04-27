@@ -752,6 +752,11 @@ namespace Applitools.Selenium.Fluent
         {
             return (SeleniumCheckSettings)base.VisualGridOptions(options);
         }
+
+        public new SeleniumCheckSettings VariationGroupId(string variationGroupId)
+        {
+            return (SeleniumCheckSettings)base.VariationGroupId(variationGroupId);
+        }
         #endregion
 
         private SeleniumCheckSettings Clone_()
