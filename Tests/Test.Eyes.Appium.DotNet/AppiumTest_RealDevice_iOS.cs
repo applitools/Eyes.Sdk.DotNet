@@ -115,7 +115,7 @@ namespace Applitools.Appium.Tests
             options.AddAdditionalCapability("tabletOnly", false);
             options.AddAdditionalCapability("privateDevicesOnly", false);
 
-            options.AddAdditionalCapability(MobileCapabilityType.App, "https://applitools.bintray.com/Examples/eyes-ios-hello-world/1.2/eyes-ios-hello-world.zip");
+            options.AddAdditionalCapability(MobileCapabilityType.App, "https://applitools.jfrog.io/artifactory/Examples/eyes-ios-hello-world/1.2/eyes-ios-hello-world.zip");
 
             options.AddAdditionalCapability("username", TestDataProvider.SAUCE_USERNAME);
             options.AddAdditionalCapability("accesskey", TestDataProvider.SAUCE_ACCESS_KEY);
