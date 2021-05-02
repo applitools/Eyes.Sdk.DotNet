@@ -1,5 +1,6 @@
 ﻿using Applitools.Utils;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -7,17 +8,23 @@ namespace Applitools.Selenium.Scrolling
 {
     public static class SeleniumPositionProviderFactory
     {
-        private static ConcurrentDictionary<string, IPositionProvider> positionProviders_ = new ConcurrentDictionary<string, IPositionProvider>();
-        public static IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
+        private static readonly ConcurrentDictionary<string, IPositionProvider> positionProviders_ = new ConcurrentDictionary<string, IPositionProvider>();
+        public static IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, RemoteWebDriver driver, IWebElement scrollRootElement, UserAgent userAgent = null)
         {
-            return positionProviders_.GetOrAdd(scrollRootElement + "_" + stitchMode,
-                (e) => CreatePositionProvider(logger, stitchMode, executor, scrollRootElement, userAgent));
+            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + driver.SessionId;
+            logger.Log(TraceLevel.Debug, Stage.General, new { PositionProviderId = id });
+            return positionProviders_.GetOrAdd(id,
+                (e) => CreatePositionProvider(logger, stitchMode, executor, scrollRootElement, id, userAgent));
         }
 
-        public static IPositionProvider CreatePositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
+        private static IPositionProvider CreatePositionProvider(Logger logger, StitchModes stitchMode,
+            IEyesJsExecutor executor, IWebElement scrollRootElement, string positionProviderId, UserAgent userAgent = null)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
             ArgumentGuard.NotNull(executor, nameof(executor));
+
+            logger.Log(TraceLevel.Debug, Stage.General,
+                new { message = "position provider does not exist in dictionary", positionProviderId });
 
             switch (stitchMode)
             {
@@ -32,9 +39,12 @@ namespace Applitools.Selenium.Scrolling
             }
         }
 
-        public static IPositionProvider TryGetPositionProviderForElement(IWebElement scrollRootElement, StitchModes stitchMode)
+        public static IPositionProvider TryGetPositionProviderForElement(IWebElement scrollRootElement, StitchModes stitchMode,
+            RemoteWebDriver driver, Logger logger)
         {
-            positionProviders_.TryGetValue(scrollRootElement + "_" + stitchMode, out IPositionProvider positionProvider);
+            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + driver.SessionId;
+            logger.Log(TraceLevel.Debug, Stage.General, new { PositionProviderId = id });
+            positionProviders_.TryGetValue(id, out IPositionProvider positionProvider);
             return positionProvider;
         }
     }
