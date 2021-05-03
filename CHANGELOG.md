@@ -1,4 +1,4 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.47] - 2021-05-03
 ### Fixed
 - Better fix for Safari's predictable element id problem [Trello 2467] (https://trello.com/c/7nrotXei)
 
