@@ -75,6 +75,11 @@ namespace Applitools.Selenium
 
         private static readonly string JS_GET_CLIENT_SIZE = "return arguments[0].clientWidth + ',' + arguments[0].clientHeight;";
 
+        private const string JS_GET_ENTIRE_ELEMENT_SIZE =
+            "var width = Math.max(arguments[0].clientWidth, arguments[0].scrollWidth);" +
+            "var height = Math.max(arguments[0].clientHeight, arguments[0].scrollHeight);" +
+            "return (width + ';' + height);";
+
         private readonly string JS_SCROLL_TO_FORMATTED_STR =
             "arguments[0].scrollLeft = {0};" +
             "arguments[0].scrollTop = {1};";
@@ -313,6 +318,16 @@ return getVisibleElementRect(arguments[0])";
             return new Size(
                 (int)Math.Ceiling(Convert.ToSingle(data[0], NumberFormatInfo.InvariantInfo)),
                 (int)Math.Ceiling(Convert.ToSingle(data[1], NumberFormatInfo.InvariantInfo)));
+        }
+
+        public static Size GetEntireSize(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
+        {
+            logger.Verbose("enter (element: {0})", element);
+            string entireSizeStr = (string)jsExecutor.ExecuteScript(JS_GET_ENTIRE_ELEMENT_SIZE, element);
+            string[] wh = entireSizeStr.Split(';');
+            Size size = new Size(Convert.ToInt32(wh[0]), Convert.ToInt32(wh[1]));
+            logger.Verbose(size.ToString());
+            return size;
         }
 
         /// <summary>
@@ -783,7 +798,7 @@ return getVisibleElementRect(arguments[0])";
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return IdForDictionary.GetHashCode();
         }
 
         #endregion

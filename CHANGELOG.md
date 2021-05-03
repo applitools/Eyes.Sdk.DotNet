@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Better fix for Safari's predictable element id problem [Trello 2467] (https://trello.com/c/7nrotXei)
+
 ## [Eyes.Appium 4.23] - 2021-04-27
 ### Updated
 - Match to latest Eyes.Sdk.Core

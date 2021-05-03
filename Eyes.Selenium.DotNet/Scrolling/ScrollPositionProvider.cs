@@ -28,11 +28,6 @@
 
         public IWebElement ScrolledElement { get; }
 
-        private const string JSGetEntirePageSize_ =
-          "var width = Math.max(arguments[0].clientWidth, arguments[0].scrollWidth);" +
-          "var height = Math.max(arguments[0].clientHeight, arguments[0].scrollHeight);" +
-          "return (width + ',' + height);";
-
         #region Methods
 
         public Point GetCurrentPosition()
@@ -55,13 +50,10 @@
             return EyesSeleniumUtils.ParseLocationString(position);
         }
 
+        /// <returns>The entire size of the current context.</returns>
         public Size GetEntireSize()
         {
-            logger_.Verbose("enter (scrollRootElement_: {0})", ScrolledElement);
-            string entireSizeStr = (string)executor_.ExecuteScript(JSGetEntirePageSize_, ScrolledElement);
-            string[] wh = entireSizeStr.Split(',');
-            Size size = new Size(Convert.ToInt32(wh[0]), Convert.ToInt32(wh[1]));
-            logger_.Verbose(size.ToString());
+            Size size = EyesRemoteWebElement.GetEntireSize(ScrolledElement, executor_, logger_);
             return size;
         }
 

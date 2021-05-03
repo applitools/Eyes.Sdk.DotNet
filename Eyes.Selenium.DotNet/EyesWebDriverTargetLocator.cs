@@ -29,7 +29,8 @@ namespace Applitools.Selenium
             if (driver.Eyes != null)
             {
                 scrollPositionProvider_ = SeleniumPositionProviderFactory.GetPositionProvider(
-                    logger_, StitchModes.Scroll, jsExecutor_, driver.Eyes.GetCurrentFrameScrollRootElement(), driver.Eyes.userAgent_);
+                    logger_, StitchModes.Scroll, jsExecutor_, driver.RemoteWebDriver,
+                    driver.Eyes.GetCurrentFrameScrollRootElement(), driver.Eyes.userAgent_);
             }
         }
 
@@ -136,7 +137,7 @@ namespace Applitools.Selenium
 
         public IWebDriver ParentFrame()
         {
-            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called, 
+            logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called,
                 new { frameChainSize = driver_.GetFrameChain().Count });
             if (driver_.GetFrameChain().Count != 0)
             {
@@ -189,7 +190,7 @@ namespace Applitools.Selenium
 
             if (FrameChain.IsSameFrameChain(currentFrameChain, frameChain))
             {
-                logger_.Log(TraceLevel.Debug, Stage.General, 
+                logger_.Log(TraceLevel.Debug, Stage.General,
                     new { message = "given frame chain equals current frame chain. returning." });
                 return driver_;
             }
