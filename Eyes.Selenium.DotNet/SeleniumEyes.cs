@@ -137,6 +137,7 @@ namespace Applitools.Selenium
 
         public string PlatformName { get; private set; }
 
+        public SeleniumPositionProviderFactory PositionProviderFactory { get; internal set; }
         #endregion Properties
 
         #region Methods
@@ -246,7 +247,7 @@ namespace Applitools.Selenium
             if (getSessionDetails_ != null) InitSessionDetails_();
 
             Logger.Log(TraceLevel.Info, Stage.Open,
-            new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
+                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
         }
 
         private void InitSessionDetails_()
