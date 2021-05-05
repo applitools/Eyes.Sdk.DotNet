@@ -20,8 +20,18 @@ namespace Applitools.Selenium.Capture
         public override Bitmap GetImage()
         {
             Bitmap image = base.GetImage();
-            logger_.Verbose("Bitmap Size: {0}x{1}", image.Width, image.Height);
 
+            if (eyes_.CachedSessionDetails != null &&
+                eyes_.CachedSessionDetails.TryGetValue("deviceOrientation", out object orientation))
+            {
+                if (((string)orientation).Equals("landscape", StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
+                {
+                    logger_.Verbose("rotating image...");
+                    image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                }
+            }
+
+            logger_.Verbose("Bitmap Size: {0}x{1}", image.Width, image.Height);
             eyes_.DebugScreenshotProvider.Save(image, "SAFARI");
 
             if (eyes_.IsCutProviderExplicitlySet)
@@ -40,7 +50,10 @@ namespace Applitools.Selenium.Capture
             logger_.Verbose("logical viewport size: " + originalViewportSize);
 
             Bitmap croppedImage = null;
-            if (userAgent_.OS.Equals(OSNames.IOS))
+            if (userAgent_.IsiOS ||
+                eyes_.PlatformName.Equals("ios", StringComparison.OrdinalIgnoreCase) ||
+                (eyes_.CachedSessionDetails.TryGetValue("PlatformName", out object platformName) &&
+                    ((string)platformName).Equals("ios", StringComparison.OrdinalIgnoreCase)))
             {
                 croppedImage = CropIOSImage(image, originalViewportSize, logger_);
             }
@@ -154,7 +167,10 @@ namespace Applitools.Selenium.Capture
                 { new Size(2732, 2048), new List<Rectangle>{ new Rectangle(0, 140, 2732, 1908) } },
 
                 { new Size(1668, 2224), new List<Rectangle>{ new Rectangle(0, 140, 1668, 2084) } },
-                { new Size(2224, 1668), new List<Rectangle>{ new Rectangle(0, 140, 2224, 1528) } }
+                { new Size(2224, 1668), new List<Rectangle>{ new Rectangle(0, 140, 2224, 1528) } },
+
+                { new Size(1620, 2160), new List<Rectangle>{ new Rectangle(0, 140, 1620, 2020) } },
+                { new Size(2160, 1620), new List<Rectangle>{ new Rectangle(0, 140, 2160, 1480) } },
             };
         }
     }
