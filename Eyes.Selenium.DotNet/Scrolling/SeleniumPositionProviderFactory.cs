@@ -2,22 +2,30 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace Applitools.Selenium.Scrolling
 {
-    public static class SeleniumPositionProviderFactory
+    public class SeleniumPositionProviderFactory
     {
-        private static readonly ConcurrentDictionary<string, IPositionProvider> positionProviders_ = new ConcurrentDictionary<string, IPositionProvider>();
-        public static IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, RemoteWebDriver driver, IWebElement scrollRootElement, UserAgent userAgent = null)
+        internal static SeleniumPositionProviderFactory GetInstance(SeleniumEyes eyes)
         {
-            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + driver.SessionId;
+            if (eyes.PositionProviderFactory == null)
+            {
+                eyes.PositionProviderFactory = new SeleniumPositionProviderFactory();
+            }
+            return eyes.PositionProviderFactory;
+        }
+
+        private readonly ConcurrentDictionary<string, IPositionProvider> positionProviders_ = new ConcurrentDictionary<string, IPositionProvider>();
+        public IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
+        {
+            string id = scrollRootElement.GetHashCode() + "_" + stitchMode;
             logger.Log(TraceLevel.Debug, Stage.General, new { PositionProviderId = id });
             return positionProviders_.GetOrAdd(id,
                 (e) => CreatePositionProvider(logger, stitchMode, executor, scrollRootElement, id, userAgent));
         }
 
-        private static IPositionProvider CreatePositionProvider(Logger logger, StitchModes stitchMode,
+        private IPositionProvider CreatePositionProvider(Logger logger, StitchModes stitchMode,
             IEyesJsExecutor executor, IWebElement scrollRootElement, string positionProviderId, UserAgent userAgent = null)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
@@ -39,7 +47,7 @@ namespace Applitools.Selenium.Scrolling
             }
         }
 
-        public static IPositionProvider TryGetPositionProviderForElement(IWebElement scrollRootElement, StitchModes stitchMode,
+        public IPositionProvider TryGetPositionProviderForElement(IWebElement scrollRootElement, StitchModes stitchMode,
             RemoteWebDriver driver, Logger logger)
         {
             string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + driver.SessionId;

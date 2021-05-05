@@ -50,10 +50,10 @@ namespace Applitools.Selenium
             Logger logger = driver.Eyes.Logger;
             UserAgent userAgent = UserAgent.ParseUserAgentString(driver.GetUserAgent());
 
-            IPositionProvider cssPositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(
-                logger, StitchModes.CSS, driver, driver.RemoteWebDriver, scrolledElement, userAgent);
-            IPositionProvider scrollPositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(
-                logger, StitchModes.Scroll, driver, driver.RemoteWebDriver, scrolledElement, userAgent);
+            IPositionProvider cssPositionProvider = SeleniumPositionProviderFactory.GetInstance(driver.Eyes).GetPositionProvider(
+                logger, StitchModes.CSS, driver, scrolledElement, userAgent);
+            IPositionProvider scrollPositionProvider = SeleniumPositionProviderFactory.GetInstance(driver.Eyes).GetPositionProvider(
+                logger, StitchModes.Scroll, driver, scrolledElement, userAgent);
             string overflow = (string)jsExecutor.ExecuteScript("return arguments[0].style.overflow", scrolledElement);
             FrameChain frameChain = driver.GetFrameChain().Clone();
             FrameState frameState = new FrameState(driver, scrolledElement, cssPositionProvider, scrollPositionProvider, overflow, frameChain);

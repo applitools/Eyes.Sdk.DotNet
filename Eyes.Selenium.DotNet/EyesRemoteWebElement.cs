@@ -193,7 +193,6 @@ return getVisibleElementRect(arguments[0])";
             FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
             string id = (string)fi.GetValue(webElement);
             fi.SetValue(this, id);
-            IdForDictionary = id + "_" + eyesDriver.RemoteWebDriver.SessionId;
         }
 
         #endregion
@@ -408,24 +407,6 @@ return getVisibleElementRect(arguments[0])";
             }
             return retval;
         }
-
-        private static IDictionary<string, IPositionProvider> positionProviderById_ = new ConcurrentDictionary<string, IPositionProvider>();
-        public IPositionProvider PositionProvider
-        {
-            get
-            {
-                positionProviderById_.TryGetValue(IdForDictionary, out IPositionProvider positionProvider);
-                Logger.Verbose("Getting position provider for element Id {0}: {1}", IdForDictionary, positionProvider);
-                return positionProvider;
-            }
-            internal set
-            {
-                Logger.Verbose("Setting position provider for element Id {0}: {1}", IdForDictionary, value);
-                positionProviderById_[IdForDictionary] = value;
-            }
-        }
-
-        public string IdForDictionary { get; }
 
         #endregion
 
@@ -798,7 +779,7 @@ return getVisibleElementRect(arguments[0])";
 
         public override int GetHashCode()
         {
-            return IdForDictionary.GetHashCode();
+            return Id.GetHashCode();
         }
 
         #endregion
