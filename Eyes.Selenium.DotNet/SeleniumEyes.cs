@@ -117,6 +117,12 @@ namespace Applitools.Selenium
         private object lastCheckSettings_;
         private object lastCheckSettingsInternal_;
 
+        private MethodInfo getPlatformName_;
+        private MethodInfo getSessionDetails_;
+
+        public IDictionary<string, object> CachedSessionDetails { get; private set; }
+
+
         public override bool IsDisabled { get => isDisabled_ ?? runner_.IsDisabled; set => isDisabled_ = value; }
 
         public IPositionProvider CurrentFramePositionProvider { get; protected set; }
@@ -128,6 +134,8 @@ namespace Applitools.Selenium
         public IImageProvider ImageProvider { get; private set; }
 
         internal FrameChain OriginalFC { get; set; }
+
+        public string PlatformName { get; private set; }
 
         #endregion Properties
 
@@ -229,8 +237,37 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
                 throw new EyesException(errMsg);
             }
+
+            Type driverType = driver_.RemoteWebDriver.GetType();
+            getPlatformName_ = driverType.GetProperty("PlatformName")?.GetGetMethod();
+            getSessionDetails_ = driverType.GetProperty("SessionDetails")?.GetGetMethod();
+
+            if (getPlatformName_ != null) PlatformName = (string)getPlatformName_.Invoke(driver_.RemoteWebDriver, null);
+            if (getSessionDetails_ != null) InitSessionDetails_();
+
             Logger.Log(TraceLevel.Info, Stage.Open,
-                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
+            new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
+        }
+
+        private void InitSessionDetails_()
+        {
+            int attempts = 2;
+            do
+            {
+                Thread.Sleep(attempts == 2 ? 0 : 1000);
+                CachedSessionDetails = (IDictionary<string, object>)getSessionDetails_.Invoke(driver_.RemoteWebDriver, null);
+            } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
+
+            if (CachedSessionDetails == null)
+            {
+                Logger.Log(TraceLevel.Warn, Stage.Open,
+                    new
+                    {
+                        message = "could not get viewportRect in session details from appium server! " +
+                                  "Using default device size instead, this might create incorrect images.",
+                        sessionDetails = getSessionDetails_.Invoke(driver_.RemoteWebDriver, null)
+                    });
+            }
         }
 
         protected override string TryCaptureDom()
@@ -256,7 +293,7 @@ namespace Applitools.Selenium
         {
             ArgumentGuard.NotNull(selector, nameof(selector));
             userDefinedSRE_ = EyesSeleniumUtils.GetDefaultRootElement(driver_);
-            PositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(Logger, StitchMode, 
+            PositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(Logger, StitchMode,
                 jsExecutor_, driver_.RemoteWebDriver, userDefinedSRE_, userAgent_);
 
             var element = driver_.RemoteWebDriver.FindElement(selector);
@@ -312,7 +349,7 @@ namespace Applitools.Selenium
             Logger.Verbose("scrollRootElement_ set to {0}", userDefinedSRE_);
 
             CurrentFramePositionProvider = null;
-            PositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(Logger, StitchMode, 
+            PositionProvider = SeleniumPositionProviderFactory.GetPositionProvider(Logger, StitchMode,
                 jsExecutor_, driver_.RemoteWebDriver, userDefinedSRE_, userAgent_);
 
             MatchRegions(getRegions, checkSettingsInternalDictionary, checkSettings);
@@ -1378,7 +1415,7 @@ namespace Applitools.Selenium
                 IWebElement defaultSRE = EyesSeleniumUtils.GetDefaultRootElement(driver);
                 if (scrollRootElement.Equals(defaultSRE))
                 {
-                    positionProvider = SeleniumPositionProviderFactory.GetPositionProvider(logger, stitchMode, 
+                    positionProvider = SeleniumPositionProviderFactory.GetPositionProvider(logger, stitchMode,
                         driver, driver.RemoteWebDriver, scrollRootElement, ua);
                 }
                 else

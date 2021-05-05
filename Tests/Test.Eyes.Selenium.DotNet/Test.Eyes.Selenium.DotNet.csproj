@@ -32,6 +32,8 @@
     <None Remove="Resources\expected_dom_window.json" />
     <None Remove="Resources\IncludedTests.txt" />
     <None Remove="Resources\IOSImages\Expected\iPad %285th generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad %288th generation%29 Simulator 14.4 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad %288th generation%29 Simulator 14.4 Portrait.png" />
     <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Portrait.png" />
     <None Remove="Resources\IOSImages\Expected\iPad Air 2 Simulator 11.0 Portrait.png" />
@@ -58,6 +60,8 @@
     <None Remove="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPad %285th generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad %288th generation%29 Simulator 14.4 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPad %288th generation%29 Simulator 14.4 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPad Air 2 Simulator 11.0 Portrait.png" />
@@ -147,6 +151,8 @@
     <EmbeddedResource Include="Resources\expected_dom_window.json" />
     <EmbeddedResource Include="Resources\IncludedTests.txt" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (5th generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (8th generation) Simulator 14.4 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (8th generation) Simulator 14.4 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 10.3 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Air 2 Simulator 11.0 Portrait.png" />
@@ -173,6 +179,8 @@
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone XS Simulator 12.2 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad (5th generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad (8th generation) Simulator 14.4 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad (8th generation) Simulator 14.4 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 10.3 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad Air 2 Simulator 11.0 Portrait.png" />
