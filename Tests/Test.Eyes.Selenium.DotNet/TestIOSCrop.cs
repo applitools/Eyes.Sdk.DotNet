@@ -20,6 +20,10 @@ namespace Applitools.Selenium.Tests
             {
                 #region iPads, Landscape
 
+                // resolution: 2160 x 1620 ; viewport: 2160 x 1480
+                // [iPad (8th generation), 14.4]
+                yield return new TestCaseData("iPad (8th generation) Simulator", "14.4", ScreenOrientation.Landscape, 2160, 1480);
+
                 // resolution: 2048 x 1536 ; viewport: 2048 x 1408 
                 // [iPad Air 2, 10.3]
                 yield return new TestCaseData("iPad Air 2 Simulator", "10.3", ScreenOrientation.Landscape, 2048, 1408);
@@ -46,6 +50,10 @@ namespace Applitools.Selenium.Tests
                 // resolution: 1536 x 2048; viewport: 1536 x 1843
                 // [iPad Air 2, 11.3] [iPad (5th generation), 11.0]
                 yield return new TestCaseData("iPad (5th generation) Simulator", "11.0", ScreenOrientation.Portrait, 1536, 1843);
+              
+                // resolution: 1620 x 2160 ; viewport: 1620 x 2020
+                // [iPad (8th generation), 14.4]
+                yield return new TestCaseData("iPad (8th generation) Simulator", "14.4", ScreenOrientation.Portrait, 1620, 2020);
 
                 // resolution: 1536 x 2048; viewport: 1536 x 1920 
                 // [iPad Air 2, 10.3]

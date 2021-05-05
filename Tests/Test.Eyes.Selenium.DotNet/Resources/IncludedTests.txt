@@ -318,6 +318,8 @@ Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","
 Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Landscape,2732,1908)
 Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (10.5 inch) Simulator","11.0",Landscape,2224,1528)
 Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad (5th generation) Simulator","11.0",Portrait,1536,1843)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad (8th generation) Simulator","14.4",Portrait,1620,2020)
+Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad (8th generation) Simulator","14.4",Landscape,2160,1480)
 Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","10.3",Portrait,1536,1920)
 Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Air 2 Simulator","11.0",Portrait,1536,1908)
 Applitools.Selenium.Tests.TestIOSCrop.TestIOSSafariCrop("iPad Pro (12.9 inch) (2nd generation) Simulator","11.0",Portrait,2048,2592)
