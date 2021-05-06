@@ -6,6 +6,7 @@ using Applitools.Tests.Utils;
 using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.VisualGrid;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -464,15 +465,13 @@ namespace Applitools.Selenium.Tests
                     List<RenderRequest> requests = new List<RenderRequest>();
                     foreach (string requestJson in mockServerConnector.RenderRequests)
                     {
-                        RenderRequest[] reqs = Newtonsoft.Json.JsonConvert.DeserializeObject<RenderRequest[]>(requestJson);
+                        RenderRequest[] reqs = JsonConvert.DeserializeObject<RenderRequest[]>(requestJson);
                         requests.AddRange(reqs);
                     }
-                    string serializedRequests = JsonUtils.Serialize(requests);
+                    string serializedRequests = JsonUtils.CreateSerializer(indent: true).Serialize(requests);
                     if (!TestUtils.RUNS_ON_CI)
                     {
-                        string dateString = DateTime.Now.ToString("yyyy_MM_dd__HH_mm");
-                        string directory = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "VGResults", dateString);
-                        Directory.CreateDirectory(directory);
+                        string directory = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "VGResults");
                         File.WriteAllText(Path.Combine(directory, testData.TestNameAsFilename + ".json"), serializedRequests);
                     }
                     string expectedVGOutput = testData.ExpectedVGOutput?.Replace("{{agentId}}", eyes.FullAgentId);
