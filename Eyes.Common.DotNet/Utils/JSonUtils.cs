@@ -24,14 +24,14 @@ namespace Applitools.Utils
         /// <summary>
         /// The default (thread-safe) serializer (adds <c>$id</c> and <c>$type</c> attributes).
         /// </summary>
-        public static JsonSerializer Serializer 
+        public static JsonSerializer Serializer
         {
             get
             {
                 return serializer_.Value;
             }
-        } 
-        
+        }
+
         #endregion
 
         #region Methods
@@ -42,33 +42,27 @@ namespace Applitools.Utils
         /// <param name="ids">Whether to mark each object with an <c>$id</c> attribute</param>
         /// <param name="types">Whether to mark objects with a <c>$type</c> attribute</param>
         /// <param name="nulls">Whether to include properties with <c>null</c> values</param>
+        /// <param name="indent">Whether to format the output json</param>
         public static JsonSerializer CreateSerializer(
-            bool ids = false, bool types = false, bool nulls = false)
+            bool ids = false, bool types = false, bool nulls = false, bool indent = false)
         {
-            JsonSerializerSettings settings = CreateSerializerSettings(ids, types, nulls);
+            JsonSerializerSettings settings = CreateSerializerSettings(ids, types, nulls, indent);
 
             return JsonSerializer.Create(settings);
         }
 
         public static JsonSerializerSettings CreateSerializerSettings(
-            bool ids = false, bool types = false, bool nulls = false)
+            bool ids = false, bool types = false, bool nulls = false, bool indent = false)
         {
             var settings = new JsonSerializerSettings()
             {
-                Formatting = Formatting.None,
                 DateParseHandling = DateParseHandling.DateTimeOffset,
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
+                Formatting = indent ? Formatting.Indented : Formatting.None,
+                NullValueHandling = nulls ? NullValueHandling.Include : NullValueHandling.Ignore,
+                PreserveReferencesHandling = ids ? PreserveReferencesHandling.Objects : PreserveReferencesHandling.None,
             };
-
-            if (ids)
-            {
-                settings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-            }
-            else
-            {
-                settings.PreserveReferencesHandling = PreserveReferencesHandling.None;
-            }
 
             if (types)
             {
@@ -78,15 +72,6 @@ namespace Applitools.Utils
             else
             {
                 settings.TypeNameHandling = TypeNameHandling.None;
-            }
-
-            if (nulls)
-            {
-                settings.NullValueHandling = NullValueHandling.Include;
-            }
-            else
-            {
-                settings.NullValueHandling = NullValueHandling.Ignore;
             }
 
             settings.Converters.Add(new StringEnumConverter());
@@ -107,7 +92,7 @@ namespace Applitools.Utils
             serializer.Serialize(sw, value);
             sw.Flush();
         }
-        
+
         /// <summary>
         /// Serializes the input object using the input serializer and returns its string 
         /// representation.
@@ -132,7 +117,7 @@ namespace Applitools.Utils
         {
             return Serialize(Serializer, value);
         }
-        
+
         /// <summary>
         /// Deserializes an object of the input type from the input json string.
         /// </summary>
@@ -145,7 +130,7 @@ namespace Applitools.Utils
                 return serializer.Deserialize(sr, type);
             }
         }
-        
+
         /// <summary>
         /// Deserializes an object of the specified type from the input json string.
         /// </summary>
@@ -153,7 +138,7 @@ namespace Applitools.Utils
         {
             return (T)Deserialize(serializer, typeof(T), json);
         }
-        
+
         #endregion
 
         #region Classes
