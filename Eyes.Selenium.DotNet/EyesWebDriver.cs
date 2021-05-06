@@ -147,13 +147,13 @@ namespace Applitools.Selenium
                 {
                     EyesRemoteWebElement erwe = new EyesRemoteWebElement(Logger_, this, element);
                     eyesWebElementsList.Add(erwe);
-                    elementsFoundSinceLastNavigation_[erwe.IdForDictionary] = erwe;
+                    string id = EyesSeleniumUtils.GetElementIdForDictionary(element, RemoteWebDriver);
+                    elementsFoundSinceLastNavigation_[id] = erwe;
                 }
                 else
                 {
                     eyesWebElementsList.Add(element);
                     string id = EyesSeleniumUtils.GetElementIdForDictionary(element, RemoteWebDriver);
-
                     elementsFoundSinceLastNavigation_[id] = element;
                 }
             }
@@ -168,16 +168,12 @@ namespace Applitools.Selenium
             if (webElement is RemoteWebElement remoteWebElement && !(webElement is EyesRemoteWebElement))
             {
                 webElement = new EyesRemoteWebElement(Logger_, this, remoteWebElement);
-                id = ((EyesRemoteWebElement)webElement).IdForDictionary;
             }
-            else if (webElement != null)
-            {
-                id = EyesSeleniumUtils.GetElementIdForDictionary(webElement, RemoteWebDriver);
-            }
-            else
+            else if (webElement == null)
             {
                 throw new EyesException($"Element not found: {by}");
             }
+            id = EyesSeleniumUtils.GetElementIdForDictionary(webElement, RemoteWebDriver);
             elementsFoundSinceLastNavigation_[id] = webElement;
             return webElement;
         }

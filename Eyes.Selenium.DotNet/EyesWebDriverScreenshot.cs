@@ -54,8 +54,8 @@ namespace Applitools.Selenium
             if (frameLocationInScreenshot == null || frameLocationInScreenshot.Value.IsEmpty)
             {
                 IWebElement frameScrollRoot = driver.Eyes.GetCurrentFrameScrollRootElement();
-                positionProvider = SeleniumPositionProviderFactory.GetPositionProvider(logger, driver.Eyes.StitchMode, 
-                    driver, driver.RemoteWebDriver, frameScrollRoot);
+                positionProvider = driver.Eyes.GetPositionProvider(logger, driver.Eyes.StitchMode,
+                    driver, frameScrollRoot);
                 logger_.Verbose("position provider: using the current frame scroll root element's position provider: {0}", positionProvider);
             }
             else if (driver.Eyes.CurrentFramePositionProvider != null)

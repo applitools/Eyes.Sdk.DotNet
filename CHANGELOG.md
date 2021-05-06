@@ -1,6 +1,8 @@
 ## [Eyes.Selenium vNext]
 ### Added
-= Support for iPad (8th Generation) cropping and rotation [Trello 2564] (https://trello.com/c/6weK0Ojj)
+- Support for iPad (8th Generation) cropping and rotation [Trello 2564] (https://trello.com/c/6weK0Ojj)
+### Updated
+- Better fix for Safari's predictable element id problem [Trello 2467] (https://trello.com/c/7nrotXei)
 
 ## [Eyes.Selenium 2.47] - 2021-05-03
 ### Fixed

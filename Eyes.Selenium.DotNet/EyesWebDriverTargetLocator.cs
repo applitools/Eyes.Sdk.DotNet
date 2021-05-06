@@ -28,9 +28,9 @@ namespace Applitools.Selenium
             jsExecutor_ = new SeleniumJavaScriptExecutor(driver_);
             if (driver.Eyes != null)
             {
-                scrollPositionProvider_ = SeleniumPositionProviderFactory.GetPositionProvider(
-                    logger_, StitchModes.Scroll, jsExecutor_, driver.RemoteWebDriver,
-                    driver.Eyes.GetCurrentFrameScrollRootElement(), driver.Eyes.userAgent_);
+                scrollPositionProvider_ = driver.Eyes.GetPositionProvider(
+                    logger_, StitchModes.Scroll, jsExecutor_, driver.Eyes.GetCurrentFrameScrollRootElement(),
+                    driver.Eyes.userAgent_);
             }
         }
 
