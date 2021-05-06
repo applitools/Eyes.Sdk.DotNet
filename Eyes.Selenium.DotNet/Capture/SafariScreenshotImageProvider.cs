@@ -65,7 +65,7 @@ namespace Applitools.Selenium.Capture
                 if (currentFrameChain.Count == 0)
                 {
                     IWebElement scrollRootElement = eyes_.GetCurrentFrameScrollRootElement();
-                    IPositionProvider positionProvider = SeleniumPositionProviderFactory.GetInstance(eyes_).GetPositionProvider(
+                    IPositionProvider positionProvider = eyes_.GetPositionProvider(
                         logger_, StitchModes.Scroll, jsExecutor_, scrollRootElement,
                         userAgent_);
                     loc = positionProvider.GetCurrentPosition();

@@ -5,19 +5,10 @@ using System.Collections.Concurrent;
 
 namespace Applitools.Selenium.Scrolling
 {
-    public class SeleniumPositionProviderFactory
+    internal class SeleniumPositionProviderFactory
     {
-        internal static SeleniumPositionProviderFactory GetInstance(SeleniumEyes eyes)
-        {
-            if (eyes.PositionProviderFactory == null)
-            {
-                eyes.PositionProviderFactory = new SeleniumPositionProviderFactory();
-            }
-            return eyes.PositionProviderFactory;
-        }
-
         private readonly ConcurrentDictionary<string, IPositionProvider> positionProviders_ = new ConcurrentDictionary<string, IPositionProvider>();
-        public IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
+        internal IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
         {
             string id = scrollRootElement.GetHashCode() + "_" + stitchMode;
             logger.Log(TraceLevel.Debug, Stage.General, new { PositionProviderId = id });

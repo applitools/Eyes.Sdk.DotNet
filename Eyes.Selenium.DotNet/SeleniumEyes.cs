@@ -52,6 +52,8 @@ namespace Applitools.Selenium
         private IWebElement userDefinedSRE_;
         private ISeleniumConfigurationProvider configProvider_;
 
+        private readonly SeleniumPositionProviderFactory positionProviderFactory_ = new SeleniumPositionProviderFactory();
+
         #endregion Fields
 
         #region Constructors
@@ -137,7 +139,6 @@ namespace Applitools.Selenium
 
         public string PlatformName { get; private set; }
 
-        public SeleniumPositionProviderFactory PositionProviderFactory { get; internal set; }
         #endregion Properties
 
         #region Methods
@@ -294,7 +295,7 @@ namespace Applitools.Selenium
         {
             ArgumentGuard.NotNull(selector, nameof(selector));
             userDefinedSRE_ = EyesSeleniumUtils.GetDefaultRootElement(driver_);
-            PositionProvider = SeleniumPositionProviderFactory.GetInstance(this).GetPositionProvider(Logger, StitchMode,
+            PositionProvider = GetPositionProvider(Logger, StitchMode,
                 jsExecutor_, userDefinedSRE_, userAgent_);
 
             var element = driver_.RemoteWebDriver.FindElement(selector);
@@ -350,7 +351,7 @@ namespace Applitools.Selenium
             Logger.Verbose("scrollRootElement_ set to {0}", userDefinedSRE_);
 
             CurrentFramePositionProvider = null;
-            PositionProvider = SeleniumPositionProviderFactory.GetInstance(this).GetPositionProvider(Logger, StitchMode,
+            PositionProvider = GetPositionProvider(Logger, StitchMode,
                 jsExecutor_, userDefinedSRE_, userAgent_);
 
             MatchRegions(getRegions, checkSettingsInternalDictionary, checkSettings);
@@ -570,7 +571,7 @@ namespace Applitools.Selenium
                 Logger.Verbose(nameof(scrollRootElement) + " set to {0}", scrollRootElement);
 
                 CurrentFramePositionProvider = null;
-                PositionProvider = SeleniumPositionProviderFactory.GetInstance(this).GetPositionProvider(Logger, StitchMode, jsExecutor_, scrollRootElement, userAgent_);
+                PositionProvider = GetPositionProvider(Logger, StitchMode, jsExecutor_, scrollRootElement, userAgent_);
                 CaretVisibilityProvider caretVisibilityProvider = new CaretVisibilityProvider(Logger, driver_, Config_);
 
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)driver_.SwitchTo();
@@ -920,7 +921,7 @@ namespace Applitools.Selenium
         private Rectangle BringRegionToView(Rectangle bounds, Point viewportLocation, bool compensateSRE = true)
         {
             IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
-            IPositionProvider currentFramePositionProvider = SeleniumPositionProviderFactory.GetInstance(this).GetPositionProvider(
+            IPositionProvider currentFramePositionProvider = GetPositionProvider(
                 Logger, StitchMode, jsExecutor_, currentFrameSRE, userAgent_);
             Point initialFramePosition = currentFramePositionProvider.GetCurrentPosition();
             Point boundsLocation = bounds.Location;
@@ -1401,6 +1402,11 @@ namespace Applitools.Selenium
             return result;
         }
 
+        internal IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
+        {
+            return positionProviderFactory_.GetPositionProvider(logger, stitchMode, executor, scrollRootElement, userAgent);
+        }
+
         private IPositionProvider GetPositionProviderForScrollRootElement_(IWebElement scrollRootElement)
         {
             return GetPositionProviderForScrollRootElement_(Logger, driver_, StitchMode, userAgent_, scrollRootElement);
@@ -1408,7 +1414,7 @@ namespace Applitools.Selenium
 
         internal static IPositionProvider GetPositionProviderForScrollRootElement_(Logger logger, EyesWebDriver driver, StitchModes stitchMode, UserAgent ua, IWebElement scrollRootElement)
         {
-            IPositionProvider positionProvider = SeleniumPositionProviderFactory.GetInstance(driver.Eyes).TryGetPositionProviderForElement(
+            IPositionProvider positionProvider = driver.Eyes.positionProviderFactory_.TryGetPositionProviderForElement(
                 scrollRootElement, stitchMode, driver.RemoteWebDriver, logger);
             if (positionProvider == null)
             {
@@ -1416,7 +1422,7 @@ namespace Applitools.Selenium
                 IWebElement defaultSRE = EyesSeleniumUtils.GetDefaultRootElement(driver);
                 if (scrollRootElement.Equals(defaultSRE))
                 {
-                    positionProvider = SeleniumPositionProviderFactory.GetInstance(driver.Eyes).GetPositionProvider(logger, stitchMode,
+                    positionProvider = driver.Eyes.GetPositionProvider(logger, stitchMode,
                         driver, scrollRootElement, ua);
                 }
                 else
