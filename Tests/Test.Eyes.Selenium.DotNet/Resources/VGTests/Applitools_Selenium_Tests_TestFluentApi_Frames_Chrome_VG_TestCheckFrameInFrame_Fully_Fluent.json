@@ -1,1 +1,31 @@
-[{"url":"https://applitools.github.io/demo/TestPages/FramesTestPage/frame3.html","dom":{"hashFormat":"sha256","hash":"7970d4b42c991fc5d9d45579d293fec3c6cdc4e91e26aa26f217a779a3e63ce0"},"resources":{"https://applitools.github.io/demo/TestPages/FramesTestPage/green_minions-800x500.jpg":{"contentType":"image/jpeg","hash":"85d9446c274d3edd0e2f577edd7270b80f9fcddaa316294a9cb8c24a10f539e3","hashFormat":"sha256"}},"renderInfo":{"width":700,"height":460,"target":"full-page"},"scriptHooks":{},"selectorsToFindRegionsFor":[],"sendDom":true,"renderId":"47A4C2BD-0349-4232-B588-C9B9DA77498B","browser":{"name":"chrome"},"platform":{"name":"linux"}}]
+[
+  {
+    "url": "https://applitools.github.io/demo/TestPages/FramesTestPage/frame3.html",
+    "dom": {
+      "hashFormat": "sha256",
+      "hash": "7970d4b42c991fc5d9d45579d293fec3c6cdc4e91e26aa26f217a779a3e63ce0"
+    },
+    "resources": {
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/green_minions-800x500.jpg": {
+        "contentType": "image/jpeg",
+        "hash": "85d9446c274d3edd0e2f577edd7270b80f9fcddaa316294a9cb8c24a10f539e3",
+        "hashFormat": "sha256"
+      }
+    },
+    "renderInfo": {
+      "width": 700,
+      "height": 460,
+      "target": "full-page"
+    },
+    "scriptHooks": {},
+    "selectorsToFindRegionsFor": [],
+    "sendDom": true,
+    "renderId": "47A4C2BD-0349-4232-B588-C9B9DA77498B",
+    "browser": {
+      "name": "chrome"
+    },
+    "platform": {
+      "name": "linux"
+    }
+  }
+]

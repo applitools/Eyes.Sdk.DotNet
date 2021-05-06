@@ -1,1 +1,74 @@
-[{"webhook":"https://some.url.com","url":"https://applitools.github.io/demo/TestPages/FramesTestPage/frame2.html","dom":{"hashFormat":"sha256","hash":"a9b1ce73c26a76d488206fc9eaf409f57aa421a74249d9e443eb042866ea46f9"},"resources":{"https://applitools.github.io/demo/TestPages/FramesTestPage/frame3.html":{"contentType":"x-applitools-html/cdt","hashFormat":"sha256"},"https://applitools.github.io/demo/TestPages/FramesTestPage/green_minions-800x500.jpg":{"contentType":"image/jpeg","hashFormat":"sha256"},"https://fonts.googleapis.com/css2?family=Roboto":{"contentType":"text/css; charset=utf-8","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxK.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4WxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu5mxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu72xKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7GxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7mxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7WxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"}},"renderer":"chrome","renderInfo":{"width":700,"height":460,"region":{"x":30,"y":40,"width":400,"height":1200},"target":"region"},"scriptHooks":{},"selectorsToFindRegionsFor":[],"sendDom":true,"agentId":"{{agentId}}","browser":{"name":"chrome"},"platform":{"name":"linux"}}]
+[
+  {
+    "webhook": "https://some.url.com",
+    "url": "https://applitools.github.io/demo/TestPages/FramesTestPage/frame2.html",
+    "dom": {
+      "hashFormat": "sha256",
+      "hash": "3d7951dbf9a4d1a96538794dce550056ca6c6366182d6c52c6153fa5c09e1160"
+    },
+    "resources": {
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/frame3.html": {
+        "contentType": "x-applitools-html/cdt",
+        "hashFormat": "sha256"
+      },
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/green_minions-800x500.jpg": {
+        "contentType": "image/jpeg",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.googleapis.com/css2?family=Roboto": {
+        "contentType": "text/css; charset=utf-8",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxK.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4WxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu5mxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu72xKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7GxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7mxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7WxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      }
+    },
+    "renderer": "chrome",
+    "renderInfo": {
+      "width": 700,
+      "height": 460,
+      "region": {
+        "x": 30,
+        "y": 40,
+        "width": 400,
+        "height": 1200
+      },
+      "target": "region"
+    },
+    "scriptHooks": {},
+    "selectorsToFindRegionsFor": [],
+    "sendDom": true,
+    "agentId": "{{agentId}}",
+    "browser": {
+      "name": "chrome"
+    },
+    "platform": {
+      "name": "linux"
+    }
+  }
+]

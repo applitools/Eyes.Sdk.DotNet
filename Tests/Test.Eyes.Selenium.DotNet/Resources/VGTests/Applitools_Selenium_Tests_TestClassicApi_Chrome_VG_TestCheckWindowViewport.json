@@ -1,1 +1,100 @@
-[{"webhook":"https://some.url.com","url":"https://applitools.github.io/demo/TestPages/FramesTestPage/","dom":{"hashFormat":"sha256","hash":"c7bce2a00358a28c7aea4f2c04361359e602a710248dfdf3592acc1aa45a1d79"},"resources":{"https://applitools.github.io/demo/TestPages/FramesTestPage/frame2.html":{"contentType":"x-applitools-html/cdt","hashFormat":"sha256"},"https://applitools.github.io/demo/TestPages/FramesTestPage/frame3.html":{"contentType":"x-applitools-html/cdt","hashFormat":"sha256"},"https://applitools.github.io/demo/TestPages/FramesTestPage/green_minions-800x500.jpg":{"contentType":"image/jpeg","hashFormat":"sha256"},"https://applitools.github.io/demo/TestPages/FramesTestPage/minions-800x500.jpg":{"contentType":"image/jpeg","hashFormat":"sha256"},"https://applitools.github.io/demo/TestPages/FramesTestPage/non-existent.jpg":{"contentType":"unknown/error","hashFormat":"sha256"},"https://fonts.googleapis.com/css2?family=PT+Serif":{"contentType":"text/css; charset=utf-8","hashFormat":"sha256"},"https://fonts.googleapis.com/css2?family=Roboto":{"contentType":"text/css; charset=utf-8","hashFormat":"sha256"},"https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFbzr-tdg.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFSzr-tdg.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFWzr8.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFYzr-tdg.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxK.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4WxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu5mxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu72xKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7GxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7mxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"},"https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7WxKOzY.woff2":{"contentType":"font/woff2","hashFormat":"sha256"}},"renderer":"chrome","renderInfo":{"width":700,"height":460,"target":"viewport"},"scriptHooks":{},"selectorsToFindRegionsFor":[],"sendDom":true,"agentId":"{{agentId}}","browser":{"name":"chrome"},"platform":{"name":"linux"}}]
+[
+  {
+    "webhook": "https://some.url.com",
+    "url": "https://applitools.github.io/demo/TestPages/FramesTestPage/",
+    "dom": {
+      "hashFormat": "sha256",
+      "hash": "14417c8b876c055f5838b316a9bcf0b703bc44a427a2172b53bf45dcdf02b2f1"
+    },
+    "resources": {
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/frame2.html": {
+        "contentType": "x-applitools-html/cdt",
+        "hashFormat": "sha256"
+      },
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/frame3.html": {
+        "contentType": "x-applitools-html/cdt",
+        "hashFormat": "sha256"
+      },
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/green_minions-800x500.jpg": {
+        "contentType": "image/jpeg",
+        "hashFormat": "sha256"
+      },
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/minions-800x500.jpg": {
+        "contentType": "image/jpeg",
+        "hashFormat": "sha256"
+      },
+      "https://applitools.github.io/demo/TestPages/FramesTestPage/non-existent.jpg": {
+        "contentType": "unknown/error",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.googleapis.com/css2?family=PT+Serif": {
+        "contentType": "text/css; charset=utf-8",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.googleapis.com/css2?family=Roboto": {
+        "contentType": "text/css; charset=utf-8",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFbzr-tdg.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFSzr-tdg.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFWzr8.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/ptserif/v12/EJRVQgYoZZY2vCFuvAFYzr-tdg.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxK.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4WxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu5mxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu72xKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7GxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7mxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      },
+      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7WxKOzY.woff2": {
+        "contentType": "font/woff2",
+        "hashFormat": "sha256"
+      }
+    },
+    "renderer": "chrome",
+    "renderInfo": {
+      "width": 700,
+      "height": 460,
+      "target": "viewport"
+    },
+    "scriptHooks": {},
+    "selectorsToFindRegionsFor": [],
+    "sendDom": true,
+    "agentId": "{{agentId}}",
+    "browser": {
+      "name": "chrome"
+    },
+    "platform": {
+      "name": "linux"
+    }
+  }
+]

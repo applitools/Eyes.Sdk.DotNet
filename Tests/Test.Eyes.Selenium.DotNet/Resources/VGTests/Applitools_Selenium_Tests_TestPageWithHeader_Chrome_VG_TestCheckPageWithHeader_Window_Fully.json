@@ -1,1 +1,25 @@
-[{"url":"https://applitools.github.io/demo/TestPages/PageWithHeader/index.html","dom":{"hashFormat":"sha256","hash":"189b34511754c40ce98846ff0f712d375c4f9f020e7ea08a3e45298dc0e648ac"},"resources":{},"renderInfo":{"width":700,"height":460,"target":"full-page"},"scriptHooks":{},"selectorsToFindRegionsFor":[],"sendDom":true,"renderId":"47A4C2BD-0349-4232-B588-C9B9DA77498B","browser":{"name":"chrome"},"platform":{"name":"linux"}}]
+[
+  {
+    "url": "https://applitools.github.io/demo/TestPages/PageWithHeader/index.html",
+    "dom": {
+      "hashFormat": "sha256",
+      "hash": "189b34511754c40ce98846ff0f712d375c4f9f020e7ea08a3e45298dc0e648ac"
+    },
+    "resources": {},
+    "renderInfo": {
+      "width": 700,
+      "height": 460,
+      "target": "full-page"
+    },
+    "scriptHooks": {},
+    "selectorsToFindRegionsFor": [],
+    "sendDom": true,
+    "renderId": "47A4C2BD-0349-4232-B588-C9B9DA77498B",
+    "browser": {
+      "name": "chrome"
+    },
+    "platform": {
+      "name": "linux"
+    }
+  }
+]

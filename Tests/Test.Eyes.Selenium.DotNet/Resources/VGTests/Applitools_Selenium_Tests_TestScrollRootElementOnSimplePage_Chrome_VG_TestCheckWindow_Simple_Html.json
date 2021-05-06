@@ -1,1 +1,32 @@
-[{"webhook":"https://some.url.com","url":"https://applitools.github.io/demo/TestPages/SimpleTestPage/index.html","dom":{"hashFormat":"sha256","hash":"84f9b713fd9511d8768cf627e479a600baf4a3b5462c62444d72435c4b204724"},"resources":{"https://applitools.github.io/demo/TestPages/SimpleTestPage/minions-300x188.jpg":{"contentType":"image/jpeg","hashFormat":"sha256"}},"renderer":"chrome","renderInfo":{"width":700,"height":460,"target":"full-page"},"scriptHooks":{},"selectorsToFindRegionsFor":[],"sendDom":true,"agentId":"{{agentId}}","browser":{"name":"chrome"},"platform":{"name":"linux"}}]
+[
+  {
+    "webhook": "https://some.url.com",
+    "url": "https://applitools.github.io/demo/TestPages/SimpleTestPage/index.html",
+    "dom": {
+      "hashFormat": "sha256",
+      "hash": "84f9b713fd9511d8768cf627e479a600baf4a3b5462c62444d72435c4b204724"
+    },
+    "resources": {
+      "https://applitools.github.io/demo/TestPages/SimpleTestPage/minions-300x188.jpg": {
+        "contentType": "image/jpeg",
+        "hashFormat": "sha256"
+      }
+    },
+    "renderer": "chrome",
+    "renderInfo": {
+      "width": 700,
+      "height": 460,
+      "target": "full-page"
+    },
+    "scriptHooks": {},
+    "selectorsToFindRegionsFor": [],
+    "sendDom": true,
+    "agentId": "{{agentId}}",
+    "browser": {
+      "name": "chrome"
+    },
+    "platform": {
+      "name": "linux"
+    }
+  }
+]
