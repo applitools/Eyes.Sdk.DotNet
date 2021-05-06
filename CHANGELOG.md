@@ -1,4 +1,4 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.48] - 2021-05-06
 ### Added
 - Support for iPad (8th Generation) cropping and rotation [Trello 2564] (https://trello.com/c/6weK0Ojj)
 ### Updated

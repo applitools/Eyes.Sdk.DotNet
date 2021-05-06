@@ -8,13 +8,16 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.47</Version>
+    <Version>2.48</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
+    <PackageReleaseNotes>### Added
+- Support for iPad (8th Generation) cropping and rotation [Trello 2564] (https://trello.com/c/6weK0Ojj)
+### Updated
 - Better fix for Safari's predictable element id problem [Trello 2467] (https://trello.com/c/7nrotXei)
+- `dom-snapshot` version to 4.5.0
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
