@@ -11,6 +11,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
     public class TestSpecialCharacters : ReportingTestSuite
     {
         [Test]
+        [Skip(TestUtils.COVERED_BY_GENERATED_TESTS_MESSAGE)]
         public void TestRenderSpecialCharacters()
         {
             ILogHandler logHandler = TestUtils.InitLogHandler();
