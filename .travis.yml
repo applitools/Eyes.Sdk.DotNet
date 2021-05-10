@@ -105,11 +105,13 @@ jobs:
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master
+      mono: none
       script:
         - chmod +x ./sendFullCoverageReport.sh && ./sendFullCoverageReport.sh
 
     - stage: Deploy
       if: tag =~ ^RELEASE_CANDIDATE AND fork == false
+      mono: none
       script:
         - chmod +x ./deploy.sh && ./deploy.sh
         - chmod +x ./sendMail.sh && ./sendMail.sh
