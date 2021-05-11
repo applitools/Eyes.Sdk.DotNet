@@ -10,13 +10,13 @@
     </Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>1.8</Version>
+    <Version>1.9</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes common</PackageTags>
-    <PackageReleaseNotes>### Added
-- Support for `AgentRunId` and `VariantId`. [Trello 2561] (https://trello.com/c/7PIfHaqk)
+    <PackageReleaseNotes>### Fixed
+- Make all other SDKs work again on .Net Core 2.1.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Common</PackageId>

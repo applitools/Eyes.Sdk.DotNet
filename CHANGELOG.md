@@ -1,4 +1,32 @@
-## [Eyes.Common vNext]
+## [Eyes.Appium 4.24] - 2021-05-11
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.27] - 2021-05-11
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.23] - 2021-05-11
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.49] - 2021-05-11
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.LeanFT 2.29] - 2021-05-11
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.28] - 2021-05-11
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.46] - 2021-05-11
+### Updated
+- Match to latest Eyes.Common
+
+## [Eyes.Common 1.9] - 2021-05-11
 ### Fixed
 - Make all other SDKs work again on .Net Core 2.1.
 
