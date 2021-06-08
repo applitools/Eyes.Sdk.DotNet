@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
@@ -29,6 +30,7 @@ namespace Applitools.Selenium
         private ITargetLocator targetLocator_;
         private readonly FrameChain frameChain_;
         private Dictionary<string, IWebElement> elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
+        private MethodInfo executeCommandMI_;
         #endregion
 
         #region Constructors
@@ -44,7 +46,7 @@ namespace Applitools.Selenium
             UserActionsEyes = userActionEyes;
             RemoteWebDriver = driver;
             frameChain_ = new FrameChain(logger);
-
+            executeCommandMI_ = driver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
             Logger_.Verbose("Driver is {0}", driver.GetType());
         }
 
@@ -350,7 +352,7 @@ namespace Applitools.Selenium
         {
             get
             {
-                var response = RemoteWebDriver.Execute("getSession");
+                var response = (Response)executeCommandMI_.Invoke(RemoteWebDriver, new object[] { "getSession" });
                 if (response == null || response.Status != WebDriverResult.Success) return null;
                 if (!(response.Value is IDictionary<string, object> dict)) return null;
                 return dict.Where(entry =>

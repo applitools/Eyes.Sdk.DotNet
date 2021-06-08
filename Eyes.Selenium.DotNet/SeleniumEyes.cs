@@ -248,7 +248,7 @@ namespace Applitools.Selenium
             }
             else
             {
-                PlatformName = driver_.GetSessionDetail("platformName") ?? driver_.GetSessionDetail("platform");
+                PlatformName = (driver_.GetSessionDetail("platformName") as string) ?? (driver_.GetSessionDetail("platform") as string);
             }
 
             if (getSessionDetailsMI != null)

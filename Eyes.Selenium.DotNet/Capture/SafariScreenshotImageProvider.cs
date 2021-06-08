@@ -24,7 +24,7 @@ namespace Applitools.Selenium.Capture
             if (eyes_.CachedSessionDetails != null &&
                 eyes_.CachedSessionDetails.TryGetValue("deviceOrientation", out object orientation))
             {
-                if ("landscape".Equals(orientation, StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
+                if ("landscape".Equals(orientation as string, StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
                 {
                     logger_.Verbose("rotating image...");
                     image.RotateFlip(RotateFlipType.Rotate270FlipNone);
@@ -53,7 +53,7 @@ namespace Applitools.Selenium.Capture
             if (userAgent_.IsiOS ||
                 "ios".Equals(eyes_.PlatformName, StringComparison.OrdinalIgnoreCase) ||
                 (eyes_.CachedSessionDetails.TryGetValue("PlatformName", out object platformName) &&
-                    "ios".Equals(platformName, StringComparison.OrdinalIgnoreCase)))
+                    "ios".Equals(platformName as string, StringComparison.OrdinalIgnoreCase)))
             {
                 croppedImage = CropIOSImage(image, originalViewportSize, logger_);
             }
