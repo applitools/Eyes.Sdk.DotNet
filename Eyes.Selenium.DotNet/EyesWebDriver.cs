@@ -352,7 +352,7 @@ namespace Applitools.Selenium
         {
             get
             {
-                var response = (Response)executeCommandMI_.Invoke(RemoteWebDriver, new object[] { "getSession" });
+                var response = (Response)executeCommandMI_.Invoke(RemoteWebDriver, new object[] { "getSession", null });
                 if (response == null || response.Status != WebDriverResult.Success) return null;
                 if (!(response.Value is IDictionary<string, object> dict)) return null;
                 return dict.Where(entry =>
