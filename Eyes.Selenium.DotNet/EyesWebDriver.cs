@@ -347,21 +347,27 @@ namespace Applitools.Selenium
             return RemoteWebDriver.ExecuteAsyncScript(script, args);
         }
 
-
         internal IDictionary<string, object> SessionDetails
         {
             get
             {
-                var response = (Response)executeCommandMI_.Invoke(RemoteWebDriver, new object[] { "getSession", null });
-                if (response == null || response.Status != WebDriverResult.Success) return null;
-                if (!(response.Value is IDictionary<string, object> dict)) return null;
-                return dict.Where(entry =>
+                try
                 {
-                    string key = entry.Key;
-                    object value = entry.Value;
-                    return !string.IsNullOrEmpty(key) && value != null && !string.IsNullOrEmpty(Convert.ToString(value));
-                })
-                .ToDictionary(entry => entry.Key, entry => entry.Value);
+                    var response = (Response)executeCommandMI_.Invoke(RemoteWebDriver, new object[] { "getSession", null });
+                    if (response == null || response.Status != WebDriverResult.Success) return null;
+                    if (!(response.Value is IDictionary<string, object> dict)) return null;
+                    return dict.Where(entry =>
+                    {
+                        string key = entry.Key;
+                        object value = entry.Value;
+                        return !string.IsNullOrEmpty(key) && value != null && !string.IsNullOrEmpty(Convert.ToString(value));
+                    })
+                    .ToDictionary(entry => entry.Key, entry => entry.Value);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 

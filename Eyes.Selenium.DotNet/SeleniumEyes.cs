@@ -292,6 +292,7 @@ namespace Applitools.Selenium
             {
                 Thread.Sleep(attempts == 2 ? 0 : 1000);
                 CachedSessionDetails = driver_.SessionDetails;
+                if (CachedSessionDetails == null) break;
             } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
 
             if (CachedSessionDetails == null)
