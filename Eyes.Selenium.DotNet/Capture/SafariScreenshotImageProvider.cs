@@ -24,7 +24,7 @@ namespace Applitools.Selenium.Capture
             if (eyes_.CachedSessionDetails != null &&
                 eyes_.CachedSessionDetails.TryGetValue("deviceOrientation", out object orientation))
             {
-                if (((string)orientation).Equals("landscape", StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
+                if ("landscape".Equals(orientation, StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
                 {
                     logger_.Verbose("rotating image...");
                     image.RotateFlip(RotateFlipType.Rotate270FlipNone);
@@ -51,9 +51,9 @@ namespace Applitools.Selenium.Capture
 
             Bitmap croppedImage = null;
             if (userAgent_.IsiOS ||
-                eyes_.PlatformName.Equals("ios", StringComparison.OrdinalIgnoreCase) ||
+                "ios".Equals(eyes_.PlatformName, StringComparison.OrdinalIgnoreCase) ||
                 (eyes_.CachedSessionDetails.TryGetValue("PlatformName", out object platformName) &&
-                    ((string)platformName).Equals("ios", StringComparison.OrdinalIgnoreCase)))
+                    "ios".Equals(platformName, StringComparison.OrdinalIgnoreCase)))
             {
                 croppedImage = CropIOSImage(image, originalViewportSize, logger_);
             }
@@ -171,6 +171,8 @@ namespace Applitools.Selenium.Capture
 
                 { new Size(1620, 2160), new List<Rectangle>{ new Rectangle(0, 140, 1620, 2020) } },
                 { new Size(2160, 1620), new List<Rectangle>{ new Rectangle(0, 140, 2160, 1480) } },
+
+                { new Size(1640, 2360), new List<Rectangle>{ new Rectangle(0, 149, 1640, 2211) } },
             };
         }
     }
