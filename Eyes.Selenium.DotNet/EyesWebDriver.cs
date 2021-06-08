@@ -345,6 +345,31 @@ namespace Applitools.Selenium
             return RemoteWebDriver.ExecuteAsyncScript(script, args);
         }
 
+
+        internal IDictionary<string, object> SessionDetails
+        {
+            get
+            {
+                var response = RemoteWebDriver.Execute("getSession");
+                if (response == null || response.Status != WebDriverResult.Success) return null;
+                if (!(response.Value is IDictionary<string, object> dict)) return null;
+                return dict.Where(entry =>
+                {
+                    string key = entry.Key;
+                    object value = entry.Value;
+                    return !string.IsNullOrEmpty(key) && value != null && !string.IsNullOrEmpty(Convert.ToString(value));
+                })
+                .ToDictionary(entry => entry.Key, entry => entry.Value);
+            }
+        }
+
+        internal object GetSessionDetail(string detail)
+        {
+            IDictionary<string, object> sessionDetails = SessionDetails;
+            if (sessionDetails == null) return null;
+            return sessionDetails.ContainsKey(detail) ? sessionDetails[detail] : null;
+        }
+
         /// <summary>
         /// Returns the viewport size of the default content (outer most frame).
         /// </summary>
