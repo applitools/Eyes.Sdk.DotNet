@@ -46,7 +46,7 @@ namespace Applitools.Selenium
             UserActionsEyes = userActionEyes;
             RemoteWebDriver = driver;
             frameChain_ = new FrameChain(logger);
-
+            executeCommandMI_ = driver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
             var driverType = driver.GetType();
             bool isAppiumDriver = false;
             var dt = driverType;
