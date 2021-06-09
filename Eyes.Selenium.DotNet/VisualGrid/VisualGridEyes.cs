@@ -821,7 +821,7 @@ namespace Applitools.Selenium.VisualGrid
                         };
                         cookieCollection.Add(cookie);
                     }
-                    
+
                     frameData.Cookies = cookieCollection;
                 }
             }
@@ -838,10 +838,19 @@ namespace Applitools.Selenium.VisualGrid
                 try
                 {
                     IWebElement frame = driver.FindElement(By.CssSelector(crossFrame.Selector));
+                    var activeElementBeforeSwitch = switchTo.ActiveElement();
                     switchTo.Frame(frame);
-                    FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, seleniumCheckTarget, runner, driver, logger, testIds);
-                    frameData.Frames.Add(result);
-                    frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
+                    var activeElementAfterSwitch = switchTo.ActiveElement();
+                    if (!activeElementAfterSwitch.Equals(activeElementBeforeSwitch))
+                    {
+                        FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, seleniumCheckTarget, runner, driver, logger, testIds);
+                        frameData.Frames.Add(result);
+                        frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
+                    }
+                    else
+                    {
+                        throw new Exception("Failed switching into frame");
+                    }
                 }
                 catch (Exception ex)
                 {
