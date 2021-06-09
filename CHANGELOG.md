@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Updated
+- `dom-snapshot` script to version 4.5.3
+
 ## [Eyes.Appium 4.24] - 2021-05-11
 ### Updated
 - Match to latest Eyes.Sdk.Core
