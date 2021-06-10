@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Switch to frame success validation to prevent endless recursion.
+
 ## [Eyes.Appium 4.24] - 2021-05-11
 ### Updated
 - Match to latest Eyes.Sdk.Core

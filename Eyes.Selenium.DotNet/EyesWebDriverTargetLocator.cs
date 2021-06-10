@@ -63,7 +63,6 @@ namespace Applitools.Selenium
         {
             logger_.Log(TraceLevel.Debug, Stage.General, StageType.Called);
             WillSwitchToFrame_(frameElement);
-            targetLocator_.Frame(frameElement);
             return driver_;
         }
 
@@ -85,7 +84,6 @@ namespace Applitools.Selenium
                 }
             }
             WillSwitchToFrame_(frames[0]);
-            targetLocator_.Frame(nameOrId);
             return driver_;
         }
 
@@ -100,7 +98,6 @@ namespace Applitools.Selenium
             }
             IWebElement targetFrame = frames[frameIndex];
             WillSwitchToFrame_(targetFrame);
-            targetLocator_.Frame(frameIndex);
             return driver_;
         }
 
@@ -131,8 +128,17 @@ namespace Applitools.Selenium
                     bounds,
                     borderWidths,
                     jsExecutor_);
-
-            driver_.GetFrameChain().Push(frame);
+            var activeElementBeforeSwitch = targetLocator_.ActiveElement();
+            targetLocator_.Frame(targetFrame);
+            var activeElementAfterSwitch = targetLocator_.ActiveElement();
+            if (!activeElementAfterSwitch.Equals(activeElementBeforeSwitch))
+            {
+                driver_.GetFrameChain().Push(frame);
+            }
+            else
+            {
+                throw new Exception("Failed switching to frame.");
+            }
         }
 
         public IWebDriver ParentFrame()
@@ -147,7 +153,6 @@ namespace Applitools.Selenium
             }
             return driver_;
         }
-
 
         public static void ParentFrame(Logger logger, ITargetLocator targetLocator, FrameChain frameChainToParent)
         {
