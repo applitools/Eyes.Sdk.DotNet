@@ -119,9 +119,6 @@ namespace Applitools.Selenium
         private object lastCheckSettings_;
         private object lastCheckSettingsInternal_;
 
-        private MethodInfo getPlatformName_;
-        private MethodInfo getSessionDetails_;
-
         public IDictionary<string, object> CachedSessionDetails { get; private set; }
 
 
@@ -241,23 +238,39 @@ namespace Applitools.Selenium
             }
 
             Type driverType = driver_.RemoteWebDriver.GetType();
-            getPlatformName_ = driverType.GetProperty("PlatformName")?.GetGetMethod();
-            getSessionDetails_ = driverType.GetProperty("SessionDetails")?.GetGetMethod();
+            Logger.Log(TraceLevel.Info, Stage.Open, new { driverType });
+            MethodInfo getPlatformNameMI = driverType.GetProperty("PlatformName")?.GetGetMethod();
+            MethodInfo getSessionDetailsMI = driverType.GetProperty("SessionDetails")?.GetGetMethod();
 
-            if (getPlatformName_ != null) PlatformName = (string)getPlatformName_.Invoke(driver_.RemoteWebDriver, null);
-            if (getSessionDetails_ != null) InitSessionDetails_();
+            if (getPlatformNameMI != null)
+            {
+                PlatformName = (string)getPlatformNameMI.Invoke(driver_.RemoteWebDriver, null);
+            }
+            else
+            {
+                PlatformName = (driver_.GetSessionDetail("platformName") as string) ?? (driver_.GetSessionDetail("platform") as string);
+            }
+
+            if (getSessionDetailsMI != null)
+            {
+                InitSessionDetails_(getSessionDetailsMI);
+            }
+            else
+            {
+                InitSessionDetailsUsingInternalImplementation_();
+            }
 
             Logger.Log(TraceLevel.Info, Stage.Open,
-                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId });
+                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId, PlatformName });
         }
 
-        private void InitSessionDetails_()
+        private void InitSessionDetails_(MethodInfo getSessionDetailsMI)
         {
             int attempts = 2;
             do
             {
                 Thread.Sleep(attempts == 2 ? 0 : 1000);
-                CachedSessionDetails = (IDictionary<string, object>)getSessionDetails_.Invoke(driver_.RemoteWebDriver, null);
+                CachedSessionDetails = (IDictionary<string, object>)getSessionDetailsMI.Invoke(driver_.RemoteWebDriver, null);
             } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
 
             if (CachedSessionDetails == null)
@@ -267,11 +280,32 @@ namespace Applitools.Selenium
                     {
                         message = "could not get viewportRect in session details from appium server! " +
                                   "Using default device size instead, this might create incorrect images.",
-                        sessionDetails = getSessionDetails_.Invoke(driver_.RemoteWebDriver, null)
+                        sessionDetails = getSessionDetailsMI.Invoke(driver_.RemoteWebDriver, null)
                     });
             }
         }
 
+        private void InitSessionDetailsUsingInternalImplementation_()
+        {
+            int attempts = 2;
+            do
+            {
+                Thread.Sleep(attempts == 2 ? 0 : 1000);
+                CachedSessionDetails = driver_.SessionDetails;
+                if (CachedSessionDetails == null) break;
+            } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
+
+            if (CachedSessionDetails == null)
+            {
+                Logger.Log(TraceLevel.Warn, Stage.Open,
+                    new
+                    {
+                        message = "could not get viewportRect in session details from appium server! " +
+                                  "Using default device size instead, this might create incorrect images.",
+                        sessionDetails = driver_.SessionDetails
+                    });
+            }
+        }
         protected override string TryCaptureDom()
         {
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);

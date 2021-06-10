@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
@@ -29,6 +30,7 @@ namespace Applitools.Selenium
         private ITargetLocator targetLocator_;
         private readonly FrameChain frameChain_;
         private Dictionary<string, IWebElement> elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
+        private MethodInfo executeCommandMI_;
         #endregion
 
         #region Constructors
@@ -44,6 +46,23 @@ namespace Applitools.Selenium
             UserActionsEyes = userActionEyes;
             RemoteWebDriver = driver;
             frameChain_ = new FrameChain(logger);
+
+            var driverType = driver.GetType();
+            bool isAppiumDriver = false;
+            var dt = driverType;
+            while (dt != null && !isAppiumDriver)
+            {
+                isAppiumDriver = dt.Name.StartsWith("AppiumDriver`");
+                dt = dt.BaseType;
+            }
+
+            if (!isAppiumDriver)
+            {
+                executeCommandMI_ = driverType.GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
+                var commandExecutorProperty = driverType.GetProperty("CommandExecutor", BindingFlags.Instance | BindingFlags.NonPublic);
+                var commandExecutor = (ICommandExecutor)commandExecutorProperty.GetValue(driver);
+                commandExecutor.CommandInfoRepository.TryAddCommand("getSession", new CommandInfo("GET", "/session/{sessionId}/"));
+            }
 
             Logger_.Verbose("Driver is {0}", driver.GetType());
         }
@@ -343,6 +362,37 @@ namespace Applitools.Selenium
         public object ExecuteAsyncScript(string script, params object[] args)
         {
             return RemoteWebDriver.ExecuteAsyncScript(script, args);
+        }
+
+        internal IDictionary<string, object> SessionDetails
+        {
+            get
+            {
+                try
+                {
+                    var response = (Response)executeCommandMI_.Invoke(RemoteWebDriver, new object[] { "getSession", null });
+                    if (response == null || response.Status != WebDriverResult.Success) return null;
+                    if (!(response.Value is IDictionary<string, object> dict)) return null;
+                    return dict.Where(entry =>
+                    {
+                        string key = entry.Key;
+                        object value = entry.Value;
+                        return !string.IsNullOrEmpty(key) && value != null && !string.IsNullOrEmpty(Convert.ToString(value));
+                    })
+                    .ToDictionary(entry => entry.Key, entry => entry.Value);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
+
+        internal object GetSessionDetail(string detail)
+        {
+            IDictionary<string, object> sessionDetails = SessionDetails;
+            if (sessionDetails == null) return null;
+            return sessionDetails.ContainsKey(detail) ? sessionDetails[detail] : null;
         }
 
         /// <summary>

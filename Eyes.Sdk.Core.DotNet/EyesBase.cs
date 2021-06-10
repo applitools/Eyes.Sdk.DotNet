@@ -896,7 +896,8 @@ namespace Applitools
                 Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { startInfo });
                 return;
             }
-
+            Logger.Log(TraceLevel.Notice, Stage.Open, StageType.Called, 
+                new { runner_ = runner_?.GetType().Name ?? "<null>" });
             RunningSession runningSession = runner_.Open(TestId, startInfo);
             OpenCompleted(runningSession);
         }
