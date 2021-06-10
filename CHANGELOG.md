@@ -1,4 +1,6 @@
 ## [Eyes.Selenium vNext]
+### Fixed
+- Switch to frame success validation to prevent endless recursion.
 ### Updated
 - `dom-snapshot` script to version 4.5.3
 
