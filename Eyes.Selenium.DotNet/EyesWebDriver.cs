@@ -46,7 +46,24 @@ namespace Applitools.Selenium
             UserActionsEyes = userActionEyes;
             RemoteWebDriver = driver;
             frameChain_ = new FrameChain(logger);
-            executeCommandMI_ = driver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            var driverType = driver.GetType();
+            bool isAppiumDriver = false;
+            var dt = driverType;
+            while (dt != null && !isAppiumDriver)
+            {
+                isAppiumDriver = dt.Name.StartsWith("AppiumDriver`");
+                dt = dt.BaseType;
+            }
+
+            if (!isAppiumDriver)
+            {
+                executeCommandMI_ = driverType.GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
+                var commandExecutorProperty = driverType.GetProperty("CommandExecutor", BindingFlags.Instance | BindingFlags.NonPublic);
+                var commandExecutor = (ICommandExecutor)commandExecutorProperty.GetValue(driver);
+                commandExecutor.CommandInfoRepository.TryAddCommand("getSession", new CommandInfo("GET", "/session/{sessionId}/"));
+            }
+
             Logger_.Verbose("Driver is {0}", driver.GetType());
         }
 
