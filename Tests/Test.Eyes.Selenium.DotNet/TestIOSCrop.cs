@@ -66,6 +66,10 @@ namespace Applitools.Selenium.Tests
                 // resolution: 2048 x 2732 ; viewport: 2048 x 2592
                 // [iPad Pro (12.9 inch) (2nd generation), 11.0] [iPad Pro (12.9 inch) (2nd generation), 12.0]
                 yield return new TestCaseData("iPad Pro (12.9 inch) (2nd generation) Simulator", "11.0", ScreenOrientation.Portrait, 2048, 2592);
+               
+                // resolution: 2048 x 2732 ; viewport: 2048 x 2542
+                // [iPad Pro (12.9 inch) (5th generation), 14.0]
+                yield return new TestCaseData("iPad Pro (12.9 inch) (5th generation) Simulator", "14.0", ScreenOrientation.Portrait, 2048, 2542);
 
                 // resolution: 1668 x 2224 ; viewport: 1668 x 2084
                 // [iPad Pro (10.5 inch), 11.0]

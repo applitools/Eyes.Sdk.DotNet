@@ -43,6 +43,7 @@
     <None Remove="Resources\IOSImages\Expected\iPad Pro %2810.5 inch%29 Simulator 11.0 Portrait.png" />
     <None Remove="Resources\IOSImages\Expected\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Expected\iPad Pro %2812.9 inch%29 %285th generation%29 Simulator 14.0 Portrait.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 11 Simulator 13.0 Landscape.png" />
@@ -71,6 +72,7 @@
     <None Remove="Resources\IOSImages\Input\iPad Pro %2810.5 inch%29 Simulator 11.0 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPad Pro %2812.9 inch%29 %282nd generation%29 Simulator 11.0 Portrait.png" />
+    <None Remove="Resources\IOSImages\Input\iPad Pro %2812.9 inch%29 %285th generation%29 Simulator 14.0 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 11 Simulator 13.0 Landscape.png" />
@@ -162,6 +164,7 @@
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (10.5 inch) Simulator 11.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPad Pro (12.9 inch) (5th generation) Simulator 14.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Simulator 13.0 Landscape.png" />
@@ -190,6 +193,7 @@
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (10.5 inch) Simulator 11.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (12.9 inch) (2nd generation) Simulator 11.0 Portrait.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPad Pro (12.9 inch) (5th generation) Simulator 14.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Simulator 13.0 Landscape.png" />

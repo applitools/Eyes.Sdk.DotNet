@@ -2,6 +2,8 @@
 ### Fixed
 - Switch to frame success validation to prevent endless recursion.
 - It is now possible to use `RemoteWebDriver` and enjoy the features of `AppiumDriver`. [Trello 2602](https://trello.com/c/6VPY7mJC)
+### Added
+- iPad (12.9) (5th generation) 14.0 support.
 ### Updated
 - `dom-snapshot` script to version 4.5.3
 

@@ -1,0 +1,92 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65FEE257-99C5-4D2B-A6DF-8726ADEFCE25}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		applitools_nuget_icon.png = applitools_nuget_icon.png
+		buildProjects.sh = buildProjects.sh
+		CHANGELOG.md = CHANGELOG.md
+		deploy.sh = deploy.sh
+		extractChangeLog.sh = extractChangeLog.sh
+		LICENSE.txt = LICENSE.txt
+		loopChangeLog.sh = loopChangeLog.sh
+		README.md = README.md
+		reportTestResult.sh = reportTestResult.sh
+		sendFullCoverageReport.sh = sendFullCoverageReport.sh
+		sendMail.sh = sendMail.sh
+		testCoverageGap.txt = testCoverageGap.txt
+		updateChangelogAndProjectFiles.py = updateChangelogAndProjectFiles.py
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Sdk.Core.DotNet", "Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj", "{3700620B-73C4-439F-8842-3D9AB6B3407A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3929CF7C-FF84-40C1-8961-D76B61DAC67C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CssParser", "CssParser\CssParser.csproj", "{DE2FCA8E-4BE9-4D7B-B60F-325715E13E3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Images.DotNet", "Tests\Test.Eyes.Images.DotNet\Test.Eyes.Images.DotNet.csproj", "{88070681-5E9E-429E-A599-DECFFAE3F66F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Images.DotNet", "Eyes.Images.DotNet\Eyes.Images.DotNet.csproj", "{0DBC9E95-6C48-4640-B636-53836DAA231A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Appium.DotNet", "Eyes.Appium.DotNet\Eyes.Appium.DotNet.csproj", "{68ED3E94-3007-4209-A433-C42441FB172C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Appium.DotNet", "Tests\Test.Eyes.Appium.DotNet\Test.Eyes.Appium.DotNet.csproj", "{86401849-E3F7-4DF8-9BE8-24BC2C62089C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "coverage-tests\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{0C0307A7-E06E-468B-95AD-3A74375802DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.Common.DotNet\Eyes.Common.DotNet.csproj", "{809D3F18-D837-4E19-8E1C-546B017035A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3700620B-73C4-439F-8842-3D9AB6B3407A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3700620B-73C4-439F-8842-3D9AB6B3407A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3700620B-73C4-439F-8842-3D9AB6B3407A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3700620B-73C4-439F-8842-3D9AB6B3407A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE2FCA8E-4BE9-4D7B-B60F-325715E13E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE2FCA8E-4BE9-4D7B-B60F-325715E13E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE2FCA8E-4BE9-4D7B-B60F-325715E13E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE2FCA8E-4BE9-4D7B-B60F-325715E13E3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88070681-5E9E-429E-A599-DECFFAE3F66F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88070681-5E9E-429E-A599-DECFFAE3F66F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88070681-5E9E-429E-A599-DECFFAE3F66F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88070681-5E9E-429E-A599-DECFFAE3F66F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DBC9E95-6C48-4640-B636-53836DAA231A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DBC9E95-6C48-4640-B636-53836DAA231A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DBC9E95-6C48-4640-B636-53836DAA231A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DBC9E95-6C48-4640-B636-53836DAA231A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68ED3E94-3007-4209-A433-C42441FB172C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68ED3E94-3007-4209-A433-C42441FB172C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68ED3E94-3007-4209-A433-C42441FB172C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68ED3E94-3007-4209-A433-C42441FB172C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86401849-E3F7-4DF8-9BE8-24BC2C62089C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86401849-E3F7-4DF8-9BE8-24BC2C62089C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86401849-E3F7-4DF8-9BE8-24BC2C62089C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86401849-E3F7-4DF8-9BE8-24BC2C62089C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C0307A7-E06E-468B-95AD-3A74375802DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{809D3F18-D837-4E19-8E1C-546B017035A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{88070681-5E9E-429E-A599-DECFFAE3F66F} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
+		{86401849-E3F7-4DF8-9BE8-24BC2C62089C} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
+		{0C0307A7-E06E-468B-95AD-3A74375802DF} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2D3A563-3BF6-42B1-B7A9-7A7DCD842A2E}
+	EndGlobalSection
+EndGlobal
