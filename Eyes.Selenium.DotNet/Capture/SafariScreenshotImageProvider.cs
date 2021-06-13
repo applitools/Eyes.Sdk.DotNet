@@ -10,7 +10,7 @@ namespace Applitools.Selenium.Capture
 {
     internal class SafariScreenshotImageProvider : MobileScreenshotImageProvider
     {
-        private static Dictionary<Size, List<Rectangle>> devicesRegions = null;
+        private static Dictionary<Size, Rectangle[]> devicesRegions_ = null;
 
         public SafariScreenshotImageProvider(SeleniumEyes eyes, Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
             : base(eyes, logger, tsInstance, userAgent)
@@ -93,7 +93,7 @@ namespace Applitools.Selenium.Capture
         {
             if (logger == null) logger = new Logger();
 
-            if (devicesRegions == null)
+            if (devicesRegions_ == null)
             {
                 InitDeviceRegionsTable_();
             }
@@ -103,7 +103,7 @@ namespace Applitools.Selenium.Capture
 
             logger.Verbose("physical device pixel size: {0}x{1}", imageWidth, imageHeight);
 
-            if (devicesRegions.TryGetValue(image.Size, out List<Rectangle> resolutions))
+            if (devicesRegions_.TryGetValue(image.Size, out Rectangle[] resolutions))
             {
                 int renderedWidth = resolutions[0].Width;
                 int relevantViewportHeight = (renderedWidth < image.Width) ? originalViewportSize.Height - 21 : originalViewportSize.Height;
@@ -114,7 +114,7 @@ namespace Applitools.Selenium.Capture
                     Rectangle bestMatchingRect = resolutions[0];
                     float bestHeightDiff = Math.Abs(bestMatchingRect.Height - height);
                     logger.Verbose("bestMatchingRect: {0} ; bestHeightDiff: {1}", bestMatchingRect, bestHeightDiff);
-                    for (int i = 1; i < resolutions.Count; ++i)
+                    for (int i = 1; i < resolutions.Length; ++i)
                     {
                         Rectangle rect = resolutions[i];
                         float heightDiff = Math.Abs(rect.Height - height);
@@ -140,39 +140,39 @@ namespace Applitools.Selenium.Capture
 
         private static void InitDeviceRegionsTable_()
         {
-            devicesRegions = new Dictionary<Size, List<Rectangle>>
+            devicesRegions_ = new Dictionary<Size, Rectangle[]>
             {
-                { new Size(1536, 2048), new List<Rectangle>{ new Rectangle(0, 140, 1536, 1908), new Rectangle(0, 205, 1536, 1843), new Rectangle(0, 128, 1536, 1920), new Rectangle(0, 194, 1536, 1854) } },
-                { new Size(2048, 1536), new List<Rectangle>{ new Rectangle(0, 140, 2048, 1396), new Rectangle(0, 205, 2048, 1331), new Rectangle(0, 128, 2048, 1408), new Rectangle(0, 194, 2048, 1342) } },
+                { new Size(1536, 2048), new Rectangle[]{ new Rectangle(0, 140, 1536, 1908), new Rectangle(0, 205, 1536, 1843), new Rectangle(0, 128, 1536, 1920), new Rectangle(0, 194, 1536, 1854) } },
+                { new Size(2048, 1536), new Rectangle[]{ new Rectangle(0, 140, 2048, 1396), new Rectangle(0, 205, 2048, 1331), new Rectangle(0, 128, 2048, 1408), new Rectangle(0, 194, 2048, 1342) } },
 
-                { new Size(828, 1792), new List<Rectangle>{ new Rectangle(0, 188, 828, 1438) } },
-                { new Size(1792, 828), new List<Rectangle>{ new Rectangle(88, 100, 1616, 686), new Rectangle(88, 166, 1616, 620) } },
+                { new Size(828, 1792), new Rectangle[]{ new Rectangle(0, 188, 828, 1438) } },
+                { new Size(1792, 828), new Rectangle[]{ new Rectangle(88, 100, 1616, 686), new Rectangle(88, 166, 1616, 620) } },
 
-                { new Size(1242, 2688), new List<Rectangle>{ new Rectangle(0, 282, 1242, 2157) } },
-                { new Size(2688, 1242), new List<Rectangle>{ new Rectangle(132, 150, 2424, 1029), new Rectangle(132, 249, 2424, 930) } },
+                { new Size(1242, 2688), new Rectangle[]{ new Rectangle(0, 282, 1242, 2157) } },
+                { new Size(2688, 1242), new Rectangle[]{ new Rectangle(132, 150, 2424, 1029), new Rectangle(132, 249, 2424, 930) } },
 
-                { new Size(1125, 2436), new List<Rectangle>{ new Rectangle(0, 282, 1125, 1905) } },
-                { new Size(2436, 1125), new List<Rectangle>{ new Rectangle(132, 150, 2172, 912), new Rectangle(132, 249, 2172, 813) } },
+                { new Size(1125, 2436), new Rectangle[]{ new Rectangle(0, 282, 1125, 1905) } },
+                { new Size(2436, 1125), new Rectangle[]{ new Rectangle(132, 150, 2172, 912), new Rectangle(132, 249, 2172, 813) } },
 
-                { new Size(1242, 2208), new List<Rectangle>{ new Rectangle(0, 210, 1242, 1866), new Rectangle(0, 192, 1242, 1884) } },
-                { new Size(2208, 1242), new List<Rectangle>{ new Rectangle(0, 132, 2208, 1110), new Rectangle(0, 150, 2208, 1092), new Rectangle(0, 230, 2208, 1012) } },
+                { new Size(1242, 2208), new Rectangle[]{ new Rectangle(0, 210, 1242, 1866), new Rectangle(0, 192, 1242, 1884) } },
+                { new Size(2208, 1242), new Rectangle[]{ new Rectangle(0, 132, 2208, 1110), new Rectangle(0, 150, 2208, 1092), new Rectangle(0, 230, 2208, 1012) } },
 
-                { new Size(750, 1334), new List<Rectangle>{ new Rectangle(0, 140, 750, 1106), new Rectangle(0, 128, 750, 1118) } },
-                { new Size(1334, 750), new List<Rectangle>{ new Rectangle(0, 100, 1334, 650), new Rectangle(0, 88, 1334, 662) } },
+                { new Size(750, 1334), new Rectangle[]{ new Rectangle(0, 140, 750, 1106), new Rectangle(0, 128, 750, 1118) } },
+                { new Size(1334, 750), new Rectangle[]{ new Rectangle(0, 100, 1334, 650), new Rectangle(0, 88, 1334, 662) } },
 
-                { new Size(640, 1136), new List<Rectangle>{ new Rectangle(0, 128, 640, 920) } },
-                { new Size(1136, 640), new List<Rectangle>{ new Rectangle(0, 88, 1136, 464) } },
+                { new Size(640, 1136), new Rectangle[]{ new Rectangle(0, 128, 640, 920) } },
+                { new Size(1136, 640), new Rectangle[]{ new Rectangle(0, 88, 1136, 464) } },
 
-                { new Size(2048, 2732), new List<Rectangle>{ new Rectangle(0, 140, 2048, 2592) } },
-                { new Size(2732, 2048), new List<Rectangle>{ new Rectangle(0, 140, 2732, 1908) } },
+                { new Size(2048, 2732), new Rectangle[]{ new Rectangle(0, 149, 2048, 2542), new Rectangle(0, 140, 2048, 2592) } },
+                { new Size(2732, 2048), new Rectangle[]{ new Rectangle(0, 140, 2732, 1908) } },
 
-                { new Size(1668, 2224), new List<Rectangle>{ new Rectangle(0, 140, 1668, 2084) } },
-                { new Size(2224, 1668), new List<Rectangle>{ new Rectangle(0, 140, 2224, 1528) } },
+                { new Size(1668, 2224), new Rectangle[]{ new Rectangle(0, 140, 1668, 2084) } },
+                { new Size(2224, 1668), new Rectangle[]{ new Rectangle(0, 140, 2224, 1528) } },
 
-                { new Size(1620, 2160), new List<Rectangle>{ new Rectangle(0, 140, 1620, 2020) } },
-                { new Size(2160, 1620), new List<Rectangle>{ new Rectangle(0, 140, 2160, 1480) } },
+                { new Size(1620, 2160), new Rectangle[]{ new Rectangle(0, 140, 1620, 2020) } },
+                { new Size(2160, 1620), new Rectangle[]{ new Rectangle(0, 140, 2160, 1480) } },
 
-                { new Size(1640, 2360), new List<Rectangle>{ new Rectangle(0, 149, 1640, 2211) } },
+                { new Size(1640, 2360), new Rectangle[]{ new Rectangle(0, 149, 1640, 2211) } },
             };
         }
     }
