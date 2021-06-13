@@ -64,7 +64,7 @@ Class Eyes_
 		defaultRetryTimeout_ = 2
 		width_ = -1
 		height_ = -1
-		eyes_.AgentId = "eyes.qtp/1.16 (UFT " & UFTVersionInRegistry() & ")"
+		eyes_.AgentId = "eyes.qtp/1.16.1 (UFT " & UFTVersionInRegistry() & ")"
 		eyes_.InteropMatchTimeout = 0
 	End Sub
 
