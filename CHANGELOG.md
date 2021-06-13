@@ -1,4 +1,16 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 4.25] - 2021-06-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.28] - 2021-06-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.24] - 2021-06-13
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.50] - 2021-06-13
 ### Fixed
 - Switch to frame success validation to prevent endless recursion.
 - It is now possible to use `RemoteWebDriver` and enjoy the features of `AppiumDriver`. [Trello 2602](https://trello.com/c/6VPY7mJC)
@@ -7,7 +19,15 @@
 ### Updated
 - `dom-snapshot` script to version 4.5.3
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.LeanFT 2.30] - 2021-06-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.29] - 2021-06-13
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.47] - 2021-06-13
 ### Added
 - Log which runner is used in `EyesBase.OpenBase()`.
 
