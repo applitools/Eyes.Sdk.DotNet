@@ -1,0 +1,174 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.DotNet", "Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj", "{A5774D03-04CF-422F-B0AF-D479797AC62B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Sdk.Core.DotNet", "Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj", "{F1C62FCE-B097-430C-84A5-E11FCC9741A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Windows.DotNet", "Eyes.Windows.DotNet\Eyes.Windows.DotNet.csproj", "{39749315-6924-4B47-97A8-64CA52010E2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Images.DotNet", "Eyes.Images.DotNet\Eyes.Images.DotNet.csproj", "{88EE57B1-C8EC-4DE5-B73D-59C07D8AB642}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Qtp.DotNet", "Eyes.Qtp.DotNet\Eyes.Qtp.DotNet.csproj", "{5B4B55FC-27B7-43EB-A8D8-9E0B570D8242}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{233F520B-DF1A-4A89-9267-8EA90D313D06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65FEE257-99C5-4D2B-A6DF-8726ADEFCE25}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		applitools_nuget_icon.png = applitools_nuget_icon.png
+		applitools_nuget_icon.svg = applitools_nuget_icon.svg
+		buildProjects.sh = buildProjects.sh
+		CHANGELOG.md = CHANGELOG.md
+		deploy.sh = deploy.sh
+		extractChangeLog.sh = extractChangeLog.sh
+		genericTests.sh = genericTests.sh
+		har_dump.py = har_dump.py
+		initChromeDriver.sh = initChromeDriver.sh
+		initGeckoDriver.sh = initGeckoDriver.sh
+		LICENSE.txt = LICENSE.txt
+		loopChangeLog.sh = loopChangeLog.sh
+		README.md = README.md
+		reportTestResult.sh = reportTestResult.sh
+		sendFullCoverageReport.sh = sendFullCoverageReport.sh
+		sendMail.sh = sendMail.sh
+		setup_proxy.sh = setup_proxy.sh
+		testCoverageGap.txt = testCoverageGap.txt
+		updateChangelogAndProjectFiles.py = updateChangelogAndProjectFiles.py
+		upload_to_azure.sh = upload_to_azure.sh
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Appium.DotNet", "Eyes.Appium.DotNet\Eyes.Appium.DotNet.csproj", "{10C96A1A-E5F1-4BDC-A1B4-0C023BBB22DC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Appium.DotNet", "Tests\Test.Eyes.Appium.DotNet\Test.Eyes.Appium.DotNet.csproj", "{E86A0400-B6CF-401F-B16F-DD99A3833B0F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Images.DotNet", "Tests\Test.Eyes.Images.DotNet\Test.Eyes.Images.DotNet.csproj", "{E5F0B057-061D-4747-8A6F-C3E484CFBD16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Sdk.Core.DotNet", "Tests\Test.Eyes.Sdk.Core.DotNet\Test.Eyes.Sdk.Core.DotNet.csproj", "{8FD802F7-B480-4B0D-87D5-5B405BE3B0C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Selenium.DotNet", "Tests\Test.Eyes.Selenium.DotNet\Test.Eyes.Selenium.DotNet.csproj", "{E8513207-2622-442D-B351-366F807A39F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Eyes.Windows.DotNet", "Tests\Test.Eyes.Windows.DotNet\Test.Eyes.Windows.DotNet.csproj", "{EF707B55-A282-4FAA-9D1D-BA02079D365D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FA02FE71-AD06-4235-A491-A76E1A1FFD49} = {FA02FE71-AD06-4235-A491-A76E1A1FFD49}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CssParser", "CssParser\CssParser.csproj", "{D0D43334-9521-4592-846C-08C718CC14A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Eyes.Windows.WPF", "Tests\Tests.Eyes.Windows.WPF\Tests.Eyes.Windows.WPF.csproj", "{FA02FE71-AD06-4235-A491-A76E1A1FFD49}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generated", "coverage-tests\test\Selenium\Tests.Eyes.Selenium.Generated.csproj", "{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "coverage-tests\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{B1990708-3C60-42B6-A7DD-F47810B1D0B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Common.DotNet", "Eyes.Common.DotNet\Eyes.Common.DotNet.csproj", "{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Ufg.DotNet", "Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj", "{A4DA651E-5D95-4C3D-BE46-82A495B6673E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "coverage-tests", "coverage-tests", "{13C182C9-852E-4320-9D41-D10DC92F2DF8}"
+	ProjectSection(SolutionItems) = preProject
+		coverage-tests\package-lock.json = coverage-tests\package-lock.json
+		coverage-tests\package.json = coverage-tests\package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configuration", "configuration", "{6F0429F3-5C65-4C4D-84C2-7498F1DD2B28}"
+	ProjectSection(SolutionItems) = preProject
+		coverage-tests\configuration\index.js = coverage-tests\configuration\index.js
+		coverage-tests\configuration\overrides.js = coverage-tests\configuration\overrides.js
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5774D03-04CF-422F-B0AF-D479797AC62B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5774D03-04CF-422F-B0AF-D479797AC62B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5774D03-04CF-422F-B0AF-D479797AC62B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5774D03-04CF-422F-B0AF-D479797AC62B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1C62FCE-B097-430C-84A5-E11FCC9741A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C62FCE-B097-430C-84A5-E11FCC9741A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1C62FCE-B097-430C-84A5-E11FCC9741A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1C62FCE-B097-430C-84A5-E11FCC9741A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39749315-6924-4B47-97A8-64CA52010E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39749315-6924-4B47-97A8-64CA52010E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39749315-6924-4B47-97A8-64CA52010E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39749315-6924-4B47-97A8-64CA52010E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88EE57B1-C8EC-4DE5-B73D-59C07D8AB642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88EE57B1-C8EC-4DE5-B73D-59C07D8AB642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88EE57B1-C8EC-4DE5-B73D-59C07D8AB642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88EE57B1-C8EC-4DE5-B73D-59C07D8AB642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B4B55FC-27B7-43EB-A8D8-9E0B570D8242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B4B55FC-27B7-43EB-A8D8-9E0B570D8242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B4B55FC-27B7-43EB-A8D8-9E0B570D8242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B4B55FC-27B7-43EB-A8D8-9E0B570D8242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10C96A1A-E5F1-4BDC-A1B4-0C023BBB22DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10C96A1A-E5F1-4BDC-A1B4-0C023BBB22DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10C96A1A-E5F1-4BDC-A1B4-0C023BBB22DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10C96A1A-E5F1-4BDC-A1B4-0C023BBB22DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E86A0400-B6CF-401F-B16F-DD99A3833B0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E86A0400-B6CF-401F-B16F-DD99A3833B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E86A0400-B6CF-401F-B16F-DD99A3833B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E86A0400-B6CF-401F-B16F-DD99A3833B0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F0B057-061D-4747-8A6F-C3E484CFBD16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F0B057-061D-4747-8A6F-C3E484CFBD16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F0B057-061D-4747-8A6F-C3E484CFBD16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F0B057-061D-4747-8A6F-C3E484CFBD16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FD802F7-B480-4B0D-87D5-5B405BE3B0C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FD802F7-B480-4B0D-87D5-5B405BE3B0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FD802F7-B480-4B0D-87D5-5B405BE3B0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FD802F7-B480-4B0D-87D5-5B405BE3B0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8513207-2622-442D-B351-366F807A39F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8513207-2622-442D-B351-366F807A39F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8513207-2622-442D-B351-366F807A39F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8513207-2622-442D-B351-366F807A39F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF707B55-A282-4FAA-9D1D-BA02079D365D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF707B55-A282-4FAA-9D1D-BA02079D365D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF707B55-A282-4FAA-9D1D-BA02079D365D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF707B55-A282-4FAA-9D1D-BA02079D365D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0D43334-9521-4592-846C-08C718CC14A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0D43334-9521-4592-846C-08C718CC14A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0D43334-9521-4592-846C-08C718CC14A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0D43334-9521-4592-846C-08C718CC14A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA02FE71-AD06-4235-A491-A76E1A1FFD49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA02FE71-AD06-4235-A491-A76E1A1FFD49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA02FE71-AD06-4235-A491-A76E1A1FFD49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA02FE71-AD06-4235-A491-A76E1A1FFD49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF36F5A3-C132-4B25-B1ED-FC2BB46A4C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E86A0400-B6CF-401F-B16F-DD99A3833B0F} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{E5F0B057-061D-4747-8A6F-C3E484CFBD16} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{8FD802F7-B480-4B0D-87D5-5B405BE3B0C7} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{E8513207-2622-442D-B351-366F807A39F3} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{EF707B55-A282-4FAA-9D1D-BA02079D365D} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{FA02FE71-AD06-4235-A491-A76E1A1FFD49} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{6579C3E1-0FAE-4D1F-847B-61E0F14BD81A} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{B1990708-3C60-42B6-A7DD-F47810B1D0B3} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{6F0429F3-5C65-4C4D-84C2-7498F1DD2B28} = {13C182C9-852E-4320-9D41-D10DC92F2DF8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2D3A563-3BF6-42B1-B7A9-7A7DCD842A2E}
+	EndGlobalSection
+EndGlobal
