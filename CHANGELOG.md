@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Ultrafast Grid: Log ill-formed resource URIs that failed to download. [Trello 2635](https://trello.com/c/yHVQxrVN)
+
 ## [Eyes.Appium 4.25] - 2021-06-13
 ### Updated
 - Match to latest Eyes.Sdk.Core
