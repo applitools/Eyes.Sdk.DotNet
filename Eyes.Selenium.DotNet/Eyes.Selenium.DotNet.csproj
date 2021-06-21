@@ -8,18 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.50</Version>
+    <Version>2.51</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Fixed
-- Switch to frame success validation to prevent endless recursion.
-- It is now possible to use `RemoteWebDriver` and enjoy the features of `AppiumDriver`. [Trello 2602](https://trello.com/c/6VPY7mJC)
-### Added
-- iPad (12.9) (5th generation) 14.0 support.
-### Updated
-- `dom-snapshot` script to version 4.5.3
+- Ultrafast Grid: Log ill-formed resource URIs that failed to download. [Trello 2635](https://trello.com/c/yHVQxrVN)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
