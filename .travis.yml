@@ -59,6 +59,7 @@ before_script:
 jobs:
   include:
     - stage: Test
+      if: env(NEW_TAGS) =~ Selenium|Appium OR (type = cron AND branch = master)
       name: Generic Tests
       mono: none
       dotnet: 3.1.407
@@ -71,6 +72,7 @@ jobs:
         - chmod +x ./genericTests.sh && ./genericTests.sh
 
     - name: Images
+      if: env(NEW_TAGS) =~ Images OR (type = cron AND branch = master)
       mono: latest
       install:
         - nuget restore Eyes.Sdk.DotNet_Travis.sln
@@ -80,18 +82,21 @@ jobs:
         - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./Tests/Test.Eyes.Images.DotNet/bin/Release/net48/Test.Eyes.Images.DotNet.dll
   
     - name: Core
+      if: env(NEW_TAGS) =~ Core OR (type = cron AND branch = master)
       mono: none
       dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
   
     - name: Appium
+      if: env(NEW_TAGS) =~ Appium OR (type = cron AND branch = master)
       mono: none
       dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
     
     - name: Selenium
+      if: env(NEW_TAGS) =~ Selenium OR (type = cron AND branch = master)
       mono: none
       dotnet: 3.1.407
       addons:

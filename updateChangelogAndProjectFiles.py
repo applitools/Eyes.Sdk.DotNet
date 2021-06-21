@@ -158,3 +158,5 @@ if __name__ == '__main__':
     f = open("NEW_TAGS.txt", "w")
     f.writelines(updated_projects)
     f.close()
+
+    os.environ["NEW_TAGS"] = reported_version
