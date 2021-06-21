@@ -470,3 +470,5 @@ Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInEyes(False)
 Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInEyes(True)
 Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(False)
 Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(True)
+
+Applitools.Selenium.Tests.VisualGridTests.TestVGWithBadResources.Test
