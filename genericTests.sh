@@ -15,35 +15,43 @@ if [ $? -ne 0 ]; then
 fi
 popd
 
-echo "running tests selenium"
-pushd coverage-tests
-npm run dotnet:run:parallel:selenium
-result=$?
-echo $result
-if [ $result -ne 0 ]; then
-    echo "Not all tests passed... Retrying."
+if [[ $NEW_TAGS =~ "Selenium" ]] || [[ $TRAVIS_BRANCH = "master" && $TRAVIS_EVENT_TYPE == "cron" ]]; then
+    echo "running tests selenium"
+    pushd coverage-tests
     npm run dotnet:run:parallel:selenium
-	if [ $? -ne 0 ]; then
-      RESULT=1
-      echo "npm run dotnet:run:parallel:selenium have failed"
+    result=$?
+    echo $result
+    if [ $result -ne 0 ]; then
+        echo "Not all tests passed... Retrying."
+        npm run dotnet:run:parallel:selenium
+	    if [ $? -ne 0 ]; then
+          RESULT=1
+          echo "npm run dotnet:run:parallel:selenium have failed"
+        fi
     fi
+    popd
+else
+    echo "Eyes.Selenium not changed and not in cron job"
 fi
-popd
 
-echo "running tests appium"
-pushd coverage-tests
-npm run dotnet:run:parallel:appium
-result=$?
-echo $result
-if [ $result -ne 0 ]; then
-    echo "Not all tests passed... Retrying."
+if [[ $NEW_TAGS =~ "Appium" ]] || [[ $TRAVIS_BRANCH = "master" && $TRAVIS_EVENT_TYPE == "cron" ]]; then
+    echo "running tests appium"
+    pushd coverage-tests
     npm run dotnet:run:parallel:appium
-	if [ $? -ne 0 ]; then
-      RESULT=1
-      echo "npm run dotnet:run:parallel:appium have failed"
+    result=$?
+    echo $result
+    if [ $result -ne 0 ]; then
+        echo "Not all tests passed... Retrying."
+        npm run dotnet:run:parallel:appium
+	    if [ $? -ne 0 ]; then
+          RESULT=1
+          echo "npm run dotnet:run:parallel:appium have failed"
+        fi
     fi
+    popd
+else
+    echo "Eyes.Appium not changed and not in cron job"
 fi
-popd
 
 echo "merge reports"
 pushd coverage-tests
