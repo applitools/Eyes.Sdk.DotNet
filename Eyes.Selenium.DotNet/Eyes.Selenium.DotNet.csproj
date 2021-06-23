@@ -8,13 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.51</Version>
+    <Version>2.52</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Fixed
-- Ultrafast Grid: Log ill-formed resource URIs that failed to download. [Trello 2635](https://trello.com/c/yHVQxrVN)
+- Ultrafast Grid: Another place where we should log ill-formed resource URIs that failed to download. [Trello 2635](https://trello.com/c/yHVQxrVN)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

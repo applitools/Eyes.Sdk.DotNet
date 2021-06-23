@@ -1,4 +1,4 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 2.52] - 2021-06-23
 ### Fixed
 - Ultrafast Grid: Another place where we should log ill-formed resource URIs that failed to download. [Trello 2635](https://trello.com/c/yHVQxrVN)
 
