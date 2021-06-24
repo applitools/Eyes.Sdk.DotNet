@@ -15,7 +15,7 @@ namespace Applitools.Tests.Utils
 
         [JsonProperty("sandbox")]
         public bool Sandbox => SendToSandbox();
-        
+
         internal static bool SendToSandbox()
         {
             // specifically request to send to sandbox...
@@ -31,17 +31,21 @@ namespace Applitools.Tests.Utils
 
         [JsonProperty("results")]
         public HashSet<TestResult> Results { get; } = new HashSet<TestResult>();
+        private static readonly object lockObj = new object();
 
         public void AddResult(TestResult result)
         {
-            if (!Results.Contains(result))
+            lock (lockObj)
             {
-                Results.Add(result);
-            }
-            else
-            {
-                Results.Remove(result);
-                Results.Add(result);
+                if (!Results.Contains(result))
+                {
+                    Results.Add(result);
+                }
+                else
+                {
+                    Results.Remove(result);
+                    Results.Add(result);
+                }
             }
         }
     }
