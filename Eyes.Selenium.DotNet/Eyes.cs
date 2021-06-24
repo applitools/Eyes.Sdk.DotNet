@@ -50,16 +50,26 @@ namespace Applitools.Selenium
             runner_ = runner;
             if (runner is VisualGridRunner visualGridRunner)
             {
-                visualGridEyes_ = new VisualGridEyes(this, visualGridRunner);
+                visualGridEyes_ = CreateVisualGridEyes_(visualGridRunner);
                 isVisualGridEyes_ = true;
                 activeEyes_ = visualGridEyes_;
             }
             else
             {
-                seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner);
+                seleniumEyes_ = CreateSeleniumEyes_(runner);
                 activeEyes_ = seleniumEyes_;
             }
             ServerConnector = runner.ServerConnector;
+        }
+
+        internal virtual SeleniumEyes CreateSeleniumEyes_(EyesRunner runner)
+        {
+            return new SeleniumEyes(this, (ClassicRunner)runner);
+        }
+
+        internal virtual VisualGridEyes CreateVisualGridEyes_(VisualGridRunner visualGridRunner)
+        {
+            return new VisualGridEyes(this, visualGridRunner);
         }
 
         internal Eyes(IServerConnectorFactory serverConnectorFactory)
@@ -290,6 +300,11 @@ namespace Applitools.Selenium
         /// Created fluently using the <see cref="Target"/> static class.</param>
         public void Check(ICheckSettings checkSettings)
         {
+            CheckImpl_(checkSettings);
+        }
+
+        internal virtual void CheckImpl_(ICheckSettings checkSettings)
+        {
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
@@ -332,11 +347,11 @@ namespace Applitools.Selenium
         {
             if (isVisualGridEyes_)
             {
-                Check(tag, Target.Window().Fully(fully ?? true));
+                Check(tag, Target.Window().Fully(fully ?? configuration_.IsForceFullPageScreenshot ?? true));
             }
             else
             {
-                Check(tag, Target.Window().Fully(fully ?? false));
+                Check(tag, Target.Window().Fully(fully ?? configuration_.IsForceFullPageScreenshot ?? false));
             }
         }
 

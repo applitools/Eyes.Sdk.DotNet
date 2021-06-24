@@ -572,6 +572,11 @@ namespace Applitools.Selenium
         /// Created fluently using the <see cref="Target"/> static class.</param>
         public void Check(ICheckSettings checkSettings)
         {
+            CheckImpl_(checkSettings);
+        }
+
+        internal virtual void CheckImpl_(ICheckSettings checkSettings)
+        {
             try
             {
                 ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
@@ -583,14 +588,7 @@ namespace Applitools.Selenium
                 lastCheckSettings_ = checkSettingsInternal.ToSerializableDictionary();
                 lastCheckSettingsInternal_ = checkSettingsInternal;
 
-                CheckState state = new CheckState();
-                seleniumCheckTarget.State = state;
-                state.StitchContent = (checkSettingsInternal.GetStitchContent() ?? false) || ForceFullPageScreenshot;
-
-                ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
-
-                // Ensure frame is not used as a region
-                ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
+                CheckState state = InitCheckState_(checkSettings, checkSettingsInternal, seleniumCheckTarget);
 
                 Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
 
@@ -700,6 +698,20 @@ namespace Applitools.Selenium
                 CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex);
                 throw new EyesException("Error", ex);
             }
+        }
+
+        internal CheckState InitCheckState_(ICheckSettings checkSettings, 
+            ICheckSettingsInternal checkSettingsInternal, ISeleniumCheckTarget seleniumCheckTarget)
+        {
+            CheckState state = new CheckState();
+            seleniumCheckTarget.State = state;
+            state.StitchContent = checkSettingsInternal.GetStitchContent() ?? Config_.IsForceFullPageScreenshot ?? false;
+
+            ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
+
+            // Ensure frame is not used as a region
+            ((SeleniumCheckSettings)checkSettings).SanitizeSettings(Logger, driver_, state);
+            return state;
         }
 
         private void CheckWindow_(ICheckSettingsInternal checkSettingsInternal)
