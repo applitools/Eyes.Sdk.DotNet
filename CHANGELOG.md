@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- `ForceFullPageScreenshot` override flow. [Trello 2588](https://trello.com/c/S5rHZBFD)
+
 ## [Eyes.Selenium 2.52] - 2021-06-23
 ### Fixed
 - Ultrafast Grid: Another place where we should log ill-formed resource URIs that failed to download. [Trello 2635](https://trello.com/c/yHVQxrVN)
