@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Made sure an exception during `OpenBase` is logged.
+
 ## [Eyes.Selenium vNext]
 ### Fixed
 - `ForceFullPageScreenshot` override flow. [Trello 2588](https://trello.com/c/S5rHZBFD)
