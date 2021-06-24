@@ -123,7 +123,7 @@ namespace Applitools.Selenium.Tests.ApiTests
             var target = Target.Window();
             if (checkSettingsValue.HasValue)
             {
-                target.Fully(checkSettingsValue.Value);
+                target = target.Fully(checkSettingsValue.Value);
             }
             eyes.Check(target);
             actual = ((IMockEyes)eyes.activeEyes_).ActualFullyValue;
