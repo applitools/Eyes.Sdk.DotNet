@@ -386,7 +386,7 @@ namespace Applitools.Selenium.VisualGrid
             UserInputs.Clear();
         }
 
-        private void CheckImpl_(ICheckSettings checkSettings)
+        internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
             if (!ValidateEyes_()) return;
 
@@ -702,7 +702,7 @@ namespace Applitools.Selenium.VisualGrid
             viewportSize_ = viewportSize;
         }
 
-        private ICheckSettings UpdateCheckSettings_(ICheckSettings checkSettings)
+        internal ICheckSettings UpdateCheckSettings_(ICheckSettings checkSettings)
         {
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
