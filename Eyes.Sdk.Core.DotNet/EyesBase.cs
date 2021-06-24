@@ -890,16 +890,24 @@ namespace Applitools
         /// </summary>
         protected void OpenBase()
         {
-            SessionStartInfo startInfo = PrepareForOpen();
-            if (startInfo == null)
+            try
             {
-                Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { startInfo });
-                return;
+                SessionStartInfo startInfo = PrepareForOpen();
+                if (startInfo == null)
+                {
+                    Logger.Log(TraceLevel.Error, TestId, Stage.Open, StageType.Called, new { startInfo });
+                    return;
+                }
+                Logger.Log(TraceLevel.Notice, Stage.Open, StageType.Called,
+                    new { runner_ = runner_?.GetType().Name ?? "<null>" });
+                RunningSession runningSession = runner_.Open(TestId, startInfo);
+                OpenCompleted(runningSession);
             }
-            Logger.Log(TraceLevel.Notice, Stage.Open, StageType.Called, 
-                new { runner_ = runner_?.GetType().Name ?? "<null>" });
-            RunningSession runningSession = runner_.Open(TestId, startInfo);
-            OpenCompleted(runningSession);
+            catch (Exception ex)
+            {
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
+                throw;
+            }
         }
 
         protected internal void UpdateServerConnector_()
