@@ -347,11 +347,11 @@ namespace Applitools.Selenium
         {
             if (isVisualGridEyes_)
             {
-                Check(tag, Target.Window().Fully(fully ?? true));
+                Check(tag, Target.Window().Fully(fully ?? configuration_.IsForceFullPageScreenshot ?? true));
             }
             else
             {
-                Check(tag, Target.Window().Fully(fully ?? false));
+                Check(tag, Target.Window().Fully(fully ?? configuration_.IsForceFullPageScreenshot ?? false));
             }
         }
 
