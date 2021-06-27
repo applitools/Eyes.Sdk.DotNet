@@ -27,12 +27,12 @@ To learn more, visit https://applitools.com/ .</Description>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\$(TargetFramework)\Eyes.Sdk.DotNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\$(TargetFramework)\Eyes.Sdk.Core.DotNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\$(TargetFramework)\Eyes.Sdk.DotNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetFramework)\Eyes.Sdk.Core.DotNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -70,7 +70,6 @@ To learn more, visit https://applitools.com/ .</Description>
   
   <Target Name="GetMyPackageFiles">
     <ItemGroup>
-      <BuildOutputInPackage Include="$(OutputPath)CssParser.dll" />
       <BuildOutputInPackage Include="$(OutputPath)Eyes.Common.DotNet.dll" />
     </ItemGroup>
   </Target>
