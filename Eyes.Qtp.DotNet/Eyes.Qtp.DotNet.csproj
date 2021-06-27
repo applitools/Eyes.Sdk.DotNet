@@ -8,7 +8,7 @@
     <PackageReleaseNotes>### Fixed
 - Chrome throwing `Browser has no child windows!` exception. [Trello 2328](https://trello.com/c/hUvN56yk)
 </PackageReleaseNotes>
-    <Version>1.16</Version>
+    <Version>1.17</Version>
   </PropertyGroup>
 
   <ItemGroup>
