@@ -1,10 +1,30 @@
-## [Eyes.Sdk.Core vNext]
-### Fixed
-- Made sure an exception during `OpenBase` is logged.
+## [Eyes.Appium 4.26] - 2021-06-27
+### Updated
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Images 2.29] - 2021-06-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.25] - 2021-06-27
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.53] - 2021-06-27
 ### Fixed
 - `ForceFullPageScreenshot` override flow. [Trello 2588](https://trello.com/c/S5rHZBFD)
+
+## [Eyes.LeanFT 2.31] - 2021-06-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.30] - 2021-06-27
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.48] - 2021-06-27
+### Fixed
+- Made sure an exception during `OpenBase` is logged.
 
 ## [Eyes.Selenium 2.52] - 2021-06-23
 ### Fixed
