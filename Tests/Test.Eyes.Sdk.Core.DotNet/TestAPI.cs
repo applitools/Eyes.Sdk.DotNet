@@ -272,6 +272,21 @@ namespace Applitools.Tests
             Assert.AreEqual(0, browsers.Count, "Not all browser types names has been verified. Remaining browser types: " + browsers.Concat(", "));
         }
 
+        [Test]
+        public void TestProxySettings()
+        {
+            ProxySettings proxySettings = new ProxySettings("http://127.0.0.1", 8888, "username", "password");
+            Uri proxyUri = proxySettings.ProxyUri;
+            Assert.AreEqual(new Uri("http://username:password@127.0.0.1:8888"), proxyUri);
+
+            WebProxy proxy = new WebProxy(proxyUri);
+            Assert.AreEqual(new Uri("http://username:password@127.0.0.1:8888"), proxy.Address);
+
+            proxySettings = new ProxySettings("http://127.0.0.1");
+            proxyUri = proxySettings.ProxyUri;
+            Assert.AreEqual(new Uri("http://127.0.0.1:80"), proxyUri);
+        }
+
         private static void AssertRegion(IGetRegions[] getRegions, Rectangle expectedRegion, string regionType)
         {
             Assert.AreEqual(1, getRegions.Length, "number of {0} region getters", regionType);

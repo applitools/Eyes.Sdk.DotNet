@@ -24,6 +24,7 @@ Applitools.Tests.TestAPI.EnsureSeleniumSetMethodPerProperty
 Applitools.Tests.TestAPI.EnsureSetMethodPerProperty
 Applitools.Tests.TestAPI.TestApiKeyProperty
 Applitools.Tests.TestAPI.TestBrowserNames
+Applitools.Tests.TestAPI.TestProxySettings
 Applitools.Tests.TestAPI.TestCheckSettingsClone
 Applitools.Tests.TestAPI.TestConfigApiKey
 Applitools.Tests.TestAPI.TestConfigServerUrl
