@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Reflection;
 using Applitools.VisualGrid;
 using System.Net;
+using System.Linq;
 
 namespace Applitools.Tests
 {
@@ -22,37 +23,65 @@ namespace Applitools.Tests
             Type configType = typeof(IConfiguration);
             Type seleniumConfigType = typeof(Selenium.IConfiguration);
             PropertyInfo[] properties = configType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo[] methodInfos = configType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            List<MethodInfo> overloads = new List<MethodInfo>();
+
             foreach (PropertyInfo pi in properties)
             {
                 Assert.NotNull(pi.GetSetMethod(), $"Property {pi.Name} doesn't have SET method");
                 Assert.NotNull(pi.GetGetMethod(), $"Property {pi.Name} doesn't have GET method");
                 {
-                    MethodInfo mi = configType.GetMethod("Set" + pi.Name, BindingFlags.Public | BindingFlags.Instance);
-                    Assert.NotNull(mi, "property '{0}' doesn't have matching setter", pi.Name);
-                    Assert.AreEqual(configType, mi.ReturnType);
-                    ParameterInfo[] paramsInfo = mi.GetParameters();
-                    Assert.AreEqual(1, paramsInfo.Length);
-                    Assert.IsTrue(pi.PropertyType.IsAssignableFrom(paramsInfo[0].ParameterType),
-                        "Setter method parameter type {0} is not assignable from {1}", paramsInfo[0].ParameterType, pi.PropertyType);
-                    //Assert.AreEqual(pi.PropertyType, paramsInfo[0].ParameterType);
-                }
-
-                {
-                    MethodInfo mi = seleniumConfigType.GetMethod("Set" + pi.Name, BindingFlags.Public | BindingFlags.Instance);
-                    Assert.NotNull(mi, "method 'Set{0}' isn't overriden in Selenium.Configuration", pi.Name);
-                    MethodAttributes mAttrs = mi.Attributes;
-                    if (!mAttrs.HasFlag(MethodAttributes.NewSlot))
+                    MethodInfo[] miArr = methodInfos.Where(m => m.Name.Equals("Set" + pi.Name)).ToArray();
+                    overloads.AddRange(miArr);
+                    if (miArr.Length == 0)
                     {
-                        Assert.Fail("overriden method '{0}' is not marked in new", mi.Name);
+                        Assert.Fail("property '{0}' doesn't have matching setter", pi.Name);
                     }
-                    Assert.AreEqual(seleniumConfigType, mi.ReturnType);
-                    ParameterInfo[] paramsInfo = mi.GetParameters();
-                    Assert.AreEqual(1, paramsInfo.Length);
-                    Assert.IsTrue(pi.PropertyType.IsAssignableFrom(paramsInfo[0].ParameterType),
-                        "Setter method parameter type {0} is not assignable from {1}", paramsInfo[0].ParameterType, pi.PropertyType);
+                    else if (miArr.Length == 1)
+                    {
+                        MethodInfo mi = miArr[0];
+                        Assert.AreEqual(configType, mi.ReturnType);
+                        ParameterInfo[] paramsInfo = mi.GetParameters();
+                        Assert.AreEqual(1, paramsInfo.Length);
+                        Assert.IsTrue(pi.PropertyType.IsAssignableFrom(paramsInfo[0].ParameterType),
+                            "Setter method parameter type {0} is not assignable from {1}", paramsInfo[0].ParameterType, pi.PropertyType);
+                        //Assert.AreEqual(pi.PropertyType, paramsInfo[0].ParameterType);
+                    }
+                    else if (miArr.Length > 1)
+                    {
+                        bool foundAMatch = false;
+                        foreach (MethodInfo mi in miArr)
+                        {
+                            ParameterInfo[] paramsInfo = mi.GetParameters();
+                            Assert.AreEqual(1, paramsInfo.Length);
+                            if (pi.PropertyType.IsAssignableFrom(paramsInfo[0].ParameterType))
+                            {
+                                foundAMatch = true;
+                            }
+                        }
+                        Assert.IsTrue(foundAMatch,
+                            "No Setter method overload found for property {0} ({1}). Relevant overloads: {2}", pi.Name, pi.PropertyType,
+                            string.Join(", ", (IEnumerable<MethodInfo>)miArr));
+                    }
                 }
             }
+
+            methodInfos = seleniumConfigType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            methodInfos = methodInfos.Where(mi => mi.GetParameters()?.Length == 1).ToArray();
+            foreach (MethodInfo omi in overloads)
+            {
+                MethodInfo mi = methodInfos.Where(mi => mi.Name == omi.Name &&
+                    mi.GetParameters()[0].ParameterType == omi.GetParameters()[0].ParameterType).FirstOrDefault();
+                Assert.NotNull(mi, "method 'Set{0}({1})' isn't overriden in Selenium.Configuration", omi.Name, omi.GetParameters()[0].ParameterType);
+                MethodAttributes mAttrs = mi.Attributes;
+                if (!mAttrs.HasFlag(MethodAttributes.NewSlot))
+                {
+                    Assert.Fail("overriden method '{0}' is not marked in new", mi.Name);
+                }
+                Assert.AreEqual(seleniumConfigType, mi.ReturnType);
+            }
             TestContext.Progress.WriteLine("{0} properties has set methods.", properties.Length);
+            TestContext.Progress.WriteLine("{0} Set methods overriden in {1}.", overloads.Count, seleniumConfigType);
         }
 
         [Test]
