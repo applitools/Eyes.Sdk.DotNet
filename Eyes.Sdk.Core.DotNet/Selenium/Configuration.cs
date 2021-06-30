@@ -183,6 +183,7 @@ namespace Applitools.Selenium
         public new IConfiguration SetServerUrl(string value) => (IConfiguration)base.SetServerUrl(value);
         public new IConfiguration SetApiKey(string value) => (IConfiguration)base.SetApiKey(value);
         public new IConfiguration SetProxy(WebProxy value) => (IConfiguration)base.SetProxy(value);
+        public new IConfiguration SetProxy(ProxySettings value) => (IConfiguration)base.SetProxy(value);
         public new IConfiguration SetUseDom(bool value) => (IConfiguration)base.SetUseDom(value);
         public new IConfiguration SetEnablePatterns(bool value) => (IConfiguration)base.SetEnablePatterns(value);
         public new IConfiguration SetIgnoreDisplacements(bool value) => (IConfiguration)base.SetIgnoreDisplacements(value);

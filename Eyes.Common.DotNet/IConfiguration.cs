@@ -91,6 +91,7 @@ namespace Applitools
         IConfiguration SetServerUrl(string value);
         IConfiguration SetApiKey(string value);
 
+        IConfiguration SetProxy(ProxySettings value);
         IConfiguration SetProxy(WebProxy value);
         IConfiguration SetIgnoreDisplacements(bool value);
         IConfiguration SetUseDom(bool value);

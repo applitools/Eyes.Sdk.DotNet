@@ -332,8 +332,13 @@ namespace Applitools
             return this;
         }
 
-
         public WebProxy Proxy { get; set; }
+
+        public IConfiguration SetProxy(ProxySettings proxy)
+        {
+            WebProxy webProxy = new WebProxy(proxy.ProxyUri);
+            return SetProxy(webProxy);
+        }
 
         public IConfiguration SetProxy(WebProxy proxy)
         {
