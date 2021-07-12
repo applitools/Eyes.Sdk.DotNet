@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Re-Added missing `BrotliSharpLib` dependency. [Trello 2665](https://trello.com/c/NJVqbF0w)
+
 ## [Eyes.Appium 4.26] - 2021-06-27
 ### Updated
 - Match to latest Eyes.Sdk.Core
