@@ -27,7 +27,7 @@ namespace Applitools.Selenium.Capture
         private readonly Logger logger_;
         private readonly EyesWebDriver webDriver_;
         private readonly object lockObject_ = new object();
-        private readonly Dictionary<CssTreeNode, AutoResetEvent> waitHandles_ = new Dictionary<CssTreeNode, AutoResetEvent>();
+        private readonly CountdownEvent countdownEvent_ = new CountdownEvent(0);
         private readonly Dictionary<string, string> cssData_ = new Dictionary<string, string>();
         private string cssStartToken_;
         private string cssEndToken_;
@@ -57,6 +57,7 @@ namespace Applitools.Selenium.Capture
             FrameChain originalFC = webDriver_.GetFrameChain().Clone();
             logger_.Verbose("saving current frame chain - size: {0} ; frame: {1}", originalFC.Count, originalFC.Peek());
             string dom = "";
+            countdownEvent_.Reset(1);
             try
             {
                 dom = GetFrameDom_(testIds);
@@ -70,9 +71,9 @@ namespace Applitools.Selenium.Capture
             ((EyesWebDriverTargetLocator)webDriver_.SwitchTo()).Frames(originalFC);
             FrameChain currentFC = webDriver_.GetFrameChain();
             logger_.Verbose("switched to frame chain - size: {0} ; frame: {1}", currentFC.Count, currentFC.Peek());
-
+            countdownEvent_.Signal();
             WaitForCssDownloadToFinish_(testIds);
-            logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript, 
+            logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript,
                 new { message = "finished waiting for CSS files to download" });
             string inlaidString = StringUtils.EfficientStringReplace(cssStartToken_, cssEndToken_, dom, cssData_);
             logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript, new { inlaidStringLength = inlaidString.Length });
@@ -121,28 +122,15 @@ namespace Applitools.Selenium.Capture
 
         private void WaitForCssDownloadToFinish_(string[] testIds)
         {
-            AutoResetEvent[] whArr = null;
-            lock (lockObject_)
-            {
-                whArr = new AutoResetEvent[waitHandles_.Count];
-                waitHandles_.Values.CopyTo(whArr, 0);
-            }
             logger_.Log(TraceLevel.Info, testIds, Stage.Check, StageType.DomScript,
-                new { message = $"Waiting on {whArr.Length} to finish download" });
+                new { message = $"Waiting on {countdownEvent_.CurrentCount} to finish download" });
 
-            foreach (AutoResetEvent wh in whArr)
+            const int timeout = 30000;
+            bool allSignaled = countdownEvent_.Wait(timeout);
+            if (!allSignaled)
             {
-                logger_.Verbose("    " + wh.GetHashCode());
-            }
-            if (whArr.Length > 0)
-            {
-                const int timeout = 30000;
-                bool allSignaled = WaitHandle.WaitAll(whArr, timeout);
-                if (!allSignaled)
-                {
-                    logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
-                        new { message = $"Not all wait handles recieved signal after {timeout} ms. aborting." });
-                }
+                logger_.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
+                    new { message = $"Not all wait handles recieved signal after {timeout} ms. aborting." });
             }
         }
 
@@ -189,8 +177,7 @@ namespace Applitools.Selenium.Capture
                 }
                 CssTreeNode cssTreeNode = new CssTreeNode(missingCssUrl, logger_, OnCssDownloadComplete_);
                 cssTreeNodes.Add(cssTreeNode);
-                AutoResetEvent waitHandle = new AutoResetEvent(false);
-                waitHandles_[cssTreeNode] = waitHandle;
+                countdownEvent_.AddCount();
                 cssTreeNode.Run(testIds);
             }
         }
@@ -245,15 +232,7 @@ namespace Applitools.Selenium.Capture
             string escapedCss = StringUtils.CleanForJSON(css);
             string href = cssTreeNode.Href;
             cssData_[href] = escapedCss;
-
-            if (waitHandles_.TryGetValue(cssTreeNode, out AutoResetEvent waitHandle))
-            {
-                waitHandle.Set();
-                lock (lockObject_)
-                {
-                    waitHandles_.Remove(cssTreeNode);
-                }
-            }
+            countdownEvent_.Signal();
         }
 
         private class CssTreeNode
