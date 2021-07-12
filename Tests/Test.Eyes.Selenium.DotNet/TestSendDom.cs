@@ -78,10 +78,33 @@ namespace Applitools.Selenium.Tests
             DomInterceptingEyes eyes = new DomInterceptingEyes();
             eyes.Batch = TestDataProvider.BatchInfo;
 
-            EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Window", new Size(1024, 768));
+            EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Full Window", new Size(1024, 768));
             try
             {
                 eyes.Check(Target.Window().Fully().WithName("Window"));
+                string actualDomJsonString = eyes.DomJson;
+                CompareDomJsons(eyes, actualDomJsonString, "Test.Eyes.Selenium.DotNet.Resources.expected_dom_fullwindow.json");
+            }
+            finally
+            {
+                eyes.Abort();
+                webDriver.Quit();
+            }
+        }
+
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
+        public void TestSendDOM_Window()
+        {
+            IWebDriver webDriver = SeleniumUtils.CreateChromeDriver();
+            webDriver.Url = "https://applitools.github.io/demo/TestPages/DomTest/dom_capture_3.html";
+            DomInterceptingEyes eyes = new DomInterceptingEyes();
+            eyes.Batch = TestDataProvider.BatchInfo;
+
+            EyesWebDriver eyesWebDriver = (EyesWebDriver)eyes.Open(webDriver, "Test Send DOM", "Window", new Size(1024, 768));
+            try
+            {
+                eyes.Check(Target.Window().Fully(false).WithName("Window"));
                 string actualDomJsonString = eyes.DomJson;
                 CompareDomJsons(eyes, actualDomJsonString, "Test.Eyes.Selenium.DotNet.Resources.expected_dom_window.json");
             }
