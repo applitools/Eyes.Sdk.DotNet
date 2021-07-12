@@ -29,6 +29,7 @@
     <None Remove="Properties\ExcludedTests.txt" />
     <None Remove="Resources\ExpectedDom_CorsCssTestPage.json" />
     <None Remove="Resources\expected_dom_frame.json" />
+    <None Remove="Resources\expected_dom_fullwindow.json" />
     <None Remove="Resources\expected_dom_window.json" />
     <None Remove="Resources\IncludedTests.txt" />
     <None Remove="Resources\IOSImages\Expected\iPad %285th generation%29 Simulator 11.0 Portrait.png" />
@@ -151,6 +152,7 @@
     <EmbeddedResource Include="Resources\ExpectedDom_CorsCssTestPage.json" />
     <EmbeddedResource Include="Resources\expected_dom_frame.json" />
     <EmbeddedResource Include="Resources\expected_dom_window.json" />
+    <EmbeddedResource Include="Resources\expected_dom_fullwindow.json" />
     <EmbeddedResource Include="Resources\IncludedTests.txt" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (5th generation) Simulator 11.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPad (8th generation) Simulator 14.4 Landscape.png" />

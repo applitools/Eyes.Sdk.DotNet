@@ -1,6 +1,7 @@
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Re-Added missing `BrotliSharpLib` dependency. [Trello 2665](https://trello.com/c/NJVqbF0w)
+- `DomCapture` now support running in Single Thread Apartment (STA) [Trello 2648](https://trello.com/c/SK5AatP4)
 
 ## [Eyes.Appium 4.26] - 2021-06-27
 ### Updated
