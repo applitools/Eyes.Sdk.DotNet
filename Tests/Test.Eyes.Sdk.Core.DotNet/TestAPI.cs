@@ -452,6 +452,17 @@ namespace Applitools.Tests
                     modifiedValue = null;
                 }
             }
+            else if (type == typeof(ProxySettings))
+            {
+                if (origValue == null)
+                {
+                    modifiedValue = new ProxySettings("http://127.0.0.1:8888");
+                }
+                else
+                {
+                    modifiedValue = null;
+                }
+            }
             return modifiedValue;
         }
     }
