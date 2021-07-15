@@ -43,7 +43,7 @@ namespace Applitools
             get
             {
                 UriBuilder builder = new UriBuilder(Address);
-                if (builder.Port == -1)
+                if (builder.Port == 80 && Port != 80)
                 {
                     builder.Port = Port;
                 }
