@@ -1,10 +1,24 @@
 ﻿using System;
+using System.Net;
 
 namespace Applitools
 {
     public class ProxySettings
     {
         public ProxySettings() { }
+
+        public ProxySettings(WebProxy webProxy)
+        {
+            Uri addr = webProxy.Address;
+            Address = addr.Scheme + "://" + addr.Host + addr.PathAndQuery;
+            Port = addr.Port;
+            if (addr.UserInfo.Length > 0)
+            {
+                string[] userAndPass = addr.UserInfo.Split(':');
+                if (userAndPass?.Length > 0) Username = userAndPass[0];
+                if (userAndPass?.Length > 1) Password = userAndPass[1];
+            }
+        }
 
         public ProxySettings(string address)
         {
@@ -29,7 +43,10 @@ namespace Applitools
             get
             {
                 UriBuilder builder = new UriBuilder(Address);
-                builder.Port = Port;
+                if (builder.Port == -1)
+                {
+                    builder.Port = Port;
+                }
                 if (Username != null)
                 {
                     builder.UserName = Username;
@@ -40,6 +57,16 @@ namespace Applitools
                 }
                 return builder.Uri;
             }
+        }
+
+        public static implicit operator WebProxy(ProxySettings proxySettings)
+        {
+            return new WebProxy(proxySettings.ProxyUri);
+        }
+
+        public static implicit operator ProxySettings(WebProxy webProxy)
+        {
+            return new ProxySettings(webProxy);
         }
     }
 }

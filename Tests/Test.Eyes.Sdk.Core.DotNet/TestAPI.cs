@@ -311,9 +311,31 @@ namespace Applitools.Tests
             WebProxy proxy = new WebProxy(proxyUri);
             Assert.AreEqual(new Uri("http://username:password@127.0.0.1:8888"), proxy.Address);
 
+            proxySettings = new ProxySettings(proxy);
+            Assert.AreEqual("http://127.0.0.1/", proxySettings.Address);
+            Assert.AreEqual(8888, proxySettings.Port);
+            Assert.AreEqual("username", proxySettings.Username);
+            Assert.AreEqual("password", proxySettings.Password);
+
             proxySettings = new ProxySettings("http://127.0.0.1");
             proxyUri = proxySettings.ProxyUri;
             Assert.AreEqual(new Uri("http://127.0.0.1:80"), proxyUri);
+
+            proxy = new WebProxy(new Uri("http://localhost:8888"));
+            proxySettings = new ProxySettings(proxy);
+            Assert.AreEqual("http://localhost/", proxySettings.Address);
+            Assert.AreEqual(8888, proxySettings.Port);
+            Assert.AreEqual(null, proxySettings.Username);
+            Assert.AreEqual(null, proxySettings.Password);
+
+            proxy = new ProxySettings("http://user@localhost:8888");
+            Assert.AreEqual(new Uri("http://user@localhost:8888"), proxy.Address);
+
+            proxySettings = proxy;
+            Assert.AreEqual("http://localhost/", proxySettings.Address);
+            Assert.AreEqual(8888, proxySettings.Port);
+            Assert.AreEqual("user", proxySettings.Username);
+            Assert.AreEqual(null, proxySettings.Password);
         }
 
         private static void AssertRegion(IGetRegions[] getRegions, Rectangle expectedRegion, string regionType)
