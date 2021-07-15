@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Added
+- `ProxySettings` class as an overload to `Configuration.SetProxy`. [Trello 2652](https://trello.com/c/B4pqDEpT)
+
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Re-Added missing `BrotliSharpLib` dependency. [Trello 2665](https://trello.com/c/NJVqbF0w)
