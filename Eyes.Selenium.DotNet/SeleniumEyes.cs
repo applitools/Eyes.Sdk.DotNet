@@ -113,7 +113,7 @@ namespace Applitools.Selenium
 
         public override string ApiKey { get => base.ApiKey ?? runner_.ApiKey; set => base.ApiKey = value; }
         public override string ServerUrl { get => base.ServerUrl ?? runner_.ServerUrl; set => base.ServerUrl = value; }
-        public override WebProxy Proxy { get => base.Proxy ?? runner_.Proxy; set => base.Proxy = value; }
+        public override ProxySettings Proxy { get => base.Proxy ?? runner_.Proxy; set => base.Proxy = value; }
 
         private bool? isDisabled_;
         private object lastCheckSettings_;

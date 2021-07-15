@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 
 namespace Applitools
 {
@@ -15,7 +14,7 @@ namespace Applitools
 
         string ServerUrl { get; set; }
 
-        WebProxy Proxy { get; set; }
+        ProxySettings Proxy { get; set; }
 
         Logger Logger { get; }
 

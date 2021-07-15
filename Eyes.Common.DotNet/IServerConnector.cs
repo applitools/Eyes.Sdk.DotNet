@@ -10,7 +10,7 @@ namespace Applitools
 {
     public interface IServerConnector : IDeleteSession
     {
-        WebProxy Proxy { get; set; }
+        ProxySettings Proxy { get; set; }
         string ApiKey { get; set; }
         Uri ServerUrl { get; set; }
 

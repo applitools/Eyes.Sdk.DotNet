@@ -34,7 +34,7 @@ namespace Applitools
         private Uri serverUrl_;
 
         private bool proxyChanged_ = false;
-        private WebProxy proxy_;
+        private ProxySettings proxy_;
         private readonly string proxyStr_ = CommonUtils.GetEnvVar("APPLITOOLS_PROXY");
 
         private RenderingInfo renderingInfo_;
@@ -136,14 +136,14 @@ namespace Applitools
         /// Gets or sets the proxy used to access the Eyes server or <c>null</c> to use the system 
         /// proxy.
         /// </summary>
-        public WebProxy Proxy
+        public ProxySettings Proxy
         {
             get
             {
                 if (proxy_ == null && !string.IsNullOrWhiteSpace(proxyStr_))
                 {
                     Logger.Log(TraceLevel.Notice, Stage.General, new { proxyStr_ });
-                    proxy_ = new WebProxy(proxyStr_);
+                    proxy_ = new ProxySettings(proxyStr_);
                     proxyChanged_ = true;
                 }
                 return proxy_;

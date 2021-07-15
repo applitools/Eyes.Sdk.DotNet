@@ -41,13 +41,6 @@ namespace Applitools
 
         public BatchClose SetProxy(ProxySettings proxy)
         {
-            WebProxy webProxy = new WebProxy(proxy.ProxyUri);
-            return SetProxy(webProxy);
-        }
-
-        public BatchClose SetProxy(WebProxy proxy)
-        {
-            ArgumentGuard.NotNull(proxy, nameof(proxy));
             Proxy = proxy;
             return this;
         }

@@ -87,7 +87,7 @@ namespace Applitools
             set => ServerConnector.ServerUrl = new Uri(value);
         }
 
-        public WebProxy Proxy
+        public ProxySettings Proxy
         {
             get => ServerConnector.Proxy;
             set => ServerConnector.Proxy = value;

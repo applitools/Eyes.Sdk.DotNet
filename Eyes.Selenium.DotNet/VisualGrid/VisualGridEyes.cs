@@ -89,7 +89,7 @@ namespace Applitools.Selenium.VisualGrid
             set { runner_.ServerUrl = value; Config_.ServerUrl = value; }
         }
 
-        public WebProxy Proxy
+        public ProxySettings Proxy
         {
             get => runner_.Proxy ?? Config_.Proxy;
             set { runner_.Proxy = value; Config_.Proxy = value; }

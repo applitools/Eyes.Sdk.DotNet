@@ -102,7 +102,7 @@ namespace Applitools.Selenium
 
         public override string ServerUrl { get => runner_.ServerUrl; set { runner_.ServerUrl = value; configuration_.ServerUrl = value; } }
 
-        public override WebProxy Proxy { get => runner_.Proxy; set { runner_.Proxy = value; configuration_.Proxy = value; } }
+        public override ProxySettings Proxy { get => runner_.Proxy; set { runner_.Proxy = value; configuration_.Proxy = value; } }
 
         #region configuration properties
 

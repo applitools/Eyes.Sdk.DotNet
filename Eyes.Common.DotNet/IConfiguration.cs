@@ -65,7 +65,7 @@ namespace Applitools
 
         IList<int> LayoutBreakpoints { get; set; }
 
-        WebProxy Proxy { get; set; }
+        ProxySettings Proxy { get; set; }
 
         IConfiguration SetAgentId(string value);
         IConfiguration SetAppName(string value);
@@ -92,7 +92,6 @@ namespace Applitools
         IConfiguration SetApiKey(string value);
 
         IConfiguration SetProxy(ProxySettings value);
-        IConfiguration SetProxy(WebProxy value);
         IConfiguration SetIgnoreDisplacements(bool value);
         IConfiguration SetUseDom(bool value);
         IConfiguration SetEnablePatterns(bool value);
