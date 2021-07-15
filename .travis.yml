@@ -76,8 +76,8 @@ jobs:
         - nuget restore Eyes.Sdk.DotNet_Travis.sln
         - nuget install NUnit.Console -Version 3.9.0 -OutputDirectory testrunner
       script:
-        - msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.8 ./Tests/Test.Eyes.Images.DotNet/Test.Eyes.Images.DotNet.csproj
-        - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./Tests/Test.Eyes.Images.DotNet/bin/Release/net48/Test.Eyes.Images.DotNet.dll
+        - msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.6.1 ./Tests/Test.Eyes.Images.DotNet/Test.Eyes.Images.DotNet.csproj
+        - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./Tests/Test.Eyes.Images.DotNet/bin/Release/net461/Test.Eyes.Images.DotNet.dll
   
     - name: Core
       mono: none
