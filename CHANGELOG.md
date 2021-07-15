@@ -1,11 +1,31 @@
-## [Eyes.Sdk.Core vNext]
-### Added
-- `ProxySettings` class as an overload to `Configuration.SetProxy`. [Trello 2652](https://trello.com/c/B4pqDEpT)
+## [Eyes.Appium 4.27] - 2021-07-15
+### Updated
+- Match to latest Eyes.Sdk.Core
 
-## [Eyes.Selenium vNext]
+## [Eyes.Images 2.30] - 2021-07-15
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.26] - 2021-07-15
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.54] - 2021-07-15
 ### Fixed
 - Re-Added missing `BrotliSharpLib` dependency. [Trello 2665](https://trello.com/c/NJVqbF0w)
 - `DomCapture` now support running in Single Thread Apartment (STA) [Trello 2648](https://trello.com/c/SK5AatP4)
+
+## [Eyes.LeanFT 2.32] - 2021-07-15
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.31] - 2021-07-15
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.49] - 2021-07-15
+### Added
+- `ProxySettings` class as an overload to `Configuration.SetProxy`. [Trello 2652](https://trello.com/c/B4pqDEpT)
 
 ## [Eyes.Appium 4.26] - 2021-06-27
 ### Updated

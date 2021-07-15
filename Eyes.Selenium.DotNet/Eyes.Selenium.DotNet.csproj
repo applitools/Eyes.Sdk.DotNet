@@ -8,13 +8,14 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.53</Version>
+    <Version>2.54</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Fixed
-- `ForceFullPageScreenshot` override flow. [Trello 2588](https://trello.com/c/S5rHZBFD)
+- Re-Added missing `BrotliSharpLib` dependency. [Trello 2665](https://trello.com/c/NJVqbF0w)
+- `DomCapture` now support running in Single Thread Apartment (STA) [Trello 2648](https://trello.com/c/SK5AatP4)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
