@@ -1,3 +1,7 @@
+## [Eyes.Common 1.10] - 2021-07-15
+### Updated
+- Reduced NuGet size.
+
 ## [Eyes.Appium 4.27] - 2021-07-15
 ### Updated
 - Match to latest Eyes.Sdk.Core

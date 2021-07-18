@@ -77,7 +77,6 @@ namespace Applitools.Selenium
         new IConfiguration SetMatchLevel(MatchLevel value);
         new IConfiguration SetServerUrl(string value);
         new IConfiguration SetApiKey(string value);
-        new IConfiguration SetProxy(WebProxy value);
         new IConfiguration SetProxy(ProxySettings value);
         new IConfiguration SetEnablePatterns(bool value);
         new IConfiguration SetIgnoreDisplacements(bool value);
