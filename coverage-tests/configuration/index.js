@@ -5,4 +5,4 @@ module.exports = {
   template: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/master/DotNet/template.hbs',
   ext: '.cs',
   outPath: './test/Selenium/coverage/generic'
-}
+};

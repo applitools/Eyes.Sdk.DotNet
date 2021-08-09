@@ -8,7 +8,7 @@ RESULT=0
 
 echo "generating tests"
 pushd coverage-tests
-npm run dotnet:generate
+npm run dotnet:generate:eg
 if [ $? -ne 0 ]; then
     RESULT=1
     echo "npm run dotnet:generate have failed"
@@ -17,12 +17,12 @@ popd
 
 echo "running tests selenium"
 pushd coverage-tests
-npm run dotnet:run:parallel:selenium
+npm run dotnet:run:parallel:selenium:eg
 result=$?
 echo $result
 if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
-    npm run dotnet:run:parallel:selenium
+    npm run dotnet:run:parallel:selenium:eg
 	if [ $? -ne 0 ]; then
       RESULT=1
       echo "npm run dotnet:run:parallel:selenium have failed"
