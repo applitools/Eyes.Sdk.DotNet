@@ -54,7 +54,7 @@ namespace Applitools.Generated.Selenium.Tests
                         if(headless) chromeOptions.AddArgument("headless");
                         driver = new RemoteWebDriver(new Uri(EG_SELENIUM_URL), chromeOptions);
                     } else {
-                        CreateChromeDriver(headless:headless);
+                        driver = CreateChromeDriver(headless:headless);
                     }
                     break;
                 case browserType.Firefox:
