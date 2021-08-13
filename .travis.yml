@@ -85,7 +85,8 @@ jobs:
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
   
-    - name: Appium
+    - stage: Test specific
+      name: Appium
       mono: none
       dotnet: 3.1.407
       script:
