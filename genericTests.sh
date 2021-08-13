@@ -20,30 +20,30 @@ pushd coverage-tests
 npm run run:parallel:selenium:eg
 result=$?
 echo $result
-# if [ $result -ne 0 ]; then
-#     echo "Not all tests passed... Retrying."
-#     npm run run:parallel:selenium:eg
-# 	if [ $? -ne 0 ]; then
-#       RESULT=1
-#       echo "npm run dotnet:run:parallel:selenium have failed"
-#     fi
-# fi
+if [ $result -ne 0 ]; then
+    echo "Not all tests passed... Retrying."
+    npm run run:parallel:selenium:eg
+	if [ $? -ne 0 ]; then
+      RESULT=1
+      echo "npm run dotnet:run:parallel:selenium have failed"
+    fi
+fi
 popd
 
-# echo "running tests appium"
-# pushd coverage-tests
-# npm run run:parallel:appium
-# result=$?
-# echo $result
-# if [ $result -ne 0 ]; then
-#     echo "Not all tests passed... Retrying."
-#     npm run run:parallel:appium
-# 	if [ $? -ne 0 ]; then
-#       RESULT=1
-#       echo "npm run dotnet:run:parallel:appium have failed"
-#     fi
-# fi
-# popd
+echo "running tests appium"
+pushd coverage-tests
+npm run run:parallel:appium
+result=$?
+echo $result
+if [ $result -ne 0 ]; then
+    echo "Not all tests passed... Retrying."
+    npm run run:parallel:appium
+	if [ $? -ne 0 ]; then
+      RESULT=1
+      echo "npm run dotnet:run:parallel:appium have failed"
+    fi
+fi
+popd
 
 echo "merge reports"
 pushd coverage-tests
