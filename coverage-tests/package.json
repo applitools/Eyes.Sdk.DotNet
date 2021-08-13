@@ -14,8 +14,8 @@
     "url": "git+https://github.com/applitools/sdk.coverage.tests.git"
   },
   "scripts": {
-    "dotnet:generate": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
-    "dotnet:generate:local": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict --tests ./coverage-tests.js && mv ./test/Selenium/coverage/generic/*Native*.cs ./test/Appium/coverage/generic && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
+    "dotnet:generate": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
+    "dotnet:generate:local": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict --tests ./coverage-tests.js && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
     "dotnet:generate:win": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
     "dotnet:generate:win:local": "coverage-tests generate ./configuration --pascalizeTests --strict --tests ./coverage-tests.js && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
     "dotnet:run:parallelOld": "cd .. && dotnet test Eyes.Sdk.DotNet_Travis.sln --filter Generated --logger \"junit;LogFilePath=./coverage-test-report.xml\"",
