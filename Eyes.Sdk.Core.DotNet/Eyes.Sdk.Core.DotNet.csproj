@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
@@ -8,13 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.49</Version>
+    <Version>2.50</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
-    <PackageReleaseNotes>### Added
-- `ProxySettings` class as an overload to `Configuration.SetProxy`. [Trello 2652](https://trello.com/c/B4pqDEpT)
+    <PackageReleaseNotes>### Updated
+- Merged Eyes.Common to Eyes.Sdk.Core.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Sdk.Core</PackageId>
