@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Merged Eyes.Common to Eyes.Sdk.Core.
+
 ## [Eyes.Common 1.10] - 2021-07-15
 ### Updated
 - Reduced NuGet size.

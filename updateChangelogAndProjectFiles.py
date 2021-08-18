@@ -35,7 +35,7 @@ def getDependentPackages(packageName, packageNextVersions, versionPart):
     dependentPackages = packageDependecies.get(packageName)
     if dependentPackages:
         for dependentPackageName in dependentPackages:
-            if not packageNextVersions.has_key(dependentPackageName):
+            if not dependentPackageName in packageNextVersions:
                 packageNextVersions[dependentPackageName] = {
                     "version_part": versionPart, "changelog": dependencyDefaultChangelogStr.format(packageName)
                     }
@@ -70,11 +70,11 @@ def collect_changes():
                 lastVNextPackageName = None
                 packageName = matches.group('PackageName')
                 version = matches.group('Version')
-                if not packageLastVersions.has_key(packageName):
+                if not packageName in packageLastVersions:
                     packageLastVersions[packageName] = version
             else:
                 if lastVNextPackageName:
-                    if (packageNextVersions.has_key(lastVNextPackageName)) and (line != "\n"):
+                    if (lastVNextPackageName in packageNextVersions) and (line != "\n"):
                         packageNextVersions[lastVNextPackageName]["changelog"] += line
                 else:
                     originalLines += line

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
@@ -38,12 +38,6 @@ To learn more, visit https://applitools.com/ .</Description>
   <PropertyGroup>
     <NoWarn>1701;1702;1705;CS1591</NoWarn>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Eyes.Common.DotNet\Eyes.Common.DotNet.csproj">
-      <PrivateAssets>all</PrivateAssets>
-    </ProjectReference>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -77,10 +71,6 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>
