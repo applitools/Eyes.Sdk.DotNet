@@ -1,4 +1,28 @@
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Appium 4.28] - 2021-08-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.31] - 2021-08-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.27] - 2021-08-18
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.55] - 2021-08-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.LeanFT 2.33] - 2021-08-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.32] - 2021-08-18
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.50] - 2021-08-18
 ### Updated
 - Merged Eyes.Common to Eyes.Sdk.Core.
 
