@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
@@ -64,7 +64,6 @@ To learn more, visit https://applitools.com/ .</Description>
   
   <Target Name="GetMyPackageFiles">
     <ItemGroup>
-      <BuildOutputInPackage Include="$(OutputPath)Eyes.Common.DotNet.dll" />
     </ItemGroup>
   </Target>
 
