@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Common.DotNet\Eyes.Common.DotNet.csproj" />
     <ProjectReference Include="..\Eyes.Images.DotNet\Eyes.Images.DotNet.csproj" />
   </ItemGroup>
 
