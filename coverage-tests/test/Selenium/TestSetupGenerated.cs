@@ -30,6 +30,7 @@ namespace Applitools.Generated.Selenium.Tests
         public static readonly string SAUCE_USERNAME = Environment.GetEnvironmentVariable("SAUCE_USERNAME");
         public static readonly string SAUCE_ACCESS_KEY = Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY");
         public static readonly string SAUCE_SELENIUM_URL = "https://ondemand.saucelabs.com:443/wd/hub";
+        public static readonly string EG_SELENIUM_URL = Environment.GetEnvironmentVariable("EXECUTION_GRID_URL");
         protected enum browserType
         {
             Chrome,
@@ -43,12 +44,18 @@ namespace Applitools.Generated.Selenium.Tests
         private SafariOptions browserOptions;
         private DesiredCapabilities caps;
 
-        protected void SetUpDriver(browserType browser = browserType.Chrome, bool legacy = false, bool headless = false)
+        protected void SetUpDriver(browserType browser = browserType.Chrome, bool legacy = false, bool headless = false, bool executionGrid = false)
         {
             switch (browser)
             {
                 case browserType.Chrome:
-                    driver = CreateChromeDriver(headless: headless);
+                    if (executionGrid) {
+                        var chromeOptions = new ChromeOptions();
+                        if(headless) chromeOptions.AddArgument("headless");
+                        driver = new RemoteWebDriver(new Uri(EG_SELENIUM_URL), chromeOptions);
+                    } else {
+                        driver = CreateChromeDriver(headless:headless);
+                    }
                     break;
                 case browserType.Firefox:
                     driver = CreateFirefoxDriver(headless: headless);

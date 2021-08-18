@@ -84,12 +84,6 @@ jobs:
       dotnet: 3.1.407
       script:
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
-  
-    - name: Appium
-      mono: none
-      dotnet: 3.1.407
-      script:
-        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
     
     - name: Selenium
       mono: none
@@ -102,6 +96,13 @@ jobs:
         - popd
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
+    
+    - stage: Test specific
+      name: Appium
+      mono: none
+      dotnet: 3.1.407
+      script:
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master

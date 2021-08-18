@@ -8,7 +8,7 @@ RESULT=0
 
 echo "generating tests"
 pushd coverage-tests
-npm run dotnet:generate
+npm run generate:eg
 if [ $? -ne 0 ]; then
     RESULT=1
     echo "npm run dotnet:generate have failed"
@@ -17,12 +17,12 @@ popd
 
 echo "running tests selenium"
 pushd coverage-tests
-npm run dotnet:run:parallel:selenium
+npm run run:parallel:selenium:eg
 result=$?
 echo $result
 if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
-    npm run dotnet:run:parallel:selenium
+    npm run run:parallel:selenium:eg
 	if [ $? -ne 0 ]; then
       RESULT=1
       echo "npm run dotnet:run:parallel:selenium have failed"
@@ -32,12 +32,12 @@ popd
 
 echo "running tests appium"
 pushd coverage-tests
-npm run dotnet:run:parallel:appium
+npm run run:parallel:appium
 result=$?
 echo $result
 if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
-    npm run dotnet:run:parallel:appium
+    npm run run:parallel:appium
 	if [ $? -ne 0 ]; then
       RESULT=1
       echo "npm run dotnet:run:parallel:appium have failed"
@@ -47,7 +47,7 @@ popd
 
 echo "merge reports"
 pushd coverage-tests
-npm run dotnet:report:merge
+npm run report:merge
 if [ $? -ne 0 ]; then
     RESULT=1
     echo "npm run dotnet:report:merge have failed"
@@ -56,7 +56,7 @@ popd
 
 echo "tests reporting"
 pushd coverage-tests
-npm run dotnet:report
+npm run report
 if [ $? -ne 0 ]; then
     RESULT=1
     echo "npm run dotnet:report have failed"
