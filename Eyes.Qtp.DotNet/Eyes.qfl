@@ -64,7 +64,7 @@ Class Eyes_
 		defaultRetryTimeout_ = 2
 		width_ = -1
 		height_ = -1
-		eyes_.AgentId = "eyes.qtp/1.17 (UFT " & UFTVersionInRegistry() & ")"
+		eyes_.AgentId = "eyes.qtp/1.17.1 (UFT " & UFTVersionInRegistry() & ")"
 		eyes_.InteropMatchTimeout = 0
 	End Sub
 
@@ -172,6 +172,18 @@ Class Eyes_
 
 	Public Property Let BaselineName(value)
 		eyes_.BaselineName = value
+	End Property
+	
+	Public Property Get ProxyUrl
+		If eyes_.Proxy = Empty Then
+			ProxyUrl = Empty
+		Else
+			ProxyUrl = eyes_.Proxy.Address.AbsoluteUri
+		End If
+	End Property
+
+	Public Property Let ProxyUrl(value)
+		eyes_.Proxy = DotNetFactory.CreateInstance("System.Net.WebProxy", Null, value)
 	End Property
 
 	Public Property Get MatchLayout
