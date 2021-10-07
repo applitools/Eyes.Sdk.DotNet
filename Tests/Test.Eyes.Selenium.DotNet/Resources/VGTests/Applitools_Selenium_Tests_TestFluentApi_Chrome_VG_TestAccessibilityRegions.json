@@ -4,7 +4,7 @@
     "url": "https://applitools.github.io/demo/TestPages/FramesTestPage/",
     "dom": {
       "hashFormat": "sha256",
-      "hash": "1af1336556019d5e826e255e10ab8cac6abc88816e8aceed5e59b7247016f63b"
+      "hash": "31bcdc0d43799604b39ff909c1820c8aae397ee0004e19fac351791b67efc088"
     },
     "resources": {
       "https://applitools.github.io/demo/TestPages/FramesTestPage/frame2.html": {
@@ -51,31 +51,31 @@
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxK.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu4mxK.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4WxKOzY.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu4WxKOzY.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu5mxKOzY.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu5mxKOzY.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu72xKOzY.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu72xKOzY.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7GxKOzY.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu7GxKOzY.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7mxKOzY.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu7mxKOzY.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       },
-      "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu7WxKOzY.woff2": {
+      "https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu7WxKOzY.woff2": {
         "contentType": "font/woff2",
         "hashFormat": "sha256"
       }
