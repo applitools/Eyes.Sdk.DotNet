@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net45;net452;net462;net472;net48;netcoreapp3.1</TargetFrameworks>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Applitools Eyes adds automated visual validation to your automated tests.
 With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
@@ -24,6 +24,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <UseWindowsForms>true</UseWindowsForms>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageOutputPath>..\PackagesOutput</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

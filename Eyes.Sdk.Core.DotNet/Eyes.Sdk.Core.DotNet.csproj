@@ -23,6 +23,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <PackageIcon>applitools_nuget_icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageOutputPath>..\PackagesOutput</PackageOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
