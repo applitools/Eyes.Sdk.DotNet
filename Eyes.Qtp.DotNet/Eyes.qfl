@@ -183,7 +183,7 @@ Class Eyes_
 	End Property
 
 	Public Property Let ProxyUrl(value)
-		eyes_.Proxy = DotNetFactory.CreateInstance("System.Net.WebProxy", Null, value)
+		eyes_.Proxy = DotNetFactory.CreateInstance("Applitools.ProxySettings", eyesPath_ & "Eyes.Sdk.Core.DotNet.dll", value)
 	End Property
 
 	Public Property Get MatchLayout
