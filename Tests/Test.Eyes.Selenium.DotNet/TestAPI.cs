@@ -200,7 +200,7 @@ namespace Applitools.Selenium.Tests
                 expectedRegions.Add(new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText));
                 if (useVisualGrid)
                 {
-                    expectedRegions.Add(new AccessibilityRegionByRectangle(10, 286, 800, 500, AccessibilityRegionType.LargeText));
+                    expectedRegions.Add(new AccessibilityRegionByRectangle(10, 285, 800, 501, AccessibilityRegionType.LargeText));
                 }
                 else
                 {
