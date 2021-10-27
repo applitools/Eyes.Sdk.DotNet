@@ -196,15 +196,17 @@ namespace Applitools.Selenium.Tests
                 var matchSettings = sessionResults.ActualAppOutput[0].ImageMatchSettings;
                 var actualRegions = matchSettings.Accessibility;
                 HashSet<AccessibilityRegionByRectangle> expectedRegions = new HashSet<AccessibilityRegionByRectangle>();
-                expectedRegions.Add(new AccessibilityRegionByRectangle(122, 933, 456, 306, AccessibilityRegionType.LargeText));
-                expectedRegions.Add(new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText));
                 if (useVisualGrid)
                 {
                     expectedRegions.Add(new AccessibilityRegionByRectangle(10, 285, 800, 501, AccessibilityRegionType.LargeText));
+                    expectedRegions.Add(new AccessibilityRegionByRectangle(122, 932, 456, 307, AccessibilityRegionType.LargeText));
+                    expectedRegions.Add(new AccessibilityRegionByRectangle(8, 1276, 690, 207, AccessibilityRegionType.LargeText));
                 }
                 else
                 {
                     expectedRegions.Add(new AccessibilityRegionByRectangle(10, 286, 285, 165, AccessibilityRegionType.LargeText));
+                    expectedRegions.Add(new AccessibilityRegionByRectangle(122, 933, 456, 306, AccessibilityRegionType.LargeText));
+                    expectedRegions.Add(new AccessibilityRegionByRectangle(8, 1277, 690, 206, AccessibilityRegionType.LargeText));
                 }
                 TestSetup.CompareAccessibilityRegionsList_(actualRegions, expectedRegions, "Accessibility");
             }
