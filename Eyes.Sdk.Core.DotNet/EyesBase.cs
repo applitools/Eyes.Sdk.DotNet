@@ -107,7 +107,7 @@ namespace Applitools
         private void Init_(ClassicRunner runner, Logger logger)
         {
             Logger = logger ?? new Logger();
-            runner_ = runner ?? new ClassicRunner(logger.GetILogHandler());
+            runner_ = runner ?? new ClassicRunner(Logger.GetILogHandler());
 
             runner_.SetEyes(this);
 
