@@ -98,7 +98,7 @@ namespace Applitools.VisualGrid
             : this(runnerOptions, null, logHandler)
         { }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null)
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null) : base(logHandler)
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
@@ -107,7 +107,7 @@ namespace Applitools.VisualGrid
         }
 
         public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
-            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
+            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null) : base(logHandler)
         {
             ServerConnectorFactory = serverConnectorFactory;
             ServerConnector = serverConnectorFactory.CreateNewServerConnector(Logger, new Uri("https://some.url.com"));
