@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
 
 namespace Applitools.Utils
 {
@@ -491,9 +492,18 @@ namespace Applitools.Utils
                         throw new NullReferenceException("response is null");
                     }
 
-                    Logger.Log(TraceLevel.Notice, Stage.General, new { message = $"OnLongRequestResponse", response.Headers});
+                    string requestId = null;
+                    if (originalRequest.Headers.Contains("x-applitools-eyes-client-request-id"))
+                    {
+                        requestId = originalRequest.Headers.GetValues("x-applitools-eyes-client-request-id").First();
+                    }
+                    Logger.Log(TraceLevel.Notice, Stage.General, StageType.RequestCompleted, new { message = $"OnLongRequestResponse", response.Headers, requestId});
 
                     Uri statusUrl = response.Headers.Location;
+                    if (statusUrl == null)
+                    {
+                        throw new Exception($"LongRequest result has no Location header (request id: {requestId})");
+                    }
                     RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, statusUrl, listener);
                     SendAsyncRequest(requestPollingListener, statusUrl, "GET");
                 }
