@@ -11,8 +11,9 @@ namespace Applitools
     {
         private readonly ConcurrentDictionary<string, IBatchCloser> batchClosers_ = new ConcurrentDictionary<string, IBatchCloser>();
 
-        public EyesRunner()
+        public EyesRunner(ILogHandler logHandler)
         {
+            Logger.SetLogHandler(logHandler);
             ServerConnectorFactory = new ServerConnectorFactory();
             ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
         }
