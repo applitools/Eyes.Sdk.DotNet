@@ -498,7 +498,7 @@ namespace Applitools.Utils
                         requestId = originalRequest.Headers.GetValues("x-applitools-eyes-client-request-id").First();
                     }
 
-                    if (response.StatusCode != HttpStatusCode.OK)
+                    if (!response.IsSuccessStatusCode)
                     {
                         Logger.Log(TraceLevel.Error, Stage.General, StageType.RequestFailed, new { requestId });
                         throw new Exception($"request failed with status code {response.StatusCode}. request id: {requestId}");
