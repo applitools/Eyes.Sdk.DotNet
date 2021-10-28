@@ -353,10 +353,10 @@ namespace Applitools
 
         private static void RepositionRegion_(Location location, IMutableRegion region)
         {
-            region.Left = Math.Max(0, region.Left - location.X);
-            region.Top = Math.Max(0, region.Top - location.Y);
             region.Width += Math.Min(0, region.Left - location.X);
             region.Height += Math.Min(0, region.Top - location.Y);
+            region.Left = Math.Max(0, region.Left - location.X);
+            region.Top = Math.Max(0, region.Top - location.Y);
         }
 
         private static void CollectSimpleRegions_(ICheckSettingsInternal checkSettingsInternal,
