@@ -491,7 +491,7 @@ namespace Applitools.Utils
                         throw new NullReferenceException("response is null");
                     }
 
-                    Logger.Log(TraceLevel.Notice, Stage.General, new { message = $"OnLongRequestResponse headers: {response.Headers}" });
+                    Logger.Log(TraceLevel.Notice, Stage.General, new { message = $"OnLongRequestResponse", response.Headers});
 
                     Uri statusUrl = response.Headers.Location;
                     RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, statusUrl, listener);

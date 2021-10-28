@@ -68,7 +68,7 @@ namespace Applitools
 
         internal HttpRestClient CreateHttpRestClient(Uri uri)
         {
-            return HttpRestClientFactory.Create(uri, AgentId, serializer_);
+            return HttpRestClientFactory.Create(uri, AgentId, serializer_, Logger);
         }
 
         #endregion
@@ -769,9 +769,9 @@ namespace Applitools
 
         private class DefaultHttpRestClientFactory : IHttpRestClientFactory
         {
-            public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
+            public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer, Logger logger = null)
             {
-                return new HttpRestClient(serverUrl, agentId, jsonSerializer);
+                return new HttpRestClient(serverUrl, agentId, jsonSerializer, logger);
             }
         }
 

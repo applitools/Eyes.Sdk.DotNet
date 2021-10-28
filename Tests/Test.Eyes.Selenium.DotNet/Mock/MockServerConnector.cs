@@ -209,7 +209,7 @@ namespace Applitools.Selenium.Tests.Mock
 
         public MockHttpClientProvider Provider { get; set; }
 
-        public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
+        public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer, Logger logger)
         {
             Provider = new MockHttpClientProvider(Logger, connector_);
             HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger, Provider);

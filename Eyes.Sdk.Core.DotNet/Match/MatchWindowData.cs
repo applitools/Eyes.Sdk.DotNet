@@ -11,6 +11,7 @@ namespace Applitools
         /// <summary>
         /// Creates a new <see cref="MatchWindowData"/> instance.
         /// </summary>
+        /// <param name="runningSession"></param>
         /// <param name="appOutput">The appOutput for the current matchWindow call.</param>
         /// <param name="tag">The step name to use.</param>
         /// <param name="agentSetup">The test setup parameters used.</param>

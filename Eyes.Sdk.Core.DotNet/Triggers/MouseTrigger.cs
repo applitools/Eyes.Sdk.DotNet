@@ -41,7 +41,7 @@ namespace Applitools
 
         /// <summary>
         /// Gets the location of the action relative to the top left corner of 
-        /// <see cref="Control"/> or <c>null</c> if unknown.
+        /// <see cref="Trigger.Control"/> or <c>null</c> if unknown.
         /// </summary>
         public Location Location
         {
