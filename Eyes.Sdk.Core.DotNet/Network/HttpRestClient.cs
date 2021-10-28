@@ -497,7 +497,14 @@ namespace Applitools.Utils
                     {
                         requestId = originalRequest.Headers.GetValues("x-applitools-eyes-client-request-id").First();
                     }
-                    Logger.Log(TraceLevel.Notice, Stage.General, StageType.RequestCompleted, new { message = $"OnLongRequestResponse", response.Headers, requestId});
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        Logger.Log(TraceLevel.Error, Stage.General, StageType.RequestFailed, new { requestId });
+                        throw new Exception($"request failed with status code {response.StatusCode}. request id: {requestId}");
+                    }
+
+                    Logger.Log(TraceLevel.Notice, Stage.General, StageType.RequestCompleted, new { message = "OnLongRequestResponse", response.Headers, requestId});
 
                     Uri statusUrl = response.Headers.Location;
                     if (statusUrl == null)
