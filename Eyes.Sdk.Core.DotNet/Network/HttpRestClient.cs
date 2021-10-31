@@ -473,7 +473,7 @@ namespace Applitools.Utils
             {
                 if (!result.IsCompleted)
                 {
-                    Logger.Log(TraceLevel.Notice, Stage.General, new { message = "long request not complete" });
+                    Logger.Log(TraceLevel.Warn, Stage.General, new { message = "long request not complete" });
                     return;
                 }
                 try
@@ -504,7 +504,7 @@ namespace Applitools.Utils
                         throw new Exception($"request failed with status code {response.StatusCode}. request id: {requestId}");
                     }
 
-                    Logger.Log(TraceLevel.Notice, Stage.General, StageType.RequestCompleted, new { message = "OnLongRequestResponse", response.Headers, requestId});
+                    Logger.Log(TraceLevel.Info, Stage.General, StageType.RequestCompleted, new { message = "OnLongRequestResponse", response.Headers, requestId});
 
                     Uri statusUrl = response.Headers.Location;
                     if (statusUrl == null)
