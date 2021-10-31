@@ -281,11 +281,20 @@ namespace Applitools.Selenium.Tests
         {
             public static string NormalizeJsonString(string json)
             {
-                JToken parsed = JToken.Parse(json);
+                try
+                {
+                    JToken parsed = JToken.Parse(json);
 
-                JToken normalized = NormalizeToken(parsed);
+                    JToken normalized = NormalizeToken(parsed);
 
-                return JsonConvert.SerializeObject(normalized, Formatting.Indented);
+                    return JsonConvert.SerializeObject(normalized, Formatting.Indented);
+                }
+                catch (Exception ex)
+                {
+                    CommonUtils.LogExceptionStackTrace(logger_,Stage.TestFramework, StageType.TestResults, ex, 
+                        new { message = "Failed normalizing json" , json });
+                    throw;
+                }
             }
 
             private static JToken NormalizeToken(JToken token)
