@@ -312,7 +312,7 @@ namespace Applitools
                     IMutableRegion mr = mutableRegions[6][i];
                     if (mr.Area == 0) continue;
                     VGUserAction userAction = userActions[i];
-                    RepositionRegion_(location, mr);
+                    //RepositionRegion_(location, mr); // THIS MUST NOT BE DONE ON USER ACTIONS
                     Trigger trigger = UserActionToTrigger(mr, userAction);
                     userInputs.Add(trigger);
                 }
