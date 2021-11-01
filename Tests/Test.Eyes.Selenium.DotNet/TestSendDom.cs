@@ -160,7 +160,7 @@ namespace Applitools.Selenium.Tests
 
             SessionResults sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
             ActualAppOutput[] actualAppOutput = sessionResults.ActualAppOutput;
-            string downloadedDomJsonString = TestUtils.GetStepDom(eyes, actualAppOutput[0]);
+            string downloadedDomJsonString = TestUtils.GetStepDom(eyes, actualAppOutput[0], logger_);
             string downloadedDomJson = JsonUtility.NormalizeJsonString(downloadedDomJsonString);
             Assert.AreEqual(expectedDomJson, downloadedDomJson);
         }
