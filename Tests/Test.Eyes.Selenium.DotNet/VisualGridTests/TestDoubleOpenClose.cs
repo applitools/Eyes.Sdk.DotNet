@@ -38,7 +38,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 driver.Quit();
             }
 
-            TestResultsSummary allTestResults = runner.GetAllTestResults(true);
+            TestResultsSummary allTestResults = runner.GetAllTestResults(false);
             Assert.AreEqual(2, allTestResults.Count);
         }
 
