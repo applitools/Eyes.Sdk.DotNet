@@ -123,19 +123,23 @@ namespace Applitools.Tests.Utils
 
         }
 
-        public static string GetStepDom(EyesBase eyes, ActualAppOutput actualAppOutput)
+        public static string GetStepDom(EyesBase eyes, ActualAppOutput actualAppOutput, Logger logger)
         {
             ArgumentGuard.NotNull(eyes, nameof(eyes));
             ArgumentGuard.NotNull(actualAppOutput, nameof(actualAppOutput));
 
             UriBuilder uriBuilder = new UriBuilder(eyes.ServerUrl);
             uriBuilder.Path = $"/api/images/dom/{actualAppOutput.Image.DomId}";
-
             NameValueCollection query = UrlUtility.ParseQueryString(uriBuilder.Query);
             query["apiKey"] = eyes.ApiKey;
             uriBuilder.Query = query.ToString();
+           
             HttpRestClient client = new HttpRestClient(uriBuilder.Uri);
             HttpResponseMessage response = client.GetJson(uriBuilder.ToString());
+            
+            logger.Log(TraceLevel.Notice, Stage.TestFramework, StageType.TestResults, 
+                new { message = "Getting step DOM", Url = uriBuilder.Uri, ResponseStatus = response.StatusCode});
+
             Stream stream = response.GetResponseStream();
             string result;
             using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))

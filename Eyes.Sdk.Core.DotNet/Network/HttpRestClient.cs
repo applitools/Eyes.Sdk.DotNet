@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
 
 namespace Applitools.Utils
 {
@@ -472,7 +473,7 @@ namespace Applitools.Utils
             {
                 if (!result.IsCompleted)
                 {
-                    Logger.Log(TraceLevel.Notice, Stage.General, new { message = "long request not complete" });
+                    Logger.Log(TraceLevel.Warn, Stage.General, new { message = "long request not complete" });
                     return;
                 }
                 try
@@ -491,7 +492,25 @@ namespace Applitools.Utils
                         throw new NullReferenceException("response is null");
                     }
 
+                    string requestId = null;
+                    if (originalRequest.Headers.Contains("x-applitools-eyes-client-request-id"))
+                    {
+                        requestId = originalRequest.Headers.GetValues("x-applitools-eyes-client-request-id").First();
+                    }
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Logger.Log(TraceLevel.Error, Stage.General, StageType.RequestFailed, new { requestId });
+                        throw new Exception($"request failed with status code {response.StatusCode}. request id: {requestId}");
+                    }
+
+                    Logger.Log(TraceLevel.Info, Stage.General, StageType.RequestCompleted, new { message = "OnLongRequestResponse", response.Headers, requestId});
+
                     Uri statusUrl = response.Headers.Location;
+                    if (statusUrl == null)
+                    {
+                        throw new Exception($"LongRequest result has no Location header (request id: {requestId})");
+                    }
                     RequestPollingTaskListener requestPollingListener = new RequestPollingTaskListener(this, statusUrl, listener);
                     SendAsyncRequest(requestPollingListener, statusUrl, "GET");
                 }

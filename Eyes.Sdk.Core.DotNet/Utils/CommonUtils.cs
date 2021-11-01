@@ -492,7 +492,7 @@ namespace Applitools.Utils
                 }
                 else
                 {
-                    logger.Log(TraceLevel.Notice, Stage.General, new { message = "task completed", callingThreadId });
+                    logger.Log(TraceLevel.Info, Stage.General, new { message = "task completed", callingThreadId });
                     tcs.TrySetResult(t.Result);
                 }
 

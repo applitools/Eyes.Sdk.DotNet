@@ -19,7 +19,7 @@ namespace Applitools
             : base(logger, serverUrl)
         {
             logger.Verbose("created");
-            HttpRestClientFactory = new MockHttpRestClientFactory(Logger);
+            HttpRestClientFactory = new MockHttpRestClientFactory();
         }
 
         public List<Uri> CloseBatchRequestUris { get; } = new List<Uri>();
@@ -34,17 +34,10 @@ namespace Applitools
 
     class MockHttpRestClientFactory : IHttpRestClientFactory
     {
-        public MockHttpRestClientFactory(Logger logger)
-        {
-            Logger = logger;
-        }
-
-        public Logger Logger { get; set; }
-
-        public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
+        public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer, Logger logger)
         {
             IHttpClientProvider mockProvider = new MockHttpClientProvider();
-            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, Logger, mockProvider);
+            HttpRestClient mockedHttpRestClient = new HttpRestClient(serverUrl, agentId, jsonSerializer, logger, mockProvider);
             return mockedHttpRestClient;
         }
     }

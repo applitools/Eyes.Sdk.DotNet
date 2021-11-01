@@ -1,6 +1,8 @@
- ## [Eyes.Sdk.Core vNext]
- ### Added
- - Pixel 5 support for UFG [Trello 2707] (https://trello.com/c/C65mK9d5)
+## [Eyes.Sdk.Core vNext]
+### Added
+- Pixel 5 support for UFG [Trello 2707] (https://trello.com/c/C65mK9d5)
+### Fixed
+- `ILogHandler` passed in the constructor will be used everywhere.
 
 ## [Eyes.Appium 4.28] - 2021-08-18
 ### Updated

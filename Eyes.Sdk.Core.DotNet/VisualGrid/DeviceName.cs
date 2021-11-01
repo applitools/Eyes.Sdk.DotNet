@@ -40,6 +40,7 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "Pixel 3 XL")] Pixel_3_XL,
         [EnumMember(Value = "Pixel 4")] Pixel_4,
         [EnumMember(Value = "Pixel 4 XL")] Pixel_4_XL,
+        [EnumMember(Value = "Pixel 5")] Pixel_5,
         
         [EnumMember(Value = "Galaxy A5")] Galaxy_A5,
 

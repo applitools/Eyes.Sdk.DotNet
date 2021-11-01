@@ -275,10 +275,10 @@ namespace Applitools
                         MaxUpOffset = gfr.MaxUpOffset,
                         MaxRightOffset = gfr.MaxRightOffset,
                         MaxDownOffset = gfr.MaxDownOffset,
-                        Top = mr.Top - location.Y,
-                        Left = mr.Left - location.X,
-                        Width = mr.Width,
-                        Height = mr.Height
+                        Top = Math.Max(0, mr.Top - location.Y),
+                        Left = Math.Max(0, mr.Left - location.X),
+                        Width = mr.Width + Math.Min(0, mr.Left - location.X),
+                        Height = mr.Height + Math.Min(0, mr.Top - location.Y)
                     };
                     floatingMatchSettings.Add(fms);
                 }
@@ -295,10 +295,10 @@ namespace Applitools
                 if (vgs.Category is IGetAccessibilityRegionType gar)
                 {
                     AccessibilityRegionByRectangle accessibilityRegion = new AccessibilityRegionByRectangle(
-                        mr.Left - location.X,
-                        mr.Top - location.Y,
-                        mr.Width,
-                        mr.Height,
+                        Math.Max(0, mr.Left - location.X),
+                        Math.Max(0, mr.Top - location.Y),
+                        mr.Width + Math.Min(0, mr.Left - location.X),
+                        mr.Height + Math.Min(0, mr.Top - location.Y),
                         gar.AccessibilityRegionType);
                     accessibilityRegions.Add(accessibilityRegion);
                 }
@@ -312,6 +312,7 @@ namespace Applitools
                     IMutableRegion mr = mutableRegions[6][i];
                     if (mr.Area == 0) continue;
                     VGUserAction userAction = userActions[i];
+                    //RepositionRegion_(location, mr); // THIS MUST NOT BE DONE ON USER ACTIONS
                     Trigger trigger = UserActionToTrigger(mr, userAction);
                     userInputs.Add(trigger);
                 }
@@ -343,10 +344,19 @@ namespace Applitools
                 }
                 else
                 {
-                    list[i].Offset(-location.X, -location.Y);
+                    var region = list[i];
+                    RepositionRegion_(location, region);
                 }
             }
             return list.ToArray();
+        }
+
+        private static void RepositionRegion_(Location location, IMutableRegion region)
+        {
+            region.Width += Math.Min(0, region.Left - location.X);
+            region.Height += Math.Min(0, region.Top - location.Y);
+            region.Left = Math.Max(0, region.Left - location.X);
+            region.Top = Math.Max(0, region.Top - location.Y);
         }
 
         private static void CollectSimpleRegions_(ICheckSettingsInternal checkSettingsInternal,

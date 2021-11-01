@@ -22,10 +22,12 @@ namespace Applitools.Images.Tests
 
         public Eyes Setup()
         {
-            Eyes eyes = new Eyes();
+            var logHandler = TestUtils.InitLogHandler();
+            Logger logger = new Logger();
+            logger.SetLogHandler(logHandler);
+            Eyes eyes = new Eyes(logger);
             eyes.Batch = batch_;
             string testName = TestContext.CurrentContext.Test.Name;
-            TestUtils.SetupLogging(eyes, testName);
             return eyes;
         }
 

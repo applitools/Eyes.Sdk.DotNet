@@ -159,7 +159,7 @@ namespace Applitools
                 statusCode_ = statusCode;
             }
 
-            public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer)
+            public HttpRestClient Create(Uri serverUrl, string agentId, JsonSerializer jsonSerializer, Logger logger)
             {
                 Provider = new MockHttpClientProvider(isNew_, statusCode_, retryAfter_, pollingUrls_);
                 var client = new HttpRestClient(serverUrl, agentId, jsonSerializer, logger_, Provider);

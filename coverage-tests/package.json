@@ -22,7 +22,7 @@
     "run:parallelOld": "cd .. && dotnet test Eyes.Sdk.DotNet_Travis.sln --filter Generated --logger \"junit;LogFilePath=./coverage-test-report.xml\"",
     "run:parallel:selenium": "dotnet test ./test/Selenium --logger \"junit;LogFilePath=./../coverage-test-reportS.xml\" -- NUnit.NumberOfTestWorkers=15",
     "run:parallel:selenium:eg": "dotnet test ./test/Selenium --logger \"junit;LogFilePath=./../coverage-test-reportS.xml\" -- NUnit.NumberOfTestWorkers=20",
-	  "run:parallel:appium": "dotnet test ./test/Appium --logger \"junit;LogFilePath=./../coverage-test-reportA.xml\"",
+    "run:parallel:appium": "dotnet test ./test/Appium --logger \"junit;LogFilePath=./../coverage-test-reportA.xml\"",
     "report:merge": "junit-merge -d test -o coverage-test-report.xml",
     "report": "[ \"$TEST_REPORT_SANDBOX\" = false ] && npm run report:prod || npm run report:sandbox ",
     "report:sandboxOLD": "coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium && coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Appium",
@@ -32,12 +32,12 @@
     "tests": "./dotNet/dotnet_tests.sh"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^2.3.14",
-    "junit-merge": "^2.0.0",
+    "@applitools/sdk-coverage-tests": "^2.3.15",
     "@typescript-eslint/parser": "^2.14.0",
-    "typescript": "^3.7.4"
+    "junit-merge": "^2.0.0",
+    "typescript": "^3.9.10"
   },
   "devDependencies": {
-    "mocha": "^8.2.1"
+    "mocha": "^8.4.0"
   }
 }
