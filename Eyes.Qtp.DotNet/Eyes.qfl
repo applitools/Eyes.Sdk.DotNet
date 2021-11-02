@@ -314,7 +314,7 @@ Class Eyes_
 
 		If width_ > 0 And height_ > 0 Then
 			Set viewportSize = NewSize_(width_, height_)
-		Else If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_FILE Then
+		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_FILE Then
 			Set viewportSize = utils_.GetImageSize(filenameOrUrl_)
 		Else
 			Set viewportSize = utils_.GetImageSize(imageFile_)
@@ -355,7 +355,7 @@ Class Eyes_
 
 		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_FILE Then
 			Set appImage = eyes_.CheckImageFile(filenameOrUrl_, tag)
-		Else If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_URL Then
+		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_URL Then
 			Set appImage = eyes_.CheckImageFile(imageFile_, tag)
 		Else
 			SetTopLevelObjectSize_()
@@ -466,10 +466,10 @@ Class Eyes_
 		Dim imageUrl
 		eyes_.Log "CheckImage_()"
 		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_PM_DEVICE Then
-	    	imageUrl = CaptureRemote_(object)
-									Set CheckImage_ = eyes_.CheckImageAtUrl(imageUrl, tag, replaceLast)
+			imageUrl = CaptureRemote_(object)
+			Set CheckImage_ = eyes_.CheckImageAtUrl(imageUrl, tag, replaceLast)
 		Else
-		    Capture_ object, null
+			Capture_ object, null
 			Set CheckImage_ = eyes_.CheckImageFile(imageFile_, tag, replaceLast)
 		End If
 	End Function
