@@ -339,29 +339,6 @@ Class Eyes_
 		eyesReport.Matches = Null
 	End Sub
 
-	Public Function CheckImageFileOrUrl(tag)
-		Dim logMsg, appImage
-		logMsg = "CheckImageFileOrUrl(" & tag & ")"
-		eyes_.Log logMsg
-		
-		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_FILE Then
-			Set appImage = eyes_.CheckImageFile(filenameOrUrl_, tag)
-		Else If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_URL Then
-			Set appImage = eyes_.CheckImageFile(imageFile_, tag)
-		Else
-			eyes_.Throw "wrong type"
-		End If
-		
-		If appImage.IsMatch Then
-			eyes_.Log logMsg & " => Match"
-		Else
-			eyes_.Log logMsg & " => Mismatch"
-		End If
-	
-		Set CheckObject = appImage
-
-	End Function
-
 	Public Function CheckObject(object, tag)
 		Dim logMsg, appImage
 
