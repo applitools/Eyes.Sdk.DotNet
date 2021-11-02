@@ -365,13 +365,26 @@ Class Eyes_
 	Public Function CheckObject(object, tag)
 		Dim logMsg, appImage
 
-		SetTopLevelObjectSize_()
+		logMsg = "CheckObject("
 
-		logMsg = "CheckObject(" & object.ToString & ", " & tag & ")"
+		If object Is Nothing Then
+			logMsg = logMsg & filenameOrUrl_
+		Else
+			logMsg = logMsg & object.ToString
+		End If
+
+		logMsg = logMsg & ", " & tag & ")"
 		eyes_.Log logMsg
-	
-		Set appImage = CheckImageRetry_(object, tag, -1)
-	
+
+		If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_FILE Then
+			Set appImage = eyes_.CheckImageFile(filenameOrUrl_, tag)
+		Else If topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_URL Then
+			Set appImage = eyes_.CheckImageFile(imageFile_, tag)
+		Else
+			SetTopLevelObjectSize_()
+			Set appImage = CheckImageRetry_(object, tag, -1)
+		End If
+
 		If appImage.IsMatch Then
 			eyes_.Log logMsg & " => Match"
 		Else
