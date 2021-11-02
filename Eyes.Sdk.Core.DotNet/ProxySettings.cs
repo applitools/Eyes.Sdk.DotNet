@@ -67,9 +67,16 @@ namespace Applitools
             if (!string.IsNullOrEmpty(proxyUri.UserInfo))
             {
                 string[] userInfoParts = proxyUri.UserInfo.Split(':');
-                string user = userInfoParts[0];
-                string pass = userInfoParts[1];
-                proxy.Credentials = new NetworkCredential(user, pass);
+                var creds = new NetworkCredential();
+                if (userInfoParts.Length > 0)
+                {
+                    creds.UserName = userInfoParts[0];
+                }
+                if (userInfoParts.Length > 1)
+                {
+                    creds.Password = userInfoParts[1];
+                }
+                proxy.Credentials = creds;
             }
             return proxy;
         }

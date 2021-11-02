@@ -330,12 +330,22 @@ namespace Applitools.Tests
 
             proxy = new ProxySettings("http://user@localhost:8888");
             Assert.AreEqual(new Uri("http://user@localhost:8888"), proxy.Address);
+            Assert.AreEqual("user", ((NetworkCredential)proxy.Credentials).UserName);
+            Assert.AreEqual(string.Empty, ((NetworkCredential)proxy.Credentials).Password);
 
             proxySettings = proxy;
             Assert.AreEqual("http://localhost/", proxySettings.Address);
             Assert.AreEqual(8888, proxySettings.Port);
             Assert.AreEqual("user", proxySettings.Username);
             Assert.AreEqual(null, proxySettings.Password);
+
+            proxySettings = new ProxySettings("http://localhost:8888");
+            proxySettings.Username = "user1";
+            proxySettings.Password = "pass1";
+            proxy = proxySettings;
+            Assert.AreEqual(new Uri("http://user1:pass1@localhost:8888"), proxy.Address);
+            Assert.AreEqual("user1", ((NetworkCredential)proxy.Credentials).UserName);
+            Assert.AreEqual("pass1", ((NetworkCredential)proxy.Credentials).Password);
         }
 
         private static void AssertRegion(IGetRegions[] getRegions, Rectangle expectedRegion, string regionType)
