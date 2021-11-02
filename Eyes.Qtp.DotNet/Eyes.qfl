@@ -327,7 +327,15 @@ Class Eyes_
 		eyes_.Open appName, testName, viewportSize
 
 		' From here onwards the log file is open!
-		eyes_.Log "TopLevelObject = '" & topLevelObject_.ToString & "'"
+		If Not topLevelObject_ Is Nothing Then
+			eyes_.Log "TopLevelObject = '" & topLevelObject_.ToString & "'"
+		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_FILE Then
+			eyes_.Log "File = '" & filenameOrUrl_ & "'"
+		ElseIf topLevelObjectType_ = TOP_LEVEL_OBJECT_TYPE_URL Then
+			eyes_.Log "Url = '" & filenameOrUrl_ & "'"
+		Else
+			eyes_.Log "this must be a mistake"
+		End If
 
 		eyesReport.TestName = testName
 		eyesReport.AppName = appName
