@@ -1,8 +1,33 @@
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Appium 4.29] - 2021-11-02
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.32] - 2021-11-02
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.28] - 2021-11-02
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.56] - 2021-11-02
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.LeanFT 2.34] - 2021-11-02
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.33] - 2021-11-02
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.51] - 2021-11-02
 ### Added
 - Pixel 5 support for UFG [Trello 2707] (https://trello.com/c/C65mK9d5)
 ### Fixed
 - `ILogHandler` passed in the constructor will be used everywhere.
+- `ProxySettings` conversion to `WebProxy` when credentials are involved.
 
 ## [Eyes.Appium 4.28] - 2021-08-18
 ### Updated

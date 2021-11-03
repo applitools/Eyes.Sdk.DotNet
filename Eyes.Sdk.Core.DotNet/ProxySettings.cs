@@ -62,7 +62,23 @@ namespace Applitools
         public static implicit operator WebProxy(ProxySettings proxySettings)
         {
             if (proxySettings == null) return null;
-            return new WebProxy(proxySettings.ProxyUri);
+            Uri proxyUri = proxySettings.ProxyUri;
+            WebProxy proxy = new WebProxy(proxyUri);
+            if (!string.IsNullOrEmpty(proxyUri.UserInfo))
+            {
+                string[] userInfoParts = proxyUri.UserInfo.Split(':');
+                var creds = new NetworkCredential();
+                if (userInfoParts.Length > 0)
+                {
+                    creds.UserName = userInfoParts[0];
+                }
+                if (userInfoParts.Length > 1)
+                {
+                    creds.Password = userInfoParts[1];
+                }
+                proxy.Credentials = creds;
+            }
+            return proxy;
         }
 
         public static implicit operator ProxySettings(WebProxy webProxy)
