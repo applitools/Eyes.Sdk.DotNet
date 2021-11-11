@@ -1,5 +1,4 @@
-﻿using Applitools.Selenium.Scrolling;
-using Applitools.Utils;
+﻿using Applitools.Utils;
 using Applitools.Utils.Images;
 using OpenQA.Selenium;
 using System;
@@ -173,6 +172,9 @@ namespace Applitools.Selenium.Capture
                 { new Size(2160, 1620), new Rectangle[]{ new Rectangle(0, 140, 2160, 1480) } },
 
                 { new Size(1640, 2360), new Rectangle[]{ new Rectangle(0, 149, 1640, 2211) } },
+
+                // iPhone 12
+                { new Size(1170, 2532), new[]{ new Rectangle(0, 290, 1170, 2242) } },
             };
         }
     }
