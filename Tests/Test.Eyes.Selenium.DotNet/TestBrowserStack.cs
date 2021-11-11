@@ -7,6 +7,7 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using OpenQA.Selenium.Safari;
 
 namespace Applitools.Selenium.Tests
 {
@@ -49,6 +50,41 @@ namespace Applitools.Selenium.Tests
             {
                 driver?.Quit();
                 eyes.Abort();
+            }
+        }
+
+        [TestCase(StitchModes.CSS)]
+        [TestCase(StitchModes.Scroll)]
+        public void SafariTest(StitchModes stitchMode)
+        {
+            var eyes = new Eyes
+            {
+                StitchMode = stitchMode
+            };
+            TestUtils.SetupLogging(eyes);
+
+            SafariOptions capability = new SafariOptions();
+            capability.AddAdditionalCapability("os_version", "14");
+            capability.AddAdditionalCapability("device", "iPhone 12");
+            capability.AddAdditionalCapability("real_mobile", "true");
+            capability.AddAdditionalCapability("browserstack.local", "false");
+            capability.AddAdditionalCapability("browserstack.user", TestDataProvider.BROWSERSTACK_USERNAME);
+            capability.AddAdditionalCapability("browserstack.key", TestDataProvider.BROWSERSTACK_ACCESS_KEY);
+
+            RemoteWebDriver driver = null;
+            try
+            {
+                driver = new RemoteWebDriver(new Uri(TestDataProvider.BROWSERSTACK_SELENIUM_URL), capability);
+                driver.Url = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
+                eyes.Open(driver, "TestBrowserStack", $"Test Safari {stitchMode}");
+                eyes.Check("viewport", Target.Window().Fully());
+                eyes.Check("full page", Target.Window().Fully());
+                eyes.Close();
+            }
+            finally
+            {
+                eyes.AbortIfNotClosed();
+                driver?.Quit();
             }
         }
     }
