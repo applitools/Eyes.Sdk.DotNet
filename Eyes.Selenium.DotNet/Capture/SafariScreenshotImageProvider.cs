@@ -174,7 +174,8 @@ namespace Applitools.Selenium.Capture
                 { new Size(1640, 2360), new Rectangle[]{ new Rectangle(0, 149, 1640, 2211) } },
 
                 // iPhone 12
-                { new Size(1170, 2532), new[]{ new Rectangle(0, 290, 1170, 2242) } },
+                { new Size(1170, 2532), new[]{ new Rectangle(0, 291, 1170, 1991)} },
+                { new Size(2532, 1170), new[]{ new Rectangle(141, 150, 2250, 981)} },
             };
         }
     }

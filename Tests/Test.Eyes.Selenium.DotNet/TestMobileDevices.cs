@@ -145,6 +145,10 @@ namespace Applitools.Selenium.Tests
                 // [iPhone 5s, 10.3]
                 yield return new TestCaseData("iPhone 5s Simulator", "10.3", ScreenOrientation.Landscape);
 
+                // resolution: 2532 x 1170 ; viewport: 2250 x 981
+                // [iPhone 12, 14.0]
+                yield return new TestCaseData("iPhone 12 Simulator", "14.0", ScreenOrientation.Landscape);
+
                 #endregion
 
                 #region iPhones, Portrait
@@ -172,6 +176,10 @@ namespace Applitools.Selenium.Tests
                 // resolution: 640 x 1136 ; viewport: 640 x 920
                 // [iPhone 5s, 10.3]
                 yield return new TestCaseData("iPhone 5s Simulator", "10.3", ScreenOrientation.Portrait);
+
+                // resolution: 1170 x 2532 ; viewport: 1170 x 1991
+                // [iPhone 12, 14.0]
+                yield return new TestCaseData("iPhone 12 Simulator", "14.0", ScreenOrientation.Portrait);
 
                 #endregion
             }
@@ -494,6 +502,16 @@ namespace Applitools.Selenium.Tests
                 PixelRatio = 2
             };
 
+            // resolution: 2532 x 1170 ; viewport: 2250 x 981
+            // [iPhone 12, 14.0]
+            chromeSimulationData["iPhone 12 Simulator;14.0;Landscape"] = new ChromeMobileEmulationDeviceSettings
+            {
+                UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+                Width = 844,
+                Height = 390,
+                PixelRatio = 3
+            };
+
             #endregion
 
             #region iPhones, Portrait
@@ -556,6 +574,16 @@ namespace Applitools.Selenium.Tests
                 Width = 320,
                 Height = 460,
                 PixelRatio = 2
+            };
+
+            // resolution: 1170 x 2532 ; viewport: 1170 x 1991
+            // [iPhone 12, 14.0]
+            chromeSimulationData["iPhone 12 Simulator;14.0;Portrait"] = new ChromeMobileEmulationDeviceSettings
+            {
+                UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+                Width = 390,
+                Height = 844,
+                PixelRatio = 3
             };
 
             #endregion

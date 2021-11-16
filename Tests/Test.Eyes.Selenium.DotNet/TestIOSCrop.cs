@@ -50,7 +50,7 @@ namespace Applitools.Selenium.Tests
                 // resolution: 1536 x 2048; viewport: 1536 x 1843
                 // [iPad Air 2, 11.3] [iPad (5th generation), 11.0]
                 yield return new TestCaseData("iPad (5th generation) Simulator", "11.0", ScreenOrientation.Portrait, 1536, 1843);
-              
+
                 // resolution: 1620 x 2160 ; viewport: 1620 x 2020
                 // [iPad (8th generation), 14.4]
                 yield return new TestCaseData("iPad (8th generation) Simulator", "14.4", ScreenOrientation.Portrait, 1620, 2020);
@@ -66,7 +66,7 @@ namespace Applitools.Selenium.Tests
                 // resolution: 2048 x 2732 ; viewport: 2048 x 2592
                 // [iPad Pro (12.9 inch) (2nd generation), 11.0] [iPad Pro (12.9 inch) (2nd generation), 12.0]
                 yield return new TestCaseData("iPad Pro (12.9 inch) (2nd generation) Simulator", "11.0", ScreenOrientation.Portrait, 2048, 2592);
-               
+
                 // resolution: 2048 x 2732 ; viewport: 2048 x 2542
                 // [iPad Pro (12.9 inch) (5th generation), 14.0]
                 yield return new TestCaseData("iPad Pro (12.9 inch) (5th generation) Simulator", "14.0", ScreenOrientation.Portrait, 2048, 2542);
@@ -119,6 +119,10 @@ namespace Applitools.Selenium.Tests
                 // [iPhone 5s, 10.3]
                 yield return new TestCaseData("iPhone 5s Simulator", "10.3", ScreenOrientation.Landscape, 1136, 464);
 
+                // resolution: 2532 x 1170 ; viewport: 2250 x 981
+                // [iPhone 12, 14.0]
+                yield return new TestCaseData("iPhone 12 Simulator", "14.0", ScreenOrientation.Landscape, 2250, 981);
+
                 #endregion
 
                 #region iPhones, Portrait
@@ -146,6 +150,10 @@ namespace Applitools.Selenium.Tests
                 // resolution: 640 x 1136 ; viewport: 640 x 920
                 // [iPhone 5s, 10.3]
                 yield return new TestCaseData("iPhone 5s Simulator", "10.3", ScreenOrientation.Portrait, 640, 920);
+
+                // resolution: 1170 x 2532 ; viewport: 1170 x 1991
+                // [iPhone 12, 14.0]
+                yield return new TestCaseData("iPhone 12 Simulator", "14.0", ScreenOrientation.Portrait, 1170, 1991);
 
                 #endregion
             }
