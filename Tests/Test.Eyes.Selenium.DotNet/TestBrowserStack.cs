@@ -1,5 +1,4 @@
-﻿using Applitools.Selenium.Tests.Utils;
-using Applitools.Tests.Utils;
+﻿using Applitools.Tests.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.IE;

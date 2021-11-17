@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Fixed Safari's cut on iPhone 12 [Trello 2694] (https://trello.com/c/mpjZpL91)
+
 ## [Eyes.Appium 4.29] - 2021-11-02
 ### Updated
 - Match to latest Eyes.Sdk.Core

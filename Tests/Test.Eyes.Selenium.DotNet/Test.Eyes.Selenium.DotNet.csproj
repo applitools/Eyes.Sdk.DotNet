@@ -48,6 +48,8 @@
     <None Remove="Resources\IOSImages\Expected\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 11 Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 12 Simulator 14.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Expected\iPhone 12 Simulator 14.0 Portrait.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Landscape.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Portrait.png" />
     <None Remove="Resources\IOSImages\Expected\iPhone 6 Plus Simulator 11.0 Landscape.png" />
@@ -77,6 +79,8 @@
     <None Remove="Resources\IOSImages\Input\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 11 Simulator 13.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 12 Simulator 14.0 Landscape.png" />
+    <None Remove="Resources\IOSImages\Input\iPhone 12 Simulator 14.0 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Landscape.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Portrait.png" />
     <None Remove="Resources\IOSImages\Input\iPhone 6 Plus Simulator 11.0 Landscape.png" />
@@ -170,6 +174,8 @@
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 11 Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 12 Simulator 14.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 12 Simulator 14.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 5s Simulator 10.3 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Expected\iPhone 6 Plus Simulator 11.0 Landscape.png" />
@@ -199,6 +205,8 @@
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Pro Max Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Pro Simulator 13.0 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 11 Simulator 13.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 12 Simulator 14.0 Landscape.png" />
+    <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 12 Simulator 14.0 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Landscape.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 5s Simulator 10.3 Portrait.png" />
     <EmbeddedResource Include="Resources\IOSImages\Input\iPhone 6 Plus Simulator 11.0 Landscape.png" />
