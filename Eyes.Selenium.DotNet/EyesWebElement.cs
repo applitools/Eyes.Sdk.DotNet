@@ -215,38 +215,6 @@ return getVisibleElementRect(arguments[0])";
          }
          */
 
-        public new Point Location
-        {
-            get
-            {
-                Logger.Verbose(this.ToString());
-                Dictionary<string, object> dictionary = new Dictionary<string, object>() { { "id", Id } };
-                Response response;
-                try
-                {
-                    response = Execute(DriverCommand.GetElementLocation, dictionary);
-                }
-                catch (NullReferenceException)
-                {
-                    response = Execute(DriverCommand.GetElementRect, dictionary);
-                }
-
-                try
-                {
-                    Dictionary<string, object> obj = (Dictionary<string, object>)response.Value;
-
-                    int x = (int)Math.Round(Convert.ToDouble(obj["x"], CultureInfo.InvariantCulture));
-                    int y = (int)Math.Round(Convert.ToDouble(obj["y"], CultureInfo.InvariantCulture));
-                    return new Point(x, y);
-                }
-                catch
-                {
-                    Logger.Log(TraceLevel.Error, Stage.General, 
-                        new { errMsg = "error parsing response: " + response.Value });
-                    throw;
-                }
-            }
-        }
 
         public int ScrollLeft
         {
