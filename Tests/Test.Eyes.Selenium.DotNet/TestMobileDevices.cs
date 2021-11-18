@@ -507,8 +507,8 @@ namespace Applitools.Selenium.Tests
             chromeSimulationData["iPhone 12 Simulator;14.0;Landscape"] = new ChromeMobileEmulationDeviceSettings
             {
                 UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
-                Width = 844,
-                Height = 390,
+                Width = 750,
+                Height = 327,
                 PixelRatio = 3
             };
 
@@ -582,7 +582,7 @@ namespace Applitools.Selenium.Tests
             {
                 UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
                 Width = 390,
-                Height = 844,
+                Height = 664,
                 PixelRatio = 3
             };
 

@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Fixed iPhone 12 Landscape [Trello 2694] (https://trello.com/c/mpjZpL91)
+
 ## [Eyes.Selenium 2.57] - 2021-11-17
 ### Fixed
 - Fixed Safari's cut on iPhone 12 [Trello 2694] (https://trello.com/c/mpjZpL91)
