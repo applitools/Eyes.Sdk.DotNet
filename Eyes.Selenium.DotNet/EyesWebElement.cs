@@ -168,7 +168,7 @@ return getVisibleElementRect(arguments[0])";
         #region Constructors
 
         public EyesWebElement(Logger logger, EyesWebDriver eyesDriver, IWebElement webElement)
-            : base(eyesDriver.RemoteWebDriver, null)
+            : base(eyesDriver.WebDriver, null)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
             ArgumentGuard.NotNull(eyesDriver, nameof(eyesDriver));

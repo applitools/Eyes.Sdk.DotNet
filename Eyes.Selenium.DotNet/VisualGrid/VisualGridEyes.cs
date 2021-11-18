@@ -802,7 +802,7 @@ namespace Applitools.Selenium.VisualGrid
 
             if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
             {
-                ICookieJar cookieJar = driver.RemoteWebDriver.Manage().Cookies;
+                ICookieJar cookieJar = driver.WebDriver.Manage().Cookies;
                 var allCookies = cookieJar?.AllCookies;
                 if (allCookies != null && allCookies.Count > 0)
                 {

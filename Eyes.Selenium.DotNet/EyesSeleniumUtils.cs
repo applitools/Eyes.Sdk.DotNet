@@ -140,7 +140,7 @@ namespace Applitools.Selenium
             return (string)fi.GetValue(element);
         }
 
-        internal static string GetElementIdForDictionary(IWebElement element, RemoteWebDriver remoteWebDriver)
+        internal static string GetElementIdForDictionary(IWebElement element, WebDriver remoteWebDriver)
         {
             return GetElementId(element) + "_" + remoteWebDriver.SessionId;
         }

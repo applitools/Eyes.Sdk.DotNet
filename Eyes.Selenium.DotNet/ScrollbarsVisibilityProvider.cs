@@ -86,7 +86,7 @@ namespace Applitools.Selenium
                     {
                         Frame frame = fc.Pop();
                         frame.ReturnToOriginalOverflow(driver_);
-                        EyesWebDriverTargetLocator.ParentFrame(logger_, driver_.RemoteWebDriver.SwitchTo(), fc);
+                        EyesWebDriverTargetLocator.ParentFrame(logger_, driver_.WebDriver.SwitchTo(), fc);
                     }
                 }
                 else

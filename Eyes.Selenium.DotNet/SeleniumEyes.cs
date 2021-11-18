@@ -221,9 +221,9 @@ namespace Applitools.Selenium
         {
             ArgumentGuard.NotNull(driver, nameof(driver));
 
-            if (driver is RemoteWebDriver remoteDriver)
+            if (driver is WebDriver webDriver)
             {
-                driver_ = new EyesWebDriver(Logger, this, this, remoteDriver);
+                driver_ = new EyesWebDriver(Logger, this, this, webDriver);
             }
             else if (driver is EyesWebDriver eyesDriver)
             {
@@ -236,14 +236,14 @@ namespace Applitools.Selenium
                 throw new EyesException(errMsg);
             }
 
-            Type driverType = driver_.RemoteWebDriver.GetType();
+            Type driverType = driver_.WebDriver.GetType();
             Logger.Log(TraceLevel.Info, Stage.Open, new { driverType });
             MethodInfo getPlatformNameMI = driverType.GetProperty("PlatformName")?.GetGetMethod();
             MethodInfo getSessionDetailsMI = driverType.GetProperty("SessionDetails")?.GetGetMethod();
 
             if (getPlatformNameMI != null)
             {
-                PlatformName = (string)getPlatformNameMI.Invoke(driver_.RemoteWebDriver, null);
+                PlatformName = (string)getPlatformNameMI.Invoke(driver_.WebDriver, null);
             }
             else
             {
@@ -260,7 +260,7 @@ namespace Applitools.Selenium
             }
 
             Logger.Log(TraceLevel.Info, Stage.Open,
-                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId, PlatformName });
+                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.WebDriver.SessionId, PlatformName });
         }
 
         private void InitSessionDetails_(MethodInfo getSessionDetailsMI)
@@ -269,7 +269,7 @@ namespace Applitools.Selenium
             do
             {
                 Thread.Sleep(attempts == 2 ? 0 : 1000);
-                CachedSessionDetails = (IDictionary<string, object>)getSessionDetailsMI.Invoke(driver_.RemoteWebDriver, null);
+                CachedSessionDetails = (IDictionary<string, object>)getSessionDetailsMI.Invoke(driver_.WebDriver, null);
             } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
 
             if (CachedSessionDetails == null)
@@ -279,7 +279,7 @@ namespace Applitools.Selenium
                     {
                         message = "could not get viewportRect in session details from appium server! " +
                                   "Using default device size instead, this might create incorrect images.",
-                        sessionDetails = getSessionDetailsMI.Invoke(driver_.RemoteWebDriver, null)
+                        sessionDetails = getSessionDetailsMI.Invoke(driver_.WebDriver, null)
                     });
             }
         }
@@ -331,7 +331,7 @@ namespace Applitools.Selenium
             PositionProvider = GetPositionProvider(Logger, StitchMode,
                 jsExecutor_, userDefinedSRE_, userAgent_);
 
-            var element = driver_.RemoteWebDriver.FindElement(selector);
+            var element = driver_.WebDriver.FindElement(selector);
             return new InRegion(driver_, InRegionBase(() => new Rectangle(element.Location, element.Size)));
         }
 
@@ -1460,7 +1460,7 @@ namespace Applitools.Selenium
         internal static IPositionProvider GetPositionProviderForScrollRootElement_(Logger logger, EyesWebDriver driver, StitchModes stitchMode, UserAgent ua, IWebElement scrollRootElement)
         {
             IPositionProvider positionProvider = driver.Eyes.positionProviderFactory_.TryGetPositionProviderForElement(
-                scrollRootElement, stitchMode, driver.RemoteWebDriver, logger);
+                scrollRootElement, stitchMode, driver.WebDriver, logger);
             if (positionProvider == null)
             {
                 logger.Verbose("creating a new position provider.");
@@ -1574,7 +1574,7 @@ namespace Applitools.Selenium
 
         protected override object GetAgentSetup()
         {
-            RemoteWebDriver remoteWebDriver = driver_.RemoteWebDriver;
+            WebDriver remoteWebDriver = driver_.WebDriver;
             Assembly eyesSeleniumAsm = this.GetType().Assembly;
             Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
             string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
