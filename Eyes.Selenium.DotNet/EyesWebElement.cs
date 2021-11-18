@@ -186,7 +186,7 @@ return getVisibleElementRect(arguments[0])";
                 throw new EyesException(errMsg);
             }
 
-            PropertyInfo fi = typeof(WebElement).GetProperty("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo fi = typeof(WebElement).GetField ("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
             string id = (string)fi.GetValue(webElement);
             fi.SetValue(this, id);
         }

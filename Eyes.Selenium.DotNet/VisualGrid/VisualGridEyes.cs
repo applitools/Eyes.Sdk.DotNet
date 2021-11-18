@@ -240,9 +240,9 @@ namespace Applitools.Selenium.VisualGrid
             {
                 jsExecutor_ = jsExecutor;
             }
-            if (webDriver is RemoteWebDriver remoteDriver)
+            if (webDriver is WebDriver wDriver)
             {
-                driver_ = new EyesWebDriver(Logger, null, this, remoteDriver);
+                driver_ = new EyesWebDriver(Logger, null, this, wDriver);
             }
             url_ = webDriver.Url;
         }

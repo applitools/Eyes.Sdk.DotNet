@@ -54,9 +54,7 @@ namespace Applitools.Selenium
             if (!isAppiumDriver)
             {
                 executeCommandMI_ = driverType.GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
-                var commandExecutorProperty = driverType.GetProperty("CommandExecutor", BindingFlags.Instance | BindingFlags.NonPublic);
-                var commandExecutor = (ICommandExecutor)commandExecutorProperty.GetValue(driver);
-                commandExecutor.TryAddCommand("getSession", new HttpCommandInfo("GET", "/session/{sessionId}/"));
+                driver.CommandExecutor.TryAddCommand("getSession", new HttpCommandInfo("GET", "/session/{sessionId}/"));
             }
 
             Logger_.Verbose("Driver is {0}", driver.GetType());

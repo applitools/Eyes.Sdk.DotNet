@@ -179,9 +179,9 @@ namespace Applitools.Selenium.Tests
             string seleniumServerUrl = SetupSeleniumServer(testName);
             bool isWellFormedUri = Uri.IsWellFormedUriString(seleniumServerUrl, UriKind.Absolute);
 
-            RemoteWebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
+            WebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
             {
-                RemoteWebDriver rwDriver = null;
+                WebDriver rwDriver = null;
                 if (isWellFormedUri)
                 {
                     try
@@ -204,12 +204,12 @@ namespace Applitools.Selenium.Tests
                     if (options_.BrowserName.Equals(BrowserNames.Chrome, StringComparison.OrdinalIgnoreCase) ||
                         options_.BrowserName.Equals(BrowserNames.Firefox, StringComparison.OrdinalIgnoreCase))
                     {
-                        rwDriver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
+                        rwDriver = (WebDriver)SeleniumUtils.CreateWebDriver(options_);
                     }
                 }
                 else
                 {
-                    rwDriver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
+                    rwDriver = (WebDriver)SeleniumUtils.CreateWebDriver(options_);
                 }
 
                 return rwDriver;
