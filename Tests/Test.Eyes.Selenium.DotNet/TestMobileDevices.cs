@@ -614,7 +614,8 @@ namespace Applitools.Selenium.Tests
             HttpRestClient client = new HttpRestClient(new Uri("https://saucelabs.com/"));
             client.SetBasicAuth(TestDataProvider.SAUCE_USERNAME, TestDataProvider.SAUCE_ACCESS_KEY);
             PassedResult passed = new PassedResult(result.IsPassed);
-            client.PutJson($"rest/v1/{TestDataProvider.SAUCE_USERNAME}/jobs/{((SeleniumEyes)eyes.activeEyes_).GetDriver().WebDriver.SessionId}", passed);
+            string sessionId = ((SeleniumEyes)eyes.activeEyes_).GetDriver().WebDriver.SessionId;
+            client.PutJson($"rest/v1/{TestDataProvider.SAUCE_USERNAME}/jobs/{sessionId}", passed);
         }
 
         private static string GetTestName_(string deviceName, string platformVersion, ScreenOrientation deviceOrientation, string page)

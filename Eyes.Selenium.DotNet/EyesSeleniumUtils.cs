@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Applitools.Selenium.Capture;
-using Applitools.Selenium.Fluent;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
@@ -136,13 +135,13 @@ namespace Applitools.Selenium
 
         internal static string GetElementId(IWebElement element)
         {
-            FieldInfo fi = typeof(WebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo fi = element.GetType().GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
             return (string)fi.GetValue(element);
         }
 
-        internal static string GetElementIdForDictionary(IWebElement element, WebDriver remoteWebDriver)
+        internal static string GetElementIdForDictionary(IWebElement element, IWebDriver remoteWebDriver)
         {
-            return GetElementId(element) + "_" + remoteWebDriver.SessionId;
+            return GetElementId(element) + "_" + ((IHasSessionId)remoteWebDriver).SessionId;
         }
 
         private static bool SetBrowserSize_(Logger logger, IWebDriver driver, Size requiredSize)

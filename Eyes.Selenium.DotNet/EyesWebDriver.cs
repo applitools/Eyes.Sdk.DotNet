@@ -16,7 +16,7 @@ namespace Applitools.Selenium
 {
     public sealed class EyesWebDriver :
         IHasCapabilities,
-        IJavaScriptExecutor, ISearchContext, ITakesScreenshot, IWebDriver, IActionExecutor,
+        ISearchContext, ITakesScreenshot, IWebDriver, IActionExecutor,
         IEyesJsExecutor
     {
         #region Fields
@@ -25,12 +25,12 @@ namespace Applitools.Selenium
         private ITargetLocator targetLocator_;
         private readonly FrameChain frameChain_;
         private Dictionary<string, IWebElement> elementsFoundSinceLastNavigation_ = new Dictionary<string, IWebElement>();
-        private MethodInfo executeCommandMI_;
+        private IEyesWebDriverAdapter eyesWebDriverAdapter_;
         #endregion
 
         #region Constructors
 
-        internal EyesWebDriver(Logger logger, SeleniumEyes eyes, IUserActionsEyes userActionEyes, WebDriver driver)
+        internal EyesWebDriver(Logger logger, SeleniumEyes eyes, IUserActionsEyes userActionEyes, IWebDriver driver)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
             //ArgumentGuard.NotNull(eyes, nameof(eyes));
@@ -41,7 +41,6 @@ namespace Applitools.Selenium
             UserActionsEyes = userActionEyes;
             WebDriver = driver;
             frameChain_ = new FrameChain(logger);
-            executeCommandMI_ = driver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
             var driverType = driver.GetType();
             bool isAppiumDriver = false;
             var dt = driverType;
@@ -53,8 +52,7 @@ namespace Applitools.Selenium
 
             if (!isAppiumDriver)
             {
-                executeCommandMI_ = driverType.GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
-                driver.CommandExecutor.TryAddCommand("getSession", new HttpCommandInfo("GET", "/session/{sessionId}/"));
+                eyesWebDriverAdapter_.TryAddCommand(driver, "getSession", "GET", "/session/{sessionId}/");
             }
 
             Logger_.Verbose("Driver is {0}", driver.GetType());
@@ -72,7 +70,7 @@ namespace Applitools.Selenium
         internal SeleniumEyes Eyes { get; private set; }
         internal IUserActionsEyes UserActionsEyes { get; private set; }
 
-        public WebDriver WebDriver { get; internal set; }
+        public IWebDriver WebDriver { get; internal set; }
 
         public string Title
         {
@@ -96,7 +94,7 @@ namespace Applitools.Selenium
 
         public ICapabilities Capabilities
         {
-            get { return WebDriver.Capabilities; }
+            get { return ((IHasCapabilities)WebDriver).Capabilities; }
         }
 
         public string Url
@@ -111,7 +109,7 @@ namespace Applitools.Selenium
 
         private Logger Logger_ { get; set; }
 
-        public bool IsActionExecutor => WebDriver.IsActionExecutor;
+        public bool IsActionExecutor => ((IActionExecutor)WebDriver).IsActionExecutor;
 
         #endregion
 
@@ -143,7 +141,7 @@ namespace Applitools.Selenium
             // TODO - Daniel, Support additional implementation of web element
             foreach (IWebElement element in foundWebElementsList)
             {
-                if (element is WebElement && !(element is EyesWebElement))
+                if (element is IWebElement && !(element is EyesWebElement))
                 {
                     EyesWebElement erwe = new EyesWebElement(Logger_, this, element);
                     eyesWebElementsList.Add(erwe);
@@ -165,7 +163,7 @@ namespace Applitools.Selenium
             // TODO - Daniel, support additional implementations of WebElement.
             IWebElement webElement = WebDriver.FindElement(by);
             string id;
-            if (webElement is WebElement WebElement && !(webElement is EyesWebElement))
+            if (webElement is IWebElement WebElement && !(webElement is EyesWebElement))
             {
                 webElement = new EyesWebElement(Logger_, this, WebElement);
             }
@@ -337,35 +335,19 @@ namespace Applitools.Selenium
 
         public object ExecuteScript(string script, params object[] args)
         {
-            return WebDriver.ExecuteScript(script, args);
+            return ((IJavaScriptExecutor)WebDriver).ExecuteScript(script, args);
         }
 
         public object ExecuteAsyncScript(string script, params object[] args)
         {
-            return WebDriver.ExecuteAsyncScript(script, args);
+            return ((IJavaScriptExecutor)WebDriver).ExecuteAsyncScript(script, args);
         }
 
         internal IDictionary<string, object> SessionDetails
         {
             get
             {
-                try
-                {
-                    var response = (Response)executeCommandMI_.Invoke(WebDriver, new object[] { "getSession", null });
-                    if (response == null || response.Status != WebDriverResult.Success) return null;
-                    if (!(response.Value is IDictionary<string, object> dict)) return null;
-                    return dict.Where(entry =>
-                    {
-                        string key = entry.Key;
-                        object value = entry.Value;
-                        return !string.IsNullOrEmpty(key) && value != null && !string.IsNullOrEmpty(Convert.ToString(value));
-                    })
-                    .ToDictionary(entry => entry.Key, entry => entry.Value);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
+                return eyesWebDriverAdapter_.GetSessionDetails(this);
             }
         }
 
@@ -420,7 +402,7 @@ namespace Applitools.Selenium
 
         public void PerformActions(IList<ActionSequence> actionSequenceList)
         {
-            WebDriver.PerformActions(actionSequenceList);
+            ((IActionExecutor)WebDriver).PerformActions(actionSequenceList);
             foreach (ActionSequence actionSequence in actionSequenceList)
             {
                 Dictionary<string, object> actions = actionSequence.ToDictionary();
@@ -441,7 +423,7 @@ namespace Applitools.Selenium
                         int x = (int)actionDictionary["x"];
                         int y = (int)actionDictionary["y"];
                         IDictionary<string, object> originDict = (IDictionary<string, object>)actionDictionary["origin"];
-                        string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + WebDriver.SessionId;
+                        string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + ((IHasSessionId)WebDriver).SessionId;
                         if (elementsFoundSinceLastNavigation_.TryGetValue(elementId, out IWebElement element))
                         {
                             UserActionsEyes.AddMouseTrigger(MouseAction.Move, element, new Point(x, y));
@@ -457,12 +439,7 @@ namespace Applitools.Selenium
 
         public void ResetInputState()
         {
-            WebDriver.ResetInputState();
-        }
-
-        public object ExecuteScript(PinnedScript script, params object[] args)
-        {
-            throw new NotImplementedException();
+            ((IActionExecutor)WebDriver).ResetInputState();
         }
 
         #endregion

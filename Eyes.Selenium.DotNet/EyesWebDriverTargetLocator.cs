@@ -39,11 +39,11 @@ namespace Applitools.Selenium
         public IWebElement ActiveElement()
         {
             IWebElement element = targetLocator_.ActiveElement();
-            if (!(element is WebElement WebElement))
+            if (!(element is IWebElement webElement))
             {
                 throw new EyesException("Not a remote web element!");
             }
-            return new EyesWebElement(logger_, driver_, WebElement);
+            return new EyesWebElement(logger_, driver_, webElement);
         }
 
         public IAlert Alert()
