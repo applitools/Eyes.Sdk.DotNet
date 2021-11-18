@@ -3,11 +3,10 @@ using Applitools.Tests.Utils;
 using Applitools.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Enums;
+//using OpenQA.Selenium.Appium;
+//using OpenQA.Selenium.Appium.Enums;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
-using OpenQA.Selenium.Remote;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -230,31 +229,31 @@ namespace Applitools.Selenium.Tests
             }
         }
 
-        private static IWebDriver InitOnSaucelabs(string deviceName, string platformVersion, ScreenOrientation deviceOrientation, string testName, string platformName, string browserName)
-        {
-            AppiumOptions options = new AppiumOptions();
+        //private static IWebDriver InitOnSaucelabs(string deviceName, string platformVersion, ScreenOrientation deviceOrientation, string testName, string platformName, string browserName)
+        //{
+        //    AppiumOptions options = new AppiumOptions();
 
-            options.AddAdditionalOption(MobileCapabilityType.PlatformName, platformName);
-            options.AddAdditionalOption(MobileCapabilityType.PlatformVersion, platformVersion);
-            options.AddAdditionalOption(MobileCapabilityType.DeviceName, deviceName);
-            options.AddAdditionalOption(MobileCapabilityType.BrowserName, browserName);
-            options.AddAdditionalOption("deviceOrientation", deviceOrientation.ToString().ToLower());
+        //    options.AddAdditionalOption(MobileCapabilityType.PlatformName, platformName);
+        //    options.AddAdditionalOption(MobileCapabilityType.PlatformVersion, platformVersion);
+        //    options.AddAdditionalOption(MobileCapabilityType.DeviceName, deviceName);
+        //    options.AddAdditionalOption(MobileCapabilityType.BrowserName, browserName);
+        //    options.AddAdditionalOption("deviceOrientation", deviceOrientation.ToString().ToLower());
 
-            options.AddAdditionalOption("username", TestDataProvider.SAUCE_USERNAME);
-            options.AddAdditionalOption("accesskey", TestDataProvider.SAUCE_ACCESS_KEY);
+        //    options.AddAdditionalOption("username", TestDataProvider.SAUCE_USERNAME);
+        //    options.AddAdditionalOption("accesskey", TestDataProvider.SAUCE_ACCESS_KEY);
 
-            options.AddAdditionalOption("name", testName);
-            options.AddAdditionalOption("idleTimeout", 360);
+        //    options.AddAdditionalOption("name", testName);
+        //    options.AddAdditionalOption("idleTimeout", 360);
 
-            options.PlatformName = platformName;
+        //    options.PlatformName = platformName;
 
-            IWebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
-            {
-                IWebDriver driver = new RemoteWebDriver(new Uri(TestDataProvider.SAUCE_SELENIUM_URL), options.ToCapabilities(), TimeSpan.FromMinutes(4));
-                return driver;
-            });
-            return webDriver;
-        }
+        //    IWebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
+        //    {
+        //        IWebDriver driver = new RemoteWebDriver(new Uri(TestDataProvider.SAUCE_SELENIUM_URL), options.ToCapabilities(), TimeSpan.FromMinutes(4));
+        //        return driver;
+        //    });
+        //    return webDriver;
+        //}
 
         private static IWebDriver InitEyesSimulation_(string deviceName, string platformVersion, ScreenOrientation deviceOrientation, string testName, string platformName, string browserName)
         {
