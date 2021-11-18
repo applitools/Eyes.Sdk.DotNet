@@ -1,10 +1,8 @@
 ﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -14,11 +12,9 @@ using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium
 {
-    public class EyesRemoteWebElement : RemoteWebElement,
-        IWebElement, ISearchContext, IFindsByLinkText, IFindsById, IFindsByName,
-        IFindsByTagName, IFindsByClassName, IFindsByXPath, IFindsByPartialLinkText,
-        IFindsByCssSelector, IWrapsDriver, ILocatable, IWrapsElement,
-        IEquatable<EyesRemoteWebElement>, IEquatable<IWebElement>
+    public class EyesWebElement : WebElement,
+        IWebElement, ISearchContext, IWrapsDriver, ILocatable, IWrapsElement,
+        IEquatable<EyesWebElement>, IEquatable<IWebElement>
     {
         #region Fields
 
@@ -165,13 +161,13 @@ namespace Applitools.Selenium
 return getVisibleElementRect(arguments[0])";
 
         private EyesWebDriver eyesDriver_;
-        private RemoteWebElement webElement_;
+        private WebElement webElement_;
 
         #endregion
 
         #region Constructors
 
-        public EyesRemoteWebElement(Logger logger, EyesWebDriver eyesDriver, IWebElement webElement)
+        public EyesWebElement(Logger logger, EyesWebDriver eyesDriver, IWebElement webElement)
             : base(eyesDriver.RemoteWebDriver, null)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
@@ -180,17 +176,17 @@ return getVisibleElementRect(arguments[0])";
 
             Logger = logger;
             eyesDriver_ = eyesDriver;
-            webElement_ = webElement as RemoteWebElement;
+            webElement_ = webElement as WebElement;
 
             if (webElement_ == null)
             {
-                string errMsg = "The input web element is not a RemoteWebElement ({0})"
+                string errMsg = "The input web element is not a WebElement ({0})"
                     .Fmt(webElement.GetType().Name);
                 Logger.Log(TraceLevel.Error, Stage.General, new { errMsg });
                 throw new EyesException(errMsg);
             }
 
-            FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
+            PropertyInfo fi = typeof(WebElement).GetProperty("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
             string id = (string)fi.GetValue(webElement);
             fi.SetValue(this, id);
         }
@@ -614,128 +610,40 @@ return getVisibleElementRect(arguments[0])";
                 WrapElements_(webElement_.FindElements(by)));
         }
 
-        public new IWebElement FindElementById(string id)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementById(id));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsById(string id)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsById(id)));
-        }
-
-        public new IWebElement FindElementByLinkText(string linkText)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByLinkText(linkText));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByLinkText(string linkText)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByLinkText(linkText)));
-        }
-
-        public new IWebElement FindElementByName(string name)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByName(name));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByName(string name)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByName(name)));
-        }
-
-        public new IWebElement FindElementByTagName(string tagName)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByTagName(tagName));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByTagName(string tagName)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByTagName(tagName)));
-        }
-
-        public new IWebElement FindElementByClassName(string className)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByClassName(className));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByClassName(string className)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByClassName(className)));
-        }
-
-        public new IWebElement FindElementByXPath(string xpath)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByXPath(xpath));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByXPath(string xpath)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByXPath(xpath)));
-        }
-
-        public new IWebElement FindElementByPartialLinkText(string partialLinkText)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByPartialLinkText(partialLinkText));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByPartialLinkText(string partialLinkText)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByPartialLinkText(partialLinkText)));
-        }
-
-        public new IWebElement FindElementByCssSelector(string cssSelector)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByCssSelector(cssSelector));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByCssSelector(string cssSelector)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByCssSelector(cssSelector)));
-        }
-
         public override string ToString()
         {
 #if DEBUG
             try
             {
-                return $"EyesRemoteWebElement: {base.TagName} (id = {base.Id})";
+                return $"EyesWebElement: {base.TagName} (id = {Id})";
             }
             catch
             {
-                return $"EyesRemoteWebElement: (id = {base.Id})";
+                return $"EyesWebElement: (id = {Id})";
             }
 #else
-            return $"EyesRemoteWebElement: (id = {base.Id})";
+            return $"EyesWebElement: (id = {Id})";
 #endif
         }
 
         /// <summary>
-        /// For RemoteWebElement object, the function returns an 
-        /// EyesRemoteWebElement object. For all other types of WebElement, 
+        /// For WebElement object, the function returns an 
+        /// EyesWebElement object. For all other types of WebElement, 
         /// the function returns the original object.
         /// </summary>
         private IWebElement WrapElementIfRemote_(IWebElement elementToWrap)
         {
-            if (elementToWrap is RemoteWebElement remoteWebElement)
+            if (elementToWrap is WebElement WebElement)
             {
-                return new EyesRemoteWebElement(Logger, eyesDriver_, elementToWrap);
+                return new EyesWebElement(Logger, eyesDriver_, elementToWrap);
             }
 
             return elementToWrap;
         }
 
         /// <summary>
-        /// For RemoteWebElement object, the function returns an 
-        /// EyesRemoteWebElement object. For all other types of WebElement, 
+        /// For WebElement object, the function returns an 
+        /// EyesWebElement object. For all other types of WebElement, 
         /// the function returns the original object.
         /// </summary>
         /// <param name="elementsToWrap"></param>
@@ -754,14 +662,14 @@ return getVisibleElementRect(arguments[0])";
             return wrappedElementsList;
         }
 
-        public bool Equals(EyesRemoteWebElement other)
+        public bool Equals(EyesWebElement other)
         {
             return this.Id == other.Id;
         }
 
         public bool Equals(IWebElement other)
         {
-            if (other is EyesRemoteWebElement erwe)
+            if (other is EyesWebElement erwe)
             {
                 return this.Equals(erwe);
             }
@@ -770,7 +678,7 @@ return getVisibleElementRect(arguments[0])";
 
         public override bool Equals(object obj)
         {
-            if (obj is EyesRemoteWebElement erwe)
+            if (obj is EyesWebElement erwe)
             {
                 return this.Equals(erwe);
             }

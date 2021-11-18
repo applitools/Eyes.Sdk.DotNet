@@ -136,7 +136,7 @@ namespace Applitools.Selenium
 
         internal static string GetElementId(IWebElement element)
         {
-            FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo fi = typeof(WebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
             return (string)fi.GetValue(element);
         }
 
@@ -345,7 +345,7 @@ namespace Applitools.Selenium
         public static Rectangle GetElementBounds(IWebElement element)
         {
             Rectangle r;
-            if (element is EyesRemoteWebElement eyesElement)
+            if (element is EyesWebElement eyesElement)
             {
                 r = eyesElement.GetClientBounds();
             }
@@ -491,7 +491,7 @@ namespace Applitools.Selenium
         public static Rectangle GetVisibleElementBounds(IWebElement element)
         {
             Rectangle r;
-            if (element is EyesRemoteWebElement eyesElement)
+            if (element is EyesWebElement eyesElement)
             {
                 r = eyesElement.GetVisibleElementRect();
             }

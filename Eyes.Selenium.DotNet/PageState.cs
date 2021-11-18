@@ -90,7 +90,7 @@ namespace Applitools.Selenium
             IPositionProvider positionProvider = SeleniumEyes.GetPositionProviderForScrollRootElement_(logger_, driver_,
                 stitchMode_, userAgent_, currentFrameSRE);
 
-            Rectangle frameRect = EyesRemoteWebElement.GetClientBoundsWithoutBorders(frameElement, driver_, logger_);
+            Rectangle frameRect = EyesWebElement.GetClientBoundsWithoutBorders(frameElement, driver_, logger_);
             if (stitchMode_ == StitchModes.Scroll)
             {
                 Point pageScrollPosition = positionProvider.GetCurrentPosition();
@@ -110,7 +110,7 @@ namespace Applitools.Selenium
             frame.ScrollRootElement = rootElement;
             SaveCurrentFrameState_(frameStates, driver_, rootElement);
             TryHideScrollbarsInFrame(config, driver_, rootElement);
-            frame.ScrollRootElementInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(rootElement, driver_, logger_);
+            frame.ScrollRootElementInnerBounds = EyesWebElement.GetClientBoundsWithoutBorders(rootElement, driver_, logger_);
         }
 
         private static void TryHideScrollbarsInFrame(Configuration config, EyesWebDriver driver, IWebElement rootElement)

@@ -39,11 +39,11 @@ namespace Applitools.Selenium
         public IWebElement ActiveElement()
         {
             IWebElement element = targetLocator_.ActiveElement();
-            if (!(element is RemoteWebElement remoteWebElement))
+            if (!(element is WebElement WebElement))
             {
                 throw new EyesException("Not a remote web element!");
             }
-            return new EyesRemoteWebElement(logger_, driver_, remoteWebElement);
+            return new EyesWebElement(logger_, driver_, WebElement);
         }
 
         public IAlert Alert()
@@ -104,9 +104,9 @@ namespace Applitools.Selenium
         private void WillSwitchToFrame_(IWebElement targetFrame)
         {
             ArgumentGuard.NotNull(targetFrame, nameof(targetFrame));
-            if (!(targetFrame is EyesRemoteWebElement eyesFrame))
+            if (!(targetFrame is EyesWebElement eyesFrame))
             {
-                eyesFrame = new EyesRemoteWebElement(logger_, driver_, targetFrame);
+                eyesFrame = new EyesWebElement(logger_, driver_, targetFrame);
             }
 
             Size ds = targetFrame.Size;
@@ -261,6 +261,11 @@ namespace Applitools.Selenium
             {
                 scrollPositionProvider_?.RestoreState(defaultContentPositionMemento_);
             }
+        }
+
+        public IWebDriver NewWindow(WindowType typeHint)
+        {
+            throw new NotImplementedException();
         }
     }
 

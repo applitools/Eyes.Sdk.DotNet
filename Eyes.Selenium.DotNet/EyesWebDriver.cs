@@ -16,11 +16,6 @@ namespace Applitools.Selenium
 {
     public sealed class EyesWebDriver :
         IHasCapabilities,
-#pragma warning disable CS0618 // Type or member is obsolete
-        IHasInputDevices,
-#pragma warning restore CS0618 // Type or member is obsolete
-        IFindsByClassName, IFindsByCssSelector,
-        IFindsById, IFindsByLinkText, IFindsByName, IFindsByTagName, IFindsByXPath,
         IJavaScriptExecutor, ISearchContext, ITakesScreenshot, IWebDriver, IActionExecutor,
         IEyesJsExecutor
     {
@@ -61,7 +56,7 @@ namespace Applitools.Selenium
                 executeCommandMI_ = driverType.GetMethod("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
                 var commandExecutorProperty = driverType.GetProperty("CommandExecutor", BindingFlags.Instance | BindingFlags.NonPublic);
                 var commandExecutor = (ICommandExecutor)commandExecutorProperty.GetValue(driver);
-                commandExecutor.CommandInfoRepository.TryAddCommand("getSession", new CommandInfo("GET", "/session/{sessionId}/"));
+                commandExecutor.TryAddCommand("getSession", new HttpCommandInfo("GET", "/session/{sessionId}/"));
             }
 
             Logger_.Verbose("Driver is {0}", driver.GetType());
@@ -99,18 +94,6 @@ namespace Applitools.Selenium
         public string CurrentWindowHandle
         {
             get { return RemoteWebDriver.CurrentWindowHandle; }
-        }
-
-        [Obsolete]
-        public IMouse Mouse
-        {
-            get { return new EyesMouse(Logger_, this, RemoteWebDriver.Mouse); }
-        }
-
-        [Obsolete]
-        public IKeyboard Keyboard
-        {
-            get { return new EyesKeyboard(Logger_, this, RemoteWebDriver.Keyboard); }
         }
 
         public ICapabilities Capabilities
@@ -162,9 +145,9 @@ namespace Applitools.Selenium
             // TODO - Daniel, Support additional implementation of web element
             foreach (IWebElement element in foundWebElementsList)
             {
-                if (element is RemoteWebElement && !(element is EyesRemoteWebElement))
+                if (element is WebElement && !(element is EyesWebElement))
                 {
-                    EyesRemoteWebElement erwe = new EyesRemoteWebElement(Logger_, this, element);
+                    EyesWebElement erwe = new EyesWebElement(Logger_, this, element);
                     eyesWebElementsList.Add(erwe);
                     string id = EyesSeleniumUtils.GetElementIdForDictionary(element, RemoteWebDriver);
                     elementsFoundSinceLastNavigation_[id] = erwe;
@@ -184,9 +167,9 @@ namespace Applitools.Selenium
             // TODO - Daniel, support additional implementations of WebElement.
             IWebElement webElement = RemoteWebDriver.FindElement(by);
             string id;
-            if (webElement is RemoteWebElement remoteWebElement && !(webElement is EyesRemoteWebElement))
+            if (webElement is WebElement WebElement && !(webElement is EyesWebElement))
             {
-                webElement = new EyesRemoteWebElement(Logger_, this, remoteWebElement);
+                webElement = new EyesWebElement(Logger_, this, WebElement);
             }
             else if (webElement == null)
             {
@@ -477,6 +460,11 @@ namespace Applitools.Selenium
         public void ResetInputState()
         {
             RemoteWebDriver.ResetInputState();
+        }
+
+        public object ExecuteScript(PinnedScript script, params object[] args)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
