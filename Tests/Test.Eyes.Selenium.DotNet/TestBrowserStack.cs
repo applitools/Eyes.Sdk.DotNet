@@ -21,7 +21,7 @@ namespace Applitools.Selenium.Tests
 
             InternetExplorerOptions options = new InternetExplorerOptions();
             options.BrowserVersion = "11.0";
-            options.AddAdditionalCapability("resolution", "1024x768");
+            options.AddAdditionalOption("resolution", "1024x768");
 
             Dictionary<string, object> browserstackOptions = new Dictionary<string, object>();
             browserstackOptions.Add("os", "Windows");
@@ -29,7 +29,7 @@ namespace Applitools.Selenium.Tests
             browserstackOptions.Add("userName", TestDataProvider.BROWSERSTACK_USERNAME);
             browserstackOptions.Add("accessKey", TestDataProvider.BROWSERSTACK_ACCESS_KEY);
 
-            options.AddAdditionalCapability("bstack:options", browserstackOptions, true);
+            options.AddAdditionalOption("bstack:options", browserstackOptions);
 
 
             IWebDriver driver = null;

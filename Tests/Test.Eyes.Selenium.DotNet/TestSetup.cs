@@ -369,13 +369,13 @@ namespace Applitools.Selenium.Tests
 
                     if (options_ is OpenQA.Selenium.IE.InternetExplorerOptions ieOptions)
                     {
-                        ieOptions.AddAdditionalCapability("sauce:options", sauceOptions, true);
+                        ieOptions.AddAdditionalOption("sauce:options", sauceOptions);
                         return TestDataProvider.SAUCE_SELENIUM_URL;
                     }
 
                     if (options_ is OpenQA.Selenium.Safari.SafariOptions safariOptions)
                     {
-                        safariOptions.AddAdditionalCapability("sauce:options", sauceOptions);
+                        safariOptions.AddAdditionalOption("sauce:options", sauceOptions);
                         return TestDataProvider.SAUCE_SELENIUM_URL;
                     }
 
@@ -397,7 +397,7 @@ namespace Applitools.Selenium.Tests
                     {
                         chromeOptions.UseSpecCompliantProtocol = true;
                         chromeOptions.BrowserVersion = "77.0";
-                        chromeOptions.AddAdditionalCapability("sauce:options", sauceOptions, true);
+                        chromeOptions.AddAdditionalOption("sauce:options", sauceOptions);
                     }
                 }
                 else if (seleniumServerUrl.ToLower().Contains("hub-cloud.browserstack.com"))
@@ -412,7 +412,7 @@ namespace Applitools.Selenium.Tests
                     {
                         chromeOptions.UseSpecCompliantProtocol = true;
                         chromeOptions.BrowserVersion = "77.0";
-                        chromeOptions.AddAdditionalCapability("bstack:options", browserstackOptions, true);
+                        chromeOptions.AddAdditionalOption("bstack:options", browserstackOptions);
                     }
                 }
             }
