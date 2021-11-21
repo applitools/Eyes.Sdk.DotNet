@@ -1,7 +1,7 @@
 ﻿using Applitools.Capture;
 using Applitools.Utils;
 using Applitools.Utils.Images;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System.Drawing;
 
 namespace Applitools.Selenium.Capture

@@ -1,5 +1,5 @@
 ﻿using Applitools.Selenium.Scrolling;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System.Drawing;
 using Applitools.Utils;
 

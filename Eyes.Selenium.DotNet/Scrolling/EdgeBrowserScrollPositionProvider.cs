@@ -1,5 +1,5 @@
 ﻿using Applitools.Utils;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 
 namespace Applitools.Selenium.Scrolling
 {

@@ -1,12 +1,11 @@
-﻿namespace Applitools.Selenium.Scrolling
-{
-    using Applitools.Utils;
-    using OpenQA.Selenium;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Globalization;
+﻿using Applitools.Utils;
+using Applitools.OpenQA.Selenium;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
+namespace Applitools.Selenium.Scrolling
+{
     internal class ScrollPositionProvider : IPositionProvider, ISeleniumPositionProvider, IEquatable<ScrollPositionProvider>
     {
         #region Constructors

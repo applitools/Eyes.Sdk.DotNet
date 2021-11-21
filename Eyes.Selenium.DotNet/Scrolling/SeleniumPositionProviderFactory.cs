@@ -1,6 +1,5 @@
 ﻿using Applitools.Utils;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.OpenQA.Selenium;
 using System.Collections.Concurrent;
 
 namespace Applitools.Selenium.Scrolling
@@ -41,7 +40,7 @@ namespace Applitools.Selenium.Scrolling
         public IPositionProvider TryGetPositionProviderForElement(IWebElement scrollRootElement, StitchModes stitchMode,
             IWebDriver driver, Logger logger)
         {
-            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + ((IHasSessionId)driver).SessionId;
+            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + driver.SessionId;
             logger.Log(TraceLevel.Debug, Stage.General, new { PositionProviderId = id });
             positionProviders_.TryGetValue(id, out IPositionProvider positionProvider);
             return positionProvider;

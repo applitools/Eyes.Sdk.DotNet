@@ -1,8 +1,6 @@
-﻿using Applitools.Selenium.Scrolling;
-using Applitools.Utils;
+﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.OpenQA.Selenium;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -39,11 +37,7 @@ namespace Applitools.Selenium
         public IWebElement ActiveElement()
         {
             IWebElement element = targetLocator_.ActiveElement();
-            if (!(element is IWebElement webElement))
-            {
-                throw new EyesException("Not a remote web element!");
-            }
-            return new EyesWebElement(logger_, driver_, webElement);
+            return new EyesWebElement(logger_, driver_, element);
         }
 
         public IAlert Alert()
@@ -72,7 +66,7 @@ namespace Applitools.Selenium
             // Finding the target element so we can report it.
             // We use find elements(plural) to avoid exception when the element
             // is not found.
-            ReadOnlyCollection<IWebElement> frames = driver_.FindElementsByName(nameOrId);
+            ReadOnlyCollection<IWebElement> frames = driver_.FindElements(By.Name(nameOrId));
             if (frames.Count == 0)
             {
                 // If there are no frames by that name, we'll try the id
@@ -262,11 +256,5 @@ namespace Applitools.Selenium
                 scrollPositionProvider_?.RestoreState(defaultContentPositionMemento_);
             }
         }
-
-        public IWebDriver NewWindow(WindowType typeHint)
-        {
-            throw new NotImplementedException();
-        }
     }
-
 }

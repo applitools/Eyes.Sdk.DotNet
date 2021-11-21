@@ -1,4 +1,4 @@
-﻿using OpenQA.Selenium;
+﻿using Applitools.OpenQA.Selenium;
 using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent

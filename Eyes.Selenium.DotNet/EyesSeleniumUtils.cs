@@ -10,9 +10,9 @@ using System.Threading;
 using Applitools.Selenium.Capture;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.OpenQA.Selenium;
 
 namespace Applitools.Selenium
 {
@@ -37,7 +37,7 @@ namespace Applitools.Selenium
         private static readonly string DOM_SCRIPTS_WRAPPER = "return ({0})({1});";
         internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
 
-        private static Size GetViewportSize_(Logger logger, IJavaScriptExecutor jsExecutor)
+        private static Size GetViewportSize_(Logger logger, IEyesJsExecutor jsExecutor)
         {
             if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string sizeStr)
             {
@@ -67,7 +67,7 @@ namespace Applitools.Selenium
             }
             else
             {
-                size = GetViewportSize_(logger, (IJavaScriptExecutor)driver);
+                size = GetViewportSize_(logger, (IEyesJsExecutor)driver);
             }
             return size;
         }
@@ -100,7 +100,7 @@ namespace Applitools.Selenium
                     size = new Size(size.Height, size.Width);
                 }
             }
-            catch (WebDriverException)
+            catch (Exception)
             {
                 // Not every WebDriver supports querying for orientation.
             }
@@ -141,7 +141,7 @@ namespace Applitools.Selenium
 
         internal static string GetElementIdForDictionary(IWebElement element, IWebDriver remoteWebDriver)
         {
-            return GetElementId(element) + "_" + ((IHasSessionId)remoteWebDriver).SessionId;
+            return GetElementId(element) + "_" + remoteWebDriver.SessionId;
         }
 
         private static bool SetBrowserSize_(Logger logger, IWebDriver driver, Size requiredSize)
@@ -459,7 +459,7 @@ namespace Applitools.Selenium
             return chosenElement;
         }
 
-        private static bool CanScrollVertically(IJavaScriptExecutor jsExecutor, IWebElement element)
+        private static bool CanScrollVertically(Applitools.OpenQA.Selenium.IJavaScriptExecutor jsExecutor, IWebElement element)
         {
             return (bool)jsExecutor.ExecuteScript("return arguments[0].scrollHeight > arguments[0].clientHeight", element);
         }

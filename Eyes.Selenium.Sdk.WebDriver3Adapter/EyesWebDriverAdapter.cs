@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using IEyesWebElement = Applitools.OpenQA.Selenium.IWebElement;
+
 namespace Applitools.Selenium
 {
     public class EyesWebDriverAdapter : IEyesWebDriverAdapter
@@ -23,7 +25,7 @@ namespace Applitools.Selenium
             executor_ = (ICommandExecutor)pi.GetValue(driver_);
         }
 
-        public string GetElementId(Logger logger, IWebElement webElement)
+        public string GetElementId(Logger logger, IEyesWebElement webElement)
         {
             if (webElement is RemoteWebElement)
             {
@@ -56,19 +58,27 @@ namespace Applitools.Selenium
             }
         }
 
+        public string GetTagName(Logger logger, IEyesWebElement webElement)
+        {
+            if (webElement is IWebElement element)
+            {
+                return element.TagName;
+            }
+            if (webElement is EyesWebElement eyesWebElement)
+            {
+                return eyesWebElement.TagName;
+            }
+            return null;
+        }
+
         public void TryAddCommand(string commandName, string method, string resourcePath)
         {
             executor_.CommandInfoRepository.TryAddCommand("getSession", new CommandInfo("GET", "/session/{sessionId}/"));
         }
 
-        public IWebElement WrapElementIfRemote(Logger logger, EyesWebDriver driver, IWebElement elementToWrap)
+        public EyesWebElement WrapElementIfRemote(Logger logger, EyesWebDriver driver, IEyesWebElement elementToWrap)
         {
-            if (elementToWrap is RemoteWebElement)
-            {
-                return new EyesWebElement(logger, driver, elementToWrap);
-            }
-
-            return elementToWrap;
+            return elementToWrap is EyesWebElement element ? element : new EyesWebElement(logger, driver, elementToWrap);
         }
     }
 }

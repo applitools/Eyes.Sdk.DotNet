@@ -1,7 +1,7 @@
-﻿namespace Applitools.Selenium.Fluent
-{
-    using OpenQA.Selenium;
+﻿using Applitools.OpenQA.Selenium;
 
+namespace Applitools.Selenium.Fluent
+{
     interface ISeleniumFrameCheckTarget : IScrollRootElementContainer
     {
         int? GetFrameIndex();

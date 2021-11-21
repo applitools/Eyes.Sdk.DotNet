@@ -1,5 +1,5 @@
 ﻿using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Drawing;
 

@@ -1,4 +1,4 @@
-﻿using OpenQA.Selenium;
+﻿using Applitools.OpenQA.Selenium;
 using System.Drawing;
 
 namespace Applitools.Selenium

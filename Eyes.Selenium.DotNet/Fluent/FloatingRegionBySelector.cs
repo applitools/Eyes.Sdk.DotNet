@@ -1,8 +1,8 @@
-﻿using OpenQA.Selenium;
-using System.Drawing;
+﻿using Applitools.OpenQA.Selenium;
 using Applitools.Utils.Geometry;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace Applitools.Selenium.Fluent
 {

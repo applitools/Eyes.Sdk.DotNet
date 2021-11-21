@@ -1,9 +1,9 @@
-﻿namespace Applitools.Selenium
-{
-    using System.Drawing;
-    using OpenQA.Selenium;
-    using Fluent;
+﻿using System.Drawing;
+using Applitools.OpenQA.Selenium;
+using Applitools.Selenium.Fluent;
 
+namespace Applitools.Selenium
+{
     public static class Target
     {
         public static SeleniumCheckSettings Window()

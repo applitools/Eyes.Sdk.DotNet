@@ -1,7 +1,6 @@
 ﻿using Applitools.Utils;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System.Drawing;
-using Applitools.Selenium.Scrolling;
 using Applitools.Utils.Geometry;
 using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
 

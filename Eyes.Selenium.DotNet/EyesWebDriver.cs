@@ -1,8 +1,5 @@
-﻿using Applitools.Utils;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Internal;
-using OpenQA.Selenium.Remote;
+﻿using Applitools.OpenQA.Selenium;
+using Applitools.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,10 +11,8 @@ using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
 {
-    public sealed class EyesWebDriver :
-        IHasCapabilities,
-        ISearchContext, ITakesScreenshot, IWebDriver, IActionExecutor,
-        IEyesJsExecutor
+    public sealed class EyesWebDriver :IWebDriver, IJavaScriptExecutor, IEyesJsExecutor
+        // IHasCapabilities, ISearchContext, ITakesScreenshot, IActionExecutor
     {
         #region Fields
 
@@ -52,7 +47,7 @@ namespace Applitools.Selenium
 
             if (!isAppiumDriver)
             {
-                eyesWebDriverAdapter_.TryAddCommand(driver, "getSession", "GET", "/session/{sessionId}/");
+                eyesWebDriverAdapter_.TryAddCommand("getSession", "GET", "/session/{sessionId}/");
             }
 
             Logger_.Verbose("Driver is {0}", driver.GetType());
@@ -94,7 +89,7 @@ namespace Applitools.Selenium
 
         public ICapabilities Capabilities
         {
-            get { return ((IHasCapabilities)WebDriver).Capabilities; }
+            get { return WebDriver.Capabilities; }
         }
 
         public string Url
@@ -109,7 +104,7 @@ namespace Applitools.Selenium
 
         private Logger Logger_ { get; set; }
 
-        public bool IsActionExecutor => ((IActionExecutor)WebDriver).IsActionExecutor;
+        public bool IsActionExecutor => WebDriver.IsActionExecutor;
 
         #endregion
 
@@ -343,13 +338,9 @@ namespace Applitools.Selenium
             return ((IJavaScriptExecutor)WebDriver).ExecuteAsyncScript(script, args);
         }
 
-        internal IDictionary<string, object> SessionDetails
-        {
-            get
-            {
-                return eyesWebDriverAdapter_.GetSessionDetails(this);
-            }
-        }
+        internal IDictionary<string, object> SessionDetails => eyesWebDriverAdapter_.GetSessionDetails();
+
+        public string SessionId => throw new NotImplementedException();
 
         internal object GetSessionDetail(string detail)
         {
@@ -423,7 +414,7 @@ namespace Applitools.Selenium
                         int x = (int)actionDictionary["x"];
                         int y = (int)actionDictionary["y"];
                         IDictionary<string, object> originDict = (IDictionary<string, object>)actionDictionary["origin"];
-                        string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + ((IHasSessionId)WebDriver).SessionId;
+                        string elementId = originDict.Values.FirstOrDefault().ToString() + "_" + WebDriver.SessionId;
                         if (elementsFoundSinceLastNavigation_.TryGetValue(elementId, out IWebElement element))
                         {
                             UserActionsEyes.AddMouseTrigger(MouseAction.Move, element, new Point(x, y));
@@ -439,7 +430,12 @@ namespace Applitools.Selenium
 
         public void ResetInputState()
         {
-            ((IActionExecutor)WebDriver).ResetInputState();
+            WebDriver.ResetInputState();
+        }
+
+        IOptions IWebDriver.Manage()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

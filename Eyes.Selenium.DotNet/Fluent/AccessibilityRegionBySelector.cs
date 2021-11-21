@@ -1,4 +1,4 @@
-﻿using OpenQA.Selenium;
+﻿using Applitools.OpenQA.Selenium;
 using System.Drawing;
 using Applitools.Utils.Geometry;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
-﻿using Applitools.Utils;
+﻿using Applitools.OpenQA.Selenium;
+using Applitools.Utils;
 using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -175,7 +175,7 @@ return getVisibleElementRect(arguments[0])";
             Logger = logger;
             eyesDriver_ = eyesDriver;
             Id = eyesWebDriverAdapter_.GetElementId(logger, webElement);
-            TagName = webElement.TagName;
+            TagName = eyesWebDriverAdapter_.GetTagName(logger, webElement);
             webElement_ = webElement;
         }
 
@@ -328,6 +328,9 @@ return getVisibleElementRect(arguments[0])";
         public Size Size => webElement_.Size;
 
         public bool Displayed => webElement_.Displayed;
+
+        Point IWebElement.Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        Size IWebElement.Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public static SizeAndBorders GetSizeAndBorders(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
