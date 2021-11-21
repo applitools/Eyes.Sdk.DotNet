@@ -97,6 +97,18 @@ jobs:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
     
+    - name: Selenium4
+      mono: none
+      dotnet: 3.1.407
+      addons:
+        chrome: stable
+      script:
+        - pushd Eyes.Selenium.DotNet/Properties/NodeResources
+        - npm install
+        - popd
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium4.DotNet/*.csproj
+    
     - stage: Test specific
       name: Appium
       mono: none
