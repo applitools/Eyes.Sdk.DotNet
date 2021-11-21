@@ -96,7 +96,7 @@ namespace Applitools.Selenium
         private Size GetFrameContentSize()
         {
             IWebElement frameScrollRootElement = EyesSeleniumUtils.GetDefaultRootElement(driver_);
-            Size sreSize = EyesWebElement.GetClientSize(frameScrollRootElement, driver_, logger_);
+            Size sreSize = EyesRemoteWebElement.GetClientSize(frameScrollRootElement, driver_, logger_);
             return sreSize;
         }
 
@@ -217,8 +217,8 @@ namespace Applitools.Selenium
             Point locationInScreenshot = Point.Empty;
             foreach (Frame frame in currentFC)
             {
-                Rectangle rect = ((EyesWebElement)frame.Reference).GetClientBounds();
-                SizeAndBorders sizeAndBorders = ((EyesWebElement)frame.Reference).SizeAndBorders;
+                Rectangle rect = ((EyesRemoteWebElement)frame.Reference).GetClientBounds();
+                SizeAndBorders sizeAndBorders = ((EyesRemoteWebElement)frame.Reference).SizeAndBorders;
                 RectangularMargins borders = sizeAndBorders.Borders;
                 rect.Offset(borders.Left, borders.Top);
                 locationInScreenshot.Offset(rect.Location);

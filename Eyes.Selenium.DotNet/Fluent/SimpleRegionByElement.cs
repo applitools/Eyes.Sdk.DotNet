@@ -22,9 +22,9 @@
 
         public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
-            if (!(element_ is EyesWebElement eyesElement))
+            if (!(element_ is EyesRemoteWebElement eyesElement))
             {
-                eyesElement = new EyesWebElement(eyesBase.Logger, ((SeleniumEyes)eyesBase).GetDriver(), element_);
+                eyesElement = new EyesRemoteWebElement(eyesBase.Logger, ((SeleniumEyes)eyesBase).GetDriver(), element_);
             }
             Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(eyesElement);
             Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);

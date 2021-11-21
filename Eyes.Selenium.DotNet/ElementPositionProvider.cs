@@ -9,19 +9,19 @@
     {
         private Logger logger_;
         private readonly EyesWebDriver driver_;
-        private EyesWebElement element_;
+        private EyesRemoteWebElement element_;
 
         public ElementPositionProvider(Logger logger, EyesWebDriver driver, IWebElement element)
         {
             logger_ = logger;
             driver_ = driver;
-            if (element is EyesWebElement eyesElement)
+            if (element is EyesRemoteWebElement eyesElement)
             {
                 element_ = eyesElement;
             }
             else
             {
-                element_ = new EyesWebElement(logger, driver, element);
+                element_ = new EyesRemoteWebElement(logger, driver, element);
             }
             logger_.Verbose(element.ToString());
         }

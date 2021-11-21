@@ -23,6 +23,7 @@ using System.Threading;
 using Region = Applitools.Utils.Geometry.Region;
 using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
 using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
+using System.Net;
 
 namespace Applitools.Selenium
 {
@@ -221,9 +222,9 @@ namespace Applitools.Selenium
         {
             ArgumentGuard.NotNull(driver, nameof(driver));
 
-            if (driver is WebDriver webDriver)
+            if (driver is RemoteWebDriver remoteDriver)
             {
-                driver_ = new EyesWebDriver(Logger, this, this, webDriver);
+                driver_ = new EyesWebDriver(Logger, this, this, remoteDriver);
             }
             else if (driver is EyesWebDriver eyesDriver)
             {
@@ -236,14 +237,14 @@ namespace Applitools.Selenium
                 throw new EyesException(errMsg);
             }
 
-            Type driverType = driver_.WebDriver.GetType();
+            Type driverType = driver_.RemoteWebDriver.GetType();
             Logger.Log(TraceLevel.Info, Stage.Open, new { driverType });
             MethodInfo getPlatformNameMI = driverType.GetProperty("PlatformName")?.GetGetMethod();
             MethodInfo getSessionDetailsMI = driverType.GetProperty("SessionDetails")?.GetGetMethod();
 
             if (getPlatformNameMI != null)
             {
-                PlatformName = (string)getPlatformNameMI.Invoke(driver_.WebDriver, null);
+                PlatformName = (string)getPlatformNameMI.Invoke(driver_.RemoteWebDriver, null);
             }
             else
             {
@@ -260,7 +261,7 @@ namespace Applitools.Selenium
             }
 
             Logger.Log(TraceLevel.Info, Stage.Open,
-                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.WebDriver.SessionId, PlatformName });
+                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId, PlatformName });
         }
 
         private void InitSessionDetails_(MethodInfo getSessionDetailsMI)
@@ -269,7 +270,7 @@ namespace Applitools.Selenium
             do
             {
                 Thread.Sleep(attempts == 2 ? 0 : 1000);
-                CachedSessionDetails = (IDictionary<string, object>)getSessionDetailsMI.Invoke(driver_.WebDriver, null);
+                CachedSessionDetails = (IDictionary<string, object>)getSessionDetailsMI.Invoke(driver_.RemoteWebDriver, null);
             } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
 
             if (CachedSessionDetails == null)
@@ -279,7 +280,7 @@ namespace Applitools.Selenium
                     {
                         message = "could not get viewportRect in session details from appium server! " +
                                   "Using default device size instead, this might create incorrect images.",
-                        sessionDetails = getSessionDetailsMI.Invoke(driver_.WebDriver, null)
+                        sessionDetails = getSessionDetailsMI.Invoke(driver_.RemoteWebDriver, null)
                     });
             }
         }
@@ -331,7 +332,7 @@ namespace Applitools.Selenium
             PositionProvider = GetPositionProvider(Logger, StitchMode,
                 jsExecutor_, userDefinedSRE_, userAgent_);
 
-            var element = driver_.WebDriver.FindElement(selector);
+            var element = driver_.RemoteWebDriver.FindElement(selector);
             return new InRegion(driver_, InRegionBase(() => new Rectangle(element.Location, element.Size)));
         }
 
@@ -416,7 +417,7 @@ namespace Applitools.Selenium
             bool hasFrames = driver_.GetFrameChain().Count > 0;
             if (hasFrames)
             {
-                region = new Region(bbox.Location, EyesWebElement.GetClientSize(userDefinedSRE_, driver_));
+                region = new Region(bbox.Location, EyesRemoteWebElement.GetClientSize(userDefinedSRE_, driver_));
             }
             else
             {
@@ -454,9 +455,9 @@ namespace Applitools.Selenium
 
         private Region GetElementInnerRegion_(IWebElement element)
         {
-            if (!(element is EyesWebElement eyesElement))
+            if (!(element is EyesRemoteWebElement eyesElement))
             {
-                eyesElement = new EyesWebElement(Logger, driver_, element);
+                eyesElement = new EyesRemoteWebElement(Logger, driver_, element);
             }
 
             Point location = eyesElement.Location;
@@ -755,7 +756,7 @@ namespace Applitools.Selenium
             Rectangle viewport = new Rectangle(Point.Empty, initialSize);
             if (userDefinedSRE_ != null)
             {
-                Rectangle sreInnerBounds = EyesWebElement.GetClientBoundsWithoutBorders(userDefinedSRE_, driver_, Logger);
+                Rectangle sreInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(userDefinedSRE_, driver_, Logger);
                 viewport.Intersect(sreInnerBounds);
             }
             Point offset = Point.Empty;
@@ -792,17 +793,17 @@ namespace Applitools.Selenium
             string orignalOverflow = EyesSeleniumUtils.SetOverflow("hidden", driver_, targetElement);
 
             // Get element's scroll size and bounds
-            Size scrollSize = EyesWebElement.GetScrollSize(targetElement, driver_, Logger);
-            Rectangle elementBounds = EyesWebElement.GetClientBounds(targetElement, driver_, Logger);
-            Rectangle elementInnerBounds = EyesWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
-            string positionStyle = EyesWebElement.GetComputedStyle("position", targetElement, driver_);
+            Size scrollSize = EyesRemoteWebElement.GetScrollSize(targetElement, driver_, Logger);
+            Rectangle elementBounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
+            Rectangle elementInnerBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
+            string positionStyle = EyesRemoteWebElement.GetComputedStyle("position", targetElement, driver_);
 
-            Point el = EyesWebElement.GetOffsetPosition(targetElement, driver_, Logger);
+            Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
             el.Offset(elementInnerBounds.X - elementBounds.X, elementInnerBounds.Y - elementBounds.Y);
             IWebElement currentFrame = driver_.FindElement(By.TagName("html"));
             if (userDefinedSRE_ != null && !userDefinedSRE_.Equals(currentFrame))
             {
-                el.Offset(EyesWebElement.GetScrollPosition(currentFrame, driver_, Logger));
+                el.Offset(EyesRemoteWebElement.GetScrollPosition(currentFrame, driver_, Logger));
             }
             state.OriginLocation = el;
             bool isScrollableElement = scrollSize.Height > elementInnerBounds.Height || scrollSize.Width > elementInnerBounds.Width;
@@ -821,11 +822,11 @@ namespace Applitools.Selenium
                 {
                     if (isScrollableElement)
                     {
-                        elementBounds = EyesWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
+                        elementBounds = EyesRemoteWebElement.GetClientBoundsWithoutBorders(targetElement, driver_, Logger);
                     }
                     else
                     {
-                        elementBounds = EyesWebElement.GetClientBounds(targetElement, driver_, Logger);
+                        elementBounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
                     }
                 }
             }
@@ -856,7 +857,7 @@ namespace Applitools.Selenium
             if (StitchMode == StitchModes.Scroll && !isScrollableElement)
             {
                 IWebElement sre = GetCurrentFrameScrollRootElement();
-                state.StitchOffset = (Size)EyesWebElement.GetScrollPosition(sre, driver_, Logger);
+                state.StitchOffset = (Size)EyesRemoteWebElement.GetScrollPosition(sre, driver_, Logger);
             }
 
             // 2. Intersect the element and the effective viewport
@@ -907,8 +908,8 @@ namespace Applitools.Selenium
                 Logger.Verbose("Target.Region(element).Fully(false)");
             }
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
-            Rectangle bounds = EyesWebElement.GetClientBounds(targetElement, driver_, Logger);
-            Point el = EyesWebElement.GetOffsetPosition(targetElement, driver_, Logger);
+            Rectangle bounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
+            Point el = EyesRemoteWebElement.GetOffsetPosition(targetElement, driver_, Logger);
             if (!state.EffectiveViewport.Contains(bounds))
             {
                 Point visualOffset = GetFrameChainOffset_(currentFrameChain);
@@ -917,14 +918,14 @@ namespace Applitools.Selenium
                 IWebElement currentFrame = driver_.FindElement(By.TagName("html"));
                 if (!currentFrameSRE.Equals(currentFrame))
                 {
-                    el.Offset(EyesWebElement.GetScrollPosition(currentFrame, driver_, Logger));
+                    el.Offset(EyesRemoteWebElement.GetScrollPosition(currentFrame, driver_, Logger));
                 }
                 IPositionProvider currentFramePositionProvider = GetPositionProviderForScrollRootElement_(currentFrameSRE);
                 Point currentFramePosition = currentFramePositionProvider.GetCurrentPosition();
                 bounds.Offset(currentFramePosition);
                 currentFramePositionProvider.SetPosition(bounds.Location);
 
-                Region actualElementBounds = EyesWebElement.GetClientBounds(targetElement, driver_, Logger);
+                Region actualElementBounds = EyesRemoteWebElement.GetClientBounds(targetElement, driver_, Logger);
                 actualElementBounds = actualElementBounds.Offset(visualOffset.X, visualOffset.Y);
 
                 Point actualFramePosition = bounds.Location - (Size)actualElementBounds.Location;
@@ -1000,7 +1001,7 @@ namespace Applitools.Selenium
                 Rectangle currentFrameBoundsWithoutBorders = Region.RemoveBorders(currentFrame.Bounds, currentFrame.BorderWidths);
                 state.EffectiveViewport = Rectangle.Intersect(state.EffectiveViewport, currentFrameBoundsWithoutBorders);
                 IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
-                Size currentSREScrollSize = EyesWebElement.GetScrollSize(currentFrameSRE, driver_, Logger);
+                Size currentSREScrollSize = EyesRemoteWebElement.GetScrollSize(currentFrameSRE, driver_, Logger);
                 state.FullRegion = new Rectangle(state.EffectiveViewport.Location, currentSREScrollSize);
             }
             else
@@ -1020,7 +1021,7 @@ namespace Applitools.Selenium
             state.EffectiveViewport = Rectangle.Intersect(state.EffectiveViewport, new Rectangle(visualOffset, currentFrame.InnerSize));
 
             IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
-            Size currentSREScrollSize = EyesWebElement.GetScrollSize(currentFrameSRE, driver_, Logger);
+            Size currentSREScrollSize = EyesRemoteWebElement.GetScrollSize(currentFrameSRE, driver_, Logger);
             state.FullRegion = new Rectangle(state.EffectiveViewport.Location, currentSREScrollSize);
 
             //string originalOverflow = EyesSeleniumUtils.SetOverflow("hidden", driver_, currentFrameSRE);
@@ -1049,7 +1050,7 @@ namespace Applitools.Selenium
             {
                 switchTo.ParentFrame();
                 Frame frame = fc[i];
-                Point frameLocation = EyesWebElement.GetClientVisualOffset(frame.Reference, driver_, Logger);
+                Point frameLocation = EyesRemoteWebElement.GetClientVisualOffset(frame.Reference, driver_, Logger);
                 offset.Offset(frameLocation);
             }
             switchTo.Frames(fc);
@@ -1064,9 +1065,9 @@ namespace Applitools.Selenium
             {
                 targetElement = driver_.FindElement(targetSelector);
             }
-            else if (targetElement != null && !(targetElement is EyesWebElement))
+            else if (targetElement != null && !(targetElement is EyesRemoteWebElement))
             {
-                targetElement = new EyesWebElement(Logger, driver_, targetElement);
+                targetElement = new EyesRemoteWebElement(Logger, driver_, targetElement);
             }
             return targetElement;
         }
@@ -1150,10 +1151,10 @@ namespace Applitools.Selenium
             }
 
             Rectangle control = Rectangle.Empty;
-            if (element is WebElement)
+            if (element is RemoteWebElement)
             {
-                element = new EyesWebElement(Logger, driver_, element);
-                control = ((EyesWebElement)element).GetBounds().ToRectangle();
+                element = new EyesRemoteWebElement(Logger, driver_, element);
+                control = ((EyesRemoteWebElement)element).GetBounds().ToRectangle();
             }
 
             if (control != Rectangle.Empty)
@@ -1267,7 +1268,7 @@ namespace Applitools.Selenium
         private ScaleProviderFactory GetScaleProviderFactory_()
         {
             IWebElement element = EyesSeleniumUtils.GetDefaultRootElement(driver_);
-            Size entireSize = EyesWebElement.GetEntireSize(element, driver_, Logger);
+            Size entireSize = EyesRemoteWebElement.GetEntireSize(element, driver_, Logger);
             return new ContextBasedScaleProviderFactory(entireSize,
                     GetViewportSize(), DevicePixelRatio, ScaleProvider, SetScaleProvider);
         }
@@ -1460,7 +1461,7 @@ namespace Applitools.Selenium
         internal static IPositionProvider GetPositionProviderForScrollRootElement_(Logger logger, EyesWebDriver driver, StitchModes stitchMode, UserAgent ua, IWebElement scrollRootElement)
         {
             IPositionProvider positionProvider = driver.Eyes.positionProviderFactory_.TryGetPositionProviderForElement(
-                scrollRootElement, stitchMode, driver.WebDriver, logger);
+                scrollRootElement, stitchMode, driver.RemoteWebDriver, logger);
             if (positionProvider == null)
             {
                 logger.Verbose("creating a new position provider.");
@@ -1574,7 +1575,7 @@ namespace Applitools.Selenium
 
         protected override object GetAgentSetup()
         {
-            WebDriver remoteWebDriver = driver_.WebDriver;
+            RemoteWebDriver remoteWebDriver = driver_.RemoteWebDriver;
             Assembly eyesSeleniumAsm = this.GetType().Assembly;
             Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
             string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
@@ -1595,8 +1596,8 @@ namespace Applitools.Selenium
                 if (fluentCommandSB.Length > 2) fluentCommandSB.Length -= 2;
                 fluentCommandString = fluentCommandSB.ToString();
             }
-            EyesWebElement html = (EyesWebElement)driver_.FindElement(By.TagName("html"));
-            EyesWebElement body = (EyesWebElement)driver_.FindElement(By.TagName("body"));
+            EyesRemoteWebElement html = (EyesRemoteWebElement)driver_.FindElement(By.TagName("html"));
+            EyesRemoteWebElement body = (EyesRemoteWebElement)driver_.FindElement(By.TagName("body"));
             return new
             {
                 SeleniumSessionId = remoteWebDriver.SessionId.ToString(),

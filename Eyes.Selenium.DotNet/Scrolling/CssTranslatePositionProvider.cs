@@ -85,7 +85,7 @@
         /// <returns>The entire size of the current context.</returns>
         public Size GetEntireSize()
         {
-            Size size = EyesWebElement.GetEntireSize(ScrolledElement, executor_, logger_);
+            Size size = EyesRemoteWebElement.GetEntireSize(ScrolledElement, executor_, logger_);
             return size;
         }
 

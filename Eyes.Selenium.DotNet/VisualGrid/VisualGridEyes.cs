@@ -240,9 +240,9 @@ namespace Applitools.Selenium.VisualGrid
             {
                 jsExecutor_ = jsExecutor;
             }
-            if (webDriver is WebDriver wDriver)
+            if (webDriver is RemoteWebDriver remoteDriver)
             {
-                driver_ = new EyesWebDriver(Logger, null, this, wDriver);
+                driver_ = new EyesWebDriver(Logger, null, this, remoteDriver);
             }
             url_ = webDriver.Url;
         }
@@ -802,7 +802,7 @@ namespace Applitools.Selenium.VisualGrid
 
             if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
             {
-                ICookieJar cookieJar = driver.WebDriver.Manage().Cookies;
+                ICookieJar cookieJar = driver.RemoteWebDriver.Manage().Cookies;
                 var allCookies = cookieJar?.AllCookies;
                 if (allCookies != null && allCookies.Count > 0)
                 {

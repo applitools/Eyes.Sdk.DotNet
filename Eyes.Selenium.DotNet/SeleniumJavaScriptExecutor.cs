@@ -13,7 +13,7 @@ namespace Applitools.Selenium
 
         public SeleniumJavaScriptExecutor(EyesWebDriver driver)
         {
-            jsExecutor_ = driver.WebDriver;
+            jsExecutor_ = driver.RemoteWebDriver;
         }
 
         public object ExecuteScript(string script, params object[] args)
