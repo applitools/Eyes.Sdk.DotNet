@@ -4,7 +4,7 @@ using Applitools.Selenium.Scrolling;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 
 namespace Applitools.Selenium.Capture
 {

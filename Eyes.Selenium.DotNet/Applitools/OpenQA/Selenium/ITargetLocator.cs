@@ -7,5 +7,7 @@
         IWebElement ActiveElement();
         IWebDriver Frame(IWebElement targetFrame);
         IWebDriver ParentFrame();
+        IWebDriver Window(string windowName);
+        IWebDriver Frame(string frameNameOrId);
     }
 }

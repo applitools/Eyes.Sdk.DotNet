@@ -6,13 +6,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
 {
-    public sealed class EyesWebDriver :IWebDriver, IJavaScriptExecutor, IEyesJsExecutor
-        // IHasCapabilities, ISearchContext, ITakesScreenshot, IActionExecutor
+    public sealed class EyesWebDriver :IWebDriver, ITakesScreenshot, IJavaScriptExecutor, IEyesJsExecutor
+        // IHasCapabilities, ISearchContext, IActionExecutor
     {
         #region Fields
 

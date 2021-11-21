@@ -11,8 +11,7 @@ using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
 using Applitools.VisualGrid;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -220,22 +219,16 @@ namespace Applitools.Selenium
         private void InitDriver_(IWebDriver driver)
         {
             ArgumentGuard.NotNull(driver, nameof(driver));
-
-            if (driver is WebDriver webDriver)
-            {
-                driver_ = new EyesWebDriver(Logger, this, this, webDriver);
-            }
-            else if (driver is EyesWebDriver eyesDriver)
+            
+            if (driver is EyesWebDriver eyesDriver)
             {
                 driver_ = eyesDriver;
             }
             else
             {
-                string errMsg = $"Driver is not a RemoteWebDriver ({driver.GetType().Name})";
-                Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
-                throw new EyesException(errMsg);
+                driver_ = new EyesWebDriver(Logger, this, this, driver);
             }
-
+            
             Type driverType = driver_.WebDriver.GetType();
             Logger.Log(TraceLevel.Info, Stage.Open, new { driverType });
             MethodInfo getPlatformNameMI = driverType.GetProperty("PlatformName")?.GetGetMethod();
@@ -1150,7 +1143,7 @@ namespace Applitools.Selenium
             }
 
             Rectangle control = Rectangle.Empty;
-            if (element is WebElement)
+            if (!(element is EyesWebElement))
             {
                 element = new EyesWebElement(Logger, driver_, element);
                 control = ((EyesWebElement)element).GetBounds().ToRectangle();
@@ -1574,7 +1567,7 @@ namespace Applitools.Selenium
 
         protected override object GetAgentSetup()
         {
-            WebDriver remoteWebDriver = driver_.WebDriver;
+            IWebDriver webDriver = driver_.WebDriver;
             Assembly eyesSeleniumAsm = this.GetType().Assembly;
             Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
             string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
@@ -1599,12 +1592,12 @@ namespace Applitools.Selenium
             EyesWebElement body = (EyesWebElement)driver_.FindElement(By.TagName("body"));
             return new
             {
-                SeleniumSessionId = remoteWebDriver.SessionId.ToString(),
+                SeleniumSessionId = webDriver.SessionId.ToString(),
                 WebDriver = new
                 {
-                    remoteWebDriver.GetType().Name,
-                    remoteWebDriver.GetType().Assembly.GetName().Version,
-                    remoteWebDriver.Capabilities,
+                    webDriver.GetType().Name,
+                    webDriver.GetType().Assembly.GetName().Version,
+                    webDriver.Capabilities,
                 },
                 SeleniumSDKAssemblyData = new
                 {

@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 
 namespace Applitools.Selenium
 {

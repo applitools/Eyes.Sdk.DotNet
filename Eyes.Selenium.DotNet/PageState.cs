@@ -1,6 +1,6 @@
 ﻿using Applitools.Selenium.Fluent;
 using Applitools.Utils;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Drawing;
 

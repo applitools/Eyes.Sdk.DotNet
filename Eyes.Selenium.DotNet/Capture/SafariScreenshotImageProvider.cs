@@ -1,6 +1,6 @@
 ﻿using Applitools.Utils;
 using Applitools.Utils.Images;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
