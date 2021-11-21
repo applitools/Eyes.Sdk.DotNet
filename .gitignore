@@ -29,3 +29,4 @@ TestResult.xml
 /Eyes.Selenium.DotNet/Properties/Resources/processPagePollForIE.js
 /coverage-tests/node_modules/
 /coverage-tests/coverage-tests-metadata.json
+/Eyes.Selenium4.DotNet/Properties/NodeResources/node_modules/
