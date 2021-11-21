@@ -10,8 +10,9 @@ using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
 {
-    public sealed class EyesWebDriver : IWebDriver, ITakesScreenshot, IJavaScriptExecutor, IEyesJsExecutor
-    // IHasCapabilities, ISearchContext, IActionExecutor
+    public sealed class EyesWebDriver : IWebDriver, ITakesScreenshot, 
+        IJavaScriptExecutor, IEyesJsExecutor, ISearchContext, IActionExecutor
+    // IHasCapabilities
     {
         #region Fields
 

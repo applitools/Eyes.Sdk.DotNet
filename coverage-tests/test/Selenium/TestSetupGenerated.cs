@@ -68,7 +68,7 @@ namespace Applitools.Generated.Selenium.Tests
                     var browserOptionsIE = new InternetExplorerOptions();
                     browserOptionsIE.PlatformName = "Windows 10";
                     browserOptionsIE.BrowserVersion = "11.285";
-                    browserOptionsIE.AddAdditionalOption("sauce:options", sauceOptions);
+                    browserOptionsIE.AddAdditionalCapability("sauce:options", sauceOptions);
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsIE.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Edge:
@@ -78,7 +78,7 @@ namespace Applitools.Generated.Selenium.Tests
                     var browserOptionsEdge = new EdgeOptions();
                     browserOptionsEdge.PlatformName = "Windows 10";
                     browserOptionsEdge.BrowserVersion = "18.17763";
-                    browserOptionsEdge.AddAdditionalOption("sauce:options", sauceOptionsEdge);
+                    browserOptionsEdge.AddAdditionalCapability("sauce:options", sauceOptionsEdge);
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsEdge.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Safari11:
@@ -103,8 +103,8 @@ namespace Applitools.Generated.Selenium.Tests
             sauceOptions.Add("accesskey", SAUCE_ACCESS_KEY);
             driverOptions.PlatformName = PlatformName;
             driverOptions.BrowserVersion = BrowserVersion;
-            driverOptions.AddAdditionalOption("username", SAUCE_USERNAME);
-            driverOptions.AddAdditionalOption("accesskey", SAUCE_ACCESS_KEY);
+            driverOptions.AddAdditionalCapability("username", SAUCE_USERNAME);
+            driverOptions.AddAdditionalCapability("accesskey", SAUCE_ACCESS_KEY);
         }
 
         protected static ChromeDriver CreateChromeDriver(ChromeOptions options = null, bool headless = false)

@@ -247,7 +247,7 @@ namespace Applitools.Selenium
         /// <param name="viewportSize">The required browser's viewport size 
         /// (i.e., the visible part of the document's body) or <c>Size.Empty</c>
         /// to allow any viewport size.</param>
-        public IWebDriver Open(IWebDriver driver)
+        protected IWebDriver Open(IWebDriver driver)
         {
             if (IsDisabled)
             {

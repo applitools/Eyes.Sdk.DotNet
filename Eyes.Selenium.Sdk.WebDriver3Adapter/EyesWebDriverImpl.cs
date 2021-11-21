@@ -16,8 +16,9 @@ namespace Applitools.Selenium
     internal class EyesWebDriverImpl : IEyesWebDriver, IWebDriver
     {
         private readonly RemoteWebDriver driver_;
+        private readonly EyesWebDriver reverseDriver_;
 
-        public EyesWebDriverImpl(IWebDriver driver)
+        internal EyesWebDriverImpl(IWebDriver driver)
         {
             if (driver is RemoteWebDriver rwd)
             {
@@ -29,7 +30,20 @@ namespace Applitools.Selenium
             }
         }
 
-        public string Url { get => driver_.Url; set => driver_.Url = value; }
+        internal EyesWebDriverImpl(IEyesWebDriver driver)
+        {
+            reverseDriver_ = (EyesWebDriver)driver;
+        }
+
+        public string Url
+        {
+            get => driver_?.Url ?? reverseDriver_.Url;
+            set
+            {
+                if (driver_ != null) driver_.Url = value;
+                else if (reverseDriver_ != null) reverseDriver_.Url = value;
+            }
+        }
 
         public string Title => driver_.Title;
 
@@ -39,7 +53,7 @@ namespace Applitools.Selenium
 
         public ReadOnlyCollection<string> WindowHandles => driver_.WindowHandles;
 
-        public string SessionId => ((RemoteWebDriver)driver_).SessionId.ToString();
+        public string SessionId => driver_.SessionId.ToString();
 
         public IEyesCapabilities Capabilities => throw new System.NotImplementedException();
 
