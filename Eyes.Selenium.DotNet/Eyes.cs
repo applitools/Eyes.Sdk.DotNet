@@ -9,7 +9,7 @@ using System.Drawing;
 
 namespace Applitools.Selenium
 {
-    public class Eyes : EyesBaseConfig, IEyesBase, ISeleniumConfigurationProvider
+    public class EyesImpl : EyesBaseConfig, IEyesBase, ISeleniumConfigurationProvider
     {
         private readonly bool isVisualGridEyes_ = false;
         internal VisualGridEyes visualGridEyes_ = null;
@@ -21,7 +21,7 @@ namespace Applitools.Selenium
 
         #region ctors
 
-        public Eyes(ILogHandler logHandler = null)
+        public EyesImpl(ILogHandler logHandler = null)
         {
             if (logHandler == null) logHandler = NullLogHandler.Instance;
             runner_ = new ClassicRunner(logHandler);
@@ -30,7 +30,7 @@ namespace Applitools.Selenium
             activeEyes_ = seleniumEyes_;
         }
 
-        public Eyes(Uri serverUrl, ILogHandler logHandler = null)
+        public EyesImpl(Uri serverUrl, ILogHandler logHandler = null)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
             if (logHandler == null) logHandler = NullLogHandler.Instance;
@@ -40,7 +40,7 @@ namespace Applitools.Selenium
             activeEyes_ = seleniumEyes_;
         }
 
-        public Eyes(EyesRunner runner)
+        public EyesImpl(EyesRunner runner)
         {
             if (runner == null)
             {
@@ -71,7 +71,7 @@ namespace Applitools.Selenium
             return new VisualGridEyes(this, visualGridRunner);
         }
 
-        internal Eyes(IServerConnectorFactory serverConnectorFactory)
+        internal EyesImpl(IServerConnectorFactory serverConnectorFactory)
         {
             runner_ = new ClassicRunner(NullLogHandler.Instance, serverConnectorFactory);
             configuration_.SetForceFullPageScreenshot(false);

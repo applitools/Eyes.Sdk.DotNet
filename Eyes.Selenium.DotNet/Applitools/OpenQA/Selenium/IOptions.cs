@@ -3,5 +3,6 @@
     public interface IOptions
     {
         IWindow Window { get; }
+        ICookieJar Cookies { get; }
     }
 }

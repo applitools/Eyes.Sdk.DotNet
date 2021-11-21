@@ -5,10 +5,8 @@ namespace Applitools.OpenQA.Selenium
 {
     public interface IWebElement
     {
-        Point Location { get; set; }
-
-        Size Size { get; set; }
-
+        Point Location { get; }
+        Size Size { get; }
         string TagName { get; }
         string Text { get; }
         bool Enabled { get; }

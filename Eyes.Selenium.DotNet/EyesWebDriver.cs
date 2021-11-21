@@ -10,8 +10,8 @@ using Size = System.Drawing.Size;
 
 namespace Applitools.Selenium
 {
-    public sealed class EyesWebDriver :IWebDriver, ITakesScreenshot, IJavaScriptExecutor, IEyesJsExecutor
-        // IHasCapabilities, ISearchContext, IActionExecutor
+    public sealed class EyesWebDriver : IWebDriver, ITakesScreenshot, IJavaScriptExecutor, IEyesJsExecutor
+    // IHasCapabilities, ISearchContext, IActionExecutor
     {
         #region Fields
 
@@ -390,10 +390,10 @@ namespace Applitools.Selenium
             WebDriver.Dispose();
         }
 
-        public void PerformActions(IList<ActionSequence> actionSequenceList)
+        public void PerformActions(IList<IActionSequence> actionSequenceList)
         {
             ((IActionExecutor)WebDriver).PerformActions(actionSequenceList);
-            foreach (ActionSequence actionSequence in actionSequenceList)
+            foreach (IActionSequence actionSequence in actionSequenceList)
             {
                 Dictionary<string, object> actions = actionSequence.ToDictionary();
                 AddTrigger_(actions);

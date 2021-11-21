@@ -2,7 +2,7 @@
 using CssParser;
 using CssParser.Model.Rules;
 using Newtonsoft.Json;
-using OpenQA.Selenium;
+using Applitools.OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

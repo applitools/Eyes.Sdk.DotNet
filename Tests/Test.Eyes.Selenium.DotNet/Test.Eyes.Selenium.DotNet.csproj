@@ -280,7 +280,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
+    <ProjectReference Include="..\..\Eyes.Selenium.Sdk.WebDriver4Adapter\Eyes.Selenium.Sdk.WebDriver4Adapter.csproj" />
     <ProjectReference Include="..\..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj" />
   </ItemGroup>
 

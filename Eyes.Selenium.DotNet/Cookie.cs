@@ -3,7 +3,7 @@ using System;
 
 namespace Applitools.Selenium
 {
-    internal class Cookie : ICookie, IEquatable<Cookie>
+    public class Cookie : ICookie, IEquatable<Cookie>
     {
         public Cookie()
         {

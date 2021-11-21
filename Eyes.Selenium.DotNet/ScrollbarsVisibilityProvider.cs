@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using System;
+﻿using Applitools.OpenQA.Selenium;
 
 namespace Applitools.Selenium
 {

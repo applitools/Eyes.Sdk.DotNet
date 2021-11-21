@@ -1,9 +1,9 @@
+using NUnit.Framework;
+using OpenQA.Selenium;
+using System.Drawing;
+
 namespace Applitools.Selenium.Tests
 {
-    using NUnit.Framework;
-    using OpenQA.Selenium;
-    using System.Drawing;
-
     [TestFixture]
     [TestFixtureSource(typeof(TestDataProvider), nameof(TestDataProvider.FixtureArgs))]
     [Parallelizable]

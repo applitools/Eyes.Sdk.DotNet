@@ -26,8 +26,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
 	<ProjectReference Include="..\..\..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+	<ProjectReference Include="..\..\..\Eyes.Selenium.Sdk.WebDriver3Adapter\Eyes.Selenium.Sdk.WebDriver3Adapter.csproj" />
   </ItemGroup>
 
 </Project>

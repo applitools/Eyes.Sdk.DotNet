@@ -7,20 +7,19 @@ using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Applitools.VisualGrid.Model;
 using Newtonsoft.Json;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
+using Applitools.OpenQA.Selenium;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace Applitools.Selenium.VisualGrid
 {
@@ -240,9 +239,9 @@ namespace Applitools.Selenium.VisualGrid
             {
                 jsExecutor_ = jsExecutor;
             }
-            if (webDriver is WebDriver wDriver)
+            if (!(webDriver is EyesWebDriver))
             {
-                driver_ = new EyesWebDriver(Logger, null, this, wDriver);
+                driver_ = new EyesWebDriver(Logger, null, this, webDriver);
             }
             url_ = webDriver.Url;
         }
@@ -803,24 +802,11 @@ namespace Applitools.Selenium.VisualGrid
             if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
             {
                 ICookieJar cookieJar = driver.WebDriver.Manage().Cookies;
-                var allCookies = cookieJar?.AllCookies;
+                ReadOnlyCollection<Cookie> allCookies = cookieJar?.AllCookies;
                 if (allCookies != null && allCookies.Count > 0)
                 {
                     var cookieCollection = new List<ICookie>();
-                    foreach (var seleniumCookie in allCookies)
-                    {
-                        Cookie cookie = new Cookie()
-                        {
-                            Name = seleniumCookie.Name,
-                            Value = seleniumCookie.Value,
-                            Path = seleniumCookie.Path,
-                            Domain = seleniumCookie.Domain,
-                            Secure = seleniumCookie.Secure,
-                            HttpOnly = seleniumCookie.IsHttpOnly,
-                            Expiry = seleniumCookie.Expiry
-                        };
-                        cookieCollection.Add(cookie);
-                    }
+                    cookieCollection.AddRange(allCookies);
 
                     frameData.Cookies = cookieCollection;
                 }

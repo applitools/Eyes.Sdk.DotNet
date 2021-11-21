@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 
 using IEyesWebElement = Applitools.OpenQA.Selenium.IWebElement;
+using IEyesWebDriver = Applitools.OpenQA.Selenium.IWebDriver;
 
 namespace Applitools.Selenium
 {
@@ -23,6 +24,12 @@ namespace Applitools.Selenium
             PropertyInfo pi = typeof(RemoteWebDriver).GetProperty("CommandExecutor", BindingFlags.NonPublic | BindingFlags.Instance);
             elementIdPropertyInfo_ = typeof(RemoteWebElement).GetProperty("Id", BindingFlags.NonPublic | BindingFlags.Instance);
             executor_ = (ICommandExecutor)pi.GetValue(driver_);
+        }
+
+        public IEyesWebDriver GetWrappingWebDriver(IWebDriver driver)
+        {
+            IEyesWebDriver result = new EyesWebDriverImpl(driver);
+            return result;
         }
 
         public string GetElementId(Logger logger, IEyesWebElement webElement)

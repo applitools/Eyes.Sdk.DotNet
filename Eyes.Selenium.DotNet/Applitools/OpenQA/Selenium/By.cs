@@ -1,44 +1,33 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
 
 namespace Applitools.OpenQA.Selenium
 {
     public class By
     {
-        public static By ClassName(string className) => null;
+        public string Mechanism { get; } = string.Empty;
 
-        internal static By TagName(string v)
+        public string Criteria { get; } = string.Empty;
+
+        protected By(string criteria, [CallerMemberName] string mechanism = null)
         {
-            throw new NotImplementedException();
+            Mechanism = mechanism;
+            Criteria = criteria;
         }
 
-        internal static By XPath(string xpath)
-        {
-            throw new NotImplementedException();
-        }
+        public static By Id(string idToFind) => new By(idToFind);
 
-        internal static By CssSelector(string cssSelector)
-        {
-            throw new NotImplementedException();
-        }
+        public static By LinkText(string linkTextToFind) => new By(linkTextToFind);
 
-        internal static By Id(string id)
-        {
-            throw new NotImplementedException();
-        }
+        public static By Name(string nameToFind) => new By(nameToFind);
 
-        internal static By LinkText(string linkText)
-        {
-            throw new NotImplementedException();
-        }
+        public static By XPath(string xpathToFind) => new By(xpathToFind);
 
-        internal static By PartialLinkText(string partialLinkText)
-        {
-            throw new NotImplementedException();
-        }
+        public static By ClassName(string classNameToFind) => new By(classNameToFind);
 
-        internal static By Name(string name)
-        {
-            throw new NotImplementedException();
-        }
+        public static By PartialLinkText(string partialLinkTextToFind) => new By(partialLinkTextToFind);
+
+        public static By TagName(string tagNameToFind) => new By(tagNameToFind);
+
+        public static By CssSelector(string cssSelectorToFind) => new By(cssSelectorToFind);
     }
 }
