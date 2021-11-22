@@ -762,7 +762,7 @@ namespace Applitools.Selenium.VisualGrid
             VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
         {
             string domScript = userAgent.IsInternetExplorer ? Common.Resources.PROCESS_PAGE_FOR_IE : Common.Resources.PROCESS_PAGE;
-            string pollingScript = userAgent.IsInternetExplorer ? Common.Resources.POLL_RESULT_FOR_IE : Common.Resources.POLL_RESULT;
+            string pollingScript = userAgent.IsInternetExplorer ? Common.Resources.POLL_PP_RESULT_FOR_IE : Common.Resources.POLL_PP_RESULT;
 
             bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
 

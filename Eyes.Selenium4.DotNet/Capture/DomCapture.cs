@@ -15,11 +15,6 @@ namespace Applitools.Selenium.Capture
 {
     class DomCapture
     {
-        private static readonly string CAPTURE_DOM = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPoll.js");
-        private static readonly string CAPTURE_DOM_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPollForIE.js");
-        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResult.js");
-        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResultForIE.js");
-
         private static readonly int MB = 1024 * 1024;
 
         internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
@@ -82,8 +77,8 @@ namespace Applitools.Selenium.Capture
 
         internal string GetDomCaptureAndPollingScriptResult_(string[] testIds)
         {
-            string captureScript = userAgent_.IsInternetExplorer ? CAPTURE_DOM_FOR_IE : CAPTURE_DOM;
-            string pollingScript = userAgent_.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
+            string captureScript = userAgent_.IsInternetExplorer ? Common.Resources.CAPTURE_DOM_FOR_IE : Common.Resources.CAPTURE_DOM;
+            string pollingScript = userAgent_.IsInternetExplorer ? Common.Resources.POLL_CD_RESULT_FOR_IE : Common.Resources.POLL_CD_RESULT;
 
             int chunkByteLength = userAgent_.IsiOS ? 10 * MB : 256 * MB;
 
