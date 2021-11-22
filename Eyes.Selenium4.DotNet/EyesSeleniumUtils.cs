@@ -8,12 +8,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Applitools.Selenium.Capture;
-using Applitools.Selenium.Fluent;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 
 namespace Applitools.Selenium
 {

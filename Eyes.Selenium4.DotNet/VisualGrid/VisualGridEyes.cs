@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class VisualGridEyes : IVisualGridEyes, ISeleniumEyes, IUserActionsEyes
+    public class VisualGridEyes : IVisualGridEyes, ISeleniumEyes, IUserActionsEyes, IVisualGridEyesInternal
     {
         private static readonly int MB = 1024 * 1024;
 
@@ -933,7 +933,7 @@ namespace Applitools.Selenium.VisualGrid
             return GetAllTestResults() != null;
         }
 
-        internal bool IsCloseIssued => !isOpen_;
+        bool IVisualGridEyesInternal.IsCloseIssued => !isOpen_;
 
         public void CloseAsync()
         {

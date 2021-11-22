@@ -9,9 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Diagnostics;
-using Applitools.Selenium;
 using Newtonsoft.Json;
-using Applitools.Selenium.VisualGrid;
 
 namespace Applitools.VisualGrid
 {
@@ -147,7 +145,7 @@ namespace Applitools.VisualGrid
 
             IDictionary<string, RGridResource> resourcesCacheMap = ((IVisualGridRunner)this).ResourcesCacheMap;
             IDictionary<string, HashSet<string>> cachedResourceMapping = ((IVisualGridRunner)this).CachedResourceMapping;
-            Ufg.IDebugResourceWriter drw = EyesSeleniumUtils.ConvertDebugResourceWriter(DebugResourceWriter);
+            Ufg.IDebugResourceWriter drw = Utils.ConvertDebugResourceWriter(DebugResourceWriter);
 
             eyesServiceRunner_ = new EyesServiceRunner(Logger, ServerConnector, allEyes_, concurrentOpenSessions,
                 drw, resourcesCacheMap, this, suiteName_);
@@ -213,7 +211,7 @@ namespace Applitools.VisualGrid
             while (isRunning && eyesServiceRunner_.Error == null)
             {
                 isRunning = false;
-                foreach (VisualGridEyes eyes in AllEyes)
+                foreach (IVisualGridEyesInternal eyes in AllEyes)
                 {
                     if (!eyes.IsCloseIssued)
                     {
