@@ -26,11 +26,6 @@ namespace Applitools.Selenium.VisualGrid
 {
     public class VisualGridEyes : IVisualGridEyes, ISeleniumEyes, IUserActionsEyes
     {
-        private static readonly string PROCESS_PAGE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePoll.js");
-        private static readonly string PROCESS_PAGE_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.processPagePollForIE.js");
-        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.pollResult.js");
-        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_snapshot.dist.pollResultForIE.js");
-
         private static readonly int MB = 1024 * 1024;
 
         private static readonly string GET_ELEMENT_XPATH_JS =
@@ -766,8 +761,8 @@ namespace Applitools.Selenium.VisualGrid
             IConfiguration config, ISeleniumCheckTarget seleniumCheckTarget,
             VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
         {
-            string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
-            string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
+            string domScript = userAgent.IsInternetExplorer ? Common.Resources.PROCESS_PAGE_FOR_IE : Common.Resources.PROCESS_PAGE;
+            string pollingScript = userAgent.IsInternetExplorer ? Common.Resources.POLL_RESULT_FOR_IE : Common.Resources.POLL_RESULT;
 
             bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
 
