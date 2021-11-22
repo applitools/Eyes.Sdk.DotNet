@@ -50,6 +50,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Ufg.DotNet", "Eyes.Ufg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium4.DotNet", "Eyes.Selenium4.DotNet\Eyes.Selenium4.DotNet.csproj", "{322A6EFF-9997-4D02-8D58-3EA2262829E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Selenium.Common", "Eyes.Selenium.Common\Eyes.Selenium.Common.csproj", "{9E52B086-301E-44E5-AF0E-213D300600C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
