@@ -1,8 +1,8 @@
-﻿namespace Applitools.Selenium
-{
-    using System;
-    using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
+namespace Applitools.Selenium
+{
     [Serializable]
     public class EyesDriverOperationException : EyesException
     {

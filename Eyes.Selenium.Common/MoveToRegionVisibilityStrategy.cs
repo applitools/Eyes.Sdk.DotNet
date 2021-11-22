@@ -1,9 +1,9 @@
-﻿namespace Applitools.Selenium
-{
-    using Utils;
-    using Utils.Geometry;
-    using System.Drawing;
+﻿using Applitools.Utils;
+using Applitools.Utils.Geometry;
+using System.Drawing;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// An implementation of <see cref="IRegionVisibilityStrategy"/> which tries to move the region.
     /// </summary>

@@ -574,17 +574,6 @@ namespace Applitools.Selenium
             }
         }
 
-        internal static Ufg.IDebugResourceWriter ConvertDebugResourceWriter(IDebugResourceWriter drw)
-        {
-            Ufg.IDebugResourceWriter ufgDrw = null;
-            if (drw is FileDebugResourceWriter fileDRW)
-            {
-                ufgDrw = new Ufg.FileDebugResourceWriter(fileDRW.TargetFolder);
-            }
-            ufgDrw = ufgDrw ?? Ufg.NullDebugResourceWriter.Instance;
-            return ufgDrw;
-        }
-
         public static string GetUserAgent(this IWebDriver driver) {
             IJavaScriptExecutor executor = (IJavaScriptExecutor)driver;
             string ua = (string)executor.ExecuteScript("return navigator.userAgent;");

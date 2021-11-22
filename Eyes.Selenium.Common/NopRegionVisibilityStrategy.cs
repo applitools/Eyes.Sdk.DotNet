@@ -1,8 +1,8 @@
-﻿namespace Applitools.Selenium
-{
-    using Utils;
-    using Utils.Geometry;
+﻿using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// An implementation of <see cref="IRegionVisibilityStrategy"/> which does nothing.
     /// </summary>

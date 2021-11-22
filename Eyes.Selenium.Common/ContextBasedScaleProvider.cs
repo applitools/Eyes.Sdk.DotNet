@@ -1,13 +1,12 @@
-﻿namespace Applitools.Selenium
-{
-    using System.Drawing;
-    using Utils;
-    using Utils.Images;
+﻿using System.Drawing;
+using Applitools.Utils;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// Scale provider which determines the scale ratio according to the context.
     /// </summary>
-    class ContextBasedScaleProvider : IScaleProvider
+    internal class ContextBasedScaleProvider : IScaleProvider
     {
         private static readonly int ALLOWED_VIEWPORT_SIZE_DEVIATION_ = 1;
         private static readonly int ALLOWED_DCES_DEVIATION_ = 10;

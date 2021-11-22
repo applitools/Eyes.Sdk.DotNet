@@ -64,7 +64,7 @@ namespace Applitools.Selenium.VisualGrid
             runner_ = visualGridRunner;
 
             IDebugResourceWriter drw = runner_.DebugResourceWriter;
-            Ufg.IDebugResourceWriter ufgDrw = EyesSeleniumUtils.ConvertDebugResourceWriter(drw);
+            Ufg.IDebugResourceWriter ufgDrw = Applitools.VisualGrid.Utils.ConvertDebugResourceWriter(drw);
             debugResourceWriter_ = ufgDrw;
         }
 
