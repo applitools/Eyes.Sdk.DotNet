@@ -177,7 +177,7 @@ namespace Applitools.Selenium.Tests
                         Assert.NotNull(input, nameof(input));
                         Assert.NotNull(expected, nameof(expected));
 
-                        Bitmap output = SafariScreenshotImageProvider.CropIOSImage(input, new Size(vpWidth, vpHeight));
+                        Bitmap output = IosCropHelper.CropIOSImage(input, new Size(vpWidth, vpHeight));
                         if (!TestUtils.RUNS_ON_CI)
                         {
                             string path = Path.Combine(TestUtils.LOGS_PATH, "DotNet", "IOSCrop");

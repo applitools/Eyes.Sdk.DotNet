@@ -1,4 +1,5 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Capture;
+using Applitools.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -86,5 +87,13 @@ namespace Applitools.Selenium.Capture
             }
         }
 
+        public static ISizeAdjuster GetImageSizeAdjuster(UserAgent ua, IEyesJsExecutor jsExecutor)
+        {
+            if (ua != null && (ua.OS.Equals(OSNames.Android) || ua.OS.Equals(OSNames.IOS)))
+            {
+                return new MobileDeviceSizeAdjuster(jsExecutor);
+            }
+            return NullSizeAdjuster.Instance;
+        }
     }
 }

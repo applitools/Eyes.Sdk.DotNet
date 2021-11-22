@@ -34,14 +34,5 @@ namespace Applitools.Selenium.Capture
             }
             return new TakeScreenshotImageProvider(logger, tsInstance, ua);
         }
-
-        public static ISizeAdjuster GetImageSizeAdjuster(UserAgent ua, IEyesJsExecutor jsExecutor)
-        {
-            if (ua != null && (ua.OS.Equals(OSNames.Android) || ua.OS.Equals(OSNames.IOS)))
-            {
-                return new MobileDeviceSizeAdjuster(jsExecutor);
-            }
-            return NullSizeAdjuster.Instance;
-        }
     }
 }

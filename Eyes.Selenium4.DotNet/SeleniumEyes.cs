@@ -553,7 +553,7 @@ namespace Applitools.Selenium
 
         private FullPageCaptureAlgorithm CreateFullPageCaptureAlgorithm(ScaleProviderFactory scaleProviderFactory, RenderingInfo renderingInfo)
         {
-            ISizeAdjuster sizeAdjuster = ImageProviderFactory.GetImageSizeAdjuster(userAgent_, jsExecutor_);
+            ISizeAdjuster sizeAdjuster = Capture.Utils.GetImageSizeAdjuster(userAgent_, jsExecutor_);
             return new FullPageCaptureAlgorithm(
                 Logger, TestId, regionPositionCompensation_, WaitBeforeScreenshots,
                 DebugScreenshotProvider,
