@@ -776,7 +776,7 @@ namespace Applitools.Selenium.VisualGrid
 
             object pollingArguments = new { chunkByteLength };
 
-            string result = EyesSeleniumUtils.RunDomScript(logger, driver, testIds, domScript, arguments, pollingArguments, pollingScript);
+            string result = Capture.Utils.RunDomScript(logger, driver, testIds, domScript, arguments, pollingArguments, pollingScript);
             if (keepOriginalUrls)
             {
                 Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);

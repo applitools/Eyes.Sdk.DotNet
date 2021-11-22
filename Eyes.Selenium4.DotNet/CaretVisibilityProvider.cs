@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Applitools.Selenium
+﻿namespace Applitools.Selenium
 {
     internal class CaretVisibilityProvider
     {

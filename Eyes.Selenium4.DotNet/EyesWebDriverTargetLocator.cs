@@ -1,8 +1,6 @@
-﻿using Applitools.Selenium.Scrolling;
-using Applitools.Utils;
+﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;

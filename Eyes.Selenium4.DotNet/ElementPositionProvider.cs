@@ -1,10 +1,10 @@
-﻿namespace Applitools.Selenium
-{
-    using Applitools.Selenium.Scrolling;
-    using OpenQA.Selenium;
-    using System.Drawing;
-    using Utils;
+﻿using Applitools.Selenium.Scrolling;
+using OpenQA.Selenium;
+using System.Drawing;
+using Applitools.Utils;
 
+namespace Applitools.Selenium
+{
     internal class ElementPositionProvider : IPositionProvider, ISeleniumPositionProvider
     {
         private Logger logger_;
