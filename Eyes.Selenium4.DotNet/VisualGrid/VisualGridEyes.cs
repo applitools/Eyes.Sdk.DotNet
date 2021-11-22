@@ -102,7 +102,7 @@ namespace Applitools.Selenium.VisualGrid
         {
             Assembly assembly = typeof(VisualGridEyes).Assembly;
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return $"Eyes.Selenium.VisualGrid.DotNet/{versionInfo.ProductVersion}";
+            return $"Eyes.Selenium4.VisualGrid.DotNet/{versionInfo.ProductVersion}";
         }
 
         public string AgentId
