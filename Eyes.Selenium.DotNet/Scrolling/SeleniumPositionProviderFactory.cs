@@ -39,9 +39,9 @@ namespace Applitools.Selenium.Scrolling
         }
 
         public IPositionProvider TryGetPositionProviderForElement(IWebElement scrollRootElement, StitchModes stitchMode,
-            RemoteWebDriver driver, Logger logger)
+            IWebDriver driver, Logger logger)
         {
-            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + driver.SessionId;
+            string id = scrollRootElement.GetHashCode() + "_" + stitchMode + "_" + ((IHasSessionId)driver).SessionId;
             logger.Log(TraceLevel.Debug, Stage.General, new { PositionProviderId = id });
             positionProviders_.TryGetValue(id, out IPositionProvider positionProvider);
             return positionProvider;

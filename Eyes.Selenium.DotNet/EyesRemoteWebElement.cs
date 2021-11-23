@@ -1,10 +1,8 @@
 ﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -14,11 +12,7 @@ using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium
 {
-    public class EyesRemoteWebElement : RemoteWebElement,
-        IWebElement, ISearchContext, IFindsByLinkText, IFindsById, IFindsByName,
-        IFindsByTagName, IFindsByClassName, IFindsByXPath, IFindsByPartialLinkText,
-        IFindsByCssSelector, IWrapsDriver, ILocatable, IWrapsElement,
-        IEquatable<EyesRemoteWebElement>, IEquatable<IWebElement>
+    public class EyesRemoteWebElement : IWebElement, IEquatable<EyesRemoteWebElement>, IEquatable<IWebElement>
     {
         #region Fields
 
@@ -165,14 +159,13 @@ namespace Applitools.Selenium
 return getVisibleElementRect(arguments[0])";
 
         private EyesWebDriver eyesDriver_;
-        private RemoteWebElement webElement_;
+        private IWebElement webElement_;
 
         #endregion
 
         #region Constructors
 
         public EyesRemoteWebElement(Logger logger, EyesWebDriver eyesDriver, IWebElement webElement)
-            : base(eyesDriver.RemoteWebDriver, null)
         {
             ArgumentGuard.NotNull(logger, nameof(logger));
             ArgumentGuard.NotNull(eyesDriver, nameof(eyesDriver));
@@ -180,20 +173,23 @@ return getVisibleElementRect(arguments[0])";
 
             Logger = logger;
             eyesDriver_ = eyesDriver;
-            webElement_ = webElement as RemoteWebElement;
+            webElement_ = webElement;
 
-            if (webElement_ == null)
-            {
-                string errMsg = "The input web element is not a RemoteWebElement ({0})"
-                    .Fmt(webElement.GetType().Name);
-                Logger.Log(TraceLevel.Error, Stage.General, new { errMsg });
-                throw new EyesException(errMsg);
-            }
+            //if (webElement_ == null)
+            //{
+            //    string errMsg = "The input web element is not a RemoteWebElement ({0})"
+            //        .Fmt(webElement.GetType().Name);
+            //    Logger.Log(TraceLevel.Error, Stage.General, new { errMsg });
+            //    throw new EyesException(errMsg);
+            //}
 
-            FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
-            string id = (string)fi.GetValue(webElement);
-            fi.SetValue(this, id);
+            PropertyInfo pi = typeof(RemoteWebElement).GetProperty("Id", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            Id = (string)pi.GetValue(webElement);
+            TagName = webElement.TagName;
         }
+
+        public string TagName { get; private set; }
+        public string Id { get; private set; }
 
         #endregion
 
@@ -219,38 +215,40 @@ return getVisibleElementRect(arguments[0])";
          }
          */
 
-        public new Point Location
-        {
-            get
-            {
-                Logger.Verbose(this.ToString());
-                Dictionary<string, object> dictionary = new Dictionary<string, object>() { { "id", Id } };
-                Response response;
-                try
-                {
-                    response = Execute(DriverCommand.GetElementLocation, dictionary);
-                }
-                catch (NullReferenceException)
-                {
-                    response = Execute(DriverCommand.GetElementRect, dictionary);
-                }
+        /*  public Point Location
+          {
+              get
+              {
+                  Logger.Verbose(this.ToString());
+                  Dictionary<string, object> dictionary = new Dictionary<string, object>() { { "id", Id } };
+                  Response response;
+                  try
+                  {
+                      response = Execute(DriverCommand.GetElementLocation, dictionary);
+                  }
+                  catch (NullReferenceException)
+                  {
+                      response = Execute(DriverCommand.GetElementRect, dictionary);
+                  }
 
-                try
-                {
-                    Dictionary<string, object> obj = (Dictionary<string, object>)response.Value;
+                  try
+                  {
+                      Dictionary<string, object> obj = (Dictionary<string, object>)response.Value;
 
-                    int x = (int)Math.Round(Convert.ToDouble(obj["x"], CultureInfo.InvariantCulture));
-                    int y = (int)Math.Round(Convert.ToDouble(obj["y"], CultureInfo.InvariantCulture));
-                    return new Point(x, y);
-                }
-                catch
-                {
-                    Logger.Log(TraceLevel.Error, Stage.General, 
-                        new { errMsg = "error parsing response: " + response.Value });
-                    throw;
-                }
-            }
-        }
+                      int x = (int)Math.Round(Convert.ToDouble(obj["x"], CultureInfo.InvariantCulture));
+                      int y = (int)Math.Round(Convert.ToDouble(obj["y"], CultureInfo.InvariantCulture));
+                      return new Point(x, y);
+                  }
+                  catch
+                  {
+                      Logger.Log(TraceLevel.Error, Stage.General, 
+                          new { errMsg = "error parsing response: " + response.Value });
+                      throw;
+                  }
+              }
+          }*/
+
+        public Point Location => webElement_.Location;
 
         public int ScrollLeft
         {
@@ -262,9 +260,9 @@ return getVisibleElementRect(arguments[0])";
             get { return Convert.ToInt32(eyesDriver_.ExecuteScript(JS_GET_SCROLL_TOP, this)); }
         }
 
-        public Point ScrollPosition => GetScrollPosition(this, eyesDriver_);
+        public Point ScrollPosition => GetScrollPosition(webElement_, eyesDriver_);
 
-        public static Point GetScrollPosition(IWebElement targetElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Point GetScrollPosition(IWebElement targetElement, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
             if (jsExecutor.ExecuteScript(JS_GET_SCROLL_POSITION, targetElement) is string scrollPositionStr)
             {
@@ -284,9 +282,9 @@ return getVisibleElementRect(arguments[0])";
             get { return Convert.ToInt32(eyesDriver_.ExecuteScript(JS_GET_SCROLL_HEIGHT, this)); }
         }
 
-        public Size ScrollSize => GetScrollSize(this, eyesDriver_, Logger);
+        public Size ScrollSize => GetScrollSize(webElement_, eyesDriver_, Logger);
 
-        public static Size GetScrollSize(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Size GetScrollSize(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
             if (jsExecutor.ExecuteScript(JS_GET_SCROLL_SIZE, element) is string scrollSizeStr)
             {
@@ -306,9 +304,9 @@ return getVisibleElementRect(arguments[0])";
             get { return Convert.ToInt32(eyesDriver_.ExecuteScript(JS_GET_CLIENT_HEIGHT, this)); }
         }
 
-        public Size ClientSize => GetClientSize(this, eyesDriver_, Logger);
+        public Size ClientSize => GetClientSize(webElement_, eyesDriver_, Logger);
 
-        public static Size GetClientSize(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Size GetClientSize(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
             string sizeStr = jsExecutor.ExecuteScript(JS_GET_CLIENT_SIZE, element) as string;
             if (sizeStr == null) { return Size.Empty; }
@@ -340,18 +338,18 @@ return getVisibleElementRect(arguments[0])";
             }
             set
             {
-                EyesSeleniumUtils.SetOverflow(value, eyesDriver_, this);
+                EyesSeleniumUtils.SetOverflow(value, eyesDriver_, webElement_);
             }
         }
 
         public string SetOverflow(string value)
         {
-            return EyesSeleniumUtils.SetOverflow(value, eyesDriver_, this);
+            return EyesSeleniumUtils.SetOverflow(value, eyesDriver_, webElement_);
         }
 
-        public RectangularMargins BorderWidths => GetBorderWidths(this, eyesDriver_, Logger);
+        public RectangularMargins BorderWidths => GetBorderWidths(webElement_, eyesDriver_, Logger);
 
-        public static RectangularMargins GetBorderWidths(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static RectangularMargins GetBorderWidths(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
             try
             {
@@ -377,9 +375,21 @@ return getVisibleElementRect(arguments[0])";
             }
         }
 
-        public SizeAndBorders SizeAndBorders => GetSizeAndBorders(this, eyesDriver_, Logger);
+        public SizeAndBorders SizeAndBorders => GetSizeAndBorders(webElement_, eyesDriver_, Logger);
 
-        public static SizeAndBorders GetSizeAndBorders(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        string IWebElement.TagName => webElement_.TagName;
+
+        public string Text => webElement_.Text;
+
+        public bool Enabled => webElement_.Enabled;
+
+        public bool Selected => webElement_.Selected;
+
+        public Size Size => webElement_.Size;
+
+        public bool Displayed => webElement_.Displayed;
+
+        public static SizeAndBorders GetSizeAndBorders(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
             SizeAndBorders retval = new SizeAndBorders();
             try
@@ -424,14 +434,15 @@ return getVisibleElementRect(arguments[0])";
             return Point.Empty;
         }
 
-        public new void SendKeys(string text)
+        public void SendKeys(string text)
         {
-            eyesDriver_.UserActionsEyes.AddKeyboardTrigger(this, text);
+            eyesDriver_.UserActionsEyes.AddKeyboardTrigger(webElement_, text);
             webElement_.SendKeys(text);
         }
 
-        public static Point GetOffsetPosition(IWebElement targetElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Point GetOffsetPosition(IWebElement targetElement, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (targetElement is EyesRemoteWebElement erwe) { targetElement = erwe.WrappedElement; }
             if (jsExecutor.ExecuteScript(JS_GET_OFFSET_POSITION, targetElement) is string scrollPositionStr)
             {
                 string[] data = scrollPositionStr.Split(',');
@@ -442,7 +453,9 @@ return getVisibleElementRect(arguments[0])";
 
         public static Point GetOffsetPositionFromActiveFrame(IWebElement targetElement, EyesWebDriver driver, Logger logger)
         {
+            if (targetElement is EyesRemoteWebElement teerwe) { targetElement = teerwe.WrappedElement; }
             IWebElement activeFrame = driver.FindElement(By.TagName("html"));
+            if (activeFrame is EyesRemoteWebElement aferwe) { activeFrame = aferwe.WrappedElement; }
             Point afp = GetScrollPosition(activeFrame, driver, logger);
             Point elp = GetOffsetPosition(targetElement, driver, logger);
             elp.Offset(afp);
@@ -485,8 +498,9 @@ return getVisibleElementRect(arguments[0])";
 
         public Rectangle GetClientBounds() => GetClientBounds(webElement_, eyesDriver_, Logger);
 
-        public static Rectangle GetClientBounds(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Rectangle GetClientBounds(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_BOUNDING_CLIENT_RECT, element);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -496,8 +510,9 @@ return getVisibleElementRect(arguments[0])";
             return rect;
         }
 
-        public static Rectangle GetClientBoundsWithoutBorders(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Rectangle GetClientBoundsWithoutBorders(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_BOUNDING_CLIENT_RECT_WITHOUT_BORDERS, element);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -507,8 +522,9 @@ return getVisibleElementRect(arguments[0])";
             return rect;
         }
 
-        public static Point GetClientVisualOffset(IWebElement element, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Point GetClientVisualOffset(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_CLIENT_VISUAL_OFFSET, element);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -519,8 +535,9 @@ return getVisibleElementRect(arguments[0])";
 
         public Rectangle GetVisibleElementRect() => GetVisibleElementRect(webElement_, eyesDriver_, Logger);
 
-        public static Rectangle GetVisibleElementRect(IWebElement webElement, IJavaScriptExecutor jsExecutor, Logger logger = null)
+        public static Rectangle GetVisibleElementRect(IWebElement webElement, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (webElement is EyesRemoteWebElement erwe) { webElement = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_VISIBLE_ELEMENT_RECT, webElement);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -530,7 +547,7 @@ return getVisibleElementRect(arguments[0])";
             return rect;
         }
 
-        public new void Click()
+        public void Click()
         {
             // Letting the driver know about the current action.
             int left = webElement_.Location.X;
@@ -565,26 +582,26 @@ return getVisibleElementRect(arguments[0])";
 
             var control = new Rectangle(left, top, width, height);
             var offset = new Point(offsetX, offsetY);
-            eyesDriver_.UserActionsEyes.AddMouseTrigger(MouseAction.Click, this, offset);
+            eyesDriver_.UserActionsEyes.AddMouseTrigger(MouseAction.Click, webElement_, offset);
 
             Logger.Verbose("Click({0} {1})", control, offset);
 
             webElement_.Click();
         }
 
-        public new void Clear()
+        public void Clear()
         {
             webElement_.Clear();
         }
 
-        public new string GetAttribute(string attributeName)
+        public string GetAttribute(string attributeName)
         {
             return webElement_.GetAttribute(attributeName);
         }
 
         public string GetComputedStyle(string propertyName) => GetComputedStyle(propertyName, webElement_, eyesDriver_);
 
-        public static string GetComputedStyle(string propertyName, IWebElement element, IJavaScriptExecutor jsExecutor)
+        public static string GetComputedStyle(string propertyName, IWebElement element, IEyesJsExecutor jsExecutor)
         {
             string scriptToExec = string.Format(JS_GET_COMPUTED_STYLE_FORMATTED_STR, propertyName);
             return (string)jsExecutor.ExecuteScript(scriptToExec, element);
@@ -597,109 +614,10 @@ return getVisibleElementRect(arguments[0])";
         /// <returns>The integer value of a computed style.</returns>
         public int GetPixelComputedStyle(string propStyle) => GetPixelComputedStyle(propStyle, webElement_, eyesDriver_);
 
-        public static int GetPixelComputedStyle(string propStyle, IWebElement element, IJavaScriptExecutor jsExecutor)
+        public static int GetPixelComputedStyle(string propStyle, IWebElement element, IEyesJsExecutor jsExecutor)
         {
             string computedStyle = GetComputedStyle(propStyle, element, jsExecutor).Trim().Replace("px", "");
             return (int)Math.Ceiling(double.Parse(computedStyle));
-        }
-
-        public new IWebElement FindElement(By by)
-        {
-            return WrapElementIfRemote_(webElement_.FindElement(by));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElements(By by)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElements(by)));
-        }
-
-        public new IWebElement FindElementById(string id)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementById(id));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsById(string id)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsById(id)));
-        }
-
-        public new IWebElement FindElementByLinkText(string linkText)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByLinkText(linkText));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByLinkText(string linkText)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByLinkText(linkText)));
-        }
-
-        public new IWebElement FindElementByName(string name)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByName(name));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByName(string name)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByName(name)));
-        }
-
-        public new IWebElement FindElementByTagName(string tagName)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByTagName(tagName));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByTagName(string tagName)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByTagName(tagName)));
-        }
-
-        public new IWebElement FindElementByClassName(string className)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByClassName(className));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByClassName(string className)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByClassName(className)));
-        }
-
-        public new IWebElement FindElementByXPath(string xpath)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByXPath(xpath));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByXPath(string xpath)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByXPath(xpath)));
-        }
-
-        public new IWebElement FindElementByPartialLinkText(string partialLinkText)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByPartialLinkText(partialLinkText));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByPartialLinkText(string partialLinkText)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByPartialLinkText(partialLinkText)));
-        }
-
-        public new IWebElement FindElementByCssSelector(string cssSelector)
-        {
-            return WrapElementIfRemote_(webElement_.FindElementByCssSelector(cssSelector));
-        }
-
-        public new ReadOnlyCollection<IWebElement> FindElementsByCssSelector(string cssSelector)
-        {
-            return new ReadOnlyCollection<IWebElement>(
-                WrapElements_(webElement_.FindElementsByCssSelector(cssSelector)));
         }
 
         public override string ToString()
@@ -707,14 +625,14 @@ return getVisibleElementRect(arguments[0])";
 #if DEBUG
             try
             {
-                return $"EyesRemoteWebElement: {base.TagName} (id = {base.Id})";
+                return $"EyesRemoteWebElement: {TagName} (id = {Id})";
             }
             catch
             {
-                return $"EyesRemoteWebElement: (id = {base.Id})";
+                return $"EyesRemoteWebElement: (id = {Id})";
             }
 #else
-            return $"EyesRemoteWebElement: (id = {base.Id})";
+            return $"EyesRemoteWebElement: (id = {Id})";
 #endif
         }
 
@@ -723,14 +641,9 @@ return getVisibleElementRect(arguments[0])";
         /// EyesRemoteWebElement object. For all other types of WebElement, 
         /// the function returns the original object.
         /// </summary>
-        private IWebElement WrapElementIfRemote_(IWebElement elementToWrap)
+        private EyesRemoteWebElement WrapElementIfRemote_(IWebElement elementToWrap)
         {
-            if (elementToWrap is RemoteWebElement remoteWebElement)
-            {
-                return new EyesRemoteWebElement(Logger, eyesDriver_, elementToWrap);
-            }
-
-            return elementToWrap;
+            return new EyesRemoteWebElement(Logger, eyesDriver_, elementToWrap);
         }
 
         /// <summary>
@@ -780,6 +693,31 @@ return getVisibleElementRect(arguments[0])";
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public void Submit()
+        {
+            webElement_.Submit();
+        }
+
+        public string GetProperty(string propertyName)
+        {
+            return webElement_.GetProperty(propertyName);
+        }
+
+        public string GetCssValue(string propertyName)
+        {
+            return webElement_.GetCssValue(propertyName);
+        }
+
+        public IWebElement FindElement(By by)
+        {
+            return webElement_.FindElement(by);
+        }
+
+        public ReadOnlyCollection<IWebElement> FindElements(By by)
+        {
+            return webElement_.FindElements(by);
         }
 
         #endregion

@@ -38,7 +38,7 @@ namespace Applitools.Selenium
         private static readonly string DOM_SCRIPTS_WRAPPER = "return ({0})({1});";
         internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
 
-        private static Size GetViewportSize_(Logger logger, IJavaScriptExecutor jsExecutor)
+        private static Size GetViewportSize_(Logger logger, IEyesJsExecutor jsExecutor)
         {
             if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string sizeStr)
             {
@@ -68,7 +68,7 @@ namespace Applitools.Selenium
             }
             else
             {
-                size = GetViewportSize_(logger, (IJavaScriptExecutor)driver);
+                size = GetViewportSize_(logger, (IEyesJsExecutor)driver);
             }
             return size;
         }
@@ -136,13 +136,14 @@ namespace Applitools.Selenium
 
         internal static string GetElementId(IWebElement element)
         {
-            FieldInfo fi = typeof(RemoteWebElement).GetField("elementId", BindingFlags.NonPublic | BindingFlags.Instance);
-            return (string)fi.GetValue(element);
+            if (element is EyesRemoteWebElement erwe) { return erwe.Id; }
+            PropertyInfo pi = typeof(RemoteWebElement).GetProperty("Id", BindingFlags.NonPublic | BindingFlags.Instance| BindingFlags.FlattenHierarchy);
+            return (string)pi.GetValue(element);
         }
 
-        internal static string GetElementIdForDictionary(IWebElement element, RemoteWebDriver remoteWebDriver)
+        internal static string GetElementIdForDictionary(IWebElement element, IWebDriver remoteWebDriver)
         {
-            return GetElementId(element) + "_" + remoteWebDriver.SessionId;
+            return GetElementId(element) + "_" + ((IHasSessionId)remoteWebDriver).SessionId;
         }
 
         private static bool SetBrowserSize_(Logger logger, IWebDriver driver, Size requiredSize)
@@ -337,6 +338,7 @@ namespace Applitools.Selenium
             ArgumentGuard.NotNull(jsExecutor, nameof(jsExecutor));
             ArgumentGuard.NotNull(rootElement, nameof(rootElement));
 
+            if (rootElement is EyesRemoteWebElement erwe) { rootElement = erwe.WrappedElement; }
             var result = jsExecutor.ExecuteScript(JSSetOverflow_.Fmt(overflow), rootElement);
             Thread.Sleep(SetOverflowWaitMS_);
             return result as string;
@@ -405,7 +407,7 @@ namespace Applitools.Selenium
         public static IWebElement GetDefaultRootElement(IWebDriver driver, Logger logger = null)
         {
             IWebElement chosenElement;
-            IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)driver;
+            IEyesJsExecutor jsExecutor = (IEyesJsExecutor)driver;
 
             IWebElement scrollingElement;
             try
@@ -460,7 +462,7 @@ namespace Applitools.Selenium
             return chosenElement;
         }
 
-        private static bool CanScrollVertically(IJavaScriptExecutor jsExecutor, IWebElement element)
+        private static bool CanScrollVertically(IEyesJsExecutor jsExecutor, IWebElement element)
         {
             return (bool)jsExecutor.ExecuteScript("return arguments[0].scrollHeight > arguments[0].clientHeight", element);
         }

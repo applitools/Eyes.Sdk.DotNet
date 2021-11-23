@@ -222,19 +222,13 @@ namespace Applitools.Selenium
         {
             ArgumentGuard.NotNull(driver, nameof(driver));
 
-            if (driver is RemoteWebDriver remoteDriver)
-            {
-                driver_ = new EyesWebDriver(Logger, this, this, remoteDriver);
-            }
-            else if (driver is EyesWebDriver eyesDriver)
+            if (driver is EyesWebDriver eyesDriver)
             {
                 driver_ = eyesDriver;
             }
             else
             {
-                string errMsg = $"Driver is not a RemoteWebDriver ({driver.GetType().Name})";
-                Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
-                throw new EyesException(errMsg);
+                driver_ = new EyesWebDriver(Logger, this, this, driver);
             }
 
             Type driverType = driver_.RemoteWebDriver.GetType();
@@ -260,8 +254,8 @@ namespace Applitools.Selenium
                 InitSessionDetailsUsingInternalImplementation_();
             }
 
-            Logger.Log(TraceLevel.Info, Stage.Open,
-                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId, PlatformName });
+            //Logger.Log(TraceLevel.Info, Stage.Open,
+            //    new { message = "Initialized Web Driver.", seleniumSessionId = driver_.RemoteWebDriver.SessionId, PlatformName });
         }
 
         private void InitSessionDetails_(MethodInfo getSessionDetailsMI)
@@ -700,7 +694,7 @@ namespace Applitools.Selenium
             }
         }
 
-        internal CheckState InitCheckState_(ICheckSettings checkSettings, 
+        internal CheckState InitCheckState_(ICheckSettings checkSettings,
             ICheckSettingsInternal checkSettingsInternal, ISeleniumCheckTarget seleniumCheckTarget)
         {
             CheckState state = new CheckState();
@@ -1575,7 +1569,7 @@ namespace Applitools.Selenium
 
         protected override object GetAgentSetup()
         {
-            RemoteWebDriver remoteWebDriver = driver_.RemoteWebDriver;
+            IWebDriver remoteWebDriver = driver_.RemoteWebDriver;
             Assembly eyesSeleniumAsm = this.GetType().Assembly;
             Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
             string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
@@ -1600,12 +1594,12 @@ namespace Applitools.Selenium
             EyesRemoteWebElement body = (EyesRemoteWebElement)driver_.FindElement(By.TagName("body"));
             return new
             {
-                SeleniumSessionId = remoteWebDriver.SessionId.ToString(),
+                SeleniumSessionId = ((IHasSessionId)remoteWebDriver).SessionId.ToString(),
                 WebDriver = new
                 {
                     remoteWebDriver.GetType().Name,
                     remoteWebDriver.GetType().Assembly.GetName().Version,
-                    remoteWebDriver.Capabilities,
+                    ((IHasCapabilities)remoteWebDriver).Capabilities,
                 },
                 SeleniumSDKAssemblyData = new
                 {

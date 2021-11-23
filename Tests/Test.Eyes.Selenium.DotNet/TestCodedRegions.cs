@@ -1,5 +1,6 @@
 ﻿using Applitools.Selenium.Tests.Utils;
 using Applitools.Tests.Utils;
+using Applitools.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System.Drawing;
@@ -20,7 +21,7 @@ namespace Applitools.Selenium.Tests
                 IWebElement headerElement = webDriver.FindElement(By.CssSelector("header"));
                 IWebElement mainElement = webDriver.FindElement(By.CssSelector("main"));
                 IWebElement boxElement = webDriver.FindElement(By.CssSelector("div"));
-                IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)webDriver;
+                IEyesJsExecutor jsExecutor = new SeleniumJavaScriptExecutor(webDriver);
                 Rectangle headerRect = EyesRemoteWebElement.GetVisibleElementRect(headerElement, jsExecutor);
                 Rectangle mainRect = EyesRemoteWebElement.GetVisibleElementRect(mainElement, jsExecutor);
                 Rectangle boxRect = EyesRemoteWebElement.GetVisibleElementRect(boxElement, jsExecutor);

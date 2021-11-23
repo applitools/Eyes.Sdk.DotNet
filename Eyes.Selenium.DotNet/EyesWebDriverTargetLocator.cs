@@ -104,9 +104,13 @@ namespace Applitools.Selenium
         private void WillSwitchToFrame_(IWebElement targetFrame)
         {
             ArgumentGuard.NotNull(targetFrame, nameof(targetFrame));
-            if (!(targetFrame is EyesRemoteWebElement eyesFrame))
+            EyesRemoteWebElement eyesFrame = targetFrame as EyesRemoteWebElement;
+            if (eyesFrame == null)
             {
                 eyesFrame = new EyesRemoteWebElement(logger_, driver_, targetFrame);
+            } else
+            {
+                targetFrame = eyesFrame.WrappedElement;
             }
 
             Size ds = targetFrame.Size;
@@ -120,7 +124,7 @@ namespace Applitools.Selenium
             Point contentLocation = new Point(bounds.X + borderWidths.Left, bounds.Y + borderWidths.Top);
             Point originalLocation = eyesFrame.ScrollPosition;
 
-            Frame frame = new Frame(logger_, targetFrame,
+            Frame frame = new Frame(logger_, eyesFrame,
                     contentLocation,
                     new Size(ds.Width, ds.Height),
                     clientSize,

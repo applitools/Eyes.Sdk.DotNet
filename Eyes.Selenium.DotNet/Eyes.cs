@@ -19,7 +19,7 @@ namespace Applitools.Selenium
         private Configuration configuration_ = new Configuration();
         internal static bool moveWindow_ = true;
         internal readonly ISeleniumEyes activeEyes_;
-
+        
         #region ctors
 
         public Eyes(ILogHandler logHandler = null)
@@ -29,6 +29,13 @@ namespace Applitools.Selenium
             configuration_.SetForceFullPageScreenshot(false);
             seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_);
             activeEyes_ = seleniumEyes_;
+
+            AppDomain.CurrentDomain.TypeResolve += CurrentDomain_TypeResolve;
+        }
+
+        private System.Reflection.Assembly CurrentDomain_TypeResolve(object sender, ResolveEventArgs args)
+        {
+            return args.RequestingAssembly;
         }
 
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
