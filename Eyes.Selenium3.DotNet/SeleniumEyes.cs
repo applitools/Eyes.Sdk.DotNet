@@ -3,6 +3,7 @@ using Applitools.Cropping;
 using Applitools.Fluent;
 using Applitools.Positioning;
 using Applitools.Selenium.Capture;
+using Applitools.Selenium.Common;
 using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Positioning;
 using Applitools.Selenium.Scrolling;
@@ -20,17 +21,16 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
 using Region = Applitools.Utils.Geometry.Region;
 using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
-using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
-using System.Net;
 
 namespace Applitools.Selenium
 {
     /// <summary>
     /// Applitools Eyes Selenium DotNet API.
     /// </summary>
-    internal class SeleniumEyes : RunningTest, IEyes, ISeleniumEyes, IUserActionsEyes
+    internal class SeleniumEyes : RunningTest, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
     {
         private const string SET_DATA_APPLITOOLS_SCROLL_ATTR = "var e = arguments[0]; if (e != null) e.setAttribute('data-applitools-scroll','true');";
 
@@ -1687,6 +1687,11 @@ namespace Applitools.Selenium
         protected override void SetConfigImpl(Applitools.IConfiguration configuration)
         {
             throw new NotImplementedException();
+        }
+
+        public int GetFrameChainLength()
+        {
+            return driver_.GetFrameChain().Count;
         }
 
         #endregion Methods

@@ -1,18 +1,19 @@
 ﻿using System;
 using Applitools.Utils.Geometry;
 using Applitools.Positioning;
+using Applitools.Selenium.Common;
 
 namespace Applitools.Selenium.Positioning
 {
     internal class FirefoxRegionPositionCompensation : IRegionPositionCompensation
     {
-        private SeleniumEyes eyes;
-        private Logger logger;
+        private readonly ISeleniumEyesCommon eyes_;
+        protected Logger logger_;
 
-        public FirefoxRegionPositionCompensation(SeleniumEyes eyes, Logger logger)
+        public FirefoxRegionPositionCompensation(ISeleniumEyesCommon eyes,  Logger logger)
         {
-            this.eyes = eyes;
-            this.logger = logger;
+            eyes_ = eyes;
+            logger_ = logger;
         }
 
         public Region CompensateRegionPosition(Region region, double pixelRatio)
@@ -22,9 +23,7 @@ namespace Applitools.Selenium.Positioning
                 return region;
             }
 
-            EyesWebDriver eyesWebDriver = eyes.GetDriver();
-            FrameChain frameChain = eyesWebDriver.GetFrameChain();
-            if (frameChain.Count > 0)
+            if (eyes_.GetFrameChainLength() > 0)
             {
                 return region;
             }
@@ -38,7 +37,7 @@ namespace Applitools.Selenium.Positioning
             }
 
             Region compensatedRegion = new Region(rect);
-            logger.Verbose($"compensating for firefox: {region} ==> {compensatedRegion}");
+            logger_.Verbose($"compensating for firefox: {region} ==> {compensatedRegion}");
 
             return compensatedRegion;
         }
