@@ -30,11 +30,18 @@ namespace Applitools.Selenium
             seleniumEyes_ = new SeleniumEyes(this, (ClassicRunner)runner_);
             activeEyes_ = seleniumEyes_;
 
+            AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.TypeResolve += CurrentDomain_TypeResolve;
+        }
+
+        private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        {
+            CommonUtils.LogExceptionStackTrace(Logger, Stage.Setup, e.Exception, sender);
         }
 
         private System.Reflection.Assembly CurrentDomain_TypeResolve(object sender, ResolveEventArgs args)
         {
+            Logger.Log(TraceLevel.Warn, Stage.Setup, new { sender, args });
             return args.RequestingAssembly;
         }
 
