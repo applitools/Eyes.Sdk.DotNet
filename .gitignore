@@ -31,3 +31,4 @@ TestResult.xml
 /coverage-tests/coverage-tests-metadata.json
 /Eyes.Selenium4.DotNet/Properties/NodeResources/node_modules/
 /Eyes.Selenium.Common/Properties/NodeResources/node_modules
+/Eyes.Selenium*.DotNet/Properties/NodeResources/

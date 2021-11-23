@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Applitools Eyes adds automated visual validation to your automated tests.
+With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
+To learn more, visit https://applitools.com/ .</Description>
+    <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
+    <Copyright>Applitools 2013</Copyright>
+    <Version>2.57</Version>
+    <Authors>Applitools</Authors>
+    <Company>Applitools</Company>
+    <Product>Eyes SDK</Product>
+    <PackageTags>applitools eyes selenium</PackageTags>
+    <PackageReleaseNotes>### Fixed
+- Fixed Safari's cut on iPhone 12 [Trello 2694] (https://trello.com/c/mpjZpL91)
+</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageId>Eyes.Selenium3</PackageId>
+    <PackageLicenseExpression />
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>applitools_nuget_icon.png</PackageIcon>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageOutputPath>..\PackagesOutput</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <PackageReference Include="BrotliSharpLib" Version="0.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CssParser\CssParser.csproj">
+		  <PrivateAssets>all</PrivateAssets>
+	  </ProjectReference>
+    <ProjectReference Include="..\Eyes.Selenium.Common\Eyes.Selenium.Common.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj">
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+  
+  <Target Name="GetMyPackageFiles">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(OutputPath)CssParser.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Eyes.Selenium.Common.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Eyes.Ufg.DotNet.dll" />
+    </ItemGroup>
+  </Target>
+    
+</Project>
