@@ -18,23 +18,23 @@ namespace Applitools.Selenium.Capture
                     int.TryParse(ua.BrowserMajorVersion, out int firefoxMajorVersion);
                     if (firefoxMajorVersion >= 48)
                     {
-                        factoryType = asm.GetType("FirefoxScreenshotImageProvider");
+                        factoryType = asm.GetType("Applitools.Selenium.Capture.FirefoxScreenshotImageProvider");
                     }
                 }
                 else if (ua.Browser.Equals(BrowserNames.Safari))
                 {
-                    factoryType = asm.GetType("SafariScreenshotImageProvider");
+                    factoryType = asm.GetType("Applitools.Selenium.Capture.SafariScreenshotImageProvider");
                 }
                 else if (ua.Browser.Equals(BrowserNames.IE))
                 {
-                    factoryType = asm.GetType("InternetExplorerScreenshotImageProvider");
+                    factoryType = asm.GetType("Applitools.Selenium.Capture.InternetExplorerScreenshotImageProvider");
                 }
                 else if (ua.OS.Equals(OSNames.Android))
                 {
-                    factoryType = asm.GetType("AndroidScreenshotImageProvider");
+                    factoryType = asm.GetType("Applitools.Selenium.Capture.AndroidScreenshotImageProvider");
                 }
             }
-            factoryType = asm.GetType("TakeScreenshotImageProvider");
+            factoryType = asm.GetType("Applitools.Selenium.Capture.TakeScreenshotImageProvider");
 
             return (IImageProvider)Activator.CreateInstance(factoryType, eyes, logger, tsInstance, ua);
         }
