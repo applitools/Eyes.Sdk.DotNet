@@ -54,7 +54,9 @@ namespace Applitools.Selenium
                 logger, StitchModes.CSS, driver, scrolledElement, userAgent);
             IPositionProvider scrollPositionProvider = driver.Eyes.GetPositionProvider(
                 logger, StitchModes.Scroll, driver, scrolledElement, userAgent);
-            string overflow = (string)jsExecutor.ExecuteScript("return arguments[0].style.overflow", scrolledElement);
+
+            EyesRemoteWebElement erwe = scrolledElement as EyesRemoteWebElement;
+            string overflow = (string)jsExecutor.ExecuteScript("return arguments[0].style.overflow", erwe != null ? erwe.WrappedElement : scrolledElement);
             FrameChain frameChain = driver.GetFrameChain().Clone();
             FrameState frameState = new FrameState(driver, scrolledElement, cssPositionProvider, scrollPositionProvider, overflow, frameChain);
             return frameState;

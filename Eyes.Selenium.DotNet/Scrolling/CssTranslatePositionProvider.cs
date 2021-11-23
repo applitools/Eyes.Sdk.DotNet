@@ -99,8 +99,9 @@
         public PositionMemento GetState()
         {
             logger_.Verbose("enter (scrollRootElement_: {0})", ScrolledElement);
+            EyesRemoteWebElement erwe = ScrolledElement as EyesRemoteWebElement;
             return new CssTranslatePositionMemento(
-                (string)executor_.ExecuteScript(JSGetCurrentTransform_, ScrolledElement), LastSetPosition_);
+                (string)executor_.ExecuteScript(JSGetCurrentTransform_, erwe != null ? erwe.WrappedElement : ScrolledElement), LastSetPosition_);
         }
 
         /// <summary>
@@ -110,7 +111,9 @@
         public void RestoreState(PositionMemento state)
         {
             logger_.Verbose("enter (scrollRootElement_: {0}), state: {1}", ScrolledElement, state);
-            executor_.ExecuteScript(JSSetTransform_.Fmt(((CssTranslatePositionMemento)state).Transform), ScrolledElement);
+            EyesRemoteWebElement erwe = ScrolledElement as EyesRemoteWebElement;
+            executor_.ExecuteScript(JSSetTransform_.Fmt(((CssTranslatePositionMemento)state).Transform), 
+                erwe != null ? erwe.WrappedElement : ScrolledElement);
             LastSetPosition_ = ((CssTranslatePositionMemento)state).Position;
         }
 

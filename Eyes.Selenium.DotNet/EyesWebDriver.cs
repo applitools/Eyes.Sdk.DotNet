@@ -15,7 +15,7 @@ using Size = System.Drawing.Size;
 namespace Applitools.Selenium
 {
     public sealed class EyesWebDriver :
-        IHasCapabilities,
+        IHasCapabilities, IWrapsDriver,
         ISearchContext, ITakesScreenshot, IWebDriver, IJavaScriptExecutor,
         IEyesJsExecutor
     {
@@ -75,6 +75,7 @@ namespace Applitools.Selenium
         internal IUserActionsEyes UserActionsEyes { get; private set; }
 
         public IWebDriver RemoteWebDriver { get; internal set; }
+        public IWebDriver WrappedDriver { get => RemoteWebDriver; }
 
         public string Title
         {

@@ -38,7 +38,7 @@ namespace Applitools.Selenium
         private static readonly string DOM_SCRIPTS_WRAPPER = "return ({0})({1});";
         internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
 
-        private static Size GetViewportSize_(Logger logger, IEyesJsExecutor jsExecutor)
+        private static Size GetViewportSize_(Logger logger, IJavaScriptExecutor jsExecutor)
         {
             if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string sizeStr)
             {
@@ -68,7 +68,7 @@ namespace Applitools.Selenium
             }
             else
             {
-                size = GetViewportSize_(logger, (IEyesJsExecutor)driver);
+                size = GetViewportSize_(logger, (IJavaScriptExecutor)driver);
             }
             return size;
         }
@@ -338,7 +338,6 @@ namespace Applitools.Selenium
             ArgumentGuard.NotNull(jsExecutor, nameof(jsExecutor));
             ArgumentGuard.NotNull(rootElement, nameof(rootElement));
 
-            if (rootElement is EyesRemoteWebElement erwe) { rootElement = erwe.WrappedElement; }
             var result = jsExecutor.ExecuteScript(JSSetOverflow_.Fmt(overflow), rootElement);
             Thread.Sleep(SetOverflowWaitMS_);
             return result as string;

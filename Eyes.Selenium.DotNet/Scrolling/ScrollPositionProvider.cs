@@ -46,6 +46,7 @@
         public virtual Point SetPosition(Point pos)
         {
             logger_.Verbose("setting position of {0} to {1}", ScrolledElement, pos);
+            EyesRemoteWebElement erwe = ScrolledElement as EyesRemoteWebElement;
             var position = executor_.ExecuteScript(string.Format(SetPositionCommandFormat, pos.X, pos.Y), ScrolledElement);
             return EyesSeleniumUtils.ParseLocationString(position);
         }

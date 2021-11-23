@@ -1,6 +1,7 @@
 ﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium
 {
-    public class EyesRemoteWebElement : IWebElement, IEquatable<EyesRemoteWebElement>, IEquatable<IWebElement>
+    public class EyesRemoteWebElement : IWebElement, IWrapsElement, IEquatable<EyesRemoteWebElement>, IEquatable<IWebElement>
     {
         #region Fields
 
@@ -264,6 +265,7 @@ return getVisibleElementRect(arguments[0])";
 
         public static Point GetScrollPosition(IWebElement targetElement, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (targetElement is EyesRemoteWebElement erwe) { targetElement = erwe.WrappedElement; }
             if (jsExecutor.ExecuteScript(JS_GET_SCROLL_POSITION, targetElement) is string scrollPositionStr)
             {
                 string[] data = scrollPositionStr.Split(',');
@@ -286,6 +288,7 @@ return getVisibleElementRect(arguments[0])";
 
         public static Size GetScrollSize(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             if (jsExecutor.ExecuteScript(JS_GET_SCROLL_SIZE, element) is string scrollSizeStr)
             {
                 string[] data = scrollSizeStr.Split(',');
@@ -308,6 +311,7 @@ return getVisibleElementRect(arguments[0])";
 
         public static Size GetClientSize(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string sizeStr = jsExecutor.ExecuteScript(JS_GET_CLIENT_SIZE, element) as string;
             if (sizeStr == null) { return Size.Empty; }
             sizeStr = sizeStr.Replace("px", "");
@@ -320,6 +324,7 @@ return getVisibleElementRect(arguments[0])";
         public static Size GetEntireSize(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
             logger.Verbose("enter (element: {0})", element);
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string entireSizeStr = (string)jsExecutor.ExecuteScript(JS_GET_ENTIRE_ELEMENT_SIZE, element);
             string[] wh = entireSizeStr.Split(';');
             Size size = new Size(Convert.ToInt32(wh[0]), Convert.ToInt32(wh[1]));
@@ -351,6 +356,7 @@ return getVisibleElementRect(arguments[0])";
 
         public static RectangularMargins GetBorderWidths(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
+            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             try
             {
                 string bordersStr = jsExecutor.ExecuteScript(JS_GET_BORDER_WIDTHS, element) as string;
@@ -424,7 +430,7 @@ return getVisibleElementRect(arguments[0])";
 
         public Point ScrollTo(Point location)
         {
-            if (eyesDriver_.ExecuteScript(string.Format(JS_SCROLL_TO_FORMATTED_STR, location.X, location.Y) + JS_GET_SCROLL_POSITION, this) is string scrollPositionStr)
+            if (eyesDriver_.ExecuteScript(string.Format(JS_SCROLL_TO_FORMATTED_STR, location.X, location.Y) + JS_GET_SCROLL_POSITION, webElement_) is string scrollPositionStr)
             {
                 string[] data = scrollPositionStr.Split(',');
                 return new Point(
@@ -442,7 +448,6 @@ return getVisibleElementRect(arguments[0])";
 
         public static Point GetOffsetPosition(IWebElement targetElement, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
-            if (targetElement is EyesRemoteWebElement erwe) { targetElement = erwe.WrappedElement; }
             if (jsExecutor.ExecuteScript(JS_GET_OFFSET_POSITION, targetElement) is string scrollPositionStr)
             {
                 string[] data = scrollPositionStr.Split(',');
@@ -453,7 +458,6 @@ return getVisibleElementRect(arguments[0])";
 
         public static Point GetOffsetPositionFromActiveFrame(IWebElement targetElement, EyesWebDriver driver, Logger logger)
         {
-            if (targetElement is EyesRemoteWebElement teerwe) { targetElement = teerwe.WrappedElement; }
             IWebElement activeFrame = driver.FindElement(By.TagName("html"));
             if (activeFrame is EyesRemoteWebElement aferwe) { activeFrame = aferwe.WrappedElement; }
             Point afp = GetScrollPosition(activeFrame, driver, logger);
@@ -500,7 +504,6 @@ return getVisibleElementRect(arguments[0])";
 
         public static Rectangle GetClientBounds(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
-            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_BOUNDING_CLIENT_RECT, element);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -512,7 +515,6 @@ return getVisibleElementRect(arguments[0])";
 
         public static Rectangle GetClientBoundsWithoutBorders(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
-            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_BOUNDING_CLIENT_RECT_WITHOUT_BORDERS, element);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -524,7 +526,6 @@ return getVisibleElementRect(arguments[0])";
 
         public static Point GetClientVisualOffset(IWebElement element, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
-            if (element is EyesRemoteWebElement erwe) { element = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_CLIENT_VISUAL_OFFSET, element);
             logger?.Verbose(result);
             string[] data = result.Split(';');
@@ -537,7 +538,6 @@ return getVisibleElementRect(arguments[0])";
 
         public static Rectangle GetVisibleElementRect(IWebElement webElement, IEyesJsExecutor jsExecutor, Logger logger = null)
         {
-            if (webElement is EyesRemoteWebElement erwe) { webElement = erwe.WrappedElement; }
             string result = (string)jsExecutor.ExecuteScript(JS_GET_VISIBLE_ELEMENT_RECT, webElement);
             logger?.Verbose(result);
             string[] data = result.Split(';');
