@@ -33,7 +33,7 @@ namespace Applitools.Selenium.Tests
             {
                 testObjects.Eyes.Open(testObjects.WebDriver, "Test Count", "Test_VGTestsCount_1", new Size(640, 480));
                 testObjects.Eyes.Check("Test", Target.Window());
-                testObjects.Eyes.Close();
+                testObjects.Eyes.Close(false);
                 TestResultsSummary resultsSummary = testObjects.Runner.GetAllTestResults();
                 Assert.AreEqual(1, resultsSummary?.Count);
             }
@@ -57,7 +57,7 @@ namespace Applitools.Selenium.Tests
                 testObjects.Eyes.SetConfiguration(conf);
                 testObjects.Eyes.Open(testObjects.WebDriver, "Test Count", "Test_VGTestsCount_2");
                 testObjects.Eyes.Check("Test", Target.Window());
-                testObjects.Eyes.Close();
+                testObjects.Eyes.Close(false);
                 TestResultsSummary resultsSummary = testObjects.Runner.GetAllTestResults();
                 Assert.AreEqual(2, resultsSummary?.Count);
             }
@@ -82,7 +82,7 @@ namespace Applitools.Selenium.Tests
                 testObjects.Eyes.SetConfiguration(conf);
                 testObjects.Eyes.Open(testObjects.WebDriver);
                 testObjects.Eyes.Check("Test", Target.Window());
-                testObjects.Eyes.Close();
+                testObjects.Eyes.Close(false);
                 TestResultsSummary resultsSummary = testObjects.Runner.GetAllTestResults();
                 Assert.AreEqual(2, resultsSummary?.Count);
             }
@@ -105,7 +105,7 @@ namespace Applitools.Selenium.Tests
                 testObjects.Eyes.SetConfiguration(conf);
                 testObjects.Eyes.Open(testObjects.WebDriver);
                 testObjects.Eyes.Check("Test", Target.Window());
-                testObjects.Eyes.Close();
+                testObjects.Eyes.Close(false);
                 TestResultsSummary resultsSummary = testObjects.Runner.GetAllTestResults();
                 Assert.AreEqual(1, resultsSummary?.Count);
             }
@@ -129,7 +129,7 @@ namespace Applitools.Selenium.Tests
                 testObjects.Eyes.SetConfiguration(conf);
                 testObjects.Eyes.Open(testObjects.WebDriver, "Test Count", "Test_VGTestsCount_5", new Size(640, 480));
                 testObjects.Eyes.Check("Test", Target.Window());
-                testObjects.Eyes.Close();
+                testObjects.Eyes.Close(false);
                 TestResultsSummary resultsSummary = testObjects.Runner.GetAllTestResults();
                 Assert.AreEqual(2, resultsSummary?.Count);
             }

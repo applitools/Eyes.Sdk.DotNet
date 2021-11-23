@@ -40,8 +40,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.Batch = TestDataProvider.BatchInfo;
                 eyes.Open(driver, "Timeout Test", "Visual Grid Timeout Test", new Size(1200, 800));
                 eyes.Check(Target.Window().WithName("Test"));
-                eyes.Close();
-                runner.GetAllTestResults();
+                eyes.Close(false);
+                runner.GetAllTestResults(false);
             }
             finally
             {

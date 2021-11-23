@@ -65,7 +65,7 @@ namespace Applitools.Selenium.Tests
                 Assert.AreEqual(new Size(640, 480), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[0]].Environment).DisplaySize.ToSize());
                 Assert.AreEqual(new Size(800, 600), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[1]].Environment).DisplaySize.ToSize());
                 Assert.AreEqual(new Size(1024, 768), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[2]].Environment).DisplaySize.ToSize());
-                Assert.AreEqual(new Size(320, 568), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[3]].Environment).DisplaySize.ToSize());
+                Assert.AreEqual(new Size(980, 1740), ((AppEnvironment)server.SessionsStartInfo[server.SessionIds[3]].Environment).DisplaySize.ToSize());
             }
             finally
             {
