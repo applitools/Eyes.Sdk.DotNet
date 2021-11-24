@@ -11,7 +11,6 @@ using Applitools.Utils;
 using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
-using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
@@ -19,7 +18,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
 using Region = Applitools.Utils.Geometry.Region;
@@ -30,19 +28,12 @@ namespace Applitools.Selenium
     /// <summary>
     /// Applitools Eyes Selenium DotNet API.
     /// </summary>
-    internal class SeleniumEyes : RunningTest, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
+    internal class SeleniumEyes : SeleniumEyesBase<IWebElement>, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
     {
-        private const string SET_DATA_APPLITOOLS_SCROLL_ATTR = "var e = arguments[0]; if (e != null) e.setAttribute('data-applitools-scroll','true');";
-
-        private const string HIDE_CARET = "var activeElement = document.activeElement; activeElement && activeElement.blur(); return activeElement;";
         #region Fields
-
-        private static readonly double UnknownDevicePixelRatio_ = 0;
-        private static readonly double DefaultDevicePixelRatio_ = 1;
 
         private EyesWebDriver driver_;
         private bool dontGetTitle_;
-        private SeleniumJavaScriptExecutor jsExecutor_;
 
         internal UserAgent userAgent_;
         private IRegionPositionCompensation regionPositionCompensation_;
@@ -50,7 +41,6 @@ namespace Applitools.Selenium
         private Region effectiveViewport_;
 
         private IWebElement userDefinedSRE_;
-        private ISeleniumConfigurationProvider configProvider_;
 
         private readonly SeleniumPositionProviderFactory positionProviderFactory_ = new SeleniumPositionProviderFactory();
 
@@ -64,77 +54,26 @@ namespace Applitools.Selenium
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
         public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, Uri serverUrl, ClassicRunner runner)
-            : base(runner)
+            : base(configurationProvider, serverUrl, runner)
         {
-            ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
-            configProvider_ = configurationProvider;
-            ServerUrl = serverUrl.ToString();
-            Init_();
         }
 
         /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
         public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner)
-            : base(runner)
+            : base(configurationProvider, runner)
         {
-            configProvider_ = configurationProvider;
-            runner_ = runner;
-            Init_();
         }
-
-        private void Init_()
-        {
-            Config_.SetHideScrollbars(true);
-            DevicePixelRatio = UnknownDevicePixelRatio_;
-            WaitBeforeScreenshots = 100;
-            DefaultMatchSettings.UseDom = false;
-            ServerConnector.SdkName = FullAgentId;
-            ServerConnector.AgentId = FullAgentId;
-        }
-
-        protected override Applitools.Configuration Configuration => configProvider_.GetConfiguration();
-
-        private Configuration Config_ => configProvider_.GetConfiguration();
 
         #endregion Constructors
 
         #region Properties
 
-        /// <summary>
-        /// Forces a full page screenshot (by scrolling and stitching) if the browser only 
-        /// supports viewport screenshots).
-        /// </summary>
-        public bool ForceFullPageScreenshot { get => Config_.IsForceFullPageScreenshot ?? false; set => Config_.SetForceFullPageScreenshot(value); }
-        public StitchModes StitchMode { get => Config_.StitchMode; set => Config_.SetStitchMode(value); }
-        public int WaitBeforeScreenshots { get => Config_.WaitBeforeScreenshots; set => Config_.SetWaitBeforeScreenshots(value); }
-        public bool HideScrollbars { get => Config_.HideScrollbars; set => Config_.SetHideScrollbars(value); }
-        public bool HideCaret { get => Config_.HideCaret; set => Config_.SetHideCaret(value); }
-
-        public override string ApiKey { get => base.ApiKey ?? runner_.ApiKey; set => base.ApiKey = value; }
-        public override string ServerUrl { get => base.ServerUrl ?? runner_.ServerUrl; set => base.ServerUrl = value; }
-        public override ProxySettings Proxy { get => base.Proxy ?? runner_.Proxy; set => base.Proxy = value; }
-
-        private bool? isDisabled_;
-        private object lastCheckSettings_;
-        private object lastCheckSettingsInternal_;
-
-        public IDictionary<string, object> CachedSessionDetails { get; private set; }
-
-
-        public override bool IsDisabled { get => isDisabled_ ?? runner_.IsDisabled; set => isDisabled_ = value; }
-
-        public IPositionProvider CurrentFramePositionProvider { get; protected set; }
-
-        public void SetScrollToRegion(bool shouldScroll) { }
-
-        public double DevicePixelRatio { get; set; }
 
         public IImageProvider ImageProvider { get; private set; }
 
         internal FrameChain OriginalFC { get; set; }
-
-        public string PlatformName { get; private set; }
 
         #endregion Properties
 
@@ -1101,7 +1040,7 @@ namespace Applitools.Selenium
             return EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE_);
         }
 
-        void IUserActionsEyes<IWebElement>.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
+        public override void AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
         {
             Rectangle control = Rectangle.Empty;
             if (element != null)
@@ -1142,7 +1081,7 @@ namespace Applitools.Selenium
             Logger.Verbose("Added {0}", trigger);
         }
 
-        void IUserActionsEyes<IWebElement>.AddKeyboardTrigger(IWebElement element, string text)
+        public override void AddKeyboardTrigger(IWebElement element, string text)
         {
             if (LastScreenshotBoundsProvider == null)
             {
@@ -1237,56 +1176,12 @@ namespace Applitools.Selenium
             Logger.Verbose("setting effective viewport size to {0}", size);
         }
 
-        private ScaleProviderFactory UpdateScalingParams()
-        {
-            ScaleProviderFactory factory;
-            if (ScaleProvider is NullScaleProvider)
-            {
-                InitDevicePixelRatio_();
-
-                Logger.Verbose("Setting scale provider...");
-                try
-                {
-                    factory = GetScaleProviderFactory_();
-                }
-                catch (Exception)
-                {
-                    // This can happen in Appium for example.
-                    Logger.Verbose("Failed to set ContextBasedScaleProvider. Using FixedScaleProvider instead...");
-                    factory = new FixedScaleProviderFactory(1.0 / DevicePixelRatio, SetScaleProvider);
-                }
-                Logger.Verbose("Done!");
-            }
-            else
-            {
-                factory = new ScaleProviderIdentityFactory(ScaleProvider, (sp) => { });
-            }
-
-            return factory;
-        }
-
-        private ScaleProviderFactory GetScaleProviderFactory_()
+        protected override ScaleProviderFactory GetScaleProviderFactory_()
         {
             IWebElement element = EyesSeleniumUtils.GetDefaultRootElement(driver_);
             Size entireSize = EyesRemoteWebElement.GetEntireSize(element, driver_, Logger);
             return new ContextBasedScaleProviderFactory(entireSize,
                     GetViewportSize(), DevicePixelRatio, ScaleProvider, SetScaleProvider);
-        }
-
-        private void InitDevicePixelRatio_()
-        {
-            Logger.Verbose("Trying to extract device pixel ratio...");
-            try
-            {
-                object dpr = JSBrowserCommands.WithReturn.GetDevicePixelRatio(driver_);
-                DevicePixelRatio = double.Parse(dpr.ToString());
-            }
-            catch (Exception)
-            {
-                Logger.Verbose("Failed to extract device pixel ratio! Using default.");
-                DevicePixelRatio = DefaultDevicePixelRatio_;
-            }
-            Logger.Verbose("Device pixel ratio: {0}", DevicePixelRatio);
         }
 
         protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
@@ -1573,123 +1468,21 @@ namespace Applitools.Selenium
             return results;
         }
 
-        protected override object GetAgentSetup()
+        protected override void GetWebDriverInfo(out object remoteWebDriver, 
+            out HtmlElementInfo html, out HtmlElementInfo body, 
+            out string scrollRootElement, out string sessionId, out object capabilities)
         {
-            RemoteWebDriver remoteWebDriver = driver_.RemoteWebDriver;
-            Assembly eyesSeleniumAsm = this.GetType().Assembly;
-            Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
-            string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
-            string eyesCoreTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesCoreAsm);
-            string fluentCommandString = null;
-            if (lastCheckSettingsInternal_ is ICheckSettingsInternal csInternal)
-            {
-                fluentCommandString = csInternal.GetFluentCommandString();
-            }
-            else if (lastCheckSettingsInternal_ is IList<ICheckSettingsInternal> lstCsInternal)
-            {
-                StringBuilder fluentCommandSB = new StringBuilder();
-                foreach (ICheckSettingsInternal csi in lstCsInternal)
-                {
-                    fluentCommandSB.Append(csi.GetFluentCommandString());
-                    fluentCommandSB.Append(", ");
-                }
-                if (fluentCommandSB.Length > 2) fluentCommandSB.Length -= 2;
-                fluentCommandString = fluentCommandSB.ToString();
-            }
-            EyesRemoteWebElement html = (EyesRemoteWebElement)driver_.FindElement(By.TagName("html"));
-            EyesRemoteWebElement body = (EyesRemoteWebElement)driver_.FindElement(By.TagName("body"));
-            return new
-            {
-                SeleniumSessionId = remoteWebDriver.SessionId.ToString(),
-                WebDriver = new
-                {
-                    remoteWebDriver.GetType().Name,
-                    remoteWebDriver.GetType().Assembly.GetName().Version,
-                    remoteWebDriver.Capabilities,
-                },
-                SeleniumSDKAssemblyData = new
-                {
-                    eyesSeleniumAsm.ImageRuntimeVersion,
-                    eyesSeleniumTargetFramework
-                },
-                CoreSDKAssemblyData = new
-                {
-                    eyesCoreAsm.ImageRuntimeVersion,
-                    eyesCoreTargetFramework
-                },
-                FullAgentId,
-                DevicePixelRatio,
-                CutProvider,
-                ScaleProvider,
-                Config_.StitchMode,
-                Config_.HideScrollbars,
-                Config_.HideCaret,
-                ForceFullPageScreenshot,
-                HtmlSizes = new
-                {
-                    DocumentElement = new
-                    {
-                        Id = html.ToString(),
-                        Client = html.ClientSize,
-                        Scroll = html.ScrollSize,
-                        Reported = html.Size
-                    },
-                    Body = new
-                    {
-                        Id = body.ToString(),
-                        Client = body.ClientSize,
-                        Scroll = body.ScrollSize,
-                        Reported = body.Size
-                    },
-                },
-                ScrollRootElement = userDefinedSRE_?.ToString(),
-                CheckSettings = lastCheckSettings_,
-                FluentCommandString = fluentCommandString,
-            };
+            remoteWebDriver = driver_.RemoteWebDriver;
+            var h = (EyesRemoteWebElement)driver_.FindElement(By.TagName("html"));
+            var b = (EyesRemoteWebElement)driver_.FindElement(By.TagName("body"));
+            html = new HtmlElementInfo { Id = h.ToString(), ClientSize = h.ClientSize, ScrollSize = h.ScrollSize, Size = h.Size };
+            body = new HtmlElementInfo { Id = b.ToString(), ClientSize = b.ClientSize, ScrollSize = b.ScrollSize, Size = b.Size };
+            scrollRootElement = userDefinedSRE_?.ToString();
+            sessionId = driver_.RemoteWebDriver.SessionId.ToString();
+            capabilities = driver_.RemoteWebDriver.Capabilities;
         }
 
-        public override IDictionary<string, IRunningTest> GetAllTests()
-        {
-            return new Dictionary<string, IRunningTest>() { { TestId, this } };
-        }
-
-        bool IEyes.IsCompleted()
-        {
-            return testResultContainer_ != null;
-        }
-
-        public IList<TestResultContainer> GetAllTestResults()
-        {
-            if (!((IEyes)this).IsCompleted())
-            {
-                return null;
-            }
-
-            return new TestResultContainer[] { testResultContainer_ };
-        }
-
-        protected internal override MatchWindowData PrepareForMatch(ICheckTask checkTask)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected internal override ICheckTask IssueCheck(ICheckSettings checkSettings,
-            IList<VisualGridSelector[]> regionSelectors, string source, IList<IUserAction> userInputs)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected internal override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetFrameChainLength()
+        public override int GetFrameChainLength()
         {
             return driver_.GetFrameChain().Count;
         }
