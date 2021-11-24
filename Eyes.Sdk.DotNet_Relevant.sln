@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium3.DotNet", "Eyes.Selenium3.DotNet\Eyes.Selenium3.DotNet.csproj", "{A5774D03-04CF-422F-B0AF-D479797AC62B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.DotNet", "Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj", "{A5774D03-04CF-422F-B0AF-D479797AC62B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Sdk.Core.DotNet", "Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj", "{F1C62FCE-B097-430C-84A5-E11FCC9741A7}"
 EndProject

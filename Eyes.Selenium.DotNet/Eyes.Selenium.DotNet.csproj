@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Applitools Eyes adds automated visual validation to your automated tests.
 With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
 To learn more, visit https://applitools.com/ .</Description>
@@ -32,7 +32,35 @@ To learn more, visit https://applitools.com/ .</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Selenium4.DotNet\Eyes.Selenium4.DotNet.csproj" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <PackageReference Include="BrotliSharpLib" Version="0.3.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CssParser\CssParser.csproj">
+		  <PrivateAssets>all</PrivateAssets>
+	  </ProjectReference>
+    <ProjectReference Include="..\Eyes.Selenium.Common\Eyes.Selenium.Common.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj">
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+  
+  <Target Name="GetMyPackageFiles">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(OutputPath)CssParser.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Eyes.Selenium.Common.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Eyes.Ufg.DotNet.dll" />
+    </ItemGroup>
+  </Target>
+    
 </Project>
