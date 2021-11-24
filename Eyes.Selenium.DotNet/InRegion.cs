@@ -1,9 +1,9 @@
-﻿namespace Applitools.Selenium
-{
-    using System.Drawing;
-    using Utils;
-    using OpenQA.Selenium;
+﻿using System.Drawing;
+using Applitools.Utils;
+using OpenQA.Selenium;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// An <see cref="InRegion"/> API.
     /// </summary>
