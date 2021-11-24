@@ -1101,7 +1101,7 @@ namespace Applitools.Selenium
             return EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE_);
         }
 
-        void IUserActionsEyes.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
+        void IUserActionsEyes<IWebElement>.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
         {
             Rectangle control = Rectangle.Empty;
             if (element != null)
@@ -1142,7 +1142,7 @@ namespace Applitools.Selenium
             Logger.Verbose("Added {0}", trigger);
         }
 
-        void IUserActionsEyes.AddKeyboardTrigger(IWebElement element, string text)
+        void IUserActionsEyes<IWebElement>.AddKeyboardTrigger(IWebElement element, string text)
         {
             if (LastScreenshotBoundsProvider == null)
             {

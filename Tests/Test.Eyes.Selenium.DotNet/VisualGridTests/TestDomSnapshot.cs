@@ -35,7 +35,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriver eyesDriver = (EyesWebDriver)eyes.Open(driver);
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
-                FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
+                VisualGridEyes visualGridEyes = eyes.visualGridEyes_;
+                FrameData scriptResult = visualGridEyes.CaptureDomSnapshot_(
                     switchTo, userAgent, config, Target.Window(), runner, eyesDriver, runner.Logger);
 
                 CollectionAssert.AreEquivalent(new Cookie[] {
@@ -102,7 +103,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriver eyesDriver = (EyesWebDriver)eyes.Open(driver);
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
-                FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
+                VisualGridEyes visualGridEyes = eyes.visualGridEyes_;
+                FrameData scriptResult = visualGridEyes.CaptureDomSnapshot_(
                     switchTo, userAgent, config, Target.Window(), runner, eyesDriver, runner.Logger);
 
                 CollectionAssert.AreEquivalent(new Cookie[] {
@@ -169,7 +171,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriver eyesDriver = (EyesWebDriver)eyes.Open(driver);
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
-                FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
+                VisualGridEyes visualGridEyes = eyes.visualGridEyes_;
+                FrameData scriptResult = visualGridEyes.CaptureDomSnapshot_(
                     switchTo, userAgent, config, Target.Window(), runner, eyesDriver, runner.Logger);
 
                 Assert.IsNull(scriptResult.Cookies);
@@ -201,7 +204,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 EyesWebDriver eyesDriver = (EyesWebDriver)eyes.Open(driver);
                 EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)eyesDriver.SwitchTo();
                 UserAgent userAgent = UserAgent.ParseUserAgentString(eyesDriver.GetUserAgent());
-                FrameData scriptResult = VisualGridEyes.CaptureDomSnapshot_(
+                VisualGridEyes visualGridEyes = eyes.visualGridEyes_;
+                FrameData scriptResult = visualGridEyes.CaptureDomSnapshot_(
                     switchTo, userAgent, config, Target.Window().UseCookies(false), runner, eyesDriver, runner.Logger);
 
                 Assert.IsNull(scriptResult.Cookies);

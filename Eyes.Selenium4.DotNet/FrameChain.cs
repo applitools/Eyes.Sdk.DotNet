@@ -1,11 +1,11 @@
-﻿namespace Applitools.Selenium
-{
-    using Applitools.Utils;
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Drawing;
+﻿using Applitools.Utils;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
 
+namespace Applitools.Selenium
+{
     public class FrameChain : IEnumerable<Frame>
     {
         private List<Frame> frames_ = new List<Frame>();

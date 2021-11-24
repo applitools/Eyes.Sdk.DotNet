@@ -2,22 +2,28 @@
 using Applitools.Selenium.Common;
 using Applitools.Selenium.Fluent;
 using Applitools.Ufg;
+using Applitools.Ufg.Model;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
+using Applitools.VisualGrid.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public abstract class VisualGridEyesBase<IWebElement, IWebDriver> : IVisualGridEyes, IVisualGridEyesInternal
+    public abstract class VisualGridEyesBase<IWebElement, IWebDriver, ICookieJar, FrameChain> : 
+        IVisualGridEyes, IVisualGridEyesInternal, IEyes, IUserActionsEyes<IWebElement>
     {
         protected static readonly int MB = 1024 * 1024;
 
@@ -72,6 +78,132 @@ namespace Applitools.Selenium.VisualGrid
             Assembly assembly = Assembly.GetCallingAssembly();
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             return $"Eyes.Selenium4.VisualGrid.DotNet/{versionInfo.ProductVersion}";
+        }
+
+        public IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize)
+        {
+            Config_.SetAppName(appName);
+            Config_.SetTestName(testName);
+            Config_.SetViewportSize(viewportSize);
+            return Open(driver);
+        }
+
+        public IWebDriver Open(IWebDriver webDriver)
+        {
+            if (!ValidateEyes_()) return webDriver;
+
+            Logger.GetILogHandler()?.Open();
+
+            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called,
+                new { FullAgentId, DotNetVersion = CommonUtils.GetDotNetVersion() });
+
+            ArgumentGuard.NotNull(webDriver, nameof(webDriver));
+
+            string apiKey = ApiKey;
+            EyesBase.ValidateAPIKey(apiKey);
+
+            ArgumentGuard.NotEmpty(Config_.AppName, "appName");
+            ArgumentGuard.NotEmpty(Config_.TestName, "testName");
+            if (isOpen_)
+            {
+                Logger.Log(TraceLevel.Warn, eyesId_, Stage.Open, StageType.Called,
+                    new { message = "called open more than once! Ignoring" });
+                return webDriver_ != null ? webDriver_ : webDriver;
+            }
+
+            isOpen_ = true;
+            InitDriver(webDriver);
+
+            string uaString = GetUserAgent();
+            if (uaString != null)
+            {
+                Logger.Log(TraceLevel.Notice, eyesId_, Stage.Open, StageType.Called, new { userAgent = uaString });
+                userAgent_ = UserAgent.ParseUserAgentString(uaString, true);
+            }
+
+            viewportSize_ = EnsureViewportSize();
+
+            Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called,
+                new { appName = Config_.AppName, testName = Config_.TestName, viewportSize = viewportSize_ });
+
+            closeFutures_.Clear();
+
+            if (Config_.Batch == null)
+            {
+                Config_.SetBatch(Batch);
+            }
+
+            List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
+            if (browserInfoList.Count == 0)
+            {
+                DesktopBrowserInfo desktopBrowserInfo = new DesktopBrowserInfo(viewportSize_);
+                browserInfoList.Add(new RenderBrowserInfo(desktopBrowserInfo));
+            }
+
+            if (runner_.AgentId == null)
+            {
+                runner_.AgentId = FullAgentId;
+            }
+
+            configAtOpen_ = GetConfigClone();
+
+            List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
+            IServerConnector serverConnector = runner_.ServerConnector;
+            string agentRunId = configAtOpen_.TestName + "_" + Guid.NewGuid();
+            foreach (RenderBrowserInfo browserInfo in browserInfoList)
+            {
+                if (browserInfo.EmulationInfo as ChromeEmulationInfo != null)
+                {
+                    ChromeEmulationInfo emulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo;
+                    Dictionary<DeviceName, DeviceSize> deviceSizes = serverConnector.GetEmulatedDevicesSizes();
+                    deviceSizes.TryGetValue(emulationInfo.DeviceName, out DeviceSize size);
+                    browserInfo.SetEmulationDeviceSize(size);
+                }
+                if (browserInfo.IosDeviceInfo != null)
+                {
+                    Dictionary<IosDeviceName, DeviceSize> deviceSizes = serverConnector.GetIosDevicesSizes();
+                    deviceSizes.TryGetValue(browserInfo.IosDeviceInfo.DeviceName, out DeviceSize size);
+                    browserInfo.SetIosDeviceSize(size);
+                }
+                VisualGridRunningTest test = new VisualGridRunningTest(
+                    eyesId_, browserInfo, Logger, configProvider_, serverConnector, agentRunId);
+                testList_.Add(test.TestId, test);
+                newTests.Add(test);
+            }
+
+            Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called, new { testCount = testList_.Count });
+            runner_.Open(this, newTests);
+            return GetDriverInternal() ?? webDriver;
+        }
+
+        protected abstract IWebDriver GetDriverInternal();
+       
+        protected abstract string GetUserAgent();
+      
+        internal abstract void InitDriver(IWebDriver webDriver);
+
+        protected virtual RectangleSize EnsureViewportSize()
+        {
+            RectangleSize viewportSize = Config_.ViewportSize;
+
+            if (viewportSize == null || viewportSize.IsEmpty())
+            {
+                List<RenderBrowserInfo> browserInfoList = Config_.GetBrowsersInfo();
+                if (browserInfoList != null && browserInfoList.Count > 0)
+                {
+                    foreach (RenderBrowserInfo deviceInfo in browserInfoList)
+                    {
+                        if (deviceInfo.EmulationInfo != null)
+                        {
+                            continue;
+                        }
+                        viewportSize = new RectangleSize(deviceInfo.Width, deviceInfo.Height);
+                        break;
+                    }
+                }
+            }
+
+            return viewportSize;
         }
 
         public string AgentId
@@ -521,6 +653,134 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         #endregion
+
+
+        internal FrameData CaptureDomSnapshot_(IEyesTargetLocator<IWebElement, IWebDriver, FrameChain> switchTo, UserAgent userAgent,
+            IConfiguration config, ISeleniumCheckTargetCommon seleniumCheckTarget,
+            VisualGridRunner runner, IWebDriver driver, Logger logger, params string[] testIds)
+        {
+            string domScript = userAgent.IsInternetExplorer ? Resources.PROCESS_PAGE_FOR_IE : Resources.PROCESS_PAGE;
+            string pollingScript = userAgent.IsInternetExplorer ? Resources.POLL_PP_RESULT_FOR_IE : Resources.POLL_PP_RESULT;
+
+            bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
+
+            int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
+            object arguments = new
+            {
+                serializeResources = true,
+                //skipResources = runner.CachedBlobsURLs.Keys,
+                dontFetchResources = config.DisableBrowserFetching || (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies),
+                chunkByteLength,
+                //uniqueUrl = "(url, query) => url"
+            };
+
+            object pollingArguments = new { chunkByteLength };
+
+            string result = Capture.Utils.RunDomScript(logger, (IEyesJsExecutor)driver, testIds, domScript, arguments, pollingArguments, pollingScript);
+            if (keepOriginalUrls)
+            {
+                Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);
+                result = removeQueryParameter.Replace(result, string.Empty);
+            }
+            FrameData frameData = JsonConvert.DeserializeObject<FrameData>(result);
+            AnalyzeFrameData_(frameData, userAgent, config, seleniumCheckTarget, runner, switchTo, driver, logger);
+            return frameData;
+        }
+
+        private void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
+          ISeleniumCheckTargetCommon seleniumCheckTarget,
+          VisualGridRunner runner, IEyesTargetLocator<IWebElement, IWebDriver, FrameChain> switchTo, IWebDriver driver, Logger logger)
+        {
+            string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
+
+            if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
+            {
+                var cookieCollection = CollectCookies(frameData, driver);
+                if (cookieCollection != null)
+                {
+                    frameData.Cookies = cookieCollection;
+                }
+            }
+            FrameChain frameChain = GetFrameChain(driver);
+            foreach (FrameData.CrossFrame crossFrame in frameData.CrossFrames)
+            {
+                if (crossFrame.Selector == null)
+                {
+                    logger.Verbose("cross frame with null selector");
+                    continue;
+                }
+
+                try
+                {
+                    IWebElement frame = FindElement(driver, crossFrame.Selector);
+                    var activeElementBeforeSwitch = switchTo.ActiveElement();
+                    switchTo.Frame(frame);
+                    var activeElementAfterSwitch = switchTo.ActiveElement();
+                    if (!activeElementAfterSwitch.Equals(activeElementBeforeSwitch))
+                    {
+                        FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, seleniumCheckTarget, runner, driver, logger, testIds);
+                        frameData.Frames.Add(result);
+                        frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
+                    }
+                    else
+                    {
+                        throw new Exception("Failed switching into frame");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                        new { crossFrame.Selector }, testIds);
+                }
+                finally
+                {
+                    switchTo.Frames(frameChain);
+                }
+            }
+
+            foreach (FrameData frame in frameData.Frames)
+            {
+                if (frame.Selector == null)
+                {
+                    logger.Verbose("cross frame with null selector");
+                    continue;
+                }
+
+                try
+                {
+                    IWebElement frameElement = FindElement(driver, frame.Selector);
+                    switchTo.Frame(frameElement);
+                    AnalyzeFrameData_(frame, userAgent, config, seleniumCheckTarget, runner, switchTo, driver, logger);
+                }
+                catch (Exception ex)
+                {
+                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                        new { frame.Selector }, testIds);
+                }
+                finally
+                {
+                    switchTo.Frames(frameChain);
+                }
+            }
+        }
+
+        void IUserActionsEyes<IWebElement>.AddKeyboardTrigger(IWebElement element, string text)
+        {
+            VGTextTrigger trigger = new VGTextTrigger(element, text);
+            UserInputs.Add(trigger);
+        }
+
+        void IUserActionsEyes<IWebElement>.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
+        {
+            VGMouseTrigger trigger = new VGMouseTrigger(action, element, cursor);
+            UserInputs.Add(trigger);
+        }
+
+        protected abstract IWebElement FindElement(IWebDriver driver, string selector);
+
+        protected abstract FrameChain GetFrameChain(IWebDriver driver);
+
+        protected abstract IList<ICookie> CollectCookies(FrameData frameData, IWebDriver driver);
 
         public override string ToString()
         {

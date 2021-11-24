@@ -1,7 +1,6 @@
 ﻿using Applitools.Utils;
 using OpenQA.Selenium;
 using System.Drawing;
-using Applitools.Selenium.Scrolling;
 using Applitools.Utils.Geometry;
 using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvider;
 
@@ -10,9 +9,9 @@ namespace Applitools.Selenium
     public class Frame
     {
         private readonly PositionMemento positionMemento_;
-        private IEyesJsExecutor jsExecutor_;
+        private readonly IEyesJsExecutor jsExecutor_;
         private string originalOverflow_;
-        private Logger logger_;
+        private readonly Logger logger_;
 
         public Frame(Logger logger, IWebElement reference, Point location, Size outerSize, Size innerSize,
             Point originalLocation, Rectangle bounds, RectangularMargins borderWidths, IEyesJsExecutor jsExecutor)

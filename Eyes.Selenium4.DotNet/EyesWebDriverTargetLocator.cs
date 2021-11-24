@@ -8,7 +8,7 @@ using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvi
 
 namespace Applitools.Selenium
 {
-    internal class EyesWebDriverTargetLocator : ITargetLocator
+    internal class EyesWebDriverTargetLocator : ITargetLocator, IEyesTargetLocator<IWebElement, IWebDriver, FrameChain>
     {
         private readonly Logger logger_;
         private readonly EyesWebDriver driver_;
