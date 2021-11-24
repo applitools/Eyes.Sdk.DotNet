@@ -11,7 +11,6 @@ using Applitools.Utils;
 using Applitools.Utils.Cropping;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
-using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -29,27 +28,17 @@ namespace Applitools.Selenium
     /// <summary>
     /// Applitools Eyes Selenium DotNet API.
     /// </summary>
-    internal class SeleniumEyes : RunningTest, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
+    internal class SeleniumEyes : SeleniumEyesBase<IWebElement, IWebDriver>, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
     {
-        private const string SET_DATA_APPLITOOLS_SCROLL_ATTR = "var e = arguments[0]; if (e != null) e.setAttribute('data-applitools-scroll','true');";
-
-        private const string HIDE_CARET = "var activeElement = document.activeElement; activeElement && activeElement.blur(); return activeElement;";
         #region Fields
-
-        private static readonly double UnknownDevicePixelRatio_ = 0;
-        private static readonly double DefaultDevicePixelRatio_ = 1;
 
         private EyesWebDriver driver_;
         private bool dontGetTitle_;
-        private SeleniumJavaScriptExecutor jsExecutor_;
-
-        internal UserAgent userAgent_;
         private IRegionPositionCompensation regionPositionCompensation_;
 
         private Region effectiveViewport_;
 
         private IWebElement userDefinedSRE_;
-        private ISeleniumConfigurationProvider configProvider_;
 
         private readonly SeleniumPositionProviderFactory positionProviderFactory_ = new SeleniumPositionProviderFactory();
 
@@ -63,77 +52,38 @@ namespace Applitools.Selenium
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
         public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, Uri serverUrl, ClassicRunner runner)
-            : base(runner)
+            : base(configurationProvider, serverUrl, runner)
         {
-            ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
-            configProvider_ = configurationProvider;
-            ServerUrl = serverUrl.ToString();
-            Init_();
         }
 
         /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
         public SeleniumEyes(ISeleniumConfigurationProvider configurationProvider, ClassicRunner runner)
-            : base(runner)
+            : base(configurationProvider, runner)
         {
-            configProvider_ = configurationProvider;
-            runner_ = runner;
-            Init_();
         }
 
-        private void Init_()
+        protected override string Source => driver_.Url;
+
+
+        protected override string GetUserAgent()
         {
-            Config_.SetHideScrollbars(true);
-            DevicePixelRatio = UnknownDevicePixelRatio_;
-            WaitBeforeScreenshots = 100;
-            DefaultMatchSettings.UseDom = false;
-            ServerConnector.SdkName = FullAgentId;
-            ServerConnector.AgentId = FullAgentId;
+            return driver_.GetUserAgent();
         }
 
-        protected override Applitools.Configuration Configuration => configProvider_.GetConfiguration();
-
-        private Configuration Config_ => configProvider_.GetConfiguration();
+        protected override object GetRemoteWebDriver()
+        {
+            return driver_.WebDriver;
+        }
 
         #endregion Constructors
 
         #region Properties
 
-        /// <summary>
-        /// Forces a full page screenshot (by scrolling and stitching) if the browser only 
-        /// supports viewport screenshots).
-        /// </summary>
-        public bool ForceFullPageScreenshot { get => Config_.IsForceFullPageScreenshot ?? false; set => Config_.SetForceFullPageScreenshot(value); }
-        public StitchModes StitchMode { get => Config_.StitchMode; set => Config_.SetStitchMode(value); }
-        public int WaitBeforeScreenshots { get => Config_.WaitBeforeScreenshots; set => Config_.SetWaitBeforeScreenshots(value); }
-        public bool HideScrollbars { get => Config_.HideScrollbars; set => Config_.SetHideScrollbars(value); }
-        public bool HideCaret { get => Config_.HideCaret; set => Config_.SetHideCaret(value); }
-
-        public override string ApiKey { get => base.ApiKey ?? runner_.ApiKey; set => base.ApiKey = value; }
-        public override string ServerUrl { get => base.ServerUrl ?? runner_.ServerUrl; set => base.ServerUrl = value; }
-        public override ProxySettings Proxy { get => base.Proxy ?? runner_.Proxy; set => base.Proxy = value; }
-
-        private bool? isDisabled_;
-        private object lastCheckSettings_;
-        private object lastCheckSettingsInternal_;
-
-        public IDictionary<string, object> CachedSessionDetails { get; private set; }
-
-
-        public override bool IsDisabled { get => isDisabled_ ?? runner_.IsDisabled; set => isDisabled_ = value; }
-
-        public IPositionProvider CurrentFramePositionProvider { get; protected set; }
-
-        public void SetScrollToRegion(bool shouldScroll) { }
-
-        public double DevicePixelRatio { get; set; }
-
         public IImageProvider ImageProvider { get; private set; }
 
         internal FrameChain OriginalFC { get; set; }
-
-        public string PlatformName { get; private set; }
 
         #endregion Properties
 
@@ -164,147 +114,6 @@ namespace Applitools.Selenium
             EyesSeleniumUtils.SetViewportSize(new Logger(), driver, new RectangleSize(size));
         }
 
-        /// <summary>
-        /// Starts a new test.
-        /// </summary>
-        /// <param name="driver">The web driver that controls the browser 
-        /// hosting the application under test.</param>
-        /// <param name="appName">The name of the application under test.</param>
-        /// <param name="testName">The test name.</param>
-        /// <param name="viewportSize">The required browser's viewport size 
-        /// (i.e., the visible part of the document's body) or <c>Size.Empty</c>
-        /// to allow any viewport size.</param>
-        public IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize)
-        {
-            Config_.SetAppName(appName);
-            Config_.SetTestName(testName);
-            //if (!viewportSize.IsEmpty)
-            //{
-            Config_.SetViewportSize(new RectangleSize(viewportSize));
-            //}
-            return Open(driver);
-        }
-
-        /// <summary>
-        /// Starts a new test.
-        /// </summary>
-        /// <param name="driver">The web driver that controls the browser 
-        /// hosting the application under test.</param>
-        public IWebDriver Open(IWebDriver driver)
-        {
-            InitDriver_(driver);
-
-            string uaString = driver_.GetUserAgent();
-            if (uaString != null)
-            {
-                Logger.Verbose("User-Agent: {0}", uaString);
-                userAgent_ = UserAgent.ParseUserAgentString(uaString, true);
-            }
-
-            InitDevicePixelRatio_();
-
-            jsExecutor_ = new SeleniumJavaScriptExecutor(driver_);
-
-            ImageProvider = ImageProviderFactory.GetImageProvider(userAgent_, this, Logger, driver_);
-            regionPositionCompensation_ = RegionPositionCompensationFactory.GetRegionPositionCompensation(userAgent_, this, Logger);
-
-            OpenBase();
-            DevicePixelRatio = UnknownDevicePixelRatio_;
-            //PositionProvider = SeleniumScrollPositionProviderFactory.GetPositionProvider(StitchMode, jsExecutor_, scrollRootElement_);
-            string batchId = Batch.Id;
-            runner_.AddBatch(batchId, this);
-
-            return driver_;
-        }
-
-        private void InitDriver_(IWebDriver driver)
-        {
-            ArgumentGuard.NotNull(driver, nameof(driver));
-
-            if (driver is WebDriver webDriver)
-            {
-                driver_ = new EyesWebDriver(Logger, this, this, webDriver);
-            }
-            else if (driver is EyesWebDriver eyesDriver)
-            {
-                driver_ = eyesDriver;
-            }
-            else
-            {
-                string errMsg = $"Driver is not a RemoteWebDriver ({driver.GetType().Name})";
-                Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
-                throw new EyesException(errMsg);
-            }
-
-            Type driverType = driver_.WebDriver.GetType();
-            Logger.Log(TraceLevel.Info, Stage.Open, new { driverType });
-            MethodInfo getPlatformNameMI = driverType.GetProperty("PlatformName")?.GetGetMethod();
-            MethodInfo getSessionDetailsMI = driverType.GetProperty("SessionDetails")?.GetGetMethod();
-
-            if (getPlatformNameMI != null)
-            {
-                PlatformName = (string)getPlatformNameMI.Invoke(driver_.WebDriver, null);
-            }
-            else
-            {
-                PlatformName = (driver_.GetSessionDetail("platformName") as string) ?? (driver_.GetSessionDetail("platform") as string);
-            }
-
-            if (getSessionDetailsMI != null)
-            {
-                InitSessionDetails_(getSessionDetailsMI);
-            }
-            else
-            {
-                InitSessionDetailsUsingInternalImplementation_();
-            }
-
-            Logger.Log(TraceLevel.Info, Stage.Open,
-                new { message = "Initialized Web Driver.", seleniumSessionId = driver_.WebDriver.SessionId, PlatformName });
-        }
-
-        private void InitSessionDetails_(MethodInfo getSessionDetailsMI)
-        {
-            int attempts = 2;
-            do
-            {
-                Thread.Sleep(attempts == 2 ? 0 : 1000);
-                CachedSessionDetails = (IDictionary<string, object>)getSessionDetailsMI.Invoke(driver_.WebDriver, null);
-            } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
-
-            if (CachedSessionDetails == null)
-            {
-                Logger.Log(TraceLevel.Warn, Stage.Open,
-                    new
-                    {
-                        message = "could not get viewportRect in session details from appium server! " +
-                                  "Using default device size instead, this might create incorrect images.",
-                        sessionDetails = getSessionDetailsMI.Invoke(driver_.WebDriver, null)
-                    });
-            }
-        }
-
-        private void InitSessionDetailsUsingInternalImplementation_()
-        {
-            int attempts = 2;
-            do
-            {
-                Thread.Sleep(attempts == 2 ? 0 : 1000);
-                CachedSessionDetails = driver_.SessionDetails;
-                if (CachedSessionDetails == null) break;
-            } while (attempts-- > 0 && !CachedSessionDetails.ContainsKey("viewportRect"));
-
-            if (CachedSessionDetails == null)
-            {
-                Logger.Log(TraceLevel.Warn, Stage.Open,
-                    new
-                    {
-                        message = "could not get viewportRect in session details from appium server! " +
-                                  "Using default device size instead, this might create incorrect images.",
-                        sessionDetails = driver_.SessionDetails
-                    });
-            }
-        }
         protected override string TryCaptureDom()
         {
             DomCapture domCapture = new DomCapture(Logger, driver_, userAgent_);
@@ -335,222 +144,6 @@ namespace Applitools.Selenium
             return new InRegion(driver_, InRegionBase(() => new Rectangle(element.Location, element.Size)));
         }
 
-        public void Check(params ICheckSettings[] checkSettings)
-        {
-            ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
-            bool originalForceFPS = ForceFullPageScreenshot;
-            lastCheckSettings_ = new List<object>();
-            lastCheckSettingsInternal_ = new List<ICheckSettingsInternal>();
-            if (checkSettings.Length > 1)
-            {
-                ForceFullPageScreenshot = true;
-            }
-
-            Dictionary<int, IGetRegions> getRegions = new Dictionary<int, IGetRegions>();
-            Dictionary<int, ICheckSettingsInternal> checkSettingsInternalDictionary = new Dictionary<int, ICheckSettingsInternal>();
-
-            for (int i = 0; i < checkSettings.Length; ++i)
-            {
-                ICheckSettings settings = checkSettings[i];
-                ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)settings;
-                ((IList<object>)lastCheckSettings_).Add(checkSettingsInternal.ToSerializableDictionary());
-                ((IList<ICheckSettingsInternal>)lastCheckSettingsInternal_).Add(checkSettingsInternal);
-                checkSettingsInternalDictionary.Add(i, checkSettingsInternal);
-
-                Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
-
-                if (targetRegion != null)
-                {
-                    getRegions.Add(i, new SimpleRegionByRectangle(targetRegion.Value));
-                }
-                else if (settings is ISeleniumCheckTarget seleniumCheckTarget)
-                {
-                    IWebElement targetElement = GetTargetElement(seleniumCheckTarget);
-                    if (targetElement == null && seleniumCheckTarget.GetFrameChain().Count == 1)
-                    {
-                        targetElement = EyesSeleniumUtils.FindFrameByFrameCheckTarget(seleniumCheckTarget.GetFrameChain()[0], driver_);
-                    }
-
-                    if (targetElement != null)
-                    {
-                        getRegions.Add(i, new SimpleRegionByElement(targetElement));
-                    }
-                }
-            }
-
-            Logger.Verbose("setting scrollRootElement_...");
-            userDefinedSRE_ = GetScrollRootElementFromSREContainer((IScrollRootElementContainer)checkSettings[0], driver_);
-
-            Logger.Verbose("scrollRootElement_ set to {0}", userDefinedSRE_);
-
-            CurrentFramePositionProvider = null;
-            PositionProvider = GetPositionProvider(Logger, StitchMode,
-                jsExecutor_, userDefinedSRE_, userAgent_);
-
-            MatchRegions(getRegions, checkSettingsInternalDictionary, checkSettings);
-            ForceFullPageScreenshot = originalForceFPS;
-        }
-
-        private void MatchRegions(Dictionary<int, IGetRegions> getRegions,
-                                  Dictionary<int, ICheckSettingsInternal> checkSettingsInternalDictionary,
-                                  ICheckSettings[] checkSettings)
-        {
-            if (getRegions.Count == 0) return;
-
-            this.OriginalFC = driver_.GetFrameChain().Clone();
-
-            Region bbox = FindBoundingBox(getRegions, checkSettings);
-
-            MatchWindowTask mwt = new MatchWindowTask(Logger, ServerConnector, runningSession_, Configuration.MatchTimeout, this);
-
-            ScaleProviderFactory scaleProviderFactory = UpdateScalingParams();
-            FullPageCaptureAlgorithm algo = CreateFullPageCaptureAlgorithm(scaleProviderFactory, new RenderingInfo());
-
-            object activeElement = null;
-            if (Config_.HideCaret)
-            {
-                activeElement = driver_.ExecuteScript(HIDE_CARET);
-            }
-
-            Region region = Region.Empty;
-            bool hasFrames = driver_.GetFrameChain().Count > 0;
-            if (hasFrames)
-            {
-                region = new Region(bbox.Location, EyesWebElement.GetClientSize(userDefinedSRE_, driver_));
-            }
-            else
-            {
-                IWebElement defaultSRE = EyesSeleniumUtils.GetDefaultRootElement(driver_);
-                if (!defaultSRE.Equals(userDefinedSRE_))
-                {
-                    region = GetElementInnerRegion_(userDefinedSRE_);
-                }
-            }
-            region.Intersect(effectiveViewport_);
-            jsExecutor_.ExecuteScript(SET_DATA_APPLITOOLS_SCROLL_ATTR, (PositionProvider as ISeleniumPositionProvider)?.ScrolledElement);
-            Bitmap screenshotImage = algo.GetStitchedRegion(region, bbox, PositionProvider, PositionProvider);
-
-            DebugScreenshotProvider.Save(screenshotImage, "original");
-            EyesScreenshot screenshot = new EyesWebDriverScreenshot(Logger, driver_, screenshotImage, EyesWebDriverScreenshot.ScreenshotTypeEnum.VIEWPORT, new Point(0, 0));
-
-            for (int i = 0; i < checkSettings.Length; ++i)
-            {
-                if (!getRegions.ContainsKey(i)) continue;
-                IGetRegions getRegion = getRegions[i];
-                ICheckSettingsInternal checkSettingsInternal = checkSettingsInternalDictionary[i];
-                List<EyesScreenshot> subScreenshots = GetSubScreenshots(hasFrames ? Region.Empty : bbox, screenshot, getRegion);
-                MatchRegion(checkSettingsInternal, mwt, subScreenshots);
-            }
-
-            screenshot.DisposeImage();
-
-            if (Config_.HideCaret && activeElement != null)
-            {
-                driver_.ExecuteScript("arguments[0].focus();", activeElement);
-            }
-
-            ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(OriginalFC);
-        }
-
-        private Region GetElementInnerRegion_(IWebElement element)
-        {
-            if (!(element is EyesWebElement eyesElement))
-            {
-                eyesElement = new EyesWebElement(Logger, driver_, element);
-            }
-
-            Point location = eyesElement.Location;
-            SizeAndBorders sizeAndBorders = eyesElement.SizeAndBorders;
-
-            Region region = new Region(
-                location.X + sizeAndBorders.Borders.Left,
-                location.Y + sizeAndBorders.Borders.Top,
-                sizeAndBorders.Size.Width,
-                sizeAndBorders.Size.Height);
-            return region;
-        }
-
-        private List<EyesScreenshot> GetSubScreenshots(Region bbox, EyesScreenshot screenshot, IGetRegions getRegion)
-        {
-            List<EyesScreenshot> subScreenshots = new List<EyesScreenshot>();
-            foreach (IMutableRegion r in getRegion.GetRegions(this, screenshot))
-            {
-                r.Offset(-bbox.Left, -bbox.Top);
-                EyesScreenshot subScreenshot = screenshot.GetSubScreenshot(new Region(r), false);
-                subScreenshots.Add(subScreenshot);
-            }
-            return subScreenshots;
-        }
-
-        private void MatchRegion(ICheckSettingsInternal checkSettingsInternal, MatchWindowTask mwt, List<EyesScreenshot> subScreenshots)
-        {
-            string name = checkSettingsInternal.GetName();
-            string source = driver_.Url;
-            Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.MatchStart, new { subScreenshots = subScreenshots.Count });
-            foreach (EyesScreenshot subScreenshot in subScreenshots)
-            {
-                DebugScreenshotProvider.Save(subScreenshot.Image, $"subscreenshot_{name}");
-
-                ImageMatchSettings ims = MatchWindowTask.CreateImageMatchSettings(checkSettingsInternal, this, subScreenshot);
-                MatchWindowTask.CollectRegions(this, subScreenshot, checkSettingsInternal, ims);
-                Location location = subScreenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-                AppOutput appOutput = new AppOutput(name, location, subScreenshot);
-
-                MatchWindowData data = PrepareForMatch(checkSettingsInternal,
-                    new Trigger[0], appOutput, name, false, ims, null, source);
-
-                MatchResult matchResult = PerformMatch(data);
-
-                Logger.Log(TraceLevel.Info, TestId, Stage.Check, StageType.MatchComplete, new { matchResult.AsExpected });
-            }
-        }
-
-        private Region FindBoundingBox(Dictionary<int, IGetRegions> getRegions, ICheckSettings[] checkSettings)
-        {
-            Size rectSize = GetViewportSize();
-
-            using (Bitmap dummyImage = new Bitmap(rectSize.Width, rectSize.Height))
-            {
-                EyesScreenshot screenshot = new EyesWebDriverScreenshot(Logger, driver_, dummyImage);
-                return FindBoundingBox(getRegions, checkSettings, screenshot);
-            }
-        }
-
-        private Region FindBoundingBox(Dictionary<int, IGetRegions> getRegions, ICheckSettings[] checkSettings, EyesScreenshot screenshot)
-        {
-            Region bbox = Region.Empty;
-            for (int i = 0; i < checkSettings.Length; ++i)
-            {
-                if (!getRegions.TryGetValue(i, out IGetRegions getRegion)) continue;
-                IList<IMutableRegion> regions = getRegion.GetRegions(this, screenshot);
-                foreach (IMutableRegion region in regions)
-                {
-                    if (bbox.IsEmpty)
-                    {
-                        bbox = new Region(region.Left, region.Top, region.Width, region.Height);
-                    }
-                    else
-                    {
-                        bbox = bbox.ExpandToContain(region);
-                    }
-                }
-            }
-            Point offset = screenshot.GetLocationInScreenshot(Point.Empty, CoordinatesTypeEnum.CONTEXT_AS_IS);
-            return bbox.Offset(offset.X, offset.Y);
-        }
-
-        private IWebElement GetTargetElement(ISeleniumCheckTarget seleniumCheckTarget)
-        {
-            ArgumentGuard.NotNull(seleniumCheckTarget, nameof(seleniumCheckTarget));
-            By targetSelector = seleniumCheckTarget.GetTargetSelector();
-            IWebElement targetElement = seleniumCheckTarget.GetTargetElement();
-            if (targetElement == null && targetSelector != null)
-            {
-                targetElement = this.driver_.FindElement(targetSelector);
-            }
-            return targetElement;
-        }
-
         private FullPageCaptureAlgorithm CreateFullPageCaptureAlgorithm(ScaleProviderFactory scaleProviderFactory, RenderingInfo renderingInfo)
         {
             ISizeAdjuster sizeAdjuster = Capture.Utils.GetImageSizeAdjuster(userAgent_, jsExecutor_);
@@ -563,143 +156,7 @@ namespace Applitools.Selenium
                 renderingInfo.MaxImageHeight, renderingInfo.MaxImageArea, sizeAdjuster);
         }
 
-        /// <summary>
-        /// Takes a snapshot of the application under test, where the capture area and settings
-        /// are given by <paramref name="checkSettings"/>.
-        /// </summary>
-        /// <param name="checkSettings">A settings object defining the capture area and parameters.
-        /// Created fluently using the <see cref="Target"/> static class.</param>
-        public void Check(ICheckSettings checkSettings)
-        {
-            CheckImpl_(checkSettings);
-        }
-
-        internal virtual void CheckImpl_(ICheckSettings checkSettings)
-        {
-            try
-            {
-                ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
-                ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
-
-                Logger.Verbose("URL: {0}", driver_.Url);
-                ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-                ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
-                lastCheckSettings_ = checkSettingsInternal.ToSerializableDictionary();
-                lastCheckSettingsInternal_ = checkSettingsInternal;
-
-                CheckState state = InitCheckState_(checkSettings, checkSettingsInternal, seleniumCheckTarget);
-
-                Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
-
-                Logger.Verbose("setting " + nameof(userDefinedSRE_) + " ...");
-                userDefinedSRE_ = TryGetUserDefinedSREFromSREContainer(seleniumCheckTarget, driver_);
-                IWebElement scrollRootElement = userDefinedSRE_;
-                if (scrollRootElement == null)
-                {
-                    scrollRootElement = EyesSeleniumUtils.GetDefaultRootElement(driver_);
-                }
-                Logger.Verbose(nameof(userDefinedSRE_) + " set to {0}", userDefinedSRE_?.ToString() ?? "null");
-                Logger.Verbose(nameof(scrollRootElement) + " set to {0}", scrollRootElement);
-
-                CurrentFramePositionProvider = null;
-                PositionProvider = GetPositionProvider(Logger, StitchMode, jsExecutor_, scrollRootElement, userAgent_);
-                CaretVisibilityProvider caretVisibilityProvider = new CaretVisibilityProvider(Logger, driver_, Config_);
-
-                EyesWebDriverTargetLocator switchTo = (EyesWebDriverTargetLocator)driver_.SwitchTo();
-
-                PageState pageState = new PageState(Logger, driver_, StitchMode, userAgent_);
-                pageState.PreparePage(seleniumCheckTarget, Config_, scrollRootElement);
-
-                FrameChain frameChainAfterSwitchToTarget = driver_.GetFrameChain().Clone();
-
-                state.EffectiveViewport = ComputeEffectiveViewport(frameChainAfterSwitchToTarget, viewportSize_);
-                // new Rectangle(Point.Empty, viewportSize_);
-                IWebElement targetElement = GetTargetElementFromSettings_(seleniumCheckTarget);
-
-                caretVisibilityProvider.HideCaret();
-
-                //////////////////////////////////////////////////////////////////
-
-                // Cases:
-                // Target.Region(x,y,w,h).Fully(true) - TODO - NOT TESTED!
-                // Target.Region(x,y,w,h).Fully(false)
-                // Target.Region(element).Fully(true)
-                // Target.Region(element).Fully(false)
-                // Target.Frame(frame).Fully(true)
-                // Target.Frame(frame).Region(x,y,w,h).Fully(true)
-                // Target.Frame(frame).Region(x,y,w,h).Fully(false) - TODO - NOT TESTED!
-                // Target.Frame(frame).Region(element).Fully(true)
-                // Target.Frame(frame).Region(element).Fully(false) - TODO - NOT TESTED!
-                // Target.Window().Fully(true)
-                // Target.Window().Fully(false)
-
-                // Algorithm:
-                // 1. Save current page state
-                // 2. Switch to frame
-                // 3. Maximize desired region or element visibility
-                // 4. Capture desired region of element
-                // 5. Go back to original frame
-                // 6. Restore page state
-
-                if (targetElement != null)
-                {
-                    if (state.StitchContent)
-                    {
-                        CheckFullElement_(checkSettingsInternal, targetElement, targetRegion, state);
-                    }
-                    else
-                    {
-                        // TODO Verify: if element is outside the viewport, we should still capture entire (outer) bounds
-                        CheckElement_(checkSettingsInternal, targetElement, targetRegion, state);
-                    }
-                }
-                else if (targetRegion != null)
-                {
-                    // Coordinates should always be treated as "Fully" in case they get out of the viewport.
-                    bool originalFully = state.StitchContent;
-                    state.StitchContent = true;
-                    CheckFullRegion_(checkSettingsInternal, targetRegion.Value, state);
-                    state.StitchContent = originalFully;
-                }
-                else if (seleniumCheckTarget.GetFrameChain().Count > 0)
-                {
-                    if (state.StitchContent)
-                    {
-                        CheckFullFrame_(checkSettingsInternal, state);
-                    }
-                    else
-                    {
-                        Logger.Log(TraceLevel.Notice, TestId, Stage.Check, StageType.Called,
-                            new { message = "Target.Frame(frame).Fully(false)" });
-                        Logger.Log(TraceLevel.Warn, TestId, Stage.Check, StageType.Called,
-                            new { message = "This shouldn't have been called, as it is covered by `CheckElement_(...)`" });
-                    }
-                }
-                else
-                {
-                    if (state.StitchContent)
-                    {
-                        CheckFullWindow_(checkSettingsInternal, state, scrollRootElement);
-                    }
-                    else
-                    {
-                        state.OriginLocation = Point.Empty;// PositionProvider.GetCurrentPosition();
-                        CheckWindow_(checkSettingsInternal);
-                    }
-                }
-
-                caretVisibilityProvider.RestoreCaret();
-
-                pageState.RestorePageState();
-            }
-            catch (Exception ex)
-            {
-                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex);
-                throw new EyesException("Error", ex);
-            }
-        }
-
-        internal CheckState InitCheckState_(ICheckSettings checkSettings, 
+        internal CheckState InitCheckState_(ICheckSettings checkSettings,
             ICheckSettingsInternal checkSettingsInternal, ISeleniumCheckTarget seleniumCheckTarget)
         {
             CheckState state = new CheckState();
@@ -1100,7 +557,7 @@ namespace Applitools.Selenium
             return EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE_);
         }
 
-        void IUserActionsEyes<IWebElement>.AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
+        public override void AddMouseTrigger(MouseAction action, IWebElement element, Point cursor)
         {
             Rectangle control = Rectangle.Empty;
             if (element != null)
@@ -1141,7 +598,7 @@ namespace Applitools.Selenium
             Logger.Verbose("Added {0}", trigger);
         }
 
-        void IUserActionsEyes<IWebElement>.AddKeyboardTrigger(IWebElement element, string text)
+        public override void AddKeyboardTrigger(IWebElement element, string text)
         {
             if (LastScreenshotBoundsProvider == null)
             {
@@ -1236,56 +693,13 @@ namespace Applitools.Selenium
             Logger.Verbose("setting effective viewport size to {0}", size);
         }
 
-        private ScaleProviderFactory UpdateScalingParams()
-        {
-            ScaleProviderFactory factory;
-            if (ScaleProvider is NullScaleProvider)
-            {
-                InitDevicePixelRatio_();
 
-                Logger.Verbose("Setting scale provider...");
-                try
-                {
-                    factory = GetScaleProviderFactory_();
-                }
-                catch (Exception)
-                {
-                    // This can happen in Appium for example.
-                    Logger.Verbose("Failed to set ContextBasedScaleProvider. Using FixedScaleProvider instead...");
-                    factory = new FixedScaleProviderFactory(1.0 / DevicePixelRatio, SetScaleProvider);
-                }
-                Logger.Verbose("Done!");
-            }
-            else
-            {
-                factory = new ScaleProviderIdentityFactory(ScaleProvider, (sp) => { });
-            }
-
-            return factory;
-        }
-
-        private ScaleProviderFactory GetScaleProviderFactory_()
+        protected override ScaleProviderFactory GetScaleProviderFactory_()
         {
             IWebElement element = EyesSeleniumUtils.GetDefaultRootElement(driver_);
             Size entireSize = EyesWebElement.GetEntireSize(element, driver_, Logger);
             return new ContextBasedScaleProviderFactory(entireSize,
                     GetViewportSize(), DevicePixelRatio, ScaleProvider, SetScaleProvider);
-        }
-
-        private void InitDevicePixelRatio_()
-        {
-            Logger.Verbose("Trying to extract device pixel ratio...");
-            try
-            {
-                object dpr = JSBrowserCommands.WithReturn.GetDevicePixelRatio(driver_);
-                DevicePixelRatio = double.Parse(dpr.ToString());
-            }
-            catch (Exception)
-            {
-                Logger.Verbose("Failed to extract device pixel ratio! Using default.");
-                DevicePixelRatio = DefaultDevicePixelRatio_;
-            }
-            Logger.Verbose("Device pixel ratio: {0}", DevicePixelRatio);
         }
 
         protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
@@ -1540,155 +954,21 @@ namespace Applitools.Selenium
             return driver_;
         }
 
-        public void CloseAsync()
+        protected override void GetWebDriverInfo(out object remoteWebDriver,
+            out HtmlElementInfo html, out HtmlElementInfo body,
+            out string scrollRootElement, out string sessionId, out object capabilities)
         {
-            Close(false);
+            remoteWebDriver = driver_.WebDriver;
+            var h = (EyesWebElement)driver_.FindElement(By.TagName("html"));
+            var b = (EyesWebElement)driver_.FindElement(By.TagName("body"));
+            html = new HtmlElementInfo { Id = h.ToString(), ClientSize = h.ClientSize, ScrollSize = h.ScrollSize, Size = h.Size };
+            body = new HtmlElementInfo { Id = b.ToString(), ClientSize = b.ClientSize, ScrollSize = b.ScrollSize, Size = b.Size };
+            scrollRootElement = userDefinedSRE_?.ToString();
+            sessionId = driver_.WebDriver.SessionId.ToString();
+            capabilities = driver_.WebDriver.Capabilities;
         }
 
-        public override TestResults Close(bool throwEx)
-        {
-            TestResults results;
-            try
-            {
-                results = StopSession(false);
-                CloseCompleted(results);
-            }
-            catch (Exception e)
-            {
-                CommonUtils.LogExceptionStackTrace(Logger, Stage.Close, e, TestId);
-                CloseFailed(e);
-                throw;
-            }
-
-            if (exception_ != null && throwEx)
-            {
-                throw new Exception("Error", exception_);
-            }
-
-            if (runner_ != null)
-            {
-                runner_.AggregateResult(testResultContainer_);
-            }
-            return results;
-        }
-
-        protected override object GetAgentSetup()
-        {
-            WebDriver remoteWebDriver = driver_.WebDriver;
-            Assembly eyesSeleniumAsm = this.GetType().Assembly;
-            Assembly eyesCoreAsm = typeof(EyesBase).Assembly;
-            string eyesSeleniumTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesSeleniumAsm);
-            string eyesCoreTargetFramework = CommonUtils.GetAssemblyTargetFramework_(eyesCoreAsm);
-            string fluentCommandString = null;
-            if (lastCheckSettingsInternal_ is ICheckSettingsInternal csInternal)
-            {
-                fluentCommandString = csInternal.GetFluentCommandString();
-            }
-            else if (lastCheckSettingsInternal_ is IList<ICheckSettingsInternal> lstCsInternal)
-            {
-                StringBuilder fluentCommandSB = new StringBuilder();
-                foreach (ICheckSettingsInternal csi in lstCsInternal)
-                {
-                    fluentCommandSB.Append(csi.GetFluentCommandString());
-                    fluentCommandSB.Append(", ");
-                }
-                if (fluentCommandSB.Length > 2) fluentCommandSB.Length -= 2;
-                fluentCommandString = fluentCommandSB.ToString();
-            }
-            EyesWebElement html = (EyesWebElement)driver_.FindElement(By.TagName("html"));
-            EyesWebElement body = (EyesWebElement)driver_.FindElement(By.TagName("body"));
-            return new
-            {
-                SeleniumSessionId = remoteWebDriver.SessionId.ToString(),
-                WebDriver = new
-                {
-                    remoteWebDriver.GetType().Name,
-                    remoteWebDriver.GetType().Assembly.GetName().Version,
-                    remoteWebDriver.Capabilities,
-                },
-                SeleniumSDKAssemblyData = new
-                {
-                    eyesSeleniumAsm.ImageRuntimeVersion,
-                    eyesSeleniumTargetFramework
-                },
-                CoreSDKAssemblyData = new
-                {
-                    eyesCoreAsm.ImageRuntimeVersion,
-                    eyesCoreTargetFramework
-                },
-                FullAgentId,
-                DevicePixelRatio,
-                CutProvider,
-                ScaleProvider,
-                Config_.StitchMode,
-                Config_.HideScrollbars,
-                Config_.HideCaret,
-                ForceFullPageScreenshot,
-                HtmlSizes = new
-                {
-                    DocumentElement = new
-                    {
-                        Id = html.ToString(),
-                        Client = html.ClientSize,
-                        Scroll = html.ScrollSize,
-                        Reported = html.Size
-                    },
-                    Body = new
-                    {
-                        Id = body.ToString(),
-                        Client = body.ClientSize,
-                        Scroll = body.ScrollSize,
-                        Reported = body.Size
-                    },
-                },
-                ScrollRootElement = userDefinedSRE_?.ToString(),
-                CheckSettings = lastCheckSettings_,
-                FluentCommandString = fluentCommandString,
-            };
-        }
-
-        public override IDictionary<string, IRunningTest> GetAllTests()
-        {
-            return new Dictionary<string, IRunningTest>() { { TestId, this } };
-        }
-
-        bool IEyes.IsCompleted()
-        {
-            return testResultContainer_ != null;
-        }
-
-        public IList<TestResultContainer> GetAllTestResults()
-        {
-            if (!((IEyes)this).IsCompleted())
-            {
-                return null;
-            }
-
-            return new TestResultContainer[] { testResultContainer_ };
-        }
-
-        protected internal override MatchWindowData PrepareForMatch(ICheckTask checkTask)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected internal override ICheckTask IssueCheck(ICheckSettings checkSettings,
-            IList<VisualGridSelector[]> regionSelectors, string source, IList<IUserAction> userInputs)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected internal override void CheckCompleted(ICheckTask checkTask, MatchResult matchResult)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetFrameChainLength()
+        public override int GetFrameChainLength()
         {
             return driver_.GetFrameChain().Count;
         }
