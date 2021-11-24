@@ -1,4 +1,5 @@
 ﻿using Applitools.Fluent;
+using Applitools.Selenium.Common;
 using Applitools.Selenium.Fluent;
 using Applitools.Ufg;
 using Applitools.Ufg.Model;
@@ -10,127 +11,21 @@ using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Applitools.Selenium.VisualGrid
 {
-    public class VisualGridEyes : IVisualGridEyes, ISeleniumEyes, IUserActionsEyes, IVisualGridEyesInternal
+    public class VisualGridEyes : VisualGridEyesBase<IWebElement, IWebDriver>, ISeleniumEyes, IUserActionsEyes
     {
-        private static readonly int MB = 1024 * 1024;
-
-        private static readonly string GET_ELEMENT_XPATH_JS =
-            "const atName='data-applitools-element-id'; var el=arguments[0];" +
-            "if (el.hasAttribute(atName)) { var id = el.getAttribute(atName) } " +
-            "else { window.APPLITOOLS_ELEMENT_ID = window.APPLITOOLS_ELEMENT_ID || 0; " +
-            " window.APPLITOOLS_ELEMENT_ID++; var id = window.APPLITOOLS_ELEMENT_ID;" +
-            " el.setAttribute(atName, id); }" +
-            "return '//*[@'+atName+'=\"'+id+'\"]';";
-
-        internal readonly VisualGridRunner runner_;
-        private readonly Dictionary<string, IRunningTest> testList_ = new Dictionary<string, IRunningTest>();
-        private readonly List<RunningTest> testsInCloseProcess_ = new List<RunningTest>();
-        private ICollection<Task<TestResultContainer>> closeFutures_ = new HashSet<Task<TestResultContainer>>();
-        private IJavaScriptExecutor jsExecutor_;
-        private string url_;
-        internal Ufg.IDebugResourceWriter debugResourceWriter_;
-        private bool? isDisabled_;
-        private ISeleniumConfigurationProvider configProvider_;
-        private IConfiguration configAtOpen_;
-        private IWebDriver webDriver_;
         private EyesWebDriver driver_;
-        internal UserAgent userAgent_;
-        private readonly Dictionary<string, string> properties_ = new Dictionary<string, string>();
-        private RectangleSize viewportSize_;
-        private bool isOpen_;
-        private readonly string eyesId_ = Guid.NewGuid().ToString();
 
         internal VisualGridEyes(ISeleniumConfigurationProvider configurationProvider, VisualGridRunner visualGridRunner)
-        {
-            ArgumentGuard.NotNull(visualGridRunner, nameof(visualGridRunner));
-            if (visualGridRunner.GetAllTestResultsAlreadyCalled)
-            {
-                throw new InvalidOperationException("Runner already returned its results");
-            }
-            configProvider_ = configurationProvider;
-            Logger = visualGridRunner.Logger;
-            runner_ = visualGridRunner;
-
-            IDebugResourceWriter drw = runner_.DebugResourceWriter;
-            Ufg.IDebugResourceWriter ufgDrw = Applitools.VisualGrid.Utils.ConvertDebugResourceWriter(drw);
-            debugResourceWriter_ = ufgDrw;
-        }
-
-        private Configuration Config_ { get => configProvider_.GetConfiguration(); }
-
-        public string ApiKey
-        {
-            get => runner_.ApiKey ?? Config_.ApiKey;
-            set { runner_.ApiKey = value; Config_.ApiKey = value; }
-        }
-
-        public string ServerUrl
-        {
-            get => runner_.ServerUrl ?? Config_.ServerUrl;
-            set { runner_.ServerUrl = value; Config_.ServerUrl = value; }
-        }
-
-        public ProxySettings Proxy
-        {
-            get => runner_.Proxy ?? Config_.Proxy;
-            set { runner_.Proxy = value; Config_.Proxy = value; }
-        }
-
-        public Logger Logger { get; }
-
-        public bool IsDisabled
-        {
-            get => isDisabled_ ?? runner_.IsDisabled;
-            set => isDisabled_ = value;
-        }
-
-        protected string BaseAgentId => GetBaseAgentId();
-
-        internal static string GetBaseAgentId()
-        {
-            Assembly assembly = typeof(VisualGridEyes).Assembly;
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return $"Eyes.Selenium.VisualGrid.DotNet/{versionInfo.ProductVersion}";
-        }
-
-        public string AgentId
-        {
-            get => Config_.AgentId;
-            set => Config_.SetAgentId(value);
-        }
-
-        public string FullAgentId => (AgentId == null) ? BaseAgentId : $"{AgentId} [{BaseAgentId}]";
-
-        public BatchInfo Batch
-        {
-            get => Config_.Batch ?? new BatchInfo();
-            set => Config_.SetBatch(value);
-        }
-
-        public List<IUserAction> UserInputs { get; } = new List<IUserAction>();
-
-        public bool IsEyesClosed()
-        {
-            return testList_.Values.All(t => t.IsCompleted);
-        }
-
-        public bool IsOpen => !IsEyesClosed();
-
-        public ICollection<TestResultContainer> TestResults { get; } = new List<TestResultContainer>();
+            : base(configurationProvider, visualGridRunner)
+        { }
 
         public IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize)
         {
@@ -197,7 +92,7 @@ namespace Applitools.Selenium.VisualGrid
                 runner_.AgentId = FullAgentId;
             }
 
-            configAtOpen_ = GetConfigClone_();
+            configAtOpen_ = GetConfigClone();
 
             List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
             IServerConnector serverConnector = runner_.ServerConnector;
@@ -231,157 +126,24 @@ namespace Applitools.Selenium.VisualGrid
         internal void InitDriver(IWebDriver webDriver)
         {
             webDriver_ = webDriver;
-            if (webDriver is IJavaScriptExecutor jsExecutor)
+            if (webDriver is IEyesJsExecutor eyesJsExecutor)
             {
-                jsExecutor_ = jsExecutor;
+                jsExecutor_ = eyesJsExecutor;
             }
-            if (webDriver is RemoteWebDriver remoteDriver)
+            else if (webDriver is IJavaScriptExecutor)
             {
-                driver_ = new EyesWebDriver(Logger, null, this, remoteDriver);
+                jsExecutor_ = new SeleniumJavaScriptExecutor(webDriver);
+            }
+            if (webDriver is RemoteWebDriver wDriver)
+            {
+                driver_ = new EyesWebDriver(Logger, null, this, wDriver);
             }
             url_ = webDriver.Url;
         }
 
-        public TestResults AbortIfNotClosed()
-        {
-            Logger.Verbose("enter");
-            return Abort();
-        }
+        protected override string BaseAgentId => GetBaseAgentId();
 
-        public TestResults Abort()
-        {
-            Logger.Verbose("enter");
-            AbortAsync();
-            return WaitForEyesToFinish_(false);
-        }
-
-        public void AbortAsync()
-        {
-            Logger.Verbose("enter");
-            foreach (RunningTest runningTest in testList_.Values)
-            {
-                runningTest.IssueAbort(new EyesException("Eyes.Close wasn't called. Aborted the test"), false);
-            }
-            Logger.Verbose("exit");
-        }
-
-        private void Abort_(Exception e)
-        {
-            foreach (RunningTest runningTest in testList_.Values)
-            {
-                runningTest.IssueAbort(e, true);
-            }
-        }
-
-        private IList<VisualGridSelector[]> GetRegionsXPaths_(ICheckSettings checkSettings)
-        {
-            List<VisualGridSelector[]> result = new List<VisualGridSelector[]>();
-            ICheckSettingsInternal csInternal = (ICheckSettingsInternal)checkSettings;
-            IList<Tuple<IWebElement, object>>[] elementLists = CollectSeleniumRegions_(csInternal);
-
-            int i;
-            for (i = 0; i < elementLists.Length; ++i)
-            {
-                IList<Tuple<IWebElement, object>> elementsList = elementLists[i];
-                GetRegionsXPaths_(result, elementsList);
-            }
-
-            return result;
-        }
-
-        private void GetRegionsXPaths_(List<VisualGridSelector[]> result, IList<Tuple<IWebElement, object>> elementsList)
-        {
-            List<VisualGridSelector> xpaths = new List<VisualGridSelector>();
-            foreach (Tuple<IWebElement, object> element in elementsList)
-            {
-                if (element.Item1 == null) continue;
-                try
-                {
-                    string xpath = (string)jsExecutor_.ExecuteScript(GET_ELEMENT_XPATH_JS, element.Item1);
-                    xpaths.Add(new VisualGridSelector(xpath, element.Item2));
-                }
-                catch (Exception e)
-                {
-                    CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, e, eyesId_);
-                }
-            }
-            result.Add(xpaths.ToArray());
-        }
-
-        private IList<Tuple<IWebElement, object>>[] CollectSeleniumRegions_(ICheckSettingsInternal csInternal)
-        {
-            IGetRegions[] ignoreRegions = csInternal.GetIgnoreRegions();
-            IGetRegions[] layoutRegions = csInternal.GetLayoutRegions();
-            IGetRegions[] strictRegions = csInternal.GetStrictRegions();
-            IGetRegions[] contentRegions = csInternal.GetContentRegions();
-            IGetFloatingRegion[] floatingRegions = csInternal.GetFloatingRegions();
-            IGetAccessibilityRegion[] accessibilityRegions = csInternal.GetAccessibilityRegions();
-
-            IList<Tuple<IWebElement, object>> ignoreElements = GetElementsFromRegions_(ignoreRegions);
-            IList<Tuple<IWebElement, object>> layoutElements = GetElementsFromRegions_(layoutRegions);
-            IList<Tuple<IWebElement, object>> strictElements = GetElementsFromRegions_(strictRegions);
-            IList<Tuple<IWebElement, object>> contentElements = GetElementsFromRegions_(contentRegions);
-            IList<Tuple<IWebElement, object>> floatingElements = GetElementsFromRegions_(floatingRegions);
-            IList<Tuple<IWebElement, object>> accessibilityElements = GetElementsFromRegions_(accessibilityRegions);
-
-            IList<Tuple<IWebElement, object>> userActionElements = GetElementsFromUserActions_(UserInputs);
-
-            return new IList<Tuple<IWebElement, object>>[] {
-                ignoreElements,
-                layoutElements,
-                strictElements,
-                contentElements,
-                floatingElements,
-                accessibilityElements,
-                userActionElements };
-        }
-
-        private IList<Tuple<IWebElement, object>> GetElementsFromUserActions_(IList<IUserAction> userInputs)
-        {
-            List<Tuple<IWebElement, object>> elements = new List<Tuple<IWebElement, object>>();
-            foreach (VGUserAction userInput in userInputs)
-            {
-                IWebElement element = (IWebElement)userInput.Control;
-                elements.Add(new Tuple<IWebElement, object>(element, new SimpleRegionByElement(element)));
-            }
-            return elements;
-        }
-
-        private IList<Tuple<IWebElement, object>> GetElementsFromRegions_(IList regionsProvider)
-        {
-            List<Tuple<IWebElement, object>> elements = new List<Tuple<IWebElement, object>>();
-            foreach (object getRegions in regionsProvider)
-            {
-                if (getRegions is IGetSeleniumRegion getSeleniumRegion)
-                {
-                    IList<IWebElement> webElements = getSeleniumRegion.GetElements(webDriver_);
-                    foreach (IWebElement element in webElements)
-                    {
-                        elements.Add(new Tuple<IWebElement, object>(element, getRegions));
-                    }
-                }
-            }
-            return elements;
-        }
-
-        public void Check(params ICheckSettings[] checkSettings)
-        {
-            ArgumentGuard.IsValidState(IsOpen, "Eyes not open");
-            if (!ValidateEyes_()) return;
-            foreach (ICheckSettings checkSetting in checkSettings)
-            {
-                CheckImpl_(checkSetting);
-            }
-            UserInputs.Clear();
-        }
-
-        public void Check(ICheckSettings checkSettings)
-        {
-            CheckImpl_(checkSettings);
-            UserInputs.Clear();
-        }
-
-        internal virtual void CheckImpl_(ICheckSettings checkSettings)
+        internal override void CheckImpl_(ICheckSettings checkSettings)
         {
             if (!ValidateEyes_()) return;
 
@@ -415,7 +177,7 @@ namespace Applitools.Selenium.VisualGrid
                 int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 checkSettings = UpdateCheckSettings_(checkSettings);
-                IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths_(checkSettings);
+                IList<VisualGridSelector[]> regionsXPaths = GetRegionsXPaths(checkSettings);
                 ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
                 SeleniumCheckSettings seleniumCheckSettings = (SeleniumCheckSettings)checkSettings;
                 string source = webDriver_.Url;
@@ -447,76 +209,9 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(ISeleniumCheckTarget seleniumCheckSettings)
-        {
-            IList<int> layoutBreakpoints;
-            bool isLayoutBreakpointsEnabled;
-            if (seleniumCheckSettings.GetLayoutBreakpoints().Count > 0 ||
-                seleniumCheckSettings.GetLayoutBreakpointsEnabled())
-            {
-                layoutBreakpoints = seleniumCheckSettings.GetLayoutBreakpoints();
-                isLayoutBreakpointsEnabled = seleniumCheckSettings.GetLayoutBreakpointsEnabled();
-            }
-            else
-            {
-                layoutBreakpoints = GetConfigClone_().LayoutBreakpoints;
-                isLayoutBreakpointsEnabled = GetConfigClone_().LayoutBreakpointsEnabled;
-            }
-
-            HashSet<string> testIds = new HashSet<string>();
-            foreach (string runningTestId in testList_.Keys)
-            {
-                testIds.Add(runningTestId);
-            }
-
-            Dictionary<int, List<RunningTest>> requiredWidths = new Dictionary<int, List<RunningTest>>();
-            if (isLayoutBreakpointsEnabled || layoutBreakpoints.Count > 0)
-            {
-                foreach (RunningTest runningTest in testList_.Values)
-                {
-                    int width = runningTest.BrowserInfo.GetDeviceSize().Width;
-                    if (width <= 0)
-                    {
-                        width = viewportSize_.Width;
-                    }
-
-                    if (layoutBreakpoints.Count > 0)
-                    {
-                        for (int i = layoutBreakpoints.Count - 1; i >= 0; i--)
-                        {
-                            if (width >= layoutBreakpoints[i])
-                            {
-                                width = layoutBreakpoints[i];
-                                break;
-                            }
-                        }
-
-                        if (width < layoutBreakpoints[0])
-                        {
-                            width = layoutBreakpoints[0] - 1;
-                            Logger.Log(TraceLevel.Warn, testIds, Stage.Check, StageType.DomScript,
-                                new { message = $"Device width is smaller than the smallest breakpoint {layoutBreakpoints[0]}" });
-                        }
-                    }
-
-                    if (requiredWidths.TryGetValue(width, out List<RunningTest> tests))
-                    {
-                        tests.Add(runningTest);
-                    }
-                    else
-                    {
-                        List<RunningTest> list = new List<RunningTest> { runningTest };
-                        requiredWidths.Add(width, list);
-                    }
-                }
-            }
-
-            return requiredWidths;
-        }
-
         private void CaptureDomForResourceCollection_(int requiredWidth, IEnumerable<IRunningTest> tests,
-            EyesWebDriverTargetLocator switchTo, ICheckSettingsInternal checkSettingsInternal,
-            IList<VisualGridSelector[]> regionsXPaths, string source)
+              EyesWebDriverTargetLocator switchTo, ICheckSettingsInternal checkSettingsInternal,
+              IList<VisualGridSelector[]> regionsXPaths, string source)
         {
             HashSet<string> testIds = new HashSet<string>();
             foreach (RunningTest runningTest in tests)
@@ -659,11 +354,6 @@ namespace Applitools.Selenium.VisualGrid
             return false;
         }
 
-        private Configuration GetConfigClone_()
-        {
-            return new Configuration(configProvider_.GetConfiguration());
-        }
-
         private void EnsureViewportSize_()
         {
             RectangleSize viewportSize = Config_.ViewportSize;
@@ -697,46 +387,6 @@ namespace Applitools.Selenium.VisualGrid
             viewportSize_ = viewportSize;
         }
 
-        internal ICheckSettings UpdateCheckSettings_(ICheckSettings checkSettings)
-        {
-            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-            ISeleniumCheckTarget seleniumCheckTarget = (ISeleniumCheckTarget)checkSettings;
-
-            MatchLevel? matchLevel = checkSettingsInternal.GetMatchLevel();
-            bool? fully = checkSettingsInternal.GetStitchContent();
-            bool? sendDom = checkSettingsInternal.GetSendDom();
-            bool? useCookies = seleniumCheckTarget.GetUseCookies();
-            var visualGridOptions = checkSettingsInternal.GetVisualGridOptions();
-
-            if (matchLevel == null)
-            {
-                checkSettings = checkSettings.MatchLevel(Config_.MatchLevel);
-            }
-
-            if (fully == null)
-            {
-                checkSettings = checkSettings.Fully(Config_.IsForceFullPageScreenshot ?? checkSettingsInternal.IsCheckWindow());
-            }
-
-            if (sendDom == null)
-            {
-                checkSettings = checkSettings.SendDom(Config_.SendDom);
-            }
-
-            if (useCookies == null)
-            {
-                checkSettings = checkSettings.UseDom(Config_.UseCookies);
-            }
-
-            List<VisualGridOption> options = new List<VisualGridOption>();
-            if (Config_.VisualGridOptions != null) options.AddRange(Config_.VisualGridOptions);
-            if (visualGridOptions != null) options.AddRange(visualGridOptions);
-
-            checkSettings = checkSettings.VisualGridOptions(options.Count > 0 ? options.ToArray() : null);
-
-            return checkSettings;
-        }
-
         private void TrySetTargetSelector_(SeleniumCheckSettings checkSettings)
         {
             ISeleniumCheckTarget seleniumCheckTarget = checkSettings;
@@ -758,7 +408,7 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         internal static FrameData CaptureDomSnapshot_(EyesWebDriverTargetLocator switchTo, UserAgent userAgent,
-            IConfiguration config, ISeleniumCheckTarget seleniumCheckTarget,
+            IConfiguration config, ISeleniumCheckTargetCommon seleniumCheckTarget,
             VisualGridRunner runner, EyesWebDriver driver, Logger logger, params string[] testIds)
         {
             string domScript = userAgent.IsInternetExplorer ? Common.Resources.PROCESS_PAGE_FOR_IE : Common.Resources.PROCESS_PAGE;
@@ -790,7 +440,7 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         private static void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
-            ISeleniumCheckTarget seleniumCheckTarget,
+            ISeleniumCheckTargetCommon seleniumCheckTarget,
             VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
             string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
@@ -884,126 +534,9 @@ namespace Applitools.Selenium.VisualGrid
             }
         }
 
-        public void SetLogHandler(ILogHandler logHandler)
-        {
-            Logger.SetLogHandler(logHandler);
-        }
-
-        public TestResults Close(bool throwEx = true)
-        {
-            CloseAsync();
-            return WaitForEyesToFinish_(throwEx);
-        }
-
-        private TestResults WaitForEyesToFinish_(bool throwException)
-        {
-            while (!IsCompleted())
-            {
-                Thread.Sleep(500);
-            }
-
-            IList<TestResultContainer> allResults = GetAllTestResults();
-            TestResultContainer errorResult = null;
-            TestResults firstResult = null;
-            foreach (TestResultContainer result in allResults)
-            {
-                if (firstResult == null)
-                {
-                    firstResult = result.TestResults;
-                }
-                if (result.Exception != null)
-                {
-                    errorResult = result;
-                    break;
-                }
-            }
-
-            if (errorResult != null)
-            {
-                if (throwException)
-                {
-                    throw new EyesException("Error occured during run:", errorResult.Exception);
-                }
-                return errorResult.TestResults;
-            }
-
-            return firstResult;
-        }
-
-        public bool IsCompleted()
-        {
-            return GetAllTestResults() != null;
-        }
-
-        bool IVisualGridEyesInternal.IsCloseIssued => !isOpen_;
-
-        public void CloseAsync()
-        {
-            if (!ValidateEyes_())
-            {
-                return;
-            }
-
-            isOpen_ = false;
-            Logger.Log(TraceLevel.Notice, eyesId_, Stage.Close, StageType.Called,
-                new { message = $"closing {testList_.Count} running tests" });
-            foreach (RunningTest runningTest in testList_.Values)
-            {
-                VisualGridRunningTest vgRunningTest = (VisualGridRunningTest)runningTest;
-                Logger.Verbose("running test name: {0}", Config_.TestName);
-                Logger.Verbose("running test device info: {0}", vgRunningTest.BrowserInfo);
-                Logger.Verbose("is current running test open: {0}", vgRunningTest.IsOpen);
-                Logger.Verbose("is current running test ready to close: {0}", vgRunningTest.IsTestReadyToClose);
-                Logger.Verbose("is current running test closed: {0}", ((IRunningTest)vgRunningTest).IsCompleted);
-                Logger.Verbose("closing current running test");
-                vgRunningTest.IssueClose();
-            }
-        }
-
-        public void AddProperty(string name, string value)
-        {
-            properties_.Add(name, value);
-        }
-
-        public void ClearProperties()
-        {
-            properties_.Clear();
-        }
-
-        public string PrintAllFutures()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (Task<TestResultContainer> future in closeFutures_)
-            {
-                sb.Append(future.Id).Append(" - ").Append(future.Status).Append(future.AsyncState).AppendLine();
-            }
-            if (sb.Length >= Environment.NewLine.Length) sb.Length -= Environment.NewLine.Length; // remove last new line
-            return sb.ToString();
-        }
-
-        private bool ValidateEyes_()
-        {
-            if (IsDisabled)
-            {
-                Logger.Verbose("WARNING! Invalid Operation - Eyes Disabled!");
-                return false;
-            }
-            return true;
-        }
-
-        public override string ToString()
-        {
-            return $"{nameof(VisualGridEyes)} (#{GetHashCode()}) - close future count: {closeFutures_.Count}";
-        }
-
         public EyesWebDriver GetDriver()
         {
             return this.driver_;
-        }
-
-        public IBatchCloser GetBatchCloser()
-        {
-            return testList_.Values.FirstOrDefault();
         }
 
         void IUserActionsEyes.AddKeyboardTrigger(IWebElement element, string text)
@@ -1018,29 +551,9 @@ namespace Applitools.Selenium.VisualGrid
             UserInputs.Add(trigger);
         }
 
-        public IList<TestResultContainer> GetAllTestResults()
+        protected override object CreateSimpleRegionByElement(IWebElement element)
         {
-            List<TestResultContainer> allResults = new List<TestResultContainer>();
-            foreach (RunningTest runningTest in testList_.Values)
-            {
-                if (!((IRunningTest)runningTest).IsCompleted)
-                {
-                    if (runner_.GetError() != null)
-                    {
-                        throw new EyesException("Execution crashed", runner_.GetError());
-                    }
-                    return null;
-                }
-
-                allResults.Add(runningTest.GetTestResultContainer());
-            }
-
-            return allResults;
-        }
-
-        public IDictionary<string, IRunningTest> GetAllTests()
-        {
-            return new Dictionary<string, IRunningTest>(testList_);
+            return new SimpleRegionByElement(element);
         }
     }
 }

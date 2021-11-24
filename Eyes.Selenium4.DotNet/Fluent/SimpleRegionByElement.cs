@@ -1,11 +1,11 @@
-﻿namespace Applitools.Selenium.Fluent
-{
-    using Utils.Geometry;
-    using OpenQA.Selenium;
-    using Applitools.Fluent;
-    using System.Drawing;
-    using System.Collections.Generic;
+﻿using Applitools.Utils.Geometry;
+using OpenQA.Selenium;
+using Applitools.Fluent;
+using System.Drawing;
+using System.Collections.Generic;
 
+namespace Applitools.Selenium.Fluent
+{
     internal class SimpleRegionByElement : IGetRegions, IGetSeleniumRegion
     {
         private IWebElement element_;

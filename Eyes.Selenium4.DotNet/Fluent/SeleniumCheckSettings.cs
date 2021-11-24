@@ -1,4 +1,5 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Selenium.Common;
+using Applitools.Utils;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
@@ -579,12 +580,12 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        List<int> ISeleniumCheckTarget.GetLayoutBreakpoints()
+        List<int> ISeleniumCheckTargetCommon.GetLayoutBreakpoints()
         {
             return layoutBreakpoints_;
         }
 
-        bool ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
+        bool ISeleniumCheckTargetCommon.GetLayoutBreakpointsEnabled()
         {
             return layoutBreakpointsEnabled_;
         }
@@ -597,7 +598,7 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        bool? ISeleniumCheckTarget.GetUseCookies()
+        bool? ISeleniumCheckTargetCommon.GetUseCookies()
         {
             return useCookies_;
         }
