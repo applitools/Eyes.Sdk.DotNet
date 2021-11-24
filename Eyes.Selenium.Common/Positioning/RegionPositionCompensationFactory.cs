@@ -1,11 +1,12 @@
 ﻿using Applitools.Positioning;
+using Applitools.Selenium.Common;
 using Applitools.Utils;
 
 namespace Applitools.Selenium.Positioning
 {
-    class RegionPositionCompensationFactory
+    internal class RegionPositionCompensationFactory
     {
-        internal static IRegionPositionCompensation GetRegionPositionCompensation(UserAgent userAgent, SeleniumEyes eyes, Logger logger)
+        internal static IRegionPositionCompensation GetRegionPositionCompensation(UserAgent userAgent, ISeleniumEyesCommon eyes, Logger logger)
         {
             if (userAgent != null)
             {

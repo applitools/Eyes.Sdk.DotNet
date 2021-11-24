@@ -10,13 +10,11 @@ namespace Applitools.Selenium.Capture
 {
     internal class InternetExplorerScreenshotImageProvider : TakeScreenshotImageProvider
     {
-        private SeleniumEyes eyes_;
         private readonly IEyesJsExecutor jsExecutor_;
 
         public InternetExplorerScreenshotImageProvider(SeleniumEyes eyes, Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
-            : base(logger, tsInstance, userAgent)
+            : base(eyes, logger, tsInstance, userAgent)
         {
-            eyes_ = eyes;
             jsExecutor_ = new SeleniumJavaScriptExecutor(eyes.GetDriver());
         }
 

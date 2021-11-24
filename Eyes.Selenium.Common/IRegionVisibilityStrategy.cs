@@ -1,8 +1,8 @@
-﻿namespace Applitools.Selenium
-{
-    using Utils;
-    using Utils.Geometry;
+﻿using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// Encapsulates implementations for providing region visibility during checkRegion.
     /// </summary>

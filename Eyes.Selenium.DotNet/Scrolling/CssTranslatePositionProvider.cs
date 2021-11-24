@@ -1,10 +1,9 @@
-﻿namespace Applitools.Selenium.Scrolling
-{
-    using Applitools.Utils;
-    using OpenQA.Selenium;
-    using System;
-    using System.Drawing;
+﻿using Applitools.Utils;
+using OpenQA.Selenium;
+using System.Drawing;
 
+namespace Applitools.Selenium.Scrolling
+{
     /// <summary>
     /// CSS Translate Transform Position Provider - will move the element graphics without recomputing the page layout.
     /// </summary>

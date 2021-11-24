@@ -1,5 +1,4 @@
-﻿using Applitools.Selenium.Scrolling;
-using Applitools.Utils;
+﻿using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -10,7 +9,7 @@ using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvi
 
 namespace Applitools.Selenium
 {
-    internal class EyesWebDriverTargetLocator : ITargetLocator
+    internal class EyesWebDriverTargetLocator : ITargetLocator, IEyesTargetLocator<IWebElement, IWebDriver, FrameChain>
     {
         private readonly Logger logger_;
         private readonly EyesWebDriver driver_;

@@ -7,12 +7,9 @@ namespace Applitools.Selenium.Capture
 {
     class FirefoxScreenshotImageProvider : TakeScreenshotImageProvider
     {
-        private SeleniumEyes eyes_;
-
         public FirefoxScreenshotImageProvider(SeleniumEyes eyes, Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
-             : base(logger, tsInstance, userAgent)
+             : base(eyes, logger, tsInstance, userAgent)
         {
-            eyes_ = eyes;
         }
 
         public override Bitmap GetImage()

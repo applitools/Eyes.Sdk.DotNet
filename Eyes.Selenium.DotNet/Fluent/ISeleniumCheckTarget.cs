@@ -1,9 +1,10 @@
-﻿using OpenQA.Selenium;
+﻿using Applitools.Selenium.Common;
+using OpenQA.Selenium;
 using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent
 {
-    interface ISeleniumCheckTarget : IScrollRootElementContainer
+    interface ISeleniumCheckTarget : ISeleniumCheckTargetCommon, IScrollRootElementContainer
     {
         By GetTargetSelector();
 
@@ -12,11 +13,5 @@ namespace Applitools.Selenium.Fluent
         IList<FrameLocator> GetFrameChain();
 
         CheckState State { get; set; }
-
-        List<int> GetLayoutBreakpoints();
-
-        bool GetLayoutBreakpointsEnabled();
-
-        bool? GetUseCookies();
     }
 }

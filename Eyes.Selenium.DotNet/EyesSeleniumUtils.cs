@@ -35,9 +35,6 @@ namespace Applitools.Selenium
 
         private const int SetOverflowWaitMS_ = 200;
 
-        private static readonly string DOM_SCRIPTS_WRAPPER = "return ({0})({1});";
-        internal static TimeSpan CAPTURE_TIMEOUT = TimeSpan.FromMinutes(5);
-
         private static Size GetViewportSize_(Logger logger, IJavaScriptExecutor jsExecutor)
         {
             if (jsExecutor.ExecuteScript(JSGetViewportSize_) is string sizeStr)
@@ -500,91 +497,6 @@ namespace Applitools.Selenium
                 r = new Rectangle(element.Location, element.Size);
             }
             return r;
-        }
-
-        internal static string RunDomScript(Logger logger, EyesWebDriver driver, string[] testIds,
-            string domScript, object domScriptArguments, object pollingScriptArguments, string pollingScript)
-        {
-            logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Starting" });
-            if (domScriptArguments == null)
-            {
-                domScriptArguments = new { };
-            }
-
-            string domScriptWrapped = string.Format(DOM_SCRIPTS_WRAPPER, domScript, JsonConvert.SerializeObject(domScriptArguments));
-            string pollingScriptWrapped = string.Format(DOM_SCRIPTS_WRAPPER, pollingScript, JsonConvert.SerializeObject(pollingScriptArguments));
-
-            try
-            {
-                string resultAsString = (string)driver.ExecuteScript(domScriptWrapped);
-                CaptureStatus scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
-                CaptureStatusEnum status = scriptResponse.Status;
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                while (status == CaptureStatusEnum.WIP && stopwatch.Elapsed < CAPTURE_TIMEOUT)
-                {
-                    Thread.Sleep(200);
-                    logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Polling" });
-                    resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
-                    scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
-                    status = scriptResponse.Status;
-                }
-
-                if (status == CaptureStatusEnum.ERROR)
-                {
-                    throw new EyesException("DomSnapshot Error: " + scriptResponse.Error);
-                }
-
-                if (stopwatch.Elapsed > CAPTURE_TIMEOUT)
-                {
-                    throw new EyesException("DOM capture timeout.");
-                }
-
-                if (status == CaptureStatusEnum.SUCCESS)
-                {
-                    return scriptResponse.Value.ToString();
-                }
-
-                StringBuilder value = new StringBuilder();
-                string chunk;
-                while (status == CaptureStatusEnum.SUCCESS_CHUNKED && !scriptResponse.Done && stopwatch.Elapsed < CAPTURE_TIMEOUT)
-                {
-                    logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Chunks Polling" });
-                    chunk = scriptResponse.Value.ToString();
-                    value.Append(chunk);
-                    resultAsString = (string)driver.ExecuteScript(pollingScriptWrapped);
-                    scriptResponse = JsonConvert.DeserializeObject<CaptureStatus>(resultAsString);
-                    status = scriptResponse.Status;
-                }
-
-                if (status == CaptureStatusEnum.ERROR)
-                {
-                    throw new EyesException("DomSnapshot Error: " + scriptResponse.Error);
-                }
-
-                if (stopwatch.Elapsed > CAPTURE_TIMEOUT)
-                {
-                    throw new EyesException("Domsnapshot Timed out");
-                }
-
-                chunk = scriptResponse.Value.ToString();
-                value.Append(chunk);
-                return value.ToString();
-            }
-            finally
-            {
-                logger.Log(TraceLevel.Info, testIds, Stage.General, StageType.DomScript, new { message = "Done" });
-            }
-        }
-
-        internal static Ufg.IDebugResourceWriter ConvertDebugResourceWriter(IDebugResourceWriter drw)
-        {
-            Ufg.IDebugResourceWriter ufgDrw = null;
-            if (drw is FileDebugResourceWriter fileDRW)
-            {
-                ufgDrw = new Ufg.FileDebugResourceWriter(fileDRW.TargetFolder);
-            }
-            ufgDrw = ufgDrw ?? Ufg.NullDebugResourceWriter.Instance;
-            return ufgDrw;
         }
 
         public static string GetUserAgent(this IWebDriver driver) {

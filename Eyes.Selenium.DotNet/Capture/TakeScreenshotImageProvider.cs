@@ -8,12 +8,14 @@ namespace Applitools.Selenium.Capture
 {
     internal class TakeScreenshotImageProvider : IImageProvider
     {
+        protected SeleniumEyes eyes_;
         protected readonly Logger logger_;
         protected ITakesScreenshot tsInstance_;
         protected UserAgent userAgent_;
 
-        public TakeScreenshotImageProvider(Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
+        public TakeScreenshotImageProvider(SeleniumEyes eyes, Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
         {
+            eyes_ = eyes;
             logger_ = logger;
             tsInstance_ = tsInstance;
             userAgent_ = userAgent;

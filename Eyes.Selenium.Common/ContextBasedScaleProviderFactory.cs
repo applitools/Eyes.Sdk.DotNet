@@ -1,12 +1,12 @@
-﻿namespace Applitools.Selenium
-{
-    using System.Drawing;
-    using Utils;
+﻿using System.Drawing;
+using Applitools.Utils;
 
+namespace Applitools.Selenium
+{
     /// <summary>
     /// Factory implementation for creating <see cref="ContextBasedScaleProvider"/> instances.
     /// </summary>
-    class ContextBasedScaleProviderFactory : ScaleProviderFactory
+    internal class ContextBasedScaleProviderFactory : ScaleProviderFactory
     {
         private readonly Size TopLevelContextEntireSize_;
         private readonly Size ViewportSize_;

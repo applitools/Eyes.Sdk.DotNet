@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CHANGELOG.md = CHANGELOG.md
 		deploy.sh = deploy.sh
 		extractChangeLog.sh = extractChangeLog.sh
+		genericTests.sh = genericTests.sh
 		LICENSE.txt = LICENSE.txt
 		loopChangeLog.sh = loopChangeLog.sh
 		README.md = README.md
@@ -46,6 +47,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "coverage-tests\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{0C0307A7-E06E-468B-95AD-3A74375802DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Ufg.DotNet", "Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj", "{D56B350E-1424-49DD-891F-4B243AF0ADEB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium4.DotNet", "Eyes.Selenium4.DotNet\Eyes.Selenium4.DotNet.csproj", "{322A6EFF-9997-4D02-8D58-3EA2262829E3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.Common", "Eyes.Selenium.Common\Eyes.Selenium.Common.csproj", "{9E52B086-301E-44E5-AF0E-213D300600C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +106,14 @@ Global
 		{D56B350E-1424-49DD-891F-4B243AF0ADEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D56B350E-1424-49DD-891F-4B243AF0ADEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D56B350E-1424-49DD-891F-4B243AF0ADEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{322A6EFF-9997-4D02-8D58-3EA2262829E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E52B086-301E-44E5-AF0E-213D300600C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

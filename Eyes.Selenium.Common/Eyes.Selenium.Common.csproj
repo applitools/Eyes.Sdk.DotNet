@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPoll.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPollForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResult.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResultForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResult.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResultForIE.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePoll.js" />
+    <None Remove="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePollForIE.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPoll.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPollForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResult.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResultForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResult.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResultForIE.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePoll.js" />
+    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePollForIE.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CssParser\CssParser.csproj" />
+    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj" />
+  </ItemGroup>
+
+</Project>

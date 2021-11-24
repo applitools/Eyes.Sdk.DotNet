@@ -17,13 +17,13 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [OneTimeSetUp]
         public void Before()
         {
-            originalTimeout = EyesSeleniumUtils.CAPTURE_TIMEOUT;
+            originalTimeout = Capture.Utils.CAPTURE_TIMEOUT;
         }
 
         [OneTimeTearDown]
         public void After()
         {
-            EyesSeleniumUtils.CAPTURE_TIMEOUT = originalTimeout;
+            Capture.Utils.CAPTURE_TIMEOUT = originalTimeout;
         }
 
         [Test]
@@ -40,8 +40,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 eyes.Batch = TestDataProvider.BatchInfo;
                 eyes.Open(driver, "Timeout Test", "Visual Grid Timeout Test", new Size(1200, 800));
                 eyes.Check(Target.Window().WithName("Test"));
-                eyes.Close();
-                runner.GetAllTestResults();
+                eyes.Close(false);
+                runner.GetAllTestResults(false);
             }
             finally
             {
@@ -53,7 +53,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         [Test]
         public void TestTimeout2()
         {
-            EyesSeleniumUtils.CAPTURE_TIMEOUT = TimeSpan.FromTicks(1);
+            Capture.Utils.CAPTURE_TIMEOUT = TimeSpan.FromTicks(1);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             ILogHandler logHandler = TestUtils.InitLogHandler();
             VisualGridRunner runner = new VisualGridRunner(10, logHandler);
