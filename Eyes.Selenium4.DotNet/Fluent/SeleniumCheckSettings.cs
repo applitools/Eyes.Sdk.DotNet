@@ -58,7 +58,7 @@ namespace Applitools.Selenium.Fluent
             return frameChain_;
         }
 
-        CheckState ISeleniumCheckTarget.State { get; set; }
+        CheckState<IWebElement> ISeleniumCheckTargetCommon<IWebDriver, IWebElement>.State { get; set; }
 
         By IScrollRootElementContainer.GetScrollRootSelector()
         {
@@ -102,11 +102,10 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        internal void SanitizeSettings(Logger logger, IWebDriver driver, CheckState state)
+        void ISeleniumCheckTargetCommon<IWebDriver, IWebElement>.SanitizeSettings(Logger logger, IWebDriver driver, CheckState<IWebElement> state)
         {
             bool isFully = state.StitchContent;
-            if (frameChain_.Count > 0 && targetElement_ == null && targetSelector_ == null && !isFully/* &&
-                ((Applitools.Fluent.ICheckSettingsInternal)this).GetTargetRegion() == null*/)
+            if (frameChain_.Count > 0 && targetElement_ == null && targetSelector_ == null && !isFully)
             {
                 FrameLocator lastFrame = frameChain_[frameChain_.Count - 1];
                 frameChain_.RemoveAt(frameChain_.Count - 1);
@@ -580,12 +579,12 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        List<int> ISeleniumCheckTargetCommon.GetLayoutBreakpoints()
+        List<int> ISeleniumCheckTargetCommon<IWebDriver, IWebElement>.GetLayoutBreakpoints()
         {
             return layoutBreakpoints_;
         }
 
-        bool ISeleniumCheckTargetCommon.GetLayoutBreakpointsEnabled()
+        bool ISeleniumCheckTargetCommon<IWebDriver, IWebElement>.GetLayoutBreakpointsEnabled()
         {
             return layoutBreakpointsEnabled_;
         }
@@ -598,7 +597,7 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
-        bool? ISeleniumCheckTargetCommon.GetUseCookies()
+        bool? ISeleniumCheckTargetCommon<IWebDriver, IWebElement>.GetUseCookies()
         {
             return useCookies_;
         }

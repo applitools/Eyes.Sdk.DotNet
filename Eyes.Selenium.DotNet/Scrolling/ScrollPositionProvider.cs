@@ -38,7 +38,7 @@
         internal static Point GetCurrentPosition(IEyesJsExecutor executor, IWebElement scrollRootElement)
         {
             var position = executor.ExecuteScript("return arguments[0].scrollLeft+';'+arguments[0].scrollTop;", scrollRootElement);
-            return EyesSeleniumUtils.ParseLocationString(position);
+            return EyesSeleniumUtilsCommon.ParseLocationString(position);
         }
 
         protected virtual string SetPositionCommandFormat => "arguments[0].scrollLeft={0};arguments[0].scrollTop={1}; return (arguments[0].scrollLeft+';'+arguments[0].scrollTop);";
@@ -47,7 +47,7 @@
         {
             logger_.Verbose("setting position of {0} to {1}", ScrolledElement, pos);
             var position = executor_.ExecuteScript(string.Format(SetPositionCommandFormat, pos.X, pos.Y), ScrolledElement);
-            return EyesSeleniumUtils.ParseLocationString(position);
+            return EyesSeleniumUtilsCommon.ParseLocationString(position);
         }
 
         /// <returns>The entire size of the current context.</returns>

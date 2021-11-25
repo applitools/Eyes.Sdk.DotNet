@@ -7,7 +7,7 @@ using ScrollPositionProvider = Applitools.Selenium.Scrolling.ScrollPositionProvi
 
 namespace Applitools.Selenium
 {
-    public class Frame
+    public class Frame : IFrame
     {
         private readonly PositionMemento positionMemento_;
         private IEyesJsExecutor jsExecutor_;
@@ -35,6 +35,8 @@ namespace Applitools.Selenium
             positionMemento_ = new ScrollPositionMemento(originalLocation);
             jsExecutor_ = jsExecutor;
         }
+
+        public object ReferenceObj => Reference;
 
         public IWebElement Reference { get; private set; }
 

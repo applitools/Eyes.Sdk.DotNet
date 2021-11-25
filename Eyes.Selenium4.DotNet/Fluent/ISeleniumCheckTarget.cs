@@ -4,14 +4,12 @@ using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent
 {
-    interface ISeleniumCheckTarget : ISeleniumCheckTargetCommon, IScrollRootElementContainer
+    interface ISeleniumCheckTarget : ISeleniumCheckTargetCommon<IWebDriver, IWebElement>, IScrollRootElementContainer
     {
         By GetTargetSelector();
 
         IWebElement GetTargetElement();
 
         IList<FrameLocator> GetFrameChain();
-
-        CheckState State { get; set; }
     }
 }

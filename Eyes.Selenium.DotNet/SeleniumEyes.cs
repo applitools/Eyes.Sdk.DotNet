@@ -1,7 +1,6 @@
 ﻿using Applitools.Capture;
 using Applitools.Cropping;
 using Applitools.Fluent;
-using Applitools.Positioning;
 using Applitools.Selenium.Capture;
 using Applitools.Selenium.Common;
 using Applitools.Selenium.Fluent;
@@ -16,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using CssTranslatePositionProvider = Applitools.Selenium.Scrolling.CssTranslatePositionProvider;
 using Region = Applitools.Utils.Geometry.Region;
@@ -27,18 +25,12 @@ namespace Applitools.Selenium
     /// <summary>
     /// Applitools Eyes Selenium DotNet API.
     /// </summary>
-    internal class SeleniumEyes : SeleniumEyesBase<IWebElement, IWebDriver>, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
+    internal class SeleniumEyes : SeleniumEyesBase<IWebElement, IWebDriver, ISeleniumCheckTarget>, IEyes, ISeleniumEyes, IUserActionsEyes, ISeleniumEyesCommon
     {
         #region Fields
 
         private EyesWebDriver driver_;
         private bool dontGetTitle_;
-
-        private IRegionPositionCompensation regionPositionCompensation_;
-
-        private Region effectiveViewport_;
-
-        private IWebElement userDefinedSRE_;
 
         private readonly SeleniumPositionProviderFactory positionProviderFactory_ = new SeleniumPositionProviderFactory();
 
@@ -63,19 +55,55 @@ namespace Applitools.Selenium
             : base(configurationProvider, runner)
         {
         }
+      
+        protected override IWebDriver Driver => driver_;
+        
+        protected override IWebElement GetDefaultRootElement() => EyesSeleniumUtils.GetDefaultRootElement(driver_);
 
         #endregion Constructors
 
-        #region Properties
-
-
-        public IImageProvider ImageProvider { get; private set; }
-
-        internal FrameChain OriginalFC { get; set; }
-
-        #endregion Properties
-
         #region Methods
+
+        protected override void InitDriverImpl_(IWebDriver driver)
+        {
+            if (driver is RemoteWebDriver remoteDriver)
+            {
+                driver_ = new EyesWebDriver(Logger, this, this, remoteDriver);
+            }
+            else if (driver is EyesWebDriver eyesDriver)
+            {
+                driver_ = eyesDriver;
+            }
+            else
+            {
+                string errMsg = $"Driver is not a RemoteWebDriver ({driver.GetType().Name})";
+                Logger.Log(TraceLevel.Error, Stage.Open, new { errMsg });
+                throw new EyesException(errMsg);
+            }
+        }
+
+        protected override void EnsureCorrectFrame(CheckState<IWebElement> state)
+        {
+            FrameChain frameChain = driver_.GetFrameChain();
+            if (state.FrameToSwitchTo != null &&
+                (frameChain.Count == 0 ||
+                state.FrameToSwitchTo != frameChain.Last().ReferenceObj))
+            {
+                driver_.SwitchTo().Frame(state.FrameToSwitchTo);
+            }
+        }
+
+        protected override EyesScreenshot CreateScreenshot(Bitmap image) =>
+            new EyesWebDriverScreenshot(Logger, driver_, image);
+
+        protected override IPositionProvider CreateScrollPositionProvider(IWebElement scrollRootElement) =>
+            new ScrollPositionProvider(Logger, driver_, scrollRootElement);
+
+        protected override IPositionProvider CreateElementPositionProvider(IWebElement scrollRootElement) =>
+            new ElementPositionProvider(Logger, driver_, scrollRootElement);
+
+        protected override IPositionProvider CreateCssTranslatePositionProvider(IWebElement scrollRootElement) =>
+            new CssTranslatePositionProvider(Logger, driver_, scrollRootElement);
 
         /// <summary>
         /// Get the viewport size using the driver. Call this method if for some reason you don't 
@@ -102,17 +130,22 @@ namespace Applitools.Selenium
             EyesSeleniumUtils.SetViewportSize(new Logger(), driver, new RectangleSize(size));
         }
 
-        protected override string Source => driver_.Url;
-
-        protected override string GetUserAgent()
+        protected override IPageStateCommon<IWebDriver, IWebElement> CreatePageState()
         {
-            return driver_.GetUserAgent();
+            return new PageState(Logger, driver_, StitchMode, userAgent_);
         }
 
-        protected override object GetRemoteWebDriver()
-        {
-            return driver_.RemoteWebDriver;
-        }
+        protected override string GetCurrentUrl() => driver_.Url;
+
+        protected override IEyesJsExecutor GetJsExecutor() => new SeleniumJavaScriptExecutor(driver_);
+
+        protected override string GetUserAgent() => driver_.GetUserAgent();
+
+        protected override object GetWrappedWebDriver() => driver_.RemoteWebDriver;
+
+        protected override IDictionary<string, object> GetSessionDetails() => driver_.SessionDetails;
+     
+        protected override FrameChain GetCurrentFrameChain() => driver_.GetFrameChain();
 
         protected override string TryCaptureDom()
         {
@@ -157,6 +190,8 @@ namespace Applitools.Selenium
                 renderingInfo.MaxImageHeight, renderingInfo.MaxImageArea, sizeAdjuster);
         }
 
+        protected override IGetRegions CreateSimpleRegionByElement(IWebElement element) => new SimpleRegionByElement(element);
+
         private void InitPositionProvidersForCheckElement_(bool isScrollableElement, IWebElement targetElement, CheckState state)
         {
             // User might still call "fully" on a non-scrollable element, adjust the position provider accordingly.
@@ -180,8 +215,8 @@ namespace Applitools.Selenium
             Logger.Verbose(nameof(isScrollableElement) + "? {0}", isScrollableElement);
         }
 
-        private void CheckElement_(ICheckSettingsInternal checkSettingsInternal, IWebElement targetElement,
-            Rectangle? targetRegion, CheckState state)
+        protected override void CheckElement_(ICheckSettingsInternal checkSettingsInternal, IWebElement targetElement,
+            Rectangle? targetRegion, CheckState<IWebElement> state)
         {
             IList<FrameLocator> frameLocators = ((ISeleniumCheckTarget)checkSettingsInternal).GetFrameChain();
             if (frameLocators.Count > 0)
@@ -239,37 +274,7 @@ namespace Applitools.Selenium
             CheckWindowBase(crop, checkSettingsInternal, source: driver_.Url);
         }
 
-        private static Rectangle? ComputeCropRectangle(Rectangle fullRect, Rectangle? cropRect)
-        {
-            if (cropRect == null) return null;
-            Rectangle crop = fullRect;
-            Rectangle cropRectValue = cropRect.Value;
-            cropRectValue.Offset(crop.Location);
-            crop.Intersect(cropRectValue);
-            return crop;
-        }
-
-        private Rectangle BringRegionToView(Rectangle bounds, Point viewportLocation, bool compensateSRE = true)
-        {
-            IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
-            IPositionProvider currentFramePositionProvider = GetPositionProvider(
-                Logger, StitchMode, jsExecutor_, currentFrameSRE, userAgent_);
-            Point initialFramePosition = currentFramePositionProvider.GetCurrentPosition();
-            Point boundsLocation = bounds.Location;
-            Point newFramePosition = boundsLocation - (Size)viewportLocation;
-
-            // This comes to compensate scrolling of SRE.
-            if (StitchMode == StitchModes.Scroll && compensateSRE)
-            {
-                newFramePosition += (Size)initialFramePosition;
-            }
-
-            Point framePositionAfterSet = currentFramePositionProvider.SetPosition(newFramePosition);
-            bounds.Location += (Size)initialFramePosition - (Size)framePositionAfterSet;
-            return bounds;
-        }
-
-        private void CheckFullRegion_(ICheckSettingsInternal checkSettingsInternal, Rectangle targetRegion, CheckState state)
+        protected override void CheckFullRegion_(ICheckSettingsInternal checkSettingsInternal, Rectangle targetRegion, CheckState<IWebElement> state)
         {
             if (((ISeleniumCheckTarget)checkSettingsInternal).GetFrameChain().Count > 0)
             {
@@ -280,7 +285,7 @@ namespace Applitools.Selenium
                 Logger.Verbose("Target.Region(x,y,w,h).Fully(true)");
             }
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
-            Frame currentFrame = currentFrameChain.Peek();
+            IFrame currentFrame = currentFrameChain.Peek();
             if (currentFrame != null)
             {
                 Rectangle currentFrameBoundsWithoutBorders = Region.RemoveBorders(currentFrame.Bounds, currentFrame.BorderWidths);
@@ -297,12 +302,12 @@ namespace Applitools.Selenium
             CheckWindowBase(targetRegion, checkSettingsInternal, source: driver_.Url);
         }
 
-        private void CheckFullFrame_(ICheckSettingsInternal checkSettingsInternal, CheckState state)
+        protected override void CheckFullFrame_(ICheckSettingsInternal checkSettingsInternal, CheckState<IWebElement> state)
         {
             Logger.Verbose("Target.Frame(frame).Fully(true)");
             FrameChain currentFrameChain = driver_.GetFrameChain().Clone();
             Point visualOffset = GetFrameChainOffset_(currentFrameChain);
-            Frame currentFrame = currentFrameChain.Peek();
+            IFrame currentFrame = currentFrameChain.Peek();
             state.EffectiveViewport = Rectangle.Intersect(state.EffectiveViewport, new Rectangle(visualOffset, currentFrame.InnerSize));
 
             IWebElement currentFrameSRE = GetCurrentFrameScrollRootElement();
@@ -316,17 +321,7 @@ namespace Applitools.Selenium
             //EyesSeleniumUtils.SetOverflow(originalOverflow, driver_, currentFrameSRE);
         }
 
-        private static Point GetFrameChainOffset_(FrameChain frameChain)
-        {
-            Point offset = Point.Empty;
-            foreach (Frame frame in frameChain)
-            {
-                offset.Offset(frame.Location);
-            }
-            return offset;
-        }
-
-        internal static IWebElement GetScrollRootElementFromSREContainer(IScrollRootElementContainer scrollRootElementContainer, EyesWebDriver driver)
+        internal protected override IWebElement GetScrollRootElementFromSREContainer(ISeleniumCheckTarget scrollRootElementContainer, IWebDriver driver)
         {
             IWebElement scrollRootElement = TryGetUserDefinedSREFromSREContainer(scrollRootElementContainer, driver);
             if (scrollRootElement == null)
@@ -336,7 +331,7 @@ namespace Applitools.Selenium
             return scrollRootElement;
         }
 
-        internal static IWebElement TryGetUserDefinedSREFromSREContainer(IScrollRootElementContainer scrollRootElementContainer, EyesWebDriver driver)
+        protected override IWebElement TryGetUserDefinedSREFromSREContainer(ISeleniumCheckTarget scrollRootElementContainer, IWebDriver driver)
         {
             IWebElement scrollRootElement = scrollRootElementContainer.GetScrollRootElement();
             if (scrollRootElement == null)
@@ -350,7 +345,7 @@ namespace Applitools.Selenium
             return scrollRootElement;
         }
 
-        internal IWebElement GetCurrentFrameScrollRootElement()
+        internal override IWebElement GetCurrentFrameScrollRootElement()
         {
             return EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE_);
         }
@@ -499,7 +494,7 @@ namespace Applitools.Selenium
                     GetViewportSize(), DevicePixelRatio, ScaleProvider, SetScaleProvider);
         }
 
-        private EyesWebDriverScreenshot GetFrameOrElementScreenshot_(ScaleProviderFactory scaleProviderFactory, CheckState state)
+        protected override EyesScreenshot GetFrameOrElementScreenshot(ScaleProviderFactory scaleProviderFactory, CheckState<IWebElement> state)
         {
             EyesWebDriverScreenshot result;
             bool switchedFrame = false;
@@ -508,7 +503,7 @@ namespace Applitools.Selenium
             if (state.EffectiveViewport.IsEmpty)
             {
                 switchedFrame = true;
-                Frame frame;
+                IFrame frame;
                 FrameChain frameChain = driver_.GetFrameChain();
                 while ((frame = frameChain.Peek()) != null)
                 {
@@ -553,7 +548,7 @@ namespace Applitools.Selenium
             state.OriginLocation = state.FullRegion.Location;
             if (switchedFrame)
             {
-                Frame frame;
+                IFrame frame;
                 FrameChain frameChain = driver_.GetFrameChain();
                 while ((frame = frameChain.Peek()) != null)
                 {
@@ -565,7 +560,7 @@ namespace Applitools.Selenium
             return result;
         }
 
-        private EyesWebDriverScreenshot GetViewportScreenshot_(ScaleProviderFactory scaleProviderFactory, CheckState state)
+        protected override EyesScreenshot GetViewportScreenshot(ScaleProviderFactory scaleProviderFactory, CheckState<IWebElement> state)
         {
             Thread.Sleep(WaitBeforeScreenshots);
             IWebElement scrolledElement = GetCurrentFrameScrollRootElement();
@@ -577,7 +572,7 @@ namespace Applitools.Selenium
             EyesWebDriverScreenshot result;
             if (state.EffectiveViewport.IsEmpty)
             {
-                Frame frame;
+                IFrame frame;
                 FrameChain originalFrameChain = driver_.GetFrameChain().Clone();
                 FrameChain frameChain = driver_.GetFrameChain();
                 Point originalViewportLocation = effectiveViewport_.Location;
@@ -612,7 +607,7 @@ namespace Applitools.Selenium
             return result;
         }
 
-        internal IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
+        internal protected override IPositionProvider GetPositionProvider(Logger logger, StitchModes stitchMode, IEyesJsExecutor executor, IWebElement scrollRootElement, UserAgent userAgent = null)
         {
             return positionProviderFactory_.GetPositionProvider(logger, stitchMode, executor, scrollRootElement, userAgent);
         }
@@ -705,9 +700,21 @@ namespace Applitools.Selenium
             return driver_;
         }
 
+        protected override IWebElement GetTargetElement(ISeleniumCheckTarget seleniumCheckTarget)
+        {
+            ArgumentGuard.NotNull(seleniumCheckTarget, nameof(seleniumCheckTarget));
+            By targetSelector = seleniumCheckTarget.GetTargetSelector();
+            IWebElement targetElement = seleniumCheckTarget.GetTargetElement();
+            if (targetElement == null && targetSelector != null)
+            {
+                targetElement = this.driver_.FindElement(targetSelector);
+            }
+            return targetElement;
+        }
+
         protected override void GetWebDriverInfo(out object remoteWebDriver,
-            out HtmlElementInfo html, out HtmlElementInfo body,
-            out string scrollRootElement, out string sessionId, out object capabilities)
+                    out HtmlElementInfo html, out HtmlElementInfo body,
+                    out string scrollRootElement, out string sessionId, out object capabilities)
         {
             remoteWebDriver = driver_.RemoteWebDriver;
             var h = (EyesRemoteWebElement)driver_.FindElement(By.TagName("html"));
@@ -715,13 +722,20 @@ namespace Applitools.Selenium
             html = new HtmlElementInfo { Id = h.ToString(), ClientSize = h.ClientSize, ScrollSize = h.ScrollSize, Size = h.Size };
             body = new HtmlElementInfo { Id = b.ToString(), ClientSize = b.ClientSize, ScrollSize = b.ScrollSize, Size = b.Size };
             scrollRootElement = userDefinedSRE_?.ToString();
-            sessionId = driver_.RemoteWebDriver.SessionId.ToString();
+            sessionId = GetSessionId();
             capabilities = driver_.RemoteWebDriver.Capabilities;
         }
+
+        protected override string GetSessionId() => driver_.RemoteWebDriver.SessionId.ToString();
 
         public override int GetFrameChainLength()
         {
             return driver_.GetFrameChain().Count;
+        }
+
+        public override int GetFrameChainLength(ISeleniumCheckTarget seleniumCheckTarget)
+        {
+            return seleniumCheckTarget.GetFrameChain().Count;
         }
 
         #endregion Methods

@@ -1,4 +1,5 @@
-﻿using Applitools.Utils;
+﻿using Applitools.Selenium.Common;
+using Applitools.Utils;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
@@ -22,7 +23,7 @@ namespace Applitools.Selenium
         IFindsByClassName, IFindsByCssSelector,
         IFindsById, IFindsByLinkText, IFindsByName, IFindsByTagName, IFindsByXPath,
         IJavaScriptExecutor, ISearchContext, ITakesScreenshot, IWebDriver, IActionExecutor,
-        IEyesJsExecutor
+        IEyesJsExecutor, IEyesWebDriverCommon
     {
         #region Fields
 
@@ -70,6 +71,11 @@ namespace Applitools.Selenium
         public FrameChain GetFrameChain()
         {
             return frameChain_;
+        }
+        
+        public int GetFrameChainLength()
+        {
+            return frameChain_.Count;
         }
 
         #endregion
@@ -388,7 +394,7 @@ namespace Applitools.Selenium
             }
         }
 
-        internal object GetSessionDetail(string detail)
+        public object GetSessionDetail(string detail)
         {
             IDictionary<string, object> sessionDetails = SessionDetails;
             if (sessionDetails == null) return null;

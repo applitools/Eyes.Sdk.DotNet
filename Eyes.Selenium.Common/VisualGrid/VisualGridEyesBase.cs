@@ -448,7 +448,7 @@ namespace Applitools.Selenium.VisualGrid
         internal ICheckSettings UpdateCheckSettings_(ICheckSettings checkSettings)
         {
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-            ISeleniumCheckTargetCommon seleniumCheckTarget = (ISeleniumCheckTargetCommon)checkSettings;
+            ISeleniumCheckTargetCommon<IWebElement> seleniumCheckTarget = (ISeleniumCheckTargetCommon<IWebElement>)checkSettings;
 
             MatchLevel? matchLevel = checkSettingsInternal.GetMatchLevel();
             bool? fully = checkSettingsInternal.GetStitchContent();
@@ -490,7 +490,7 @@ namespace Applitools.Selenium.VisualGrid
             return new Configuration(configProvider_.GetConfiguration());
         }
 
-        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(ISeleniumCheckTargetCommon seleniumCheckSettings)
+        internal Dictionary<int, List<RunningTest>> MapRunningTestsToRequiredBrowserWidth_(ISeleniumCheckTargetCommon<IWebElement> seleniumCheckSettings)
         {
             IList<int> layoutBreakpoints;
             bool isLayoutBreakpointsEnabled;
@@ -656,7 +656,7 @@ namespace Applitools.Selenium.VisualGrid
 
 
         internal FrameData CaptureDomSnapshot_(IEyesTargetLocator<IWebElement, IWebDriver, FrameChain> switchTo, UserAgent userAgent,
-            IConfiguration config, ISeleniumCheckTargetCommon seleniumCheckTarget,
+            IConfiguration config, ISeleniumCheckTargetCommon<IWebElement> seleniumCheckTarget,
             VisualGridRunner runner, IWebDriver driver, Logger logger, params string[] testIds)
         {
             string domScript = userAgent.IsInternetExplorer ? Resources.PROCESS_PAGE_FOR_IE : Resources.PROCESS_PAGE;
@@ -688,7 +688,7 @@ namespace Applitools.Selenium.VisualGrid
         }
 
         private void AnalyzeFrameData_(FrameData frameData, UserAgent userAgent, IConfiguration config,
-          ISeleniumCheckTargetCommon seleniumCheckTarget,
+          ISeleniumCheckTargetCommon<IWebElement> seleniumCheckTarget,
           VisualGridRunner runner, IEyesTargetLocator<IWebElement, IWebDriver, FrameChain> switchTo, IWebDriver driver, Logger logger)
         {
             string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();

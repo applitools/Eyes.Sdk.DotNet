@@ -6,9 +6,9 @@ using System.Drawing;
 
 namespace Applitools.Selenium
 {
-    public class FrameChain : IEnumerable<Frame>
+    public class FrameChain : IEnumerable<IFrame>
     {
-        private List<Frame> frames_ = new List<Frame>();
+        private List<IFrame> frames_ = new List<IFrame>();
         private Logger logger_;
 
         public int Count { get { return frames_.Count; } }
@@ -18,10 +18,10 @@ namespace Applitools.Selenium
             logger_ = logger;
         }
 
-        public Frame this[int index] { get { return frames_[index]; } }
+        public IFrame this[int index] { get { return frames_[index]; } }
 
         #region Enumerable
-        public IEnumerator<Frame> GetEnumerator()
+        public IEnumerator<IFrame> GetEnumerator()
         {
             return frames_.GetEnumerator();
         }
@@ -55,7 +55,7 @@ namespace Applitools.Selenium
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < lc1; ++i)
             {
-                if (!c1.frames_[i].Reference.Equals(c2.frames_[i].Reference))
+                if (!c1.frames_[i].ReferenceObj.Equals(c2.frames_[i].ReferenceObj))
                 {
                     return false;
                 }
@@ -74,7 +74,7 @@ namespace Applitools.Selenium
             int lc = Math.Min(lc1, lc2);
             for (int i = 0; i < lc; ++i)
             {
-                if (c1.frames_[i].Reference.Equals(c2.frames_[i].Reference))
+                if (c1.frames_[i].ReferenceObj.Equals(c2.frames_[i].ReferenceObj))
                 {
                     commonFrames++;
                     continue;
@@ -96,15 +96,15 @@ namespace Applitools.Selenium
         /// Removes the last inserted frame element. Practically means we switched
         /// back to the parent of the current frame
         /// </summary>
-        public Frame Pop()
+        public IFrame Pop()
         {
             if (frames_.Count == 0) return null;
-            Frame frame = Peek();
+            IFrame frame = Peek();
             frames_.RemoveAt(frames_.Count - 1);
             return frame;
         }
 
-        public Frame Peek()
+        public IFrame Peek()
         {
             if (frames_.Count == 0) return null;
             return frames_[frames_.Count - 1];
@@ -114,7 +114,7 @@ namespace Applitools.Selenium
         /// Appends a frame to the frame chain.
         /// </summary>
         /// <param name="frame">The frame to be added.</param>
-        public void Push(Frame frame)
+        public void Push(IFrame frame)
         {
             frames_.Add(frame);
         }
@@ -147,7 +147,7 @@ namespace Applitools.Selenium
         {
             logger_.Verbose("enter");
             Point result = new Point();
-            foreach (Frame frame in frames_)
+            foreach (IFrame frame in frames_)
             {
                 result.Offset(frame.Location);
             }
@@ -168,7 +168,7 @@ namespace Applitools.Selenium
 
         public FrameChain Clone()
         {
-            return new FrameChain(logger_) { frames_ = new List<Frame>(this.frames_) };
+            return new FrameChain(logger_) { frames_ = new List<IFrame>(frames_) };
         }
     }
 }

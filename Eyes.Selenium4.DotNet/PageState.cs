@@ -1,4 +1,5 @@
-﻿using Applitools.Selenium.Fluent;
+﻿using Applitools.Selenium.Common;
+using Applitools.Selenium.Fluent;
 using Applitools.Utils;
 using OpenQA.Selenium;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Drawing;
 
 namespace Applitools.Selenium
 {
-    internal class PageState
+    internal class PageState : IPageStateCommon<IWebDriver, IWebElement>
     {
         private EyesWebDriver driver_;
         private Logger logger_;
@@ -21,6 +22,11 @@ namespace Applitools.Selenium
             driver_ = driver;
             stitchMode_ = stitchMode;
             userAgent_ = userAgent;
+        }
+
+        public void PreparePage(ISeleniumCheckTargetCommon<IWebDriver, IWebElement> seleniumCheckTarget, Configuration config, IWebElement userDefinedSRE)
+        {
+            PreparePage((ISeleniumCheckTarget)seleniumCheckTarget, config, userDefinedSRE);
         }
 
         internal void PreparePage(ISeleniumCheckTarget seleniumCheckTarget, Configuration config, IWebElement userDefinedSRE)
@@ -51,7 +57,7 @@ namespace Applitools.Selenium
             while (fc.Count > 0)
             {
                 switchTo.ParentFrame();
-                Frame currentFrame = fc.Pop();
+                Frame currentFrame = (Frame)fc.Pop();
                 IWebElement rootElement = EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, null);
                 SaveCurrentFrameState_(frameStates_, driver_, rootElement);
                 MaximizeTargetFrameInCurrentFrame_(currentFrame.Reference, rootElement);
@@ -70,7 +76,7 @@ namespace Applitools.Selenium
             ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(originalFrameChain_);
         }
 
-        internal int SwitchToTargetFrame_(ISeleniumCheckTarget checkTarget, Configuration config, 
+        internal int SwitchToTargetFrame_(ISeleniumCheckTarget checkTarget, Configuration config,
             List<FrameState> frameStates, IWebElement userDefinedSRE)
         {
             IList<FrameLocator> frameChain = checkTarget.GetFrameChain();
@@ -106,7 +112,7 @@ namespace Applitools.Selenium
 
             switchTo.Frame(frameElement);
             IWebElement rootElement = SeleniumEyes.GetScrollRootElementFromSREContainer(frameTarget, driver_);
-            Frame frame = driver_.GetFrameChain().Peek();
+            Frame frame = (Frame)driver_.GetFrameChain().Peek();
             frame.ScrollRootElement = rootElement;
             SaveCurrentFrameState_(frameStates, driver_, rootElement);
             TryHideScrollbarsInFrame(config, driver_, rootElement);
@@ -126,5 +132,6 @@ namespace Applitools.Selenium
             FrameState frameState = FrameState.GetCurrentFrameState(driver, rootElement);
             frameStates.Add(frameState);
         }
+
     }
 }
