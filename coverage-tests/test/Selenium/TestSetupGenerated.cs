@@ -2,6 +2,7 @@
 using Applitools.Tests.Utils;
 using Applitools.VisualGrid;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
@@ -59,7 +60,11 @@ namespace Applitools.Generated.Selenium.Tests
                     }
                     break;
                 case browserType.Firefox:
-                    driver = CreateFirefoxDriver(headless: headless);
+                    TestContext tc = TestContext.CurrentContext;
+                    logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped, 
+                        new { message="Firefox not supported for Selenium 4", testName = tc.Test.FullName });
+                    Assert.Inconclusive();
+                    //driver = CreateFirefoxDriver(headless: headless);
                     break;
                 case browserType.IE:
                     var sauceOptions = new Dictionary<string, object>();
