@@ -97,8 +97,7 @@ jobs:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
     
-    - stage: Test specific
-      name: Appium
+    - name: Appium
       mono: none
       dotnet: 3.1.407
       script:
