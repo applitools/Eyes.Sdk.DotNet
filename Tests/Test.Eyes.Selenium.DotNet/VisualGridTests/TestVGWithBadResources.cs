@@ -18,7 +18,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             driver.Url = "https://applitools.github.io/demo/TestPages/VisualGridTestPage/bad_resources.html";
 
             BatchInfo batch = new BatchInfo("Visual Grid - Test bad resources");
-            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestVGWithBadWebhook));
+            ILogHandler logHandler = TestUtils.InitLogHandler(nameof(TestVGWithBadResources));
             VisualGridRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
 
@@ -26,6 +26,38 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             config.SetBatch(batch);
             config.SetAppName("Visual Grid Tests");
             config.SetTestName("Bad Resources");
+            config.SetViewportSize(new Applitools.Utils.Geometry.RectangleSize(800, 600));
+
+            eyes.SetConfiguration(config);
+            eyes.Open(driver);
+            try
+            {
+                eyes.Check(Target.Window().Fully());
+                eyes.Close();
+                runner.GetAllTestResults();
+            }
+            finally
+            {
+                eyes.AbortIfNotClosed();
+                driver.Quit();
+            }
+        }  
+        
+        [Test]
+        public void TestEmptyResource()
+        {
+            IWebDriver driver = SeleniumUtils.CreateChromeDriver();
+            driver.Url = "https://applitools.github.io/demo/TestPages/SpecialCases/PageWithEmptyResource.html";
+
+            BatchInfo batch = new BatchInfo("Visual Grid - Test empty resource (204)");
+            ILogHandler logHandler = TestUtils.InitLogHandler();
+            VisualGridRunner runner = new VisualGridRunner(10, logHandler);
+            Eyes eyes = new Eyes(runner);
+
+            Configuration config = new Configuration();
+            config.SetBatch(batch);
+            config.SetAppName("Visual Grid Tests");
+            config.SetTestName("Empty Resources");
             config.SetViewportSize(new Applitools.Utils.Geometry.RectangleSize(800, 600));
 
             eyes.SetConfiguration(config);

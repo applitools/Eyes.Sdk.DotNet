@@ -481,6 +481,7 @@ Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(False)
 Applitools.Selenium.Tests.TestAPI.TestSetServerUrlAndApiKeyInRunner(True)
 
 Applitools.Selenium.Tests.VisualGridTests.TestVGWithBadResources.Test
+Applitools.Selenium.Tests.VisualGridTests.TestVGWithBadResources.TestEmptyResource
 
 Applitools.Selenium.Tests.ApiTests.TestApiMethods.TestFullyInConfiguration(False,null,null,False)
 Applitools.Selenium.Tests.ApiTests.TestApiMethods.TestFullyInConfiguration(False,null,False,False)
