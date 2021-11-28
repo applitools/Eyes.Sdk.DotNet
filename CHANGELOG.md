@@ -1,6 +1,8 @@
 ## [Eyes.Sdk.Core vNext]
 ### Updated
 - Support Selenium 4
+### Fixed
+- Couldn't handle correctly illegal `content-type` and `media-type` strings. [Trello 2758] (https://trello.com/c/Ti5X0Km2)
 
 ## [Eyes.Selenium4 2.57] - 2021-11-21
 ### Added

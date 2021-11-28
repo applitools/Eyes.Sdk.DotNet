@@ -676,14 +676,13 @@ namespace Applitools
 
             string hash = resource.Sha256;
             string contentType = resource.ContentType?.Split(';')[0];
+            if (string.IsNullOrWhiteSpace(contentType)) contentType = null;
 
             Logger.Log(TraceLevel.Info, resource.TestIds, Stage.Render,
-                new { resourceHash = hash, resourceUrl = resource.Url, renderId });
-
+                new { resourceHash = hash, resourceUrl = resource.Url, renderId, resource.ErrorStatusCode });
             HttpRequestMessage request = CreateUfgHttpWebRequest_($"/resources/sha256/{hash}?render-id={renderId}",
                 method: "PUT", contentType: contentType, mediaType: contentType ?? "application/octet-stream",
                 content: content);
-
             httpClient_.SendAsyncRequest(listener, request, Logger, new BackoffProvider());
             Logger.Verbose("future created.");
         }
