@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Support Selenium 4
+
 ## [Eyes.Selenium4 2.57] - 2021-11-21
 ### Added
 - This very project which supports WebDriver 4.
