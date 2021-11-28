@@ -1,3 +1,11 @@
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Support Selenium 4
+
+## [Eyes.Selenium4 2.57] - 2021-11-21
+### Added
+- This very project which supports WebDriver 4.
+
 ## [Eyes.Selenium 2.57] - 2021-11-17
 ### Fixed
 - Fixed Safari's cut on iPhone 12 [Trello 2694] (https://trello.com/c/mpjZpL91)

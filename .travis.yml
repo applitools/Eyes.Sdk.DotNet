@@ -91,7 +91,7 @@ jobs:
       addons:
         chrome: stable
       script:
-        - pushd Eyes.Selenium.DotNet/Properties/NodeResources
+        - pushd Eyes.Selenium4.DotNet/Properties/NodeResources
         - npm install
         - popd
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh

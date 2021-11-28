@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-pushd Eyes.Selenium.DotNet/Properties/NodeResources
+pushd Eyes.Selenium4.DotNet/Properties/NodeResources
 npm install
 popd
-
 RESULT=0
 
 echo "generating tests"
