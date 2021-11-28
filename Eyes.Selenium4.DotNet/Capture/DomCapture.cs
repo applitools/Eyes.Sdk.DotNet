@@ -15,10 +15,10 @@ namespace Applitools.Selenium.Capture
 {
     class DomCapture
     {
-        private static readonly string CAPTURE_DOM = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPoll.js");
-        private static readonly string CAPTURE_DOM_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPollForIE.js");
-        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResult.js");
-        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResultForIE.js");
+        private static readonly string CAPTURE_DOM = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet4.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPoll.js");
+        private static readonly string CAPTURE_DOM_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet4.Properties.NodeResources.node_modules._applitools.dom_capture.dist.captureDomAndPollForIE.js");
+        private static readonly string POLL_RESULT = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet4.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResult.js");
+        private static readonly string POLL_RESULT_FOR_IE = CommonUtils.ReadResourceFile("Eyes.Selenium.DotNet4.Properties.NodeResources.node_modules._applitools.dom_capture.dist.pollResultForIE.js");
 
         private static readonly int MB = 1024 * 1024;
 

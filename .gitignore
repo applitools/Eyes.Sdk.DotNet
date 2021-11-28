@@ -17,16 +17,8 @@ TestResult.xml
 *.playlist
 .DS_Store
 *.snupkg
-/Eyes.Selenium.DotNet/Properties/Resources/captureDomAndPoll.js
-/Eyes.Selenium.DotNet/Properties/Resources/captureDomAndPollForIE.js
-/Eyes.Selenium.DotNet/Properties/Resources/processPageAndSerializePoll.js
-/Eyes.Selenium.DotNet/Properties/Resources/processPageAndSerializePollForIE.js
 /Eyes.Selenium.DotNet/Properties/resBackup
 *.diagsession
-/Eyes.Selenium.DotNet/Properties/Resources/pollResult.js
-/Eyes.Selenium.DotNet/Properties/Resources/pollResultForIE.js
-/Eyes.Selenium.DotNet/Properties/Resources/processPagePoll.js
-/Eyes.Selenium.DotNet/Properties/Resources/processPagePollForIE.js
 /coverage-tests/node_modules/
 /coverage-tests/coverage-tests-metadata.json
-/Eyes.Selenium4.DotNet/Properties/NodeResources/node_modules/
+*/Properties/NodeResources/node_modules/
