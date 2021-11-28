@@ -1,8 +1,36 @@
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Appium 4.30] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Images 2.33] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.CodedUI 2.29] - 2021-11-28
+### Updated
+- Match to latest Eyes.Windows
+
+## [Eyes.Selenium 2.58] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.LeanFT 2.35] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Windows 2.34] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core 2.52] - 2021-11-28
 ### Updated
 - Support Selenium 4
 ### Fixed
 - Couldn't handle correctly illegal `content-type` and `media-type` strings. [Trello 2758] (https://trello.com/c/Ti5X0Km2)
+
+## [Eyes.Selenium4 2.58] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
 
 ## [Eyes.Selenium4 2.57] - 2021-11-21
 ### Added
