@@ -9,7 +9,8 @@ namespace Applitools.Selenium.Capture
 {
     internal class SafariScreenshotImageProvider : MobileScreenshotImageProvider
     {
-        private static Dictionary<Size, Rectangle[]> devicesRegions_ = null;
+        private static IDictionary<string, IDictionary<Size, Rectangle[]>> regionsPeriOsVersion_;
+        private static string defaultiOSKey = "*";
 
         public SafariScreenshotImageProvider(SeleniumEyes eyes, Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
             : base(eyes, logger, tsInstance, userAgent)
@@ -54,7 +55,7 @@ namespace Applitools.Selenium.Capture
                 (eyes_.CachedSessionDetails.TryGetValue("PlatformName", out object platformName) &&
                     "ios".Equals(platformName as string, StringComparison.OrdinalIgnoreCase)))
             {
-                croppedImage = CropIOSImage(image, originalViewportSize, logger_);
+                croppedImage = CropIOSImage(image, originalViewportSize, userAgent_.BrowserMajorVersion, logger_);
             }
             else if (!eyes_.ForceFullPageScreenshot)
             {
@@ -90,9 +91,14 @@ namespace Applitools.Selenium.Capture
 
         internal static Bitmap CropIOSImage(Bitmap image, Size originalViewportSize, Logger logger = null)
         {
+            return CropIOSImage(image, originalViewportSize, defaultiOSKey, logger);
+        }
+
+        internal static Bitmap CropIOSImage(Bitmap image, Size originalViewportSize, string iosMajorVersion, Logger logger = null)
+        {
             if (logger == null) logger = new Logger();
 
-            if (devicesRegions_ == null)
+            if (regionsPeriOsVersion_ == null)
             {
                 InitDeviceRegionsTable_();
             }
@@ -100,9 +106,11 @@ namespace Applitools.Selenium.Capture
             int imageWidth = image.Width;
             int imageHeight = image.Height;
 
+            logger.Verbose("iOS version: {0}", iosMajorVersion);
             logger.Verbose("physical device pixel size: {0}x{1}", imageWidth, imageHeight);
 
-            if (devicesRegions_.TryGetValue(image.Size, out Rectangle[] resolutions))
+            var devicesRegions = GetiOSRegions(iosMajorVersion);
+            if (devicesRegions.TryGetValue(image.Size, out Rectangle[] resolutions))
             {
                 int renderedWidth = resolutions[0].Width;
                 int relevantViewportHeight = (renderedWidth < image.Width) ? originalViewportSize.Height - 21 : originalViewportSize.Height;
@@ -137,9 +145,21 @@ namespace Applitools.Selenium.Capture
             return image;
         }
 
+        private static IDictionary<Size, Rectangle[]> GetiOSRegions(string iOSVersion)
+        {
+            if (regionsPeriOsVersion_.TryGetValue(iOSVersion, out var regions))
+            {
+                return regions;
+            }
+
+            return regionsPeriOsVersion_[defaultiOSKey];
+        }
+
         private static void InitDeviceRegionsTable_()
         {
-            devicesRegions_ = new Dictionary<Size, Rectangle[]>
+            regionsPeriOsVersion_ = new Dictionary<string, IDictionary<Size, Rectangle[]>>()
+            {
+                {defaultiOSKey, new Dictionary<Size, Rectangle[]>
             {
                 { new Size(1536, 2048), new Rectangle[]{ new Rectangle(0, 140, 1536, 1908), new Rectangle(0, 205, 1536, 1843), new Rectangle(0, 128, 1536, 1920), new Rectangle(0, 194, 1536, 1854) } },
                 { new Size(2048, 1536), new Rectangle[]{ new Rectangle(0, 140, 2048, 1396), new Rectangle(0, 205, 2048, 1331), new Rectangle(0, 128, 2048, 1408), new Rectangle(0, 194, 2048, 1342) } },
@@ -173,9 +193,18 @@ namespace Applitools.Selenium.Capture
 
                 { new Size(1640, 2360), new Rectangle[]{ new Rectangle(0, 149, 1640, 2211) } },
 
-                // iPhone 12
+                // iPhone 12, iOS 14
                 { new Size(1170, 2532), new[]{ new Rectangle(0, 291, 1170, 1991)} },
                 { new Size(2532, 1170), new[]{ new Rectangle(141, 150, 2250, 981)} },
+            }},
+                {
+                    "15", new Dictionary<Size, Rectangle[]>
+                    {
+                        // iPhone 12, iOS 15
+                        {new Size(1170, 2532), new[] {new Rectangle(0, 141, 1170, 1993)}},
+                        {new Size(2532, 1170), new[] {new Rectangle(147, 150, 2238, 981)}},
+                    }
+                }
             };
         }
     }
