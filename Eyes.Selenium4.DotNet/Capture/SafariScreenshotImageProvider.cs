@@ -9,6 +9,7 @@ namespace Applitools.Selenium.Capture
 {
     internal class SafariScreenshotImageProvider : MobileScreenshotImageProvider
     {
+        private const string defaultiOSKey = "*";
         private static Dictionary<Size, Rectangle[]> devicesRegions_ = null;
 
         public SafariScreenshotImageProvider(SeleniumEyes eyes, Logger logger, ITakesScreenshot tsInstance, UserAgent userAgent)
@@ -89,6 +90,11 @@ namespace Applitools.Selenium.Capture
         }
 
         internal static Bitmap CropIOSImage(Bitmap image, Size originalViewportSize, Logger logger = null)
+        {
+            return CropIOSImage(image, originalViewportSize, defaultiOSKey, logger);
+        }
+
+        internal static Bitmap CropIOSImage(Bitmap image, Size originalViewportSize, string iosMajorVersion, Logger logger = null)
         {
             if (logger == null) logger = new Logger();
 
