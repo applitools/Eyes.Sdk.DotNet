@@ -21,9 +21,9 @@ namespace Applitools.Selenium.Tests
                 IWebElement mainElement = webDriver.FindElement(By.CssSelector("main"));
                 IWebElement boxElement = webDriver.FindElement(By.CssSelector("div"));
                 IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)webDriver;
-                Rectangle headerRect = EyesRemoteWebElement.GetVisibleElementRect(headerElement, jsExecutor);
-                Rectangle mainRect = EyesRemoteWebElement.GetVisibleElementRect(mainElement, jsExecutor);
-                Rectangle boxRect = EyesRemoteWebElement.GetVisibleElementRect(boxElement, jsExecutor);
+                Rectangle headerRect = EyesWebElement.GetVisibleElementRect(headerElement, jsExecutor);
+                Rectangle mainRect = EyesWebElement.GetVisibleElementRect(mainElement, jsExecutor);
+                Rectangle boxRect = EyesWebElement.GetVisibleElementRect(boxElement, jsExecutor);
                 Assert.AreEqual(new Rectangle(8, 8, 724, 50), headerRect);
                 Assert.AreEqual(new Rectangle(8, 58, 724, 36), mainRect);
                 Assert.AreEqual(new Rectangle(8, 58, 724, 36), boxRect);

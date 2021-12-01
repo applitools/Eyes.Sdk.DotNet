@@ -280,7 +280,7 @@ namespace Applitools.Selenium.Tests
         public void TestFullAgentId_1()
         {
             Eyes eyes = new Eyes();
-            StringAssert.StartsWith("Eyes.Selenium.DotNet/", eyes.FullAgentId);
+            StringAssert.StartsWith("Eyes.Selenium4.DotNet/", eyes.FullAgentId);
         }
 
         [Test]
@@ -289,14 +289,14 @@ namespace Applitools.Selenium.Tests
             string serverUrlStr = "https://eyesapi.applitools.com";
             Uri serverUrl = new Uri(serverUrlStr);
             Eyes eyes = new Eyes(serverUrl);
-            StringAssert.StartsWith("Eyes.Selenium.DotNet/", eyes.FullAgentId);
+            StringAssert.StartsWith("Eyes.Selenium4.DotNet/", eyes.FullAgentId);
         }
 
         [Test]
         public void TestFullAgentId_3()
         {
             Eyes eyes = new Eyes(new ServerConnectorFactory());
-            StringAssert.StartsWith("Eyes.Selenium.DotNet/", eyes.FullAgentId);
+            StringAssert.StartsWith("Eyes.Selenium4.DotNet/", eyes.FullAgentId);
         }
 
         [Test]
@@ -306,7 +306,7 @@ namespace Applitools.Selenium.Tests
             try
             {
                 Eyes eyes = new Eyes(runner);
-                StringAssert.StartsWith("Eyes.Selenium.VisualGrid.DotNet/", eyes.FullAgentId);
+                StringAssert.StartsWith("Eyes.Selenium4.VisualGrid.DotNet/", eyes.FullAgentId);
             }
             finally
             {

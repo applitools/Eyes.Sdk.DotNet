@@ -245,7 +245,7 @@ return getVisibleElementRect(arguments[0])";
                 }
                 catch
                 {
-                    Logger.Log(TraceLevel.Error, Stage.General, 
+                    Logger.Log(TraceLevel.Error, Stage.General,
                         new { errMsg = "error parsing response: " + response.Value });
                     throw;
                 }

@@ -504,7 +504,7 @@ namespace Applitools.Utils
                         throw new Exception($"request failed with status code {response.StatusCode}. request id: {requestId}");
                     }
 
-                    Logger.Log(TraceLevel.Info, Stage.General, StageType.RequestCompleted, new { message = "OnLongRequestResponse", response.Headers, requestId});
+                    Logger.Log(TraceLevel.Info, Stage.General, StageType.RequestCompleted, new { message = "OnLongRequestResponse", response.Headers, requestId });
 
                     Uri statusUrl = response.Headers.Location;
                     if (statusUrl == null)
@@ -532,9 +532,9 @@ namespace Applitools.Utils
 
             HttpRequestMessage message = new HttpRequestMessage(new HttpMethod(method), requestUri);
 
-            if (accept != null)
+            if (MediaTypeWithQualityHeaderValue.TryParse(accept, out MediaTypeWithQualityHeaderValue mediaTypeWithQualityHeaderValue))
             {
-                message.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse(accept));
+                message.Headers.Accept.Add(mediaTypeWithQualityHeaderValue);
             }
 
             if (Headers.Count > 0)
@@ -578,9 +578,9 @@ namespace Applitools.Utils
                 message.Content = new ByteArrayContent(bytes);
 
 
-                if (contentType != null)
+                if (MediaTypeHeaderValue.TryParse(contentType, out MediaTypeHeaderValue mediaTypeHeaderValue))
                 {
-                    message.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+                    message.Content.Headers.ContentType = mediaTypeHeaderValue;
                 }
 
                 if (contentEncoding != null)
