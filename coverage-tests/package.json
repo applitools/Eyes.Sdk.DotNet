@@ -29,13 +29,15 @@
     "report:sandbox": "coverage-tests report ./configuration --sandbox --reportId $APPLITOOLS_REPORT_ID",
     "report:prodOLD": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium && coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium",
     "report:prod": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID",
-    "tests": "./dotNet/dotnet_tests.sh"
+    "tests": "./dotNet/dotnet_tests.sh",
+    "universal:debug": "eyes-universal --singleton --lazy"
   },
   "dependencies": {
     "@applitools/sdk-coverage-tests": "^2.3.15",
     "@typescript-eslint/parser": "^2.14.0",
     "junit-merge": "^2.0.0",
-    "typescript": "^3.9.10"
+    "typescript": "^3.9.10",
+    "@applitools/eyes-universal": "0.2.0"
   },
   "devDependencies": {
     "mocha": "^8.4.0"

@@ -282,6 +282,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Eyes.Selenium4.DotNet\Eyes.Selenium4.DotNet.csproj" />
     <ProjectReference Include="..\..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj" />
+    <ProjectReference Include="..\..\Eyes.Universal.Sdk.DotNet\Eyes.Universal.Sdk.DotNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
