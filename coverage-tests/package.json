@@ -37,7 +37,7 @@
     "@typescript-eslint/parser": "^2.14.0",
     "junit-merge": "^2.0.0",
     "typescript": "^3.9.10",
-    "@applitools/eyes-universal": "0.2.0"
+    "@applitools/eyes-universal": "0.2.3"
   },
   "devDependencies": {
     "mocha": "^8.4.0"

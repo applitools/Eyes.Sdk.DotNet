@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -11,7 +12,7 @@ namespace Eyes.Universal.Sdk.DotNet
 
     public class WebSocketClient //: IUniversalSocketClient
     {
-        public ClientWebSocket clientWebSocket_;
+        private ClientWebSocket clientWebSocket_;
         private CancellationTokenSource cancellationTokenSource;
 
         public event SocketMessageReceivedHandler MessageReceived;
@@ -29,7 +30,12 @@ namespace Eyes.Universal.Sdk.DotNet
         
         public Task SendData(string message)
         {
-             return SendStringAsync(message, cancellationTokenSource.Token);
+             return SendStringAsync(message, CancellationToken.None);
+        }
+
+        public Task SendData(string message, CancellationToken cancellationToken)
+        {
+             return SendStringAsync(message, cancellationToken);
         }
 
         private async Task SendStringAsync(string data, CancellationToken cancellationToken)
@@ -41,6 +47,7 @@ namespace Eyes.Universal.Sdk.DotNet
 
         public async Task<string> ReceiveMessage()
         {
+            
             var buffer = new ArraySegment<byte>(new byte[1024]);
             WebSocketReceiveResult result = null;
             var allBytes = new List<byte>();
@@ -52,6 +59,10 @@ namespace Eyes.Universal.Sdk.DotNet
                 {
                     allBytes.Add(buffer.Array[i]);
                 }
+
+
+                var tex1t = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
+                Debug.WriteLine(tex1t);
             }
             while (!result.EndOfMessage);
 
