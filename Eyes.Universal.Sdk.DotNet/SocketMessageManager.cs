@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Eyes.Universal.Sdk.DotNet.Commands.Client;
@@ -9,6 +11,7 @@ namespace Eyes.Universal.Sdk.DotNet
     public class SocketMessageManager
     {
         private readonly WebSocketClient _socketClient;
+        private static Process nativeProc_;
 
         public SocketMessageManager()
         {
@@ -21,6 +24,7 @@ namespace Eyes.Universal.Sdk.DotNet
 
         public async Task<CoreMakeManagerResponse> SendRequest(CoreMakeManager coreMakeManager)
         {
+            TryStartProcess_();
             //var coreMakeManager = CreateCoreMakeManager();
             var coreMakeManagerJson = ConvertData(coreMakeManager);
 
@@ -36,6 +40,22 @@ namespace Eyes.Universal.Sdk.DotNet
             } while (coreMakeManagerResponse?.Payload?.Result?.ApplitoolsRefId != coreMakeManager.Key);
 
             return coreMakeManagerResponse;
+        }
+
+        private void TryStartProcess_()
+        {
+            if (nativeProc_ == null || nativeProc_.HasExited)
+            {
+                string path = Assembly.GetExecutingAssembly().Location;
+                string osVersion = Environment.OSVersion.VersionString.ToLower();
+                string os, suffix;
+                if (osVersion.Contains("windows")) { os = "win-x64"; suffix = "win.exe"; }
+                else if (osVersion.Contains("mac")) { os = "mac-x64"; suffix = "macos"; }
+                else { os = "linux-x64"; suffix = "linux"; }
+
+                path = Path.Combine(Path.GetDirectoryName(path), "runtimes", os, "native", "eyes-universal-" + suffix);
+                nativeProc_ = Process.Start(path);
+            }
         }
 
         public string ConvertData<T>(T data)
