@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Applitools Eyes adds automated visual validation to your automated tests.
 With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
@@ -14,7 +14,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
     <PackageReleaseNotes>
-</PackageReleaseNotes>
+    </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Universal.Sdk.DotNet</PackageId>
     <PackageLicenseExpression />
@@ -48,7 +48,7 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup Condition="!$(TargetFramework.Contains('.'))">
     <PackageReference Include="DotNetZip.Reduced" Version="1.9.1.8" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="!$(TargetFramework.Contains('.'))">
     <Reference Include="System.Management" />
     <Reference Include="System.Web" />
@@ -62,7 +62,7 @@ To learn more, visit https://applitools.com/ .</Description>
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
-  
+
   <Target Name="GetMyPackageFiles">
     <ItemGroup>
     </ItemGroup>
@@ -75,6 +75,10 @@ To learn more, visit https://applitools.com/ .</Description>
 
   <ItemGroup>
     <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content  Include="runtimes\**" Pack="true" PackagePath="runtimes" />
   </ItemGroup>
 
 </Project>
