@@ -17,21 +17,27 @@ namespace Eyes.Universal.Sdk.DotNet
     {
         private WebSocketClient socketClient_;
         private CoreMakeManagerResponse coreMakeManagerResponse_;
+        private string managerApplitoolsRefId_;
         private EyesRef eyes_;
+        private readonly ILogHandler logHandler_;
 
         public UniversalSocketClient(ILogHandler logHandler = null)
         {
-            if (logHandler == null) logHandler = NullLogHandler.Instance;
+            if (logHandler == null)
+            {
+                logHandler = NullLogHandler.Instance;
+            }
+
+            logHandler_ = logHandler;
             socketClient_ = new WebSocketClient();
         }
-        
+
         public void Open(IWebDriver driver, string appName, string testName, Size viewportSize)
         {
-            var driverUrl = driver.Url;
             var url = GetSocketUrl(2107);
             socketClient_.ConnectAsync(url).GetAwaiter().GetResult();
 
-            var makeSdk = CreateCoreMakeSdk(); 
+            var makeSdk = CreateCoreMakeSdk();
             var makeSdkJson = ConvertData(makeSdk);
 
             socketClient_.SendData(makeSdkJson);
@@ -39,16 +45,11 @@ namespace Eyes.Universal.Sdk.DotNet
             var coreMakeManager = CreateCoreMakeManager();
 
             coreMakeManagerResponse_ = SendRequest(coreMakeManager).Result;
-            
-            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(coreMakeManagerResponse_.Payload.Result.ApplitoolsRefId, driver);
-            
+            managerApplitoolsRefId_ = coreMakeManagerResponse_.Payload.Result.ApplitoolsRefId;
+
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver, appName, testName, viewportSize);
+
             eyes_ = SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload.Eyes;
-
-            //var eyesManagerOpenEyesJson = ConvertData(eyesManagerOpenEyes);
-
-            //socketClient_.SendData(eyesManagerOpenEyesJson);
-            //var text =  socketClient_.ReceiveMessage();
-
         }
 
         public void Check(string name, ICheckSettings checkSettings)
@@ -74,8 +75,7 @@ namespace Eyes.Universal.Sdk.DotNet
         public void CloseAll()
         { 
             var closeAllEyes = CreateEyesManageCloseAllEyes();
-
-            var testResult = SendRequest(closeAllEyes);
+            var testResult = SendRequest<EyesManageCloseAllEyes, TestResult>(closeAllEyes);
 
             socketClient_.Close();
         }
@@ -115,10 +115,11 @@ namespace Eyes.Universal.Sdk.DotNet
                 {
                     Manager = new ManagerRef
                     {
-                        ApplitoolsRefId = coreMakeManagerResponse_.Payload.Result.ApplitoolsRefId
+                        ApplitoolsRefId = managerApplitoolsRefId_
                     }
                 }
             };
+
             return closeAllEyes;
         }
 
@@ -144,7 +145,7 @@ namespace Eyes.Universal.Sdk.DotNet
             return result;
         }
 
-        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(string applitoolsRefId, IWebDriver webDriver)
+        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(string applitoolsRefId, IWebDriver webDriver, string appName, string testName, Size viewportSize)
         {
             var remoteWebDriver = webDriver as RemoteWebDriver;
             var result = new EyesManagerOpenEyes
@@ -164,7 +165,10 @@ namespace Eyes.Universal.Sdk.DotNet
                     },
                     Config = new EyesConfig
                     {
-                        ServerUrl = remoteWebDriver?.Url
+                        AppName = appName,
+                        TestName = testName,
+                        ServerUrl = remoteWebDriver?.Url,
+                        ViewportSize = viewportSize
                     }
                 }
             };
@@ -189,25 +193,6 @@ namespace Eyes.Universal.Sdk.DotNet
 
             return coreMakeManagerResponse;
         }
-
-        public async Task<TestResult> SendRequest(EyesManageCloseAllEyes data)
-        {
-            var json = ConvertData(data);
-
-            await socketClient_.SendData(json);
-
-            TestResult result;
-
-            do
-            {
-                var text = await socketClient_.ReceiveMessage();
-
-                result = JsonConvert.DeserializeObject<TestResult>(text);
-            //} while (coreMakeManagerResponse_?.Key != result?.Key);
-            } while (result == null);
-
-            return result;
-        }
         
         private async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
         {
@@ -219,8 +204,8 @@ namespace Eyes.Universal.Sdk.DotNet
 
             do
             {
-                var text = await socketClient_.ReceiveMessage();
-                result = JsonConvert.DeserializeObject<TResponse>(text);
+                var response = await socketClient_.ReceiveMessage();
+                result = JsonConvert.DeserializeObject<TResponse>(response);
             } while (result == null);
 
             return result;

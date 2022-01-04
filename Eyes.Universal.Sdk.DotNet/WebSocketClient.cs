@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -12,8 +11,8 @@ namespace Eyes.Universal.Sdk.DotNet
 
     public class WebSocketClient //: IUniversalSocketClient
     {
-        private CancellationTokenSource cancellationTokenSource_;
         private readonly ClientWebSocket clientWebSocket_;
+        private CancellationTokenSource cancellationTokenSource_;
 
         public WebSocketClient()
         {
@@ -38,13 +37,6 @@ namespace Eyes.Universal.Sdk.DotNet
             return SendStringAsync(message, cancellationToken);
         }
 
-        private async Task SendStringAsync(string data, CancellationToken cancellationToken)
-        {
-            var encoded = Encoding.UTF8.GetBytes(data);
-            var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
-            await clientWebSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
-        }
-
         public async Task<string> ReceiveMessage()
         {
             var buffer = new ArraySegment<byte>(new byte[1024]);
@@ -58,10 +50,6 @@ namespace Eyes.Universal.Sdk.DotNet
                 {
                     allBytes.Add(buffer.Array[i]);
                 }
-
-
-                var tex1t = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
-                Debug.WriteLine(tex1t);
             } while (!result.EndOfMessage);
 
             var text = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
@@ -83,6 +71,13 @@ namespace Eyes.Universal.Sdk.DotNet
         protected virtual void OnMessageReceived(string message)
         {
             MessageReceived?.Invoke(message);
+        }
+
+        private async Task SendStringAsync(string data, CancellationToken cancellationToken)
+        {
+            var encoded = Encoding.UTF8.GetBytes(data);
+            var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
+            await clientWebSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
         }
     }
 }
