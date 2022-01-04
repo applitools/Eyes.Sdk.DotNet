@@ -1,18 +1,17 @@
 ﻿using System.Reflection;
 using Applitools;
 using Applitools.Utils.Geometry;
-using Newtonsoft.Json;
 using OpenQA.Selenium;
 
-namespace Eyes.Universal.Sdk.DotNet
+namespace Eyes.Universal.Sdk.DotNet.Commands
 {
     public class RemoteEvents
     {
-        [JsonProperty("serverUrl")] public string ServerUrl { get; set; }
+        public string ServerUrl { get; set; }
 
-        [JsonProperty("accessKey")] public string AccessKey { get; set; }
+        public string AccessKey { get; set; }
 
-        [JsonProperty("timeout")] public int? Timeout { get; set; }
+        public int? Timeout { get; set; }
     }
 
     public class EyesConfig
@@ -31,30 +30,15 @@ namespace Eyes.Universal.Sdk.DotNet
         //    }
         //}
 
-        [JsonProperty("debugScreenshots")] public IDebugScreenshotProvider DebugScreenshotProvider { get; set; }
+        public IDebugScreenshotProvider DebugScreenshotProvider { get; set; }
 
-        [JsonProperty("agentId")] 
         public string AgentId { get; set; }
-
-        [JsonProperty("apiKey")] 
         public string ApiKey { get; set; }
-
-        [JsonProperty("serverUrl")] 
         public string ServerUrl { get; set; }
-
-        [JsonProperty("proxy")] 
         public Proxy Proxy { get; set; }
-
-        [JsonProperty("isDisabled")] 
         public bool? IsDisabled { get; set; }
-
-        [JsonProperty("connectionTimeout")] 
         public int? ConnectionTimeout { get; set; }
-
-        [JsonProperty("removeSession")] 
         public bool? RemoveSession { get; set; }
-
-        [JsonProperty("remoteEvents")] 
         public RemoteEvents RemoteEvents { get; set; }
 
         //export type EyesOpenConfig = {
@@ -135,7 +119,9 @@ namespace Eyes.Universal.Sdk.DotNet
         public bool? HideScrollbars { get; set; }
         public bool? HideCaret { get; set; }
         public int? StitchOverlap { get; set; }
+
         public IWebElement ScrollRootElement { get; set; }
+
         //  cut?: ImageCropRect | ImageCropRegion
         //public ImageRotation? rotation { get; set; }
         public int? ScaleRatio { get; set; }
@@ -149,10 +135,10 @@ namespace Eyes.Universal.Sdk.DotNet
         //}
 
         public int? ConcurrentSessions { get; set; }
+
         //  browsersInfo?: (DesktopBrowserRenderer | ChromeEmulationDeviceRenderer | IOSDeviceRenderer)[]
         //  visualGridOptions?: Record<string, any>
         //  layoutBreakpoints?: boolean | number[]
         public bool? DisableBrowserFetching { get; set; }
-
     }
 }

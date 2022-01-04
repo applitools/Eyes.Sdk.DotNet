@@ -12,30 +12,30 @@ namespace Eyes.Universal.Sdk.DotNet
 
     public class WebSocketClient //: IUniversalSocketClient
     {
-        private ClientWebSocket clientWebSocket_;
-        private CancellationTokenSource cancellationTokenSource;
-
-        public event SocketMessageReceivedHandler MessageReceived;
+        private CancellationTokenSource cancellationTokenSource_;
+        private readonly ClientWebSocket clientWebSocket_;
 
         public WebSocketClient()
         {
             clientWebSocket_ = new ClientWebSocket();
         }
 
+        public event SocketMessageReceivedHandler MessageReceived;
+
         public Task ConnectAsync(string url)
         {
-            cancellationTokenSource = new CancellationTokenSource();
-            return clientWebSocket_.ConnectAsync(new Uri(url), cancellationTokenSource.Token);
+            cancellationTokenSource_ = new CancellationTokenSource();
+            return clientWebSocket_.ConnectAsync(new Uri(url), cancellationTokenSource_.Token);
         }
-        
+
         public Task SendData(string message)
         {
-             return SendStringAsync(message, CancellationToken.None);
+            return SendStringAsync(message, CancellationToken.None);
         }
 
         public Task SendData(string message, CancellationToken cancellationToken)
         {
-             return SendStringAsync(message, cancellationToken);
+            return SendStringAsync(message, cancellationToken);
         }
 
         private async Task SendStringAsync(string data, CancellationToken cancellationToken)
@@ -47,9 +47,8 @@ namespace Eyes.Universal.Sdk.DotNet
 
         public async Task<string> ReceiveMessage()
         {
-            
             var buffer = new ArraySegment<byte>(new byte[1024]);
-            WebSocketReceiveResult result = null;
+            WebSocketReceiveResult result;
             var allBytes = new List<byte>();
 
             do
@@ -63,8 +62,7 @@ namespace Eyes.Universal.Sdk.DotNet
 
                 var tex1t = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
                 Debug.WriteLine(tex1t);
-            }
-            while (!result.EndOfMessage);
+            } while (!result.EndOfMessage);
 
             var text = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
 
@@ -78,10 +76,10 @@ namespace Eyes.Universal.Sdk.DotNet
 
         public void Dispose()
         {
-            cancellationTokenSource.Dispose();
+            cancellationTokenSource_.Dispose();
             clientWebSocket_.Dispose();
         }
-        
+
         protected virtual void OnMessageReceived(string message)
         {
             MessageReceived?.Invoke(message);

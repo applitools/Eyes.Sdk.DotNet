@@ -1,10 +1,7 @@
-﻿using Newtonsoft.Json;
-
-namespace Eyes.Universal.Sdk.DotNet.Commands.Client
+﻿namespace Eyes.Universal.Sdk.DotNet.Commands.Requests
 {
     public class CoreMakeSdk : ClientCommandBase
     {
-        [JsonProperty("name")]
         public override string Name => "Core.makeSDK";
     }
 }

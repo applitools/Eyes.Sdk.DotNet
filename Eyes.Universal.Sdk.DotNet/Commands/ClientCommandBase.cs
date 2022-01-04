@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Eyes.Universal.Sdk.DotNet.Commands.Client
+namespace Eyes.Universal.Sdk.DotNet.Commands
 {
     public abstract class ClientCommandBase
     {
