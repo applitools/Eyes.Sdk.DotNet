@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ using Eyes.Universal.Sdk.DotNet.Commands.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 
 namespace Eyes.Universal.Sdk.DotNet
 {
@@ -19,6 +19,7 @@ namespace Eyes.Universal.Sdk.DotNet
         private CoreMakeManagerResponse coreMakeManagerResponse_;
         private string managerApplitoolsRefId_;
         private EyesRef eyes_;
+        private readonly string serverUrl_;
         private readonly ILogHandler logHandler_;
 
         public UniversalSocketClient(ILogHandler logHandler = null)
@@ -28,6 +29,7 @@ namespace Eyes.Universal.Sdk.DotNet
                 logHandler = NullLogHandler.Instance;
             }
 
+            serverUrl_ = "https://eyesapi.applitools.com/";
             logHandler_ = logHandler;
             socketClient_ = new WebSocketClient();
         }
@@ -66,14 +68,14 @@ namespace Eyes.Universal.Sdk.DotNet
 
             var matchResults = SendRequest<EyesCheckRequest, MatchResult>(request);
         }
-        
+
         public void Dispose()
         {
             socketClient_.Dispose();
         }
 
         public void CloseAll()
-        { 
+        {
             var closeAllEyes = CreateEyesManageCloseAllEyes();
             var testResult = SendRequest<EyesManageCloseAllEyes, TestResult>(closeAllEyes);
 
@@ -147,7 +149,8 @@ namespace Eyes.Universal.Sdk.DotNet
 
         private EyesManagerOpenEyes CreateEyesManagerOpenEyes(string applitoolsRefId, IWebDriver webDriver, string appName, string testName, Size viewportSize)
         {
-            var remoteWebDriver = webDriver as RemoteWebDriver;
+            var remoteWebDriver = (WebDriver)webDriver;
+            var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var result = new EyesManagerOpenEyes
             {
                 Key = Guid.NewGuid().ToString(),
@@ -159,15 +162,15 @@ namespace Eyes.Universal.Sdk.DotNet
                     },
                     Driver = new UniversalDriverConfig
                     {
-                        ServerUrl = webDriver.Url, 
-                        Capabilities = remoteWebDriver?.Capabilities,
-                        SessionId = remoteWebDriver?.SessionId.ToString()
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString()
                     },
                     Config = new EyesConfig
                     {
                         AppName = appName,
                         TestName = testName,
-                        ServerUrl = remoteWebDriver?.Url,
+                        ServerUrl = serverUrl_,
                         ViewportSize = viewportSize
                     }
                 }
@@ -175,14 +178,14 @@ namespace Eyes.Universal.Sdk.DotNet
 
             return result;
         }
-        
+
         public async Task<CoreMakeManagerResponse> SendRequest(CoreMakeManager coreMakeManager)
         {
             var coreMakeManagerJson = ConvertData(coreMakeManager);
 
             await socketClient_.SendData(coreMakeManagerJson);
 
-            CoreMakeManagerResponse coreMakeManagerResponse = null;
+            CoreMakeManagerResponse coreMakeManagerResponse;
 
             do
             {
@@ -193,7 +196,7 @@ namespace Eyes.Universal.Sdk.DotNet
 
             return coreMakeManagerResponse;
         }
-        
+
         private async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
         {
             var json = ConvertData(data);
@@ -209,6 +212,34 @@ namespace Eyes.Universal.Sdk.DotNet
             } while (result == null);
 
             return result;
+        }
+
+        private string GetServerUrl(ICommandExecutor commandExecutor)
+        {
+            return GetPrivateFieldValue<ICommandExecutor, Uri>(commandExecutor, "remoteServerUri").AbsoluteUri;
+        }
+
+        private IDictionary<string, object> GetCapabilities(WebDriver webDriver)
+        {
+            return GetPrivateFieldValue<ICapabilities, IDictionary<string, object>>(webDriver.Capabilities, "capabilities");
+        }
+
+        private TR GetPrivateFieldValue<T, TR>(T instance, string fieldName)
+        {
+            return (TR)GetPrivateFieldValue(instance, fieldName);
+        }
+
+        private object GetPrivateFieldValue<T>(T instance, string fieldName)
+        {
+            var instanceType = instance.GetType();
+            FieldInfo fieldInfo = instanceType.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (fieldInfo == null)
+            {
+                throw new Exception($"The type {instanceType} does not contain {fieldName}");
+            }
+            
+            return fieldInfo.GetValue(instance);
         }
     }
 }

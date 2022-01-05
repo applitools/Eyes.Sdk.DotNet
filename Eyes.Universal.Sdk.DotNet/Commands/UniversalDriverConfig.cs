@@ -1,4 +1,4 @@
-﻿using OpenQA.Selenium;
+﻿using System.Collections.Generic;
 
 namespace Eyes.Universal.Sdk.DotNet.Commands
 {
@@ -6,6 +6,6 @@ namespace Eyes.Universal.Sdk.DotNet.Commands
     {
         public string ServerUrl { get; set; }
         public string SessionId { get; set; }
-        public ICapabilities Capabilities { get; set; }
+        public IDictionary<string, object> Capabilities { get; set; }
     }
 }
