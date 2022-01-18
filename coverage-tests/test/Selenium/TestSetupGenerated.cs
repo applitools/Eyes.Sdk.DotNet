@@ -146,11 +146,13 @@ namespace Applitools.Generated.Selenium.Tests
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
             runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
             eyes = new Eyes(runner);
+            eyes.HostOS = "Linux";
             initEyesSettings(isVisualGrid, isCSSMode);
         }
 
         protected void initEyesSettings(bool isVisualGrid, bool isCSSMode)
         {
+			eyes.HostOS = "Linux";
             eyes.Batch = BatchInfo;
             if (!isVisualGrid) eyes.StitchMode = isCSSMode ? StitchModes.CSS : StitchModes.Scroll;
             eyes.BranchName = "master";

@@ -33,11 +33,11 @@
     "universal:debug": "eyes-universal --singleton --lazy"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^2.3.15",
+    "@applitools/eyes-universal": "1.0.5",
+    "@applitools/sdk-coverage-tests": "^2.3.17",
     "@typescript-eslint/parser": "^2.14.0",
     "junit-merge": "^2.0.0",
-    "typescript": "^3.9.10",
-    "@applitools/eyes-universal": "0.2.3"
+    "typescript": "^3.9.10"
   },
   "devDependencies": {
     "mocha": "^8.4.0"

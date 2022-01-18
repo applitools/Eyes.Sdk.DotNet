@@ -1,11 +1,18 @@
-﻿using Applitools;
-
-namespace Eyes.Universal.Sdk.DotNet.Commands.Requests
+﻿namespace Eyes.Universal.Sdk.DotNet.Commands.Requests
 {
-    public class EyesCheckRequest
+    public class EyesCheckRequestPayload
     {
         public EyesRef Eyes { get; set; }
-        public ICheckSettings Settings { get; set; }
+        public UniversalCheckSettings Settings { get; set; }
         public EyesConfig Config { get; set; }
+    }
+
+    public class EyesCheckRequest
+    {
+        public string Name => "Eyes.check";
+
+        public string Key { get; set; }
+
+        public EyesCheckRequestPayload Payload { get; set; }
     }
 }

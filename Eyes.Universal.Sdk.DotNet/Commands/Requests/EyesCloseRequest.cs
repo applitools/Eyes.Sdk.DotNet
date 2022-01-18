@@ -2,6 +2,7 @@
 {
     public class EyesCloseRequest
     {
+        public string Name => "Eyes.close";
         public EyesRef Eyes { get; set; }
     }
 }
