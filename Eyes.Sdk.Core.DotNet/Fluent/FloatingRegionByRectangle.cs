@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Fluent;
 
 namespace Applitools
 {
@@ -42,6 +43,24 @@ namespace Applitools
                     MaxUpOffset = maxUpOffset_,
                     MaxRightOffset= maxRightOffset_,
                     MaxDownOffset = maxDownOffset_
+                }
+            };
+        }
+
+        public TFloatingRegion ToRegion()
+        {
+            return new RectangleFloatingRegion
+            {
+                MaxDownOffset = maxDownOffset_,
+                MaxUpOffset = maxUpOffset_,
+                MaxLeftOffset = maxLeftOffset_,
+                MaxRightOffset = maxRightOffset_,
+                Region = new RectangleRegion
+                {
+                    X = rect_.Left,
+                    Y = rect_.Height,
+                    Width = rect_.Width,
+                    Height = rect_.Height
                 }
             };
         }

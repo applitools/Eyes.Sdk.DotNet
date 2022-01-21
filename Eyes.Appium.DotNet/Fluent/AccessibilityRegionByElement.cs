@@ -31,6 +31,11 @@ namespace Applitools.Appium.Fluent
             };
         }
 
+        public TAccessibilityRegion ToRegion()
+        {
+            throw new System.NotImplementedException();
+        }
+
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
         {
             return new List<IWebElement>() { element_ };

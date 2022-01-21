@@ -3,6 +3,7 @@ using System.Drawing;
 using Applitools.Utils.Geometry;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Applitools.Fluent;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -30,6 +31,19 @@ namespace Applitools.Selenium.Fluent
                 retVal.Add(new AccessibilityRegionByRectangle(new Rectangle(pTag, r.Size), regionType_));
             }
             return retVal;
+        }
+
+        public TAccessibilityRegion ToRegion()
+        {
+            return new SelectorAccessibilityRegion
+            {
+                Type = regionType_,
+                Region = new SelectorRegion
+                {
+                    Type = selector_.Mechanism,
+                    Selector = selector_.Criteria
+                }
+            };
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)

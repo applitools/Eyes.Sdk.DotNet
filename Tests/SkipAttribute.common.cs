@@ -12,7 +12,7 @@ namespace Applitools.Tests.Utils
             reason_ = reason;
         }
 
-        public void ApplyToTest(Test test)
+        public void ApplyToTest(NUnit.Framework.Internal.Test test)
         {
             if (test.RunState != RunState.NotRunnable)
             {

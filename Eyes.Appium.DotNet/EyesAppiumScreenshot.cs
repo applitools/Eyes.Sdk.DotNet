@@ -1,5 +1,4 @@
-﻿using Applitools.Appium;
-using Applitools.Cropping;
+﻿using Applitools.Cropping;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.Utils.Images;
@@ -12,9 +11,9 @@ namespace Applitools
     {
         private readonly Logger logger_;
         private readonly Region workingArea_;
-        private readonly Eyes eyes_;
+        private readonly Appium.Eyes eyes_;
 
-        public EyesAppiumScreenshot(Logger logger, Bitmap image, Region workingArea, Eyes eyes) : base(image)
+        public EyesAppiumScreenshot(Logger logger, Bitmap image, Region workingArea, Appium.Eyes eyes) : base(image)
         {
             logger_ = logger;
             workingArea_ = workingArea;

@@ -2,6 +2,8 @@
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Fluent;
+using Eyes.Sdk.Core.DotNet.Utils;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -25,6 +27,18 @@ namespace Applitools.Selenium.Fluent
 
             return new AccessibilityRegionByRectangle[] {
                 new AccessibilityRegionByRectangle(new Rectangle(pTag, r.Size), regionType_)
+            };
+        }
+
+        public TAccessibilityRegion ToRegion()
+        {
+            return new ElementAccessibilityRegion
+            {
+                Type = regionType_,
+                Region = new ElementRegion
+                {
+                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                }
             };
         }
 

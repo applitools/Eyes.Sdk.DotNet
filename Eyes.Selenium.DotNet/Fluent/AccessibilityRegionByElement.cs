@@ -28,6 +28,11 @@ namespace Applitools.Selenium.Fluent
             };
         }
 
+        public TAccessibilityRegion ToRegion()
+        {
+            throw new System.NotImplementedException();
+        }
+
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
             return new List<IWebElement>() { element_ };

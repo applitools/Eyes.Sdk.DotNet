@@ -30,5 +30,10 @@
             Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
             return new MutableRegion[] { new MutableRegion(pTag.X, pTag.Y, r.Width, r.Height) };
         }
+
+        public TRegion ToRegion()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

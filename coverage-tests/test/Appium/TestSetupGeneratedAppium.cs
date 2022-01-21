@@ -6,8 +6,6 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.Enums;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium;
-using Applitools.Appium;
-using Applitools.Generated.Selenium.Tests;
 using Applitools.Tests.Utils;
 
 namespace Applitools.Generated.Appium.Tests
@@ -18,7 +16,7 @@ namespace Applitools.Generated.Appium.Tests
 		protected RemoteWebDriver driver;
 		protected IWebDriver webDriver;
 		protected EyesRunner runner;
-		protected Eyes eyes;
+		protected Applitools.Appium.Eyes eyes;
 		protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
 		public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
 		public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");

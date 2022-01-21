@@ -1,4 +1,6 @@
-﻿namespace Applitools.Selenium.Fluent
+﻿using Eyes.Sdk.Core.DotNet.Utils;
+
+namespace Applitools.Selenium.Fluent
 {
     using Utils.Geometry;
     using OpenQA.Selenium;
@@ -29,6 +31,16 @@
             Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(eyesElement);
             Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
             return new MutableRegion[] { new MutableRegion(pTag.X, pTag.Y, r.Width, r.Height) };
+        }
+
+        public TRegion ToRegion()
+        {
+            var elementId = element_.GetPrivateFieldValue<string>("elementId");
+
+            return new ElementRegion
+            {
+                ElementId = elementId
+            };
         }
     }
 }

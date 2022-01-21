@@ -18,7 +18,18 @@ namespace Applitools
 
         public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
-            return new IMutableRegion[] { region };
+            return new[] { region };
+        }
+
+        public TRegion ToRegion()
+        {
+            return new RectangleRegion
+            {
+                X = region.Left,
+                Y = region.Height,
+                Width = region.Width,
+                Height = region.Height
+            };
         }
     }
 }

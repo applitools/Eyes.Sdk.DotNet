@@ -1,6 +1,4 @@
-﻿using Applitools.Selenium;
-using Applitools.Tests.Utils;
-using Applitools.VisualGrid;
+﻿using Applitools.Tests.Utils;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -14,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Applitools.VisualGrid;
 
 namespace Applitools.Generated.Selenium.Tests
 {
@@ -23,7 +22,7 @@ namespace Applitools.Generated.Selenium.Tests
         protected IWebDriver driver;
         protected IWebDriver webDriver;
         protected EyesRunner runner;
-        protected Eyes eyes;
+        protected Applitools.Selenium.Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
@@ -145,7 +144,7 @@ namespace Applitools.Generated.Selenium.Tests
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
             runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
-            eyes = new Eyes(runner);
+            eyes = new Applitools.Selenium.Eyes(runner);
             eyes.HostOS = "Linux";
             initEyesSettings(isVisualGrid, isCSSMode);
         }

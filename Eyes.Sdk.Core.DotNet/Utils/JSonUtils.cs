@@ -36,6 +36,15 @@ namespace Applitools.Utils
 
         #region Methods
 
+        public static string ToJson(this object instance)
+        {
+            return JsonConvert.SerializeObject(instance, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
+
         /// <summary>
         /// Creates, configures and returns a <see cref="JsonSerializer"/> instance.
         /// </summary>

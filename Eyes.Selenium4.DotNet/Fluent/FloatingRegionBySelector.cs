@@ -3,6 +3,7 @@ using System.Drawing;
 using Applitools.Utils.Geometry;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Applitools.Fluent;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -57,6 +58,22 @@ namespace Applitools.Selenium.Fluent
                 );
             }
             return retVal;
+        }
+
+        public TFloatingRegion ToRegion()
+        {
+            return new SelectorFloatingRegion
+            {
+                MaxDownOffset = maxDownOffset_,
+                MaxUpOffset = maxUpOffset_,
+                MaxLeftOffset = maxLeftOffset_,
+                MaxRightOffset = maxRightOffset_,
+                Region = new SelectorRegion
+                {
+                    Type = selector_.Mechanism,
+                    Selector = selector_.Criteria
+                }
+            };
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)

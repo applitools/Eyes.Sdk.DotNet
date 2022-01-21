@@ -2,6 +2,8 @@
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Fluent;
+using Eyes.Sdk.Core.DotNet.Utils;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -48,6 +50,21 @@ namespace Applitools.Selenium.Fluent
                     MaxUpOffset = maxUpOffset_,
                     MaxRightOffset = maxRightOffset_,
                     MaxDownOffset = maxDownOffset_
+                }
+            };
+        }
+
+        public TFloatingRegion ToRegion()
+        {
+            return new ElementFloatingRegion
+            {
+                MaxDownOffset = maxDownOffset_,
+                MaxUpOffset = maxUpOffset_,
+                MaxLeftOffset = maxLeftOffset_,
+                MaxRightOffset = maxRightOffset_,
+                Region = new ElementRegion
+                {
+                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
                 }
             };
         }

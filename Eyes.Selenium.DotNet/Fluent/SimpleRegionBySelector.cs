@@ -1,4 +1,6 @@
-﻿namespace Applitools.Selenium.Fluent
+﻿using System;
+
+namespace Applitools.Selenium.Fluent
 {
     using Utils.Geometry;
     using OpenQA.Selenium;
@@ -33,6 +35,11 @@
                 mutableRegions.Add(new MutableRegion(pTag.X, pTag.Y, r.Width, r.Height));
             }
             return mutableRegions;
+        }
+
+        public TRegion ToRegion()
+        {
+            throw new NotImplementedException();
         }
     }
 }

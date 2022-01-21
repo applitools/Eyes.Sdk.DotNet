@@ -37,5 +37,10 @@ namespace Applitools.Appium.Fluent
             }
             return mutableRegions;
         }
+
+        public TRegion ToRegion()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

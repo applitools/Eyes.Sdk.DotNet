@@ -1,5 +1,4 @@
-﻿using Applitools.Windows;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -29,7 +28,7 @@ namespace Applitools.Tests.Utils
             return new NunitLogHandler(false);
         }
 
-        public static void SetupLogging(Eyes eyes, [CallerMemberName] string testName = null)
+        public static void SetupLogging(Windows.Eyes eyes, [CallerMemberName] string testName = null)
         {
             ILogHandler logHandler = null;
             if (!RUNS_ON_CI)

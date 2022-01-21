@@ -23,7 +23,7 @@ namespace Applitools.Generated.Selenium.Tests
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
-            eyes = new Eyes(logHandler);
+            eyes = new Applitools.Selenium.Eyes(logHandler);
             initEyesSettings(false, true);
             eyes.AddProperty("Orientation", deviceOrientation.ToString());
             eyes.AddProperty("Page", page);

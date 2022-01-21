@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 // This file is used by Code Analysis to maintain SuppressMessage 
 // attributes that are applied to this project.

@@ -55,6 +55,11 @@ namespace Applitools.Appium.Fluent
             };
         }
 
+        public TFloatingRegion ToRegion()
+        {
+            throw new System.NotImplementedException();
+        }
+
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
         {
             return new List<IWebElement>() { element_ };

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Fluent;
 
 namespace Applitools
 {
@@ -52,6 +53,21 @@ namespace Applitools
         public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
             return new AccessibilityRegionByRectangle[] { this };
+        }
+
+        public TAccessibilityRegion ToRegion()
+        {
+            return new RectangleAccessibilityRegion
+            {
+                Type = Type,
+                Region = new RectangleRegion
+                {
+                    X = Region.Left,
+                    Y = Region.Height,
+                    Width = Region.Width,
+                    Height = Region.Height
+                }
+            };
         }
 
         public bool Equals(AccessibilityRegionByRectangle other)

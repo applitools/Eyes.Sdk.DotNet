@@ -34,5 +34,14 @@
             }
             return mutableRegions;
         }
+
+        public TRegion ToRegion()
+        {
+            return new SelectorRegion
+            {
+                Selector = selector_.Criteria,
+                Type = selector_.Mechanism
+            };
+        }
     }
 }
