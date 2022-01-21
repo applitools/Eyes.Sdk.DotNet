@@ -665,11 +665,16 @@ namespace Applitools.Selenium
         {
             var root = ((IScrollRootElementContainer) checkSettings).GetScrollRootSelector();
 
-            return new SelectorRegion
+            if (root != null)
             {
-                Type = root.Criteria,
-                Selector = root.Mechanism
-            };
+                return new SelectorRegion
+                {
+                    Type = root.Criteria,
+                    Selector = root.Mechanism
+                };
+            }
+
+            return null;
         }
 
         private IList<TRegion> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
