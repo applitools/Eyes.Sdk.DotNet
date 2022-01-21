@@ -25,7 +25,6 @@ namespace Applitools.Generated.Appium.Tests
 		protected void initEyes(bool isVisualGrid, bool isCSSMode)
 		{
 			eyes = new Applitools.Appium.Eyes();
-			eyes.HostOS = "Linux";
 			eyes.MatchTimeout = TimeSpan.FromSeconds(10);
 			eyes.Batch = BatchInfo;
 			eyes.BranchName = "master";
