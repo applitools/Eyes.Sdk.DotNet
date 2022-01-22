@@ -1,7 +1,7 @@
-﻿using Applitools.Selenium.VisualGrid;
-using Applitools.Utils;
+﻿using Applitools.Utils;
 using Applitools.Utils.Cropping;
 using Applitools.VisualGrid;
+using Applitools.Selenium.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -160,13 +160,12 @@ namespace Applitools.Selenium
         {
             Logger.Verbose("enter. Abort");
 
-            var request = new EyesAbortRequest
+            if (IsOpen == false)
             {
-                Payload = new EyesAbortRequestPayload
-                {
-                    Eyes = eyes_
-                }
-            };
+                return new TestResults();
+            }
+
+            var request = CreateEyesAbortRequest();
 
             var testResults = SendRequest<EyesAbortRequest, TestResults>(request).Result;
 
@@ -184,7 +183,18 @@ namespace Applitools.Selenium
         public void AbortAsync()
         {
             Logger.Verbose("enter. AbortAsync");
-            Task.Factory.StartNew(Abort);
+
+            if (IsOpen == false)
+            {
+                return;
+            }
+
+            var request = CreateEyesAbortRequest();
+
+            SendRequest<EyesAbortRequest>(request).GetAwaiter();
+
+            //socketClient_.Close();
+            IsOpen = false;
         }
 
         #region selenium specific properties
@@ -285,7 +295,7 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
                 return;
             }
-
+            
             var seleniumCheckSettings = (SeleniumCheckSettings) checkSettings;
             var request = new EyesCheckRequest
             {
@@ -295,10 +305,12 @@ namespace Applitools.Selenium
                     Eyes = eyes_,
                     Config = new EyesConfig
                     {
-                        DisplayName = TestName,
-                        TestName = TestName,
-                        AppName = AppName,
-                        ServerUrl = ServerUrl
+                        DisplayName = Config.TestName,
+                        TestName = Config.TestName,
+                        AppName = Config.AppName,
+                        ServerUrl = ServerUrl,
+                        Batch = Config.Batch,
+                        HostOs = Config.HostOS
                     },
                     Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
                 }
@@ -307,7 +319,10 @@ namespace Applitools.Selenium
             var result = SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
             if (result?.Payload?.Result?.AsExpected == false)
             {
-                throw new TestFailedException();
+                if (FailureReports == FailureReports.Immediate)
+                {
+                    throw new TestFailedException();
+                }
             }
         }
 
@@ -330,7 +345,11 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
                 return;
             }
-            Check(checkSettings);
+
+            foreach (var checkSetting in checkSettings)
+            {
+                Check(checkSetting);
+            }
         }
 
         /// <summary>
@@ -540,23 +559,27 @@ namespace Applitools.Selenium
 
         /// <summary>
         /// Ends the test and returns its results.
-        /// </summary>
+        /// </summary>-
         public virtual TestResults Close(bool throwEx = true)
         {
-            var eyesCloseRequest = new EyesCloseRequest
-            {
-                Payload = new EyesCloseRequestPayload
-                {
-                    Eyes = eyes_
-                }
-            };
+            var eyesCloseRequest = CreateEyesCloseRequest();
 
-            var testResults = SendRequest<EyesCloseRequest, TestResults>(eyesCloseRequest).Result;
+            var response = SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
 
             //socketClient_.Close();
             IsOpen = false;
 
-            return testResults;
+            var testResult = response?.Payload?.Result?.FirstOrDefault();
+
+            if (testResult != null)
+            {
+                if (testResult.Mismatches > 0 && throwEx)
+                {
+                    throw new TestFailedException();
+                }
+            }
+
+            return testResult;
         }
 
         /// <summary>
@@ -571,7 +594,12 @@ namespace Applitools.Selenium
             }
             Logger.Verbose("enter. CloseAsync");
 
-            Task.Factory.StartNew(() => Close());
+            var eyesCloseRequest = CreateEyesCloseRequest();
+
+            SendRequest<EyesCloseRequest>(eyesCloseRequest).GetAwaiter();
+
+            //socketClient_.Close();
+            IsOpen = false;
         }
 
         public void Log(string msg, params object[] args)
@@ -641,11 +669,36 @@ namespace Applitools.Selenium
             return driver;
         }
 
+        private EyesCloseRequest CreateEyesCloseRequest()
+        {
+            var eyesCloseRequest = new EyesCloseRequest
+            {
+                Payload = new EyesCloseRequestPayload
+                {
+                    Eyes = eyes_
+                }
+            };
+            return eyesCloseRequest;
+        }
+
+        private EyesAbortRequest CreateEyesAbortRequest()
+        {
+            var request = new EyesAbortRequest
+            {
+                Payload = new EyesAbortRequestPayload
+                {
+                    Eyes = eyes_
+                }
+            };
+            return request;
+        }
+
         private UniversalCheckSettings CreateUniversalCheckSettings(SeleniumCheckSettings checkSettings)
         {
             var checkSettingsInternal = (ICheckSettingsInternal) checkSettings;
             var settings = new UniversalCheckSettings
             {
+                Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettings),
                 Fully = checkSettingsInternal.GetStitchContent(),
                 Frames = GetFrames(checkSettings),
@@ -845,7 +898,8 @@ namespace Applitools.Selenium
                         TestName = testName,
                         ServerUrl = serverUrl_,
                         ViewportSize = viewportSize, 
-                        ApiKey = API_KEY
+                        ApiKey = API_KEY,
+                        HostOs = HostOS,
                     }
                 }
             };
@@ -887,7 +941,7 @@ namespace Applitools.Selenium
 
             return result;
         }
-
+        
         private async Task SendRequest<TRequest>(TRequest data)
         {
             var json = ToJson(data);
