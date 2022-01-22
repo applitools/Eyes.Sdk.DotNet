@@ -636,6 +636,8 @@ namespace Applitools.Selenium
 
         private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
         {
+            UniversalSdkNativeLoader.Start();
+
             TestName = testName;
             AppName = appName;
             driver_ = driver;

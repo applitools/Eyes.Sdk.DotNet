@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
@@ -63,6 +63,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <ProjectReference Include="..\CssParser\CssParser.csproj">
 		  <PrivateAssets>all</PrivateAssets>
 	  </ProjectReference>
+    <ProjectReference Include="..\Eyes.Sdk.Universal.Core.DotNet\Eyes.Sdk.Universal.Core.DotNet.csproj" />
     <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
