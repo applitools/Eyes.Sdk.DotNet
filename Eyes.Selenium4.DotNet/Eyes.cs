@@ -626,6 +626,7 @@ namespace Applitools.Selenium
         {
             UniversalSdkNativeLoader.Start();
 
+            ApiKey = API_KEY;
             TestName = testName;
             AppName = appName;
             ViewportSize = viewportSize;

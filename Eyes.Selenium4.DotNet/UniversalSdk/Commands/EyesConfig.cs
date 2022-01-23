@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Applitools;
 using Applitools.Utils.Geometry;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 
 namespace Applitools.Selenium.Commands
@@ -76,8 +77,10 @@ namespace Applitools.Selenium.Commands
         public PropertyInfo[] Properties { get; set; }
         public BatchInfo Batch { get; set; }
         public ImageMatchSettings DefaultMatchSettings { get; set; }
+        [JsonProperty("hostOS")]
         public string HostOs { get; set; }
         public string HostAppInfo { get; set; }
+        [JsonProperty("hostOSInfo")]
         public string HostOsInfo { get; set; }
         public string DeviceInfo { get; set; }
         public string BaselineEnvName { get; set; }
@@ -161,7 +164,7 @@ namespace Applitools.Selenium.Commands
             ServerUrl = config.ServerUrl;
             TestName = config.TestName;
             HostAppInfo = config.HostApp;
-            MatchTimeout = config.MatchTimeout.Seconds;
+            MatchTimeout = (int)config.MatchTimeout.TotalMilliseconds;
             Proxy = config.Proxy;
             SaveDiffs = config.SaveDiffs;
             SaveFailedTests = config.SaveFailedTests;
