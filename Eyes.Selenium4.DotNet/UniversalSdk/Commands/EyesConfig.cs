@@ -35,7 +35,7 @@ namespace Applitools.Selenium.Commands
         public string AgentId { get; set; }
         public string ApiKey { get; set; }
         public string ServerUrl { get; set; }
-        public Proxy Proxy { get; set; }
+        public ProxySettings Proxy { get; set; }
         public bool? IsDisabled { get; set; }
         public int? ConnectionTimeout { get; set; }
         public bool? RemoveSession { get; set; }
@@ -140,5 +140,33 @@ namespace Applitools.Selenium.Commands
         //  visualGridOptions?: Record<string, any>
         //  layoutBreakpoints?: boolean | number[]
         public bool? DisableBrowserFetching { get; set; }
+
+        public EyesConfig()
+        {
+            
+        }
+
+        public EyesConfig(Applitools.Configuration config) : this()
+        {
+            AgentId = config.AgentId;
+            ApiKey = config.ApiKey;
+            AppName = config.AppName;
+            BaselineBranchName = config.BaselineBranchName;
+            BaselineEnvName = config.BaselineEnvName;
+            Batch = config.Batch;
+            BranchName = config.BranchName;
+            DefaultMatchSettings = config.DefaultMatchSettings;
+            DisplayName = config.TestName;
+            HostOs = config.HostOS;
+            ServerUrl = config.ServerUrl;
+            TestName = config.TestName;
+            HostAppInfo = config.HostApp;
+            MatchTimeout = config.MatchTimeout.Seconds;
+            Proxy = config.Proxy;
+            SaveDiffs = config.SaveDiffs;
+            SaveFailedTests = config.SaveFailedTests;
+            SaveNewTests = config.SaveDiffs;
+            StitchOverlap = config.StitchOverlap;
+        }
     }
 }

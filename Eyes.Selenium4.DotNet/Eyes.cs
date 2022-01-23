@@ -293,22 +293,14 @@ namespace Applitools.Selenium
             }
             
             var seleniumCheckSettings = (SeleniumCheckSettings) checkSettings;
+            var eyesConfig = new EyesConfig(Config);
             var request = new EyesCheckRequest
             {
                 Key = Guid.NewGuid().ToString(),
                 Payload = new EyesCheckRequestPayload
                 {
                     Eyes = eyes_,
-                    Config = new EyesConfig
-                    {
-                        DisplayName = Config.TestName,
-                        TestName = Config.TestName,
-                        AppName = Config.AppName,
-                        ServerUrl = ServerUrl,
-                        Batch = Config.Batch,
-                        HostOs = Config.HostOS,
-                        BranchName = Config.BranchName
-                    },
+                    Config = eyesConfig,
                     Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
                 }
             };
@@ -637,6 +629,7 @@ namespace Applitools.Selenium
 
             TestName = testName;
             AppName = appName;
+            ViewportSize = viewportSize;
             driver_ = driver;
             var url = GetSocketUrl(21077);
             socketClient_.ConnectAsync(url).GetAwaiter().GetResult();
@@ -651,7 +644,7 @@ namespace Applitools.Selenium
             coreMakeManagerResponse_ = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).Result;
             managerApplitoolsRefId_ = coreMakeManagerResponse_.Payload.Result.ApplitoolsRefId;
 
-            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver, appName, testName, viewportSize);
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
             driverRef_ = eyesManagerOpenEyes.Payload.Driver;
             eysConfig_ = eyesManagerOpenEyes.Payload.Config;
 
@@ -869,10 +862,7 @@ namespace Applitools.Selenium
 
         private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
             string applitoolsRefId,
-            IWebDriver webDriver,
-            string appName,
-            string testName,
-            Size? viewportSize)
+            IWebDriver webDriver)
         {
             var remoteWebDriver = (WebDriver)webDriver;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
@@ -891,16 +881,7 @@ namespace Applitools.Selenium
                         Capabilities = GetCapabilities(remoteWebDriver),
                         SessionId = remoteWebDriver.SessionId.ToString()
                     },
-                    Config = new EyesConfig
-                    {
-                        AppName = appName,
-                        TestName = testName,
-                        ServerUrl = serverUrl_,
-                        ViewportSize = viewportSize, 
-                        ApiKey = API_KEY,
-                        HostOs = HostOS,
-                        BranchName = Config.BranchName
-                    }
+                    Config = new EyesConfig(Config)
                 }
             };
 
