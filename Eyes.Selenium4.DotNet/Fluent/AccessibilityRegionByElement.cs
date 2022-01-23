@@ -3,7 +3,7 @@ using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Drawing;
 using Applitools.Fluent;
-using Eyes.Sdk.Core.DotNet.Utils;
+using Applitools.Utils;
 
 namespace Applitools.Selenium.Fluent
 {

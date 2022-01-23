@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Eyes.Sdk.Core.DotNet.Utils
+namespace Applitools.Utils
 {
     public static class ReflectionUtils
     {

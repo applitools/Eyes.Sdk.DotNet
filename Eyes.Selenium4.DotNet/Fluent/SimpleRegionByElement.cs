@@ -1,4 +1,4 @@
-﻿using Eyes.Sdk.Core.DotNet.Utils;
+﻿using Applitools.Utils;
 
 namespace Applitools.Selenium.Fluent
 {

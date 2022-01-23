@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Applitools.Fluent;
 using Applitools.Selenium.Fluent;
-using Eyes.Sdk.Core.DotNet.Utils;
 using Applitools.Selenium.Commands;
 using Applitools.Selenium.Commands.Requests;
 using Applitools.Selenium.Commands.Responses;

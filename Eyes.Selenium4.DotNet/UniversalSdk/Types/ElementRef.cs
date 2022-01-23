@@ -1,4 +1,4 @@
-﻿namespace Eyes.Selenium4.DotNet.UniversalSdk.Types
+﻿namespace Applitools.UniversalSdk.Types
 {
     internal class ElementRef
     {
