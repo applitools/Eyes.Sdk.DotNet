@@ -45,6 +45,7 @@ namespace Applitools.Selenium.Commands.Responses
     public class EyesCloseResponse
     {
         public string Name { get; set; }
+
         public EyesCloseResponsePayload Payload { get; set; }
     }
 }

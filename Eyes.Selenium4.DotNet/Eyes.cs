@@ -24,20 +24,16 @@ namespace Applitools.Selenium
     public class Eyes : EyesBaseConfig, IEyesBase, ISeleniumConfigurationProvider
     {
         private Configuration configuration_ = new Configuration();
-        private string apiKey;
         internal static bool moveWindow_ = true;
-        private string _apiKey;
-        private string _serverUrl;
-        private ProxySettings _proxy;
-        private bool _isOpen;
-        private Logger _logger;
-
+        private string apiKey_;
+        private ProxySettings proxy_;
+        private Logger logger_;
 
         private WebSocketClient socketClient_;
         private CoreMakeManagerResponse coreMakeManagerResponse_;
         private string managerApplitoolsRefId_;
         private EyesRef eyes_;
-        private readonly string serverUrl_;
+        private string serverUrl_;
         private IWebDriver driver_;
         private UniversalDriverConfig driverRef_;
         private EyesConfig eysConfig_;
@@ -55,7 +51,7 @@ namespace Applitools.Selenium
         public Eyes(ILogHandler logHandler = null)
         {
             if (logHandler == null) logHandler = NullLogHandler.Instance;
-            _logger = new Logger();
+            logger_ = new Logger();
             configuration_.SetForceFullPageScreenshot(false);
 
             serverUrl_ = "https://eyesapi.applitools.com/";
@@ -108,13 +104,13 @@ namespace Applitools.Selenium
 
         public override string ApiKey
         {
-            get => _apiKey;
-            set => _apiKey = value;
+            get => apiKey_;
+            set => apiKey_ = value;
         }
 
-        public override string ServerUrl { get => _serverUrl; set { _serverUrl = value; configuration_.ServerUrl = value; } }
+        public override string ServerUrl { get => serverUrl_; set { serverUrl_ = value; configuration_.ServerUrl = value; } }
 
-        public override ProxySettings Proxy { get => _proxy; set { _proxy = value; configuration_.Proxy = value; } }
+        public override ProxySettings Proxy { get => proxy_; set { proxy_ = value; configuration_.Proxy = value; } }
 
         #region configuration properties
 
@@ -154,7 +150,7 @@ namespace Applitools.Selenium
 
         public bool IsOpen { get; private set; }
 
-        public Logger Logger => _logger;
+        public Logger Logger => logger_;
 
         public TestResults Abort()
         {
@@ -310,7 +306,8 @@ namespace Applitools.Selenium
                         AppName = Config.AppName,
                         ServerUrl = ServerUrl,
                         Batch = Config.Batch,
-                        HostOs = Config.HostOS
+                        HostOs = Config.HostOS,
+                        BranchName = Config.BranchName
                     },
                     Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
                 }
@@ -604,7 +601,7 @@ namespace Applitools.Selenium
 
         public void Log(string msg, params object[] args)
         {
-            _logger.Log(TraceLevel.Notice, TestName, Stage.General, new { message = string.Format(msg, args) });
+            logger_.Log(TraceLevel.Notice, TestName, Stage.General, new { message = string.Format(msg, args) });
         }
 
         public void AddProperty(string name, string value)
@@ -651,7 +648,7 @@ namespace Applitools.Selenium
 
             var coreMakeManager = CreateCoreMakeManager();
 
-            coreMakeManagerResponse_ = SendRequest(coreMakeManager).Result;
+            coreMakeManagerResponse_ = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).Result;
             managerApplitoolsRefId_ = coreMakeManagerResponse_.Payload.Result.ApplitoolsRefId;
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver, appName, testName, viewportSize);
@@ -832,9 +829,9 @@ namespace Applitools.Selenium
             return $"ws://localhost:{port}/eyes";
         }
 
-        private EyesManageCloseAllEyes CreateEyesManageCloseAllEyes()
+        private EyesManageCloseAllEyesRequest CreateEyesManageCloseAllEyes()
         {
-            var closeAllEyes = new EyesManageCloseAllEyes
+            var closeAllEyes = new EyesManageCloseAllEyesRequest
             {
                 Payload = new EyesManageCloseAllEyesRequestPayload
                 {
@@ -848,9 +845,9 @@ namespace Applitools.Selenium
             return closeAllEyes;
         }
 
-        private CoreMakeSdk CreateCoreMakeSdk()
+        private CoreMakeSdkRequest CreateCoreMakeSdk()
         {
-            var result = new CoreMakeSdk();
+            var result = new CoreMakeSdkRequest();
             result.AddOrUpdatePayload("name", "netSDK");
             result.AddOrUpdatePayload("protocol", "webdriver");
             result.AddOrUpdatePayload("version", Assembly.GetEntryAssembly().GetName().Version.ToString());
@@ -859,9 +856,9 @@ namespace Applitools.Selenium
             return result;
         }
 
-        private CoreMakeManager CreateCoreMakeManager()
+        private CoreMakeManagerRequest CreateCoreMakeManager()
         {
-            var result = new CoreMakeManager
+            var result = new CoreMakeManagerRequest
             {
                 Key = Guid.NewGuid().ToString()
             };
@@ -902,31 +899,14 @@ namespace Applitools.Selenium
                         ViewportSize = viewportSize, 
                         ApiKey = API_KEY,
                         HostOs = HostOS,
+                        BranchName = Config.BranchName
                     }
                 }
             };
 
             return result;
         }
-
-        private async Task<CoreMakeManagerResponse> SendRequest(CoreMakeManager coreMakeManager)
-        {
-            var coreMakeManagerJson = ToJson(coreMakeManager);
-
-            await socketClient_.SendData(coreMakeManagerJson);
-
-            CoreMakeManagerResponse coreMakeManagerResponse;
-
-            do
-            {
-                var response = await socketClient_.ReceiveMessage();
-
-                coreMakeManagerResponse = JsonConvert.DeserializeObject<CoreMakeManagerResponse>(response);
-            } while (coreMakeManagerResponse?.Key != coreMakeManager.Key);
-
-            return coreMakeManagerResponse;
-        }
-
+        
         private async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
         {
             var json = ToJson(data);

@@ -5,9 +5,9 @@
         public EyesRef Eyes { get; set; }
     }
 
-    public class EyesCloseRequest
+    public class EyesCloseRequest : RequestBase
     {
-        public string Name => "Eyes.close";
+        public override string Name => "Eyes.close";
         public EyesCloseRequestPayload Payload { get; set; }
     }
 }

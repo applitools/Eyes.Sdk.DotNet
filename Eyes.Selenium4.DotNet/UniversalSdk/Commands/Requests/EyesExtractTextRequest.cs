@@ -14,12 +14,10 @@
         public EyesConfig Config { get; set; }
     }
 
-    public class EyesExtractTextRequest
+    public class EyesExtractTextRequest : RequestBase
     {
-        public string Name => "Eyes.extractText";
-
-        public string Key { get; set; }
-
+        public override string Name => "Eyes.extractText";
+        
         public EyesExtractTextRequestPayload Payload { get; set; }
     }
 }

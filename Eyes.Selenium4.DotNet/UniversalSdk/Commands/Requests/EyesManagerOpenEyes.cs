@@ -17,12 +17,10 @@ namespace Applitools.Selenium.Commands.Requests
         public EyesConfig Config { get; set; }
     }
 
-    public class EyesManagerOpenEyes //: ClientCommandBase
+    public class EyesManagerOpenEyes : RequestBase
     {
-        public string Name => "EyesManager.openEyes";
-
-        public string Key { get; set; }
-
+        public override string Name => "EyesManager.openEyes";
+        
         public EyesManagerOpenEyesRequestPayload Payload { get; set; }
     }
 }

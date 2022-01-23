@@ -16,11 +16,9 @@ namespace Applitools.Selenium.Commands.Requests
         public EyesConfig Config { get; set; }
     }
 
-    public class CoreCloseBatchesRequest
+    public class CoreCloseBatchesRequest : RequestBase
     {
-        public string Name => "Core.closeBatches";
-
-        public string Key { get; set; }
+        public override string Name => "Core.closeBatches";
 
         public CoreCloseBatchesRequestPayload Payload { get; set; }
     }

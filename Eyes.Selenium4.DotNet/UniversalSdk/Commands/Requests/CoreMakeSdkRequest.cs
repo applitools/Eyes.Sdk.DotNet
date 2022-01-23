@@ -1,6 +1,6 @@
 ﻿namespace Applitools.Selenium.Commands.Requests
 {
-    public class CoreMakeSdk : ClientCommandBase
+    public class CoreMakeSdkRequest : KeyedRequestBase
     {
         public override string Name => "Core.makeSDK";
     }
