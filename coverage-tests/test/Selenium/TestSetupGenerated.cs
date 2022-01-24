@@ -12,17 +12,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Applitools.Selenium;
 using Applitools.VisualGrid;
 
 namespace Applitools.Generated.Selenium.Tests
 {
     public abstract class TestSetupGenerated : FilteringTestSuite
     {
-
         protected IWebDriver driver;
         protected IWebDriver webDriver;
         protected EyesRunner runner;
-        protected Applitools.Selenium.Eyes eyes;
+        protected Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
