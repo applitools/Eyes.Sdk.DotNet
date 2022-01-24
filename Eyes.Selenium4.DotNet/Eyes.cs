@@ -27,7 +27,7 @@ namespace Applitools.Selenium
         private string apiKey_;
         private ProxySettings proxy_;
         private Logger logger_;
-
+        private PropertiesCollection properties_;
         private WebSocketClient socketClient_;
         private CoreMakeManagerResponse coreMakeManagerResponse_;
         private string managerApplitoolsRefId_;
@@ -55,6 +55,7 @@ namespace Applitools.Selenium
 
             serverUrl_ = "https://eyesapi.applitools.com/";
             socketClient_ = new WebSocketClient();
+            properties_ = new PropertiesCollection();
         }
 
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
@@ -153,6 +154,12 @@ namespace Applitools.Selenium
 
         public TestResults Abort()
         {
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
             Logger.Verbose("enter. Abort");
 
             if (IsOpen == false)
@@ -230,11 +237,6 @@ namespace Applitools.Selenium
         /// to allow any viewport size.</param>
         public IWebDriver Open(IWebDriver driver)
         {
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Open, StageType.Disabled);
-                return driver;
-            }
             return OpenEyes(driver);
         }
 
@@ -250,11 +252,6 @@ namespace Applitools.Selenium
         /// to allow any viewport size.</param>
         public IWebDriver Open(IWebDriver driver, string appName, string testName, Size viewportSize)
         {
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
-                return driver;
-            }
             return OpenEyes(driver, appName, testName, viewportSize);
         }
 
@@ -264,11 +261,6 @@ namespace Applitools.Selenium
         /// </summary>
         public IWebDriver Open(IWebDriver driver, string appName, string testName)
         {
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
-                return driver;
-            }
             return OpenEyes(driver, appName, testName, Size.Empty);
         }
 
@@ -550,6 +542,12 @@ namespace Applitools.Selenium
         /// </summary>-
         public virtual TestResults Close(bool throwEx = true)
         {
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
             var eyesCloseRequest = CreateEyesCloseRequest();
 
             var response = SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
@@ -563,7 +561,7 @@ namespace Applitools.Selenium
             {
                 if (testResult.Mismatches > 0 && throwEx)
                 {
-                    throw new TestFailedException();
+                    throw new TestFailedException(testResult.Url);
                 }
             }
 
@@ -603,7 +601,7 @@ namespace Applitools.Selenium
                 return;
             }
 
-            throw new NotImplementedException();
+            properties_.Add(name, value);
         }
 
         public void ClearProperties()
@@ -613,7 +611,8 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, TestName, Stage.General, StageType.Disabled);
                 return;
             }
-            throw new NotImplementedException();
+
+            properties_.Clear();
         }
 
         IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
@@ -624,15 +623,22 @@ namespace Applitools.Selenium
 
         private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
         {
-            UniversalSdkNativeLoader.Start();
-
             ApiKey = API_KEY;
             TestName = testName;
             AppName = appName;
             ViewportSize = viewportSize;
             driver_ = driver;
+
+            UniversalSdkNativeLoader.Start();
+
             var url = GetSocketUrl(21077);
             socketClient_.ConnectAsync(url).GetAwaiter().GetResult();
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
+                return driver;
+            }
 
             var makeSdk = CreateCoreMakeSdk();
             var makeSdkJson = ToJson(makeSdk);

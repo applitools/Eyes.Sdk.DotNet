@@ -26,7 +26,7 @@ namespace Applitools
             return new RectangleRegion
             {
                 X = region.Left,
-                Y = region.Height,
+                Y = region.Top,
                 Width = region.Width,
                 Height = region.Height
             };

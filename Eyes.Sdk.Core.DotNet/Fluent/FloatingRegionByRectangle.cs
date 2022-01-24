@@ -58,7 +58,7 @@ namespace Applitools
                 Region = new RectangleRegion
                 {
                     X = rect_.Left,
-                    Y = rect_.Height,
+                    Y = rect_.Top,
                     Width = rect_.Width,
                     Height = rect_.Height
                 }

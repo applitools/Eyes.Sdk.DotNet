@@ -170,6 +170,7 @@ namespace Applitools.Selenium.Commands
             SaveFailedTests = config.SaveFailedTests;
             SaveNewTests = config.SaveDiffs;
             StitchOverlap = config.StitchOverlap;
+            ViewportSize = config.ViewportSize;
         }
     }
 }
