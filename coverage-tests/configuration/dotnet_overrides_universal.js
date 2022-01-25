@@ -5,4 +5,7 @@ module.exports = {
     'should extract text from regions': {skipEmit: true},
     'should extract text regions from image': {skipEmit: true},
     'should not fail if scroll root is stale on android': {skipEmit: true},
+    'adopted styleSheets on firefox': {skipEmit: true},
+    'should send custom batch properties': {skipEmit: true},
+    'check region by selector within shadow dom with vg': {skipEmit: true},
 }
