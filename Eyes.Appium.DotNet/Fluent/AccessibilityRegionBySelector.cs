@@ -22,17 +22,7 @@ namespace Applitools.Appium.Fluent
 
         public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
         {
-            ReadOnlyCollection<IWebElement> elements = ((Eyes)eyesBase).GetDriver().FindElements(selector_);
-            IList<AccessibilityRegionByRectangle> retVal = new List<AccessibilityRegionByRectangle>();
-            double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
-            foreach (IWebElement element in elements)
-            {
-                Region r = new Region(element.Location, element.Size);
-                r = r.Scale(scaleRatio);
-                Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-                retVal.Add(new AccessibilityRegionByRectangle(new Rectangle(pTag, r.Size), regionType_));
-            }
-            return retVal;
+            throw new System.NotImplementedException();
         }
 
         public TAccessibilityRegion ToRegion()

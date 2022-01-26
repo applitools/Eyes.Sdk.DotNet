@@ -2,19 +2,19 @@
 using Applitools.Utils.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Net;
+using Applitools.Selenium;
+using Applitools.VisualGrid;
 
 namespace Applitools
 {
     public class Configuration : IConfiguration
     {
+        private static readonly int DEFAULT_WAIT_BEFORE_SCREENSHOTS = 100;
         private static readonly TimeSpan DEFAULT_MATCH_TIMEOUT = TimeSpan.FromSeconds(2);
 
+        private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
         public Configuration()
         {
-            DefaultMatchSettings.IgnoreCaret = true;
-            SetAgentId(null);
-            SetSaveNewTests(true); // New tests are automatically saved by default.
         }
 
         public Configuration(IConfiguration configuration)
@@ -43,10 +43,37 @@ namespace Applitools
             TestName = configuration.TestName;
             ViewportSize = configuration.ViewportSize;
             AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
+            IsForceFullPageScreenshot = configuration.IsForceFullPageScreenshot;
+            WaitBeforeScreenshots = configuration.WaitBeforeScreenshots;
+            StitchMode = configuration.StitchMode;
+            HideCaret = configuration.HideCaret;
+            UseCookies = configuration.UseCookies;
+            HideScrollbars = configuration.HideScrollbars;
+            DisableBrowserFetching = configuration.DisableBrowserFetching;
             LayoutBreakpointsEnabled = configuration.LayoutBreakpointsEnabled;
             layoutBreakpoints_ = new List<int>(configuration.LayoutBreakpoints);
-        }
 
+            VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
+
+
+            if (configuration is Configuration config)
+            {
+                browsersInfo_.AddRange(config.browsersInfo_);
+            }
+        }
+        public string Type { get; set; }
+        public int? Concurrency { get; set; }
+        public bool? Legacy { get; set; }
+
+        public bool? IsForceFullPageScreenshot { get; set; }
+
+        public int? WaitBeforeScreenshots { get; set; }
+
+        public StitchModes? StitchMode { get; set; }
+
+        public bool? HideCaret { get; set; }
+
+        public bool? DisableBrowserFetching { get; set; }
 
         /// <summary>
         /// Get the batch in which context future tests will run or <c>null</c>
@@ -187,17 +214,33 @@ namespace Applitools
             return this;
         }
 
-        public bool SaveNewTests { get; set; }
+        public VisualGridOption[] VisualGridOptions { get; set; }
 
-        public IConfiguration SetSaveNewTests(bool value)
+        public IConfiguration SetVisualGridOptions(params VisualGridOption[] options)
+        {
+            VisualGridOptions = (VisualGridOption[])options?.Clone();
+            return this;
+        }
+
+        public bool? UseCookies { get; set; }
+
+        public IConfiguration SetUseCookies(bool? useCookies)
+        {
+            UseCookies = useCookies;
+            return this;
+        }
+
+        public bool? SaveNewTests { get; set; }
+
+        public IConfiguration SetSaveNewTests(bool? value)
         {
             SaveNewTests = value;
             return this;
         }
 
-        public bool SaveFailedTests { get; set; }
+        public bool? SaveFailedTests { get; set; }
 
-        public IConfiguration SetSaveFailedTests(bool value)
+        public IConfiguration SetSaveFailedTests(bool? value)
         {
             SaveFailedTests = value;
             return this;
@@ -213,6 +256,7 @@ namespace Applitools
 
 
         public string TestName { get; set; }
+
 
         public IConfiguration SetTestName(string value)
         {
@@ -235,7 +279,7 @@ namespace Applitools
         }
 
 
-        public ImageMatchSettings DefaultMatchSettings { get; set; } = new ImageMatchSettings(MatchLevel.Strict) { IgnoreCaret = true };
+        public ImageMatchSettings DefaultMatchSettings { get; set; }
 
         public IConfiguration SetDefaultMatchSettings(ImageMatchSettings value)
         {
@@ -244,27 +288,27 @@ namespace Applitools
         }
 
 
-        public int StitchOverlap { get; set; } = 10;
+        public int? StitchOverlap { get; set; }
 
-        public IConfiguration SetStitchOverlap(int value)
+        public IConfiguration SetStitchOverlap(int? value)
         {
             StitchOverlap = value;
             return this;
         }
 
 
-        public bool SendDom { get; set; } = true;
+        public bool? SendDom { get; set; }
 
-        public IConfiguration SetSendDom(bool value)
+        public IConfiguration SetSendDom(bool? value)
         {
             SendDom = value;
             return this;
         }
 
 
-        public TimeSpan MatchTimeout { get; set; } = DEFAULT_MATCH_TIMEOUT;
+        public TimeSpan? MatchTimeout { get; set; }
 
-        public IConfiguration SetMatchTimeout(TimeSpan value)
+        public IConfiguration SetMatchTimeout(TimeSpan? value)
         {
             MatchTimeout = value;
             return this;
@@ -289,26 +333,26 @@ namespace Applitools
         }
 
 
-        public bool IgnoreCaret
+        public bool? IgnoreCaret
         {
-            get => DefaultMatchSettings.IgnoreCaret ?? true;
+            get => DefaultMatchSettings.IgnoreCaret;
             set => SetIgnoreCaret(value);
         }
 
-        public IConfiguration SetIgnoreCaret(bool value)
+        public IConfiguration SetIgnoreCaret(bool? value)
         {
             DefaultMatchSettings.IgnoreCaret = value;
             return this;
         }
 
 
-        public MatchLevel MatchLevel
+        public MatchLevel? MatchLevel
         {
-            get => DefaultMatchSettings.MatchLevel ?? MatchLevel.Strict;
+            get => DefaultMatchSettings.MatchLevel;
             set => SetMatchLevel(value);
         }
 
-        public IConfiguration SetMatchLevel(MatchLevel value)
+        public IConfiguration SetMatchLevel(MatchLevel? value)
         {
             DefaultMatchSettings.MatchLevel = value;
             return this;
@@ -332,6 +376,13 @@ namespace Applitools
             return this;
         }
 
+        public bool? HideScrollbars { get; set; }
+        public IConfiguration SetHideScrollbars(bool? value)
+        {
+            HideScrollbars = value;
+            return this;
+        }
+
         public ProxySettings Proxy { get; set; }
 
         public IConfiguration SetProxy(ProxySettings proxy)
@@ -340,7 +391,7 @@ namespace Applitools
             return this;
         }
 
-        public bool UseDom
+        public bool? UseDom
         {
             get => DefaultMatchSettings.UseDom;
             set => SetUseDom(value);
@@ -349,29 +400,58 @@ namespace Applitools
         /// <summary>
         /// Use the page DOM when computing the layout of the page.
         /// </summary>
-        public IConfiguration SetUseDom(bool value)
+        public IConfiguration SetUseDom(bool? value)
         {
             DefaultMatchSettings.UseDom = value;
             return this;
         }
 
+        public IConfiguration SetForceFullPageScreenshot(bool? value)
+        {
+            IsForceFullPageScreenshot = value;
+            return this;
+        }
 
-        public bool EnablePatterns
+        public IConfiguration SetWaitBeforeScreenshots(int? value)
+        {
+            WaitBeforeScreenshots = value;
+            return this;
+        }
+
+        public IConfiguration SetStitchMode(StitchModes? value)
+        {
+            StitchMode = value;
+            return this;
+        }
+
+        public IConfiguration SetHideCaret(bool? value)
+        {
+            HideCaret = value;
+            return this;
+        }
+
+        public IConfiguration SetDisableBrowserFetching(bool? value)
+        {
+            DisableBrowserFetching = value;
+            return this;
+        }
+
+        public bool? EnablePatterns
         {
             get => DefaultMatchSettings.EnablePatterns;
             set => SetEnablePatterns(value);
         }
 
-        public IConfiguration SetEnablePatterns(bool value)
+        public IConfiguration SetEnablePatterns(bool? value)
         {
             DefaultMatchSettings.EnablePatterns = value;
             return this;
         }
 
-        public bool IgnoreDisplacements { get; set; }
+        public bool? IgnoreDisplacements { get; set; }
 
 
-        public IConfiguration SetIgnoreDisplacements(bool value)
+        public IConfiguration SetIgnoreDisplacements(bool? value)
         {
             IgnoreDisplacements = value;
             return this;
@@ -393,7 +473,7 @@ namespace Applitools
         /// <summary>
         /// Sets and gets optional timeout in seconds. 
         /// </summary>
-        public int? AbortIdleTestTimeout { get; set; } = null;
+        public int? AbortIdleTestTimeout { get; set; }
 
         /// <summary>
         /// Set optional server timeout in seconds for handling test.
@@ -406,14 +486,14 @@ namespace Applitools
             return this;
         }
 
-        public IConfiguration SetLayoutBreakpointsEnabled(bool shouldSet)
+        public IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet)
         {
             LayoutBreakpointsEnabled = shouldSet;
             LayoutBreakpoints.Clear();
             return this;
         }
 
-        public bool LayoutBreakpointsEnabled { get; set; }
+        public bool? LayoutBreakpointsEnabled { get; set; }
 
         public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
         {
@@ -444,6 +524,65 @@ namespace Applitools
         {
             get => layoutBreakpoints_;
             set => SetLayoutBreakpoints_(value);
+        }
+
+        public List<RenderBrowserInfo> GetBrowsersInfo()
+        {
+            return browsersInfo_;
+        }
+        
+        public IConfiguration AddBrowsers(params IRenderBrowserInfo[] browsersInfo)
+        {
+            foreach (IRenderBrowserInfo browserInfo in browsersInfo)
+            {
+                if (browserInfo is DesktopBrowserInfo desktopBrowserInfo)
+                {
+                    AddBrowser(desktopBrowserInfo);
+                }
+                else if (browserInfo is ChromeEmulationInfo chromeEmulationInfo)
+                {
+                    AddBrowser(chromeEmulationInfo);
+                }
+                else if (browserInfo is IosDeviceInfo iosDeviceInfo)
+                {
+                    AddBrowser(iosDeviceInfo);
+                }
+            }
+            return this;
+        }
+
+        public IConfiguration AddBrowser(DesktopBrowserInfo desktopBrowserInfo)
+        {
+            RenderBrowserInfo browserInfo = new RenderBrowserInfo(desktopBrowserInfo);
+            browsersInfo_.Add(browserInfo);
+            return this;
+        }
+        public IConfiguration AddBrowser(ChromeEmulationInfo emulationInfo)
+        {
+            RenderBrowserInfo browserInfo = new RenderBrowserInfo(emulationInfo);
+            browsersInfo_.Add(browserInfo);
+            return this;
+        }
+
+        public IConfiguration AddBrowser(IosDeviceInfo deviceInfo)
+        {
+            RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
+            browsersInfo_.Add(browserInfo);
+            return this;
+        }
+
+        public IConfiguration AddBrowser(int width, int height, BrowserType browserType, string baselineEnvName = null)
+        {
+            DesktopBrowserInfo browserInfo = new DesktopBrowserInfo(width, height, browserType, baselineEnvName);
+            return AddBrowser(browserInfo);
+        }
+
+        public IConfiguration AddDeviceEmulation(DeviceName deviceName,
+            ScreenOrientation screenOrientation = ScreenOrientation.Portrait,
+            string baselineEnvName = null)
+        {
+            ChromeEmulationInfo emulationInfo = new ChromeEmulationInfo(deviceName, screenOrientation);
+            return AddBrowser(emulationInfo);
         }
 
         public virtual Configuration Clone()

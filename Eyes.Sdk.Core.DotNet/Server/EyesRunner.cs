@@ -1,25 +1,49 @@
-﻿using Applitools.Utils;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Applitools.Selenium;
+using Applitools.Selenium.Commands.Requests;
+using Applitools.Selenium.Commands.Responses;
+using Applitools.Utils;
+using Newtonsoft.Json;
 
 namespace Applitools
 {
     public abstract class EyesRunner
     {
-        private readonly ConcurrentDictionary<string, IBatchCloser> batchClosers_ = new ConcurrentDictionary<string, IBatchCloser>();
+        private string apiKey;
+        private string serverUrl;
+        private ProxySettings proxy;
+        private string managerApplitoolsRefId_;
+        private ManagerConfig config_;
 
-        public EyesRunner(ILogHandler logHandler)
+        public WebSocketClient SocketClient { get; }
+
+        public ManagerConfig Config
+        {
+            get => config_ ?? (config_ = InitConfig());
+            set => config_ = value;
+        }
+
+        protected EyesRunner(ILogHandler logHandler)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
             }
-            ServerConnectorFactory = new ServerConnectorFactory();
-            ServerConnector = ServerConnectorFactory.CreateNewServerConnector(Logger, new Uri(ServerUrl));
+
+            UniversalSdkNativeLoader.Start();
+
+            SocketClient = new WebSocketClient();
+
+            var url = GetSocketUrl(21077);
+            SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
         }
+
+        protected abstract ManagerConfig InitConfig();
 
         protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
@@ -29,45 +53,30 @@ namespace Applitools
         {
             return GetAllTestResults(true);
         }
-
+        
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
-            return new TestResultsSummary(new List<TestResultContainer>());
-
-            Logger.Log(Stage.Close, StageType.TestResults);
-
-            TestResultsSummary allTestResults;
-            try
+            var results = CloseAllEyes();
+            if (shouldThrowException)
             {
-                GetAllTestResultsAlreadyCalled = true;
-                allTestResults = GetAllTestResultsImpl(shouldThrowException);
-            }
-            finally
-            {
-                DeleteAllBatches_();
-            }
-            string[] testIds = GetAllEyes().SelectMany(e => e.GetAllTests().Keys).ToArray();
-            Logger.Log(TraceLevel.Notice, testIds, Stage.Close, StageType.TestResults, new { allTestResults.Count });
-            return allTestResults;
-        }
+                var mismatchedResults = results.Where(i => i.Mismatches > 0).ToList();
+                if (mismatchedResults.Any())
+                {
+                    var sb = new StringBuilder();
+                    foreach (var mr in mismatchedResults)
+                    {
+                        sb.AppendLine();
+                        sb.AppendFormat("Name: {0}", mr.Name);
+                    }
 
-        private void DeleteAllBatches_()
-        {
-            if (DontCloseBatches) return;
-            Logger.Log(TraceLevel.Notice, Stage.Close, StageType.CloseBatch, new { batches = batchClosers_.Keys });
-            foreach (KeyValuePair<string, IBatchCloser> kvp in batchClosers_)
-            {
-                IBatchCloser connector = kvp.Value;
-                connector.CloseBatch(kvp.Key);
+                    throw new EyesException(sb.ToString());
+                }
             }
-        }
 
-        public void AddBatch(string batchId, IBatchCloser batchCloser)
-        {
-            batchClosers_.TryAdd(batchId, batchCloser);
-        }
+            var testResultContainers = results.Select(i => new TestResultContainer(i)).ToList();
 
-        protected abstract TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException);
+            return new TestResultsSummary(testResultContainers);
+        }
 
         public void SetLogHandler(ILogHandler logHandler)
         {
@@ -78,35 +87,133 @@ namespace Applitools
             }
         }
 
-        public IServerConnector ServerConnector { get; set; }
-        public IServerConnectorFactory ServerConnectorFactory { get; set; }
-
         public string ApiKey
         {
-            get => ServerConnector.ApiKey;
-            set => ServerConnector.ApiKey = value;
+            get => apiKey;
+            set
+            {
+                apiKey = value;
+                foreach (var eye in GetAllEyes())
+                {
+                    eye.ApiKey = value;
+                }
+            }
         }
 
         public string ServerUrl
         {
-            get => ServerConnector?.ServerUrl.AbsoluteUri ?? CommonUtils.ServerUrl;
-            set => ServerConnector.ServerUrl = new Uri(value);
+            get => serverUrl;
+            set
+            {
+                serverUrl = value;
+                foreach (var eye in GetAllEyes())
+                {
+                    eye.ServerUrl = value;
+                }
+            }
         }
 
         public ProxySettings Proxy
         {
-            get => ServerConnector.Proxy;
-            set => ServerConnector.Proxy = value;
+            get => proxy;
+            set
+            {
+                proxy = value;
+                foreach (var eye in GetAllEyes())
+                {
+                    eye.Proxy = value;
+                }
+            }
         }
 
         public bool IsDisabled { get; set; }
-        public bool DontCloseBatches { get; set; } = CommonUtils.DontCloseBatches;
-        public string AgentId
-        {
-            get { return ServerConnector.AgentId; }
-            set { if (value != null) ServerConnector.AgentId = value; }
-        }
 
         public bool GetAllTestResultsAlreadyCalled { get; private set; } = false;
+         
+        public string GetCoreMakeManager()
+        {
+            if (managerApplitoolsRefId_ == null)
+            {
+                var makeSdk = CreateCoreMakeSdk();
+                var makeSdkJson = makeSdk.ToJson();
+
+                SocketClient.SendData(makeSdkJson);
+
+                var coreMakeManager = CreateCoreMakeManager();
+
+                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).Result;
+                managerApplitoolsRefId_ = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
+            }
+
+            return managerApplitoolsRefId_;
+        }
+
+        public IList<TestResults> CloseAllEyes()
+        {
+            var request = CreateEyesManageCloseAllEyes();
+
+            var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseResponse>(request).Result;
+
+            return response?.Payload?.Result;
+        }
+
+        private EyesManageCloseAllEyesRequest CreateEyesManageCloseAllEyes()
+        {
+            var closeAllEyes = new EyesManageCloseAllEyesRequest
+            {
+                Payload = new EyesManageCloseAllEyesRequestPayload
+                {
+                    Manager = new ManagerRef
+                    {
+                        ApplitoolsRefId = managerApplitoolsRefId_
+                    }
+                }
+            };
+
+            return closeAllEyes;
+        }
+
+        private async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
+        {
+            var json = data.ToJson();
+
+            await SocketClient.SendData(json);
+
+            TResponse result;
+
+            do
+            {
+                var response = await SocketClient.ReceiveMessage();
+                result = JsonConvert.DeserializeObject<TResponse>(response);
+            } while (result == null);
+
+            return result;
+        }
+
+        private string GetSocketUrl(int port)
+        {
+            return $"ws://localhost:{port}/eyes";
+        }
+
+        private CoreMakeSdkRequest CreateCoreMakeSdk()
+        {
+            var result = new CoreMakeSdkRequest();
+            result.AddOrUpdatePayload("name", "netSDK");
+            result.AddOrUpdatePayload("protocol", "webdriver");
+            result.AddOrUpdatePayload("version", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
+
+            return result;
+        }
+
+        private CoreMakeManagerRequest CreateCoreMakeManager()
+        {
+            var result = new CoreMakeManagerRequest
+            {
+                Payload =  Config
+            };
+
+            return result;
+        }
     }
 }

@@ -44,11 +44,11 @@ namespace Applitools.Appium.Capture
                 screenshotBytes = tsInstance_.GetScreenshot().AsByteArray;
                 using (Bitmap screenshotBitmap = BasicImageUtils.CreateBitmap(screenshotBytes))
                 {
-                    eyes_.DebugScreenshotProvider.Save(screenshotBitmap, "DEVICE_ORIGINAL");
+                    //eyes_.DebugScreenshotProvider.Save(screenshotBitmap, "DEVICE_ORIGINAL");
                     result = BasicImageUtils.Crop(screenshotBitmap, eyes_.CachedViewport);
                 }
             }
-            result = BasicImageUtils.ScaleImage(result, eyes_.ScaleRatio);
+            result = BasicImageUtils.ScaleImage(result, 1);
             return result;
         }
     }

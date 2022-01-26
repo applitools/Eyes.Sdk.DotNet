@@ -118,49 +118,49 @@ namespace Applitools.Tests
             TestContext.Progress.WriteLine("{0} properties has set methods.", properties.Length);
         }
 
-        [Test]
-        public void TestConfigApiKey()
-        {
-            TestEyes testEyes = new TestEyes();
-            IConfiguration config = testEyes.GetConfiguration();
-            config.ApiKey = "someTestApiKey";
-            testEyes.SetConfiguration(config);
-            testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
-            IServerConnector serverConnector = testEyes.ServerConnector;
-            Assert.AreEqual("someTestApiKey", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
-        }
+        //[Test]
+        //public void TestConfigApiKey()
+        //{
+        //    TestEyes testEyes = new TestEyes();
+        //    IConfiguration config = testEyes.GetConfiguration();
+        //    config.ApiKey = "someTestApiKey";
+        //    testEyes.SetConfiguration(config);
+        //    testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
+        //    IServerConnector serverConnector = testEyes.ServerConnector;
+        //    Assert.AreEqual("someTestApiKey", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
+        //}
 
-        [Test]
-        public void TestConfigServerUrl()
-        {
-            TestEyes testEyes = new TestEyes();
-            IConfiguration config = testEyes.GetConfiguration();
-            config.ServerUrl = "https://some.testurl.com/";
-            testEyes.SetConfiguration(config);
-            testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
-            IServerConnector serverConnector = testEyes.ServerConnector;
-            Assert.AreEqual("https://some.testurl.com/", serverConnector.ServerUrl.AbsoluteUri, nameof(serverConnector.ServerUrl));
-        }
+        //[Test]
+        //public void TestConfigServerUrl()
+        //{
+        //    TestEyes testEyes = new TestEyes();
+        //    IConfiguration config = testEyes.GetConfiguration();
+        //    config.ServerUrl = "https://some.testurl.com/";
+        //    testEyes.SetConfiguration(config);
+        //    testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
+        //    IServerConnector serverConnector = testEyes.ServerConnector;
+        //    Assert.AreEqual("https://some.testurl.com/", serverConnector.ServerUrl.AbsoluteUri, nameof(serverConnector.ServerUrl));
+        //}
 
-        [Test]
-        public void TestApiKeyProperty()
-        {
-            TestEyes testEyes = new TestEyes();
-            testEyes.ApiKey = "someTestApiKey";
-            testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
-            IServerConnector serverConnector = testEyes.ServerConnector;
-            Assert.AreEqual("someTestApiKey", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
-        }
+        //[Test]
+        //public void TestApiKeyProperty()
+        //{
+        //    TestEyes testEyes = new TestEyes();
+        //    testEyes.ApiKey = "someTestApiKey";
+        //    testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
+        //    IServerConnector serverConnector = testEyes.ServerConnector;
+        //    Assert.AreEqual("someTestApiKey", serverConnector.ApiKey, nameof(serverConnector.ApiKey));
+        //}
 
-        [Test]
-        public void TestServerUrlProperty()
-        {
-            TestEyes testEyes = new TestEyes();
-            testEyes.ServerUrl = "https://some.testurl.com/";
-            testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
-            IServerConnector serverConnector = testEyes.ServerConnector;
-            Assert.AreEqual("https://some.testurl.com/", serverConnector.ServerUrl.AbsoluteUri, nameof(serverConnector.ServerUrl));
-        }
+        //[Test]
+        //public void TestServerUrlProperty()
+        //{
+        //    TestEyes testEyes = new TestEyes();
+        //    testEyes.ServerUrl = "https://some.testurl.com/";
+        //    testEyes.UpdateServerConnector_(); // call this instead of calling eyes.OpenBase.
+        //    IServerConnector serverConnector = testEyes.ServerConnector;
+        //    Assert.AreEqual("https://some.testurl.com/", serverConnector.ServerUrl.AbsoluteUri, nameof(serverConnector.ServerUrl));
+        //}
 
         [TestCase(typeof(IConfiguration), typeof(Configuration))]
         [TestCase(typeof(Selenium.IConfiguration), typeof(Selenium.Configuration))]

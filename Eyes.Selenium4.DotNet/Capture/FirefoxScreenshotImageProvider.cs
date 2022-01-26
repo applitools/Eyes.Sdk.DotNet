@@ -26,7 +26,7 @@ namespace Applitools.Selenium.Capture
             eyesWebDriver.SwitchTo().DefaultContent();
 
             Bitmap image = BasicImageUtils.CreateBitmap(tsInstance_.GetScreenshot().AsByteArray);
-            eyes_.DebugScreenshotProvider.Save(image, "FIREFOX");
+           // eyes_.DebugScreenshotProvider.Save(image, "FIREFOX");
 
             logger_.Verbose("switching back to original frame.");
             ((EyesWebDriverTargetLocator)eyesWebDriver.SwitchTo()).Frames(frameChain);

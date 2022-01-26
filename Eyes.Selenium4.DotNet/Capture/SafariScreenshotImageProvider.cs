@@ -21,23 +21,23 @@ namespace Applitools.Selenium.Capture
         {
             Bitmap image = base.GetImage();
 
-            if (eyes_.CachedSessionDetails != null &&
-                eyes_.CachedSessionDetails.TryGetValue("deviceOrientation", out object orientation))
-            {
-                if ("landscape".Equals(orientation as string, StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
-                {
-                    logger_.Verbose("rotating image...");
-                    image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                }
-            }
+            //if (eyes_.CachedSessionDetails != null &&
+            //    eyes_.CachedSessionDetails.TryGetValue("deviceOrientation", out object orientation))
+            //{
+            //    if ("landscape".Equals(orientation as string, StringComparison.OrdinalIgnoreCase) && image.Width < image.Height)
+            //    {
+            //        logger_.Verbose("rotating image...");
+            //        image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            //    }
+            //}
 
-            logger_.Verbose("Bitmap Size: {0}x{1}", image.Width, image.Height);
-            eyes_.DebugScreenshotProvider.Save(image, "SAFARI");
+            //logger_.Verbose("Bitmap Size: {0}x{1}", image.Width, image.Height);
+            //eyes_.DebugScreenshotProvider.Save(image, "SAFARI");
 
-            if (eyes_.IsCutProviderExplicitlySet)
-            {
-                return image;
-            }
+            //if (eyes_.IsCutProviderExplicitlySet)
+            //{
+            //    return image;
+            //}
 
             double scaleRatio = eyes_.DevicePixelRatio;
 
@@ -50,41 +50,41 @@ namespace Applitools.Selenium.Capture
             logger_.Verbose("logical viewport size: " + originalViewportSize);
 
             Bitmap croppedImage = null;
-            if (userAgent_.IsiOS ||
-                "ios".Equals(eyes_.PlatformName, StringComparison.OrdinalIgnoreCase) ||
-                (eyes_.CachedSessionDetails.TryGetValue("PlatformName", out object platformName) &&
-                    "ios".Equals(platformName as string, StringComparison.OrdinalIgnoreCase)))
-            {
-                croppedImage = CropIOSImage(image, originalViewportSize, logger_);
-            }
-            else if (!eyes_.ForceFullPageScreenshot)
-            {
-                Point loc;
-                FrameChain currentFrameChain = eyes_.GetDriver().GetFrameChain();
+            //if (userAgent_.IsiOS ||
+            //    "ios".Equals(eyes_.PlatformName, StringComparison.OrdinalIgnoreCase) ||
+            //    (eyes_.CachedSessionDetails.TryGetValue("PlatformName", out object platformName) &&
+            //        "ios".Equals(platformName as string, StringComparison.OrdinalIgnoreCase)))
+            //{
+            //    croppedImage = CropIOSImage(image, originalViewportSize, logger_);
+            //}
+            //else if (!eyes_.ForceFullPageScreenshot)
+            //{
+            //    Point loc;
+            //    FrameChain currentFrameChain = eyes_.GetDriver().GetFrameChain();
 
-                if (currentFrameChain.Count == 0)
-                {
-                    IWebElement scrollRootElement = eyes_.GetCurrentFrameScrollRootElement();
-                    IPositionProvider positionProvider = eyes_.GetPositionProvider(
-                        logger_, StitchModes.Scroll, jsExecutor_, scrollRootElement,
-                        userAgent_);
-                    loc = positionProvider.GetCurrentPosition();
-                }
-                else
-                {
-                    loc = currentFrameChain.GetDefaultContentScrollPosition();
-                }
+            //    if (currentFrameChain.Count == 0)
+            //    {
+            //        IWebElement scrollRootElement = eyes_.GetCurrentFrameScrollRootElement();
+            //        IPositionProvider positionProvider = eyes_.GetPositionProvider(
+            //            logger_, StitchModes.Scroll, jsExecutor_, scrollRootElement,
+            //            userAgent_);
+            //        loc = positionProvider.GetCurrentPosition();
+            //    }
+            //    else
+            //    {
+            //        loc = currentFrameChain.GetDefaultContentScrollPosition();
+            //    }
 
-                loc = new Point((int)Math.Ceiling(loc.X * scaleRatio), (int)Math.Ceiling(loc.Y * scaleRatio));
+            //    loc = new Point((int)Math.Ceiling(loc.X * scaleRatio), (int)Math.Ceiling(loc.Y * scaleRatio));
 
-                croppedImage = BasicImageUtils.Crop(image, new Rectangle(loc, viewportSize));
-            }
+            //    croppedImage = BasicImageUtils.Crop(image, new Rectangle(loc, viewportSize));
+            //}
             if (croppedImage != null && !ReferenceEquals(croppedImage, image))
             {
                 image.Dispose();
                 image = croppedImage;
             }
-            eyes_.DebugScreenshotProvider.Save(image, "SAFARI_CROPPED");
+           // eyes_.DebugScreenshotProvider.Save(image, "SAFARI_CROPPED");
 
             return image;
         }

@@ -312,10 +312,10 @@ namespace Applitools.Selenium
         {
             // Move the window to (0,0) to have the best chance to be able to
             // set the viewport size as requested.
-            if (Eyes.moveWindow_)
-            {
-                driver.Manage().Window.Position = new Point(0, 0);
-            }
+            //if (Eyes.moveWindow_)
+            //{
+            //    driver.Manage().Window.Position = new Point(0, 0);
+            //}
 
             SetBrowserSizeByViewportSize(logger, driver, actualViewportSize, requiredSize);
 

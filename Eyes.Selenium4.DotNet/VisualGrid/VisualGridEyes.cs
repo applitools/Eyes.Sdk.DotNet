@@ -70,9 +70,9 @@ namespace Applitools.Selenium.VisualGrid
             Logger = visualGridRunner.Logger;
             runner_ = visualGridRunner;
 
-            IDebugResourceWriter drw = runner_.DebugResourceWriter;
-            Ufg.IDebugResourceWriter ufgDrw = EyesSeleniumUtils.ConvertDebugResourceWriter(drw);
-            debugResourceWriter_ = ufgDrw;
+            //IDebugResourceWriter drw = runner_.DebugResourceWriter;
+            //Ufg.IDebugResourceWriter ufgDrw = EyesSeleniumUtils.ConvertDebugResourceWriter(drw);
+            //debugResourceWriter_ = ufgDrw;
         }
 
         private Configuration Config_ { get => configProvider_.GetConfiguration(); }
@@ -157,7 +157,7 @@ namespace Applitools.Selenium.VisualGrid
             ArgumentGuard.NotNull(webDriver, nameof(webDriver));
 
             string apiKey = ApiKey;
-            EyesBase.ValidateAPIKey(apiKey);
+            //EyesBase.ValidateAPIKey(apiKey);
 
             ArgumentGuard.NotEmpty(Config_.AppName, "appName");
             ArgumentGuard.NotEmpty(Config_.TestName, "testName");
@@ -197,39 +197,39 @@ namespace Applitools.Selenium.VisualGrid
                 browserInfoList.Add(new RenderBrowserInfo(desktopBrowserInfo));
             }
 
-            if (runner_.AgentId == null)
-            {
-                runner_.AgentId = FullAgentId;
-            }
+            //if (runner_.AgentId == null)
+            //{
+            //    runner_.AgentId = FullAgentId;
+            //}
 
-            configAtOpen_ = GetConfigClone_();
+            //configAtOpen_ = GetConfigClone_();
 
             List<VisualGridRunningTest> newTests = new List<VisualGridRunningTest>();
-            IServerConnector serverConnector = runner_.ServerConnector;
+            IServerConnector serverConnector;// = runner_.ServerConnector;
             string agentRunId = configAtOpen_.TestName + "_" + Guid.NewGuid();
             foreach (RenderBrowserInfo browserInfo in browserInfoList)
             {
                 if (browserInfo.EmulationInfo as ChromeEmulationInfo != null)
                 {
                     ChromeEmulationInfo emulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo;
-                    Dictionary<DeviceName, DeviceSize> deviceSizes = serverConnector.GetEmulatedDevicesSizes();
-                    deviceSizes.TryGetValue(emulationInfo.DeviceName, out DeviceSize size);
-                    browserInfo.SetEmulationDeviceSize(size);
+                    Dictionary<DeviceName, DeviceSize> deviceSizes;// = serverConnector.GetEmulatedDevicesSizes();
+                    //deviceSizes.TryGetValue(emulationInfo.DeviceName, out DeviceSize size);
+                   // browserInfo.SetEmulationDeviceSize(size);
                 }
                 if (browserInfo.IosDeviceInfo != null)
                 {
-                    Dictionary<IosDeviceName, DeviceSize> deviceSizes = serverConnector.GetIosDevicesSizes();
-                    deviceSizes.TryGetValue(browserInfo.IosDeviceInfo.DeviceName, out DeviceSize size);
-                    browserInfo.SetIosDeviceSize(size);
+                    Dictionary<IosDeviceName, DeviceSize> deviceSizes;// = serverConnector.GetIosDevicesSizes();
+                    //deviceSizes.TryGetValue(browserInfo.IosDeviceInfo.DeviceName, out DeviceSize size);
+                    //browserInfo.SetIosDeviceSize(size);
                 }
                 VisualGridRunningTest test = new VisualGridRunningTest(
-                    eyesId_, browserInfo, Logger, configProvider_, serverConnector, agentRunId);
+                    eyesId_, browserInfo, Logger, configProvider_, null, agentRunId);
                 testList_.Add(test.TestId, test);
                 newTests.Add(test);
             }
 
             Logger.Log(TraceLevel.Info, eyesId_, Stage.Open, StageType.Called, new { testCount = testList_.Count });
-            runner_.Open(this, newTests);
+            //runner_.Open(this, newTests);
             return driver_ ?? webDriver;
         }
 
@@ -394,11 +394,11 @@ namespace Applitools.Selenium.VisualGrid
 
             try
             {
-                object logMessage = runner_.GetConcurrencyLog();
-                if (logMessage != null)
-                {
-                    NetworkLogHandler.SendEvent(runner_.ServerConnector, TraceLevel.Notice, logMessage);
-                }
+                //object logMessage = runner_.GetConcurrencyLog();
+                //if (logMessage != null)
+                //{
+                //    NetworkLogHandler.SendEvent(runner_.ServerConnector, TraceLevel.Notice, logMessage);
+                //}
             }
             catch (JsonException e)
             {
@@ -415,8 +415,8 @@ namespace Applitools.Selenium.VisualGrid
                     seleniumCheckTarget.Init(Logger, driver_);
                 }
 
-                int waitBeforeScreenshots = Config_.WaitBeforeScreenshots;
-                Thread.Sleep(waitBeforeScreenshots);
+                //int waitBeforeScreenshots = Config_.WaitBeforeScreenshots;
+                //Thread.Sleep(waitBeforeScreenshots);
                 int switchedToCount = SwitchToFrame_((ISeleniumCheckTarget)checkSettings);
                 TrySetTargetSelector_((SeleniumCheckSettings)checkSettings);
                 checkSettings = UpdateCheckSettings_(checkSettings);
@@ -465,7 +465,7 @@ namespace Applitools.Selenium.VisualGrid
             else
             {
                 layoutBreakpoints = GetConfigClone_().LayoutBreakpoints;
-                isLayoutBreakpointsEnabled = GetConfigClone_().LayoutBreakpointsEnabled;
+                //isLayoutBreakpointsEnabled = GetConfigClone_().LayoutBreakpointsEnabled;
             }
 
             HashSet<string> testIds = new HashSet<string>();
@@ -475,7 +475,7 @@ namespace Applitools.Selenium.VisualGrid
             }
 
             Dictionary<int, List<RunningTest>> requiredWidths = new Dictionary<int, List<RunningTest>>();
-            if (isLayoutBreakpointsEnabled || layoutBreakpoints.Count > 0)
+            //if (isLayoutBreakpointsEnabled || layoutBreakpoints.Count > 0)
             {
                 foreach (RunningTest runningTest in testList_.Values)
                 {
@@ -571,7 +571,7 @@ namespace Applitools.Selenium.VisualGrid
 
             scriptResult.UserAgent = userAgent_;
             //visualGridRunner_.DebugResourceWriter = Config_.DebugResourceWriter;
-            runner_.Check(scriptResult, checkTasks);
+            //runner_.Check(scriptResult, checkTasks);
             //Logger.Verbose("created renderTask  ({0})", checkSettings);
         }
 
@@ -715,7 +715,7 @@ namespace Applitools.Selenium.VisualGrid
 
             if (matchLevel == null)
             {
-                checkSettings = checkSettings.MatchLevel(Config_.MatchLevel);
+                //checkSettings = checkSettings.MatchLevel(Config_.MatchLevel);
             }
 
             if (fully == null)
@@ -725,12 +725,12 @@ namespace Applitools.Selenium.VisualGrid
 
             if (sendDom == null)
             {
-                checkSettings = checkSettings.SendDom(Config_.SendDom);
+                //checkSettings = checkSettings.SendDom(Config_.SendDom);
             }
 
             if (useCookies == null)
             {
-                checkSettings = checkSettings.UseDom(Config_.UseCookies);
+                //checkSettings = checkSettings.UseDom(Config_.UseCookies);
             }
 
             List<VisualGridOption> options = new List<VisualGridOption>();
@@ -769,14 +769,14 @@ namespace Applitools.Selenium.VisualGrid
             string domScript = userAgent.IsInternetExplorer ? PROCESS_PAGE_FOR_IE : PROCESS_PAGE;
             string pollingScript = userAgent.IsInternetExplorer ? POLL_RESULT_FOR_IE : POLL_RESULT;
 
-            bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
+            //bool keepOriginalUrls = runner.ServerConnector.GetType().Name.Contains("Mock");
 
             int chunkByteLength = userAgent.IsiOS ? 10 * MB : 256 * MB;
             object arguments = new
             {
                 serializeResources = true,
                 //skipResources = runner.CachedBlobsURLs.Keys,
-                dontFetchResources = config.DisableBrowserFetching || (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies),
+                //dontFetchResources = config.DisableBrowserFetching || (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies),
                 chunkByteLength,
                 //uniqueUrl = "(url, query) => url"
             };
@@ -784,7 +784,7 @@ namespace Applitools.Selenium.VisualGrid
             object pollingArguments = new { chunkByteLength };
 
             string result = EyesSeleniumUtils.RunDomScript(logger, driver, testIds, domScript, arguments, pollingArguments, pollingScript);
-            if (keepOriginalUrls)
+            //if (keepOriginalUrls)
             {
                 Regex removeQueryParameter = new Regex("\\?applitools-iframe=\\d*", RegexOptions.Compiled);
                 result = removeQueryParameter.Replace(result, string.Empty);
@@ -798,9 +798,9 @@ namespace Applitools.Selenium.VisualGrid
             ISeleniumCheckTarget seleniumCheckTarget,
             VisualGridRunner runner, EyesWebDriverTargetLocator switchTo, EyesWebDriver driver, Logger logger)
         {
-            string[] testIds = runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
+            string[] testIds ;//= runner.allEyes_.SelectMany(e => e.GetAllTests().Select(t => t.Key)).ToArray();
 
-            if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
+           // if (seleniumCheckTarget?.GetUseCookies() ?? config.UseCookies)
             {
                 ICookieJar cookieJar = driver.WebDriver.Manage().Cookies;
                 var allCookies = cookieJar?.AllCookies;
@@ -843,9 +843,9 @@ namespace Applitools.Selenium.VisualGrid
                     var activeElementAfterSwitch = switchTo.ActiveElement();
                     if (!activeElementAfterSwitch.Equals(activeElementBeforeSwitch))
                     {
-                        FrameData result = CaptureDomSnapshot_(switchTo, userAgent, config, seleniumCheckTarget, runner, driver, logger, testIds);
-                        frameData.Frames.Add(result);
-                        frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
+                        FrameData result;// = CaptureDomSnapshot_(switchTo, userAgent, config, seleniumCheckTarget, runner, driver, logger, testIds);
+                        //frameData.Frames.Add(result);
+                       // frameData.Cdt[crossFrame.Index].Attributes.Add(new AttributeData("data-applitools-src", result.Url.AbsoluteUri));
                     }
                     else
                     {
@@ -854,8 +854,8 @@ namespace Applitools.Selenium.VisualGrid
                 }
                 catch (Exception ex)
                 {
-                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
-                        new { crossFrame.Selector }, testIds);
+                    //CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                    //    new { crossFrame.Selector }, testIds);
                 }
                 finally
                 {
@@ -879,8 +879,8 @@ namespace Applitools.Selenium.VisualGrid
                 }
                 catch (Exception ex)
                 {
-                    CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
-                        new { frame.Selector }, testIds);
+                    //CommonUtils.LogExceptionStackTrace(logger, Stage.ResourceCollection, StageType.Failed, ex,
+                    //    new { frame.Selector }, testIds);
                 }
                 finally
                 {
@@ -1030,10 +1030,10 @@ namespace Applitools.Selenium.VisualGrid
             {
                 if (!((IRunningTest)runningTest).IsCompleted)
                 {
-                    if (runner_.GetError() != null)
-                    {
-                        throw new EyesException("Execution crashed", runner_.GetError());
-                    }
+                    //if (runner_.GetError() != null)
+                    //{
+                    //    throw new EyesException("Execution crashed", runner_.GetError());
+                    //}
                     return null;
                 }
 

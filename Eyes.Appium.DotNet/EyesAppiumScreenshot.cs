@@ -47,10 +47,10 @@ namespace Applitools
             logger_.Verbose("GetSubScreenshot([{0}], {1})", subregion, throwIfClipped);
 
             ArgumentGuard.NotNull(subregion, nameof(subregion));
-            if (eyes_.CutProvider != null && !(eyes_.CutProvider is NullCutProvider))
-            {
-                subregion = new Region(Point.Empty, workingArea_.Size);
-            }
+            //if (eyes_.CutProvider != null && !(eyes_.CutProvider is NullCutProvider))
+            //{
+            //    subregion = new Region(Point.Empty, workingArea_.Size);
+            //}
             Bitmap subScreenshotImage = BasicImageUtils.Crop(Image, subregion.ToRectangle());
             DisposeImage();
 

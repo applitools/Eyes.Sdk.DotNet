@@ -45,11 +45,11 @@ namespace Applitools.Tests.Utils
             if (!RUNS_ON_CI)
             {
                 string path = InitLogPath(testName);
-                eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
-                {
-                    Path = path,
-                    Prefix = testName + "_"
-                };
+                //eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
+                //{
+                //    Path = path,
+                //    Prefix = testName + "_"
+                //};
                 logHandler = new FileLogHandler(Path.Combine(path, testName + ".log"), true, true);
             }
             else
@@ -59,7 +59,7 @@ namespace Applitools.Tests.Utils
 
             if (logHandler != null)
             {
-                eyes.SetLogHandler(logHandler);
+                //eyes.SetLogHandler(logHandler);
             }
         }
 

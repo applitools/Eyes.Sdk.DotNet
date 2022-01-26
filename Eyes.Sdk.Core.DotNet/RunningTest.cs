@@ -16,10 +16,10 @@ namespace Applitools
 
         public static readonly int PARALLEL_STEPS_LIMIT = 1;
 
-        protected internal override void OpenCompleted(RunningSession result)
+        protected internal  void OpenCompleted(RunningSession result)
         {
             inOpenProcess_ = false;
-            base.OpenCompleted(result);
+           // base.OpenCompleted(result);
         }
 
         internal void OpenFailed(Exception e)
@@ -35,23 +35,23 @@ namespace Applitools
 
         protected internal abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
 
-        protected RunningTest(ClassicRunner runner) : base(runner)
+        protected RunningTest(ClassicRunner runner)// : base(runner)
         {
             BrowserInfo = null;
         }
 
         protected RunningTest(RenderBrowserInfo browserInfo, Logger logger, IServerConnector serverConnector)
-            : base(logger, serverConnector)
+            //: base(logger, serverConnector)
         {
             BrowserInfo = browserInfo;
         }
 
         protected RunningTest(ClassicRunner runner, IServerConnectorFactory serverConnectorFactory, Logger logger = null)
-            : base(serverConnectorFactory, runner, logger)
+            //: base(serverConnectorFactory, runner, logger)
         {
         }
 
-        protected override string GetInferredEnvironment()
+        protected  string GetInferredEnvironment()
         {
             return null;
         }
@@ -66,6 +66,7 @@ namespace Applitools
         public bool IsCloseTaskIssued { get => isAbortIssued_ != null; }
 
         private RenderBrowserInfo browserInfo_;
+        private TestResultContainer testResultContainer_;
 
         public RenderBrowserInfo BrowserInfo
         {
@@ -81,15 +82,21 @@ namespace Applitools
             }
         }
 
-        protected internal override SessionStartInfo PrepareForOpen()
+        protected internal SessionStartInfo PrepareForOpen()
         {
             inOpenProcess_ = true;
-            return base.PrepareForOpen();
+            throw new NotImplementedException();
         }
 
         public bool IsTestAborted => isAbortIssued_ ?? false;
 
         bool IRunningTest.IsCompleted => GetIsCompleted();
+        public string TestId { get; set; }
+
+        private bool GetIsCompleted()
+        {
+            throw new NotImplementedException();
+        }
 
         protected internal void IssueClose()
         {
@@ -126,12 +133,17 @@ namespace Applitools
                 }
                 catch (Exception e)
                 {
-                    CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e, TestId);
+                    //CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e, TestId);
                     exception_ = e;
                 }
             }
 
             testResultContainer_ = new TestResultContainer(testResults, BrowserInfo, exception_);
+        }
+
+        private void LogSessionResultsAndThrowException(bool b, TestResults testResults)
+        {
+            throw new NotImplementedException();
         }
 
         protected internal void CloseFailed(Exception e)
@@ -145,22 +157,22 @@ namespace Applitools
             testResultContainer_ = new TestResultContainer(null, BrowserInfo, exception_);
         }
 
-        protected internal override SessionStopInfo PrepareStopSession(bool isAborted)
+        protected internal SessionStopInfo PrepareStopSession(bool isAborted)
         {
             startedCloseProcess_ = true;
-            return base.PrepareStopSession(isAborted);
+
+            throw new NotImplementedException();
         }
 
         protected internal void SetTestInExceptionMode(Exception e)
         {
-            CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e, TestId);
-            if (IsTestAborted)
-            {
-                return;
-            }
-            IssueAbort(e, true);
+            throw new NotImplementedException();
         }
 
         public TestResultContainer GetTestResultContainer() { return testResultContainer_; }
+        public void CloseBatch(string batchId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

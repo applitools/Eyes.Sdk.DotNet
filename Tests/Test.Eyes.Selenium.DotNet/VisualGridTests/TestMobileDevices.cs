@@ -17,15 +17,15 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             EyesRunner runner = new VisualGridRunner(10, logHandler);
             Eyes eyes = new Eyes(runner);
 
-            Configuration config = eyes.GetConfiguration();
-            config.AddBrowser(new DesktopBrowserInfo(new RectangleSize(700, 460), BrowserType.CHROME));
-            config.AddDeviceEmulation(DeviceName.Galaxy_S3);
-            config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_11_Pro));
-            config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_XR));
-            config.SetBatch(TestDataProvider.BatchInfo);
-            config.SetAppName("Visual Grid DotNet Tests");
-            config.SetTestName("UFG Mobile Device No Result");
-            eyes.SetConfiguration(config);
+            //Configuration config = eyes.GetConfiguration();
+            //config.AddBrowser(new DesktopBrowserInfo(new RectangleSize(700, 460), BrowserType.CHROME));
+            //config.AddDeviceEmulation(DeviceName.Galaxy_S3);
+            //config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_11_Pro));
+            //config.AddBrowser(new IosDeviceInfo(IosDeviceName.iPhone_XR));
+            //config.SetBatch(TestDataProvider.BatchInfo);
+            //config.SetAppName("Visual Grid DotNet Tests");
+            //config.SetTestName("UFG Mobile Device No Result");
+            //eyes.SetConfiguration(config);
 
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
             driver.Url = "https://demo.applitools.com";

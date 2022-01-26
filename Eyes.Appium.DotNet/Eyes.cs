@@ -33,7 +33,8 @@ namespace Applitools.Appium
 
         internal double GetScaleRatioForRegions()
         {
-            return getPlatformName_.Invoke(driver_, null).Equals("iOS") ? 1 : ScaleRatio;
+            //return getPlatformName_.Invoke(driver_, null).Equals("iOS") ? 1 : ScaleRatio;
+            return 1;
         }
 
         public static Func<IWebDriver, bool> IsLandscapeOrientation = IsLandscapeOrientationImpl_;
@@ -48,7 +49,7 @@ namespace Applitools.Appium
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
         public Eyes(Uri serverUrl)
-            : base(serverUrl)
+            //: base(serverUrl)
         {
             Init_();
         }
@@ -71,14 +72,14 @@ namespace Applitools.Appium
         #region Configuration
         private Configuration configuration_ = new Configuration();
 
-        protected override Configuration Configuration { get => configuration_; }
+        protected Configuration Configuration { get => configuration_; }
 
         public Configuration GetConfiguration()
         {
             return new Configuration(configuration_);
         }
 
-        protected override void SetConfigImpl(IConfiguration configuration)
+        protected void SetConfigImpl(IConfiguration configuration)
         {
             configuration_ = new Configuration(configuration);
         }
@@ -86,7 +87,7 @@ namespace Applitools.Appium
 
         #region Properties
 
-        protected override bool ViewportSizeRequired => false;
+        protected bool ViewportSizeRequired => false;
 
         public Rectangle CachedViewport { get; private set; }
 
@@ -124,8 +125,8 @@ namespace Applitools.Appium
 
             imageProvider_ = new TakesScreenshotImageProvider(Logger, driver_, this);
             Region viewport = CachedViewport;
-            Size viewportSize = viewport.Scale(ScaleRatio).Size;
-            OpenBase(appName, testName, viewportSize);
+            //Size viewportSize = viewport.Scale(ScaleRatio).Size;
+            //OpenBase(appName, testName, viewportSize);
 
             return driver_;
         }
@@ -138,7 +139,7 @@ namespace Applitools.Appium
             if (CachedSessionDetails?.TryGetValue("pixelRatio", out pixelRatioObj) == true)
             {
                 Logger.Verbose("setting pixel ratio to {0}", pixelRatioObj);
-                ScaleRatio = 1 / Convert.ToDouble(pixelRatioObj);
+                //ScaleRatio = 1 / Convert.ToDouble(pixelRatioObj);
             }
             if (CachedSessionDetails?.TryGetValue("viewportRect", out viewportRectObj) == true)
             {
@@ -188,11 +189,11 @@ namespace Applitools.Appium
                 string app;
                 try { app = driver_.Capabilities.GetCapability(MobileCapabilityType.App)?.ToString() ?? driver_.Url; }
                 catch { app = null; }
-                CheckWindowBase(targetRegion, checkSettingsInternal, source: app);
+                //CheckWindowBase(targetRegion, checkSettingsInternal, source: app);
             }
             catch (Exception ex)
             {
-                CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
+                //CommonUtils.LogExceptionStackTrace(Logger, Stage.Check, ex, TestId);
                 throw;
             }
         }
@@ -221,12 +222,12 @@ namespace Applitools.Appium
                     Logger.Verbose("Scaling {0} by {1}", targetRect, scaleRatio);
                     targetRect = targetRect.Scale(scaleRatio);
                     Region physicalViewport = CachedViewport;
-                    Region logicalViewport = physicalViewport.Scale(ScaleRatio);
-                    if (!targetRect.Contains(logicalViewport))
-                    {
-                        targetRect = targetRect.Offset(-logicalViewport.Location.X, -logicalViewport.Location.Y);
-                    }
-                    targetRect.Intersect(new Region(Point.Empty, logicalViewport.Size));
+                    ////Region logicalViewport = physicalViewport.Scale(ScaleRatio);
+                    //if (!targetRect.Contains(logicalViewport))
+                    //{
+                    //    targetRect = targetRect.Offset(-logicalViewport.Location.X, -logicalViewport.Location.Y);
+                    //}
+                    //targetRect.Intersect(new Region(Point.Empty, logicalViewport.Size));
                     return targetRect.Rectangle;
                 }
             }
@@ -299,7 +300,7 @@ namespace Applitools.Appium
             return false;
         }
 
-        protected override Size GetViewportSize()
+        protected Size GetViewportSize()
         {
             RectangleSize viewportSize = Configuration.ViewportSize;
             if (viewportSize == null || viewportSize.IsEmpty())
@@ -319,48 +320,45 @@ namespace Applitools.Appium
             }
         }
 
-        protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
+        protected EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
         {
-            Bitmap screenshotImage = imageProvider_.GetImage();
-            DebugScreenshotProvider.Save(screenshotImage, "original");
-            Region updatedRegion = CachedViewport;
-            updatedRegion = updatedRegion.Scale(ScaleRatio);
-            if (!(CutProvider is NullCutProvider))
-            {
-                updatedRegion = CutProvider.ToRectangle(screenshotImage.Size);
-                Bitmap croppedScreenshotImage = CutProvider.Cut(screenshotImage);
-                DebugScreenshotProvider.Save(croppedScreenshotImage, "cropped");
-                screenshotImage.Dispose();
-                screenshotImage = croppedScreenshotImage;
-            }
-            EyesAppiumScreenshot result = new EyesAppiumScreenshot(Logger, screenshotImage, updatedRegion, this);
-            if (targetRegion != null && !targetRegion.Value.IsEmpty)
-            {
-                result = (EyesAppiumScreenshot)result.GetSubScreenshot(targetRegion.Value, false);
-            }
-            return result;
+            //Bitmap screenshotImage = imageProvider_.GetImage();
+            //DebugScreenshotProvider.Save(screenshotImage, "original");
+            //Region updatedRegion = CachedViewport;
+            //updatedRegion = updatedRegion.Scale(ScaleRatio);
+            //if (!(CutProvider is NullCutProvider))
+            //{
+            //    updatedRegion = CutProvider.ToRectangle(screenshotImage.Size);
+            //    Bitmap croppedScreenshotImage = CutProvider.Cut(screenshotImage);
+            //    DebugScreenshotProvider.Save(croppedScreenshotImage, "cropped");
+            //    screenshotImage.Dispose();
+            //    screenshotImage = croppedScreenshotImage;
+            //}
+            //EyesAppiumScreenshot result = new EyesAppiumScreenshot(Logger, screenshotImage, updatedRegion, this);
+            //if (targetRegion != null && !targetRegion.Value.IsEmpty)
+            //{
+            //    result = (EyesAppiumScreenshot)result.GetSubScreenshot(targetRegion.Value, false);
+            //}
+            return null;
         }
 
-        protected override void SetViewportSize(RectangleSize size)
+        protected void SetViewportSize(RectangleSize size)
         {
             Configuration.SetViewportSize(size);
         }
 
-        protected override string GetInferredEnvironment()
+        protected string GetInferredEnvironment()
         {
             return null;
         }
 
-        protected override object GetEnvironment_()
+        protected object GetEnvironment_()
         {
-            AppEnvironment appEnv = (AppEnvironment)base.GetEnvironment_();
-            string deviceName = (string)driver_.Capabilities.GetCapability(MobileCapabilityType.DeviceName);
-            appEnv.DeviceInfo = deviceName;
-            appEnv.DisplaySize = viewportSize_ ?? driver_.Manage().Window.Size;
-            return appEnv;
+
+            return null;
         }
 
-        protected override string GetTitle()
+        protected string GetTitle()
         {
             return string.Empty;
         }

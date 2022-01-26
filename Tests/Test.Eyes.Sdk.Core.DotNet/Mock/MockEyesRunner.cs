@@ -1,5 +1,6 @@
 ﻿using Applitools.Tests.Utils;
 using System.Collections.Generic;
+using Applitools.Selenium.Commands.Requests;
 
 namespace Applitools.Tests
 {
@@ -10,12 +11,17 @@ namespace Applitools.Tests
 
         }
 
+        protected override ManagerConfig InitConfig()
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override IEnumerable<IEyesBase> GetAllEyes()
         {
             return null;
         }
 
-        protected override TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)
+        protected  TestResultsSummary GetAllTestResultsImpl(bool shouldThrowException)
         {
             return null;
         }

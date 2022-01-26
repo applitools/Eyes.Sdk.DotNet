@@ -47,7 +47,7 @@ namespace Applitools.Selenium
         internal static FrameState GetCurrentFrameState(EyesWebDriver driver, IWebElement scrolledElement)
         {
             IJavaScriptExecutor jsExecutor = driver;
-            Logger logger = driver.Eyes.Logger;
+            Logger logger = new Logger() ;//= driver.Eyes.Logger;
             UserAgent userAgent = UserAgent.ParseUserAgentString(driver.GetUserAgent());
 
             IPositionProvider cssPositionProvider = driver.Eyes.GetPositionProvider(

@@ -50,31 +50,31 @@ namespace Applitools.Selenium
 
             UpdateScreenshotType_(screenshotType, image);
 
-            IPositionProvider positionProvider;
-            if (frameLocationInScreenshot == null || frameLocationInScreenshot.Value.IsEmpty)
-            {
-                IWebElement frameScrollRoot = driver.Eyes.GetCurrentFrameScrollRootElement();
-                positionProvider = driver.Eyes.GetPositionProvider(logger, driver.Eyes.StitchMode,
-                    driver, frameScrollRoot);
-                logger_.Verbose("position provider: using the current frame scroll root element's position provider: {0}", positionProvider);
-            }
-            else if (driver.Eyes.CurrentFramePositionProvider != null)
-            {
-                positionProvider = driver.Eyes.CurrentFramePositionProvider;
-                logger_.Verbose("position provider: using CurrentFramePositionProvider: {0}", positionProvider);
-            }
-            else
-            {
-                positionProvider = driver.Eyes.PositionProvider;
-                logger_.Verbose("position provider: using PositionProvider: {0}", positionProvider);
-            }
+            //IPositionProvider positionProvider;
+            //if (frameLocationInScreenshot == null || frameLocationInScreenshot.Value.IsEmpty)
+            //{
+            //    IWebElement frameScrollRoot = driver.Eyes.GetCurrentFrameScrollRootElement();
+            //    positionProvider = driver.Eyes.GetPositionProvider(logger, driver.Eyes.StitchMode,
+            //        driver, frameScrollRoot);
+            //    logger_.Verbose("position provider: using the current frame scroll root element's position provider: {0}", positionProvider);
+            //}
+            //else if (driver.Eyes.CurrentFramePositionProvider != null)
+            //{
+            //    positionProvider = driver.Eyes.CurrentFramePositionProvider;
+            //    logger_.Verbose("position provider: using CurrentFramePositionProvider: {0}", positionProvider);
+            //}
+            //else
+            //{
+            //    positionProvider = driver.Eyes.PositionProvider;
+            //    logger_.Verbose("position provider: using PositionProvider: {0}", positionProvider);
+            //}
 
             //IPositionProvider positionProvider = driver.Eyes.CurrentFramePositionProvider ?? driver.Eyes.PositionProvider;
 
             frameChain_ = driver_.GetFrameChain();
             logger_.Verbose("got frame chain. getting frame size...");
-            Size frameSize = GetFrameSize_(positionProvider);
-            UpdateCurrentScrollPosition_(positionProvider);
+            //Size frameSize = GetFrameSize_(positionProvider);
+            //UpdateCurrentScrollPosition_(positionProvider);
             UpdateFrameLocationInScreenshot_(frameLocationInScreenshot);
             Size frameContentSize = GetFrameContentSize();
 

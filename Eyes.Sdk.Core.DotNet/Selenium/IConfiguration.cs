@@ -8,50 +8,7 @@ namespace Applitools.Selenium
 {
     public interface IConfiguration : Applitools.IConfiguration
     {
-        bool? IsForceFullPageScreenshot { get; set; }
 
-        int WaitBeforeScreenshots { get; set; }
-
-        StitchModes StitchMode { get; set; }
-
-        bool HideScrollbars { get; set; }
-
-        bool HideCaret { get; set; }
-
-        bool DisableBrowserFetching { get; set; }
-
-        List<RenderBrowserInfo> GetBrowsersInfo();
-
-        VisualGridOption[] VisualGridOptions { get; set; }
-
-        bool UseCookies { get; set; }
-
-        IConfiguration SetWaitBeforeScreenshots(int waitBeforeScreenshots);
-
-        IConfiguration SetStitchMode(StitchModes stitchMode);
-
-        IConfiguration SetHideScrollbars(bool hideScreenshot);
-
-        IConfiguration SetHideCaret(bool hideCaret);
-
-        IConfiguration SetDisableBrowserFetching(bool disableBrowserFetching);
-
-        IConfiguration SetForceFullPageScreenshot(bool forceFullPageScreenshot);
-
-
-        IConfiguration AddBrowsers(params IRenderBrowserInfo[] browsersInfo);
-        IConfiguration AddBrowser(DesktopBrowserInfo browserInfo);
-        IConfiguration AddBrowser(ChromeEmulationInfo emulationInfo);
-        IConfiguration AddBrowser(IosDeviceInfo deviceInfo);
-        IConfiguration AddBrowser(int width, int height, BrowserType browserType, string baselineEnvName = null);
-
-        IConfiguration AddDeviceEmulation(DeviceName deviceName,
-            ScreenOrientation screenOrientation = ScreenOrientation.Portrait,
-            string baselineEnvName = null);
-
-        IConfiguration SetVisualGridOptions(params VisualGridOption[] options);
-
-        IConfiguration SetUseCookies(bool useCookies);
         #region override setters
 
         new IConfiguration SetAgentId(string value);

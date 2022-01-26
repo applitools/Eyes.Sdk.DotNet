@@ -50,13 +50,13 @@ namespace Applitools.Selenium.Capture
             {
                 //Damn IE driver returns full page screenshot even when not asked to!
                 logger_.Verbose("seems IE returned full page screenshot rather than only the viewport.");
-                eyes_.DebugScreenshotProvider.Save(image, "IE");
-                if (!eyes_.IsCutProviderExplicitlySet)
-                {
-                    Bitmap croppedImage = BasicImageUtils.Crop(image, new Rectangle(scaledLoc, viewportSize));
-                    image.Dispose();
-                    image = croppedImage;
-                }
+                //eyes_.DebugScreenshotProvider.Save(image, "IE");
+                //if (!eyes_.IsCutProviderExplicitlySet)
+                //{
+                //    Bitmap croppedImage = BasicImageUtils.Crop(image, new Rectangle(scaledLoc, viewportSize));
+                //    image.Dispose();
+                //    image = croppedImage;
+                //}
             }
 
             positionProvider?.SetPosition(loc);

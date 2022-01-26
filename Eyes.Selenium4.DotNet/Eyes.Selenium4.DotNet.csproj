@@ -27,6 +27,12 @@ To learn more, visit https://applitools.com/ .</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UniversalSdk\Commands\**" />
+    <EmbeddedResource Remove="UniversalSdk\Commands\**" />
+    <None Remove="UniversalSdk\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPoll.js" />
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPollForIE.js" />
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\pollResult.js" />

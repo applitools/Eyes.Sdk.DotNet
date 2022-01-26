@@ -22,7 +22,7 @@ namespace Applitools.Selenium
 
         internal void TryHideScrollbars(bool stitchContent, IWebElement scrollRootElement)
         {
-            if (configuration_.HideScrollbars)
+            //if (configuration_.HideScrollbars)
             {
                 scrollRootElement_ = scrollRootElement;
                 frameChain_ = driver_.GetFrameChain().Clone();
@@ -50,7 +50,7 @@ namespace Applitools.Selenium
 
                 logger_.Verbose("done hiding scrollbars.");
             }
-            else
+            //else
             {
                 logger_.Verbose("no need to hide scrollbars.");
             }
@@ -76,7 +76,7 @@ namespace Applitools.Selenium
 
         internal void TryRestoreScrollbars()
         {
-            if (configuration_.HideScrollbars)
+            //if (configuration_.HideScrollbars)
             {
                 ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(frameChain_);
                 FrameChain fc = frameChain_.Clone();
@@ -100,7 +100,7 @@ namespace Applitools.Selenium
                 ((EyesWebDriverTargetLocator)driver_.SwitchTo()).Frames(frameChain_);
                 logger_.Verbose("done restoring scrollbars.");
             }
-            else
+            //else
             {
                 logger_.Verbose("no need to restore scrollbars.");
             }

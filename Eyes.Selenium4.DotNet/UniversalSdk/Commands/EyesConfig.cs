@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Applitools;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
@@ -158,19 +157,28 @@ namespace Applitools.Selenium.Commands
             BaselineEnvName = config.BaselineEnvName;
             Batch = config.Batch;
             BranchName = config.BranchName;
+            ParentBranchName = config.ParentBranchName;
             DefaultMatchSettings = config.DefaultMatchSettings;
+            DisableBrowserFetching = config.DisableBrowserFetching;
             DisplayName = config.TestName;
             HostOs = config.HostOS;
             ServerUrl = config.ServerUrl;
             TestName = config.TestName;
             HostAppInfo = config.HostApp;
-            MatchTimeout = (int)config.MatchTimeout.TotalMilliseconds;
+            MatchTimeout = config.MatchTimeout.HasValue ? (int)config.MatchTimeout.Value.TotalMilliseconds : (int?)null;
             Proxy = config.Proxy;
             SaveDiffs = config.SaveDiffs;
             SaveFailedTests = config.SaveFailedTests;
-            SaveNewTests = config.SaveDiffs;
+            SaveNewTests = config.SaveNewTests;
             StitchOverlap = config.StitchOverlap;
             ViewportSize = config.ViewportSize;
+            HideScrollbars = config.HideScrollbars;
+            HideCaret = config.HideCaret;
+            EnvironmentName = config.EnvironmentName;
+            StitchMode = config.StitchMode;
+            WaitBeforeScreenshots = config.WaitBeforeScreenshots;
+            SendDom = config.SendDom;
+            // DontCloseBatches
         }
     }
 }

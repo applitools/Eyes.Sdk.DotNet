@@ -60,31 +60,37 @@ namespace Applitools
         /// <summary>
         /// An array of ignore regions.
         /// </summary>
+        [JsonProperty("IgnoreRegions")]
         public IMutableRegion[] Ignore { get; set; } = new IMutableRegion[0];
 
         /// <summary>
         /// An array of strict regions.
         /// </summary>
+        [JsonProperty("StrictRegions")]
         public IMutableRegion[] Strict { get; set; } = new IMutableRegion[0];
 
         /// <summary>
         /// An array of content regions.
         /// </summary>
+        [JsonProperty("ContentRegions")]
         public IMutableRegion[] Content { get; set; } = new IMutableRegion[0];
 
         /// <summary>
         /// An array of layout regions.
         /// </summary>
+        [JsonProperty("LayoutRegions")]
         public IMutableRegion[] Layout { get; set; } = new IMutableRegion[0];
 
         /// <summary>
         /// An array of "floating" regions.
         /// </summary>
+        [JsonProperty("FloatingRegions")]
         public FloatingMatchSettings[] Floating { get; set; } = new FloatingMatchSettings[0];
 
         /// <summary>
         /// An array of accessibility regions.
         /// </summary>
+        [JsonProperty("AccessibilityRegions")]
         public AccessibilityRegionByRectangle[] Accessibility { get; set; } = new AccessibilityRegionByRectangle[0];
 
         public AccessibilitySettings AccessibilitySettings { get; set; }
@@ -98,9 +104,9 @@ namespace Applitools
         /// <summary>
         /// Whether or not to use the page DOM when computing the layout of the page.
         /// </summary>
-        public bool UseDom { get; set; }
-        public bool EnablePatterns { get; set; }
-        public bool IgnoreDisplacements { get; set; }
+        public bool? UseDom { get; set; }
+        public bool? EnablePatterns { get; set; }
+        public bool? IgnoreDisplacements { get; set; }
 
         public bool Equals(ImageMatchSettings other)
         {

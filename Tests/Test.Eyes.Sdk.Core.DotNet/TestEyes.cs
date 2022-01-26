@@ -12,34 +12,34 @@ namespace Applitools
         {
         }
 
-        protected override Configuration Configuration => (Configuration)configuration_;
+        protected  Configuration Configuration => (Configuration)configuration_;
         public IConfiguration GetConfiguration() => configuration_;
-        protected override void SetConfigImpl(IConfiguration configuration)
+        protected  void SetConfigImpl(IConfiguration configuration)
         {
             configuration_ = new Configuration(configuration);
         }
 
-        protected override string GetInferredEnvironment()
+        protected  string GetInferredEnvironment()
         {
             return "TestEyes";
         }
 
-        protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
+        protected  EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
         {
             return new TestEyesScreenshot();
         }
 
-        protected override string GetTitle()
+        protected  string GetTitle()
         {
             return "TestEyes_Title";
         }
 
-        protected override Size GetViewportSize()
+        protected  Size GetViewportSize()
         {
             return new Size(100, 100);
         }
 
-        protected override void SetViewportSize(RectangleSize size)
+        protected  void SetViewportSize(RectangleSize size)
         {
         }
     }

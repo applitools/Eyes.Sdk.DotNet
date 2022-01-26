@@ -46,7 +46,6 @@ namespace Applitools
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
         protected EyesWindowsBase(Uri serverUrl)
-            : base(serverUrl)
         {
         }
 
@@ -64,14 +63,14 @@ namespace Applitools
 
         private Configuration configuration_ = new Configuration();
 
-        protected override Configuration Configuration { get => configuration_; }
+        protected Configuration Configuration { get => configuration_; }
 
         public Configuration GetConfiguration()
         {
             return new Configuration(configuration_);
         }
 
-        protected override void SetConfigImpl(IConfiguration configuration)
+        protected void SetConfigImpl(IConfiguration configuration)
         {
             configuration_ = new Configuration(configuration);
         }
@@ -105,10 +104,10 @@ namespace Applitools
                 // and not ignored.
                 guiCapturer_.StopMonitoring();
                 guiCapturer_.StartMonitoring(false);
-                Logger.Verbose("AUT Process id set to {0}".Fmt(value));
+                //Logger.Verbose("AUT Process id set to {0}".Fmt(value));
             }
         }
-        protected override bool ViewportSizeRequired => false;
+        protected  bool ViewportSizeRequired => false;
 
         #endregion
 
@@ -116,7 +115,7 @@ namespace Applitools
 
         public WindowCaptureInfo[] GetWindows(params string[] classNames)
         {
-            return GetWindows(Logger, processId_, classNames);
+            return GetWindows(null, processId_, classNames);
         }
 
         internal static WindowCaptureInfo[] GetWindows(Logger logger, int processId, params string[] classNames)
@@ -188,7 +187,7 @@ namespace Applitools
 
             Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
 
-            CheckWindowBase(targetRegion, checkSettings.WithName(name));
+            //CheckWindowBase(targetRegion, checkSettings.WithName(name));
         }
 
         #region Protected
@@ -214,7 +213,7 @@ namespace Applitools
                 captureApi_.Dispose();
             }
 
-            captureApi_ = new WindowsLowLevelCaptureApi(Logger);
+            captureApi_ = new WindowsLowLevelCaptureApi(null);
 
             title_ = null;
             lastScreenshotBounds_ = Rectangle.Empty;
@@ -224,12 +223,12 @@ namespace Applitools
                 guiCapturer_.Dispose();
             }
 
-            guiCapturer_ = new GuiCapturer(Logger, captureApi_);
+            guiCapturer_ = new GuiCapturer(null, captureApi_);
             guiCapturer_.MonitorHost = true;
 
             processId_ = processId; // this is just a member...
 
-            OpenBase(appName, testName, viewportSize);
+            //OpenBase(appName, testName, viewportSize);
 
             ProcessId = processId; // and this is a property that has a side effect that it also starts monitoring.
             guiCapturer_.StartMonitoring(false);
@@ -247,8 +246,8 @@ namespace Applitools
             var topBounds = topWindow.Client;
             if (!topBounds.Contains(control))
             {
-                Logger.Verbose("ScreenToClient(): {0} is not contained in last screenshot!"
-                    .Fmt(GeometryUtils.ToString(control)));
+                //Logger.Verbose("ScreenToClient(): {0} is not contained in last screenshot!"
+                //    .Fmt(GeometryUtils.ToString(control)));
             }
 
             control.Intersect(topBounds);
@@ -270,7 +269,7 @@ namespace Applitools
         {
             if (!lastScreenshotBounds_.Contains(onScreen))
             {
-                Logger.Verbose("ScreenToLastScreenshot(): {0} is not contained in last screenshot!", onScreen);
+                //Logger.Verbose("ScreenToLastScreenshot(): {0} is not contained in last screenshot!", onScreen);
                 onScreenshot = Point.Empty;
                 return false;
             }
@@ -289,9 +288,9 @@ namespace Applitools
 
             if (!lastScreenshotBounds_.Contains(control))
             {
-                Logger.Verbose(
-                    "ScreenToLastScreenshot(): {0} is not contained in last screenshot!"
-                    .Fmt(GeometryUtils.ToString(control)));
+                //Logger.Verbose(
+                //    "ScreenToLastScreenshot(): {0} is not contained in last screenshot!"
+                //    .Fmt(GeometryUtils.ToString(control)));
             }
 
             control.Intersect(lastScreenshotBounds_);
@@ -329,21 +328,21 @@ namespace Applitools
                 return true;
             }
 
-            Logger.Verbose("IsRelevantControl(): [{0}] is irrelevant".Fmt(control));
+            //Logger.Verbose("IsRelevantControl(): [{0}] is irrelevant".Fmt(control));
             return false;
         }
 
-        protected override Size GetViewportSize()
+        protected Size GetViewportSize()
         {
             //return GetTopWindow_().Client.Size;
             return Size.Empty;
         }
 
-        protected override void SetViewportSize(RectangleSize size)
+        protected void SetViewportSize(RectangleSize size)
         {
             ArgumentGuard.NotNull(size, nameof(size));
 
-            Logger.Verbose("SetViewportSize(" + size + ")");
+            //Logger.Verbose("SetViewportSize(" + size + ")");
 
             var topWindow = GetTopWindow_();
             var current = topWindow.Client.Size;
@@ -352,7 +351,7 @@ namespace Applitools
                 return;
             }
 
-            if (!WindowsGuiUtils.GetWindowRectangles(Logger, topWindow.Handle, out SafeNativeMethods.RECT wr, out SafeNativeMethods.RECT cr))
+            if (!WindowsGuiUtils.GetWindowRectangles(null, topWindow.Handle, out SafeNativeMethods.RECT wr, out SafeNativeMethods.RECT cr))
             {
                 throw new EyesException("Failed to obtain window size!");
             }
@@ -387,13 +386,13 @@ namespace Applitools
             "Microsoft.Globalization",
             "CA1308:NormalizeStringsToUppercase",
             Justification = "We want the process name to be in lowercase")]
-        protected override string GetInferredEnvironment()
+        protected string GetInferredEnvironment()
         {
-            var processName = SystemUtils.GetProcessName(processId_, Logger) ?? "-";
+            var processName = SystemUtils.GetProcessName(processId_, null) ?? "-";
             return $"proc:{processName};{OSNames.GetNameAndVersion(Environment.OSVersion)}";
         }
 
-        protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
+        protected EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
         {
             IntPtr hWnd = (requestedWindowHandle != IntPtr.Zero) ? requestedWindowHandle : GetTopWindow_().Handle;
             Bitmap screenshot = null;
@@ -414,12 +413,12 @@ namespace Applitools
             }
         }
 
-        protected override string GetTitle()
+        protected string GetTitle()
         {
             return title_;
         }
 
-        protected override void CloseOrAbort(bool aborted)
+        protected void CloseOrAbort(bool aborted)
         {
             if (guiCapturer_ != null)
             {

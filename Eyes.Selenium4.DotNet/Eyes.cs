@@ -1,156 +1,182 @@
 ﻿using Applitools.Utils;
 using Applitools.Utils.Cropping;
-using Applitools.VisualGrid;
-using Applitools.Selenium.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Applitools.Fluent;
 using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Commands;
 using Applitools.Selenium.Commands.Requests;
 using Applitools.Selenium.Commands.Responses;
+using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium.Remote;
 
 namespace Applitools.Selenium
 {
-    public class Eyes : EyesBaseConfig, IEyesBase, ISeleniumConfigurationProvider
+    public class Eyes : EyesBase//, ISeleniumConfigurationProvider//, IEyesBase
     {
-        private Configuration configuration_ = new Configuration();
-        internal static bool moveWindow_ = true;
-        private string apiKey_;
-        private ProxySettings proxy_;
         private Logger logger_;
         private PropertiesCollection properties_;
-        private WebSocketClient socketClient_;
-        private CoreMakeManagerResponse coreMakeManagerResponse_;
         private string managerApplitoolsRefId_;
         private EyesRef eyes_;
-        private string serverUrl_;
         private IWebDriver driver_;
-        private UniversalDriverConfig driverRef_;
-        private EyesConfig eysConfig_;
-        private IDebugScreenshotProvider _debugScreenshotProvider;
 
         // TODO: remove
-        internal EyesRunner runner_ = null;
-        internal readonly ISeleniumEyes activeEyes_;
-        internal SeleniumEyes seleniumEyes_ = null;
-        internal VisualGridEyes visualGridEyes_ = null;
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
+        private readonly EyesRunner runner_;
+        private readonly Uri serverUrl_;
+        private readonly ILogHandler logHandler_;
 
         #region ctors
 
         public Eyes(ILogHandler logHandler = null)
+            : this(new ClassicRunner(), logHandler: logHandler)
         {
-            if (logHandler == null) logHandler = NullLogHandler.Instance;
-            logger_ = new Logger();
-            configuration_.SetForceFullPageScreenshot(false);
-
-            serverUrl_ = "https://eyesapi.applitools.com/";
-            socketClient_ = new WebSocketClient();
-            properties_ = new PropertiesCollection();
         }
 
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
-        : this(logHandler)
+        : this(new ClassicRunner(), serverUrl, logHandler)
         {
             ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
+            serverUrl_ = serverUrl;
         }
 
-        public Eyes(EyesRunner runner)
-            : this(NullLogHandler.Instance)
+        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null)
         {
-        }
+            if (logHandler == null) logHandler = NullLogHandler.Instance;
 
-        internal Eyes(IServerConnectorFactory serverConnectorFactory)
-            : this(NullLogHandler.Instance)
-        {
-        }
+            logger_ = new Logger();
+            logHandler_ = logHandler;
+            properties_ = new PropertiesCollection();
 
-        internal virtual SeleniumEyes CreateSeleniumEyes_(EyesRunner runner)
-        {
-            throw new NotImplementedException();
+            runner_ = runner;
         }
-
-        internal virtual VisualGridEyes CreateVisualGridEyes_(VisualGridRunner visualGridRunner)
-        {
-            throw new NotImplementedException();
-        }
-
 
         #endregion
 
-        public Configuration GetConfiguration()
+        public string ApiKey
         {
-            return new Configuration(configuration_);
+            get => Config.ApiKey;
+            set => Config.SetApiKey(value);
+        }
+        
+        public string TestName
+        {
+            get => Config.TestName;
+            set => Config.SetTestName(value);
+        }
+        
+        public string AppName
+        {
+            get => Config.AppName;
+            set => Config.SetAppName(value);
+        }
+        
+        public RectangleSize ViewportSize
+        {
+            get => Config.ViewportSize;
+            set => Config.SetViewportSize(value);
+        }
+        
+        public string ServerUrl
+        {
+            get => Config.ServerUrl;
+            set => Config.SetServerUrl(value);
         }
 
-        protected override void SetConfigImpl(Applitools.IConfiguration configuration)
+        public ProxySettings Proxy
         {
-            configuration_ = new Configuration((IConfiguration)configuration);
+            get => Config.Proxy;
+            set => Config.SetProxy(value);
         }
-
-        protected internal override Applitools.Configuration Config => configuration_;
-        Configuration ISeleniumConfigurationProvider.GetConfiguration() { return configuration_; }
-
-        //public override string FullAgentId => {}
-
-        public override string ApiKey
-        {
-            get => apiKey_;
-            set => apiKey_ = value;
-        }
-
-        public override string ServerUrl { get => serverUrl_; set { serverUrl_ = value; configuration_.ServerUrl = value; } }
-
-        public override ProxySettings Proxy { get => proxy_; set { proxy_ = value; configuration_.Proxy = value; } }
 
         #region configuration properties
 
-        public StitchModes StitchMode
+        public StitchModes? StitchMode
         {
-            get => configuration_.StitchMode;
-            set => configuration_.SetStitchMode(value);
+            get => Config.StitchMode;
+            set => Config.SetStitchMode(value);
         }
 
-        public int WaitBeforeScreenshots
+        public int? WaitBeforeScreenshots
         {
-            get => configuration_.WaitBeforeScreenshots;
-            set => configuration_.SetWaitBeforeScreenshots(value);
+            get => Config.WaitBeforeScreenshots;
+            set => Config.SetWaitBeforeScreenshots(value);
         }
 
-        public bool ForceFullPageScreenshot
+        public bool? ForceFullPageScreenshot
         {
-            get => configuration_.IsForceFullPageScreenshot ?? false;
-            set => configuration_.SetForceFullPageScreenshot(value);
+            get => Config.IsForceFullPageScreenshot;
+            set => Config.SetForceFullPageScreenshot(value);
         }
 
-        public bool HideScrollbars
+        public bool? HideScrollbars
         {
-            get => configuration_.HideScrollbars;
-            set => configuration_.SetHideScrollbars(value);
+            get => Config.HideScrollbars;
+            set => Config.SetHideScrollbars(value);
         }
 
-        public bool HideCaret
+        public bool? HideCaret
         {
-            get => configuration_.HideCaret;
-            set => configuration_.SetHideCaret(value);
+            get => Config.HideCaret;
+            set => Config.SetHideCaret(value);
+        }
+
+        public bool? SaveNewTests
+        {
+            get => Config.SaveNewTests;
+            set => Config.SetSaveNewTests(value);
+        }
+
+        public string HostOS
+        {
+            get => Config.HostOS;
+            set => Config.SetHostOS(value);
+        }
+
+        public string BranchName
+        {
+            get => Config.BranchName;
+            set => Config.SetBranchName(value);
+        }
+
+        public string ParentBranchName
+        {
+            get => Config.ParentBranchName;
+            set => Config.SetParentBranchName(value);
+        }
+
+        public BatchInfo Batch
+        {
+            get => Config.Batch;
+            set => Config.SetBatch(value);
         }
 
         #endregion
 
-        public bool IsDisabled { get; set; }
-
-        public bool IsOpen { get; private set; }
 
         public Logger Logger => logger_;
+
+        /// <summary>
+        /// Specifies how detected mismatches are reported.
+        /// </summary>
+        [Obsolete]
+        public FailureReports FailureReports { get; set; } = FailureReports.OnClose;
+
+        public Applitools.Configuration GetConfiguration()
+        {
+            return Config;
+        }
+
+        public void SetConfiguration(Applitools.Configuration config)
+        {
+            Config = config;
+        }
 
         public TestResults Abort()
         {
@@ -171,7 +197,6 @@ namespace Applitools.Selenium
 
             var testResults = SendRequest<EyesAbortRequest, TestResults>(request).Result;
 
-            //socketClient_.Close();
             IsOpen = false;
 
             return testResults;
@@ -297,11 +322,17 @@ namespace Applitools.Selenium
             };
 
             var result = SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+
+            if (result?.Payload?.Error != null)
+            {
+                throw new EyesException(result.Payload.Error.Message);
+            }
+
             if (result?.Payload?.Result?.AsExpected == false)
             {
                 if (FailureReports == FailureReports.Immediate)
                 {
-                    throw new TestFailedException();
+                    throw new EyesException();
                 }
             }
         }
@@ -342,7 +373,7 @@ namespace Applitools.Selenium
         /// Thrown if a mismatch is detected and immediate failure reports are enabled.</exception>
         public void CheckWindow(string tag = null, bool? fully = null)
         {
-            Check(tag, Target.Window().Fully(fully ?? configuration_.IsForceFullPageScreenshot ?? false));
+            Check(tag, Target.Window().Fully(fully ?? Config.IsForceFullPageScreenshot ?? false));
         }
 
         /// <summary>
@@ -549,6 +580,7 @@ namespace Applitools.Selenium
             }
 
             var eyesCloseRequest = CreateEyesCloseRequest();
+https://eyes.applitools.com/app/batches/00000251759091008912/00000251759091008630?accountId=xIpd7EWjhU6cjJzDGrMcUw~~
 
             var response = SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
 
@@ -561,7 +593,7 @@ namespace Applitools.Selenium
             {
                 if (testResult.Mismatches > 0 && throwEx)
                 {
-                    throw new TestFailedException(testResult.Url);
+                    throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
                 }
             }
 
@@ -582,9 +614,8 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            SendRequest<EyesCloseRequest>(eyesCloseRequest).GetAwaiter();
+            SendRequest(eyesCloseRequest).GetAwaiter();
 
-            //socketClient_.Close();
             IsOpen = false;
         }
 
@@ -615,44 +646,71 @@ namespace Applitools.Selenium
             properties_.Clear();
         }
 
-        IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
+        /// <summary>
+        /// Sets the OS (e.g., Windows) and application (e.g., Chrome) 
+        /// that host the application under test.
+        /// </summary>
+        /// <param name="hostOS">The name of the OS hosting the application under test or 
+        /// <c>null</c> to auto-detect.</param>
+        /// <param name="hostApp">The name of the application hosting the application under
+        /// test or <c>null</c> to auto-detect.</param>
+        public void SetAppEnvironment(string hostOS, string hostApp)
         {
-            throw new NotImplementedException();
+            if (IsDisabled)
+            {
+                Logger.Verbose("Ignored");
+                return;
+            }
+
+            Logger.Verbose("SetAppEnvironment({0}, {1})", hostOS, hostApp);
+
+            if (string.IsNullOrWhiteSpace(hostOS))
+            {
+                hostOS = null;
+            }
+            else
+            {
+                hostOS = hostOS.Trim();
+            }
+
+            if (string.IsNullOrWhiteSpace(hostApp))
+            {
+                hostApp = null;
+            }
+            else
+            {
+                hostApp = hostApp.Trim();
+            }
+
+            Config.SetHostOS(hostOS);
+            Config.SetHostApp(hostApp);
         }
 
-
+        //IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
+        //{
+        //    throw new NotImplementedException();
+        //}
+        
         private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
         {
-            ApiKey = API_KEY;
+            if (string.IsNullOrEmpty(ApiKey))
+            {
+                ApiKey = API_KEY;
+            }
             TestName = testName;
             AppName = appName;
             ViewportSize = viewportSize;
             driver_ = driver;
-
-            UniversalSdkNativeLoader.Start();
-
-            var url = GetSocketUrl(21077);
-            socketClient_.ConnectAsync(url).GetAwaiter().GetResult();
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
                 return driver;
             }
-
-            var makeSdk = CreateCoreMakeSdk();
-            var makeSdkJson = ToJson(makeSdk);
-
-            socketClient_.SendData(makeSdkJson);
-
-            var coreMakeManager = CreateCoreMakeManager();
-
-            coreMakeManagerResponse_ = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).Result;
-            managerApplitoolsRefId_ = coreMakeManagerResponse_.Payload.Result.ApplitoolsRefId;
+            
+            managerApplitoolsRefId_ = runner_.GetCoreMakeManager();
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
-            driverRef_ = eyesManagerOpenEyes.Payload.Driver;
-            eysConfig_ = eyesManagerOpenEyes.Payload.Config;
 
             var openEyesResponsePayload = SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
             eyes_ = openEyesResponsePayload.Result;
@@ -699,6 +757,7 @@ namespace Applitools.Selenium
                 Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettings),
                 Fully = checkSettingsInternal.GetStitchContent(),
+                VariationGroupId = checkSettingsInternal.GetVariationGroupId(),
                 Frames = GetFrames(checkSettings),
                 ScrollRootElement = GetScrollRootElement(checkSettings),
                 IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
@@ -715,7 +774,7 @@ namespace Applitools.Selenium
         private SelectorRegion GetScrollRootElement(SeleniumCheckSettings checkSettings)
         {
             var root = ((IScrollRootElementContainer) checkSettings).GetScrollRootSelector();
-
+            
             if (root != null)
             {
                 return new SelectorRegion
@@ -823,49 +882,6 @@ namespace Applitools.Selenium
             return json;
         }
 
-        private string GetSocketUrl(int port)
-        {
-            return $"ws://localhost:{port}/eyes";
-        }
-
-        private EyesManageCloseAllEyesRequest CreateEyesManageCloseAllEyes()
-        {
-            var closeAllEyes = new EyesManageCloseAllEyesRequest
-            {
-                Payload = new EyesManageCloseAllEyesRequestPayload
-                {
-                    Manager = new ManagerRef
-                    {
-                        ApplitoolsRefId = managerApplitoolsRefId_
-                    }
-                }
-            };
-
-            return closeAllEyes;
-        }
-
-        private CoreMakeSdkRequest CreateCoreMakeSdk()
-        {
-            var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("name", "netSDK");
-            result.AddOrUpdatePayload("protocol", "webdriver");
-            result.AddOrUpdatePayload("version", Assembly.GetEntryAssembly().GetName().Version.ToString());
-            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
-
-            return result;
-        }
-
-        private CoreMakeManagerRequest CreateCoreMakeManager()
-        {
-            var result = new CoreMakeManagerRequest
-            {
-                Key = Guid.NewGuid().ToString()
-            };
-            result.AddOrUpdatePayload("type", "classic");
-
-            return result;
-        }
-
         private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
             string applitoolsRefId,
             IWebDriver webDriver)
@@ -898,13 +914,13 @@ namespace Applitools.Selenium
         {
             var json = ToJson(data);
 
-            await socketClient_.SendData(json);
+            await runner_.SocketClient.SendData(json);
 
             TResponse result;
 
             do
             {
-                var response = await socketClient_.ReceiveMessage();
+                var response = await runner_.SocketClient.ReceiveMessage();
                 result = JsonConvert.DeserializeObject<TResponse>(response);
             } while (result == null);
 
@@ -915,7 +931,7 @@ namespace Applitools.Selenium
         {
             var json = ToJson(data);
 
-            await socketClient_.SendData(json);
+            await runner_.SocketClient.SendData(json);
         }
 
         private string GetServerUrl(ICommandExecutor commandExecutor)

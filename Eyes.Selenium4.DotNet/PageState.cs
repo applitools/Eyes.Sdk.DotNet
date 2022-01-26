@@ -85,37 +85,37 @@ namespace Applitools.Selenium
 
         private void MaximizeTargetFrameInCurrentFrame_(IWebElement frameElement, IWebElement userDefinedSRE)
         {
-            IWebElement currentFrameSRE = EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE);
+            //IWebElement currentFrameSRE = EyesSeleniumUtils.GetCurrentFrameScrollRootElement(driver_, userDefinedSRE);
 
-            IPositionProvider positionProvider = SeleniumEyes.GetPositionProviderForScrollRootElement_(logger_, driver_,
-                stitchMode_, userAgent_, currentFrameSRE);
+            //IPositionProvider positionProvider ;//= SeleniumEyes.GetPositionProviderForScrollRootElement_(logger_, driver_,
+            //    stitchMode_, userAgent_, currentFrameSRE);
 
-            Rectangle frameRect = EyesWebElement.GetClientBoundsWithoutBorders(frameElement, driver_, logger_);
-            if (stitchMode_ == StitchModes.Scroll)
-            {
-                Point pageScrollPosition = positionProvider.GetCurrentPosition();
-                frameRect.Offset(pageScrollPosition);
-            }
-            positionProvider.SetPosition(frameRect.Location);
+            //Rectangle frameRect = EyesWebElement.GetClientBoundsWithoutBorders(frameElement, driver_, logger_);
+            //if (stitchMode_ == StitchModes.Scroll)
+            //{
+            //    Point pageScrollPosition = positionProvider.GetCurrentPosition();
+            //    frameRect.Offset(pageScrollPosition);
+            //}
+            //positionProvider.SetPosition(frameRect.Location);
         }
 
         private void SwitchToFrame_(IWebElement frameElement,
             ISeleniumFrameCheckTarget frameTarget, Configuration config, List<FrameState> frameStates)
         {
-            ITargetLocator switchTo = driver_.SwitchTo();
+            //ITargetLocator switchTo = driver_.SwitchTo();
 
-            switchTo.Frame(frameElement);
-            IWebElement rootElement = SeleniumEyes.GetScrollRootElementFromSREContainer(frameTarget, driver_);
-            Frame frame = driver_.GetFrameChain().Peek();
-            frame.ScrollRootElement = rootElement;
-            SaveCurrentFrameState_(frameStates, driver_, rootElement);
-            TryHideScrollbarsInFrame(config, driver_, rootElement);
-            frame.ScrollRootElementInnerBounds = EyesWebElement.GetClientBoundsWithoutBorders(rootElement, driver_, logger_);
+            //switchTo.Frame(frameElement);
+            //IWebElement rootElement ;//= SeleniumEyes.GetScrollRootElementFromSREContainer(frameTarget, driver_);
+            //Frame frame = driver_.GetFrameChain().Peek();
+            //frame.ScrollRootElement = rootElement;
+            //SaveCurrentFrameState_(frameStates, driver_, rootElement);
+            //TryHideScrollbarsInFrame(config, driver_, rootElement);
+            //frame.ScrollRootElementInnerBounds = EyesWebElement.GetClientBoundsWithoutBorders(rootElement, driver_, logger_);
         }
 
         private static void TryHideScrollbarsInFrame(Configuration config, EyesWebDriver driver, IWebElement rootElement)
         {
-            if (config.HideScrollbars)
+            //if (config.HideScrollbars)
             {
                 EyesSeleniumUtils.SetOverflow("hidden", driver, rootElement);
             }
