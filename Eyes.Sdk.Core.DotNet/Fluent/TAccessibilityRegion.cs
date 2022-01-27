@@ -9,16 +9,16 @@ namespace Applitools
 
     public class RectangleAccessibilityRegion : TAccessibilityRegion
     {
-        public RectangleRegion Region { get; set; }
+        public RegionRectangle Region { get; set; }
     }
 
     public class SelectorAccessibilityRegion : TAccessibilityRegion
     {
-        public SelectorRegion Region { get; set; }
+        public RegionSelector Region { get; set; }
     }
 
     public class ElementAccessibilityRegion : TAccessibilityRegion
     {
-        public ElementRegion Region { get; set; }
+        public RegionElement Region { get; set; }
     }
 }

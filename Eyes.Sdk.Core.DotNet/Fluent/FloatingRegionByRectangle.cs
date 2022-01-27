@@ -55,7 +55,7 @@ namespace Applitools
                 MaxUpOffset = maxUpOffset_,
                 MaxLeftOffset = maxLeftOffset_,
                 MaxRightOffset = maxRightOffset_,
-                Region = new RectangleRegion
+                Region = new RegionRectangle
                 {
                     X = rect_.Left,
                     Y = rect_.Top,

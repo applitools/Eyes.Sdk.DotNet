@@ -35,7 +35,7 @@ namespace Applitools.Selenium.Fluent
             return new ElementAccessibilityRegion
             {
                 Type = regionType_,
-                Region = new ElementRegion
+                Region = new RegionElement
                 {
                     ElementId = element_.GetPrivateFieldValue<string>("elementId")
                 }

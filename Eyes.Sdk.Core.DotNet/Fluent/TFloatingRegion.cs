@@ -12,16 +12,16 @@ namespace Applitools
 
     public class RectangleFloatingRegion : TFloatingRegion
     {
-        public RectangleRegion Region { get; set; }
+        public RegionRectangle Region { get; set; }
     }
 
     public class SelectorFloatingRegion : TFloatingRegion
     {
-        public SelectorRegion Region { get; set; }
+        public RegionSelector Region { get; set; }
     }
 
     public class ElementFloatingRegion : TFloatingRegion
     {
-        public ElementRegion Region { get; set; }
+        public RegionElement Region { get; set; }
     }
 }

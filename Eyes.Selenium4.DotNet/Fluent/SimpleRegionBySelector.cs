@@ -37,7 +37,7 @@
 
         public TRegion ToRegion()
         {
-            return new SelectorRegion
+            return new RegionSelector
             {
                 Selector = selector_.Criteria,
                 Type = selector_.Mechanism

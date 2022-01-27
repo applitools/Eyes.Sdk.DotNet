@@ -23,7 +23,7 @@ namespace Applitools
 
         public TRegion ToRegion()
         {
-            return new RectangleRegion
+            return new RegionRectangle
             {
                 X = region.Left,
                 Y = region.Top,

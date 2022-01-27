@@ -65,8 +65,8 @@ namespace Applitools.Selenium.Commands
         }
          */
         public TRegion Region { get; set; }
-        public IList<FrameReference> Frames { get; set; }
-        public SelectorRegion ScrollRootElement { get; set; }
+        public IList<IFrame> Frames { get; set; }
+        public TRegion ScrollRootElement { get; set; }
         public bool? Fully { get; set; }
 
         public UniversalCheckSettings()
@@ -77,7 +77,7 @@ namespace Applitools.Selenium.Commands
             ContentRegions = new TRegion[0];
             FloatingRegions = new TFloatingRegion[0];
             AccessibilityRegions = new TAccessibilityRegion[0];
-            Frames = new List<FrameReference>();
+            Frames = new List<IFrame>();
             Timeout = -1;
         }
     }

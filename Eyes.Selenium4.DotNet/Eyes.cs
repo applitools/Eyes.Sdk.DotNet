@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Applitools.Fluent;
 using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Commands;
@@ -195,7 +194,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            var testResults = SendRequest<EyesAbortRequest, TestResults>(request).Result;
+            var testResults = runner_.SendRequest<EyesAbortRequest, TestResults>(request).Result;
 
             IsOpen = false;
 
@@ -218,7 +217,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            SendRequest<EyesAbortRequest>(request).GetAwaiter();
+            runner_.SendRequest(request).GetAwaiter();
 
             //socketClient_.Close();
             IsOpen = false;
@@ -321,7 +320,7 @@ namespace Applitools.Selenium
                 }
             };
 
-            var result = SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+            var result = runner_.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
 
             if (result?.Payload?.Error != null)
             {
@@ -580,11 +579,9 @@ namespace Applitools.Selenium
             }
 
             var eyesCloseRequest = CreateEyesCloseRequest();
-https://eyes.applitools.com/app/batches/00000251759091008912/00000251759091008630?accountId=xIpd7EWjhU6cjJzDGrMcUw~~
 
-            var response = SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+            var response = runner_.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
 
-            //socketClient_.Close();
             IsOpen = false;
 
             var testResult = response?.Payload?.Result?.FirstOrDefault();
@@ -614,7 +611,7 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            SendRequest(eyesCloseRequest).GetAwaiter();
+            runner_.SendRequest(eyesCloseRequest).GetAwaiter();
 
             IsOpen = false;
         }
@@ -712,7 +709,7 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
 
-            var openEyesResponsePayload = SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
+            var openEyesResponsePayload = runner_.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;
@@ -771,16 +768,25 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
             return settings;
         }
 
-        private SelectorRegion GetScrollRootElement(SeleniumCheckSettings checkSettings)
+        private TRegion GetScrollRootElement(SeleniumCheckSettings checkSettings)
         {
-            var root = ((IScrollRootElementContainer) checkSettings).GetScrollRootSelector();
-            
-            if (root != null)
+            var container = (IScrollRootElementContainer) checkSettings;
+            var selector = container.GetScrollRootSelector();
+            if (selector != null)
             {
-                return new SelectorRegion
+                return new RegionSelector
                 {
-                    Type = root.Criteria,
-                    Selector = root.Mechanism
+                    Type = selector.Criteria,
+                    Selector = selector.Mechanism
+                };
+            }
+
+            var element = container.GetScrollRootElement();
+            if (element != null)
+            {
+                return new RegionElement
+                {
+                    ElementId = element.GetPrivateFieldValue<string>("elementId")
                 };
             }
 
@@ -792,13 +798,44 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
             return checkSettings.GetIgnoreRegions().Select(i => i.ToRegion()).ToList();
         }
 
-        private IList<FrameReference> GetFrames(SeleniumCheckSettings checkSettings)
+        private IList<IFrame> GetFrames(SeleniumCheckSettings checkSettings)
         {
+            var frames = new List<IFrame>();
             var frameChain = ((ISeleniumCheckTarget) checkSettings).GetFrameChain();
-            return frameChain.Select(i => new FrameReference
+
+            foreach (var item in frameChain)
             {
-                Frame = i.GetFrameNameOrId()
-            }).ToList();
+                if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
+                {
+                    frames.Add(new FrameNameOrId
+                    {
+                        Frame = item.FrameNameOrId
+                    });
+                    continue;
+                }
+                
+                if (item.FrameSelector != null)
+                {
+                    frames.Add(new FrameSelector
+                    {
+                        Type = item.FrameSelector.Criteria,
+                        Selector = item.FrameSelector.Mechanism
+                    });
+                    continue;
+                }
+                
+                if (item.FrameReference != null)
+                {
+                    frames.Add(new FrameElement
+                    {
+                        ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
+                    });
+                }
+
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Skipped, new { checkSettings });
+            }
+
+            return frames;
         }
 
         private TRegion GetUniversalRegion(ICheckSettings checkSettings)
@@ -819,7 +856,7 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
                         var element = GetTargetElement(seleniumCheckTarget);
                         if (element != null)
                         {
-                            region = new ElementRegion
+                            region = new RegionElement
                             {
                                 ElementId = element.GetPrivateFieldValue<string>("elementId")
                             };
@@ -836,21 +873,21 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
             return checkSettings.GetTargetElement();
         }
 
-        private SelectorRegion CreateCheckSettingsRegionSelector(ISeleniumCheckTarget settings)
+        private RegionSelector CreateCheckSettingsRegionSelector(ISeleniumCheckTarget settings)
         {
-            SelectorRegion selector = null;
+            RegionSelector regionSelector = null;
 
             var targetSelector = settings.GetTargetSelector();
             if (targetSelector != null)
             {
-                selector = new SelectorRegion
+                regionSelector = new RegionSelector
                 {
                     Selector = targetSelector.Criteria,
                     Type = targetSelector.Mechanism
                 };
             }
 
-            return selector;
+            return regionSelector;
         }
 
         private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
@@ -860,7 +897,7 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
             var rectangle = settings.GetTargetRegion();
             if (rectangle.HasValue)
             {
-                region = new RectangleRegion
+                region = new RegionRectangle
                 {
                     X = rectangle.Value.X,
                     Y = rectangle.Value.Y,
@@ -910,30 +947,6 @@ https://eyes.applitools.com/app/batches/00000251759091008912/0000025175909100863
             return result;
         }
         
-        private async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
-        {
-            var json = ToJson(data);
-
-            await runner_.SocketClient.SendData(json);
-
-            TResponse result;
-
-            do
-            {
-                var response = await runner_.SocketClient.ReceiveMessage();
-                result = JsonConvert.DeserializeObject<TResponse>(response);
-            } while (result == null);
-
-            return result;
-        }
-        
-        private async Task SendRequest<TRequest>(TRequest data)
-        {
-            var json = ToJson(data);
-
-            await runner_.SocketClient.SendData(json);
-        }
-
         private string GetServerUrl(ICommandExecutor commandExecutor)
         {
             var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;

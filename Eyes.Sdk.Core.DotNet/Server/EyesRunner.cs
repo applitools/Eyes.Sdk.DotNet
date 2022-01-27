@@ -20,7 +20,7 @@ namespace Applitools
         private string managerApplitoolsRefId_;
         private ManagerConfig config_;
 
-        public WebSocketClient SocketClient { get; }
+        protected WebSocketClient SocketClient { get; }
 
         public ManagerConfig Config
         {
@@ -48,6 +48,30 @@ namespace Applitools
         protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
         public Logger Logger { get; } = new Logger();
+
+        public async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
+        {
+            var json = data.ToJson();
+
+            await SocketClient.SendData(json);
+
+            TResponse result;
+
+            do
+            {
+                var response = await SocketClient.ReceiveMessage();
+                result = JsonConvert.DeserializeObject<TResponse>(response);
+            } while (result == null);
+
+            return result;
+        }
+
+        public async Task SendRequest<TRequest>(TRequest data)
+        {
+            var json = data.ToJson();
+
+            await SocketClient.SendData(json);
+        }
 
         public TestResultsSummary GetAllTestResults()
         {
@@ -172,24 +196,7 @@ namespace Applitools
 
             return closeAllEyes;
         }
-
-        private async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
-        {
-            var json = data.ToJson();
-
-            await SocketClient.SendData(json);
-
-            TResponse result;
-
-            do
-            {
-                var response = await SocketClient.ReceiveMessage();
-                result = JsonConvert.DeserializeObject<TResponse>(response);
-            } while (result == null);
-
-            return result;
-        }
-
+        
         private string GetSocketUrl(int port)
         {
             return $"ws://localhost:{port}/eyes";

@@ -38,7 +38,7 @@ namespace Applitools.Selenium.Fluent
             return new SelectorAccessibilityRegion
             {
                 Type = regionType_,
-                Region = new SelectorRegion
+                Region = new RegionSelector
                 {
                     Type = selector_.Mechanism,
                     Selector = selector_.Criteria

@@ -60,7 +60,7 @@ namespace Applitools
             return new RectangleAccessibilityRegion
             {
                 Type = Type,
-                Region = new RectangleRegion
+                Region = new RegionRectangle
                 {
                     X = Region.Left,
                     Y = Region.Top,

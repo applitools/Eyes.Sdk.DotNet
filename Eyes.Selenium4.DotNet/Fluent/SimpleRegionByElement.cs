@@ -37,7 +37,7 @@ namespace Applitools.Selenium.Fluent
         {
             var elementId = element_.GetPrivateFieldValue<string>("elementId");
 
-            return new ElementRegion
+            return new RegionElement
             {
                 ElementId = elementId
             };

@@ -68,7 +68,7 @@ namespace Applitools.Selenium.Fluent
                 MaxUpOffset = maxUpOffset_,
                 MaxLeftOffset = maxLeftOffset_,
                 MaxRightOffset = maxRightOffset_,
-                Region = new SelectorRegion
+                Region = new RegionSelector
                 {
                     Type = selector_.Mechanism,
                     Selector = selector_.Criteria
