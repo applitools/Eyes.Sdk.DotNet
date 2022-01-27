@@ -588,7 +588,7 @@ namespace Applitools.Selenium
 
             if (testResult != null)
             {
-                if (testResult.Mismatches > 0 && throwEx)
+                if (testResult.IsPassed == false && throwEx)
                 {
                     throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
                 }

@@ -30,6 +30,7 @@ namespace Applitools.Generated.Selenium.Tests
         public static readonly string SAUCE_ACCESS_KEY = Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY");
         public static readonly string SAUCE_SELENIUM_URL = "https://ondemand.saucelabs.com:443/wd/hub";
         public static readonly string EG_SELENIUM_URL = Environment.GetEnvironmentVariable("EXECUTION_GRID_URL");
+        public static readonly string LOCAL_SELENIUM_URL = "http://localhost:4444/wd/hub";
         protected enum browserType
         {
             Chrome,
@@ -55,7 +56,7 @@ namespace Applitools.Generated.Selenium.Tests
                     }
                     else
                     {
-                        driver = CreateChromeDriver(headless: headless);
+                        driver = CreateChromeDriver2(headless: headless);
                     }
                     break;
                 case browserType.Firefox:
@@ -127,6 +128,26 @@ namespace Applitools.Generated.Selenium.Tests
             return webDriver;
         }
 
+
+        protected static WebDriver CreateChromeDriver2(ChromeOptions options = null, bool headless = false)
+        {
+            WebDriver webDriver = RetryCreateWebDriver(() =>
+            {
+                if (options == null)
+                {
+                    options = new ChromeOptions();
+                }
+                if (headless) options.AddArgument("--headless");
+
+                var driver1 = new RemoteWebDriver(new Uri(LOCAL_SELENIUM_URL), options);
+
+                //ChromeDriver webDriverRet = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options, TimeSpan.FromMinutes(4)) : new ChromeDriver(options);
+                return driver1;
+            });
+            return webDriver;
+        }
+
+
         protected static FirefoxDriver CreateFirefoxDriver(bool headless = false)
         {
             FirefoxDriver webDriver = RetryCreateWebDriver(() =>
@@ -145,6 +166,7 @@ namespace Applitools.Generated.Selenium.Tests
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
             runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
             eyes = new Applitools.Selenium.Eyes(runner);
+            eyes.HideScrollbars = true;
             initEyesSettings(isVisualGrid, isCSSMode);
         }
 
