@@ -15,9 +15,10 @@ namespace Applitools
         private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
         public Configuration()
         {
+            DefaultMatchSettings = new ImageMatchSettings();
         }
 
-        public Configuration(IConfiguration configuration)
+        public Configuration(IConfiguration configuration) : this()
         {
             AgentId = configuration.AgentId;
             ApiKey = configuration.ApiKey;
@@ -254,9 +255,7 @@ namespace Applitools
             return this;
         }
 
-
         public string TestName { get; set; }
-
 
         public IConfiguration SetTestName(string value)
         {
@@ -278,7 +277,6 @@ namespace Applitools
             return this;
         }
 
-
         public ImageMatchSettings DefaultMatchSettings { get; set; }
 
         public IConfiguration SetDefaultMatchSettings(ImageMatchSettings value)
@@ -286,7 +284,6 @@ namespace Applitools
             DefaultMatchSettings = value;
             return this;
         }
-
 
         public int? StitchOverlap { get; set; }
 
@@ -296,7 +293,6 @@ namespace Applitools
             return this;
         }
 
-
         public bool? SendDom { get; set; }
 
         public IConfiguration SetSendDom(bool? value)
@@ -304,7 +300,6 @@ namespace Applitools
             SendDom = value;
             return this;
         }
-
 
         public TimeSpan? MatchTimeout { get; set; }
 
@@ -314,7 +309,6 @@ namespace Applitools
             return this;
         }
 
-
         public string HostApp { get; set; }
 
         public IConfiguration SetHostApp(string value)
@@ -323,7 +317,6 @@ namespace Applitools
             return this;
         }
 
-
         public string HostOS { get; set; }
 
         public IConfiguration SetHostOS(string value)
@@ -331,7 +324,6 @@ namespace Applitools
             HostOS = value;
             return this;
         }
-
 
         public bool? IgnoreCaret
         {
@@ -345,7 +337,6 @@ namespace Applitools
             return this;
         }
 
-
         public MatchLevel? MatchLevel
         {
             get => DefaultMatchSettings.MatchLevel;
@@ -357,7 +348,6 @@ namespace Applitools
             DefaultMatchSettings.MatchLevel = value;
             return this;
         }
-
         
         public string ServerUrl { get; set; }
 

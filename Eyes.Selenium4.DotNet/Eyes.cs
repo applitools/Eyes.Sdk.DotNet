@@ -776,8 +776,8 @@ namespace Applitools.Selenium
             {
                 return new RegionSelector
                 {
-                    Type = selector.Criteria,
-                    Selector = selector.Mechanism
+                    Type = selector.Mechanism,
+                    Selector = selector.Criteria
                 };
             }
 
