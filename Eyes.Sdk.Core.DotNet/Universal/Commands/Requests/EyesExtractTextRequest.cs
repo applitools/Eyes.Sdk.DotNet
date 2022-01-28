@@ -1,10 +1,13 @@
-﻿namespace Applitools.Selenium.Commands.Requests
+﻿using Applitools.Fluent;
+
+namespace Applitools.Selenium.Commands.Requests
 {
     public class OCRExtractSettings
     {
+        public TRegion Target { get; set; }
         public string Hint { get; set; }
-        public int? number { get; set; }
-        public string language { get; set; }
+        public int? minMatch { get; set; }
+        public string Language { get; set; }
     }
 
     public class EyesExtractTextRequestPayload
