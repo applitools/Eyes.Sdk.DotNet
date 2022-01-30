@@ -27,7 +27,6 @@ namespace Applitools.Selenium
 
         // TODO: remove
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
-        private readonly EyesRunner runner_;
         private readonly Uri serverUrl_;
         private readonly ILogHandler logHandler_;
 
@@ -45,15 +44,14 @@ namespace Applitools.Selenium
             serverUrl_ = serverUrl;
         }
 
-        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null)
+        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null) : 
+            base(runner)
         {
             if (logHandler == null) logHandler = NullLogHandler.Instance;
 
             logger_ = new Logger();
             logHandler_ = logHandler;
             properties_ = new PropertiesCollection();
-
-            runner_ = runner;
         }
 
         #endregion
@@ -194,7 +192,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            var testResults = runner_.SendRequest<EyesAbortRequest, TestResults>(request).Result;
+            var testResults = EyesRunner.SendRequest<EyesAbortRequest, TestResults>(request).Result;
 
             IsOpen = false;
 
@@ -217,7 +215,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            runner_.SendRequest(request).GetAwaiter();
+            EyesRunner.SendRequest(request).GetAwaiter();
 
             //socketClient_.Close();
             IsOpen = false;
@@ -320,7 +318,7 @@ namespace Applitools.Selenium
                 }
             };
 
-            var result = runner_.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+            var result = EyesRunner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
 
             if (result?.Payload?.Error != null)
             {
@@ -580,7 +578,7 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            var response = runner_.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+            var response = EyesRunner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
 
             IsOpen = false;
 
@@ -611,7 +609,7 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            runner_.SendRequest(eyesCloseRequest).GetAwaiter();
+            EyesRunner.SendRequest(eyesCloseRequest).GetAwaiter();
 
             IsOpen = false;
         }
@@ -705,11 +703,11 @@ namespace Applitools.Selenium
                 return driver;
             }
             
-            managerApplitoolsRefId_ = runner_.GetCoreMakeManager();
+            managerApplitoolsRefId_ = EyesRunner.GetCoreMakeManager();
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
 
-            var openEyesResponsePayload = runner_.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
+            var openEyesResponsePayload = EyesRunner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;
@@ -755,6 +753,9 @@ namespace Applitools.Selenium
                 Region = GetUniversalRegion(checkSettings),
                 Fully = checkSettingsInternal.GetStitchContent(),
                 VariationGroupId = checkSettingsInternal.GetVariationGroupId(),
+                IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
+                SendDom = checkSettingsInternal.GetSendDom(),
+                UseDom = checkSettingsInternal.GetUseDom(),
                 Frames = GetFrames(checkSettings),
                 ScrollRootElement = GetScrollRootElement(checkSettings),
                 IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
@@ -789,6 +790,15 @@ namespace Applitools.Selenium
                     ElementId = element.GetPrivateFieldValue<string>("elementId")
                 };
             }
+            //var frameChain = ((ISeleniumCheckTarget)checkSettings).GetFrameChain();
+            //if (frameChain.First().ScrollRootSelector != null)
+            //{
+            //    return new RegionSelector
+            //    {
+            //        Type = frameChain.First().ScrollRootSelector.Mechanism,
+            //        Selector = frameChain.First().ScrollRootSelector.Criteria
+            //    };
+            //}
 
             return null;
         }
@@ -811,28 +821,32 @@ namespace Applitools.Selenium
                     {
                         Frame = item.FrameNameOrId
                     });
-                    continue;
                 }
                 
                 if (item.FrameSelector != null)
                 {
                     frames.Add(new FrameSelector
                     {
-                        Type = item.FrameSelector.Criteria,
-                        Selector = item.FrameSelector.Mechanism
+                        Type = item.FrameSelector.Mechanism,
+                        Selector = item.FrameSelector.Criteria
                     });
-                    continue;
                 }
                 
-                if (item.FrameReference != null)
+                if (item.FrameReference != null) 
                 {
                     frames.Add(new FrameElement
                     {
                         ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
                     });
                 }
-
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Skipped, new { checkSettings });
+                
+                //if (item.ScrollRootSelector != null)
+                //{
+                //    frames.Add(new FrameScrollRootElement
+                //    {
+                //        ScrollRootElement = new TSelector(item.ScrollRootSelector.Mechanism, item.ScrollRootSelector.Criteria)
+                //    });
+                //}
             }
 
             return frames;
