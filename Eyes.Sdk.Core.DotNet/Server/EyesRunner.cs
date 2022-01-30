@@ -80,6 +80,11 @@ namespace Applitools
         
         public TestResultsSummary GetAllTestResults(bool shouldThrowException)
         {
+            if (IsDisabled)
+            {
+                return new TestResultsSummary(new List<TestResultContainer>());
+            }
+
             var results = CloseAllEyes();
             if (shouldThrowException)
             {
@@ -174,9 +179,18 @@ namespace Applitools
 
         public IList<TestResults> CloseAllEyes()
         {
+            if (IsDisabled)
+            {
+                return new List<TestResults>();
+            }
+
             var request = CreateEyesManageCloseAllEyes();
 
             var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseResponse>(request).Result;
+            if (response.Payload?.Error != null)
+            {
+                throw new EyesException(response.Payload.Error.Message);
+            }
 
             return response?.Payload?.Result;
         }

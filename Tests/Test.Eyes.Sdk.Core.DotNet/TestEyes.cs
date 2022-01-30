@@ -8,7 +8,7 @@ namespace Applitools
     {
         private IConfiguration configuration_ = new Configuration();
 
-        public TestEyes()
+        public TestEyes() : base(new ClassicRunner())
         {
         }
 

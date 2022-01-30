@@ -36,18 +36,21 @@ namespace Applitools
         protected internal abstract void CheckCompleted(ICheckTask checkTask, MatchResult matchResult);
 
         protected RunningTest(ClassicRunner runner)// : base(runner)
+            : base(runner)
         {
             BrowserInfo = null;
         }
 
         protected RunningTest(RenderBrowserInfo browserInfo, Logger logger, IServerConnector serverConnector)
             //: base(logger, serverConnector)
+            : base(new ClassicRunner())
         {
             BrowserInfo = browserInfo;
         }
 
         protected RunningTest(ClassicRunner runner, IServerConnectorFactory serverConnectorFactory, Logger logger = null)
             //: base(serverConnectorFactory, runner, logger)
+            : base(runner)
         {
         }
 

@@ -5,12 +5,12 @@ namespace Applitools.Selenium.Commands.Responses
 {
     public class TestResult
     {
-        public string TestId { get; set; }
-        public string name { get; set; }
-        public string secretToken { get; set; }
-        public string status { get; set; } //enum
-        public string appName { get; set; }
-        public string batchId { get; set; }
+        public string id { get; set; }
+        public string Name { get; set; }
+        public string SecretToken { get; set; }
+        public string Status { get; set; } //enum
+        public string AppName { get; set; }
+        public string BatchId { get; set; }
         public string batchName { get; set; }
         public string branchName { get; set; }
         public string hostOS { get; set; }
@@ -40,6 +40,7 @@ namespace Applitools.Selenium.Commands.Responses
     public class EyesCloseResponsePayload
     {
         public IList<TestResults> Result { get; set; }
+        public ResponsePayloadError Error { get; set; }
     }
 
     public class EyesCloseResponse

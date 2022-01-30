@@ -36,14 +36,20 @@ public delegate string CreateImageHandler(Rectangle region);
     [ComVisible(true)]
     public abstract class EyesBase //: EyesBaseConfig, IEyesBase, IBatchCloser
     {
+        protected EyesRunner EyesRunner { get; private set; }
         protected internal Applitools.Configuration Config { get; protected set; }
 
-        public bool IsDisabled { get; set; }
+        public bool IsDisabled
+        {
+            get => EyesRunner.IsDisabled;
+            set => EyesRunner.IsDisabled = value;
+        }
 
         public bool IsOpen { get; set; }
 
-        protected EyesBase()
+        protected EyesBase(EyesRunner eyesRunner)
         {
+            EyesRunner = eyesRunner;
             Config = new Configuration();
         }
 

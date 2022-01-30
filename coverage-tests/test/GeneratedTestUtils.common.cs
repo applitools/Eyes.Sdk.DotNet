@@ -1,3 +1,4 @@
+using System;
 using Applitools.Tests.Utils;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json.Linq;
@@ -27,7 +28,7 @@ namespace Applitools.Generated.Utils
 
         public static void compareProcedure(int actual, object expected, string type = null)
         {
-            Assert.AreEqual((int)expected, actual);
+            Assert.AreEqual(Convert.ToInt32(expected), actual);
         }
 
         public static void compareProcedure(FloatingMatchSettings actualRegion, FloatingMatchSettings expectedRegion, string type = "Floating")

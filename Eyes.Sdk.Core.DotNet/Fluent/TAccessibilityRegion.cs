@@ -1,9 +1,12 @@
 ﻿using Applitools.Fluent;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools
 {
     public abstract class TAccessibilityRegion
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         public AccessibilityRegionType Type { get; set; }
     }
 
