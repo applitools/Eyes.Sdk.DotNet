@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools.Selenium.Commands
 {
@@ -116,7 +117,9 @@ namespace Applitools.Selenium.Commands
         //}
 
         public int? WaitBeforeScreenshots { get; set; }
-        public string StitchMode { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public StitchModes? StitchMode { get; set; }
         public bool? HideScrollbars { get; set; }
         public bool? HideCaret { get; set; }
         public int? StitchOverlap { get; set; }
@@ -174,7 +177,7 @@ namespace Applitools.Selenium.Commands
             HideScrollbars = config.HideScrollbars;
             HideCaret = config.HideCaret;
             EnvironmentName = config.EnvironmentName;
-            StitchMode = config.StitchMode?.ToString().ToLower();
+            StitchMode = config.StitchMode;
             WaitBeforeScreenshots = config.WaitBeforeScreenshots;
             SendDom = config.SendDom;
             // DontCloseBatches

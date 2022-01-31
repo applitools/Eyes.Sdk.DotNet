@@ -4,13 +4,18 @@ using Applitools.Fluent;
 
 namespace Applitools.Selenium.Commands
 {
+    public class Hooks
+    {
+        public string BeforeCaptureScreenshot { get; set; }
+    }
+
     public class UniversalCheckSettings
     {
         public string Name { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public bool? LayoutBreakpoints { get; set; }
         public IDictionary<string, object> VisualGridOptions { get; set; }
-        public string Hooks { get; set; }
+        public Hooks Hooks { get; set; }
         public string RenderId { get; set; }
         public string VariationGroupId { get; set; }
         public int? Timeout { get; set; }
