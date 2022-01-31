@@ -749,6 +749,7 @@ namespace Applitools.Selenium
             var checkSettingsInternal = (ICheckSettingsInternal) checkSettings;
             var settings = new UniversalCheckSettings
             {
+                MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettings),
                 Fully = checkSettingsInternal.GetStitchContent(),
@@ -765,7 +766,7 @@ namespace Applitools.Selenium
                 FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
                 AccessibilityRegions = checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray()
             };
-
+            
             return settings;
         }
 

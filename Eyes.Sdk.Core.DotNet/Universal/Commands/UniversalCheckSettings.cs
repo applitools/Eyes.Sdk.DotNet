@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Applitools;
 using Applitools.Fluent;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools.Selenium.Commands
 {
@@ -47,6 +49,7 @@ namespace Applitools.Selenium.Commands
         }
          */
            public ExactMatchSettings Exact { get; set; }
+           [JsonConverter(typeof(StringEnumConverter))]
            public MatchLevel? MatchLevel { get; set; }
            public bool? SendDom { get; set; }
            public bool? UseDom { get; set; }
