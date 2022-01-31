@@ -28,7 +28,14 @@ namespace Applitools.Generated.Utils
 
         public static void compareProcedure(int actual, object expected, string type = null)
         {
-            Assert.AreEqual(Convert.ToInt32(expected), actual);
+            try
+            {
+                Assert.AreEqual((int)expected, actual);
+            }
+            catch (System.InvalidCastException e)
+            {
+                Assert.AreEqual((System.Int64)expected, actual);
+            }
         }
 
         public static void compareProcedure(FloatingMatchSettings actualRegion, FloatingMatchSettings expectedRegion, string type = "Floating")
