@@ -33,7 +33,7 @@ namespace Applitools
         private VisualGridOption[] visualGridOptions_;
         private string variationGroupId_;
 
-        private static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
+        public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
         /// <summary>
         /// 

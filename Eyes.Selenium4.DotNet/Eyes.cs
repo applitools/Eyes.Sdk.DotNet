@@ -759,6 +759,10 @@ namespace Applitools.Selenium
             var checkSettingsInternal = (ICheckSettingsInternal) checkSettings;
             var settings = new UniversalCheckSettings
             {
+                Hooks = new Hooks
+                {
+                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
+                },
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettings),
