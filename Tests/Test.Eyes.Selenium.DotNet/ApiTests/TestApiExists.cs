@@ -24,9 +24,7 @@ namespace Applitools.Selenium.Tests.ApiTests
             eyes.HostApp = "host app";
             eyes.HostOS = "windows";
             eyes.AgentId = "some agent id";
-
-            string fullAgentId = eyes.FullAgentId;
-
+            
             eyes.IgnoreCaret = true;
             eyes.HideCaret = true;
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -53,7 +51,7 @@ namespace Applitools.Selenium.Tests.ApiTests
             double sr = eyes.ScaleRatio;
             eyes.SetScrollToRegion(true);
 
-            Configuration config = eyes.GetConfiguration();
+            var config = eyes.GetConfiguration();
 
             Assert.AreEqual(config.AppName, "app name");
             Assert.AreEqual(config.TestName, "test name");

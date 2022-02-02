@@ -68,6 +68,12 @@ namespace Applitools.Selenium
             set => Config.SetTestName(value);
         }
         
+        public string BaselineBranchName
+        {
+            get => Config.BaselineBranchName;
+            set => Config.SetBaselineBranchName(value);
+        }
+        
         public string AppName
         {
             get => Config.AppName;
@@ -78,6 +84,12 @@ namespace Applitools.Selenium
         {
             get => Config.ViewportSize;
             set => Config.SetViewportSize(value);
+        }
+        
+        public MatchLevel? MatchLevel
+        {
+            get => Config.MatchLevel;
+            set => Config.SetMatchLevel(value);
         }
         
         public string ServerUrl
@@ -118,10 +130,22 @@ namespace Applitools.Selenium
             set => Config.SetHideScrollbars(value);
         }
 
+        public bool? IgnoreCaret
+        {
+            get => Config.IgnoreCaret;
+            set => Config.SetIgnoreCaret(value);
+        }
+
         public bool? HideCaret
         {
             get => Config.HideCaret;
             set => Config.SetHideCaret(value);
+        }
+
+        public bool? SaveFailedTests
+        {
+            get => Config.SaveFailedTests;
+            set => Config.SetSaveFailedTests(value);
         }
 
         public bool? SaveNewTests
@@ -130,16 +154,64 @@ namespace Applitools.Selenium
             set => Config.SetSaveNewTests(value);
         }
 
+        public bool? SendDom
+        {
+            get => Config.SendDom;
+            set => Config.SetSendDom(value);
+        }
+
+        public bool? SaveDiffs
+        {
+            get => Config.SaveDiffs;
+            set => Config.SetSaveDiffs(value);
+        }
+
+        public int? StitchOverlap
+        {
+            get => Config.StitchOverlap;
+            set => Config.SetStitchOverlap(value);
+        }
+
+        public TimeSpan? MatchTimeout
+        {
+            get => Config.MatchTimeout;
+            set => Config.SetMatchTimeout(value);
+        }
+
         public string HostOS
         {
             get => Config.HostOS;
             set => Config.SetHostOS(value);
         }
 
+        public string AgentId
+        {
+            get => Config.AgentId;
+            set => Config.SetAgentId(value);
+        }
+        
         public string BranchName
         {
             get => Config.BranchName;
             set => Config.SetBranchName(value);
+        }
+
+        public string BaselineEnvName
+        {
+            get => Config.BaselineEnvName;
+            set => Config.SetBaselineEnvName(value);
+        }
+
+        public string EnvironmentName
+        {
+            get => Config.EnvironmentName;
+            set => Config.SetEnvironmentName(value);
+        }
+
+        public string HostApp
+        {
+            get => Config.HostApp;
+            set => Config.SetHostApp(value);
         }
 
         public string ParentBranchName
@@ -577,7 +649,7 @@ namespace Applitools.Selenium
 
         /// <summary>
         /// Ends the test and returns its results.
-        /// </summary>-
+        /// </summary>
         public virtual TestResults Close(bool throwEx = true)
         {
             if (IsDisabled)
@@ -604,6 +676,41 @@ namespace Applitools.Selenium
 
             return testResult;
         }
+
+        //public TestResults ExtractText()
+        //{
+        //    if (IsDisabled)
+        //    {
+        //        Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+        //        return new TestResults();
+        //    }
+
+        //    //var request = new EyesExtractTextRequest
+        //    //{
+        //    //    Payload = new EyesExtractTextRequestPayload
+        //    //    {
+        //    //        Config = 
+        //    //    }
+        //    //}
+
+        //    var eyesCloseRequest = CreateEyesCloseRequest();
+
+        //    var response = EyesRunner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+
+        //    IsOpen = false;
+
+        //    var testResult = response?.Payload?.Result?.FirstOrDefault();
+
+        //    if (testResult != null)
+        //    {
+        //        if (testResult.IsPassed == false && throwEx)
+        //        {
+        //            throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
+        //        }
+        //    }
+
+        //    return testResult;
+        //}
 
         /// <summary>
         /// Ends the test asynchronously.
@@ -702,6 +809,7 @@ namespace Applitools.Selenium
             {
                 ApiKey = API_KEY;
             }
+            
             TestName = testName;
             AppName = appName;
             ViewportSize = viewportSize;
