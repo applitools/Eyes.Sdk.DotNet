@@ -107,8 +107,7 @@ namespace Applitools.Generated.Selenium.Tests
             sauceOptions.Add("accesskey", SAUCE_ACCESS_KEY);
             driverOptions.PlatformName = PlatformName;
             driverOptions.BrowserVersion = BrowserVersion;
-            driverOptions.AddAdditionalOption("username", SAUCE_USERNAME);
-            driverOptions.AddAdditionalOption("accesskey", SAUCE_ACCESS_KEY);
+            driverOptions.AddAdditionalOption("sauce:options", sauceOptions);
         }
 
         protected static ChromeDriver CreateChromeDriver(ChromeOptions options = null, bool headless = false)
