@@ -2,6 +2,7 @@
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid.Model;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace Applitools.VisualGrid
 {
@@ -73,6 +74,7 @@ namespace Applitools.VisualGrid
 
         public string BaselineEnvName { get; }
         public SizeMode Target { get; } = SizeMode.FullPage;
+        [JsonProperty("name")]
         public BrowserType BrowserType { get; }
 
         public int Width => ViewportSize?.Width ?? 0;

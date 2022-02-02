@@ -1,5 +1,8 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -143,11 +146,12 @@ namespace Applitools.Selenium.Commands
         //  browsersInfo?: (DesktopBrowserRenderer | ChromeEmulationDeviceRenderer | IOSDeviceRenderer)[]
         //  visualGridOptions?: Record<string, any>
         //  layoutBreakpoints?: boolean | number[]
+        public IRenderBrowserInfo[] BrowsersInfo { get; set; }
         public bool? DisableBrowserFetching { get; set; }
 
         public EyesConfig()
         {
-            
+            Properties = new PropertyInfo[0];
         }
 
         public EyesConfig(Applitools.Configuration config) : this()
@@ -180,7 +184,29 @@ namespace Applitools.Selenium.Commands
             StitchMode = config.StitchMode;
             WaitBeforeScreenshots = config.WaitBeforeScreenshots;
             SendDom = config.SendDom;
-            // DontCloseBatches
+
+            var browsers = new List<IRenderBrowserInfo>();
+
+            foreach (var browserInfo in config.GetBrowsersInfo())
+            {
+                if (browserInfo.DesktopBrowserInfo != null)
+                {
+                    browsers.Add(browserInfo.DesktopBrowserInfo);
+                }
+                //if (browserInfo.IosDeviceInfo != null)
+                //{
+                //    browsers.Add(browserInfo.IosDeviceInfo);
+                //}
+                //if (browserInfo.EmulationInfo != null)
+                //{
+                //    browsers.Add((ChromeEmulationInfo)browserInfo.EmulationInfo);
+                //}
+            }
+
+            if (browsers.Any())
+            {
+                BrowsersInfo = browsers.ToArray();
+            }
         }
     }
 }

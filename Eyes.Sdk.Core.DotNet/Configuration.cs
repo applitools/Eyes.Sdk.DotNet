@@ -263,7 +263,7 @@ namespace Applitools
             return this;
         }
 
-        public RectangleSize ViewportSize { get; set; } = new RectangleSize();
+        public RectangleSize ViewportSize { get; set; }
 
         public IConfiguration SetViewportSize(int width, int height)
         {

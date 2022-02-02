@@ -1,6 +1,7 @@
 ﻿using Applitools.Selenium;
 using System;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace Applitools.VisualGrid
 {
@@ -25,7 +26,7 @@ namespace Applitools.VisualGrid
         public Size ViewportSize { get; }
         public int Width { get => ViewportSize.Width; }
         public int Height { get => ViewportSize.Height; }
-
+        [JsonProperty("name")]
         public BrowserType BrowserType { get; }
         public string BaselineEnvName { get; }
 

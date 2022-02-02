@@ -283,7 +283,7 @@ namespace Applitools.Selenium
         /// </summary>
         public IWebDriver Open(IWebDriver driver, string appName, string testName)
         {
-            return OpenEyes(driver, appName, testName, Size.Empty);
+            return OpenEyes(driver, appName, testName);
         }
 
         /// <summary>
@@ -370,7 +370,12 @@ namespace Applitools.Selenium
         /// Thrown if a mismatch is detected and immediate failure reports are enabled.</exception>
         public void CheckWindow(string tag = null, bool? fully = null)
         {
-            Check(tag, Target.Window().Fully(fully ?? Config.IsForceFullPageScreenshot ?? false));
+            var settings = Target.Window();
+            if (fully.HasValue)
+            {
+                settings = settings.Fully(fully.Value);
+            }
+            Check(tag, settings);
         }
 
         /// <summary>
@@ -384,7 +389,12 @@ namespace Applitools.Selenium
         /// Thrown if a mismatch is detected and immediate failure reports are enabled.</exception>
         public void CheckWindow(TimeSpan matchTimeout, string tag = null, bool? fully = null)
         {
-            Check(tag, Target.Window().Timeout(matchTimeout).Fully(fully ?? false));
+            var settings = Target.Window().Timeout(matchTimeout);
+            if (fully.HasValue)
+            {
+                settings = settings.Fully(fully.Value);
+            }
+            Check(tag, settings);
         }
 
         /// <summary>
