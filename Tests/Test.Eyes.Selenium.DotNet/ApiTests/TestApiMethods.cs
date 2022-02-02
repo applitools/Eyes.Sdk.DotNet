@@ -21,10 +21,10 @@ namespace Applitools.Selenium.Tests.ApiTests
             string logPath = TestUtils.InitLogPath();
             ILogHandler logHandler = TestUtils.InitLogHandler(logPath: logPath);
             EyesRunner runner = useVisualGrid ? (EyesRunner)new VisualGridRunner(10, logHandler) : new ClassicRunner(logHandler);
-            if (useVisualGrid && !TestUtils.RUNS_ON_CI)
-            {
-                ((VisualGridRunner)runner).DebugResourceWriter = new FileDebugResourceWriter(logPath);
-            }
+            //if (useVisualGrid && !TestUtils.RUNS_ON_CI)
+            //{
+            //    ((VisualGridRunner)runner).DebugResourceWriter = new FileDebugResourceWriter(logPath);
+            //}
             Eyes eyes = new Eyes(runner);
             eyes.Batch = TestDataProvider.BatchInfo;
             try

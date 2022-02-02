@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Tests
 
 
                 eyes = new Eyes();
-                Configuration configuration = eyes.GetConfiguration();
+                var configuration = eyes.GetConfiguration();
                 configuration.SetAppName(nameof(TestMobileEmulation)).SetTestName(nameof(TestCheckRegion_LoadPageAfterOpen));
                 eyes.SetConfiguration(configuration);
                 eyes.Open(webDriver);

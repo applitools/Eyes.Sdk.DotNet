@@ -217,7 +217,7 @@ namespace Applitools.Selenium.Tests
 
             eyes.AddProperty("Selenium Session ID", webDriver.SessionId.ToString());
 
-            eyes.AddProperty("ForceFPS", eyes.ForceFullPageScreenshot ? "true" : "false");
+            eyes.AddProperty("ForceFPS", eyes.ForceFullPageScreenshot.HasValue && eyes.ForceFullPageScreenshot.Value ? "true" : "false");
             eyes.AddProperty("Agent ID", eyes.FullAgentId);
 
             //IWebDriver webDriver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), capabilities_);
@@ -488,7 +488,7 @@ namespace Applitools.Selenium.Tests
             {
                 driver?.Quit();
                 eyes?.Abort();
-                eyes?.runner_.GetAllTestResults(false);
+                eyes?.Runner.GetAllTestResults(false);
             }
         }
 

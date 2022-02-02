@@ -190,6 +190,12 @@ namespace Applitools.Selenium
             set => Config.SetAgentId(value);
         }
         
+        public string FullAgentId
+        {
+            get => AgentId;
+            set => AgentId = value;
+        }
+        
         public string BranchName
         {
             get => Config.BranchName;
@@ -264,7 +270,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            var testResults = EyesRunner.SendRequest<EyesAbortRequest, TestResults>(request).Result;
+            var testResults = Runner.SendRequest<EyesAbortRequest, TestResults>(request).Result;
 
             IsOpen = false;
 
@@ -287,7 +293,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            EyesRunner.SendRequest(request).GetAwaiter();
+            Runner.SendRequest(request).GetAwaiter();
 
             //socketClient_.Close();
             IsOpen = false;
@@ -390,7 +396,7 @@ namespace Applitools.Selenium
                 }
             };
 
-            var result = EyesRunner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
 
             if (result?.Payload?.Error != null)
             {
@@ -660,7 +666,7 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            var response = EyesRunner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
 
             IsOpen = false;
 
@@ -695,7 +701,7 @@ namespace Applitools.Selenium
 
         //    var eyesCloseRequest = CreateEyesCloseRequest();
 
-        //    var response = EyesRunner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
 
         //    IsOpen = false;
 
@@ -726,7 +732,7 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            EyesRunner.SendRequest(eyesCloseRequest).GetAwaiter();
+            Runner.SendRequest(eyesCloseRequest).GetAwaiter();
 
             IsOpen = false;
         }
@@ -821,11 +827,11 @@ namespace Applitools.Selenium
                 return driver;
             }
             
-            managerApplitoolsRefId_ = EyesRunner.GetCoreMakeManager();
+            managerApplitoolsRefId_ = Runner.GetCoreMakeManager();
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
 
-            var openEyesResponsePayload = EyesRunner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
+            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;

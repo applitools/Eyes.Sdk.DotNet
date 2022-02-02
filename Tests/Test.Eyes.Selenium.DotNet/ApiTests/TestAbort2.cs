@@ -114,7 +114,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void Test_ThrowBeforeOpen()
         {
             // 1. Update the Eyes configuration with test specific values
-            Configuration testConfig = eyes.GetConfiguration();
+            var testConfig = eyes.GetConfiguration();
             testConfig.SetTestName("test URL : " + testedUrl);
             eyes.SetConfiguration(testConfig);
             throw new Exception("Before Open");
@@ -123,7 +123,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void Test_ThrowAfterOpen()
         {
             // 1. Update the Eyes configuration with test specific values
-            Configuration testConfig = eyes.GetConfiguration();
+            var testConfig = eyes.GetConfiguration();
             testConfig.SetTestName("test URL : " + testedUrl);
             eyes.SetConfiguration(testConfig);
 
@@ -135,7 +135,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void Test_ThrowDuringCheck()
         {
             // 1. Update the Eyes configuration with test specific values
-            Configuration testConfig = eyes.GetConfiguration();
+            var testConfig = eyes.GetConfiguration();
             testConfig.SetTestName("test URL : " + testedUrl);
             eyes.SetConfiguration(testConfig);
 
@@ -150,7 +150,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void Test_ThrowAfterCheck()
         {
             // 1. Update the Eyes configuration with test specific values
-            Configuration testConfig = eyes.GetConfiguration();
+            var testConfig = eyes.GetConfiguration();
             testConfig.SetTestName("test URL : " + testedUrl);
             eyes.SetConfiguration(testConfig);
 

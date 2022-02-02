@@ -146,7 +146,7 @@ namespace Applitools.Selenium.Tests
             Eyes eyes = new Eyes(runner);
             eyes.Batch = TestDataProvider.BatchInfo;
             AccessibilitySettings settings = new AccessibilitySettings(AccessibilityLevel.AA, AccessibilityGuidelinesVersion.WCAG_2_0);
-            Configuration configuration = eyes.GetConfiguration();
+            var configuration = eyes.GetConfiguration();
             configuration.SetAccessibilityValidation(settings);
             eyes.SetConfiguration(configuration);
             IWebDriver driver = SeleniumUtils.CreateChromeDriver();
@@ -368,7 +368,7 @@ namespace Applitools.Selenium.Tests
 
             Eyes eyes = new Eyes(runner);
 
-            IConfiguration config = eyes.GetConfiguration();
+            var config = eyes.GetConfiguration();
             config.ServerUrl = "https://some.server.url.com";
             config.ApiKey = "someApiKey";
             eyes.SetConfiguration(config);
@@ -441,7 +441,7 @@ namespace Applitools.Selenium.Tests
 
         private static void ValidateConfiguration_(Eyes eyes)
         {
-            IConfiguration configuration = eyes.GetConfiguration();
+            var configuration = eyes.GetConfiguration();
             Assert.AreEqual("someApiKey", configuration.ApiKey);
             Assert.AreEqual("https://some.server.url.com", configuration.ServerUrl);
         }

@@ -38,7 +38,7 @@ namespace Applitools.Selenium.Tests.ApiTests
             eyes_ = new Eyes(runner_);
             eyes_.Batch = TestDataProvider.BatchInfo;
 
-            Configuration config = eyes_.GetConfiguration();
+            var config = eyes_.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
             eyes_.SetConfiguration(config);
 
@@ -49,7 +49,7 @@ namespace Applitools.Selenium.Tests.ApiTests
         public void LocalTearDown()
         {
             driver_.Quit();
-            (runner_ as VisualGridRunner)?.StopServiceRunner();
+            //(runner_ as VisualGridRunner)?.StopServiceRunner();
         }
 
         [Test]

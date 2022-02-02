@@ -20,7 +20,7 @@ namespace Applitools.Selenium.Tests
             runner.SetLogHandler(TestUtils.InitLogHandler());
             Eyes eyes = new Eyes(runner);
 
-            Configuration sconf = eyes.GetConfiguration();
+            var sconf = eyes.GetConfiguration();
 
             string suffix = useVisualGrid ? "_VG" : "";
             // Set test name

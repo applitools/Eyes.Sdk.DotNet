@@ -246,7 +246,7 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestAccessibilityRegions()
         {
-            IConfiguration config = GetEyes().GetConfiguration();
+            var config = GetEyes().GetConfiguration();
             config.AccessibilityValidation = new AccessibilitySettings(AccessibilityLevel.AAA, AccessibilityGuidelinesVersion.WCAG_2_0);
             GetEyes().SetConfiguration(config);
             GetEyes().Check(Target.Window().Accessibility(By.ClassName("ignore"), AccessibilityRegionType.LargeText));
