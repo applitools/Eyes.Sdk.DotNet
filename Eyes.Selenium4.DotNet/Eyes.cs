@@ -199,7 +199,10 @@ namespace Applitools.Selenium
             }
             
             var seleniumCheckSettings = (SeleniumCheckSettings) checkSettings;
-            var eyesConfig = new EyesConfig(Config);
+            var eyesConfig = new EyesConfig(Config)
+            {
+                Properties = properties_.ToArray()
+            };
             var request = new EyesCheckRequest
             {
                 Key = Guid.NewGuid().ToString(),
@@ -485,8 +488,13 @@ namespace Applitools.Selenium
 
             IsOpen = false;
 
-            var testResult = response?.Payload?.Result?.FirstOrDefault();
+            var error = response?.Payload?.Error;
+            if (error != null && throwEx)
+            {
+                throw new TestFailedException($"{error.Message}{Environment.NewLine}{error.Stack}");
+            }
 
+            var testResult = response?.Payload?.Result?.FirstOrDefault();
             if (testResult != null)
             {
                 if (testResult.IsPassed == false && throwEx)
@@ -907,6 +915,9 @@ namespace Applitools.Selenium
                         SessionId = remoteWebDriver.SessionId.ToString()
                     },
                     Config = new EyesConfig(Config)
+                    {
+                        Properties = properties_.ToArray()
+                    }
                 }
             };
 
