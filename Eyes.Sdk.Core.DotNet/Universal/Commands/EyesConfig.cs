@@ -142,6 +142,7 @@ namespace Applitools.Selenium.Commands
         //}
 
         public int? ConcurrentSessions { get; set; }
+        public IDictionary<string, object> VisualGridOptions { get; set; }
 
         //  browsersInfo?: (DesktopBrowserRenderer | ChromeEmulationDeviceRenderer | IOSDeviceRenderer)[]
         //  visualGridOptions?: Record<string, any>
@@ -152,9 +153,11 @@ namespace Applitools.Selenium.Commands
         public EyesConfig()
         {
             Properties = new PropertyData[0];
+            VisualGridOptions = new Dictionary<string, object>();
         }
 
-        public EyesConfig(Applitools.Configuration config) : this()
+        public EyesConfig(Applitools.Configuration config) 
+            : this()
         {
             AgentId = config.AgentId;
             ApiKey = config.ApiKey;
@@ -184,9 +187,13 @@ namespace Applitools.Selenium.Commands
             StitchMode = config.StitchMode;
             WaitBeforeScreenshots = config.WaitBeforeScreenshots;
             SendDom = config.SendDom;
+            DontCloseBatches = config.DontCloseBatches;
+            if (config.VisualGridOptions?.Length > 0)
+            {
+                VisualGridOptions = config.VisualGridOptions.ToDictionary(i => i.Key, v => v.Value);
+            }
 
             var browsers = new List<IRenderBrowserInfo>();
-
             foreach (var browserInfo in config.GetBrowsersInfo())
             {
                 if (browserInfo.DesktopBrowserInfo != null)

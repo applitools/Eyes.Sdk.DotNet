@@ -52,6 +52,12 @@ namespace Applitools
             set => Config.SetStitchMode(value);
         }
 
+        public bool? DontCloseBatches
+        {
+            get => Config.DontCloseBatches;
+            set => Config.SetDontCloseBatches(value);
+        }
+
         public int? WaitBeforeScreenshots
         {
             get => Config.WaitBeforeScreenshots;

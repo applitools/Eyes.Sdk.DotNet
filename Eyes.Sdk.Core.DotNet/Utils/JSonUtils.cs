@@ -38,9 +38,16 @@ namespace Applitools.Utils
 
         public static string ToJson(this object instance)
         {
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy
+                {
+                    ProcessDictionaryKeys = false
+                }
+            };
             return JsonConvert.SerializeObject(instance, new JsonSerializerSettings
             {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                ContractResolver = contractResolver,
                 NullValueHandling = NullValueHandling.Ignore
             });
         }

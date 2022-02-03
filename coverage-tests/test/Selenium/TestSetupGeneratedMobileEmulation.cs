@@ -64,6 +64,13 @@ namespace Applitools.Generated.Selenium.Tests
                 Height = 512,
                 PixelRatio = 2
             };
+            chromeSimulationData_["Android Emulator;8.0;Landscape"] = new ChromiumMobileEmulationDeviceSettings()
+            {
+                UserAgent = "Mozilla/5.0 (Linux; Android 8.0.0; Android SDK built for x86_64 Build/OSR1.180418.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36",
+                Width = 384,
+                Height = 512,
+                PixelRatio = 2
+            };
             #endregion
 
             #region iPads, Landscape

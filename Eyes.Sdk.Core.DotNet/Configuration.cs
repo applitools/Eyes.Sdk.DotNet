@@ -301,6 +301,14 @@ namespace Applitools
             return this;
         }
 
+        public bool? DontCloseBatches { get; set; }
+
+        public IConfiguration SetDontCloseBatches(bool? value)
+        {
+            DontCloseBatches = value;
+            return this;
+        }
+
         public TimeSpan? MatchTimeout { get; set; }
 
         public IConfiguration SetMatchTimeout(TimeSpan? value)

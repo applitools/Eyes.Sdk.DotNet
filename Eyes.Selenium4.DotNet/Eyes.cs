@@ -882,17 +882,7 @@ namespace Applitools.Selenium
 
             return region;
         }
-
-        private string ToJson<T>(T data)
-        {
-            string json = JsonConvert.SerializeObject(data, new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                NullValueHandling = NullValueHandling.Ignore
-            });
-            return json;
-        }
-
+        
         private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
             string applitoolsRefId,
             IWebDriver webDriver)
