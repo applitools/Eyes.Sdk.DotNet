@@ -76,7 +76,7 @@ namespace Applitools.Selenium.Commands
         public string DisplayName { get; set; }
         public RectangleSize ViewportSize { get; set; }
         public string SessionType { get; set; }
-        public PropertyInfo[] Properties { get; set; }
+        public PropertyData[] Properties { get; set; }
         public BatchInfo Batch { get; set; }
         public ImageMatchSettings DefaultMatchSettings { get; set; }
         [JsonProperty("hostOS")]
@@ -151,7 +151,7 @@ namespace Applitools.Selenium.Commands
 
         public EyesConfig()
         {
-            Properties = new PropertyInfo[0];
+            Properties = new PropertyData[0];
         }
 
         public EyesConfig(Applitools.Configuration config) : this()

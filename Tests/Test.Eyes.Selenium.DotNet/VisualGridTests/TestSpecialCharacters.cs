@@ -26,7 +26,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             sconf.SetBatch(TestDataProvider.BatchInfo);
 
             eyes.SetConfiguration(sconf);
-            ChromeDriver driver = SeleniumUtils.CreateChromeDriver();
+            var driver = SeleniumUtils.CreateChromeDriver();
             eyes.Open(driver);
             driver.Url = "https://applitools.github.io/demo/TestPages/SpecialCharacters/index.html";
             eyes.Check("Test Special Characters", Target.Window().Fully());

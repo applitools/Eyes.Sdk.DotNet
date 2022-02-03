@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Net;
-using System.Reflection;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 
@@ -9,8 +6,7 @@ namespace Applitools
 {
     public abstract class EyesBaseConfig
     {
-
-        protected Applitools.Configuration Config { get; private set; }
+        protected Configuration Config { get; set; }
 
         public string ApiKey
         {
@@ -109,17 +105,97 @@ namespace Applitools
             get => Config.Batch;
             set => Config.SetBatch(value);
         }
+        
+        public string BaselineBranchName
+        {
+            get => Config.BaselineBranchName;
+            set => Config.SetBaselineBranchName(value);
+        }
+        
+        public MatchLevel? MatchLevel
+        {
+            get => Config.MatchLevel;
+            set => Config.SetMatchLevel(value);
+        }
+        
+        public bool? IgnoreCaret
+        {
+            get => Config.IgnoreCaret;
+            set => Config.SetIgnoreCaret(value);
+        }
+        
+        public bool? SaveFailedTests
+        {
+            get => Config.SaveFailedTests;
+            set => Config.SetSaveFailedTests(value);
+        }
+        
+        public bool? SendDom
+        {
+            get => Config.SendDom;
+            set => Config.SetSendDom(value);
+        }
+
+        public bool? SaveDiffs
+        {
+            get => Config.SaveDiffs;
+            set => Config.SetSaveDiffs(value);
+        }
+
+        public int? StitchOverlap
+        {
+            get => Config.StitchOverlap;
+            set => Config.SetStitchOverlap(value);
+        }
+
+        public TimeSpan? MatchTimeout
+        {
+            get => Config.MatchTimeout;
+            set => Config.SetMatchTimeout(value);
+        }
+        
+        public string AgentId
+        {
+            get => Config.AgentId;
+            set => Config.SetAgentId(value);
+        }
+
+        public string FullAgentId
+        {
+            get => AgentId;
+            set => AgentId = value;
+        }
+        
+        public string BaselineEnvName
+        {
+            get => Config.BaselineEnvName;
+            set => Config.SetBaselineEnvName(value);
+        }
+
+        public string EnvironmentName
+        {
+            get => Config.EnvironmentName;
+            set => Config.SetEnvironmentName(value);
+        }
+
+        public string HostApp
+        {
+            get => Config.HostApp;
+            set => Config.SetHostApp(value);
+        }
+
+        public Logger Logger { get; }
 
         #endregion
 
-        public bool IsDisabled { get; set; }
+        public virtual bool IsDisabled { get; set; }
 
         public bool IsOpen { get; protected set; }
 
-
-        protected EyesBaseConfig()
+        protected EyesBaseConfig(Configuration configuration)
         {
-            Config = new Applitools.Configuration(new Configuration());
+            Config = configuration ?? new Configuration();
+            Logger = new Logger();
         }
 
         public void SetConfiguration(IConfiguration configuration)

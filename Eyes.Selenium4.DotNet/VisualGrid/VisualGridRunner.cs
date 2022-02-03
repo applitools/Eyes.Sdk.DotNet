@@ -76,7 +76,7 @@ namespace Applitools.VisualGrid
             : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory, logHandler)
         {
         }
-        
+
         protected override ManagerConfig InitConfig()
         {
             return new ManagerConfig
