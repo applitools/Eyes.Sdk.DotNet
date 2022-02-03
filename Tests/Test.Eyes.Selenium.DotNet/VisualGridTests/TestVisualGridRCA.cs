@@ -40,7 +40,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 driver.Quit();
                 eyes.AbortIfNotClosed();
-                runner.StopServiceRunner();
+                //runner.StopServiceRunner();
             }
         }
 
@@ -71,7 +71,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 driver.Quit();
                 eyes.AbortIfNotClosed();
-                runner.StopServiceRunner();
+                //runner.StopServiceRunner();
             }
         }
     }

@@ -56,12 +56,6 @@ namespace Applitools.Selenium
 
         #endregion
 
-        public string ApiKey
-        {
-            get => Config.ApiKey;
-            set => Config.SetApiKey(value);
-        }
-        
         public string TestName
         {
             get => Config.TestName;
@@ -92,12 +86,6 @@ namespace Applitools.Selenium
             set => Config.SetMatchLevel(value);
         }
         
-        public string ServerUrl
-        {
-            get => Config.ServerUrl;
-            set => Config.SetServerUrl(value);
-        }
-
         public ProxySettings Proxy
         {
             get => Config.Proxy;
@@ -815,10 +803,18 @@ namespace Applitools.Selenium
             {
                 ApiKey = API_KEY;
             }
-            
-            TestName = testName;
-            AppName = appName;
-            ViewportSize = viewportSize;
+            if (string.IsNullOrEmpty(appName) == false)
+            {
+                AppName = appName;
+            }
+            if (string.IsNullOrEmpty(testName) == false)
+            {
+                TestName = testName;
+            }
+            if (viewportSize != null)
+            {
+                ViewportSize = viewportSize;
+            }
             driver_ = driver;
 
             if (IsDisabled)

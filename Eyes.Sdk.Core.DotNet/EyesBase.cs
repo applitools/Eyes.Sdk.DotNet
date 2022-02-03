@@ -45,11 +45,23 @@ public delegate string CreateImageHandler(Rectangle region);
             set => Runner.IsDisabled = value;
         }
 
+        public string ApiKey
+        {
+            get => Config.ApiKey;
+            set => Config.SetApiKey(value);
+        }
+
+        public string ServerUrl
+        {
+            get => Config.ServerUrl;
+            set => Config.SetServerUrl(value);
+        }
+
         public bool IsOpen { get; set; }
 
         protected EyesBase(EyesRunner runner)
         {
-            Runner = runner;
+            Runner = runner ?? new ClassicRunner();
             Config = new Configuration();
         }
 

@@ -75,8 +75,9 @@ namespace Applitools.Tests.Utils
         public static void SetupLogging(Selenium.Eyes eyes, [CallerMemberName] string testName = null)
         {
             string path = SetupDebugScreenshotProvider(eyes, testName);
-            Selenium.Eyes.moveWindow_ = !Debugger.IsAttached;
-            SetupLogging(eyes.runner_, testName, path);
+            // Note: double check it
+            //Selenium.Eyes.moveWindow_ = !Debugger.IsAttached;
+            SetupLogging(eyes.Runner, testName, path);
         }
 
         public static string SetupDebugScreenshotProvider(Selenium.Eyes eyes, string testName)

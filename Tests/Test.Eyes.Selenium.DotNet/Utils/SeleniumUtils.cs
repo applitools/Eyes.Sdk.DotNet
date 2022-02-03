@@ -13,6 +13,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Safari;
 using OpenQA.Selenium.Support.UI;
 
@@ -349,10 +350,10 @@ namespace Applitools.Selenium.Tests.Utils
                 logPath = TestUtils.InitLogPath(testName);
                 logHandler = TestUtils.InitLogHandler(testName, logPath);
                 VisualGridRunner visualGridRunner = new VisualGridRunner(10, logHandler);
-                if (!TestUtils.RUNS_ON_CI)
-                {
-                    visualGridRunner.DebugResourceWriter = new FileDebugResourceWriter(logPath);
-                }
+                //if (!TestUtils.RUNS_ON_CI)
+                //{
+                //    visualGridRunner.DebugResourceWriter = new FileDebugResourceWriter(logPath);
+                //}
                 runner = visualGridRunner;
             }
             else

@@ -46,7 +46,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             finally
             {
                 driver.Quit();
-                runner.StopServiceRunner();
+                //runner.StopServiceRunner();
             }
         }
 
@@ -63,7 +63,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 driver.Url = "https://applitools.com/helloworld";
                 eyes.Batch = TestDataProvider.BatchInfo;
 
-                Configuration configuration = eyes.GetConfiguration();
+                var configuration = eyes.GetConfiguration();
                 configuration.SetAppName("Test Timeouts").SetTestName("Test Timeouts").SetBatch(TestDataProvider.BatchInfo);
                 configuration.AddBrowser(800, 600, BrowserType.CHROME);
                 configuration.AddDeviceEmulation(DeviceName.Laptop_with_HiDPI_screen);
@@ -79,7 +79,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             finally
             {
                 driver.Quit();
-                runner.StopServiceRunner();
+                //runner.StopServiceRunner();
             }
         }
     }

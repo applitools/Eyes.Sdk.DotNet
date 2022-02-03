@@ -17,7 +17,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             driver.Url = "https://applitools.com/helloworld";
             VisualGridRunner runner = new VisualGridRunner(10);
             Eyes eyes = new Eyes(runner);
-            Configuration config = eyes.GetConfiguration();
+            var config = eyes.GetConfiguration();
             config.AddBrowser(800, 600, BrowserType.CHROME);
             config.AddBrowser(800, 600, BrowserType.FIREFOX);
             config.AddBrowser(1200, 800, BrowserType.CHROME);
