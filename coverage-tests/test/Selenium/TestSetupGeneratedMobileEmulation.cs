@@ -24,7 +24,7 @@ namespace Applitools.Generated.Selenium.Tests
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
             eyes = new Applitools.Selenium.Eyes(logHandler);
-            initEyesSettings(false, true);
+            initEyesSettings(false, false);
             eyes.AddProperty("Orientation", deviceOrientation.ToString());
             eyes.AddProperty("Page", page);
         }
@@ -58,6 +58,13 @@ namespace Applitools.Generated.Selenium.Tests
 
             #region Android
             chromeSimulationData_["Android Emulator;8.0;Portrait"] = new ChromiumMobileEmulationDeviceSettings()
+            {
+                UserAgent = "Mozilla/5.0 (Linux; Android 8.0.0; Android SDK built for x86_64 Build/OSR1.180418.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36",
+                Width = 384,
+                Height = 512,
+                PixelRatio = 2
+            };
+            chromeSimulationData_["Android Emulator;8.0;Landscape"] = new ChromiumMobileEmulationDeviceSettings()
             {
                 UserAgent = "Mozilla/5.0 (Linux; Android 8.0.0; Android SDK built for x86_64 Build/OSR1.180418.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36",
                 Width = 384,
