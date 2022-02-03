@@ -94,5 +94,9 @@ namespace Applitools.Generated.Utils
         {
             Assert.AreEqual(expected, (string)actual);
         }
+        public static void compareProcedure(PropertyData actual, PropertyData expected, string type = null)
+        {
+            Assert.AreEqual(expected.ToString(), actual.ToString());
+        }
     }
 }
