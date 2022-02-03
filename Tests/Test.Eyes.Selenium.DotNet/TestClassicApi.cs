@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Tests
         [Test]
         public void TestCheckWindow_ForceFullPageScreenshot()
         {
-            bool originalForceFullPageScreenshot = GetEyes().ForceFullPageScreenshot;
+            bool originalForceFullPageScreenshot = GetEyes().ForceFullPageScreenshot ?? false;
             GetEyes().ForceFullPageScreenshot = true;
             GetEyes().CheckWindow("Window");
             GetEyes().ForceFullPageScreenshot = originalForceFullPageScreenshot;

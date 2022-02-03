@@ -10,7 +10,6 @@ using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Commands;
 using Applitools.Selenium.Commands.Requests;
 using Applitools.Selenium.Commands.Responses;
-using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium.Remote;
@@ -19,7 +18,6 @@ namespace Applitools.Selenium
 {
     public class Eyes : EyesBase//, ISeleniumConfigurationProvider//, IEyesBase
     {
-        private Logger logger_;
         private PropertiesCollection properties_;
         private string managerApplitoolsRefId_;
         private EyesRef eyes_;
@@ -49,181 +47,11 @@ namespace Applitools.Selenium
         {
             if (logHandler == null) logHandler = NullLogHandler.Instance;
 
-            logger_ = new Logger();
             logHandler_ = logHandler;
             properties_ = new PropertiesCollection();
         }
 
         #endregion
-
-        public string TestName
-        {
-            get => Config.TestName;
-            set => Config.SetTestName(value);
-        }
-        
-        public string BaselineBranchName
-        {
-            get => Config.BaselineBranchName;
-            set => Config.SetBaselineBranchName(value);
-        }
-        
-        public string AppName
-        {
-            get => Config.AppName;
-            set => Config.SetAppName(value);
-        }
-        
-        public RectangleSize ViewportSize
-        {
-            get => Config.ViewportSize;
-            set => Config.SetViewportSize(value);
-        }
-        
-        public MatchLevel? MatchLevel
-        {
-            get => Config.MatchLevel;
-            set => Config.SetMatchLevel(value);
-        }
-        
-        public ProxySettings Proxy
-        {
-            get => Config.Proxy;
-            set => Config.SetProxy(value);
-        }
-
-        #region configuration properties
-
-        public StitchModes? StitchMode
-        {
-            get => Config.StitchMode;
-            set => Config.SetStitchMode(value);
-        }
-
-        public int? WaitBeforeScreenshots
-        {
-            get => Config.WaitBeforeScreenshots;
-            set => Config.SetWaitBeforeScreenshots(value);
-        }
-
-        public bool? ForceFullPageScreenshot
-        {
-            get => Config.IsForceFullPageScreenshot;
-            set => Config.SetForceFullPageScreenshot(value);
-        }
-
-        public bool? HideScrollbars
-        {
-            get => Config.HideScrollbars;
-            set => Config.SetHideScrollbars(value);
-        }
-
-        public bool? IgnoreCaret
-        {
-            get => Config.IgnoreCaret;
-            set => Config.SetIgnoreCaret(value);
-        }
-
-        public bool? HideCaret
-        {
-            get => Config.HideCaret;
-            set => Config.SetHideCaret(value);
-        }
-
-        public bool? SaveFailedTests
-        {
-            get => Config.SaveFailedTests;
-            set => Config.SetSaveFailedTests(value);
-        }
-
-        public bool? SaveNewTests
-        {
-            get => Config.SaveNewTests;
-            set => Config.SetSaveNewTests(value);
-        }
-
-        public bool? SendDom
-        {
-            get => Config.SendDom;
-            set => Config.SetSendDom(value);
-        }
-
-        public bool? SaveDiffs
-        {
-            get => Config.SaveDiffs;
-            set => Config.SetSaveDiffs(value);
-        }
-
-        public int? StitchOverlap
-        {
-            get => Config.StitchOverlap;
-            set => Config.SetStitchOverlap(value);
-        }
-
-        public TimeSpan? MatchTimeout
-        {
-            get => Config.MatchTimeout;
-            set => Config.SetMatchTimeout(value);
-        }
-
-        public string HostOS
-        {
-            get => Config.HostOS;
-            set => Config.SetHostOS(value);
-        }
-
-        public string AgentId
-        {
-            get => Config.AgentId;
-            set => Config.SetAgentId(value);
-        }
-        
-        public string FullAgentId
-        {
-            get => AgentId;
-            set => AgentId = value;
-        }
-        
-        public string BranchName
-        {
-            get => Config.BranchName;
-            set => Config.SetBranchName(value);
-        }
-
-        public string BaselineEnvName
-        {
-            get => Config.BaselineEnvName;
-            set => Config.SetBaselineEnvName(value);
-        }
-
-        public string EnvironmentName
-        {
-            get => Config.EnvironmentName;
-            set => Config.SetEnvironmentName(value);
-        }
-
-        public string HostApp
-        {
-            get => Config.HostApp;
-            set => Config.SetHostApp(value);
-        }
-
-        public string ParentBranchName
-        {
-            get => Config.ParentBranchName;
-            set => Config.SetParentBranchName(value);
-        }
-
-        public BatchInfo Batch
-        {
-            get => Config.Batch;
-            set => Config.SetBatch(value);
-        }
-
-        #endregion
-
-
-        public Logger Logger => logger_;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -283,7 +111,6 @@ namespace Applitools.Selenium
 
             Runner.SendRequest(request).GetAwaiter();
 
-            //socketClient_.Close();
             IsOpen = false;
         }
 
@@ -727,7 +554,7 @@ namespace Applitools.Selenium
 
         public void Log(string msg, params object[] args)
         {
-            logger_.Log(TraceLevel.Notice, TestName, Stage.General, new { message = string.Format(msg, args) });
+            Logger.Log(TraceLevel.Notice, TestName, Stage.General, new { message = string.Format(msg, args) });
         }
 
         public void AddProperty(string name, string value)

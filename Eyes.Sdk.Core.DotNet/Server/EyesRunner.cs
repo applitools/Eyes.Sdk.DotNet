@@ -28,6 +28,8 @@ namespace Applitools
             set => config_ = value;
         }
 
+        public bool DontCloseBatches { get; set; }
+
         protected EyesRunner(ILogHandler logHandler)
         {
             if (logHandler != null)

@@ -1,18 +1,5 @@
-﻿using Applitools.Cropping;
-using Applitools.Exceptions;
-using Applitools.Fluent;
-using Applitools.Utils;
-using Applitools.Utils.Cropping;
-using Applitools.Utils.Geometry;
-using Applitools.Utils.Images;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Applitools
@@ -23,60 +10,36 @@ namespace Applitools
     /// </summary>
     public delegate string[] GetTextHandler(string imageId, IList<Rectangle> regions, string lanuage);
 
-/// <summary>
-/// Creates an image of the specified region of the application window and returns its id.
-/// </summary>
-/// <param name="region">Image region or an empty rectangle to create an image of 
-/// the entire window.</param>
-public delegate string CreateImageHandler(Rectangle region);
+    /// <summary>
+    /// Creates an image of the specified region of the application window and returns its id.
+    /// </summary>
+    /// <param name="region">Image region or an empty rectangle to create an image of 
+    /// the entire window.</param>
+    public delegate string CreateImageHandler(Rectangle region);
 
     //    /// <summary>
     //    /// Applitools Eyes base class.
     //    /// </summary>
     [ComVisible(true)]
-    public abstract class EyesBase //: EyesBaseConfig, IEyesBase, IBatchCloser
+    public abstract class EyesBase : EyesBaseConfig//, IEyesBase, IBatchCloser
     {
         internal EyesRunner Runner { get; private set; }
-        protected internal Applitools.Configuration Config { get; protected set; }
 
-        public bool IsDisabled
+        public override bool IsDisabled
         {
             get => Runner.IsDisabled;
             set => Runner.IsDisabled = value;
         }
 
-        public string ApiKey
-        {
-            get => Config.ApiKey;
-            set => Config.SetApiKey(value);
-        }
-
-        public string ServerUrl
-        {
-            get => Config.ServerUrl;
-            set => Config.SetServerUrl(value);
-        }
-
-        public bool IsOpen { get; set; }
-
-        protected EyesBase(EyesRunner runner)
+        protected EyesBase(EyesRunner runner = null, Configuration configuration = null) : base(configuration)
         {
             Runner = runner ?? new ClassicRunner();
-            Config = new Configuration();
         }
-
+        
         public virtual void AbortIfNotClosed()
         {
 
         }
-        
-        protected EyesBase(Configuration configuration)
-        {
-            Config = configuration;
-        }
-
-
-
 
         //public 
 
@@ -272,7 +235,6 @@ public delegate string CreateImageHandler(Rectangle region);
         //        /// <summary>
         //        /// Message logger.
         //        /// </summary>
-        public Logger Logger { get; private set; }
 
         //        //protected SetScaleProviderHandler SetScaleProvider
         //        //{
