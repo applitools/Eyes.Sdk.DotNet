@@ -16,6 +16,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApiTests\TestApiMethods.cs" />
+    <Compile Remove="ApiTests\TestBatchApi.cs" />
+    <Compile Remove="TestAPI.cs" />
+    <Compile Remove="TestBrowserResize.cs" />
+    <Compile Remove="TestClassicApi.cs" />
+    <Compile Remove="TestDom.cs" />
+    <Compile Remove="TestHelperMethods.cs" />
+    <Compile Remove="TestSendDom.cs" />
+    <Compile Remove="TestsUsingMockServerConnector.cs" />
+    <Compile Remove="VisualGridTests\TestBatchClose.cs" />
+    <Compile Remove="VisualGridTests\TestDomSnapshot.cs" />
     <Compile Remove="VisualGridTests\TestRenderingTask.cs" />
     <Compile Remove="VisualGridTests\TestVGCloseAsync.cs" />
     <Compile Remove="VisualGridTests\TestVGNoMissingSteps.cs" />

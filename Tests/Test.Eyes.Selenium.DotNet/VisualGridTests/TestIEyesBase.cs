@@ -39,7 +39,8 @@ namespace Applitools.Selenium.Tests.VisualGridTests
         {
             LogPath = TestUtils.InitLogPath(fixtureName);
             LogHandler = TestUtils.InitLogHandler(fixtureName, LogPath);
-            VisualGridRunner.waitForResultTimeout_ = TimeSpan.FromMinutes(1);
+            // Note: double check it
+            //VisualGridRunner.waitForResultTimeout_ = TimeSpan.FromMinutes(1);
             suiteArgs_.Add("fixture", fixtureName);
         }
 

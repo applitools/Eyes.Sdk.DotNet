@@ -42,7 +42,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             }
             finally
             {
-                runner.StopServiceRunner();
+               //runner.StopServiceRunner();
             }
         }
     }

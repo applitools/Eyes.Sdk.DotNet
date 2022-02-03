@@ -164,7 +164,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
                 driver.Quit();
             }
             Assert.IsFalse(runner.GetAllTestResultsAlreadyCalled);
-            (runner as VisualGridRunner)?.StopServiceRunner();
+            //(runner as VisualGridRunner)?.StopServiceRunner();
         }
     }
 }

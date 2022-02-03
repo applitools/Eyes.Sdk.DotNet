@@ -92,7 +92,7 @@ namespace Applitools.Selenium.Tests.VisualGridTests
             {
                 eyes.AbortIfNotClosed();
                 driver.Quit();
-                if (runner is VisualGridRunner vgr) vgr.StopServiceRunner();
+                //if (runner is VisualGridRunner vgr) vgr.StopServiceRunner();
             }
         }
     }
