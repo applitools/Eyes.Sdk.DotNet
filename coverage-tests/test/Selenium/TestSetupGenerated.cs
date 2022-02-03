@@ -59,11 +59,11 @@ namespace Applitools.Generated.Selenium.Tests
                     }
                     break;
                 case browserType.Firefox:
-                    TestContext tc = TestContext.CurrentContext;
-                    logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped,
-                        new { message = "Firefox not supported for Selenium 4", testName = tc.Test.FullName });
-                    Assert.Inconclusive();
-                    //driver = CreateFirefoxDriver(headless: headless);
+                    //TestContext tc = TestContext.CurrentContext;
+                    //logger_.Log(TraceLevel.Notice, Stage.TestFramework, StageType.Skipped,
+                    //    new { message = "Firefox not supported for Selenium 4", testName = tc.Test.FullName });
+                    //Assert.Inconclusive();
+                    driver = CreateFirefoxDriver(headless: headless);
                     break;
                 case browserType.IE:
                     var sauceOptions = new Dictionary<string, object>();
