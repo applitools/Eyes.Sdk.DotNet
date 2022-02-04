@@ -6,12 +6,8 @@
         public ResponsePayloadError Error { get; set; }
     }
 
-    public class EyesManagerOpenEyesResponse //: ClientCommandBase
+    public class EyesManagerOpenEyesResponse : CommandBase
     {
-        public string Name { get; set; }
-
-        public string Key { get; set; }
-
         public EyesManagerOpenEyesResponsePayload Payload { get; set; }
     }
 }

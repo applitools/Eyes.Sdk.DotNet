@@ -36,10 +36,12 @@ namespace Applitools
             Runner = runner ?? new ClassicRunner();
         }
         
-        public virtual void AbortIfNotClosed()
+        public TestResults AbortIfNotClosed()
         {
-
+            return Abort();
         }
+
+        public abstract TestResults Abort();
 
         //public 
 

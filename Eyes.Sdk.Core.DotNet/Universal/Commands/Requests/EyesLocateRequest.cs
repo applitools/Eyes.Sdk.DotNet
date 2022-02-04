@@ -13,10 +13,13 @@
         public EyesConfig Config { get; set; }
     }
 
-    public class EyesLocateRequest : RequestBase
+    public class EyesLocateRequest : CommandBase
     {
-        public override string Name => "Eyes.locate";
-        
         public EyesLocateRequestPayload Payload { get; set; }
+
+        public EyesLocateRequest()
+        {
+            Name = "Eyes.locate";
+        }
     }
 }

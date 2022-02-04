@@ -2,14 +2,14 @@
 
 namespace Applitools.Selenium.Commands
 {
-    public abstract class RequestBase
+    public abstract class CommandBase
     {
-        public abstract string Name { get; }
+        public string Name { get; set; }
 
         public string Key { get; set; }
 
 
-        protected RequestBase()
+        protected CommandBase()
         {
             Key = Guid.NewGuid().ToString();
         }

@@ -2,6 +2,9 @@
 {
     public class CoreMakeSdkRequest : KeyedRequestBase
     {
-        public override string Name => "Core.makeSDK";
+        public CoreMakeSdkRequest()
+        {
+            Name = "Core.makeSDK";
+        }
     }
 }

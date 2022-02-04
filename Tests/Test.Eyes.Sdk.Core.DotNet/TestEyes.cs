@@ -42,5 +42,10 @@ namespace Applitools
         protected  void SetViewportSize(RectangleSize size)
         {
         }
+
+        public override TestResults Abort()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

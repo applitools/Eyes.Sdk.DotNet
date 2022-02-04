@@ -7,10 +7,13 @@
         public EyesConfig Config { get; set; }
     }
 
-    public class EyesCheckRequest : RequestBase
+    public class EyesCheckRequest : CommandBase
     {
-        public override string Name => "Eyes.check";
-        
         public EyesCheckRequestPayload Payload { get; set; }
+
+        public EyesCheckRequest()
+        {
+            Name = "Eyes.check";
+        }
     }
 }

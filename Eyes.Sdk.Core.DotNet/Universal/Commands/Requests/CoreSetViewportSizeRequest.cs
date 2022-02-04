@@ -7,10 +7,13 @@ namespace Applitools.Selenium.Commands.Requests
         public RectangleSize Size { get; set; }
     }
 
-    public class CoreSetViewportSizeRequest : RequestBase
+    public class CoreSetViewportSizeRequest : CommandBase
     {
-        public override string Name => "Core.setViewportSize";
-
         public DriverRequestPayload Payload { get; set; }
+
+        public CoreSetViewportSizeRequest()
+        {
+            Name = "Core.setViewportSize";
+        }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace Applitools
+﻿using Applitools.Selenium.Commands;
+
+namespace Applitools
 {
-    public class EyesManageCloseAllEyesResponse
+    public class EyesManageCloseAllEyesResponse : CommandBase
     {
-        public string Name { get; set; }
     }
 }

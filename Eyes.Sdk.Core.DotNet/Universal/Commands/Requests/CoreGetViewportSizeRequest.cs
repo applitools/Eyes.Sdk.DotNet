@@ -1,9 +1,12 @@
 ﻿namespace Applitools.Selenium.Commands.Requests
 {
-    public class CoreGetViewportSizeRequest : RequestBase
+    public class CoreGetViewportSizeRequest : CommandBase
     {
-        public override string Name => "Core.getViewportSize";
-
         public DriverRequestPayload Payload { get; set; }
+
+        public CoreGetViewportSizeRequest()
+        {
+            Name = "Core.getViewportSize";
+        }
     }
 }

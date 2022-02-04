@@ -5,10 +5,13 @@
         public ManagerRef Manager { get; set; }
     }
 
-    public class EyesManageCloseAllEyesRequest : RequestBase
+    public class EyesManageCloseAllEyesRequest : CommandBase
     {
-        public override string Name => "EyesManager.closeAllEyes";
-
         public EyesManageCloseAllEyesRequestPayload Payload { get; set; }
+
+        public EyesManageCloseAllEyesRequest()
+        {
+            Name = "EyesManager.closeAllEyes";
+        }
     }
 }

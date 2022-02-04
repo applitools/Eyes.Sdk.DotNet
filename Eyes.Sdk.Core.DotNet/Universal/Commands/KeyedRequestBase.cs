@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Applitools.Selenium.Commands
 {
-    public abstract class KeyedRequestBase : RequestBase
+    public abstract class KeyedRequestBase : CommandBase
     {
         [JsonProperty("payload")]
         public IDictionary<string, object> Payload { get; }

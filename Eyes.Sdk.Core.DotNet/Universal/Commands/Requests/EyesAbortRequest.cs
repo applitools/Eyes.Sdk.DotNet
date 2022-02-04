@@ -5,10 +5,13 @@
         public EyesRef Eyes { get; set; }
     }
 
-    public class EyesAbortRequest : RequestBase
+    public class EyesAbortRequest : CommandBase
     {
-        public override string Name => "Eyes.abort";
-
         public EyesAbortRequestPayload Payload { get; set; }
+
+        public EyesAbortRequest()
+        {
+            Name = "Eyes.abort";
+        }
     }
 }

@@ -15,10 +15,13 @@
         public EyesConfig Config { get; set; }
     }
 
-    public class EyesExtractTextRegionsRequest : RequestBase
+    public class EyesExtractTextRegionsRequest : CommandBase
     {
-        public override string Name => "Eyes.extractTextRegions";
-        
         public EyesExtractTextRegionsRequestPayload Payload { get; set; }
+
+        public EyesExtractTextRegionsRequest()
+        {
+            Name = "Eyes.extractTextRegions";
+        }
     }
 }

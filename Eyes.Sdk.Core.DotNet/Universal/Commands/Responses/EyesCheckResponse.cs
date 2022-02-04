@@ -1,6 +1,4 @@
-﻿using Applitools;
-
-namespace Applitools.Selenium.Commands.Responses
+﻿namespace Applitools.Selenium.Commands.Responses
 {
     public class EyesCheckResponsePayload
     {
@@ -8,11 +6,8 @@ namespace Applitools.Selenium.Commands.Responses
         public ResponsePayloadError Error { get; set; }
     }
 
-    public class EyesCheckResponse //: ClientCommandBase
+    public class EyesCheckResponse : CommandBase
     {
-        public string Name { get; set; }
-        public string Key { get; set; }
-
         public EyesCheckResponsePayload Payload { get; set; }
     }
 }

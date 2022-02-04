@@ -7,10 +7,13 @@
         public bool? Legacy { get; set; }
     }
 
-    public class CoreMakeManagerRequest : RequestBase
+    public class CoreMakeManagerRequest : CommandBase
     {
-        public override string Name => "Core.makeManager";
-
         public ManagerConfig Payload { get; set; }
+
+        public CoreMakeManagerRequest()
+        {
+            Name = "Core.makeManager";
+        }
     }
 }

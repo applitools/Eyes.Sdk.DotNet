@@ -37,16 +37,14 @@ namespace Applitools.Selenium.Commands.Responses
         public string url { get; set; }
     }
 
-    public class EyesCloseResponsePayload
+    public class EyesCloseAbortResponsePayload
     {
         public IList<TestResults> Result { get; set; }
         public ResponsePayloadError Error { get; set; }
     }
 
-    public class EyesCloseResponse
+    public class EyesCloseAbortResponse : CommandBase
     {
-        public string Name { get; set; }
-
-        public EyesCloseResponsePayload Payload { get; set; }
+        public EyesCloseAbortResponsePayload Payload { get; set; }
     }
 }

@@ -13,10 +13,8 @@ namespace Applitools.Selenium.Commands.Responses
         public CoreMakeManagerResponseResult Result { get; set; }
     }
 
-    public class CoreMakeManagerResponse //: ClientCommandBase
+    public class CoreMakeManagerResponse : CommandBase
     {
-        public string Key { get; set; }
-
         public CoreMakeManagerResponsePayload Payload { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Applitools.Selenium;
+using Applitools.Selenium.Commands;
 using Applitools.Selenium.Commands.Requests;
 using Applitools.Selenium.Commands.Responses;
 using Applitools.Utils;
@@ -30,6 +31,51 @@ namespace Applitools
 
         public bool DontCloseBatches { get; set; }
 
+        public string ApiKey
+        {
+            get => apiKey;
+            set
+            {
+                apiKey = value;
+                foreach (var eye in GetAllEyes())
+                {
+                    eye.ApiKey = value;
+                }
+            }
+        }
+
+        public string ServerUrl
+        {
+            get => serverUrl;
+            set
+            {
+                serverUrl = value;
+                foreach (var eye in GetAllEyes())
+                {
+                    eye.ServerUrl = value;
+                }
+            }
+        }
+
+        public ProxySettings Proxy
+        {
+            get => proxy;
+            set
+            {
+                proxy = value;
+                foreach (var eye in GetAllEyes())
+                {
+                    eye.Proxy = value;
+                }
+            }
+        }
+
+        public bool IsDisabled { get; set; }
+
+        public bool GetAllTestResultsAlreadyCalled { get; } = false;
+
+        public Logger Logger { get; } = new Logger();
+
         protected EyesRunner(ILogHandler logHandler)
         {
             if (logHandler != null)
@@ -45,13 +91,9 @@ namespace Applitools
             SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
         }
 
-        protected abstract ManagerConfig InitConfig();
-
-        protected abstract IEnumerable<IEyesBase> GetAllEyes();
-
-        public Logger Logger { get; } = new Logger();
-
-        public async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data)
+        public async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data) 
+            where TRequest : CommandBase 
+            where TResponse : CommandBase
         {
             var json = data.ToJson();
 
@@ -63,7 +105,7 @@ namespace Applitools
             {
                 var response = await SocketClient.ReceiveMessage();
                 result = JsonConvert.DeserializeObject<TResponse>(response);
-            } while (result == null);
+            } while (result == null || result.Key != data.Key);
 
             return result;
         }
@@ -118,49 +160,6 @@ namespace Applitools
             }
         }
 
-        public string ApiKey
-        {
-            get => apiKey;
-            set
-            {
-                apiKey = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.ApiKey = value;
-                }
-            }
-        }
-
-        public string ServerUrl
-        {
-            get => serverUrl;
-            set
-            {
-                serverUrl = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.ServerUrl = value;
-                }
-            }
-        }
-
-        public ProxySettings Proxy
-        {
-            get => proxy;
-            set
-            {
-                proxy = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.Proxy = value;
-                }
-            }
-        }
-
-        public bool IsDisabled { get; set; }
-
-        public bool GetAllTestResultsAlreadyCalled { get; private set; } = false;
-         
         public string GetCoreMakeManager()
         {
             if (managerApplitoolsRefId_ == null)
@@ -188,7 +187,7 @@ namespace Applitools
 
             var request = CreateEyesManageCloseAllEyes();
 
-            var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseResponse>(request).Result;
+            var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseAbortResponse>(request).Result;
             if (response.Payload?.Error != null)
             {
                 throw new EyesException(response.Payload.Error.Message);
@@ -196,6 +195,10 @@ namespace Applitools
 
             return response?.Payload?.Result;
         }
+
+        protected abstract ManagerConfig InitConfig();
+
+        protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
         private EyesManageCloseAllEyesRequest CreateEyesManageCloseAllEyes()
         {

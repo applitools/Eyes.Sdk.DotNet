@@ -17,10 +17,13 @@ namespace Applitools.Selenium.Commands.Requests
         public EyesConfig Config { get; set; }
     }
 
-    public class EyesExtractTextRequest : RequestBase
+    public class EyesExtractTextRequest : CommandBase
     {
-        public override string Name => "Eyes.extractText";
-        
         public EyesExtractTextRequestPayload Payload { get; set; }
+
+        public EyesExtractTextRequest()
+        {
+            Name = "Eyes.extractText";
+        }
     }
 }

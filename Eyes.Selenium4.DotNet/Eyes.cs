@@ -10,8 +10,6 @@ using Applitools.Selenium.Fluent;
 using Applitools.Selenium.Commands;
 using Applitools.Selenium.Commands.Requests;
 using Applitools.Selenium.Commands.Responses;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium.Remote;
 
 namespace Applitools.Selenium
@@ -27,6 +25,12 @@ namespace Applitools.Selenium
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly Uri serverUrl_;
         private readonly ILogHandler logHandler_;
+
+        /// <summary>
+        /// Specifies how detected mismatches are reported.
+        /// </summary>
+        [Obsolete]
+        public FailureReports FailureReports { get; set; } = FailureReports.OnClose;
 
         #region ctors
 
@@ -53,12 +57,6 @@ namespace Applitools.Selenium
 
         #endregion
 
-        /// <summary>
-        /// Specifies how detected mismatches are reported.
-        /// </summary>
-        [Obsolete]
-        public FailureReports FailureReports { get; set; } = FailureReports.OnClose;
-
         public Applitools.Configuration GetConfiguration()
         {
             return Config;
@@ -69,7 +67,7 @@ namespace Applitools.Selenium
             Config = config;
         }
 
-        public TestResults Abort()
+        public override TestResults Abort()
         {
             if (IsDisabled)
             {
@@ -86,18 +84,18 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            var testResults = Runner.SendRequest<EyesAbortRequest, TestResults>(request).Result;
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Result.Payload;
+
+            if (payload?.Error != null)
+            {
+                throw new EyesException($"{payload.Error.Message}");
+            }
 
             IsOpen = false;
 
-            return testResults;
+            return payload?.Result?.FirstOrDefault();
         }
-
-        public TestResults AbortIfNotClosed()
-        {
-            return Abort();
-        }
-
+        
         public void AbortAsync()
         {
             Logger.Verbose("enter. AbortAsync");
@@ -120,11 +118,11 @@ namespace Applitools.Selenium
 
         public ICutProvider CutProvider { get; set; }
 
-        #endregion
-
         public double DevicePixelRatio { get; set; }
 
         public double ScaleRatio { get; set; }
+
+        #endregion
 
         public void SetScrollToRegion(bool shouldScroll)
         {
@@ -188,46 +186,6 @@ namespace Applitools.Selenium
         public void Check(ICheckSettings checkSettings)
         {
             CheckImpl_(checkSettings);
-        }
-
-        internal virtual void CheckImpl_(ICheckSettings checkSettings)
-        {
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
-                return;
-            }
-            
-            var seleniumCheckSettings = (SeleniumCheckSettings) checkSettings;
-            var eyesConfig = new EyesConfig(Config)
-            {
-                Properties = properties_.ToArray()
-            };
-            var request = new EyesCheckRequest
-            {
-                Key = Guid.NewGuid().ToString(),
-                Payload = new EyesCheckRequestPayload
-                {
-                    Eyes = eyes_,
-                    Config = eyesConfig,
-                    Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
-                }
-            };
-
-            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
-
-            if (result?.Payload?.Error != null)
-            {
-                throw new EyesException(result.Payload.Error.Message);
-            }
-
-            if (result?.Payload?.Result?.AsExpected == false)
-            {
-                if (FailureReports == FailureReports.Immediate)
-                {
-                    throw new EyesException();
-                }
-            }
         }
 
         /// <summary>
@@ -484,7 +442,7 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
 
             IsOpen = false;
 
@@ -524,7 +482,7 @@ namespace Applitools.Selenium
 
         //    var eyesCloseRequest = CreateEyesCloseRequest();
 
-        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseResponse>(eyesCloseRequest).Result;
+        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
 
         //    IsOpen = false;
 
@@ -631,7 +589,47 @@ namespace Applitools.Selenium
         //{
         //    throw new NotImplementedException();
         //}
-        
+
+        internal virtual void CheckImpl_(ICheckSettings checkSettings)
+        {
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
+                return;
+            }
+
+            var seleniumCheckSettings = (SeleniumCheckSettings)checkSettings;
+            var eyesConfig = new EyesConfig(Config)
+            {
+                Properties = properties_.ToArray()
+            };
+            var request = new EyesCheckRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new EyesCheckRequestPayload
+                {
+                    Eyes = eyes_,
+                    Config = eyesConfig,
+                    Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
+                }
+            };
+
+            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+
+            if (result?.Payload?.Error != null)
+            {
+                throw new EyesException(result.Payload.Error.Message);
+            }
+
+            if (result?.Payload?.Result?.AsExpected == false)
+            {
+                if (FailureReports == FailureReports.Immediate)
+                {
+                    throw new EyesException();
+                }
+            }
+        }
+
         private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
         {
             if (string.IsNullOrEmpty(ApiKey))
