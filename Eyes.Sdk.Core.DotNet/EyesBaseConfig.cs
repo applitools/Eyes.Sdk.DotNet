@@ -1,6 +1,7 @@
 ﻿using System;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
+using Eyes.Sdk.Core.DotNet.Universal.Types;
 
 namespace Applitools
 {
@@ -140,6 +141,12 @@ namespace Applitools
         {
             get => Config.SendDom;
             set => Config.SetSendDom(value);
+        }
+
+        public IImageCrop Cut
+        {
+            get => Config.Cut;
+            set => Config.SetCut(value);
         }
 
         public bool? SaveDiffs

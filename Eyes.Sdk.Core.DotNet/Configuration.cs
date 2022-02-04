@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Applitools.Selenium;
 using Applitools.VisualGrid;
+using Eyes.Sdk.Core.DotNet.Universal.Types;
 
 namespace Applitools
 {
@@ -298,6 +299,14 @@ namespace Applitools
         public IConfiguration SetSendDom(bool? value)
         {
             SendDom = value;
+            return this;
+        }
+
+        public IImageCrop Cut { get; set; }
+
+        public IConfiguration SetCut(IImageCrop value)
+        {
+            Cut = value;
             return this;
         }
 

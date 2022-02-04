@@ -26,6 +26,7 @@ namespace Applitools.Selenium.Tests.Utils
     {
         private const int DefaultTimeoutInSeconds_ = 30;
         private const string TestApiIndicatorsContainerId_ = "Test";
+        public static readonly string LOCAL_SELENIUM_URL = "http://localhost:4444/wd/hub";
 
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
         private static readonly Logger logger_ = new Logger();
@@ -35,7 +36,7 @@ namespace Applitools.Selenium.Tests.Utils
             logger_.SetLogHandler(new NunitLogHandler());
         }
 
-        public static ChromeDriver CreateChromeDriver(ChromeOptions options = null)
+        public static ChromeDriver CreateChromeDriver1(ChromeOptions options = null)
         {
             if (options == null)
             {
@@ -58,6 +59,28 @@ namespace Applitools.Selenium.Tests.Utils
             return webDriver;
         }
 
+        public static RemoteWebDriver CreateChromeDriver(ChromeOptions options = null)
+        {
+            RemoteWebDriver webDriver = RetryCreateWebDriver(() =>
+            {
+                if (options == null)
+                {
+                    options = new ChromeOptions();
+                }
+                if (TestUtils.RUN_HEADLESS)
+                {
+                    options.AddArgument("--headless");
+                }
+                options.AddArguments("--no-sandbox", "--verbose", "--disable-gpu");
+
+                var driver1 = new RemoteWebDriver(new Uri(LOCAL_SELENIUM_URL), options);
+
+                //ChromeDriver webDriverRet = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options, TimeSpan.FromMinutes(4)) : new ChromeDriver(options);
+                return driver1;
+            });
+            return webDriver;
+        }
+
         public static IWebDriver CreateWebDriver(DriverOptions options)
         {
             IWebDriver webDriver = RetryCreateWebDriver(() =>
@@ -69,7 +92,8 @@ namespace Applitools.Selenium.Tests.Utils
                     case "safari": driver = DRIVER_PATH != null ? new SafariDriver(DRIVER_PATH, (SafariOptions)options) : new SafariDriver((SafariOptions)options); break;
                     case "internet explorer": driver = DRIVER_PATH != null ? new InternetExplorerDriver(DRIVER_PATH, (InternetExplorerOptions)options) : new InternetExplorerDriver((InternetExplorerOptions)options); break;
                     case "edge": driver = DRIVER_PATH != null ? new EdgeDriver(DRIVER_PATH, (EdgeOptions)options) : new EdgeDriver((EdgeOptions)options); break;
-                    default: driver = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, (ChromeOptions)options) : new ChromeDriver((ChromeOptions)options); break;
+                    //default: driver = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, (ChromeOptions)options) : new ChromeDriver((ChromeOptions)options); break;
+                    default: driver = CreateChromeDriver((ChromeOptions)options); break;
                 }
                 return driver;
             });

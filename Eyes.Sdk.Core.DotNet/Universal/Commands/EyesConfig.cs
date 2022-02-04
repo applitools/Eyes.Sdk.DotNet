@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
+using Eyes.Sdk.Core.DotNet.Universal.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -119,6 +120,7 @@ namespace Applitools.Selenium.Commands
         //  scaleRatio?: number
         //}
 
+        public IImageCrop Cut { get; set; }
         public int? WaitBeforeScreenshots { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -187,6 +189,7 @@ namespace Applitools.Selenium.Commands
             StitchMode = config.StitchMode;
             WaitBeforeScreenshots = config.WaitBeforeScreenshots;
             SendDom = config.SendDom;
+            Cut = config.Cut;
             DontCloseBatches = config.DontCloseBatches;
             if (config.VisualGridOptions?.Length > 0)
             {
