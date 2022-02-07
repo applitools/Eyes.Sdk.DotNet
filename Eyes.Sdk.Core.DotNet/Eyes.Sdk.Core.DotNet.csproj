@@ -8,16 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>2.53</Version>
+    <Version>3.1</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
     <PackageReleaseNotes>### Updated
-- Support Selenium 4
-### Fixed
-- Couldn't handle correctly illegal `content-type` and `media-type` strings. [Trello 2758] (https://trello.com/c/Ti5X0Km2)
-</PackageReleaseNotes>
+- Added support for Universal SDK</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Sdk.Core</PackageId>
     <PackageLicenseExpression />

@@ -2,13 +2,13 @@
 ### Added
 - Universal Server
 
-## [Eyes.Selenium4 3.0] - 2022-01-07
+## [Eyes.Selenium4 3.1] - 2022-01-07
 ### Updated
-- Supports Universal SDK
+- Added support for Universal SDK
 
-## [Eyes.Sdk.Core 3.0] - 2022-01-07
+## [Eyes.Sdk.Core 3.1] - 2022-01-07
 ### Updated
-- Supports Universal SDK
+- Added support for Universal SDK
 
 ## [Eyes.Sdk.Core 2.52] - 2021-11-28
 ### Updated
