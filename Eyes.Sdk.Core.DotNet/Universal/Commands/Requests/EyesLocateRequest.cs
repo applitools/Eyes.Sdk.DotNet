@@ -12,7 +12,7 @@
         public LocateSettings Settings { get; set; }
         public EyesConfig Config { get; set; }
     }
-
+     
     public class EyesLocateRequest : CommandBase
     {
         public EyesLocateRequestPayload Payload { get; set; }

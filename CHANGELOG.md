@@ -1,3 +1,19 @@
+## [Eyes.Sdk.Universal.Core 1.0.7] - 2022-01-07
+### Added
+- Universal Server
+
+## [Eyes.Selenium4 3.0] - 2022-01-07
+### Updated
+- Supports Universal SDK
+
+## [Eyes.Sdk.Core 3.0] - 2022-01-07
+### Updated
+- Supports Universal SDK
+
+## [Eyes.Sdk.Core 2.52] - 2021-11-28
+### Updated
+- Match to latest Eyes.Sdk.Core
+
 ## [Eyes.Selenium4 2.59] - 2021-12-05
 ### Fixed
 - Safari's cut on iPhone 12 running on iOS 15 [Trello 2694] (https://trello.com/c/mpjZpL91)

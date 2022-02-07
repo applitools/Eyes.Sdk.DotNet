@@ -1,4 +1,4 @@
-﻿namespace Eyes.Sdk.Core.DotNet.Universal.Types
+﻿namespace Applitools
 {
     public class ImageCropRegion : IImageCrop
     {

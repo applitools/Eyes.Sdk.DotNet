@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Applitools.Utils.Geometry;
-using Applitools.VisualGrid;
-using Eyes.Sdk.Core.DotNet.Universal.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
-using Eyes.Sdk.Core.DotNet.Universal.Types;
 
 namespace Applitools
 {

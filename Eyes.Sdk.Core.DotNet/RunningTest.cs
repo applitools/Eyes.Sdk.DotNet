@@ -2,12 +2,35 @@
 using Applitools.VisualGrid;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using Applitools.Fluent;
+using Applitools.Utils.Geometry;
 
 namespace Applitools
 {
+    public class MatchWindowTask
+    {
+        public static ImageMatchSettings CreateImageMatchSettings(ICheckSettingsInternal checkSettingsInternal, object visualGridRunningTest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void CollectRegions(ImageMatchSettings imageMatchSettings, List<Trigger> userInputs, List<IRegion> regions, IList<VisualGridSelector[]> regionSelectors, IList<VGUserAction> userActions, Location location)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void CollectRegions(ImageMatchSettings imageMatchSettings, ICheckSettingsInternal checkSettingsInternal)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public abstract class RunningTest : EyesBase, IRunningTest
     {
         protected Exception exception_;
+        protected string agentRunId_;
         private bool? isAbortIssued_ = null;
         private bool inOpenProcess_ = false;
         private bool startedCloseProcess_ = false;
@@ -16,10 +39,69 @@ namespace Applitools
 
         public static readonly int PARALLEL_STEPS_LIMIT = 1;
 
+        protected virtual Configuration Configuration { get; }
+        protected ServerConnector ServerConnector { get; }
+
         protected internal  void OpenCompleted(RunningSession result)
         {
             inOpenProcess_ = false;
            // base.OpenCompleted(result);
+        }
+
+        protected virtual string BaseAgentId { get; }
+
+        protected internal virtual object GetEnvironment_()
+        {
+            return null;
+        }
+
+        protected virtual string GetBaselineEnvName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual IDictionary<string, IRunningTest> GetAllTests()
+        {
+            return new Dictionary<string, IRunningTest>() { { TestId, this } };
+        }
+        protected FileVersionInfo GetActualAssemblyVersionInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected void ValidateResult_(string getName, MatchResult matchResult)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected MatchWindowData PrepareForMatch(ICheckSettingsInternal checkSettingsInternal, List<Trigger> userInputs, AppOutput appOutput, string tag, bool b, ImageMatchSettings imageMatchSettings, string renderId, string checkTaskSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void SetConfigImpl(IConfiguration configuration)
+        {
+
+        }
+
+        protected virtual EyesScreenshot GetScreenshot(Rectangle? region, ICheckSettingsInternal checkSettingsInternal)
+        {
+            return null;
+        }
+
+        protected virtual string GetTitle()
+        {
+            return null;
+        }
+
+        protected virtual Size GetViewportSize()
+        {
+            return Size.Empty;
+        }
+
+        protected virtual void SetViewportSize(RectangleSize size)
+        {
+            Logger.Log(TraceLevel.Warn, TestId, Stage.Open);
         }
 
         internal void OpenFailed(Exception e)
@@ -64,6 +146,11 @@ namespace Applitools
         protected bool GetIsTestReadyToClose()
         {
             return !inOpenProcess_ && isAbortIssued_ != null && !startedCloseProcess_;
+        }
+
+        public override TestResults Abort()
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsCloseTaskIssued { get => isAbortIssued_ != null; }

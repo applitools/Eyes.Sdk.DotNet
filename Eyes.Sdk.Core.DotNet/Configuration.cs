@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using Applitools.Selenium;
 using Applitools.VisualGrid;
-using Eyes.Sdk.Core.DotNet.Universal.Types;
 
 namespace Applitools
 {
