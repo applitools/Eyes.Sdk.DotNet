@@ -1,3 +1,7 @@
+## [Eyes.Selenium4 vNexy]
+### Updated
+- Added support for SetLogger and DebugScreenshotProvider
+
 ## [Eyes.Sdk.Universal.Core 1.0.7] - 2022-01-07
 ### Added
 - Universal Server
