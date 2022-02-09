@@ -3,6 +3,7 @@ using Applitools.Utils.Geometry;
 using System;
 using System.Collections.Generic;
 using Applitools.Selenium;
+using Applitools.Selenium.Commands;
 using Applitools.VisualGrid;
 
 namespace Applitools
@@ -394,6 +395,14 @@ namespace Applitools
         public IConfiguration SetProxy(ProxySettings proxy)
         {
             Proxy = proxy;
+            return this;
+        }
+
+        public DebugScreenshotHandler DebugScreenshotProvider { get; set; }
+
+        public IConfiguration SetDebugScreenshotProvider(DebugScreenshotHandler debugScreenshotProvider)
+        {
+            DebugScreenshotProvider = debugScreenshotProvider;
             return this;
         }
 

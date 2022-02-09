@@ -15,6 +15,13 @@ namespace Applitools.Selenium.Commands
         public int? Timeout { get; set; }
     }
 
+    public class DebugScreenshotHandler
+    {
+        public string Prefix { get; set; }
+        public string Path { get; set; }
+        public bool Save { get; set; }
+    }
+
     public class EyesConfig
     {
         //export type EyesBaseConfig = {
@@ -31,7 +38,7 @@ namespace Applitools.Selenium.Commands
         //    }
         //}
 
-        public IDebugScreenshotProvider DebugScreenshotProvider { get; set; }
+        public DebugScreenshotHandler DebugScreenshots { get; set; }
 
         public string AgentId { get; set; }
         public string ApiKey { get; set; }
@@ -188,6 +195,7 @@ namespace Applitools.Selenium.Commands
             SendDom = config.SendDom;
             Cut = config.Cut;
             DontCloseBatches = config.DontCloseBatches;
+            DebugScreenshots = config.DebugScreenshotProvider;
             if (config.VisualGridOptions?.Length > 0)
             {
                 VisualGridOptions = config.VisualGridOptions.ToDictionary(i => i.Key, v => v.Value);

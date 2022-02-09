@@ -1,4 +1,5 @@
 ﻿using System;
+using Applitools.Selenium.Commands;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 
@@ -42,6 +43,12 @@ namespace Applitools
         {
             get => Config.Proxy;
             set => Config.SetProxy(value);
+        }
+
+        public DebugScreenshotHandler DebugScreenshotProvider
+        {
+            get => Config.DebugScreenshotProvider;
+            set => Config.SetDebugScreenshotProvider(value);
         }
 
         #region configuration properties
