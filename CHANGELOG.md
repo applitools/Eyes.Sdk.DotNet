@@ -1,4 +1,4 @@
-## [Eyes.Selenium4 vNexy]
+## [Eyes.Selenium4 3.2] - 2022-02-09
 ### Updated
 - Added support for SetLogger and DebugScreenshotProvider
 
