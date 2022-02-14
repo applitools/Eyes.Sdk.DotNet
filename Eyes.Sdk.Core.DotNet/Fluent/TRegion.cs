@@ -1,4 +1,6 @@
-﻿namespace Applitools.Fluent
+﻿using Applitools.Selenium.Commands;
+
+namespace Applitools.Fluent
 {
     public class TRegion
     {
@@ -13,7 +15,7 @@
         public int Height { get; set; }
     }
 
-    public class RegionSelector : TRegion
+    public class RegionSelector : TRegion, IFrame
     {
         public string Type { get; set; }
         public string Selector { get; set; }

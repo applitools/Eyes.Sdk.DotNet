@@ -769,11 +769,7 @@ namespace Applitools.Selenium
                 
                 if (item.FrameSelector != null)
                 {
-                    frames.Add(new FrameSelector
-                    {
-                        //Type = item.FrameSelector.Mechanism,
-                        //Selector = item.FrameSelector.Criteria
-                    });
+                    frames.Add(selectorTransformer_.GetRegionSelector(item.FrameSelector.ToString()));
                 }
                 
                 if (item.FrameReference != null) 
