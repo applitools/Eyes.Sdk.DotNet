@@ -184,71 +184,71 @@ namespace Applitools.Tests
             }
         }
 
-        [Test]
-        public void TestCheckSettingsClone()
-        {
-            ICheckSettings checkSettings = Target.Window();
-            checkSettings = checkSettings.Accessibility(new Rectangle(20, 30, 40, 50), AccessibilityRegionType.GraphicalObject);
-            checkSettings = checkSettings.BeforeRenderScreenshotHook("Test Hook");
-            checkSettings = checkSettings.Content(new Rectangle(10, 20, 30, 40));
-            checkSettings = checkSettings.EnablePatterns(true);
-            checkSettings = checkSettings.Floating(new Rectangle(30, 40, 50, 60), 1, 2, 3, 4);
-            checkSettings = checkSettings.Fully(true);
-            checkSettings = checkSettings.Ignore(new Rectangle(40, 50, 60, 70));
-            checkSettings = checkSettings.IgnoreCaret(true);
-            checkSettings = checkSettings.IgnoreDisplacements(true);
-            checkSettings = checkSettings.Layout(new Rectangle(50, 60, 70, 80));
-            checkSettings = checkSettings.MatchLevel(MatchLevel.Exact);
-            checkSettings = checkSettings.SendDom(true);
-            checkSettings = checkSettings.Strict(new Rectangle(60, 70, 80, 90));
-            checkSettings = checkSettings.Timeout(TimeSpan.FromMinutes(4));
-            checkSettings = checkSettings.UseDom(true);
-            checkSettings = checkSettings.WithName("Test Name");
+        //[Test]
+        //public void TestCheckSettingsClone()
+        //{
+        //    ICheckSettings checkSettings = Target.Window();
+        //    checkSettings = checkSettings.Accessibility(new Rectangle(20, 30, 40, 50), AccessibilityRegionType.GraphicalObject);
+        //    checkSettings = checkSettings.BeforeRenderScreenshotHook("Test Hook");
+        //    checkSettings = checkSettings.Content(new Rectangle(10, 20, 30, 40));
+        //    checkSettings = checkSettings.EnablePatterns(true);
+        //    checkSettings = checkSettings.Floating(new Rectangle(30, 40, 50, 60), 1, 2, 3, 4);
+        //    checkSettings = checkSettings.Fully(true);
+        //    checkSettings = checkSettings.Ignore(new Rectangle(40, 50, 60, 70));
+        //    checkSettings = checkSettings.IgnoreCaret(true);
+        //    checkSettings = checkSettings.IgnoreDisplacements(true);
+        //    checkSettings = checkSettings.Layout(new Rectangle(50, 60, 70, 80));
+        //    checkSettings = checkSettings.MatchLevel(MatchLevel.Exact);
+        //    checkSettings = checkSettings.SendDom(true);
+        //    checkSettings = checkSettings.Strict(new Rectangle(60, 70, 80, 90));
+        //    checkSettings = checkSettings.Timeout(TimeSpan.FromMinutes(4));
+        //    checkSettings = checkSettings.UseDom(true);
+        //    checkSettings = checkSettings.WithName("Test Name");
 
-            ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
+        //    ICheckSettingsInternal clonedCheckSettings = (ICheckSettingsInternal)checkSettings.Clone();
 
-            Assert.AreEqual(null, clonedCheckSettings.GetTargetRegion(), "target region");
+        //    Assert.AreEqual(null, clonedCheckSettings.GetTargetRegion(), "target region");
 
-            IGetAccessibilityRegion[] getAccessibilityRegions = clonedCheckSettings.GetAccessibilityRegions();
-            Assert.AreEqual(1, getAccessibilityRegions.Length, "number of accessibility region getters");
-            IList<AccessibilityRegionByRectangle> accessibilityRegions = getAccessibilityRegions[0].GetRegions(null, null);
-            Assert.AreEqual(1, accessibilityRegions.Count, "number of accessibility regions");
-            AccessibilityRegionByRectangle expectedAccessibilityRegion = new AccessibilityRegionByRectangle(new Rectangle(20, 30, 40, 50), AccessibilityRegionType.GraphicalObject);
-            Assert.AreEqual(expectedAccessibilityRegion.Region, accessibilityRegions[0].Region, "accessibility region coordinates");
-            Assert.AreEqual(expectedAccessibilityRegion.Type, accessibilityRegions[0].Type, "accessibility region type");
+        //    IGetAccessibilityRegion[] getAccessibilityRegions = clonedCheckSettings.GetAccessibilityRegions();
+        //    Assert.AreEqual(1, getAccessibilityRegions.Length, "number of accessibility region getters");
+        //    IList<AccessibilityRegionByRectangle> accessibilityRegions = getAccessibilityRegions[0].GetRegions(null, null);
+        //    Assert.AreEqual(1, accessibilityRegions.Count, "number of accessibility regions");
+        //    AccessibilityRegionByRectangle expectedAccessibilityRegion = new AccessibilityRegionByRectangle(new Rectangle(20, 30, 40, 50), AccessibilityRegionType.GraphicalObject);
+        //    Assert.AreEqual(expectedAccessibilityRegion.Region, accessibilityRegions[0].Region, "accessibility region coordinates");
+        //    Assert.AreEqual(expectedAccessibilityRegion.Type, accessibilityRegions[0].Type, "accessibility region type");
 
-            Assert.AreEqual("Test Hook", clonedCheckSettings.GetScriptHooks()["beforeCaptureScreenshot"]);
+        //    Assert.AreEqual("Test Hook", clonedCheckSettings.GetScriptHooks()["beforeCaptureScreenshot"]);
 
-            AssertRegion(clonedCheckSettings.GetContentRegions(), new Rectangle(10, 20, 30, 40), "Content");
+        //    AssertRegion(clonedCheckSettings.GetContentRegions(), new Rectangle(10, 20, 30, 40), "Content");
 
-            Assert.AreEqual(true, clonedCheckSettings.GetEnablePatterns());
+        //    Assert.AreEqual(true, clonedCheckSettings.GetEnablePatterns());
 
-            IGetFloatingRegion[] getFloatingRegions = clonedCheckSettings.GetFloatingRegions();
-            Assert.AreEqual(1, getFloatingRegions.Length, "number of Floating region getters");
-            IList<FloatingMatchSettings> FloatingRegions = getFloatingRegions[0].GetRegions(null, null);
-            Assert.AreEqual(1, FloatingRegions.Count, "number of Floating regions");
-            FloatingMatchSettings expectedFloatingRegion = new FloatingMatchSettings(30, 40, 50, 60, 1, 2, 3, 4);
-            Assert.AreEqual(expectedFloatingRegion, FloatingRegions[0], "Floating region");
+        //    IGetFloatingRegion[] getFloatingRegions = clonedCheckSettings.GetFloatingRegions();
+        //    Assert.AreEqual(1, getFloatingRegions.Length, "number of Floating region getters");
+        //    IList<FloatingMatchSettings> FloatingRegions = getFloatingRegions[0].GetRegions(null, null);
+        //    Assert.AreEqual(1, FloatingRegions.Count, "number of Floating regions");
+        //    FloatingMatchSettings expectedFloatingRegion = new FloatingMatchSettings(30, 40, 50, 60, 1, 2, 3, 4);
+        //    Assert.AreEqual(expectedFloatingRegion, FloatingRegions[0], "Floating region");
 
-            Assert.AreEqual(true, clonedCheckSettings.GetStitchContent(), "fully (stitch content)");
+        //    Assert.AreEqual(true, clonedCheckSettings.GetStitchContent(), "fully (stitch content)");
 
-            AssertRegion(clonedCheckSettings.GetIgnoreRegions(), new Rectangle(40, 50, 60, 70), "Ignore");
+        //    AssertRegion(clonedCheckSettings.GetIgnoreRegions(), new Rectangle(40, 50, 60, 70), "Ignore");
 
-            Assert.AreEqual(true, clonedCheckSettings.GetIgnoreCaret(), "ignore caret");
-            Assert.AreEqual(true, clonedCheckSettings.GetIgnoreDisplacements(), "ignore displacements");
+        //    Assert.AreEqual(true, clonedCheckSettings.GetIgnoreCaret(), "ignore caret");
+        //    Assert.AreEqual(true, clonedCheckSettings.GetIgnoreDisplacements(), "ignore displacements");
 
-            AssertRegion(clonedCheckSettings.GetLayoutRegions(), new Rectangle(50, 60, 70, 80), "Layout");
+        //    AssertRegion(clonedCheckSettings.GetLayoutRegions(), new Rectangle(50, 60, 70, 80), "Layout");
 
-            Assert.AreEqual(MatchLevel.Exact, clonedCheckSettings.GetMatchLevel(), "match level");
-            Assert.AreEqual(true, clonedCheckSettings.GetSendDom(), "send dom");
+        //    Assert.AreEqual(MatchLevel.Exact, clonedCheckSettings.GetMatchLevel(), "match level");
+        //    Assert.AreEqual(true, clonedCheckSettings.GetSendDom(), "send dom");
 
-            AssertRegion(clonedCheckSettings.GetStrictRegions(), new Rectangle(60, 70, 80, 90), "Strict");
+        //    AssertRegion(clonedCheckSettings.GetStrictRegions(), new Rectangle(60, 70, 80, 90), "Strict");
 
-            Assert.AreEqual((int)TimeSpan.FromMinutes(4).TotalMilliseconds, clonedCheckSettings.GetTimeout(), "timeout");
-            Assert.AreEqual(true, clonedCheckSettings.GetUseDom(), "use dom");
+        //    Assert.AreEqual((int)TimeSpan.FromMinutes(4).TotalMilliseconds, clonedCheckSettings.GetTimeout(), "timeout");
+        //    Assert.AreEqual(true, clonedCheckSettings.GetUseDom(), "use dom");
 
-            Assert.AreEqual("Test Name", clonedCheckSettings.GetName(), "name");
-        }
+        //    Assert.AreEqual("Test Name", clonedCheckSettings.GetName(), "name");
+        //}
 
         [Test]
         public void TestBrowserNames()
@@ -348,13 +348,13 @@ namespace Applitools.Tests
             Assert.AreEqual("pass1", ((NetworkCredential)proxy.Credentials).Password);
         }
 
-        private static void AssertRegion(IGetRegions[] getRegions, Rectangle expectedRegion, string regionType)
-        {
-            Assert.AreEqual(1, getRegions.Length, "number of {0} region getters", regionType);
-            IList<IMutableRegion> regions = getRegions[0].GetRegions(null, null);
-            Assert.AreEqual(1, regions.Count, "number of {0} regions", regionType);
-            Assert.AreEqual(expectedRegion, regions[0].Rectangle, "{0} region", regionType);
-        }
+        //private static void AssertRegion(IGetRegions[] getRegions, Rectangle expectedRegion, string regionType)
+        //{
+        //    Assert.AreEqual(1, getRegions.Length, "number of {0} region getters", regionType);
+        //    IList<IMutableRegion> regions = getRegions[0].GetRegions(null, null);
+        //    Assert.AreEqual(1, regions.Count, "number of {0} regions", regionType);
+        //    Assert.AreEqual(expectedRegion, regions[0].Rectangle, "{0} region", regionType);
+        //}
 
         private object ModifyValue(Type type, object origValue)
         {

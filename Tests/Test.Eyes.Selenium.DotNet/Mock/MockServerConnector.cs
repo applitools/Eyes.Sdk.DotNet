@@ -150,8 +150,8 @@ namespace Applitools.Selenium.Tests.Mock
                     {
                         string selector = selectorToken["selector"].Value<string>();
                         IWebElement elem = driver.FindElement(By.XPath(selector));
-                        Rectangle r = EyesSeleniumUtils.GetElementBounds(elem);
-                        selectorRegions.Add(new VGRegion() { X = r.X, Y = r.Y, Width = r.Width, Height = r.Height });
+                        //Rectangle r = EyesSeleniumUtils.GetElementBounds(elem);
+                        //selectorRegions.Add(new VGRegion() { X = r.X, Y = r.Y, Width = r.Width, Height = r.Height });
                     }
                 }
                 RenderStatusResults result = new RenderStatusResults()

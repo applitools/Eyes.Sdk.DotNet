@@ -25,6 +25,7 @@ namespace Applitools.Selenium
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly Uri serverUrl_;
         private readonly ILogHandler logHandler_;
+        private readonly SelectorTransformer selectorTransformer_;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -42,8 +43,6 @@ namespace Applitools.Selenium
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
         : this(new ClassicRunner(), serverUrl, logHandler)
         {
-            ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
-            serverUrl_ = serverUrl;
         }
 
         public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null) : 
@@ -53,6 +52,10 @@ namespace Applitools.Selenium
 
             logHandler_ = logHandler;
             properties_ = new PropertiesCollection();
+            //ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
+            serverUrl_ = serverUrl;
+
+            selectorTransformer_ = new SelectorTransformer();
         }
 
         #endregion
@@ -729,11 +732,7 @@ namespace Applitools.Selenium
             var selector = container.GetScrollRootSelector();
             if (selector != null)
             {
-                return new RegionSelector
-                {
-                    Type = selector.Mechanism,
-                    Selector = selector.Criteria
-                };
+                return selectorTransformer_.GetRegionSelector(selector.ToString());
             }
 
             var element = container.GetScrollRootElement();
@@ -744,15 +743,6 @@ namespace Applitools.Selenium
                     ElementId = element.GetPrivateFieldValue<string>("elementId")
                 };
             }
-            //var frameChain = ((ISeleniumCheckTarget)checkSettings).GetFrameChain();
-            //if (frameChain.First().ScrollRootSelector != null)
-            //{
-            //    return new RegionSelector
-            //    {
-            //        Type = frameChain.First().ScrollRootSelector.Mechanism,
-            //        Selector = frameChain.First().ScrollRootSelector.Criteria
-            //    };
-            //}
 
             return null;
         }
@@ -781,8 +771,8 @@ namespace Applitools.Selenium
                 {
                     frames.Add(new FrameSelector
                     {
-                        Type = item.FrameSelector.Mechanism,
-                        Selector = item.FrameSelector.Criteria
+                        //Type = item.FrameSelector.Mechanism,
+                        //Selector = item.FrameSelector.Criteria
                     });
                 }
                 
@@ -793,14 +783,6 @@ namespace Applitools.Selenium
                         ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
                     });
                 }
-                
-                //if (item.ScrollRootSelector != null)
-                //{
-                //    frames.Add(new FrameScrollRootElement
-                //    {
-                //        ScrollRootElement = new TSelector(item.ScrollRootSelector.Mechanism, item.ScrollRootSelector.Criteria)
-                //    });
-                //}
             }
 
             return frames;
@@ -840,19 +822,15 @@ namespace Applitools.Selenium
         {
             return checkSettings.GetTargetElement();
         }
-
+        
         private RegionSelector CreateCheckSettingsRegionSelector(ISeleniumCheckTarget settings)
         {
             RegionSelector regionSelector = null;
-
+            
             var targetSelector = settings.GetTargetSelector();
             if (targetSelector != null)
             {
-                regionSelector = new RegionSelector
-                {
-                    Selector = targetSelector.Criteria,
-                    Type = targetSelector.Mechanism
-                };
+                regionSelector = new SelectorTransformer().GetRegionSelector(targetSelector.ToString());
             }
 
             return regionSelector;
@@ -881,8 +859,8 @@ namespace Applitools.Selenium
             string applitoolsRefId,
             IWebDriver webDriver)
         {
-            var remoteWebDriver = (WebDriver)webDriver;
-            var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
+            var remoteWebDriver = (RemoteWebDriver)webDriver;
+            var serverUrl = GetServerUrl(remoteWebDriver);
             var result = new EyesManagerOpenEyes
             {
                 Key = Guid.NewGuid().ToString(),
@@ -908,6 +886,12 @@ namespace Applitools.Selenium
             return result;
         }
         
+        private string GetServerUrl(RemoteWebDriver webDriver)
+        {
+            var commandExecutor = webDriver.GetBaseTypePrivateFieldValue<RemoteWebDriver, ICommandExecutor>("executor");
+            return GetServerUrl(commandExecutor);
+        }
+
         private string GetServerUrl(ICommandExecutor commandExecutor)
         {
             var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;
@@ -916,7 +900,7 @@ namespace Applitools.Selenium
             return instance.GetPrivateFieldValue<Uri>("remoteServerUri").AbsoluteUri;
         }
 
-        private IDictionary<string, object> GetCapabilities(WebDriver webDriver)
+        private IDictionary<string, object> GetCapabilities(RemoteWebDriver webDriver)
         {
             return webDriver.Capabilities.GetPrivateFieldValue<IDictionary<string, object>>("capabilities");
         }

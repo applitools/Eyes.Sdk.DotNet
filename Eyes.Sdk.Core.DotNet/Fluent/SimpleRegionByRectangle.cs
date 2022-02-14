@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using Applitools.Fluent;
 using Applitools.Utils.Geometry;
 
@@ -15,12 +14,7 @@ namespace Applitools
         }
 
         public SimpleRegionByRectangle(Point location, Size size) : this(new Rectangle(location, size)) { }
-
-        public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            return new[] { region };
-        }
-
+        
         public TRegion ToRegion()
         {
             return new RegionRectangle

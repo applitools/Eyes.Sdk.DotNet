@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using Applitools.Fluent;
 
@@ -49,12 +48,7 @@ namespace Applitools
 
         [JsonConverter(typeof(StringEnumConverter))]
         public AccessibilityRegionType Type { get; set; }
-
-        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            return new AccessibilityRegionByRectangle[] { this };
-        }
-
+        
         public TAccessibilityRegion ToRegion()
         {
             return new RectangleAccessibilityRegion

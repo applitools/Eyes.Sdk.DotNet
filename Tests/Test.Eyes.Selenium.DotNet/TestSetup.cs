@@ -1,12 +1,9 @@
 ﻿using Applitools.Metadata;
 using Applitools.Selenium.Tests.Mock;
 using Applitools.Selenium.Tests.Utils;
-using Applitools.Selenium.VisualGrid;
 using Applitools.Tests.Utils;
-using Applitools.Ufg;
 using Applitools.Utils;
 using Applitools.VisualGrid;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -179,9 +176,9 @@ namespace Applitools.Selenium.Tests
             string seleniumServerUrl = SetupSeleniumServer(testName);
             bool isWellFormedUri = Uri.IsWellFormedUriString(seleniumServerUrl, UriKind.Absolute);
 
-            WebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
+            RemoteWebDriver webDriver = SeleniumUtils.RetryCreateWebDriver(() =>
             {
-                WebDriver rwDriver = null;
+                RemoteWebDriver rwDriver = null;
                 if (isWellFormedUri)
                 {
                     try
@@ -204,12 +201,12 @@ namespace Applitools.Selenium.Tests
                     if (options_.BrowserName.Equals(BrowserNames.Chrome, StringComparison.OrdinalIgnoreCase) ||
                         options_.BrowserName.Equals(BrowserNames.Firefox, StringComparison.OrdinalIgnoreCase))
                     {
-                        rwDriver = (WebDriver)SeleniumUtils.CreateWebDriver(options_);
+                        rwDriver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
                     }
                 }
                 else
                 {
-                    rwDriver = (WebDriver)SeleniumUtils.CreateWebDriver(options_);
+                    rwDriver = (RemoteWebDriver)SeleniumUtils.CreateWebDriver(options_);
                 }
 
                 return rwDriver;
@@ -369,13 +366,13 @@ namespace Applitools.Selenium.Tests
 
                     if (options_ is OpenQA.Selenium.IE.InternetExplorerOptions ieOptions)
                     {
-                        ieOptions.AddAdditionalOption("sauce:options", sauceOptions);
+                        ieOptions.AddAdditionalCapability("sauce:options", sauceOptions);
                         return TestDataProvider.SAUCE_SELENIUM_URL;
                     }
 
                     if (options_ is OpenQA.Selenium.Safari.SafariOptions safariOptions)
                     {
-                        safariOptions.AddAdditionalOption("sauce:options", sauceOptions);
+                        safariOptions.AddAdditionalCapability("sauce:options", sauceOptions);
                         return TestDataProvider.SAUCE_SELENIUM_URL;
                     }
 
@@ -397,7 +394,7 @@ namespace Applitools.Selenium.Tests
                     {
                         chromeOptions.UseSpecCompliantProtocol = true;
                         chromeOptions.BrowserVersion = "77.0";
-                        chromeOptions.AddAdditionalOption("sauce:options", sauceOptions);
+                        chromeOptions.AddAdditionalCapability("sauce:options", sauceOptions);
                     }
                 }
                 else if (seleniumServerUrl.ToLower().Contains("hub-cloud.browserstack.com"))
@@ -412,7 +409,7 @@ namespace Applitools.Selenium.Tests
                     {
                         chromeOptions.UseSpecCompliantProtocol = true;
                         chromeOptions.BrowserVersion = "77.0";
-                        chromeOptions.AddAdditionalOption("bstack:options", browserstackOptions);
+                        chromeOptions.AddAdditionalCapability("bstack:options", browserstackOptions);
                     }
                 }
             }

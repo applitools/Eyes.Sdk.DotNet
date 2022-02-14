@@ -30,6 +30,8 @@ namespace Applitools.Generated.Selenium.Tests
         public static readonly string SAUCE_ACCESS_KEY = Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY");
         public static readonly string SAUCE_SELENIUM_URL = "https://ondemand.saucelabs.com:443/wd/hub";
         public static readonly string EG_SELENIUM_URL = Environment.GetEnvironmentVariable("EXECUTION_GRID_URL");
+        public static readonly string LOCAL_SELENIUM_URL = "http://localhost:4444/wd/hub";
+        public static readonly string LOCAL_FIREFOX_SELENIUM_URL = "http://localhost:4445/wd/hub";
         protected enum browserType
         {
             Chrome,
@@ -72,7 +74,7 @@ namespace Applitools.Generated.Selenium.Tests
                     var browserOptionsIE = new InternetExplorerOptions();
                     browserOptionsIE.PlatformName = "Windows 10";
                     browserOptionsIE.BrowserVersion = "11.285";
-                    browserOptionsIE.AddAdditionalOption("sauce:options", sauceOptions);
+                    browserOptionsIE.AddAdditionalCapability("sauce:options", sauceOptions, true);
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsIE.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Edge:
@@ -82,7 +84,7 @@ namespace Applitools.Generated.Selenium.Tests
                     var browserOptionsEdge = new EdgeOptions();
                     browserOptionsEdge.PlatformName = "Windows 10";
                     browserOptionsEdge.BrowserVersion = "18.17763";
-                    browserOptionsEdge.AddAdditionalOption("sauce:options", sauceOptionsEdge);
+                    browserOptionsEdge.AddAdditionalCapability("sauce:options", sauceOptionsEdge);
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsEdge.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Safari11:
@@ -107,7 +109,7 @@ namespace Applitools.Generated.Selenium.Tests
             sauceOptions.Add("accesskey", SAUCE_ACCESS_KEY);
             driverOptions.PlatformName = PlatformName;
             driverOptions.BrowserVersion = BrowserVersion;
-            driverOptions.AddAdditionalOption("sauce:options", sauceOptions);
+            driverOptions.AddAdditionalCapability("sauce:options", sauceOptions);
         }
 
         protected static ChromeDriver CreateChromeDriver(ChromeOptions options = null, bool headless = false)
@@ -125,6 +127,23 @@ namespace Applitools.Generated.Selenium.Tests
             });
             return webDriver;
         }
+        protected static RemoteWebDriver CreateChromeDriver2(ChromeOptions options = null, bool headless = false)
+        {
+            RemoteWebDriver webDriver = RetryCreateWebDriver(() =>
+            {
+                if (options == null)
+                {
+                    options = new ChromeOptions();
+                }
+                if (headless) options.AddArgument("--headless");
+
+                var driver1 = new RemoteWebDriver(new Uri(LOCAL_SELENIUM_URL), options);
+
+                //ChromeDriver webDriverRet = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options, TimeSpan.FromMinutes(4)) : new ChromeDriver(options);
+                return driver1;
+            });
+            return webDriver;
+        }
 
         protected static FirefoxDriver CreateFirefoxDriver(bool headless = false)
         {
@@ -138,6 +157,20 @@ namespace Applitools.Generated.Selenium.Tests
             return webDriver;
         }
 
+        protected static RemoteWebDriver CreateFirefoxDriver1(bool headless = false)
+        {
+            RemoteWebDriver webDriver = RetryCreateWebDriver(() =>
+            {
+                var options = new FirefoxOptions();
+                if (headless) options.AddArgument("--headless");
+
+                var driver1 = new RemoteWebDriver(new Uri(LOCAL_FIREFOX_SELENIUM_URL), options);
+
+                //FirefoxDriver webDriverRet = new FirefoxDriver(DRIVER_PATH, options);
+                return driver1;
+            });
+            return webDriver;
+        }
         protected void initEyes(bool isVisualGrid, bool isCSSMode)
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;

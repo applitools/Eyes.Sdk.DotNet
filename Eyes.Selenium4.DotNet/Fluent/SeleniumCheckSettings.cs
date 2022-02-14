@@ -109,7 +109,7 @@ namespace Applitools.Selenium.Fluent
             {
                 FrameLocator lastFrame = frameChain_[frameChain_.Count - 1];
                 frameChain_.RemoveAt(frameChain_.Count - 1);
-                targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
+                //targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
                 state.FrameToSwitchTo = targetElement_;
                 logger.Log(TraceLevel.Notice, Stage.Check,
                     new { message = "Using Target.Frame() for the purpose of Target.Region()" });

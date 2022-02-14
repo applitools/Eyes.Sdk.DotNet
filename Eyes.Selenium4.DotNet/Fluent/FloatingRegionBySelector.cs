@@ -1,6 +1,4 @@
 ﻿using OpenQA.Selenium;
-using System.Drawing;
-using Applitools.Utils.Geometry;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Applitools.Fluent;
@@ -9,6 +7,7 @@ namespace Applitools.Selenium.Fluent
 {
     internal class FloatingRegionBySelector : IGetFloatingRegion, IGetSeleniumRegion, IGetFloatingRegionOffsets
     {
+        private readonly SelectorTransformer selectorTransformer_;
         private int maxDownOffset_;
         private int maxLeftOffset_;
         private int maxRightOffset_;
@@ -19,7 +18,7 @@ namespace Applitools.Selenium.Fluent
         public FloatingRegionBySelector(By selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
         {
             selector_ = selector;
-
+            selectorTransformer_ = new SelectorTransformer();
             maxUpOffset_ = maxUpOffset;
             maxDownOffset_ = maxDownOffset;
             maxLeftOffset_ = maxLeftOffset;
@@ -33,33 +32,7 @@ namespace Applitools.Selenium.Fluent
         int IGetFloatingRegionOffsets.MaxRightOffset => maxRightOffset_;
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
-
-        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            ReadOnlyCollection<IWebElement> elements = ((SeleniumEyes)eyesBase).GetDriver().FindElements(selector_);
-            IList<FloatingMatchSettings> retVal = new List<FloatingMatchSettings>();
-            foreach (IWebElement element in elements)
-            {
-                Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(element);
-                Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-                retVal.Add(
-                    new FloatingMatchSettings()
-                    {
-                        Left = pTag.X,
-                        Top = pTag.Y,
-                        Width = r.Width,
-                        Height = r.Height,
-                        MaxLeftOffset = maxLeftOffset_,
-                        MaxUpOffset = maxUpOffset_,
-                        MaxRightOffset = maxRightOffset_,
-                        MaxDownOffset = maxDownOffset_
-                    }
-                );
-            }
-            return retVal;
-        }
-
+        
         public TFloatingRegion ToRegion()
         {
             return new SelectorFloatingRegion
@@ -68,11 +41,7 @@ namespace Applitools.Selenium.Fluent
                 MaxUpOffset = maxUpOffset_,
                 MaxLeftOffset = maxLeftOffset_,
                 MaxRightOffset = maxRightOffset_,
-                Region = new RegionSelector
-                {
-                    Type = selector_.Mechanism,
-                    Selector = selector_.Criteria
-                }
+                Region = selectorTransformer_.GetRegionSelector(selector_.ToString())
             };
         }
 

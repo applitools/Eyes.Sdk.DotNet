@@ -54,8 +54,8 @@ namespace Applitools.Selenium.Tests
         private static DriverOptions GetGalaxyS8Options()
         {
             ChromeOptions options = new ChromeOptions();
-            options.AddAdditionalOption("deviceName", "Samsung Galaxy S8 WQHD GoogleAPI Emulator");
-            options.AddAdditionalOption("platformVersion", "7.1");
+            options.AddAdditionalCapability("deviceName", "Samsung Galaxy S8 WQHD GoogleAPI Emulator");
+            options.AddAdditionalCapability("platformVersion", "7.1");
             options.PlatformName = "Android";
             return options;
         }
@@ -63,8 +63,8 @@ namespace Applitools.Selenium.Tests
         private static DriverOptions GetiOSSafariOptions()
         {
             SafariOptions options = new SafariOptions();
-            options.AddAdditionalOption("deviceName", "iPhone X Simulator");
-            options.AddAdditionalOption("platformVersion", "11.2");
+            options.AddAdditionalCapability("deviceName", "iPhone X Simulator");
+            options.AddAdditionalCapability("platformVersion", "11.2");
             options.PlatformName = "iOS";
             return options;
         }
