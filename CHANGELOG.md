@@ -1,3 +1,11 @@
+## [Eyes.Sdk.Core.S3 3.0] - 2022-01-14
+### Updated
+- Universal SDK
+
+## [Eyes.Selenium 3.0] - 2022-02-14
+### Updated
+- Universal SDK
+
 ## [Eyes.Selenium4 3.2] - 2022-02-09
 ### Updated
 - Added support for SetLogger and DebugScreenshotProvider

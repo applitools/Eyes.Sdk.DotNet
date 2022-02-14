@@ -24,10 +24,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <ItemGroup>
-	<ProjectReference Include="..\..\..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
-	<ProjectReference Include="..\..\..\Eyes.Selenium4.DotNet\Eyes.Selenium4.DotNet.csproj" />
+    <ProjectReference Include="..\..\..\Eyes.Sdk.Core.S3.DotNet\Eyes.Sdk.Core.S3.DotNet.csproj" />
+    <ProjectReference Include="..\..\..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
   </ItemGroup>
 
 </Project>

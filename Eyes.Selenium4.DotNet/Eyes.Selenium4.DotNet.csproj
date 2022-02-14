@@ -69,9 +69,6 @@ To learn more, visit https://applitools.com/ .</Description>
 		  <PrivateAssets>all</PrivateAssets>
 	  </ProjectReference>
     <ProjectReference Include="..\Eyes.Sdk.Universal.Core.DotNet\Eyes.Sdk.Universal.Core.DotNet.csproj" />
-    <ProjectReference Include="..\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj">
-      <PrivateAssets>all</PrivateAssets>
-    </ProjectReference>
     <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj">
     </ProjectReference>
   </ItemGroup>

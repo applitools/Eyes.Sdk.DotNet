@@ -1,7 +1,7 @@
-﻿using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using System.Collections.Generic;
-using System.Drawing;
+using Applitools.Fluent;
+using Applitools.Utils;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -17,27 +17,22 @@ namespace Applitools.Selenium.Fluent
         }
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
-
-        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(element_);
-            Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-            return new AccessibilityRegionByRectangle[] {
-                new AccessibilityRegionByRectangle(new Rectangle(pTag, r.Size), regionType_)
-            };
-        }
-
+        
         public TAccessibilityRegion ToRegion()
         {
-            throw new System.NotImplementedException();
+            return new ElementAccessibilityRegion
+            {
+                Type = regionType_,
+                Region = new RegionElement
+                {
+                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                }
+            };
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement>() { element_ };
+            return new List<IWebElement> { element_ };
         }
-
-
     }
 }
