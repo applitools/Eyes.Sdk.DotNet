@@ -9,35 +9,64 @@ namespace Applitools.Selenium
         {
             var parts = description.Split(':').Select(i => i.Trim()).ToList();
 
-            return new RegionSelector
-            {
-                Type = GetSelector(parts[0]),
-                Selector = parts[1]
-            };
+            return GetSelector(parts[0], parts[1]);
         }
 
-        private string GetSelector(string part)
+        private RegionSelector GetSelector(string type, string selector)
         {
-            switch (part)
+            string cssSelectorName = "css selector";
+            switch (type)
             {
                 case "By.ClassName":
-                    return "class name";
-                case "By.PartialLinkText":
-                    return "partial link text";
+                    return new RegionSelector
+                    {
+                        Type = cssSelectorName,
+                        Selector = $".{selector}"
+                    };
                 case "By.TagName":
-                    return "tag name";
+                    return new RegionSelector
+                    {
+                        Type = cssSelectorName,
+                        Selector = selector
+                    };
                 case "By.Name":
-                    return "name";
-                case "By.CssSelector":
-                    return "css selector";
-                case "By.XPath":
-                    return "xpath";
-                case "By.LinkText":
-                    return "link text";
+                    return new RegionSelector
+                    {
+                        Type = cssSelectorName,
+                        Selector = $"[name=\"{selector}\"]"
+                    };
                 case "By.Id":
-                    return "id";
+                    return new RegionSelector
+                    {
+                        Type = cssSelectorName,
+                        Selector = $"[id=\"{selector}\"]"
+                    };
+                case "By.CssSelector":
+                    return new RegionSelector
+                    {
+                        Type = cssSelectorName,
+                        Selector = selector
+                    };
+                case "By.PartialLinkText":
+                    return new RegionSelector
+                    {
+                        Type = "partial link text",
+                        Selector = selector
+                    };
+                case "By.XPath":
+                    return new RegionSelector
+                    {
+                        Type = "xpath",
+                        Selector = selector
+                    };
+                case "By.LinkText":
+                    return new RegionSelector
+                    {
+                        Type = "link text",
+                        Selector = selector
+                    };
                 default:
-                    throw new EyesException($"Unsupported selector {part}");
+                    throw new EyesException($"Unsupported selector {type}");
             }
         }
     }

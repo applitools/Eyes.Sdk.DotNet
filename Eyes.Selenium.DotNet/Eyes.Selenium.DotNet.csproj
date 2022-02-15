@@ -74,7 +74,6 @@ To learn more, visit https://applitools.com/ .</Description>
   <Target Name="GetMyPackageFiles">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)CssParser.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)Eyes.Ufg.DotNet.dll" />
     </ItemGroup>
   </Target>
     
