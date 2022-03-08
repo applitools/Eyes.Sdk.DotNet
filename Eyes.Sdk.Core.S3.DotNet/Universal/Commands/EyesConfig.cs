@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -208,14 +209,14 @@ namespace Applitools.Selenium.Commands
                 {
                     browsers.Add(browserInfo.DesktopBrowserInfo);
                 }
-                //if (browserInfo.IosDeviceInfo != null)
-                //{
-                //    browsers.Add(browserInfo.IosDeviceInfo);
-                //}
-                //if (browserInfo.EmulationInfo != null)
-                //{
-                //    browsers.Add((ChromeEmulationInfo)browserInfo.EmulationInfo);
-                //}
+                if (browserInfo.IosDeviceInfo != null)
+                {
+                    browsers.Add(browserInfo.IosDeviceInfo);
+                }
+                if (browserInfo.EmulationInfo != null)
+                {
+                    browsers.Add((ChromeEmulationInfo)browserInfo.EmulationInfo);
+                }
             }
 
             if (browsers.Any())
