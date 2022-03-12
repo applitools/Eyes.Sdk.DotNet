@@ -20,7 +20,6 @@ namespace Applitools.VisualGrid
             Version = iosVersion;
         }
 
-        [JsonProperty("name")]
         public IosDeviceName DeviceName { get; }
 
         [JsonIgnore]
