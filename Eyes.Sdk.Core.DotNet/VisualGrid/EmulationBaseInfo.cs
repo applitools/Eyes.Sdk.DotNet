@@ -1,5 +1,7 @@
 ﻿using Applitools.Utils.Geometry;
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools.VisualGrid
 {
@@ -10,6 +12,7 @@ namespace Applitools.VisualGrid
             ScreenOrientation = screenOrientation;
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public ScreenOrientation ScreenOrientation { get; set; }
         public RectangleSize Size { get; set; }
 

@@ -224,9 +224,9 @@ namespace Applitools
         private CoreMakeSdkRequest CreateCoreMakeSdk()
         {
             var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("name", "netSDK");
+            result.AddOrUpdatePayload("name", "netUniversal4");
             result.AddOrUpdatePayload("protocol", "webdriver");
-            result.AddOrUpdatePayload("version", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            result.AddOrUpdatePayload("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 
             return result;

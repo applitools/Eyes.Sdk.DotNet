@@ -2,7 +2,7 @@
 
 namespace Applitools.Selenium
 {
-    internal class Cookie //: ICookie, IEquatable<Cookie>
+    internal class Cookie// : ICookie, IEquatable<Cookie>
     {
         public Cookie()
         {

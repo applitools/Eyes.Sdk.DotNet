@@ -20,12 +20,12 @@ namespace Applitools
         [EnumMember(Value = "safari-earlyaccess")] SAFARI_EARLY_ACCESS,
         [EnumMember(Value = "ie10")] IE_10,
         [EnumMember(Value = "ie11")] IE_11,
-        [EnumMember(Value = "edge")] 
+        [EnumMember(Value = "edge")]
         [Obsolete("The 'EDGE' option that is being used in your browsers' configuration will soon be deprecated. Please change it to either \"EDGE_LEGACY\" for the legacy version or to \"EDGE_CHROMIUM\" for the new Chromium-based version.")]
         EDGE,
         [EnumMember(Value = "edgelegacy")] EDGE_LEGACY,
-        [EnumMember(Value="edgechromium")] EDGE_CHROMIUM,
-        [EnumMember(Value= "edgechromium-one-version-back")] EDGE_CHROMIUM_ONE_VERSION_BACK,
-        [EnumMember(Value="edgechromium-two-versions-back")] EDGE_CHROMIUM_TWO_VERSIONS_BACK,
+        [EnumMember(Value = "edgechromium")] EDGE_CHROMIUM,
+        [EnumMember(Value = "edgechromium-one-version-back")] EDGE_CHROMIUM_ONE_VERSION_BACK,
+        [EnumMember(Value = "edgechromium-two-versions-back")] EDGE_CHROMIUM_TWO_VERSIONS_BACK,
     }
 }

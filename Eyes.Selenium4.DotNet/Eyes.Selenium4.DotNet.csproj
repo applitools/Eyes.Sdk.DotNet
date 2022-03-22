@@ -13,8 +13,9 @@ To learn more, visit https://applitools.com/ .</Description>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Added support for SetLogger and DebugScreenshotProvider</PackageReleaseNotes>
+    <PackageReleaseNotes>### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium4</PackageId>
     <PackageLicenseExpression />
@@ -24,12 +25,6 @@ To learn more, visit https://applitools.com/ .</Description>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageOutputPath>..\PackagesOutput</PackageOutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="UniversalSdk\Commands\**" />
-    <EmbeddedResource Remove="UniversalSdk\Commands\**" />
-    <None Remove="UniversalSdk\Commands\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPoll.js" />
@@ -80,7 +75,6 @@ To learn more, visit https://applitools.com/ .</Description>
   <Target Name="GetMyPackageFiles">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)CssParser.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)Eyes.Ufg.DotNet.dll" />
     </ItemGroup>
   </Target>
     

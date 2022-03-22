@@ -4,6 +4,7 @@ using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools.VisualGrid
 {
@@ -19,7 +20,6 @@ namespace Applitools.VisualGrid
             Version = iosVersion;
         }
 
-        [JsonProperty("name")]
         public IosDeviceName DeviceName { get; }
 
         [JsonIgnore]
@@ -35,6 +35,7 @@ namespace Applitools.VisualGrid
             }
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty("screenOrientation")]
         public ScreenOrientation ScreenOrientation { get; }
         

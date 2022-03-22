@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -208,14 +209,20 @@ namespace Applitools.Selenium.Commands
                 {
                     browsers.Add(browserInfo.DesktopBrowserInfo);
                 }
-                //if (browserInfo.IosDeviceInfo != null)
-                //{
-                //    browsers.Add(browserInfo.IosDeviceInfo);
-                //}
-                //if (browserInfo.EmulationInfo != null)
-                //{
-                //    browsers.Add((ChromeEmulationInfo)browserInfo.EmulationInfo);
-                //}
+                if (browserInfo.IosDeviceInfo != null)
+                {
+                    browsers.Add(new IosDevice
+                    {
+                        IosDeviceInfo = browserInfo.IosDeviceInfo
+                    });
+                }
+                if (browserInfo.EmulationInfo != null)
+                {
+                    browsers.Add(new ChromeEmulation
+                    {
+                        ChromeEmulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo
+                    });
+                }
             }
 
             if (browsers.Any())
@@ -223,5 +230,15 @@ namespace Applitools.Selenium.Commands
                 BrowsersInfo = browsers.ToArray();
             }
         }
+    }
+
+    public class IosDevice : IRenderBrowserInfo
+    {
+        public IosDeviceInfo IosDeviceInfo { get; set; }
+    }
+
+    public class ChromeEmulation : IRenderBrowserInfo
+    {
+        public ChromeEmulationInfo ChromeEmulationInfo { get; set; }
     }
 }
