@@ -1,3 +1,18 @@
+## [Eyes.Selenium4 3.3] - 2022-03-22
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
+## [Eyes.Sdk.Core 3.2] - 2022-03-22
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
+## [Eyes.Sdk.Core.S3 3.2] - 2022-03-22
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
 ## [Eyes.Selenium 3.1] - 2022-03-18
 ### Fixed
 - Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)

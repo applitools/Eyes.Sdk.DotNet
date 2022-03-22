@@ -8,15 +8,16 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.1</Version>
+    <Version>3.2</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
-    <PackageReleaseNotes>### Added
-- Universal SDK</PackageReleaseNotes>
+    <PackageReleaseNotes>### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageId>Eyes.Sdk.Core.S3</PackageId>
+    <PackageId>Eyes.Sdk.Core</PackageId>
     <PackageLicenseExpression />
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>applitools_nuget_icon.png</PackageIcon>
@@ -27,12 +28,12 @@ To learn more, visit https://applitools.com/ .</Description>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\$(TargetFramework)\Eyes.Sdk.Core.S3.DotNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\$(TargetFramework)\Eyes.Sdk.Core.DotNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\$(TargetFramework)\Eyes.Sdk.Core.S3.DotNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetFramework)\Eyes.Sdk.Core.DotNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
