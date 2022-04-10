@@ -454,6 +454,7 @@ namespace Applitools.Selenium
             var testResult = response?.Payload?.Result?.FirstOrDefault();
             if (testResult != null)
             {
+                testResult.Runner = Runner;
                 if (testResult.IsPassed == false && throwEx)
                 {
                     throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
@@ -462,41 +463,6 @@ namespace Applitools.Selenium
 
             return testResult;
         }
-
-        //public TestResults ExtractText()
-        //{
-        //    if (IsDisabled)
-        //    {
-        //        Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-        //        return new TestResults();
-        //    }
-
-        //    //var request = new EyesExtractTextRequest
-        //    //{
-        //    //    Payload = new EyesExtractTextRequestPayload
-        //    //    {
-        //    //        Config = 
-        //    //    }
-        //    //}
-
-        //    var eyesCloseRequest = CreateEyesCloseRequest();
-
-        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
-
-        //    IsOpen = false;
-
-        //    var testResult = response?.Payload?.Result?.FirstOrDefault();
-
-        //    if (testResult != null)
-        //    {
-        //        if (testResult.IsPassed == false && throwEx)
-        //        {
-        //            throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
-        //        }
-        //    }
-
-        //    return testResult;
-        //}
 
         /// <summary>
         /// Ends the test asynchronously.
@@ -583,12 +549,7 @@ namespace Applitools.Selenium
             Config.SetHostOS(hostOS);
             Config.SetHostApp(hostApp);
         }
-
-        //IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        
         internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
             if (IsDisabled)
@@ -648,6 +609,7 @@ namespace Applitools.Selenium
                 ViewportSize = viewportSize;
             }
             driver_ = driver;
+            Runner.ApiKey = ApiKey;
 
             if (IsDisabled)
             {

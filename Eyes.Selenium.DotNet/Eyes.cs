@@ -648,6 +648,7 @@ namespace Applitools.Selenium
                 ViewportSize = viewportSize;
             }
             driver_ = driver;
+            Runner.ApiKey = ApiKey;
 
             if (IsDisabled)
             {

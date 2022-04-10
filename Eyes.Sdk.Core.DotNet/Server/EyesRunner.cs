@@ -37,10 +37,10 @@ namespace Applitools
             set
             {
                 apiKey = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.ApiKey = value;
-                }
+                //foreach (var eye in GetAllEyes())
+                //{
+                //    eye.ApiKey = value;
+                //}
             }
         }
 
@@ -188,12 +188,26 @@ namespace Applitools
             var request = CreateEyesManageCloseAllEyes();
 
             var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseAbortResponse>(request).Result;
-            if (response.Payload?.Error != null)
+
+            var payload = response.Payload;
+            if (payload != null)
             {
-                throw new EyesException(response.Payload.Error.Message);
+                if (payload.Error != null)
+                {
+                    throw new EyesException(response.Payload.Error.Message);
+                }
+
+                var testResults = payload.Result;
+
+                foreach (var testResult in testResults)
+                {
+                    testResult.Runner = this;
+                }
+
+                return testResults;
             }
 
-            return response?.Payload?.Result;
+            return new List<TestResults>();
         }
 
         protected abstract ManagerConfig InitConfig();
