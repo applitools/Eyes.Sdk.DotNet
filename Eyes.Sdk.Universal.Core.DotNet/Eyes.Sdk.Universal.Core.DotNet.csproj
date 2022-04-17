@@ -43,7 +43,7 @@
 
 	<ItemGroup>
 		<None Include="runtimes\**" Pack="true" PackagePath="runtimes">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<Pack>True</Pack>
 		</None>
