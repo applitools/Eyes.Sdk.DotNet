@@ -25,16 +25,37 @@ namespace Applitools
         {
             if (nativeProc_ == null || nativeProc_.HasExited)
             {
-                string path = Assembly.GetExecutingAssembly().Location;
+                string basePath = Assembly.GetExecutingAssembly().Location;
+                string path;
                 string osVersion = Environment.OSVersion.VersionString.ToLower();
                 string os, suffix;
-                if (osVersion.Contains("windows")) { os = "win-x64"; suffix = "win.exe"; }
-                else if (osVersion.Contains("mac")) { os = "mac-x64"; suffix = "macos"; }
-                else { os = "linux-x64"; suffix = "linux"; }
+                if (osVersion.Contains("windows"))
+                {
+                    os = "win-x64";
+                    suffix = "win.exe";
+                    path = GetServerFilePath(basePath, os, suffix);
+                }
+                else if (osVersion.Contains("mac"))
+                {
+                    os = "mac-x64";
+                    suffix = "macos";
+                    path = GetServerFilePath(basePath, os, suffix);
+                }
+                else
+                {
+                    os = "linux-x64";
+                    suffix = "linux";
+                    path = GetServerFilePath(basePath, os, suffix);
+                    CommandExecutor.ExecCommand($"chmod 755 {path}");
+                }
 
-                path = Path.Combine(Path.GetDirectoryName(path), "runtimes", os, "native", "eyes-universal-" + suffix);
                 nativeProc_ = Process.Start(path);
             }
+        }
+
+        private static string GetServerFilePath(string basePath, string os, string suffix)
+        {
+            return Path.Combine(Path.GetDirectoryName(basePath), "runtimes", os, "native", "eyes-universal-" + suffix);
         }
 
         private void TryStopProcess_()

@@ -1,7 +1,7 @@
-﻿using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using System.Collections.Generic;
-using System.Drawing;
+using Applitools.Fluent;
+using Applitools.Utils;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -31,37 +31,25 @@ namespace Applitools.Selenium.Fluent
         int IGetFloatingRegionOffsets.MaxRightOffset => maxRightOffset_;
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
-
-        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
+        
+        public TFloatingRegion ToRegion()
         {
-            Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(element_);
-            Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-            return new FloatingMatchSettings[] {
-                new FloatingMatchSettings()
+            return new ElementFloatingRegion
+            {
+                MaxDownOffset = maxDownOffset_,
+                MaxUpOffset = maxUpOffset_,
+                MaxLeftOffset = maxLeftOffset_,
+                MaxRightOffset = maxRightOffset_,
+                Region = new RegionElement
                 {
-                    Left = pTag.X,
-                    Top = pTag.Y,
-                    Width = r.Width,
-                    Height = r.Height,
-                    MaxLeftOffset = maxLeftOffset_,
-                    MaxUpOffset = maxUpOffset_,
-                    MaxRightOffset = maxRightOffset_,
-                    MaxDownOffset = maxDownOffset_
+                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
                 }
             };
         }
 
-        public TFloatingRegion ToRegion()
-        {
-            throw new System.NotImplementedException();
-        }
-
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement>() { element_ };
+            return new List<IWebElement> { element_ };
         }
-
-
     }
 }

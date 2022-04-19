@@ -1,7 +1,5 @@
-﻿using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using System.Collections.Generic;
-using System.Drawing;
 using Applitools.Fluent;
 using Applitools.Utils;
 
@@ -33,27 +31,7 @@ namespace Applitools.Selenium.Fluent
         int IGetFloatingRegionOffsets.MaxRightOffset => maxRightOffset_;
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
-
-        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            Rectangle r = EyesSeleniumUtils.GetVisibleElementBounds(element_);
-            Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-            return new FloatingMatchSettings[] {
-                new FloatingMatchSettings()
-                {
-                    Left = pTag.X,
-                    Top = pTag.Y,
-                    Width = r.Width,
-                    Height = r.Height,
-                    MaxLeftOffset = maxLeftOffset_,
-                    MaxUpOffset = maxUpOffset_,
-                    MaxRightOffset = maxRightOffset_,
-                    MaxDownOffset = maxDownOffset_
-                }
-            };
-        }
-
+        
         public TFloatingRegion ToRegion()
         {
             return new ElementFloatingRegion
@@ -71,9 +49,7 @@ namespace Applitools.Selenium.Fluent
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement>() { element_ };
+            return new List<IWebElement> { element_ };
         }
-
-
     }
 }

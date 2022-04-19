@@ -20,7 +20,6 @@ namespace Applitools.VisualGrid
             Version = iosVersion;
         }
 
-        [JsonProperty("name")]
         public IosDeviceName DeviceName { get; }
 
         [JsonIgnore]
@@ -35,7 +34,6 @@ namespace Applitools.VisualGrid
                 catch (Exception) { return DeviceName.ToString(); }
             }
         }
-
 
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty("screenOrientation")]

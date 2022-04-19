@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Applitools
+﻿namespace Applitools
 {
     public interface IGetAccessibilityRegion
     {
-        IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot);
         TAccessibilityRegion ToRegion();
     }
 }

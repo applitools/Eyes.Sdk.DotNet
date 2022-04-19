@@ -3,7 +3,6 @@ using Applitools.Tests.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Chromium;
 
 namespace Applitools.Selenium.Tests
 {
@@ -16,7 +15,7 @@ namespace Applitools.Selenium.Tests
             IWebDriver webDriver = null;
             try
             {
-                ChromiumMobileEmulationDeviceSettings mobileSettings = new ChromiumMobileEmulationDeviceSettings()
+                ChromeMobileEmulationDeviceSettings  mobileSettings = new ChromeMobileEmulationDeviceSettings 
                 {
                     UserAgent = "Mozilla/5.0 (Linux; Android 8.0.0; Android SDK built for x86_64 Build/OSR1.180418.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36",
                     Width = 384,

@@ -37,10 +37,10 @@ namespace Applitools
             set
             {
                 apiKey = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.ApiKey = value;
-                }
+                //foreach (var eye in GetAllEyes())
+                //{
+                //    eye.ApiKey = value;
+                //}
             }
         }
 
@@ -180,31 +180,45 @@ namespace Applitools
 
         public IList<TestResults> CloseAllEyes()
         {
+            var results = new List<TestResults>();
+
             if (IsDisabled)
             {
-                return new List<TestResults>();
+                return results;
             }
 
             var request = CreateEyesManageCloseAllEyes();
-
-            var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseAbortResponse>(request).Result;
-            if (response.Payload?.Error != null)
+            
+            var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).Result;
+            var payload = response.Payload;
+            if (payload != null)
             {
-                throw new EyesException(response.Payload.Error.Message);
+                foreach (var closeAllTestResults in payload.Result.Results)
+                {
+                    if (closeAllTestResults.Exception != null)
+                    {
+                        throw new EyesException(closeAllTestResults.Exception.ToString());
+                    }
+
+                    var testResults = closeAllTestResults.TestResults;
+                    testResults.Runner = this;
+
+                    results.Add(testResults);
+                }
             }
 
-            return response?.Payload?.Result;
+            return results;
         }
 
         protected abstract ManagerConfig InitConfig();
 
         protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
-        private EyesManageCloseAllEyesRequest CreateEyesManageCloseAllEyes()
+        private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes()
         {
-            var closeAllEyes = new EyesManageCloseAllEyesRequest
+            var closeAllEyes = new EyesManagerCloseManagerRequest
             {
-                Payload = new EyesManageCloseAllEyesRequestPayload
+                Payload = new EyesManageCloseManagerRequestPayload
                 {
                     Manager = new ManagerRef
                     {
@@ -224,9 +238,9 @@ namespace Applitools
         private CoreMakeSdkRequest CreateCoreMakeSdk()
         {
             var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("name", "netSDK");
+            result.AddOrUpdatePayload("name", "netUniversal4");
             result.AddOrUpdatePayload("protocol", "webdriver");
-            result.AddOrUpdatePayload("version", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            result.AddOrUpdatePayload("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 
             return result;

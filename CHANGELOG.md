@@ -1,3 +1,35 @@
+## [Eyes.Selenium4 3.3] - 2022-03-22
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
+## [Eyes.Sdk.Core 3.2] - 2022-03-22
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
+## [Eyes.Sdk.Core.S3 3.2] - 2022-03-22
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
+## [Eyes.Selenium 3.1] - 2022-03-18
+### Fixed
+- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
+- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)
+
+## [Eyes.Sdk.Universal.Core 1.0.8] - 2022-03-18
+### Fixed
+- Fixed the support for .Net Framework 4.7.2. [Trello 2827] (https://trello.com/c/90oCKeL2)
+
+## [Eyes.Sdk.Core.S3 3.0] - 2022-01-14
+### Updated
+- Universal SDK
+
+## [Eyes.Selenium 3.0] - 2022-02-14
+### Updated
+- Universal SDK
+
 ## [Eyes.Selenium4 3.2] - 2022-02-09
 ### Updated
 - Added support for SetLogger and DebugScreenshotProvider

@@ -57,7 +57,6 @@ namespace Applitools
                 testResults.IsNew = sessionStopInfo.RunningSession.IsNewSession;
                 testResults.Url = sessionStopInfo.RunningSession.Url;
                 Logger.Verbose(testResults.ToString());
-                testResults.ServerConnector = ServerConnector;
                 listener.OnComplete(testResults);
             },
             (ex) =>

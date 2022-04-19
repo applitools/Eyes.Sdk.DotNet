@@ -211,11 +211,17 @@ namespace Applitools.Selenium.Commands
                 }
                 if (browserInfo.IosDeviceInfo != null)
                 {
-                    browsers.Add(browserInfo.IosDeviceInfo);
+                    browsers.Add(new IosDevice
+                    {
+                        IosDeviceInfo = browserInfo.IosDeviceInfo
+                    });
                 }
                 if (browserInfo.EmulationInfo != null)
                 {
-                    browsers.Add((ChromeEmulationInfo)browserInfo.EmulationInfo);
+                    browsers.Add(new ChromeEmulation
+                    {
+                        ChromeEmulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo
+                    });
                 }
             }
 
@@ -224,5 +230,15 @@ namespace Applitools.Selenium.Commands
                 BrowsersInfo = browsers.ToArray();
             }
         }
+    }
+
+    public class IosDevice : IRenderBrowserInfo
+    {
+        public IosDeviceInfo IosDeviceInfo { get; set; }
+    }
+
+    public class ChromeEmulation : IRenderBrowserInfo
+    {
+        public ChromeEmulationInfo ChromeEmulationInfo { get; set; }
     }
 }

@@ -10,13 +10,13 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>1.0.7</Version>
+		<Version>1.0.8</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
 		<PackageTags>applitools eyes</PackageTags>
-		<PackageReleaseNotes>
-		</PackageReleaseNotes>
+		<PackageReleaseNotes>### Fixed
+- Fixed the support for .Net Framework 4.7.2. [Trello 2827] (https://trello.com/c/90oCKeL2)</PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageId>Eyes.Sdk.Universal.Core</PackageId>
 		<PackageLicenseExpression />
@@ -42,9 +42,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="runtimes\**" Pack="true" PackagePath="runtimes">
-			<CopyToOutputDirectory>true</CopyToOutputDirectory>
-		</Content>
+		<None Include="runtimes\**" Pack="true" PackagePath="runtimes">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<Pack>True</Pack>
+		</None>
+
+		<None Include="Eyes.Sdk.Universal.Core.targets">
+			<PackagePath>build\</PackagePath>
+			<Pack>true</Pack>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -68,8 +75,8 @@
 
 	<PropertyGroup>
 		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
-		<AssemblyVersion>1.0.7.0</AssemblyVersion>
-		<FileVersion>1.0.7.0</FileVersion>
+		<AssemblyVersion>1.0.8.0</AssemblyVersion>
+		<FileVersion>1.0.8.0</FileVersion>
 	</PropertyGroup>
 
 	<Target Name="GetMyPackageFiles">
@@ -81,17 +88,4 @@
 		<None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
 		<None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Update="runtimes\linux-x64\native\eyes-universal-linux">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="runtimes\osx-x64\native\eyes-universal-macos">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="runtimes\win-x64\native\eyes-universal-win.exe">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
 </Project>

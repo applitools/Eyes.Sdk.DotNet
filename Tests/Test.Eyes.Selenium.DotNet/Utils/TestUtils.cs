@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Applitools.Selenium.Commands;
 
 namespace Applitools.Tests.Utils
 {
@@ -85,7 +86,7 @@ namespace Applitools.Tests.Utils
             string path = InitLogPath(testName);
             if (!RUNS_ON_CI)
             {
-                eyes.DebugScreenshotProvider = new FileDebugScreenshotProvider()
+                eyes.DebugScreenshotProvider = new DebugScreenshotHandler
                 {
                     Path = path,
                     Prefix = testName + "_"

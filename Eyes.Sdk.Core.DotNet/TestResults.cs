@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using Applitools.Selenium.Commands.Requests;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 
@@ -19,6 +20,8 @@ namespace Applitools
             Url = string.Empty;
         }
 
+        internal EyesRunner Runner { get; set; }
+        
         public string SecretToken { get; set; }
 
         public string Id { get; set; }
@@ -138,11 +141,22 @@ namespace Applitools
 
         public SessionAccessibilityStatus AccessibilityStatus { get; set; }
 
-        internal IDeleteSession ServerConnector { private get; set; }
-
         public void Delete()
         {
-            this.ServerConnector.DeleteSession(this);
+            Runner.SendRequest(new CoreDeleteTestRequest
+            {
+                Payload = new CoreDeleteTestRequestPayload
+                {
+                    Settings = new CoreDeleteTestSettings
+                    {
+                        TestId = Id,
+                        BatchId = BatchId,
+                        ServerUrl = CommonData.DefaultServerUrl,
+                        ApiKey = Runner.ApiKey,
+                        SecretToken = SecretToken
+                    }
+                }
+            }).Wait();
         }
 
         /// <inheritdoc />
