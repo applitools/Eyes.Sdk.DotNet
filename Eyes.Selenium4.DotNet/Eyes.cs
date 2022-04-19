@@ -82,21 +82,29 @@ namespace Applitools.Selenium
 
             if (IsOpen == false)
             {
-                return new TestResults();
+                return new TestResults
+                {
+                    Runner = Runner
+                };
             }
 
             var request = CreateEyesAbortRequest();
 
             var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Result.Payload;
 
-            if (payload?.Error != null)
+            foreach (var testResults in payload.Result)
+            {
+                testResults.Runner = Runner;
+            }
+
+            if (payload.Error != null)
             {
                 throw new EyesException($"{payload.Error.Message}");
             }
 
             IsOpen = false;
 
-            return payload?.Result?.FirstOrDefault();
+            return payload.Result?.FirstOrDefault();
         }
         
         public void AbortAsync()
@@ -464,6 +472,41 @@ namespace Applitools.Selenium
             return testResult;
         }
 
+        //public TestResults ExtractText()
+        //{
+        //    if (IsDisabled)
+        //    {
+        //        Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+        //        return new TestResults();
+        //    }
+
+        //    //var request = new EyesExtractTextRequest
+        //    //{
+        //    //    Payload = new EyesExtractTextRequestPayload
+        //    //    {
+        //    //        Config = 
+        //    //    }
+        //    //}
+
+        //    var eyesCloseRequest = CreateEyesCloseRequest();
+
+        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
+
+        //    IsOpen = false;
+
+        //    var testResult = response?.Payload?.Result?.FirstOrDefault();
+
+        //    if (testResult != null)
+        //    {
+        //        if (testResult.IsPassed == false && throwEx)
+        //        {
+        //            throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
+        //        }
+        //    }
+
+        //    return testResult;
+        //}
+
         /// <summary>
         /// Ends the test asynchronously.
         /// </summary>
@@ -549,7 +592,12 @@ namespace Applitools.Selenium
             Config.SetHostOS(hostOS);
             Config.SetHostApp(hostApp);
         }
-        
+
+        //IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
         internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
             if (IsDisabled)

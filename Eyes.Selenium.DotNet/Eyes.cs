@@ -82,21 +82,29 @@ namespace Applitools.Selenium
 
             if (IsOpen == false)
             {
-                return new TestResults();
+                return new TestResults
+                {
+                    Runner = Runner
+                };
             }
 
             var request = CreateEyesAbortRequest();
 
             var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Result.Payload;
 
-            if (payload?.Error != null)
+            foreach (var testResults in payload.Result)
+            {
+                testResults.Runner = Runner;
+            }
+
+            if (payload.Error != null)
             {
                 throw new EyesException($"{payload.Error.Message}");
             }
 
             IsOpen = false;
 
-            return payload?.Result?.FirstOrDefault();
+            return payload.Result?.FirstOrDefault();
         }
         
         public void AbortAsync()
@@ -454,6 +462,7 @@ namespace Applitools.Selenium
             var testResult = response?.Payload?.Result?.FirstOrDefault();
             if (testResult != null)
             {
+                testResult.Runner = Runner;
                 if (testResult.IsPassed == false && throwEx)
                 {
                     throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");

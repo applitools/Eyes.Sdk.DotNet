@@ -21,7 +21,7 @@ namespace Applitools
         }
 
         internal EyesRunner Runner { get; set; }
-
+        
         public string SecretToken { get; set; }
 
         public string Id { get; set; }
@@ -141,11 +141,9 @@ namespace Applitools
 
         public SessionAccessibilityStatus AccessibilityStatus { get; set; }
 
-        internal IDeleteSession ServerConnector { private get; set; }
-
         public void Delete()
         {
-            var response = Runner.SendRequest<CoreDeleteTestRequest, EyesManageCloseAllEyesResponse>(new CoreDeleteTestRequest
+            Runner.SendRequest(new CoreDeleteTestRequest
             {
                 Payload = new CoreDeleteTestRequestPayload
                 {
@@ -158,7 +156,7 @@ namespace Applitools
                         SecretToken = SecretToken
                     }
                 }
-            });
+            }).Wait();
         }
 
         /// <inheritdoc />

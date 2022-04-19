@@ -180,44 +180,45 @@ namespace Applitools
 
         public IList<TestResults> CloseAllEyes()
         {
+            var results = new List<TestResults>();
+
             if (IsDisabled)
             {
-                return new List<TestResults>();
+                return results;
             }
 
             var request = CreateEyesManageCloseAllEyes();
-
-            var response = SendRequest<EyesManageCloseAllEyesRequest, EyesCloseAbortResponse>(request).Result;
+            
+            var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).Result;
             var payload = response.Payload;
             if (payload != null)
             {
-                if (payload.Error != null)
+                foreach (var closeAllTestResults in payload.Result.Results)
                 {
-                    throw new EyesException(response.Payload.Error.Message);
+                    if (closeAllTestResults.Exception != null)
+                    {
+                        throw new EyesException(closeAllTestResults.Exception.ToString());
+                    }
+
+                    var testResults = closeAllTestResults.TestResults;
+                    testResults.Runner = this;
+
+                    results.Add(testResults);
                 }
-
-                var testResults = payload.Result;
-
-                foreach (var testResult in testResults)
-                {
-                    testResult.Runner = this;
-                }
-
-                return testResults;
             }
 
-            return new List<TestResults>();
+            return results;
         }
 
         protected abstract ManagerConfig InitConfig();
 
         protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
-        private EyesManageCloseAllEyesRequest CreateEyesManageCloseAllEyes()
+        private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes()
         {
-            var closeAllEyes = new EyesManageCloseAllEyesRequest
+            var closeAllEyes = new EyesManagerCloseManagerRequest
             {
-                Payload = new EyesManageCloseAllEyesRequestPayload
+                Payload = new EyesManageCloseManagerRequestPayload
                 {
                     Manager = new ManagerRef
                     {
