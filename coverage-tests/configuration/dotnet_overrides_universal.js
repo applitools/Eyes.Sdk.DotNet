@@ -10,4 +10,23 @@ module.exports = {
     'should fail check of stale element': {skip: true},
     'should set viewport size': {skip: true},
     'should set viewport size on edge legacy': {skip: true},
+
+    // Generation errors:
+	'check window on mobile web android': {skipEmit: true},
+	'check window on mobile web ios': {skipEmit: true},
+	'should extract text from regions without a hint': {skipEmit: true},
+	'should abort after close': {skipEmit: true},
+	'should abort after close with vg': {skipEmit: true},
+	'should return aborted tests in getAllTestResults': {skipEmit: true},
+	'should return aborted tests in getAllTestResults with vg': {skipEmit: true},
+	'should send agentRunId': {skipEmit: true},
+	'appium android landscape mode check window on android 7': {skipEmit: true},
+	'appium android landscape mode check window on android 10': {skipEmit: true},
+	'appium android landscape mode check region on android 7': {skipEmit: true},
+	'appium android landscape mode check region on android 10': {skipEmit: true},
+	// Compilation errors:
+	'pageCoverage data is correct': {skipEmit: true},
+	'pageCoverage data is correct with vg': {skipEmit: true},
+	'should waitBeforeCapture with breakpoints in check': {skipEmit: true},
+	'should waitBeforeCapture with breakpoints in open': {skipEmit: true}
 }
