@@ -31,6 +31,7 @@ namespace Applitools
     public class EyesManagerCloseManagerResponsePayload
     {
         public EyesManagerCloseManagerResult Result { get; set; }
+        public ResponsePayloadError Error { get; set; }
     }
 
     public class EyesManagerCloseManagerResponse : CommandBase

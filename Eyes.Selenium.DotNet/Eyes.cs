@@ -94,12 +94,15 @@ namespace Applitools.Selenium
 
             foreach (var testResults in payload.Result)
             {
-                testResults.Runner = Runner;
+                if (testResults != null)
+                {
+                    testResults.Runner = Runner;
+                }
             }
 
             if (payload.Error != null)
             {
-                throw new EyesException($"{payload.Error.Message}");
+                throw new EyesException(payload.Error.ToString());
             }
 
             IsOpen = false;
@@ -456,7 +459,7 @@ namespace Applitools.Selenium
             var error = response?.Payload?.Error;
             if (error != null && throwEx)
             {
-                throw new TestFailedException($"{error.Message}{Environment.NewLine}{error.Stack}");
+                throw new TestFailedException(error.ToString());
             }
 
             var testResult = response?.Payload?.Result?.FirstOrDefault();
@@ -623,10 +626,10 @@ namespace Applitools.Selenium
             };
 
             var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
-
-            if (result?.Payload?.Error != null)
+            var error = result?.Payload?.Error;
+            if (error != null)
             {
-                throw new EyesException(result.Payload.Error.Message);
+                throw new EyesException(error.ToString());
             }
 
             if (result?.Payload?.Result?.AsExpected == false)

@@ -28,5 +28,6 @@ module.exports = {
 	'pageCoverage data is correct': {skipEmit: true},
 	'pageCoverage data is correct with vg': {skipEmit: true},
 	'should waitBeforeCapture with breakpoints in check': {skipEmit: true},
-	'should waitBeforeCapture with breakpoints in open': {skipEmit: true}
+	'should waitBeforeCapture with breakpoints in open': {skipEmit: true},
+	'should return browserInfo in getAllTestResults': {skipEmit: true},
 }
