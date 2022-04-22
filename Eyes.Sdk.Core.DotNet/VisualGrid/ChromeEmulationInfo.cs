@@ -7,7 +7,6 @@ namespace Applitools.VisualGrid
 {
     public class ChromeEmulationInfo : EmulationBaseInfo, IRenderBrowserInfo, IEquatable<ChromeEmulationInfo>
     {
-        public DeviceName DeviceName { get; set; }
         public string SerializedDeviceName
         {
             get
@@ -17,10 +16,12 @@ namespace Applitools.VisualGrid
             }
         }
 
-        public ChromeEmulationInfo(DeviceName deviceName, 
-            ScreenOrientation screenOrientation = ScreenOrientation.Portrait) : base(screenOrientation)
+        public ChromeEmulationInfo(
+            DeviceName deviceName,
+            ScreenOrientation screenOrientation = ScreenOrientation.Portrait)
+            : base(deviceName, screenOrientation)
         {
-            DeviceName = deviceName;
+            
         }
 
         public override string ToString()
