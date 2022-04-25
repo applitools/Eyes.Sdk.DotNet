@@ -186,15 +186,17 @@ namespace Applitools
 
                 foreach (var closeAllTestResults in payload.Result.Results)
                 {
-                    if (closeAllTestResults.Exception != null)
+                    if (closeAllTestResults.Exception != null && shouldThrowException)
                     {
                         throw new EyesException(closeAllTestResults.Exception.ToString());
                     }
 
                     var testResults = closeAllTestResults.TestResults;
-                    testResults.Runner = this;
-
-                    results.Add(testResults);
+                    if (testResults != null)
+                    {
+                        testResults.Runner = this;
+                        results.Add(testResults);
+                    }
                 }
             }
 
