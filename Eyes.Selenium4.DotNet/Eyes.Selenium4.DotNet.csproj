@@ -14,8 +14,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Fixed
-- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
-- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)</PackageReleaseNotes>
+- Fixed Delete() method. [Trello 2851] (https://trello.com/c/90hedYWk)</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium4</PackageId>
     <PackageLicenseExpression />

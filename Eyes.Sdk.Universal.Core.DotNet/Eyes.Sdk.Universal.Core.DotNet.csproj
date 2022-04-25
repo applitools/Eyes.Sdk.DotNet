@@ -10,13 +10,15 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>1.0.8</Version>
+		<Version>2.2.4</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
 		<PackageTags>applitools eyes</PackageTags>
-		<PackageReleaseNotes>### Fixed
-- Fixed the support for .Net Framework 4.7.2. [Trello 2827] (https://trello.com/c/90oCKeL2)</PackageReleaseNotes>
+		<PackageReleaseNotes>### Updated
+- Updated Universal Server Version
+### Fixed
+- FIxed running tests on Linux</PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageId>Eyes.Sdk.Universal.Core</PackageId>
 		<PackageLicenseExpression />
@@ -75,8 +77,6 @@
 
 	<PropertyGroup>
 		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
-		<AssemblyVersion>1.0.8.0</AssemblyVersion>
-		<FileVersion>1.0.8.0</FileVersion>
 	</PropertyGroup>
 
 	<Target Name="GetMyPackageFiles">
