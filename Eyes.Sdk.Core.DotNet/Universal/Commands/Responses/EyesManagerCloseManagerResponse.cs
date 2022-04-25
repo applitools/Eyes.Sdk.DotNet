@@ -18,9 +18,9 @@ namespace Applitools
         public int Unresolved { get; set; }
         public int Failed { get; set; }
         public int Exceptions { get; set; }
-        public int Mismatches { get; set; }
-        public int Missing { get; set; }
-        public int Matches { get; set; }
+        public int? Mismatches { get; set; }
+        public int? Missing { get; set; }
+        public int? Matches { get; set; }
 
         public EyesManagerCloseManagerResult()
         {
