@@ -31,10 +31,6 @@ To learn more, visit https://applitools.com/ .</Description>
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
-  </ItemGroup>
 
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
@@ -48,6 +44,11 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Eyes.Sdk.Core.S3.DotNet\Eyes.Sdk.Core.S3.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
   </ItemGroup>
   
 </Project>

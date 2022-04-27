@@ -1,18 +1,18 @@
 ﻿using Applitools.Utils;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Applitools.Common;
+using OpenQA.Selenium.Appium;
+using Target = Applitools.Common.Target;
 
 namespace Applitools.Appium
 {
     public sealed class Eyes : EyesBase
     {
+        private Selenium.Eyes _seleniumEyes;
         private RemoteWebDriver driver_;
+        private ISelectorTransformer selectorTransformer;
 
-        public IDictionary<string, object> CachedSessionDetails { get; private set; }
+        //public IDictionary<string, object> CachedSessionDetails { get; private set; }
         
         //public static Func<IWebDriver, bool> IsLandscapeOrientation = IsLandscapeOrientationImpl_;
 
@@ -24,7 +24,7 @@ namespace Applitools.Appium
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
         public Eyes(Uri serverUrl)
-            //: base(serverUrl)
+            : this()
         {
             Init_();
         }
@@ -33,7 +33,17 @@ namespace Applitools.Appium
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
         public Eyes()
+            : this(new ClassicRunner()) 
         {
+            Init_();
+        }
+
+        public Eyes(EyesRunner runner)
+            : base(runner)
+        {
+            selectorTransformer = new AppiumSelectorTransformer();
+            _seleniumEyes = new Selenium.Eyes(Runner, "URL", selectorTransformer: selectorTransformer);
+
             Init_();
         }
 
@@ -44,29 +54,20 @@ namespace Applitools.Appium
         #endregion
 
         #region Configuration
-        private Configuration configuration_ = new Configuration();
-
-        protected Configuration Configuration { get => configuration_; }
 
         public Configuration GetConfiguration()
         {
-            return new Configuration(configuration_);
+            return Config;
         }
-
-        protected void SetConfigImpl(IConfiguration configuration)
-        {
-            configuration_ = new Configuration(configuration);
-        }
+        
         #endregion
 
         #region Properties
         
-        public Rectangle CachedViewport { get; private set; }
+        //public Rectangle CachedViewport { get; private set; }
 
         #endregion
-
-        internal IWebDriver GetDriver() { return driver_; }
-
+        
         public RemoteWebDriver Open(RemoteWebDriver driver, string appName, string testName)
         {
             Logger.GetILogHandler().Open();
@@ -79,8 +80,26 @@ namespace Applitools.Appium
 
             driver_ = driver;
 
+            Type driverType = driver.GetType();
+            if (driverType.GenericTypeArguments.Length != 1)
+            {
+                throw new EyesException($"driver is not an AppiumDriver<IWebElement>");
+            }
+            Type argType = driverType.GenericTypeArguments[0];
+            Type appiumDriverType = typeof(AppiumDriver<>).MakeGenericType(argType);
+            if (!appiumDriverType.IsAssignableFrom(driverType))
+            {
+                throw new EyesException($"driver is not an AppiumDriver<{argType.Name}>");
+            }
 
-
+            _seleniumEyes.Open(driver, appName, testName);
+            ApiKey = _seleniumEyes.ApiKey;
+            Runner.ApiKey = _seleniumEyes.Runner.ApiKey;
+            AppName = _seleniumEyes.AppName;
+            TestName = _seleniumEyes.TestName;
+            ViewportSize = _seleniumEyes.ViewportSize;
+            IsOpen = true;
+            
             return driver_;
         }
         
@@ -92,7 +111,7 @@ namespace Applitools.Appium
                 return;
             }
 
-
+            _seleniumEyes.Check(checkSettings);
         }
         
         public void Check(string name, ICheckSettings checkSettings)
@@ -122,7 +141,13 @@ namespace Applitools.Appium
         
         public override TestResults Abort()
         {
-            throw new EyesException();
+            IsOpen = false;
+            return _seleniumEyes.Abort();
+        }
+        
+        public override TestResults Close(bool throwEx = true)
+        {
+            return _seleniumEyes.Close(throwEx);
         }
     }
 }

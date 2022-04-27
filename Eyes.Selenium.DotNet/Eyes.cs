@@ -23,9 +23,9 @@ namespace Applitools.Selenium
 
         // TODO: remove
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
-        private readonly Uri serverUrl_;
+        private readonly string serverUrlFieldName_;
         private readonly ILogHandler logHandler_;
-        private readonly SelectorTransformer selectorTransformer_;
+        private readonly ISelectorTransformer selectorTransformer_;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -41,21 +41,24 @@ namespace Applitools.Selenium
         }
 
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
-        : this(new ClassicRunner(), serverUrl, logHandler)
+        : this(new ClassicRunner(), serverUrl?.AbsolutePath, logHandler)
         {
         }
 
-        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null) : 
-            base(runner)
+        public Eyes(
+            EyesRunner runner, 
+            string serverUrlFieldName = "remoteServerUri", 
+            ILogHandler logHandler = null, 
+            ISelectorTransformer selectorTransformer = null) 
+            : base(runner)
         {
             if (logHandler == null) logHandler = NullLogHandler.Instance;
 
             logHandler_ = logHandler;
             properties_ = new PropertiesCollection();
-            //ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
-            serverUrl_ = serverUrl;
+            serverUrlFieldName_ = serverUrlFieldName;
 
-            selectorTransformer_ = new SelectorTransformer();
+            selectorTransformer_ = selectorTransformer ?? new SeleniumSelectorTransformer();
         }
 
         #endregion
@@ -110,7 +113,7 @@ namespace Applitools.Selenium
             return payload.Result?.FirstOrDefault();
         }
         
-        public void AbortAsync()
+        public override void AbortAsync()
         {
             Logger.Verbose("enter. AbortAsync");
 
@@ -442,7 +445,7 @@ namespace Applitools.Selenium
         /// <summary>
         /// Ends the test and returns its results.
         /// </summary>
-        public virtual TestResults Close(bool throwEx = true)
+        public override TestResults Close(bool throwEx = true)
         {
             if (IsDisabled)
             {
@@ -474,41 +477,6 @@ namespace Applitools.Selenium
 
             return testResult;
         }
-
-        //public TestResults ExtractText()
-        //{
-        //    if (IsDisabled)
-        //    {
-        //        Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-        //        return new TestResults();
-        //    }
-
-        //    //var request = new EyesExtractTextRequest
-        //    //{
-        //    //    Payload = new EyesExtractTextRequestPayload
-        //    //    {
-        //    //        Config = 
-        //    //    }
-        //    //}
-
-        //    var eyesCloseRequest = CreateEyesCloseRequest();
-
-        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
-
-        //    IsOpen = false;
-
-        //    var testResult = response?.Payload?.Result?.FirstOrDefault();
-
-        //    if (testResult != null)
-        //    {
-        //        if (testResult.IsPassed == false && throwEx)
-        //        {
-        //            throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
-        //        }
-        //    }
-
-        //    return testResult;
-        //}
 
         /// <summary>
         /// Ends the test asynchronously.
@@ -595,12 +563,7 @@ namespace Applitools.Selenium
             Config.SetHostOS(hostOS);
             Config.SetHostApp(hostApp);
         }
-
-        //IDictionary<string, IRunningTest> IEyesBase.GetAllTests()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        
         internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
             if (IsDisabled)
@@ -609,7 +572,7 @@ namespace Applitools.Selenium
                 return;
             }
 
-            var seleniumCheckSettings = (SeleniumCheckSettings)checkSettings;
+            var seleniumCheckSettings = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = new EyesConfig(Config)
             {
                 Properties = properties_.ToArray()
@@ -709,9 +672,8 @@ namespace Applitools.Selenium
             return request;
         }
 
-        private UniversalCheckSettings CreateUniversalCheckSettings(SeleniumCheckSettings checkSettings)
+        private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            var checkSettingsInternal = (ICheckSettingsInternal) checkSettings;
             var settings = new UniversalCheckSettings
             {
                 Hooks = new Hooks
@@ -720,14 +682,14 @@ namespace Applitools.Selenium
                 },
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
-                Region = GetUniversalRegion(checkSettings),
+                Region = GetUniversalRegion(checkSettingsInternal),
                 Fully = checkSettingsInternal.GetStitchContent(),
                 VariationGroupId = checkSettingsInternal.GetVariationGroupId(),
                 IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
                 SendDom = checkSettingsInternal.GetSendDom(),
                 UseDom = checkSettingsInternal.GetUseDom(),
-                Frames = GetFrames(checkSettings),
-                ScrollRootElement = GetScrollRootElement(checkSettings),
+                Frames = GetFrames(checkSettingsInternal),
+                ScrollRootElement = GetScrollRootElement(checkSettingsInternal),
                 IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
                 StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
                 LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
@@ -739,22 +701,25 @@ namespace Applitools.Selenium
             return settings;
         }
 
-        private TRegion GetScrollRootElement(SeleniumCheckSettings checkSettings)
+        private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)
         {
-            var container = (IScrollRootElementContainer) checkSettings;
-            var selector = container.GetScrollRootSelector();
-            if (selector != null)
+            var container = checkSettings as IScrollRootElementContainer;
+            if (container != null)
             {
-                return selectorTransformer_.GetRegionSelector(selector.ToString());
-            }
-
-            var element = container.GetScrollRootElement();
-            if (element != null)
-            {
-                return new RegionElement
+                var selector = container.GetScrollRootSelector();
+                if (selector != null)
                 {
-                    ElementId = element.GetPrivateFieldValue<string>("elementId")
-                };
+                    return selectorTransformer_.GetRegionSelector(selector);
+                }
+
+                var element = container.GetScrollRootElement();
+                if (element != null)
+                {
+                    return new RegionElement
+                    {
+                        ElementId = element.GetPrivateFieldValue<string>("elementId")
+                    };
+                }
             }
 
             return null;
@@ -765,39 +730,40 @@ namespace Applitools.Selenium
             return checkSettings.GetIgnoreRegions().Select(i => i.ToRegion()).ToList();
         }
 
-        private IList<IFrame> GetFrames(SeleniumCheckSettings checkSettings)
+        private IList<IFrame> GetFrames(ICheckSettingsInternal checkSettings)
         {
             var frames = new List<IFrame>();
-            var frameChain = ((ISeleniumCheckTarget) checkSettings).GetFrameChain();
-
-            foreach (var item in frameChain)
+            if (checkSettings is ISeleniumCheckTarget seleniumCheckTarget)
             {
-                if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
+                foreach (var item in seleniumCheckTarget.GetFrameChain())
                 {
-                    frames.Add(new FrameNameOrId
+                    if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
                     {
-                        Frame = item.FrameNameOrId
-                    });
-                }
-                
-                if (item.FrameSelector != null)
-                {
-                    frames.Add(selectorTransformer_.GetRegionSelector(item.FrameSelector.ToString()));
-                }
-                
-                if (item.FrameReference != null) 
-                {
-                    frames.Add(new FrameElement
+                        frames.Add(new FrameNameOrId
+                        {
+                            Frame = item.FrameNameOrId
+                        });
+                    }
+
+                    if (item.FrameSelector != null)
                     {
-                        ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
-                    });
+                        frames.Add(selectorTransformer_.GetRegionSelector(item.FrameSelector));
+                    }
+
+                    if (item.FrameReference != null)
+                    {
+                        frames.Add(new FrameElement
+                        {
+                            ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
+                        });
+                    }
                 }
             }
 
             return frames;
         }
 
-        private TRegion GetUniversalRegion(ICheckSettings checkSettings)
+        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
         {
             TRegion region = null;
             if (checkSettings is ICheckSettingsInternal checkSettingsInternal)
@@ -807,7 +773,7 @@ namespace Applitools.Selenium
 
             if (region == null)
             {
-                if (checkSettings is ISeleniumCheckTarget seleniumCheckTarget)
+                if (checkSettings is ITargetContainer seleniumCheckTarget)
                 {
                     region = CreateCheckSettingsRegionSelector(seleniumCheckTarget);
                     if (region == null)
@@ -827,19 +793,19 @@ namespace Applitools.Selenium
             return region;
         }
 
-        private IWebElement GetTargetElement(ISeleniumCheckTarget checkSettings)
+        private IWebElement GetTargetElement(ITargetContainer checkSettings)
         {
             return checkSettings.GetTargetElement();
         }
         
-        private RegionSelector CreateCheckSettingsRegionSelector(ISeleniumCheckTarget settings)
+        private RegionSelector CreateCheckSettingsRegionSelector(ITargetContainer settings)
         {
             RegionSelector regionSelector = null;
             
             var targetSelector = settings.GetTargetSelector();
             if (targetSelector != null)
             {
-                regionSelector = new SelectorTransformer().GetRegionSelector(targetSelector.ToString());
+                regionSelector = selectorTransformer_.GetRegionSelector(targetSelector);
             }
 
             return regionSelector;
@@ -906,7 +872,7 @@ namespace Applitools.Selenium
             var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;
             var instance = driverServiceCommandExecutor != null ? driverServiceCommandExecutor.HttpExecutor : commandExecutor;
 
-            return instance.GetPrivateFieldValue<Uri>("remoteServerUri").AbsoluteUri;
+            return instance.GetPrivateFieldValue<Uri>(serverUrlFieldName_).AbsoluteUri;
         }
 
         private IDictionary<string, object> GetCapabilities(RemoteWebDriver webDriver)

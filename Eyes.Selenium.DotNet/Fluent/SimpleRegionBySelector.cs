@@ -8,13 +8,14 @@
     internal class SimpleRegionBySelector : IGetRegions, IGetSeleniumRegion
     {
         private readonly By selector_;
-        private readonly SelectorTransformer selectorTransformer_;
-
+        private readonly ISelectorTransformer selectorTransformer_;
+        
         public SimpleRegionBySelector(By by)
         {
             selector_ = by;
-            selectorTransformer_ = new SelectorTransformer();
+            selectorTransformer_ = new SeleniumSelectorTransformer();
         }
+
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector_);
@@ -23,7 +24,7 @@
         
         public TRegion ToRegion()
         {
-            return selectorTransformer_.GetRegionSelector(selector_.ToString());
+            return selectorTransformer_.GetRegionSelector(selector_);
         }
     }
 }
