@@ -1,3 +1,15 @@
+## [Eyes.Appium 5.0] - 2022-04-28
+### Updated
+- Support for Universal Server
+
+## [Eyes.Selenium 3.5] - 2022-04-28
+### Updated
+- Code refactoring
+
+## [Eyes.Sdk.Core.S3 3.5] - 2022-04-28
+### Updated
+- Support for Appium Universal Server
+
 ## [Eyes.Selenium 3.4] - 2022-04-25
 ### Fixed
 - Fixed Delete() method. [Trello 2851] (https://trello.com/c/90hedYWk)

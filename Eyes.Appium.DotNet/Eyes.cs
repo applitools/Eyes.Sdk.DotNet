@@ -2,15 +2,13 @@
 using OpenQA.Selenium.Remote;
 using System;
 using OpenQA.Selenium.Appium;
-using Target = Applitools.Common.Target;
 
 namespace Applitools.Appium
 {
     public sealed class Eyes : EyesBase
     {
-        private Selenium.Eyes _seleniumEyes;
+        private readonly Selenium.Eyes seleniumEyes_;
         private RemoteWebDriver driver_;
-        private ISelectorTransformer selectorTransformer;
 
         //public IDictionary<string, object> CachedSessionDetails { get; private set; }
         
@@ -41,8 +39,8 @@ namespace Applitools.Appium
         public Eyes(EyesRunner runner)
             : base(runner)
         {
-            selectorTransformer = new AppiumSelectorTransformer();
-            _seleniumEyes = new Selenium.Eyes(Runner, "URL", selectorTransformer: selectorTransformer);
+            var selectorTransformer = new AppiumSelectorTransformer();
+            seleniumEyes_ = new Selenium.Eyes(Runner, "URL", selectorTransformer: selectorTransformer);
 
             Init_();
         }
@@ -92,12 +90,12 @@ namespace Applitools.Appium
                 throw new EyesException($"driver is not an AppiumDriver<{argType.Name}>");
             }
 
-            _seleniumEyes.Open(driver, appName, testName);
-            ApiKey = _seleniumEyes.ApiKey;
-            Runner.ApiKey = _seleniumEyes.Runner.ApiKey;
-            AppName = _seleniumEyes.AppName;
-            TestName = _seleniumEyes.TestName;
-            ViewportSize = _seleniumEyes.ViewportSize;
+            seleniumEyes_.Open(driver, appName, testName);
+            ApiKey = seleniumEyes_.ApiKey;
+            Runner.ApiKey = seleniumEyes_.Runner.ApiKey;
+            AppName = seleniumEyes_.AppName;
+            TestName = seleniumEyes_.TestName;
+            ViewportSize = seleniumEyes_.ViewportSize;
             IsOpen = true;
             
             return driver_;
@@ -111,7 +109,7 @@ namespace Applitools.Appium
                 return;
             }
 
-            _seleniumEyes.Check(checkSettings);
+            seleniumEyes_.Check(checkSettings);
         }
         
         public void Check(string name, ICheckSettings checkSettings)
@@ -142,12 +140,12 @@ namespace Applitools.Appium
         public override TestResults Abort()
         {
             IsOpen = false;
-            return _seleniumEyes.Abort();
+            return seleniumEyes_.Abort();
         }
         
         public override TestResults Close(bool throwEx = true)
         {
-            return _seleniumEyes.Close(throwEx);
+            return seleniumEyes_.Close(throwEx);
         }
     }
 }
