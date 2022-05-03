@@ -9,6 +9,7 @@ dist: xenial
 
 services:
   - docker
+  - xvfb
 
 branches:
   except:
