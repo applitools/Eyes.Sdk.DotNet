@@ -20,7 +20,7 @@
     "generate:win": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
     "generate:win:local": "coverage-tests generate ./configuration --pascalizeTests --strict --tests ./coverage-tests.js && move /Y .\\test\\Selenium\\coverage\\generic\\*Native*.cs .\\test\\Appium\\coverage\\generic && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",
     "run:parallelOld": "cd .. && dotnet test Eyes.Sdk.DotNet_Travis.sln --filter Generated --logger \"junit;LogFilePath=./coverage-test-report.xml\"",
-    "run:parallel:selenium": "dotnet test ./test/Selenium --logger \"junit;LogFilePath=./../coverage-test-reportS.xml\" -- NUnit.NumberOfTestWorkers=15",
+    "run:parallel:selenium": "dotnet test ./test/Selenium --logger \"junit;LogFilePath=./../coverage-test-reportS.xml\" -- NUnit.NumberOfTestWorkers=6",
     "run:parallel:selenium:eg": "dotnet test ./test/Selenium --logger \"junit;LogFilePath=./../coverage-test-reportS.xml\" -- NUnit.NumberOfTestWorkers=20",
     "run:parallel:appium": "dotnet test ./test/Appium --logger \"junit;LogFilePath=./../coverage-test-reportA.xml\"",
     "report:merge": "junit-merge -d test -o coverage-test-report.xml",
