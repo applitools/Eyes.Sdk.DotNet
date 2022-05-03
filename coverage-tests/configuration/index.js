@@ -7,5 +7,6 @@ module.exports = {
   template: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/master/DotNet/template.hbs',
   tests: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/coverage-tests.js',
   ext: '.cs',
-  outPath: './test/Selenium/coverage/generic'
+  outPath: './test/Selenium/coverage/generic',
+  emitOnly: ['/should return actual viewport size/']
 };
