@@ -68,8 +68,6 @@ jobs:
         chrome: stable
         firefox: latest
       script:
-        - nvm install 14
-        - nvm use 14
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./genericTests.sh && ./genericTests.sh
