@@ -93,9 +93,6 @@ jobs:
       addons:
         chrome: stable
       script:
-        - pushd Eyes.Selenium4.DotNet/Properties/NodeResources
-        - npm install
-        - popd
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
     
@@ -103,9 +100,6 @@ jobs:
       mono: none
       dotnet: 3.1.407
       script:
-        - pushd Eyes.Selenium.DotNet/Properties/NodeResources
-        - npm install
-        - popd
         - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
 
     - stage: Full Regression Mail
