@@ -25,9 +25,16 @@ module.exports = {
 	'appium android landscape mode check region on android 7': {skipEmit: true},
 	'appium android landscape mode check region on android 10': {skipEmit: true},
 	// Compilation errors:
-	'pageCoverage data is correct': {skipEmit: true},
-	'pageCoverage data is correct with vg': {skipEmit: true},
 	'should waitBeforeCapture with breakpoints in check': {skipEmit: true},
 	'should waitBeforeCapture with breakpoints in open': {skipEmit: true},
 	'should return browserInfo in getAllTestResults': {skipEmit: true},
+	// // Page coverage feature
+	'pageCoverage data is correct': {skipEmit: true},
+	'pageCoverage data is correct with vg': {skipEmit: true},
+	'appium iOS check fully window with scroll and pageCoverage': {skipEmit: true},
+	'appium iOS check window region with scroll and pageCoverage': {skipEmit: true},
+
+	// Flaky tests (waitBeforeCapture isn't implemented) 
+	'should be empty if page delayed by 1500': {skip: true},
+	'should waitBeforeCapture in check': {skip: true}
 }
