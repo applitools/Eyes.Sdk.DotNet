@@ -33,4 +33,7 @@ module.exports = {
 	'pageCoverage data is correct with vg': {skipEmit: true},
 	'appium iOS check fully window with scroll and pageCoverage': {skipEmit: true},
 	'appium iOS check window region with scroll and pageCoverage': {skipEmit: true},
+
+	// Flaky tests
+	'should be empty if page delayed by 1500': {skip: true},
 }
