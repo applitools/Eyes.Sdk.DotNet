@@ -90,7 +90,9 @@ namespace Applitools.Appium
                 throw new EyesException($"driver is not an AppiumDriver<{argType.Name}>");
             }
 
+            seleniumEyes_.SetConfiguration(Config);
             seleniumEyes_.Open(driver, appName, testName);
+
             ApiKey = seleniumEyes_.ApiKey;
             Runner.ApiKey = seleniumEyes_.Runner.ApiKey;
             AppName = seleniumEyes_.AppName;

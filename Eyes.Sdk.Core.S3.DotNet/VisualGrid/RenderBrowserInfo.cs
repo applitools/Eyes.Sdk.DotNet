@@ -30,6 +30,13 @@ namespace Applitools.VisualGrid
             BrowserType = BrowserType.CHROME;
         }
 
+        public RenderBrowserInfo(AndroidDeviceInfo androidDeviceInfo, string baselineEnvName = null)
+        {
+            AndroidDeviceInfo = androidDeviceInfo;
+            BaselineEnvName = baselineEnvName;
+            BrowserType = BrowserType.CHROME;
+        }
+
         public RectangleSize GetDeviceSize()
         {
             return ViewportSize ??
@@ -71,6 +78,7 @@ namespace Applitools.VisualGrid
         public DesktopBrowserInfo DesktopBrowserInfo { get; }
         public EmulationBaseInfo EmulationInfo { get; }
         public IosDeviceInfo IosDeviceInfo { get; }
+        public AndroidDeviceInfo AndroidDeviceInfo { get; }
 
         public string BaselineEnvName { get; }
         public SizeMode Target { get; } = SizeMode.FullPage;

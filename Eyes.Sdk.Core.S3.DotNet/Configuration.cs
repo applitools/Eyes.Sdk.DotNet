@@ -10,9 +10,6 @@ namespace Applitools
 {
     public class Configuration : IConfiguration
     {
-        private static readonly int DEFAULT_WAIT_BEFORE_SCREENSHOTS = 100;
-        private static readonly TimeSpan DEFAULT_MATCH_TIMEOUT = TimeSpan.FromSeconds(2);
-
         private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
         public Configuration()
         {
@@ -562,7 +559,43 @@ namespace Applitools
                 {
                     AddBrowser(iosDeviceInfo);
                 }
+                else if (browserInfo is AndroidDeviceInfo androidDeviceInfo)
+                {
+                    AddBrowser(androidDeviceInfo);
+                }
             }
+            return this;
+        }
+
+        public IConfiguration AddMobileDevices(params IosDeviceInfo[] iosDeviceInfos)
+        {
+            foreach (var iosDeviceInfo in iosDeviceInfos)
+            {
+                AddMobileDevice(iosDeviceInfo);
+            }
+
+            return this;
+        }
+
+        public IConfiguration AddMobileDevice(IosDeviceInfo iosDeviceInfo)
+        {
+            return AddBrowser(iosDeviceInfo);
+        }
+
+        public Configuration AddMobileDevices(params AndroidDeviceInfo[] androidDeviceInfos)
+        {
+            foreach (var androidDeviceInfo in androidDeviceInfos)
+            {
+                AddMobileDevice(androidDeviceInfo);
+            }
+
+            return this;
+        }
+        
+        public Configuration AddMobileDevice(AndroidDeviceInfo androidDeviceInfo)
+        {
+            RenderBrowserInfo renderBrowserInfo = new RenderBrowserInfo(androidDeviceInfo);
+            browsersInfo_.Add(renderBrowserInfo);
             return this;
         }
 
@@ -580,6 +613,13 @@ namespace Applitools
         }
 
         public IConfiguration AddBrowser(IosDeviceInfo deviceInfo)
+        {
+            RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
+            browsersInfo_.Add(browserInfo);
+            return this;
+        }
+
+        public IConfiguration AddBrowser(AndroidDeviceInfo deviceInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
             browsersInfo_.Add(browserInfo);
