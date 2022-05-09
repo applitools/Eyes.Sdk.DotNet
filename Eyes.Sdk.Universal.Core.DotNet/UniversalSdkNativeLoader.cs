@@ -38,9 +38,10 @@ namespace Applitools
                 }
                 else if (OperatingSystemChecker.IsMacOs())
                 {
-                    os = "mac-x64";
+                    os = "osx-x64";
                     suffix = "macos";
                     path = GetServerFilePath(basePath, os, suffix);
+                    CommandExecutor.ExecCommand($"chmod 755 {path}");
                 }
                 else if (OperatingSystemChecker.IsLinux())
                 {
