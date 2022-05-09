@@ -5,6 +5,8 @@ using System.Reflection;
 
 namespace Applitools
 {
+    using System.Runtime.InteropServices;
+
     public class UniversalSdkNativeLoader
     {
         private static Process nativeProc_;
@@ -27,26 +29,29 @@ namespace Applitools
             {
                 string basePath = Assembly.GetExecutingAssembly().Location;
                 string path;
-                string osVersion = Environment.OSVersion.VersionString.ToLower();
                 string os, suffix;
-                if (osVersion.Contains("windows"))
+                if (OperatingSystemChecker.IsWindows())
                 {
                     os = "win-x64";
                     suffix = "win.exe";
                     path = GetServerFilePath(basePath, os, suffix);
                 }
-                else if (osVersion.Contains("mac"))
+                else if (OperatingSystemChecker.IsMacOs())
                 {
                     os = "mac-x64";
                     suffix = "macos";
                     path = GetServerFilePath(basePath, os, suffix);
                 }
-                else
+                else if (OperatingSystemChecker.IsLinux())
                 {
                     os = "linux-x64";
                     suffix = "linux";
                     path = GetServerFilePath(basePath, os, suffix);
                     CommandExecutor.ExecCommand($"chmod 755 {path}");
+                }
+                else
+                {
+                    throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
                 }
 
                 nativeProc_ = Process.Start(path);
