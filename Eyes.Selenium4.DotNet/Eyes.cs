@@ -671,7 +671,7 @@ namespace Applitools.Selenium
             managerApplitoolsRefId_ = Runner.GetCoreMakeManager();
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
-
+            
             var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
             eyes_ = openEyesResponsePayload.Result;
 
@@ -868,8 +868,8 @@ namespace Applitools.Selenium
             string applitoolsRefId,
             IWebDriver webDriver)
         {
-            var remoteWebDriver = (RemoteWebDriver)webDriver;
-            var serverUrl = GetServerUrl(remoteWebDriver);
+            var remoteWebDriver = (WebDriver)webDriver;
+            var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var result = new EyesManagerOpenEyes
             {
                 Key = Guid.NewGuid().ToString(),
@@ -895,12 +895,6 @@ namespace Applitools.Selenium
             return result;
         }
         
-        private string GetServerUrl(RemoteWebDriver webDriver)
-        {
-            var commandExecutor = webDriver.GetBaseTypePrivateFieldValue<RemoteWebDriver, ICommandExecutor>("executor");
-            return GetServerUrl(commandExecutor);
-        }
-
         private string GetServerUrl(ICommandExecutor commandExecutor)
         {
             var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;
@@ -909,7 +903,7 @@ namespace Applitools.Selenium
             return instance.GetPrivateFieldValue<Uri>("remoteServerUri").AbsoluteUri;
         }
 
-        private IDictionary<string, object> GetCapabilities(RemoteWebDriver webDriver)
+        private IDictionary<string, object> GetCapabilities(WebDriver webDriver)
         {
             return webDriver.Capabilities.GetPrivateFieldValue<IDictionary<string, object>>("capabilities");
         }
