@@ -36,5 +36,8 @@ module.exports = {
 
 	// Flaky tests (waitBeforeCapture isn't implemented) 
 	'should be empty if page delayed by 1500': {skip: true},
-	'should waitBeforeCapture in check': {skip: true}
+	'should waitBeforeCapture in check': {skip: true},
+	
+	// Skipped test running on Selenium3 but not on Selenium4
+	'should send dom on edge legacy': {skip: true},
 }
