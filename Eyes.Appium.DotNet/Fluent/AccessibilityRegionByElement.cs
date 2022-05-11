@@ -1,10 +1,9 @@
-﻿using Applitools.Utils.Geometry;
+﻿using System.Collections.Generic;
+using Applitools.Fluent;
+using Applitools.Utils;
 using OpenQA.Selenium;
-using System.Collections.Generic;
-using System.Drawing;
-using Region = Applitools.Utils.Geometry.Region;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
     internal class AccessibilityRegionByElement : IGetAccessibilityRegion, IGetAppiumRegion, IGetAccessibilityRegionType
     {
@@ -18,29 +17,22 @@ namespace Applitools.Appium.Fluent
         }
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
-
-        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
-            Region r = new Region(element_.Location, element_.Size);
-            r = r.Scale(scaleRatio);
-            Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-            return new AccessibilityRegionByRectangle[] {
-                new AccessibilityRegionByRectangle(new Rectangle(pTag, r.Size), regionType_)
-            };
-        }
-
+        
         public TAccessibilityRegion ToRegion()
         {
-            throw new System.NotImplementedException();
+            return new ElementAccessibilityRegion
+            {
+                Type = regionType_,
+                Region = new RegionElement
+                {
+                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                }
+            };
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement>() { element_ };
+            return new List<IWebElement> { element_ };
         }
-
-
     }
 }

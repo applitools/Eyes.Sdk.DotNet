@@ -1,13 +1,12 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Applitools.Fluent;
 
 namespace Applitools.Selenium.Fluent
 {
     internal class FloatingRegionBySelector : IGetFloatingRegion, IGetSeleniumRegion, IGetFloatingRegionOffsets
     {
-        private readonly SelectorTransformer selectorTransformer_;
+        private readonly SeleniumSelectorTransformer selectorTransformer_;
         private int maxDownOffset_;
         private int maxLeftOffset_;
         private int maxRightOffset_;
@@ -18,7 +17,7 @@ namespace Applitools.Selenium.Fluent
         public FloatingRegionBySelector(By selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
         {
             selector_ = selector;
-            selectorTransformer_ = new SelectorTransformer();
+            selectorTransformer_ = new SeleniumSelectorTransformer();
             maxUpOffset_ = maxUpOffset;
             maxDownOffset_ = maxDownOffset;
             maxLeftOffset_ = maxLeftOffset;
@@ -41,7 +40,7 @@ namespace Applitools.Selenium.Fluent
                 MaxUpOffset = maxUpOffset_,
                 MaxLeftOffset = maxLeftOffset_,
                 MaxRightOffset = maxRightOffset_,
-                Region = selectorTransformer_.GetRegionSelector(selector_.ToString())
+                Region = selectorTransformer_.GetRegionSelector(selector_)
             };
         }
 

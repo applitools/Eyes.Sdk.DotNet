@@ -1,46 +1,31 @@
-﻿using Applitools.Utils.Geometry;
-using OpenQA.Selenium;
-using Applitools.Fluent;
-using System.Drawing;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Region = Applitools.Utils.Geometry.Region;
+using Applitools.Fluent;
+using Applitools.Selenium;
+using OpenQA.Selenium;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
     internal class SimpleRegionBySelector : IGetRegions, IGetAppiumRegion
     {
         private readonly By selector_;
-
+        private readonly ISelectorTransformer selectorTransformer_;
+        
         public SimpleRegionBySelector(By by)
         {
             selector_ = by;
+            selectorTransformer_ = new AppiumSelectorTransformer();
         }
+
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
         {
             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector_);
             return elements;
         }
-
-        public IList<IMutableRegion> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            IWebDriver driver = ((Eyes)eyesBase).GetDriver();
-            ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector_);
-            IList<IMutableRegion> mutableRegions = new List<IMutableRegion>();
-            double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
-            foreach (IWebElement element in elements)
-            {
-                Region r = new Region(element.Location, element.Size);
-                r = r.Scale(scaleRatio);
-                Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-                mutableRegions.Add(new MutableRegion(pTag.X, pTag.Y, r.Width, r.Height));
-            }
-            return mutableRegions;
-        }
-
+        
         public TRegion ToRegion()
         {
-            throw new System.NotImplementedException();
+            return selectorTransformer_.GetRegionSelector(selector_);
         }
     }
 }

@@ -1,11 +1,8 @@
 ﻿using OpenQA.Selenium;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
-    interface IAppiumCheckTarget //: IScrollRootElementContainer
+    interface IAppiumCheckTarget : ITargetContainer //: IScrollRootElementContainer
     {
-        By GetTargetSelector();
-
-        IWebElement GetTargetElement();
     }
 }

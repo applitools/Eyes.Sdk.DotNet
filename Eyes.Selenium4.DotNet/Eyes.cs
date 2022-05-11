@@ -94,12 +94,15 @@ namespace Applitools.Selenium
 
             foreach (var testResults in payload.Result)
             {
-                testResults.Runner = Runner;
+                if (testResults != null)
+                {
+                    testResults.Runner = Runner;
+                }
             }
 
             if (payload.Error != null)
             {
-                throw new EyesException($"{payload.Error.Message}");
+                throw new EyesException(payload.Error.ToString());
             }
 
             IsOpen = false;
@@ -456,7 +459,7 @@ namespace Applitools.Selenium
             var error = response?.Payload?.Error;
             if (error != null && throwEx)
             {
-                throw new TestFailedException($"{error.Message}{Environment.NewLine}{error.Stack}");
+                throw new TestFailedException(error.ToString());
             }
 
             var testResult = response?.Payload?.Result?.FirstOrDefault();
@@ -623,10 +626,10 @@ namespace Applitools.Selenium
             };
 
             var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
-
-            if (result?.Payload?.Error != null)
+            var error = result?.Payload?.Error;
+            if (error != null)
             {
-                throw new EyesException(result.Payload.Error.Message);
+                throw new EyesException(error.ToString());
             }
 
             if (result?.Payload?.Result?.AsExpected == false)
@@ -668,14 +671,14 @@ namespace Applitools.Selenium
             managerApplitoolsRefId_ = Runner.GetCoreMakeManager();
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
-
+            
             var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;
             if (error != null)
             {
-                throw new EyesException($"{error.Message}{Environment.NewLine}{error.Stack}");
+                throw new EyesException(error.ToString());
             }
 
             IsOpen = true;
@@ -865,8 +868,8 @@ namespace Applitools.Selenium
             string applitoolsRefId,
             IWebDriver webDriver)
         {
-            var remoteWebDriver = (RemoteWebDriver)webDriver;
-            var serverUrl = GetServerUrl(remoteWebDriver);
+            var remoteWebDriver = (WebDriver)webDriver;
+            var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var result = new EyesManagerOpenEyes
             {
                 Key = Guid.NewGuid().ToString(),
@@ -892,12 +895,6 @@ namespace Applitools.Selenium
             return result;
         }
         
-        private string GetServerUrl(RemoteWebDriver webDriver)
-        {
-            var commandExecutor = webDriver.GetBaseTypePrivateFieldValue<RemoteWebDriver, ICommandExecutor>("executor");
-            return GetServerUrl(commandExecutor);
-        }
-
         private string GetServerUrl(ICommandExecutor commandExecutor)
         {
             var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;
@@ -906,7 +903,7 @@ namespace Applitools.Selenium
             return instance.GetPrivateFieldValue<Uri>("remoteServerUri").AbsoluteUri;
         }
 
-        private IDictionary<string, object> GetCapabilities(RemoteWebDriver webDriver)
+        private IDictionary<string, object> GetCapabilities(WebDriver webDriver)
         {
             return webDriver.Capabilities.GetPrivateFieldValue<IDictionary<string, object>>("capabilities");
         }

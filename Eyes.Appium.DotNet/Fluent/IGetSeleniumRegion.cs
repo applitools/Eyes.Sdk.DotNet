@@ -1,7 +1,7 @@
-﻿using OpenQA.Selenium;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using OpenQA.Selenium;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
     internal interface IGetAppiumRegion
     {

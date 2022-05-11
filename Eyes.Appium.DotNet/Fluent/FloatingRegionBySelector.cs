@@ -1,14 +1,13 @@
-﻿using OpenQA.Selenium;
-using System.Drawing;
-using Applitools.Utils.Geometry;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Region = Applitools.Utils.Geometry.Region;
+using Applitools.Selenium;
+using OpenQA.Selenium;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
     internal class FloatingRegionBySelector : IGetFloatingRegion, IGetAppiumRegion, IGetFloatingRegionOffsets
     {
+        private readonly SeleniumSelectorTransformer selectorTransformer_;
         private int maxDownOffset_;
         private int maxLeftOffset_;
         private int maxRightOffset_;
@@ -19,7 +18,7 @@ namespace Applitools.Appium.Fluent
         public FloatingRegionBySelector(By selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
         {
             selector_ = selector;
-
+            selectorTransformer_ = new SeleniumSelectorTransformer();
             maxUpOffset_ = maxUpOffset;
             maxDownOffset_ = maxDownOffset;
             maxLeftOffset_ = maxLeftOffset;
@@ -33,38 +32,17 @@ namespace Applitools.Appium.Fluent
         int IGetFloatingRegionOffsets.MaxRightOffset => maxRightOffset_;
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
-
-        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            ReadOnlyCollection<IWebElement> elements = ((Eyes)eyesBase).GetDriver().FindElements(selector_);
-            IList<FloatingMatchSettings> retVal = new List<FloatingMatchSettings>();
-            double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
-            foreach (IWebElement element in elements)
-            {
-                Region r = new Region(element.Location, element.Size);
-                r = r.Scale(scaleRatio);
-                Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-                retVal.Add(
-                    new FloatingMatchSettings()
-                    {
-                        Left = pTag.X,
-                        Top = pTag.Y,
-                        Width = r.Width,
-                        Height = r.Height,
-                        MaxLeftOffset = maxLeftOffset_,
-                        MaxUpOffset = maxUpOffset_,
-                        MaxRightOffset = maxRightOffset_,
-                        MaxDownOffset = maxDownOffset_
-                    }
-                );
-            }
-            return retVal;
-        }
-
+        
         public TFloatingRegion ToRegion()
         {
-            throw new System.NotImplementedException();
+            return new SelectorFloatingRegion
+            {
+                MaxDownOffset = maxDownOffset_,
+                MaxUpOffset = maxUpOffset_,
+                MaxLeftOffset = maxLeftOffset_,
+                MaxRightOffset = maxRightOffset_,
+                Region = selectorTransformer_.GetRegionSelector(selector_)
+            };
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)

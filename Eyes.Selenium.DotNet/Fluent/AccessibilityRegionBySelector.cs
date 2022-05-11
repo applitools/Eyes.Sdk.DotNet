@@ -8,13 +8,13 @@ namespace Applitools.Selenium.Fluent
     {
         private readonly AccessibilityRegionType regionType_;
         private readonly By selector_;
-        private readonly SelectorTransformer selectorTransformer_;
+        private readonly SeleniumSelectorTransformer selectorTransformer_;
 
         public AccessibilityRegionBySelector(By selector, AccessibilityRegionType regionType)
         {
             selector_ = selector;
             regionType_ = regionType;
-            selectorTransformer_ = new SelectorTransformer();
+            selectorTransformer_ = new SeleniumSelectorTransformer();
         }
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
@@ -24,7 +24,7 @@ namespace Applitools.Selenium.Fluent
             return new SelectorAccessibilityRegion
             {
                 Type = regionType_,
-                Region = selectorTransformer_.GetRegionSelector(selector_.ToString())
+                Region = selectorTransformer_.GetRegionSelector(selector_)
             };
         }
 

@@ -41,8 +41,6 @@ namespace Applitools.Appium.Tests
          
             IWebElement button = driver_.FindElement(buttonSelector_);
             button.Click();
-            
-            eyes_.CutProvider = cutProvider_;
         }
 
         [SetUp]
@@ -128,6 +126,5 @@ namespace Applitools.Appium.Tests
 
             return driver;
         }
-
     }
 }
