@@ -1,3 +1,22 @@
+## [Eyes.Selenium 3.6] - 2022-05-12
+### Updated
+- Excluded NodeResources
+
+## [Eyes.Selenium4 3.5] - 2022-05-12
+### Fixed
+- Selenium version dependency
+- Server Url
+### Updated
+- Excluded NodeResources
+
+## [Eyes.Sdk.Core.S3 3.6] - 2022-05-12
+### Updated
+- Updated ProxySettings
+
+## [Eyes.Sdk.Universal.Core 2.5.6] - 2022-05-12
+### Updated
+- Updated Universal Server Version
+
 ## [Eyes.Appium 5.0] - 2022-04-28
 ### Updated
 - Support for Universal Server
