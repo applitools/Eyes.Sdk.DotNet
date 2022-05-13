@@ -13,7 +13,7 @@ module.exports = {
 
     // Generation errors:
 	'check window on mobile web android': {skipEmit: true},
-	//'check window on mobile web ios': {skipEmit: true},
+	'check window on mobile web ios': {skipEmit: true},
 	'should extract text from regions without a hint': {skipEmit: true},
 	//'should abort after close': {skipEmit: true},
 	//'should abort after close with vg': {skipEmit: true},
