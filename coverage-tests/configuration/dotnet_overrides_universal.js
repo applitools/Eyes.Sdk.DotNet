@@ -12,7 +12,7 @@ module.exports = {
     'should set viewport size on edge legacy': {skip: true},
 
     // Generation errors:
-	//'check window on mobile web android': {skipEmit: true},
+	'check window on mobile web android': {skipEmit: true},
 	//'check window on mobile web ios': {skipEmit: true},
 	'should extract text from regions without a hint': {skipEmit: true},
 	//'should abort after close': {skipEmit: true},
