@@ -197,6 +197,7 @@ namespace Applitools.Selenium.Commands
             Cut = config.Cut;
             DontCloseBatches = config.DontCloseBatches;
             DebugScreenshots = config.DebugScreenshotProvider;
+            ForceFullPageScreenshot = config.IsForceFullPageScreenshot;
             if (config.VisualGridOptions?.Length > 0)
             {
                 VisualGridOptions = config.VisualGridOptions.ToDictionary(i => i.Key, v => v.Value);
