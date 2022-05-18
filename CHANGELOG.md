@@ -1,3 +1,11 @@
+## [Eyes.Sdk.Core 3.6] - 2022-05-18
+### Fixed
+- Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
+
+## [Eyes.Sdk.Core.S3 3.6] - 2022-05-18
+### Fixed
+- Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
+
 ## [Eyes.Appium 5.0] - 2022-04-28
 ### Updated
 - Support for Universal Server
