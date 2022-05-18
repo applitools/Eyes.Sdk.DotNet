@@ -7,10 +7,13 @@ namespace Applitools.VisualGrid
 {
     public abstract class EmulationBaseInfo : IEquatable<EmulationBaseInfo>
     {
-        public EmulationBaseInfo(ScreenOrientation screenOrientation)
+        protected EmulationBaseInfo(DeviceName deviceName, ScreenOrientation screenOrientation)
         {
+            DeviceName = deviceName;
             ScreenOrientation = screenOrientation;
         }
+
+        public DeviceName DeviceName { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ScreenOrientation ScreenOrientation { get; set; }

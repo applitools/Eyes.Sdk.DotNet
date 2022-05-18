@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using OpenQA.Selenium;
-using Applitools.Appium.Fluent;
 
 namespace Applitools.Appium
 {

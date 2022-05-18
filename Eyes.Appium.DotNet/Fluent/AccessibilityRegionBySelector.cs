@@ -1,33 +1,31 @@
-﻿using OpenQA.Selenium;
-using System.Drawing;
-using Applitools.Utils.Geometry;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Region = Applitools.Utils.Geometry.Region;
+using OpenQA.Selenium;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
     internal class AccessibilityRegionBySelector : IGetAccessibilityRegion, IGetAppiumRegion, IGetAccessibilityRegionType
     {
         private readonly AccessibilityRegionType regionType_;
         private readonly By selector_;
+        private readonly ISelectorTransformer selectorTransformer_;
 
         public AccessibilityRegionBySelector(By selector, AccessibilityRegionType regionType)
         {
             selector_ = selector;
             regionType_ = regionType;
+            selectorTransformer_ = new AppiumSelectorTransformer();
         }
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
-
-        public IList<AccessibilityRegionByRectangle> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public TAccessibilityRegion ToRegion()
         {
-            throw new System.NotImplementedException();
+            return new SelectorAccessibilityRegion
+            {
+                Type = regionType_,
+                Region = selectorTransformer_.GetRegionSelector(selector_)
+            };
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)

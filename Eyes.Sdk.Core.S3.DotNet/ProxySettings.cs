@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace Applitools
 {
@@ -25,7 +26,7 @@ namespace Applitools
             Address = address;
         }
 
-        public ProxySettings(string address, int port, string username, string password)
+        public ProxySettings(string address, int port, string username = null, string password = null)
         {
             Address = address;
             Port = port;
@@ -33,12 +34,15 @@ namespace Applitools
             Password = password;
         }
 
+        [JsonIgnore]
         public string Address { get; set; }
+        [JsonIgnore]
         public int Port { get; set; } = 80;
         public string Username { get; set; }
         public string Password { get; set; }
+        public bool? IsHttpOnly { get; set; }
 
-        public Uri ProxyUri
+        public Uri Url
         {
             get
             {
@@ -62,7 +66,7 @@ namespace Applitools
         public static implicit operator WebProxy(ProxySettings proxySettings)
         {
             if (proxySettings == null) return null;
-            Uri proxyUri = proxySettings.ProxyUri;
+            Uri proxyUri = proxySettings.Url;
             WebProxy proxy = new WebProxy(proxyUri);
             if (!string.IsNullOrEmpty(proxyUri.UserInfo))
             {

@@ -42,12 +42,12 @@ namespace Applitools.Selenium.Fluent
         {
         }
 
-        By ISeleniumCheckTarget.GetTargetSelector()
+        By ITargetContainer.GetTargetSelector()
         {
             return targetSelector_;
         }
 
-        IWebElement ISeleniumCheckTarget.GetTargetElement()
+        IWebElement ITargetContainer.GetTargetElement()
         {
             return targetElement_;
         }

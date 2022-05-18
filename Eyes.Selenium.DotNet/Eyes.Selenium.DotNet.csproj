@@ -8,14 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.1</Version>
+    <Version>3.5</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)
-- Fixed specifying CHROME_ONE_VERSION_BACK throws error. [Trello 2811] (https://trello.com/c/9yTc9w7o)</PackageReleaseNotes>
+    <PackageReleaseNotes>### Updated
+- Code refactoring</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
     <PackageLicenseExpression />
@@ -25,28 +24,6 @@ To learn more, visit https://applitools.com/ .</Description>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageOutputPath>..\PackagesOutput</PackageOutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPoll.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\captureDomAndPollForIE.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\pollResult.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-capture\dist\pollResultForIE.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\pollResult.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\pollResultForIE.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\processPagePoll.js" />
-    <None Remove="Properties\NodeResources\node_modules\%40applitools\dom-snapshot\dist\processPagePollForIE.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPoll.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\captureDomAndPollForIE.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResult.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-capture\dist\pollResultForIE.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResult.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\pollResultForIE.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePoll.js" />
-    <EmbeddedResource Include="Properties\NodeResources\node_modules\@applitools\dom-snapshot\dist\processPagePollForIE.js" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />

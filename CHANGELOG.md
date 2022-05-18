@@ -1,3 +1,37 @@
+## [Eyes.Appium 5.0] - 2022-04-28
+### Updated
+- Support for Universal Server
+
+## [Eyes.Selenium 3.5] - 2022-04-28
+### Updated
+- Code refactoring
+
+## [Eyes.Sdk.Core.S3 3.5] - 2022-04-28
+### Updated
+- Support for Appium Universal Server
+
+## [Eyes.Selenium 3.4] - 2022-04-25
+### Fixed
+- Fixed Delete() method. [Trello 2851] (https://trello.com/c/90hedYWk)
+
+## [Eyes.Selenium4 3.4] - 2022-04-25
+### Fixed
+- Fixed Delete() method. [Trello 2851] (https://trello.com/c/90hedYWk)
+
+## [Eyes.Sdk.Core.S3 3.4] - 2022-04-25
+### Updated
+- Updated Get All Test Results
+
+## [Eyes.Sdk.Core 3.4] - 2022-04-25
+### Updated
+- Updated Get All Test Results
+
+## [Eyes.Sdk.Universal.Core 2.2.4] - 2022-04-25
+### Updated
+- Updated Universal Server Version
+### Fixed
+- FIxed running tests on Linux
+
 ## [Eyes.Selenium4 3.3] - 2022-03-22
 ### Fixed
 - Fixed config.AddDeviceEmulation(); usage. [Trello 2831] (https://trello.com/c/J6Io5any)

@@ -43,6 +43,8 @@ namespace Applitools
             return allResults_.ToArray();
         }
 
+        public TestResultContainer[] allresults => allResults_.ToArray();
+
         public TestResultContainer this[int index] => allResults_[index];
 
         public override string ToString()

@@ -1,10 +1,9 @@
-﻿using Applitools.Utils.Geometry;
+﻿using System.Collections.Generic;
+using Applitools.Fluent;
+using Applitools.Utils;
 using OpenQA.Selenium;
-using System.Collections.Generic;
-using System.Drawing;
-using Region = Applitools.Utils.Geometry.Region;
 
-namespace Applitools.Appium.Fluent
+namespace Applitools.Appium
 {
     internal class FloatingRegionByElement : IGetFloatingRegion, IGetAppiumRegion, IGetFloatingRegionOffsets
     {
@@ -32,39 +31,25 @@ namespace Applitools.Appium.Fluent
         int IGetFloatingRegionOffsets.MaxRightOffset => maxRightOffset_;
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
-
-        public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
+        
+        public TFloatingRegion ToRegion()
         {
-            double scaleRatio = ((Eyes)eyesBase).GetScaleRatioForRegions();
-            Region r = new Region(element_.Location, element_.Size);
-            r = r.Scale(scaleRatio);
-            Point pTag = screenshot.ConvertLocation(r.Location, CoordinatesTypeEnum.CONTEXT_RELATIVE, CoordinatesTypeEnum.SCREENSHOT_AS_IS);
-
-            return new FloatingMatchSettings[] {
-                new FloatingMatchSettings()
+            return new ElementFloatingRegion
+            {
+                MaxDownOffset = maxDownOffset_,
+                MaxUpOffset = maxUpOffset_,
+                MaxLeftOffset = maxLeftOffset_,
+                MaxRightOffset = maxRightOffset_,
+                Region = new RegionElement
                 {
-                    Left = pTag.X,
-                    Top = pTag.Y,
-                    Width = r.Width,
-                    Height = r.Height,
-                    MaxLeftOffset = maxLeftOffset_,
-                    MaxUpOffset = maxUpOffset_,
-                    MaxRightOffset = maxRightOffset_,
-                    MaxDownOffset = maxDownOffset_
+                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
                 }
             };
         }
 
-        public TFloatingRegion ToRegion()
-        {
-            throw new System.NotImplementedException();
-        }
-
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement>() { element_ };
+            return new List<IWebElement> { element_ };
         }
-
-
     }
 }

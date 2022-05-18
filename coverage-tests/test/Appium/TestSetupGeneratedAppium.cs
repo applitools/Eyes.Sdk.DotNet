@@ -31,7 +31,7 @@ namespace Applitools.Generated.Appium.Tests
 			eyes.SaveNewTests = false;
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
-			eyes.SetLogHandler(logHandler);
+			//eyes.SetLogHandler(logHandler);
 		}
 
 		protected void initDriver(string device, string app)

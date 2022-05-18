@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using Applitools.Fluent;
+using OpenQA.Selenium;
 
 namespace Applitools.Selenium
 {
-    public class SelectorTransformer
+    public class SeleniumSelectorTransformer : ISelectorTransformer
     {
-        public RegionSelector GetRegionSelector(string description)
+        public RegionSelector GetRegionSelector(By selector)
         {
-            var parts = description.Split(':').Select(i => i.Trim()).ToList();
+            var parts = selector.ToString().Split(':').Select(i => i.Trim()).ToList();
 
             return GetSelector(parts[0], parts[1]);
         }

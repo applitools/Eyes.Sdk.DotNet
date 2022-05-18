@@ -92,6 +92,7 @@ namespace Applitools
         IConfiguration AddBrowser(DesktopBrowserInfo browserInfo);
         IConfiguration AddBrowser(ChromeEmulationInfo emulationInfo);
         IConfiguration AddBrowser(IosDeviceInfo deviceInfo);
+        IConfiguration AddBrowser(AndroidDeviceInfo deviceInfo);
         IConfiguration AddBrowser(int width, int height, BrowserType browserType, string baselineEnvName = null);
 
         IConfiguration AddDeviceEmulation(DeviceName deviceName,

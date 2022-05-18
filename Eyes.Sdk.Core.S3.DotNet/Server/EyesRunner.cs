@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Applitools.Selenium;
 using Applitools.Selenium.Commands;
@@ -129,22 +128,7 @@ namespace Applitools
                 return new TestResultsSummary(new List<TestResultContainer>());
             }
 
-            var results = CloseAllEyes();
-            if (shouldThrowException)
-            {
-                var mismatchedResults = results.Where(i => i.Mismatches > 0).ToList();
-                if (mismatchedResults.Any())
-                {
-                    var sb = new StringBuilder();
-                    foreach (var mr in mismatchedResults)
-                    {
-                        sb.AppendLine();
-                        sb.AppendFormat("Name: {0}", mr.Name);
-                    }
-
-                    throw new EyesException(sb.ToString());
-                }
-            }
+            var results = CloseAllEyes(shouldThrowException);
 
             var testResultContainers = results.Select(i => new TestResultContainer(i)).ToList();
 
@@ -178,7 +162,7 @@ namespace Applitools
             return managerApplitoolsRefId_;
         }
 
-        public IList<TestResults> CloseAllEyes()
+        public IList<TestResults> CloseAllEyes(bool shouldThrowException)
         {
             var results = new List<TestResults>();
 
@@ -187,23 +171,32 @@ namespace Applitools
                 return results;
             }
 
-            var request = CreateEyesManageCloseAllEyes();
-            
+            var request = CreateEyesManageCloseAllEyes(shouldThrowException);
+
             var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).Result;
             var payload = response.Payload;
+
             if (payload != null)
             {
+                var error = payload.Error;
+                if (error != null)
+                {
+                    throw new EyesException(error.ToString());
+                }
+
                 foreach (var closeAllTestResults in payload.Result.Results)
                 {
-                    if (closeAllTestResults.Exception != null)
+                    if (closeAllTestResults.Exception != null && shouldThrowException)
                     {
                         throw new EyesException(closeAllTestResults.Exception.ToString());
                     }
-
+                    
                     var testResults = closeAllTestResults.TestResults;
-                    testResults.Runner = this;
-
-                    results.Add(testResults);
+                    if (testResults != null)
+                    {
+                        testResults.Runner = this;
+                        results.Add(testResults);
+                    }
                 }
             }
 
@@ -214,7 +207,7 @@ namespace Applitools
 
         protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
-        private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes()
+        private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes(bool shouldThrowException)
         {
             var closeAllEyes = new EyesManagerCloseManagerRequest
             {
@@ -223,7 +216,8 @@ namespace Applitools
                     Manager = new ManagerRef
                     {
                         ApplitoolsRefId = managerApplitoolsRefId_
-                    }
+                    },
+                    ThrowErr = shouldThrowException
                 }
             };
 

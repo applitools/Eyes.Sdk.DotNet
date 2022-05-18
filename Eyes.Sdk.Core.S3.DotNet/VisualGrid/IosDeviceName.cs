@@ -14,6 +14,8 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "iPhone Xs")] iPhone_XS,
         [EnumMember(Value = "iPhone X")] iPhone_X,
         [EnumMember(Value = "iPhone 8")] iPhone_8,
+        [EnumMember(Value = "iPhone 8 Plus")] iPhone_8_Plus,
+        [EnumMember(Value = "iPhone SE (1st generation)")] iPhone_SE,
         [EnumMember(Value = "iPhone 7")] iPhone_7,
         [EnumMember(Value = "iPad Pro (12.9-inch) (3rd generation)")] iPad_Pro_3,
         [EnumMember(Value = "iPad (7th generation)")] iPad_7,

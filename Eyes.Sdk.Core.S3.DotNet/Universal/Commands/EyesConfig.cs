@@ -224,6 +224,13 @@ namespace Applitools.Selenium.Commands
                         ChromeEmulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo
                     });
                 }
+                if (browserInfo.AndroidDeviceInfo != null)
+                {
+                    browsers.Add(new AndroidDevice
+                    {
+                        AndroidDeviceInfo = browserInfo.AndroidDeviceInfo
+                    });
+                }
             }
 
             if (browsers.Any())
@@ -236,6 +243,11 @@ namespace Applitools.Selenium.Commands
     public class IosDevice : IRenderBrowserInfo
     {
         public IosDeviceInfo IosDeviceInfo { get; set; }
+    }
+
+    public class AndroidDevice : IRenderBrowserInfo
+    {
+        public AndroidDeviceInfo AndroidDeviceInfo { get; set; }
     }
 
     public class ChromeEmulation : IRenderBrowserInfo
