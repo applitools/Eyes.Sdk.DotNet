@@ -3,7 +3,8 @@ module.exports = {
   emitter: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/DotNet/emitter.js',
   overrides: [
       'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/js/overrides.js',
-      './configuration/dotnet_overrides_universal'],
+      'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/dotnet/overrides.js',
+    ],
   template: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/master/DotNet/template.hbs',
   tests: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/coverage-tests.js',
   ext: '.cs',
