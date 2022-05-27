@@ -1,0 +1,2 @@
+# Ignore generic tests directory
+/coverage/generic
