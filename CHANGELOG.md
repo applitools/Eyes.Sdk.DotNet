@@ -1,3 +1,8 @@
+## [Eyes.Sdk.Universal.Core 2.2.21] - 2022-05-30
+### Updated
+- Updated Universal Server Version to 2.5.21
+- Used dynamic Universal Server port [Trello 2889] (https://trello.com/c/rNWV8i3p)
+
 ## [Eyes.Sdk.Core 3.6] - 2022-05-18
 ### Fixed
 - Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
