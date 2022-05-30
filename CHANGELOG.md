@@ -1,15 +1,31 @@
+## [Eyes.Appium 5.1] - 2022-05-31
+### Updated
+- Added Extra logs
+
+## [Eyes.Selenium4 3.7] - 2022-05-31
+### Updated
+- Updated SendRequest method
+- Added Extra logs
+
+## [Eyes.Selenium 3.7] - 2022-05-31
+### Updated
+- Updated SendRequest method
+- Added Extra logs
+
+## [Eyes.Sdk.Core 3.7] - 2022-05-30
+### Fixed
+- Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
+- Fixed SendRequest [Trello 2883] (https://trello.com/c/6sr4pHyq)
+
+## [Eyes.Sdk.Core.S3 3.7] - 2022-05-30
+### Fixed
+- Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
+- Fixed SendRequest [Trello 2883] (https://trello.com/c/6sr4pHyq)
+
 ## [Eyes.Sdk.Universal.Core 2.2.21] - 2022-05-30
 ### Updated
 - Updated Universal Server Version to 2.5.21
 - Used dynamic Universal Server port [Trello 2889] (https://trello.com/c/rNWV8i3p)
-
-## [Eyes.Sdk.Core 3.6] - 2022-05-18
-### Fixed
-- Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
-
-## [Eyes.Sdk.Core.S3 3.6] - 2022-05-18
-### Fixed
-- Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)
 
 ## [Eyes.Appium 5.0] - 2022-04-28
 ### Updated

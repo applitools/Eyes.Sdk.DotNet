@@ -211,10 +211,14 @@ namespace Applitools
 
         public bool IsOpen { get; protected set; }
 
-        protected EyesBaseConfig(Configuration configuration)
+        protected EyesBaseConfig(Configuration configuration, ILogHandler logHandler = null)
         {
             Config = configuration ?? new Configuration();
             Logger = new Logger();
+            if (logHandler != null)
+            {
+                Logger.SetLogHandler(logHandler);
+            }
         }
 
         public void SetConfiguration(IConfiguration configuration)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Applitools.Selenium;
 using Applitools.Selenium.Commands;
@@ -87,6 +88,8 @@ namespace Applitools
             SocketClient = new WebSocketClient();
 
             var url = GetSocketUrl(serverPort);
+            Logger.Log($"Server url: {url}");
+
             SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
         }
 
@@ -98,15 +101,28 @@ namespace Applitools
 
             await SocketClient.SendData(json);
 
-            TResponse result;
-
-            do
+            for (int i = 0; i < 5; i++)
             {
                 var response = await SocketClient.ReceiveMessage();
-                result = JsonConvert.DeserializeObject<TResponse>(response);
-            } while (result == null || result.Key != data.Key);
 
-            return result;
+                if (response != null)
+                {
+                    if (response.Contains(data.Name))
+                    {
+                        var result = JsonConvert.DeserializeObject<TResponse>(response);
+                        if (result.Key == data.Key)
+                        {
+                            return result;
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(50);
+                    }
+                }
+            }
+
+            throw new EyesException($"Did not get a response for command: {data.Name}, key: {data.Name}");
         }
 
         public async Task SendRequest<TRequest>(TRequest data)
@@ -146,6 +162,8 @@ namespace Applitools
 
         public string GetCoreMakeManager()
         {
+            Logger.Log("CoreMakeManager");
+
             if (managerApplitoolsRefId_ == null)
             {
                 var makeSdk = CreateCoreMakeSdk();
@@ -164,6 +182,8 @@ namespace Applitools
 
         public IList<TestResults> CloseAllEyes(bool shouldThrowException)
         {
+            Logger.Log("Closing All Eyes");
+
             var results = new List<TestResults>();
 
             if (IsDisabled)

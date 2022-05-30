@@ -24,7 +24,6 @@ namespace Applitools.Selenium
         // TODO: remove
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly string serverUrlFieldName_;
-        private readonly ILogHandler logHandler_;
         private readonly ISelectorTransformer selectorTransformer_;
 
         /// <summary>
@@ -50,11 +49,8 @@ namespace Applitools.Selenium
             string serverUrlFieldName = "remoteServerUri", 
             ILogHandler logHandler = null, 
             ISelectorTransformer selectorTransformer = null) 
-            : base(runner)
+            : base(runner, logHandler: logHandler)
         {
-            if (logHandler == null) logHandler = NullLogHandler.Instance;
-
-            logHandler_ = logHandler;
             properties_ = new PropertiesCollection();
             serverUrlFieldName_ = serverUrlFieldName;
 
@@ -447,6 +443,8 @@ namespace Applitools.Selenium
         /// </summary>
         public override TestResults Close(bool throwEx = true)
         {
+            Logger.Log("Close");
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
@@ -483,6 +481,8 @@ namespace Applitools.Selenium
         /// </summary>
         public virtual void CloseAsync()
         {
+            Logger.Log("CloseAsync");
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
@@ -566,6 +566,8 @@ namespace Applitools.Selenium
         
         internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
+            Logger.Log("CheckImpl");
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
@@ -606,6 +608,8 @@ namespace Applitools.Selenium
 
         private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
         {
+            Logger.Log("OpenEyes");
+
             if (string.IsNullOrEmpty(ApiKey))
             {
                 ApiKey = API_KEY;
