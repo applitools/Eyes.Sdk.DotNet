@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 
 RESULT=0
+MESSAGE=""
 
 echo "generating tests"
 pushd coverage-tests
+export UFG_ON_EG=true
 npm run generate
 if [ $? -ne 0 ]; then
-    RESULT=1
-    echo "npm run dotnet:generate have failed"
+    ((RESULT+=1))
+    MESSAGE+=$'npm run dotnet:generate have failed'
+    echo $MESSAGE
 fi
-popd
+
+# start eg client and save process id
+# commented out if need eg client logs
+export APPLITOOLS_SHOW_LOGS=true
+yarn universal:eg &
+EG_PID="$!"
+export EXECUTION_GRID_URL=http://localhost:8080
+echo $EXECUTION_GRID_URL
 
 echo "running tests selenium"
-pushd coverage-tests
 npm run run:parallel:selenium
 result=$?
 echo $result
@@ -20,14 +29,18 @@ if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
     npm run run:parallel:selenium
 	if [ $? -ne 0 ]; then
-      RESULT=1
-      echo "npm run dotnet:run:parallel:selenium have failed"
+      ((RESULT+=1))
+      MESSAGE+=$'npm run dotnet:run:parallel:selenium have failed'
+      echo $MESSAGE
     fi
 fi
-popd
+
+# Kill eg client by the process id
+echo $EG_PID
+pkill -P $EG_PID
+kill -9 $EG_PID
 
 echo "running tests appium"
-pushd coverage-tests
 npm run run:parallel:appium
 result=$?
 echo $result
@@ -35,29 +48,28 @@ if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
     npm run run:parallel:appium
 	if [ $? -ne 0 ]; then
-      RESULT=1
-      echo "npm run dotnet:run:parallel:appium have failed"
+      ((RESULT+=1))
+      MESSAGE+=$'npm run dotnet:run:parallel:appium have failed'
+      echo $MESSAGE
     fi
 fi
-popd
 
 echo "merge reports"
-pushd coverage-tests
 npm run report:merge
 if [ $? -ne 0 ]; then
-    RESULT=1
-    echo "npm run dotnet:report:merge have failed"
+    ((RESULT+=1))
+    MESSAGE+=$'npm run dotnet:report:merge have failed'
+    echo $MESSAGE
 fi
-popd
+
 
 echo "tests reporting"
-pushd coverage-tests
 npm run report
 if [ $? -ne 0 ]; then
-    RESULT=1
-    echo "npm run dotnet:report have failed"
+    ((RESULT+=1))
+    MESSAGE+=$'npm run dotnet:report have failed'
+    echo $MESSAGE
 fi
-popd
 
 echo "RESULT = ${RESULT}"
 if [ $RESULT -eq 0 ]; then

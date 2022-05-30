@@ -31,10 +31,11 @@
     "report:prodOLD": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium && coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID --resultDir ./test/Selenium",
     "report:prod": "coverage-tests report ./configuration --reportId $APPLITOOLS_REPORT_ID",
     "tests": "./dotNet/dotnet_tests.sh",
-    "universal:debug": "eyes-universal --singleton --lazy"
+    "universal:debug": "eyes-universal --singleton --lazy",
+    "universal:eg": "eyes-universal eg-client --port 8080"
   },
   "dependencies": {
-    "@applitools/eyes-universal": "1.0.6",
+    "@applitools/eyes-universal": "^2.5.17",
     "@applitools/sdk-coverage-tests": "^2.3.18",
     "@typescript-eslint/parser": "^2.14.0",
     "junit-merge": "^2.0.0",
