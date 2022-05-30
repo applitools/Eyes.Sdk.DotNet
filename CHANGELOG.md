@@ -1,3 +1,17 @@
+## [Eyes.Appium 5.1] - 2022-05-31
+### Updated
+- Added Extra logs
+
+## [Eyes.Selenium4 3.7] - 2022-05-31
+### Updated
+- Updated SendRequest method
+- Added Extra logs
+
+## [Eyes.Selenium 3.7] - 2022-05-31
+### Updated
+- Updated SendRequest method
+- Added Extra logs
+
 ## [Eyes.Sdk.Core 3.7] - 2022-05-30
 ### Fixed
 - Sent ForceFullPageScreenshot to Server [Trello 2894] (https://trello.com/c/TPstOsVV)

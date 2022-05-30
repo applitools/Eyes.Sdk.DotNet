@@ -8,13 +8,14 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.3</Version>
+    <Version>3.7</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- Fixed Delete() method. [Trello 2851] (https://trello.com/c/90hedYWk)</PackageReleaseNotes>
+    <PackageReleaseNotes>### Updated
+- Updated SendRequest method
+- Added Extra logs</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium4</PackageId>
     <PackageLicenseExpression />

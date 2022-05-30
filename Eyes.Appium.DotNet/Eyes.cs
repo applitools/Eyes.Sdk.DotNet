@@ -36,11 +36,11 @@ namespace Applitools.Appium
             Init_();
         }
 
-        public Eyes(EyesRunner runner)
-            : base(runner)
+        public Eyes(EyesRunner runner, ILogHandler logHandler = null)
+            : base(runner, logHandler: logHandler)
         {
             var selectorTransformer = new AppiumSelectorTransformer();
-            seleniumEyes_ = new Selenium.Eyes(Runner, "URL", selectorTransformer: selectorTransformer);
+            seleniumEyes_ = new Selenium.Eyes(Runner, "URL", logHandler, selectorTransformer);
 
             Init_();
         }

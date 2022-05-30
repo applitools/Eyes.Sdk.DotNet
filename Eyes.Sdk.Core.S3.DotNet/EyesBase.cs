@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Applitools.Utils;
@@ -10,7 +9,7 @@ namespace Applitools
     /// <summary>
     /// Extracts text in the specified language from the input image region.
     /// </summary>
-    public delegate string[] GetTextHandler(string imageId, IList<Rectangle> regions, string lanuage);
+    public delegate string[] GetTextHandler(string imageId, IList<Rectangle> regions, string language);
 
     /// <summary>
     /// Creates an image of the specified region of the application window and returns its id.

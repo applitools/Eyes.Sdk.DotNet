@@ -4,16 +4,23 @@ RESULT=0
 
 echo "generating tests"
 pushd coverage-tests
+export UFG_ON_EG=true
 npm run generate
 if [ $? -ne 0 ]; then
     RESULT=1
     echo "npm run dotnet:generate have failed"
     exit 1
 fi
-popd
+
+# start eg client and save process id
+# commented out if need eg client logs
+export APPLITOOLS_SHOW_LOGS=true
+yarn universal:eg &
+EG_PID="$!"
+export EXECUTION_GRID_URL=http://localhost:8080
+echo $EXECUTION_GRID_URL
 
 echo "running tests selenium"
-pushd coverage-tests
 npm run run:parallel:selenium4
 result=$?
 echo $result
@@ -23,10 +30,13 @@ if [ $result -ne 0 ]; then
 	if [ $? -ne 0 ]; then
       RESULT=1
       echo "npm run dotnet:run:parallel:selenium have failed"
-      exit 1
     fi
 fi
-popd
+
+# Kill eg client by the process id
+echo $EG_PID
+pkill -P $EG_PID
+kill -9 $EG_PID
 
 echo "RESULT = ${RESULT}"
 if [ $RESULT -eq 0 ]; then
