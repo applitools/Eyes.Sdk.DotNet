@@ -103,7 +103,14 @@ namespace Applitools
             do
             {
                 var response = await SocketClient.ReceiveMessage();
-                result = JsonConvert.DeserializeObject<TResponse>(response);
+                try
+                {
+                    result = JsonConvert.DeserializeObject<TResponse>(response);
+                }
+                catch
+                {
+                    result = null;
+                }
             } while (result == null || result.Key != data.Key);
 
             return result;
