@@ -24,7 +24,6 @@ namespace Applitools.Selenium
         // TODO: remove
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly Uri serverUrl_;
-        private readonly ILogHandler logHandler_;
         private readonly SelectorTransformer selectorTransformer_;
 
         /// <summary>
@@ -45,12 +44,9 @@ namespace Applitools.Selenium
         {
         }
 
-        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null) : 
-            base(runner)
+        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null) 
+            : base(runner, logHandler: logHandler)
         {
-            if (logHandler == null) logHandler = NullLogHandler.Instance;
-
-            logHandler_ = logHandler;
             properties_ = new PropertiesCollection();
             //ArgumentGuard.NotNull(serverUrl, nameof(serverUrl));
             serverUrl_ = serverUrl;
@@ -444,6 +440,8 @@ namespace Applitools.Selenium
         /// </summary>
         public virtual TestResults Close(bool throwEx = true)
         {
+            Logger.Log("Close");
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
@@ -474,47 +472,14 @@ namespace Applitools.Selenium
 
             return testResult;
         }
-
-        //public TestResults ExtractText()
-        //{
-        //    if (IsDisabled)
-        //    {
-        //        Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-        //        return new TestResults();
-        //    }
-
-        //    //var request = new EyesExtractTextRequest
-        //    //{
-        //    //    Payload = new EyesExtractTextRequestPayload
-        //    //    {
-        //    //        Config = 
-        //    //    }
-        //    //}
-
-        //    var eyesCloseRequest = CreateEyesCloseRequest();
-
-        //    var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
-
-        //    IsOpen = false;
-
-        //    var testResult = response?.Payload?.Result?.FirstOrDefault();
-
-        //    if (testResult != null)
-        //    {
-        //        if (testResult.IsPassed == false && throwEx)
-        //        {
-        //            throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
-        //        }
-        //    }
-
-        //    return testResult;
-        //}
-
+        
         /// <summary>
         /// Ends the test asynchronously.
         /// </summary>
         public virtual void CloseAsync()
         {
+            Logger.Log("CloseAsync");
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
@@ -603,6 +568,8 @@ namespace Applitools.Selenium
 
         internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
+            Logger.Log("CheckImpl");
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
@@ -643,6 +610,8 @@ namespace Applitools.Selenium
 
         private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
         {
+            Logger.Log("OpenEyes");
+
             if (string.IsNullOrEmpty(ApiKey))
             {
                 ApiKey = API_KEY;

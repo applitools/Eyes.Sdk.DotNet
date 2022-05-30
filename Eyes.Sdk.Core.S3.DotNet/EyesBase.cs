@@ -33,10 +33,10 @@ namespace Applitools
             set => Runner.IsDisabled = value;
         }
 
-        protected EyesBase(EyesRunner runner = null, Configuration configuration = null) 
-            : base(configuration)
+        protected EyesBase(EyesRunner runner = null, Configuration configuration = null, ILogHandler logHandler = null) 
+            : base(configuration, logHandler)
         {
-            Runner = runner ?? new ClassicRunner();
+            Runner = runner ?? new ClassicRunner(logHandler);
         }
 
         /// <summary>
