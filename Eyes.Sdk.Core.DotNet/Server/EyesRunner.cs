@@ -82,11 +82,11 @@ namespace Applitools
                 Logger.SetLogHandler(logHandler);
             }
 
-            UniversalSdkNativeLoader.Start();
+            int serverPort = UniversalSdkNativeLoader.Start();
 
             SocketClient = new WebSocketClient();
 
-            var url = GetSocketUrl(21077);
+            var url = GetSocketUrl(serverPort);
             SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
         }
 

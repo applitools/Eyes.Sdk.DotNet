@@ -9,11 +9,12 @@ namespace Applitools
 
     public class UniversalSdkNativeLoader
     {
+        private static int port_ = 21077;
         private static Process nativeProc_;
 
-        public static void Start()
+        public static int Start()
         {
-            TryStartProcess_();
+            return TryStartProcess_();
         }
 
         public void Stop()
@@ -23,7 +24,7 @@ namespace Applitools
 
         public bool IsRunning => nativeProc_ != null && !nativeProc_.HasExited;
 
-        private static void TryStartProcess_()
+        private static int TryStartProcess_()
         {
             if (nativeProc_ == null || nativeProc_.HasExited)
             {
@@ -55,8 +56,12 @@ namespace Applitools
                     throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
                 }
 
-                nativeProc_ = Process.Start(path);
+                nativeProc_ = StartProcess(path);
+                
+                port_ = GetPort(nativeProc_);
             }
+
+            return port_;
         }
 
         private static string GetServerFilePath(string basePath, string os, string suffix)
@@ -69,6 +74,37 @@ namespace Applitools
             if (nativeProc_ != null && !nativeProc_.HasExited)
             {
                 nativeProc_.Kill();
+            }
+        }
+
+        private static Process StartProcess(string path)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = path,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+
+            return process;
+        }
+
+        private static int GetPort(Process process)
+        {
+            try
+            {
+                var portStr = process.StandardOutput.ReadLine();
+                return string.IsNullOrEmpty(portStr) ? port_ : int.Parse(portStr);
+            }
+            catch
+            {
+                return port_;
             }
         }
     }
