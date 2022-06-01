@@ -35,8 +35,7 @@ fi
 
 # Kill eg client by the process id
 echo $EG_PID
-pkill -P $EG_PID
-kill -9 $EG_PID
+kill $EG_PID
 
 echo "RESULT = ${RESULT}"
 if [ $RESULT -eq 0 ]; then
