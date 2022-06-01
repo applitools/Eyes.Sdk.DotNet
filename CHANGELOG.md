@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Universal.Core 2.2.22] - 2022-06-01
+### Updated
+- Updated Universal Server Version to 2.5.22
+
 ## [Eyes.Appium 5.1] - 2022-05-31
 ### Updated
 - Added Extra logs
