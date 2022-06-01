@@ -37,8 +37,7 @@ fi
 
 # Kill eg client by the process id
 echo $EG_PID
-pkill -P $EG_PID
-kill -9 $EG_PID
+kill $EG_PID
 
 echo "running tests appium"
 npm run run:parallel:appium
@@ -72,6 +71,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "RESULT = ${RESULT}"
+echo $MESSAGE
 if [ $RESULT -eq 0 ]; then
     exit 0
 else
