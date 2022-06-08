@@ -53,11 +53,11 @@ namespace Applitools
                 }
                 if (Username != null)
                 {
-                    builder.UserName = Username;
+                    builder.UserName = Uri.EscapeDataString(Username);
                 }
                 if (Password != null)
                 {
-                    builder.Password = Password;
+                    builder.Password = Uri.EscapeDataString(Password);
                 }
                 return builder.Uri;
             }
