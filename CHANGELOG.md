@@ -6,7 +6,7 @@
 ### Fixed
 - Proxy Password with Special Character [Trello 2777] (https://trello.com/c/8PiNZJNt)
 
-## [Eyes.Sdk.Universal.Core 2.2.22] - 2022-06-10
+## [Eyes.Sdk.Universal.Core 2.7.1] - 2022-06-10
 ### Updated
 - Updated Universal Server Version to 2.7.1
 - Added clear exception in case if Universal Server file does not exist
