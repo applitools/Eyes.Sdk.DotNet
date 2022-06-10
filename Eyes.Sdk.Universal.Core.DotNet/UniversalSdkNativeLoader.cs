@@ -56,6 +56,11 @@ namespace Applitools
                     throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
                 }
 
+                if (File.Exists(path) == false)
+                {
+                    throw new Exception($"Universal Server file '{path}' does not exist.");
+                }
+
                 nativeProc_ = StartProcess(path);
                 
                 port_ = GetPort(nativeProc_);

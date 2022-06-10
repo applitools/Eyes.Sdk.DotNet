@@ -10,13 +10,14 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>2.5.22</Version>
+		<Version>2.7.1</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
 		<PackageTags>applitools eyes</PackageTags>
 		<PackageReleaseNotes>### Updated
-- Updated Universal Server Version to 2.5.22</PackageReleaseNotes>
+- Updated Universal Server Version to 2.7.1
+- Added clear exception in case if Universal Server file does not exist</PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageId>Eyes.Sdk.Universal.Core</PackageId>
 		<PackageLicenseExpression />

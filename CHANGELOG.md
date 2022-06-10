@@ -1,3 +1,16 @@
+## [Eyes.Sdk.Core.S3 3.8] - 2022-06-10
+### Fixed
+- Proxy Password with Special Character [Trello 2777] (https://trello.com/c/8PiNZJNt)
+
+## [Eyes.Sdk.Core 3.8] - 2022-06-10
+### Fixed
+- Proxy Password with Special Character [Trello 2777] (https://trello.com/c/8PiNZJNt)
+
+## [Eyes.Sdk.Universal.Core 2.2.22] - 2022-06-10
+### Updated
+- Updated Universal Server Version to 2.7.1
+- Added clear exception in case if Universal Server file does not exist
+
 ## [Eyes.Sdk.Universal.Core 2.2.22] - 2022-06-01
 ### Updated
 - Updated Universal Server Version to 2.5.22
