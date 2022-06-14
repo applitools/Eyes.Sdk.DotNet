@@ -463,15 +463,17 @@ namespace Applitools
             return this;
         }
 
-        public bool? IgnoreDisplacements { get; set; }
-
+        public bool? IgnoreDisplacements
+        {
+            get => DefaultMatchSettings.IgnoreDisplacements;
+            set => SetIgnoreDisplacements(value);
+        }
 
         public IConfiguration SetIgnoreDisplacements(bool? value)
         {
-            IgnoreDisplacements = value;
+            DefaultMatchSettings.IgnoreDisplacements = value;
             return this;
         }
-
 
         public AccessibilitySettings AccessibilityValidation
         {

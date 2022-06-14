@@ -351,6 +351,18 @@ namespace Applitools
             return this;
         }
 
+        public bool? IgnoreDisplacements
+        {
+            get => DefaultMatchSettings.IgnoreDisplacements;
+            set => SetIgnoreDisplacements(value);
+        }
+
+        public IConfiguration SetIgnoreDisplacements(bool? value)
+        {
+            DefaultMatchSettings.IgnoreDisplacements = value;
+            return this;
+        }
+
         public MatchLevel? MatchLevel
         {
             get => DefaultMatchSettings.MatchLevel;
@@ -459,17 +471,7 @@ namespace Applitools
             DefaultMatchSettings.EnablePatterns = value;
             return this;
         }
-
-        public bool? IgnoreDisplacements { get; set; }
-
-
-        public IConfiguration SetIgnoreDisplacements(bool? value)
-        {
-            IgnoreDisplacements = value;
-            return this;
-        }
-
-
+        
         public AccessibilitySettings AccessibilityValidation
         {
             get => DefaultMatchSettings.AccessibilitySettings;
