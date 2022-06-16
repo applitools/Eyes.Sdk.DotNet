@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Applitools
@@ -36,6 +37,11 @@ namespace Applitools
                     os = "win-x64";
                     suffix = "win.exe";
                     path = GetServerFilePath(basePath, os, suffix);
+
+                    if (File.Exists(path) == false)
+                    {
+                        CopyPackageFolder(basePath);
+                    }
                 }
                 else if (OperatingSystemChecker.IsMacOs())
                 {
@@ -110,6 +116,36 @@ namespace Applitools
             catch
             {
                 return port_;
+            }
+        }
+
+        private static void CopyPackageFolder(string basePath)
+        {
+            var packageName = "eyes.sdk.universal.core";
+            var packageFolderPathEnv = @"%userprofile%\.nuget\packages";
+            var nugetFolder = Environment.ExpandEnvironmentVariables(packageFolderPathEnv);
+            var packageFolderPath = Path.Combine(nugetFolder, packageName);
+            var directoryInfo = new DirectoryInfo(packageFolderPath);
+            var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i).FirstOrDefault();
+            var latestPackagePath = Path.Combine(packageFolderPath, latestPackageName);
+
+            var targetRootFolder = Path.GetDirectoryName(basePath);
+
+            CopyFilesRecursively(latestPackagePath, targetRootFolder);
+        }
+
+        private static void CopyFilesRecursively(string sourcePath, string targetPath)
+        {
+            //Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+            }
+
+            //Copy all the files & Replaces any files with the same name
+            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            {
+                File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
             }
         }
     }
