@@ -9,7 +9,7 @@
 ## [Eyes.Sdk.Universal.Core 2.8.0] - 2022-06-16
 ### Updated
 - Updated Universal Server Version to 2.8.0
-- Copied Universal Server binaries in case when it does not exist (.NET Framework issue)
+- Copied Universal Server binaries in case when it does not exist (dotnet core issue)
 
 ## [Eyes.Sdk.Core.S3 3.8] - 2022-06-10
 ### Fixed

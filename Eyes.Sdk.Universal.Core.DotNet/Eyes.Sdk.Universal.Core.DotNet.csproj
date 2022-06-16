@@ -17,7 +17,7 @@
 		<PackageTags>applitools eyes</PackageTags>
 		<PackageReleaseNotes>### Updated
 - Updated Universal Server Version to 2.8.0
-- Copied Universal Server binaries in case when it does not exist (.NET Framework issue)</PackageReleaseNotes>
+- Copied Universal Server binaries in case when it does not exist (dotnet core issue)</PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageId>Eyes.Sdk.Universal.Core</PackageId>
 		<PackageLicenseExpression />
