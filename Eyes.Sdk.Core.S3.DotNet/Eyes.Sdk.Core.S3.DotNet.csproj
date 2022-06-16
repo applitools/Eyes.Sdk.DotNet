@@ -14,7 +14,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes</PackageTags>
     <PackageReleaseNotes>### Fixed
-- Proxy Password with Special Character [Trello 2777] (https://trello.com/c/8PiNZJNt)</PackageReleaseNotes>
+- Fixed IgnoreDisplacements for Config [Trello 2886] (https://trello.com/c/6hQRBYSw)</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Sdk.Core.S3</PackageId>
     <PackageLicenseExpression />
