@@ -40,7 +40,7 @@ namespace Applitools
 
                     if (File.Exists(path) == false)
                     {
-                        CopyPackageFolder(basePath);
+                        CopyCorePackageFolder(basePath);
                     }
                 }
                 else if (OperatingSystemChecker.IsMacOs())
@@ -119,7 +119,7 @@ namespace Applitools
             }
         }
 
-        private static void CopyPackageFolder(string basePath)
+        private static void CopyCorePackageFolder(string basePath)
         {
             var packageName = "eyes.sdk.universal.core";
             var packageFolderPathEnv = @"%userprofile%\.nuget\packages";
@@ -127,11 +127,15 @@ namespace Applitools
             var packageFolderPath = Path.Combine(nugetFolder, packageName);
             var directoryInfo = new DirectoryInfo(packageFolderPath);
             var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i).FirstOrDefault();
-            var latestPackagePath = Path.Combine(packageFolderPath, latestPackageName);
 
-            var targetRootFolder = Path.GetDirectoryName(basePath);
+            if (string.IsNullOrEmpty(latestPackageName) == false)
+            {
+                var latestPackagePath = Path.Combine(packageFolderPath, latestPackageName);
 
-            CopyFilesRecursively(latestPackagePath, targetRootFolder);
+                var targetRootFolder = Path.GetDirectoryName(basePath);
+
+                CopyFilesRecursively(latestPackagePath, targetRootFolder);
+            }
         }
 
         private static void CopyFilesRecursively(string sourcePath, string targetPath)
