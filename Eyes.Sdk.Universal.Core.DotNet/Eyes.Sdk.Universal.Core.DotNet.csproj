@@ -10,13 +10,13 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>2.8.0</Version>
+		<Version>2.9.1</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
 		<PackageTags>applitools eyes</PackageTags>
 		<PackageReleaseNotes>### Updated
-- Updated Universal Server Version to 2.8.0
+- Updated Universal Server Version to 2.9.1
 - Copied Universal Server binaries in case when it does not exist (dotnet core issue)</PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageId>Eyes.Sdk.Universal.Core</PackageId>

@@ -1,3 +1,8 @@
+## [Eyes.Sdk.Universal.Core 2.9.1] - 2022-06-21
+### Updated
+- Updated Universal Server Version to 2.9.1
+- Copied Universal Server binaries in case when it does not exist (dotnet core issue)
+
 ## [Eyes.Sdk.Core 3.9] - 2022-06-16
 ### Fixed
 - Fixed IgnoreDisplacements for Config [Trello 2886] (https://trello.com/c/6hQRBYSw)
@@ -5,11 +10,6 @@
 ## [Eyes.Sdk.Core.S3 3.9] - 2022-06-16
 ### Fixed
 - Fixed IgnoreDisplacements for Config [Trello 2886] (https://trello.com/c/6hQRBYSw)
-
-## [Eyes.Sdk.Universal.Core 2.8.0] - 2022-06-16
-### Updated
-- Updated Universal Server Version to 2.8.0
-- Copied Universal Server binaries in case when it does not exist (dotnet core issue)
 
 ## [Eyes.Sdk.Core.S3 3.8] - 2022-06-10
 ### Fixed

@@ -82,7 +82,7 @@ namespace Applitools
             {
                 Logger.SetLogHandler(logHandler);
             }
-
+            
             int serverPort = UniversalSdkNativeLoader.Start();
 
             SocketClient = new WebSocketClient();
@@ -91,6 +91,8 @@ namespace Applitools
             Logger.Log($"Server url: {url}");
 
             SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
+
+            Logger.Log("Connected to Server");
         }
 
         public async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data) 
