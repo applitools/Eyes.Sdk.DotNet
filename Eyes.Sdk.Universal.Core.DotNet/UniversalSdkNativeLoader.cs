@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Applitools
 {
@@ -29,7 +28,7 @@ namespace Applitools
         {
             if (nativeProc_ == null || nativeProc_.HasExited)
             {
-                string basePath = Assembly.GetExecutingAssembly().Location;
+                string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 string path;
                 string os, suffix;
                 if (OperatingSystemChecker.IsWindows())

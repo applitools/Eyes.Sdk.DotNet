@@ -1,3 +1,9 @@
+## [Eyes.Sdk.Universal.Core 2.9.3] - 2022-06-28
+### Updated
+- Updated Universal Server Version to 2.9.3
+### Fixed
+- Fixed Path for Universal Server on Mac
+
 ## [Eyes.Sdk.Universal.Core 2.9.1] - 2022-06-21
 ### Updated
 - Updated Universal Server Version to 2.9.1
