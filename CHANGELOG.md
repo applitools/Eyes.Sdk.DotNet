@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Universal.Core 2.9.5] - 2022-07-05
+### Updated
+- Updated Universal Server Version to 2.9.5
+
 ## [Eyes.Sdk.Universal.Core 2.9.3] - 2022-06-28
 ### Updated
 - Updated Universal Server Version to 2.9.3
