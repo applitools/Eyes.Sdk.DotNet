@@ -27,8 +27,10 @@ def upSemanticVersion(currentVersion, part):
 
 def getDependentPackages(packageName, packageNextVersions, versionPart):
     packageDependecies = {
-        "Eyes.Sdk.Core": ["Eyes.Windows", "Eyes.LeanFT", "Eyes.Images", "Eyes.Appium", "Eyes.Selenium", "Eyes.Selenium4"],
-        "Eyes.Windows": ["Eyes.CodedUI"],
+        "Eyes.Selenium": ["Eyes.Appium"],
+        "Eyes.Sdk.Core": ["Eyes.Selenium4"],
+        "Eyes.Sdk.Core.S3": ["Eyes.Appium", "Eyes.Selenium"],
+        "Eyes.Sdk.Universal.Core": ["Eyes.Sdk.Core", "Eyes.Sdk.Core.S3", "Eyes.Selenium", "Eyes.Selenium4"],
     }
     dependencyDefaultChangelogStr="### Updated\n- Match to latest {}\n"
     dependentPackages = packageDependecies.get(packageName)
