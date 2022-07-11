@@ -5,7 +5,7 @@ MESSAGE=""
 
 echo "generating tests"
 pushd coverage-tests
-export UFG_ON_EG=true
+export UFG_ON_EG=false
 npm run generate
 if [ $? -ne 0 ]; then
     ((RESULT+=1))
