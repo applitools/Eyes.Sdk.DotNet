@@ -1,6 +1,6 @@
 ## [Eyes.Sdk.Universal.Core vNext]
 ### Updated
-- Updated Universal Server Version to 2.9.5
+- Updated Universal Server Version to 2.9.6
 
 ## [Eyes.Sdk.Universal.Core vNext]
 ### Updated
