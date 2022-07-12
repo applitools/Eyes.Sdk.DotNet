@@ -4,7 +4,7 @@ RESULT=0
 
 echo "generating tests"
 pushd coverage-tests
-export UFG_ON_EG=true
+# export UFG_ON_EG=true
 npm run generate
 if [ $? -ne 0 ]; then
     RESULT=1
