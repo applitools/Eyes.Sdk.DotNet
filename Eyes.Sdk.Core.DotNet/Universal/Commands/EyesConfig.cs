@@ -156,6 +156,7 @@ namespace Applitools.Selenium.Commands
         //  layoutBreakpoints?: boolean | number[]
         public IRenderBrowserInfo[] BrowsersInfo { get; set; }
         public bool? DisableBrowserFetching { get; set; }
+        public object LayoutBreakpoints { get; set; }
 
         public EyesConfig()
         {
@@ -198,6 +199,9 @@ namespace Applitools.Selenium.Commands
             DontCloseBatches = config.DontCloseBatches;
             DebugScreenshots = config.DebugScreenshotProvider;
             ForceFullPageScreenshot = config.IsForceFullPageScreenshot;
+
+            SetLayoutBreakpoints(config);
+
             if (config.VisualGridOptions?.Length > 0)
             {
                 VisualGridOptions = config.VisualGridOptions.ToDictionary(i => i.Key, v => v.Value);
@@ -229,6 +233,18 @@ namespace Applitools.Selenium.Commands
             if (browsers.Any())
             {
                 BrowsersInfo = browsers.ToArray();
+            }
+        }
+
+        private void SetLayoutBreakpoints(Applitools.Configuration config)
+        {
+            if (config.LayoutBreakpoints != null && config.LayoutBreakpoints.Any())
+            {
+                LayoutBreakpoints = config.LayoutBreakpoints;
+            }
+            else if (config.LayoutBreakpointsEnabled.HasValue)
+            {
+                LayoutBreakpoints = config.LayoutBreakpointsEnabled;
             }
         }
     }

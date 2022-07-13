@@ -15,7 +15,7 @@ namespace Applitools.Selenium.Commands
     {
         public string Name { get; set; }
         public bool? DisableBrowserFetching { get; set; }
-        public bool? LayoutBreakpoints { get; set; }
+        public object LayoutBreakpoints { get; set; }
         public IDictionary<string, object> VisualGridOptions { get; set; }
         public Hooks Hooks { get; set; }
         public string RenderId { get; set; }

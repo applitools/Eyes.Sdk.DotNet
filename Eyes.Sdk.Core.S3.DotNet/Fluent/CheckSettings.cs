@@ -33,6 +33,9 @@ namespace Applitools
         private VisualGridOption[] visualGridOptions_;
         private string variationGroupId_;
 
+        protected bool layoutBreakpointsEnabled_;
+        protected readonly List<int> layoutBreakpoints_ = new List<int>();
+
         public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
         /// <summary>
@@ -151,6 +154,16 @@ namespace Applitools
         }
 
         protected StringBuilder fluentCode_ = new StringBuilder();
+
+        public bool? GetLayoutBreakpointsEnabled()
+        {
+            return layoutBreakpointsEnabled_;
+        }
+
+        public IList<int> GetLayoutBreakpoints()
+        {
+            return layoutBreakpoints_;
+        }
 
         /// <summary>
         /// Shortcut to set the match level to <see cref="MatchLevel.Exact"/>.

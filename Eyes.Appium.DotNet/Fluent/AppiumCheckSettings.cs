@@ -15,9 +15,7 @@ namespace Applitools.Appium
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_ = null;
-        private bool layoutBreakpointsEnabled_;
         private bool? useCookies_;
-        private readonly List<int> layoutBreakpoints_ = new List<int>();
 
         internal AppiumCheckSettings()
         {
