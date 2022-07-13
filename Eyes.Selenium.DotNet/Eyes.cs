@@ -14,7 +14,7 @@ using OpenQA.Selenium.Remote;
 
 namespace Applitools.Selenium
 {
-    public class Eyes : EyesBase//, ISeleniumConfigurationProvider//, IEyesBase
+    public class Eyes : EyesBase
     {
         private PropertiesCollection properties_;
         private string managerApplitoolsRefId_;

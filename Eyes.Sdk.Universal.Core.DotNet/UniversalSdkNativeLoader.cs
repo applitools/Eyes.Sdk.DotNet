@@ -69,6 +69,8 @@ namespace Applitools
                 nativeProc_ = StartProcess(path);
                 
                 port_ = GetPort(nativeProc_);
+
+                Debug.WriteLine($"Universal Server process ID: {nativeProc_.Id}.");
             }
 
             return port_;
