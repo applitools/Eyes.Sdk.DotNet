@@ -15,9 +15,7 @@ namespace Applitools.Selenium.Fluent
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_ = null;
-        private bool layoutBreakpointsEnabled_;
         private bool? useCookies_;
-        private readonly List<int> layoutBreakpoints_ = new List<int>();
 
         internal SeleniumCheckSettings()
         {
@@ -557,6 +555,11 @@ namespace Applitools.Selenium.Fluent
             clone.layoutBreakpointsEnabled_ = shouldSet;
             clone.layoutBreakpoints_.Clear();
             return clone;
+        }
+
+        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
+        {
+            return LayoutBreakpointsEnabled(shouldSet);
         }
 
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)

@@ -35,5 +35,9 @@ namespace Applitools.Fluent
 
         string GetFluentCommandString();
         string GetVariationGroupId();
+
+        bool? GetLayoutBreakpointsEnabled();
+
+        IList<int> GetLayoutBreakpoints();
     }
 }

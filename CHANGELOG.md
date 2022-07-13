@@ -1,12 +1,33 @@
-## [Eyes.Sdk.Universal.Core vNext]
+## [Eyes.Selenium4 vNext]
 ### Updated
-- Updated Universal Server Version to 2.9.6
+- Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
 
-## [Eyes.Sdk.Universal.Core vNext]
-### Updated
-- Updated Universal Server Version to 2.9.3
+## [Eyes.Selenium vNext]
+- Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
+
+## [Eyes.Sdk.Core vNext]
 ### Fixed
-- Fixed Path for Universal Server on Mac
+- Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
+- User agent version of Universal C# SDK [Trello 2952] (https://trello.com/c/lesfAFwA)
+
+## [Eyes.Sdk.Core.S3 vNext]
+### Fixed
+- Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
+- User agent version of Universal C# SDK [Trello 2952] (https://trello.com/c/lesfAFwA)
+
+## [Eyes.Sdk.Universal.Core 2.9.6] - 2022-07-11
+### Updated
+- Universal Server Version to 2.9.6
+### Fixed
+- Path for Universal Server on Mac [Trello 2931] (https://trello.com/c/FidzIMrS)
+
+## [Eyes.Selenium4 3.8] - 2022-06-21
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Selenium 3.8] - 2022-06-21
+### Updated
+- Match to latest Eyes.Sdk.Core.S3
 
 ## [Eyes.Sdk.Universal.Core 2.9.1] - 2022-06-21
 ### Updated

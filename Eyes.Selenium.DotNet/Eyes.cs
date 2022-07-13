@@ -684,6 +684,7 @@ namespace Applitools.Selenium
                 {
                     BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
                 },
+                LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettingsInternal),
@@ -703,6 +704,16 @@ namespace Applitools.Selenium
             };
             
             return settings;
+        }
+
+        private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
+        {
+            if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
+            {
+                return settings.GetLayoutBreakpoints();
+            }
+
+            return settings.GetLayoutBreakpointsEnabled();
         }
 
         private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)

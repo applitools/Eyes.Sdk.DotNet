@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -15,9 +16,7 @@ namespace Applitools.Selenium.Fluent
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_ = null;
-        private bool layoutBreakpointsEnabled_;
         private bool? useCookies_;
-        private readonly List<int> layoutBreakpoints_ = new List<int>();
 
         internal SeleniumCheckSettings()
         {
@@ -559,6 +558,11 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
+        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
+        {
+            return LayoutBreakpointsEnabled(shouldSet);
+        }
+
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -578,18 +582,7 @@ namespace Applitools.Selenium.Fluent
             clone.layoutBreakpoints_.Sort();
             return clone;
         }
-
-        List<int> ISeleniumCheckTarget.GetLayoutBreakpoints()
-        {
-            return layoutBreakpoints_;
-        }
-
-        bool ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
-        {
-            return layoutBreakpointsEnabled_;
-        }
-
-
+        
         public SeleniumCheckSettings UseCookies(bool useCookies)
         {
             SeleniumCheckSettings clone = Clone_();
