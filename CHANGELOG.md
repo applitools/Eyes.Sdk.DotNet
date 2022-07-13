@@ -1,16 +1,20 @@
-## [Eyes.Selenium4 vNext]
+## [Eyes.Selenium4 3.9] - 2022-07-13
 ### Updated
 - Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 5.2] - 2022-07-13
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium 3.9] - 2022-07-13
 - Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Sdk.Core 3.10] - 2022-07-13
 ### Fixed
 - Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
 - User agent version of Universal C# SDK [Trello 2952] (https://trello.com/c/lesfAFwA)
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Sdk.Core.S3 3.10] - 2022-07-13
 ### Fixed
 - Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
 - User agent version of Universal C# SDK [Trello 2952] (https://trello.com/c/lesfAFwA)
