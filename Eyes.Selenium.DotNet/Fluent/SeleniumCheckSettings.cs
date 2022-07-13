@@ -557,6 +557,11 @@ namespace Applitools.Selenium.Fluent
             return clone;
         }
 
+        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
+        {
+            return LayoutBreakpointsEnabled(shouldSet);
+        }
+
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             SeleniumCheckSettings clone = Clone_();
