@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -20,6 +21,7 @@ namespace Applitools
         private ProxySettings proxy;
         private string managerApplitoolsRefId_;
         private ManagerConfig config_;
+        private readonly Assembly _actualAssembly;
 
         protected WebSocketClient SocketClient { get; }
 
@@ -84,13 +86,15 @@ namespace Applitools
             }
 
             int serverPort = UniversalSdkNativeLoader.Start();
-
+            
             SocketClient = new WebSocketClient();
 
             var url = GetSocketUrl(serverPort);
             Logger.Log($"Server url: {url}");
 
             SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
+
+            _actualAssembly = GetActualAssembly();
         }
 
         public async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data) 
@@ -227,6 +231,21 @@ namespace Applitools
 
         protected abstract IEnumerable<IEyesBase> GetAllEyes();
 
+        private Assembly GetActualAssembly()
+        {
+            StackTrace stackTrace = new StackTrace();
+            StackFrame[] stackFrames = stackTrace.GetFrames();
+            foreach (StackFrame stackFrame in stackFrames)
+            {
+                Type callingType = stackFrame.GetMethod().DeclaringType;
+                if (callingType.IsAbstract) continue;
+                if (callingType.Assembly.GetCustomAttribute<PrivateAssemblyAttribute>() != null) continue;
+                return callingType.Assembly;
+            }
+
+            return Assembly.GetExecutingAssembly();
+        }
+
         private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes(bool shouldThrowException)
         {
             var closeAllEyes = new EyesManagerCloseManagerRequest
@@ -254,7 +273,7 @@ namespace Applitools
             var result = new CoreMakeSdkRequest();
             result.AddOrUpdatePayload("name", "netUniversal3");
             result.AddOrUpdatePayload("protocol", "webdriver");
-            result.AddOrUpdatePayload("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            result.AddOrUpdatePayload("version", _actualAssembly.GetName().Version.ToString());
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 
             return result;
