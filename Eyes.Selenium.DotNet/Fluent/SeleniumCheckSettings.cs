@@ -587,7 +587,7 @@ namespace Applitools.Selenium.Fluent
             return layoutBreakpoints_;
         }
 
-        bool ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
+        bool? ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
         {
             return layoutBreakpointsEnabled_;
         }

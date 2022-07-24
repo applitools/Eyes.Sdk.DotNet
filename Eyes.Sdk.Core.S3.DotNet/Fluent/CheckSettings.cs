@@ -33,7 +33,7 @@ namespace Applitools
         private VisualGridOption[] visualGridOptions_;
         private string variationGroupId_;
 
-        protected bool layoutBreakpointsEnabled_;
+        protected bool? layoutBreakpointsEnabled_;
         protected readonly List<int> layoutBreakpoints_ = new List<int>();
 
         public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
