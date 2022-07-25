@@ -512,6 +512,11 @@ namespace Applitools
 
         public bool? LayoutBreakpointsEnabled { get; set; }
 
+        public IConfiguration SetLayoutBreakpoints(bool layoutBreakpointsEnabled)
+        {
+            return SetLayoutBreakpointsEnabled(layoutBreakpointsEnabled);
+        }
+
         public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
         {
             return SetLayoutBreakpoints_(breakpoints);
