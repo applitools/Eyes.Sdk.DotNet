@@ -460,8 +460,9 @@ namespace Applitools.Selenium
                 throw new TestFailedException(error.ToString());
             }
 
-            var testResult = response?.Payload?.Result?.FirstOrDefault();
-            if (testResult != null)
+            var testResults = response?.Payload?.Result ?? new List<TestResults>();
+
+            foreach (var testResult in testResults)
             {
                 testResult.Runner = Runner;
                 if (testResult.IsPassed == false && throwEx)
@@ -470,7 +471,7 @@ namespace Applitools.Selenium
                 }
             }
 
-            return testResult;
+            return testResults.FirstOrDefault();
         }
         
         /// <summary>
