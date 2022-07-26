@@ -457,13 +457,13 @@ namespace Applitools.Selenium
 
             IsOpen = false;
 
-            var error = response?.Payload?.Error;
+            var error = response.Payload.Error;
             if (error != null && throwEx)
             {
                 throw new TestFailedException(error.ToString());
             }
 
-            var testResults = response?.Payload?.Result ?? new List<TestResults>();
+            var testResults = response.Payload.Result;
 
             foreach (var testResult in testResults)
             {
@@ -474,7 +474,7 @@ namespace Applitools.Selenium
                 }
             }
 
-            return testResults.FirstOrDefault();
+            return testResults.First();
         }
 
         /// <summary>
