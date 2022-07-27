@@ -10,6 +10,14 @@
 ### Fixed
 - Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
 
+## [Eyes.Sdk.Core 3.11] - 2022-07-27
+### Fixed
+- Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
+
+## [Eyes.Sdk.Core.S3 3.11] - 2022-07-27
+### Fixed
+- Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
+
 ## [Eyes.Selenium 3.10] - 2022-07-24
 ### Updated
 - Match to latest Eyes.Sdk.Core.S3
