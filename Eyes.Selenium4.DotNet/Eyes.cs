@@ -467,7 +467,7 @@ namespace Applitools.Selenium
                 testResult.Runner = Runner;
                 if (testResult.IsPassed == false && throwEx)
                 {
-                    throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
                 }
             }
 
