@@ -457,23 +457,24 @@ namespace Applitools.Selenium
 
             IsOpen = false;
 
-            var error = response?.Payload?.Error;
+            var error = response.Payload.Error;
             if (error != null && throwEx)
             {
                 throw new TestFailedException(error.ToString());
             }
 
-            var testResult = response?.Payload?.Result?.FirstOrDefault();
-            if (testResult != null)
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
             {
                 testResult.Runner = Runner;
                 if (testResult.IsPassed == false && throwEx)
                 {
-                    throw new TestFailedException($"{testResult.Url}{Environment.NewLine}");
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
                 }
             }
 
-            return testResult;
+            return testResults.First();
         }
 
         /// <summary>

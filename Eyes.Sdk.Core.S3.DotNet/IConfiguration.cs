@@ -143,6 +143,7 @@ namespace Applitools
         IConfiguration SetAbortIdleTestTimeout(int? value);
         IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet);
         IConfiguration SetLayoutBreakpoints(params int[] breakpoints);
+        IConfiguration SetLayoutBreakpoints(bool layoutBreakpointsEnabled);
 
         IConfiguration SetVisualGridOptions(params VisualGridOption[] options);
 

@@ -11,7 +11,7 @@ namespace Applitools.Selenium.Fluent
 
         List<int> GetLayoutBreakpoints();
 
-        bool GetLayoutBreakpointsEnabled();
+        bool? GetLayoutBreakpointsEnabled();
 
         bool? GetUseCookies();
     }
