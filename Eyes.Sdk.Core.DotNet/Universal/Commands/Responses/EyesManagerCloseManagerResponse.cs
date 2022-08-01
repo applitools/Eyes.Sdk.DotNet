@@ -1,13 +1,23 @@
 ﻿using System.Collections.Generic;
 using Applitools.Selenium.Commands;
+using Newtonsoft.Json;
+
 
 namespace Applitools
 {
+    public class UniversalException
+    {
+        public string Message { get; set; }
+        public string Stack { get; set; }
+        public string Reason { get; set; }
+    }
+
     public class CloseAllResult
     {
         public TestResults TestResults { get; set; }
-        public object Exception { get; set; }
-        //public DesktopBrowserInfo BrowserInfo { get; set; }
+        public UniversalException Exception { get; set; }
+        [JsonProperty]
+        public object BrowserInfo { get; set; }
     }
 
     public class EyesManagerCloseManagerResult

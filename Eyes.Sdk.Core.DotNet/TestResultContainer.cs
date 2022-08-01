@@ -16,6 +16,16 @@ namespace Applitools
             Exception = exception;
         }
 
+        public TestResultContainer(CloseAllResult closeAllResult)
+        {
+            TestResults = closeAllResult.TestResults;
+            // BrowserInfo = browserInfo;
+            if (closeAllResult.Exception != null)
+            {
+                Exception = new Exception(closeAllResult.Exception.Message);
+            }
+        }
+
         public override string ToString()
         {
             string browserInfoStr = BrowserInfo != null ? "\n browserInfo = " + BrowserInfo : string.Empty;

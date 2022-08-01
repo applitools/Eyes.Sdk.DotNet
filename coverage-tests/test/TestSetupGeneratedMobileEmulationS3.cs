@@ -46,7 +46,7 @@ namespace Applitools.Generated.Selenium.Tests
             {
                 ChromeOptions options = new ChromeOptions();
                 options.EnableMobileEmulation(mobileSettings);
-                driver = CreateChromeDriver(options, headless: true);
+                driver = CreateChromeDriver2(options, headless: true);
             }
             return driver;
         }
