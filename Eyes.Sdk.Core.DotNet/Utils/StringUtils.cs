@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using Applitools.VisualGrid;
 
 namespace Applitools.Utils
 {
@@ -322,6 +325,41 @@ namespace Applitools.Utils
                 result.Add(str.Substring(i));
             }
             return result.ToArray();
+        }
+
+        public static DeviceName ToDeviceName(this string deviceName)
+        {
+            var enumValue = deviceName.ToEnum<DeviceName>();
+
+            return enumValue;
+        }
+
+        public static IosDeviceName ToIosDeviceName(this string deviceName)
+        {
+            var enumValue = deviceName.ToEnum<IosDeviceName>();
+
+            return enumValue;
+        }
+
+        public static ScreenOrientation ToScreenOrientation(this string deviceName)
+        {
+            var enumValue = deviceName.ToEnum<ScreenOrientation>();
+            return enumValue;
+        }
+
+        public static BrowserType ToBrowserType(this string name)
+        {
+            var enumValue = name.ToEnum<BrowserType>();
+
+            return enumValue;
+        }
+
+        public static T ToEnum<T>(this string value)
+        {
+            var enumValue = Enum.GetValues(typeof(T))
+                .Cast<T>().First(i => i.GetAttribute<EnumMemberAttribute>().Value == value);
+
+            return enumValue;
         }
 
         #region Legacy

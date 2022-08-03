@@ -5,6 +5,23 @@ using Newtonsoft.Json;
 
 namespace Applitools
 {
+    public class UniversalBrowserInfo
+    {
+        public string Name { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+        public UniversalDeviceInfo IosDeviceInfo { get; set; }
+        public UniversalDeviceInfo AndroidDeviceInfo { get; set; }
+        public UniversalDeviceInfo ChromeEmulationInfo { get; set; }
+    }
+
+    public class UniversalDeviceInfo
+    {
+        public string DeviceName { get; set; }
+        public string ScreenOrientation { get; set; }
+        public string Version { get; set; }
+    }
+
     public class UniversalException
     {
         public string Message { get; set; }
@@ -17,7 +34,7 @@ namespace Applitools
         public TestResults TestResults { get; set; }
         public UniversalException Exception { get; set; }
         [JsonProperty]
-        public object BrowserInfo { get; set; }
+        public UniversalBrowserInfo BrowserInfo { get; set; }
     }
 
     public class EyesManagerCloseManagerResult
