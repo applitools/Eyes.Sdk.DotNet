@@ -92,7 +92,7 @@ jobs:
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./test/Tests.Eyes.Selenium.csproj -- NUnit.NumberOfTestWorkers=15
+        - dotnet test ./Tests/Tests.Eyes.Selenium/Tests.Eyes.Selenium.csproj -- NUnit.NumberOfTestWorkers=15
 
     # Skipped TODO fix specific tests
     # - name: Images
