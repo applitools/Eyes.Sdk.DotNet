@@ -1,8 +1,20 @@
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Sdk.Core 3.12] - 2022-08-03
 ### Fixed
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Appium 5.5] - 2022-08-03
+### Updated
+- Match to latest Eyes.Sdk.Core.S3
+
+## [Eyes.Selenium 3.13] - 2022-08-03
+### Updated
+- Match to latest Eyes.Sdk.Core.S3
+
+## [Eyes.Selenium4 3.13] - 2022-08-03
+### Updated
+- Match to latest Eyes.Sdk.Core
+
+## [Eyes.Sdk.Core.S3 3.12] - 2022-08-03
 ### Fixed
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
 ### Updated
