@@ -1,3 +1,15 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
+### Updated
+- Android Device Names [Trello 44] https://trello.com/c/SZAPDKSI
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
+### Updated
+- Android Device Names [Trello 44] https://trello.com/c/SZAPDKSI
+
 ## [Eyes.Selenium4 3.11] - 2022-07-27
 ### Fixed
 - Layout Breakpoints [Trello 2959] (https://trello.com/c/p3AFQBKi)
