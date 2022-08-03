@@ -15,6 +15,8 @@ namespace Tests.Eyes.Selenium
         private Applitools.Selenium.Eyes eyes;
         private IWebDriver driver;
 
+        public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
+
         [SetUp]
         public void Setup()
         {
@@ -25,7 +27,7 @@ namespace Tests.Eyes.Selenium
                 options.AddArguments("headless");
             }
             // Use Chrome browser
-            driver = new ChromeDriver(options);
+            driver = new ChromeDriver(DRIVER_PATH, options);
 
             //Initialize the Runner for your test with concurrency of 5.
             // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
