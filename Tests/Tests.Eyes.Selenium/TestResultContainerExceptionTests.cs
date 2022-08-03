@@ -33,11 +33,9 @@ namespace Tests.Eyes.Selenium
 
             // Initialize the eyes SDK (IMPORTANT: make sure your API key is set in the APPLITOOLS_API_KEY env variable).
             eyes = new Applitools.Selenium.Eyes(runner);
-            eyes.SaveNewTests = true;
+            eyes.SaveNewTests = false;
             eyes.BranchName = "master";
             eyes.ParentBranchName = "master";
-            //eyes.AddProperty("ForceFPS", eyes.ForceFullPageScreenshot ? "true" : "false");
-            //eyes.AddProperty("Agent ID", eyes.FullAgentId);
             eyes.HideScrollbars = true;
             var config = eyes.GetConfiguration();
             config.AddBrowsers(new DesktopBrowserInfo(1000, 800, BrowserType.CHROME));
@@ -55,27 +53,28 @@ namespace Tests.Eyes.Selenium
 
             // If the test was aborted before eyes.close was called, ends the test as aborted.
             eyes.AbortIfNotClosed();
-
-            //Wait and collect all test results
-            // we pass false to this method to suppress the exception that is thrown if we
-            // find visual differences
-            TestResultsSummary allTestResults = runner.GetAllTestResults();
         }
 
         [Test]
         public void ServerExceptionTest()
         {
-            driver.Navigate().GoToUrl("http://applitools.github.io/demo/TestPages/fixed-position");
-            driver = eyes.Open(driver, "Eyes Selenium SDK - Tests", "ServerExceptionTest", new RectangleSize(width: 700, height: 460));
-            eyes.Check(Target.Region(By.CssSelector("#non existing")).Fully());
-            eyes.Close(true);
-
-            //var allTestResults = runner.GetAllTestResults();
-            //Assert.Equals(3, allTestResults.Count);
-            //foreach (var testResult in allTestResults)
-            //{
-            //    Assert.NotNull(testResult.BrowserInfo);
-            //}
+            driver.Navigate().GoToUrl("https://applitools.github.io/demo/TestPages/AdoptedStyleSheets/index.html");
+            driver = eyes.Open(driver, "Eyes Selenium SDK - Integration Tests", "ServerExceptionTest", new RectangleSize(width: 700, height: 460));
+            eyes.Check(Target.Window().Fully(false));
+            try
+            {
+                eyes.Close(true);
+            }
+            finally
+            {
+                var allTestResults = runner.GetAllTestResults(false);
+                Assert.AreEqual(3, allTestResults.Count);
+                foreach (var testResult in allTestResults)
+                {
+                    Assert.NotNull(testResult.Exception);
+                    Assert.NotNull(testResult.BrowserInfo);
+                }
+            }
         }
     }
 }
