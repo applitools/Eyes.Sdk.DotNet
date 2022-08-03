@@ -3,12 +3,18 @@
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
 ### Updated
 - Android Device Names [Trello 44] https://trello.com/c/SZAPDKSI
+- Universal Server Version to 2.10.3
 
 ## [Eyes.Selenium4 vNext]
 ### Fixed
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
 ### Updated
 - Android Device Names [Trello 44] https://trello.com/c/SZAPDKSI
+- Universal Server Version to 2.10.3
+
+## [Eyes.Sdk.Universal.Core 2.10.3] - 2022-08-03
+### Updated
+- Universal Server Version to 2.10.3
 
 ## [Eyes.Selenium4 3.11] - 2022-07-27
 ### Fixed
