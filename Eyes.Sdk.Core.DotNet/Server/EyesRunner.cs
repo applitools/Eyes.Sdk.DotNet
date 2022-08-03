@@ -186,11 +186,11 @@ namespace Applitools
             return managerApplitoolsRefId_;
         }
 
-        public IList<TestResults> CloseAllEyes(bool shouldThrowException)
+        private IList<CloseAllResult> CloseAllEyes(bool shouldThrowException)
         {
             Logger.Log("Closing All Eyes");
 
-            var results = new List<TestResults>();
+            var results = new List<CloseAllResult>();
 
             if (IsDisabled)
             {
@@ -201,7 +201,6 @@ namespace Applitools
 
             var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).Result;
             var payload = response.Payload;
-
             if (payload != null)
             {
                 var error = payload.Error;
@@ -221,9 +220,10 @@ namespace Applitools
                     if (testResults != null)
                     {
                         testResults.Runner = this;
-                        results.Add(testResults);
                     }
                 }
+
+                results.AddRange(payload.Result.Results);
             }
 
             return results;

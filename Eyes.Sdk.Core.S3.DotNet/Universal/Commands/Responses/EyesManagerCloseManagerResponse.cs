@@ -1,13 +1,40 @@
 ﻿using System.Collections.Generic;
 using Applitools.Selenium.Commands;
+using Newtonsoft.Json;
+
 
 namespace Applitools
 {
+    public class UniversalBrowserInfo
+    {
+        public string Name { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+        public UniversalDeviceInfo IosDeviceInfo { get; set; }
+        public UniversalDeviceInfo AndroidDeviceInfo { get; set; }
+        public UniversalDeviceInfo ChromeEmulationInfo { get; set; }
+    }
+    
+    public class UniversalDeviceInfo
+    {
+        public string DeviceName { get; set; }
+        public string ScreenOrientation { get; set; }
+        public string Version { get; set; }
+    }
+    
+    public class UniversalException
+    {
+        public string Message { get; set; }
+        public string Stack { get; set; }
+        public string Reason { get; set; }
+    }
+
     public class CloseAllResult
     {
         public TestResults TestResults { get; set; }
-        public object Exception { get; set; }
-        //public DesktopBrowserInfo BrowserInfo { get; set; }
+        public UniversalException Exception { get; set; }
+        [JsonProperty]
+        public UniversalBrowserInfo BrowserInfo { get; set; }
     }
 
     public class EyesManagerCloseManagerResult
