@@ -67,15 +67,16 @@ namespace Tests.Eyes.Selenium
             {
                 eyes.Close(true);
             }
-            finally
+            catch
             {
-                var allTestResults = runner.GetAllTestResults(false);
-                Assert.AreEqual(3, allTestResults.Count);
-                foreach (var testResult in allTestResults)
-                {
-                    Assert.NotNull(testResult.Exception);
-                    Assert.NotNull(testResult.BrowserInfo);
-                }
+            }
+
+            var allTestResults = runner.GetAllTestResults(false);
+            Assert.AreEqual(3, allTestResults.Count);
+            foreach (var testResult in allTestResults)
+            {
+                Assert.NotNull(testResult.Exception);
+                Assert.NotNull(testResult.BrowserInfo);
             }
         }
     }
