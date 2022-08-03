@@ -1,11 +1,15 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.12] - 2022-08-03
 ### Fixed
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
 ### Updated
 - Android Device Names [Trello 44] https://trello.com/c/SZAPDKSI
 - Universal Server Version to 2.10.3
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.4] - 2022-08-03
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium 3.12] - 2022-08-03
 ### Fixed
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
 ### Updated
