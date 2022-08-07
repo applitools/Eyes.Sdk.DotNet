@@ -1,3 +1,7 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- .NET Xpath Selector truncated | Element not found error [Trello 2969] (https://trello.com/c/RLiRm5t8)
+
 ## [Eyes.Sdk.Core 3.12] - 2022-08-03
 ### Fixed
 - TestResultContainer Exception and BrowserInfo [Trello 2964] (https://trello.com/c/KTRPRood)
