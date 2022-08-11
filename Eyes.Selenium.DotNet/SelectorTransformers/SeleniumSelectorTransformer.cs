@@ -8,7 +8,7 @@ namespace Applitools.Selenium
     {
         public RegionSelector GetRegionSelector(By selector)
         {
-            var parts = selector.ToString().Split(':').Select(i => i.Trim()).ToList();
+            var parts = selector.ToString().Split(new[] { ':' }, 2).Select(i => i.Trim()).ToList();
 
             return GetSelector(parts[0], parts[1]);
         }

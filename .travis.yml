@@ -83,7 +83,7 @@ jobs:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh    
         
-    - name: Tests Selenium
+    - name: E2E Tests Selenium
       mono: none
       dotnet: 3.1.407
       addons:
@@ -92,7 +92,18 @@ jobs:
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./Tests/Tests.Eyes.Selenium/Tests.Eyes.Selenium.csproj -- NUnit.NumberOfTestWorkers=15
+        - dotnet test ./Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
+
+    - name: Unit Tests Selenium
+      mono: none
+      dotnet: 3.1.407
+      addons:
+        chrome: stable
+        firefox: latest
+      script:
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - dotnet test ./Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj -- NUnit.NumberOfTestWorkers=15
 
     # Skipped TODO fix specific tests
     # - name: Images
