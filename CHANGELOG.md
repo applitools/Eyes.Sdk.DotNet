@@ -1,4 +1,8 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 5.6] - 2022-08-12
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium 3.14] - 2022-08-12
 ### Fixed
 - .NET Xpath Selector truncated | Element not found error [Trello 2969] (https://trello.com/c/RLiRm5t8)
 
