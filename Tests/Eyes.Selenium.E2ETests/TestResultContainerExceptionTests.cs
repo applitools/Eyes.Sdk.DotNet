@@ -22,7 +22,7 @@ namespace Eyes.Selenium.E2ETests
         {
             var CI = Environment.GetEnvironmentVariable("CI");
             var options = new ChromeOptions();
-          //  if (CI != null)
+            //  if (CI != null)
             {
                 options.AddArguments("headless");
             }
@@ -32,21 +32,21 @@ namespace Eyes.Selenium.E2ETests
             //Initialize the Runner for your test with concurrency of 5.
             // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
             runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5));
+
+            // Initialize the eyes SDK (IMPORTANT: make sure your API key is set in the APPLITOOLS_API_KEY env variable).
             eyes = new Applitools.Selenium.Eyes(runner);
-            eyes.DontCloseBatches = false;
-
+            eyes.SaveNewTests = false;
+            eyes.BranchName = "master";
+            eyes.ParentBranchName = "master";
+            eyes.HideScrollbars = true;
             var config = eyes.GetConfiguration();
-            config.DontCloseBatches = false;
-
-            runner.DontCloseBatches = true;
-
             config.AddBrowsers(new DesktopBrowserInfo(1000, 800, BrowserType.CHROME));
             config.AddBrowsers(new IosDeviceInfo(IosDeviceName.iPad_7));
             config.AddBrowsers(new ChromeEmulationInfo(DeviceName.Pixel_4_XL));
             config.SetLayoutBreakpoints(500, 1000);
             eyes.SetConfiguration(config);
         }
-        
+
         [TearDown]
         public void TearDown()
         {
