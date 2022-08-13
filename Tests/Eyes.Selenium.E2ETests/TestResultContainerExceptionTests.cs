@@ -40,9 +40,7 @@ namespace Eyes.Selenium.E2ETests
             eyes.ParentBranchName = "master";
             eyes.HideScrollbars = true;
             var config = eyes.GetConfiguration();
-            config.AddBrowsers(new DesktopBrowserInfo(1000, 800, BrowserType.CHROME));
             config.AddBrowsers(new IosDeviceInfo(IosDeviceName.iPad_7));
-            config.AddBrowsers(new ChromeEmulationInfo(DeviceName.Pixel_4_XL));
             config.SetLayoutBreakpoints(500, 1000);
             eyes.SetConfiguration(config);
         }
@@ -72,7 +70,7 @@ namespace Eyes.Selenium.E2ETests
             }
 
             var allTestResults = runner.GetAllTestResults(false);
-            Assert.AreEqual(3, allTestResults.Count);
+            Assert.AreEqual(1, allTestResults.Count);
             foreach (var testResult in allTestResults)
             {
                 Assert.NotNull(testResult.Exception);
