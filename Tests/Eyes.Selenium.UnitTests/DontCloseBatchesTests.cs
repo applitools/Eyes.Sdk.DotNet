@@ -10,7 +10,7 @@ namespace Eyes.Selenium.UnitTests
         [TestCase(true)]
         [TestCase(false)]
         [TestCase(null)]
-        public void DontCloseBatches_VisualGridRunner_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
+        public void VisualGridRunner_SetRunnerDontCloseBatchesAfter_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
         {
             var runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5), startServer:false);
             var eyes = new Applitools.Selenium.Eyes(runner);
@@ -23,11 +23,64 @@ namespace Eyes.Selenium.UnitTests
         [TestCase(true)]
         [TestCase(false)]
         [TestCase(null)]
-        public void DontCloseBatches_ClassicRunner_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
+        public void ClassicRunner_SetRunnerDontCloseBatchesAfter_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
         {
             var runner = new ClassicRunner(false);
             var eyes = new Applitools.Selenium.Eyes(runner);
             runner.DontCloseBatches = dontCloseBatches;
+
+            Assert.AreEqual(dontCloseBatches, eyes.DontCloseBatches);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        [TestCase(null)]
+        public void VisualGridRunner_SetRunnerDontCloseBatchesBefore_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
+        {
+            var runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5), startServer:false);
+            runner.DontCloseBatches = dontCloseBatches;
+            var eyes = new Applitools.Selenium.Eyes(runner);
+
+            Assert.AreEqual(dontCloseBatches, eyes.DontCloseBatches);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        [TestCase(null)]
+        public void ClassicRunner_SetRunnerDontCloseBatchesBefore_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
+        {
+            var runner = new ClassicRunner(false);
+            runner.DontCloseBatches = dontCloseBatches;
+            var eyes = new Applitools.Selenium.Eyes(runner);
+
+            Assert.AreEqual(dontCloseBatches, eyes.DontCloseBatches);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void VisualGridRunner_OverrideDontCloseBatches_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
+        {
+            var runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5), startServer: false);
+            var eyes = new Applitools.Selenium.Eyes(runner);
+            runner.DontCloseBatches = !dontCloseBatches;
+            eyes.DontCloseBatches = dontCloseBatches;
+
+            Assert.AreEqual(dontCloseBatches, eyes.DontCloseBatches);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        [TestCase(null)]
+        public void ClassicRunner_OverrideDontCloseBatches_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
+        {
+            var runner = new ClassicRunner(false);
+            var eyes = new Applitools.Selenium.Eyes(runner);
+            runner.DontCloseBatches = !dontCloseBatches;
+            eyes.DontCloseBatches = dontCloseBatches;
 
             Assert.AreEqual(dontCloseBatches, eyes.DontCloseBatches);
         }

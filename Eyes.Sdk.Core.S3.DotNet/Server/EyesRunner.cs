@@ -16,14 +16,10 @@ namespace Applitools
 {
     public abstract class EyesRunner
     {
-        private string apiKey;
-        private string serverUrl;
-        private ProxySettings proxy;
         private string managerApplitoolsRefId_;
         private ManagerConfig config_;
         private readonly Assembly _actualAssembly;
-        private bool? _dontCloseBatches;
-        private readonly IList<EyesBase> _eyeses;
+        private readonly IList<EyesBaseConfig> _eyeses;
 
         protected WebSocketClient SocketClient { get; private set; }
 
@@ -33,57 +29,13 @@ namespace Applitools
             set => config_ = value;
         }
 
-        public bool? DontCloseBatches
-        {
-            get => _dontCloseBatches;
-            set
-            {
-                _dontCloseBatches = value;
-                foreach (var eyes in GetAllEyes())
-                {
-                    eyes.DontCloseBatches = value;
-                }
-            }
-        }
+        public bool? DontCloseBatches { get; set; }
 
-        public string ApiKey
-        {
-            get => apiKey;
-            set
-            {
-                apiKey = value;
-                foreach (var eyes in GetAllEyes())
-                {
-                    eyes.ApiKey = value;
-                }
-            }
-        }
+        public string ApiKey { get; set; }
 
-        public string ServerUrl
-        {
-            get => serverUrl;
-            set
-            {
-                serverUrl = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.ServerUrl = value;
-                }
-            }
-        }
+        public string ServerUrl { get; set; }
 
-        public ProxySettings Proxy
-        {
-            get => proxy;
-            set
-            {
-                proxy = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.Proxy = value;
-                }
-            }
-        }
+        public ProxySettings Proxy { get; set; }
 
         public bool IsDisabled { get; set; }
 
@@ -98,7 +50,7 @@ namespace Applitools
                 Logger.SetLogHandler(logHandler);
             }
 
-            _eyeses = new List<EyesBase>();
+            _eyeses = new List<EyesBaseConfig>();
             if (startServer)
             {
                 StartServer();
@@ -174,7 +126,7 @@ namespace Applitools
             }
         }
 
-        public void AddEyes(EyesBase eyesBase)
+        public void AddEyes(EyesBaseConfig eyesBase)
         {
             _eyeses.Add(eyesBase);
         }
@@ -244,7 +196,7 @@ namespace Applitools
 
         protected abstract ManagerConfig InitConfig();
 
-        protected virtual IEnumerable<EyesBase> GetAllEyes()
+        protected virtual IEnumerable<EyesBaseConfig> GetAllEyes()
         {
             return _eyeses;
         }

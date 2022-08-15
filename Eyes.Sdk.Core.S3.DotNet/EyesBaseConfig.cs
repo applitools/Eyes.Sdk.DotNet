@@ -9,9 +9,11 @@ namespace Applitools
     {
         protected Configuration Config { get; set; }
 
+        internal EyesRunner Runner { get; }
+
         public string ApiKey
         {
-            get => Config.ApiKey;
+            get => Config.ApiKey ?? Runner.ApiKey;
             set => Config.SetApiKey(value);
         }
 
@@ -35,13 +37,13 @@ namespace Applitools
 
         public string ServerUrl
         {
-            get => Config.ServerUrl;
+            get => Config.ServerUrl ?? Runner.ServerUrl;
             set => Config.SetServerUrl(value);
         }
 
         public ProxySettings Proxy
         {
-            get => Config.Proxy;
+            get => Config.Proxy ?? Runner.Proxy;
             set => Config.SetProxy(value);
         }
 
@@ -61,7 +63,7 @@ namespace Applitools
 
         public bool? DontCloseBatches
         {
-            get => Config.DontCloseBatches;
+            get => Config.DontCloseBatches ?? Runner.DontCloseBatches;
             set => Config.SetDontCloseBatches(value);
         }
 
@@ -211,7 +213,7 @@ namespace Applitools
 
         public bool IsOpen { get; protected set; }
 
-        protected EyesBaseConfig(Configuration configuration, ILogHandler logHandler = null)
+        protected EyesBaseConfig(Configuration configuration, ILogHandler logHandler = null, EyesRunner runner = null)
         {
             Config = configuration ?? new Configuration();
             Logger = new Logger();
@@ -219,6 +221,8 @@ namespace Applitools
             {
                 Logger.SetLogHandler(logHandler);
             }
+            Runner = runner ?? new ClassicRunner(logHandler);
+            Runner.AddEyes(this);
         }
 
         public void SetConfiguration(IConfiguration configuration)
