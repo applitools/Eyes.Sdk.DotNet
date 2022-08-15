@@ -34,6 +34,7 @@ namespace Applitools
             : base(configuration, logHandler)
         {
             Runner = runner ?? new ClassicRunner(logHandler);
+            Runner.AddEyes(this);
         }
         
         public TestResults AbortIfNotClosed()

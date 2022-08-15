@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Applitools.Selenium.Commands.Requests;
+﻿using Applitools.Selenium.Commands.Requests;
 
 namespace Applitools.VisualGrid
 {
@@ -35,46 +33,33 @@ namespace Applitools.VisualGrid
         }
 
         internal readonly TestConcurrency testConcurrency_;
-        
-        public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), suiteName, logHandler)
+
+        public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null, bool startServer = true)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), suiteName, logHandler, startServer)
         {
             testConcurrency_ = new TestConcurrency();
         }
 
-        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
-            : this(concurrentOpenSessions, null, logHandler)
+        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null, bool startServer = true)
+            : this(concurrentOpenSessions, null, logHandler, startServer)
         { }
 
-        public VisualGridRunner(int concurrentOpenSessions, string suiteName, ILogHandler logHandler = null)
-            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), suiteName, logHandler)
+        public VisualGridRunner(int concurrentOpenSessions, string suiteName, ILogHandler logHandler = null, bool startServer = true)
+            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), suiteName, logHandler, startServer)
         {
             testConcurrency_ = new TestConcurrency(concurrentOpenSessions, true);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
-            : this(runnerOptions, null, logHandler)
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null, bool startServer = true)
+            : this(runnerOptions, null, logHandler, startServer)
         { }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null) : base(logHandler)
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null, bool startServer = true)
+            : base(logHandler, startServer)
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
             if (logHandler != null) Logger.SetLogHandler(logHandler);
-        }
-
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
-            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null) : base(logHandler)
-        {
-            runnerOptions_ = runnerOptions;
-            testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
-            if (logHandler != null) Logger.SetLogHandler(logHandler);
-        }
-
-        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
-            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
-            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory, logHandler)
-        {
         }
 
         protected override ManagerConfig InitConfig()
@@ -85,11 +70,6 @@ namespace Applitools.VisualGrid
                 Concurrency = testConcurrency_.UserConcurrency,
                 Legacy = testConcurrency_.IsLegacy
             };
-        }
-
-        protected override IEnumerable<IEyesBase> GetAllEyes()
-        {
-            throw new NotImplementedException();
         }
     }
 }

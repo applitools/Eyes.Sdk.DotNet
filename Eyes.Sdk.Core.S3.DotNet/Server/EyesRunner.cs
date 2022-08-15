@@ -16,14 +16,12 @@ namespace Applitools
 {
     public abstract class EyesRunner
     {
-        private string apiKey;
-        private string serverUrl;
-        private ProxySettings proxy;
         private string managerApplitoolsRefId_;
         private ManagerConfig config_;
         private readonly Assembly _actualAssembly;
+        private readonly IList<EyesBaseConfig> _eyeses;
 
-        protected WebSocketClient SocketClient { get; }
+        protected WebSocketClient SocketClient { get; private set; }
 
         public ManagerConfig Config
         {
@@ -31,46 +29,13 @@ namespace Applitools
             set => config_ = value;
         }
 
-        public bool DontCloseBatches { get; set; }
+        public bool? DontCloseBatches { get; set; }
 
-        public string ApiKey
-        {
-            get => apiKey;
-            set
-            {
-                apiKey = value;
-                //foreach (var eye in GetAllEyes())
-                //{
-                //    eye.ApiKey = value;
-                //}
-            }
-        }
+        public string ApiKey { get; set; }
 
-        public string ServerUrl
-        {
-            get => serverUrl;
-            set
-            {
-                serverUrl = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.ServerUrl = value;
-                }
-            }
-        }
+        public string ServerUrl { get; set; }
 
-        public ProxySettings Proxy
-        {
-            get => proxy;
-            set
-            {
-                proxy = value;
-                foreach (var eye in GetAllEyes())
-                {
-                    eye.Proxy = value;
-                }
-            }
-        }
+        public ProxySettings Proxy { get; set; }
 
         public bool IsDisabled { get; set; }
 
@@ -78,21 +43,18 @@ namespace Applitools
 
         public Logger Logger { get; } = new Logger();
 
-        protected EyesRunner(ILogHandler logHandler)
+        protected EyesRunner(ILogHandler logHandler, bool startServer = true)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
             }
 
-            int serverPort = UniversalSdkNativeLoader.Start();
-            
-            SocketClient = new WebSocketClient();
-
-            var url = GetSocketUrl(serverPort);
-            Logger.Log($"Server url: {url}");
-
-            SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
+            _eyeses = new List<EyesBaseConfig>();
+            if (startServer)
+            {
+                StartServer();
+            }
 
             _actualAssembly = GetActualAssembly();
         }
@@ -164,6 +126,11 @@ namespace Applitools
             }
         }
 
+        public void AddEyes(EyesBaseConfig eyesBase)
+        {
+            _eyeses.Add(eyesBase);
+        }
+
         public string GetCoreMakeManager()
         {
             Logger.Log("CoreMakeManager");
@@ -229,7 +196,10 @@ namespace Applitools
 
         protected abstract ManagerConfig InitConfig();
 
-        protected abstract IEnumerable<IEyesBase> GetAllEyes();
+        protected virtual IEnumerable<EyesBaseConfig> GetAllEyes()
+        {
+            return _eyeses;
+        }
 
         private Assembly GetActualAssembly()
         {
@@ -262,7 +232,21 @@ namespace Applitools
 
             return closeAllEyes;
         }
-        
+
+        private void StartServer()
+        {
+            int serverPort = UniversalSdkNativeLoader.Start();
+
+            SocketClient = new WebSocketClient();
+
+            var url = GetSocketUrl(serverPort);
+            Logger.Log($"Server url: {url}");
+
+            SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
+
+            Logger.Log("Connected to Server");
+        }
+
         private string GetSocketUrl(int port)
         {
             return $"ws://localhost:{port}/eyes";
