@@ -9,7 +9,8 @@ namespace Eyes.Selenium.UnitTests
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void DontCloseBatches_VisualGridRunner_DontCloseBatchesPopulatedForEyes(bool dontCloseBatches)
+        [TestCase(null)]
+        public void DontCloseBatches_VisualGridRunner_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
         {
             var runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5), startServer:false);
             var eyes = new Applitools.Selenium.Eyes(runner);
@@ -21,13 +22,32 @@ namespace Eyes.Selenium.UnitTests
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void DontCloseBatches_ClassicRunner_DontCloseBatchesPopulatedForEyes(bool dontCloseBatches)
+        [TestCase(null)]
+        public void DontCloseBatches_ClassicRunner_DontCloseBatchesPopulatedForEyes(bool? dontCloseBatches)
         {
             var runner = new ClassicRunner(false);
             var eyes = new Applitools.Selenium.Eyes(runner);
             runner.DontCloseBatches = dontCloseBatches;
 
             Assert.AreEqual(dontCloseBatches, eyes.DontCloseBatches);
+        }
+
+        [Test]
+        public void DontCloseBatches_VisualGridRunner_NullIsDefault()
+        {
+            var runner = new VisualGridRunner(new RunnerOptions().TestConcurrency(5), startServer: false);
+            var eyes = new Applitools.Selenium.Eyes(runner);
+
+            Assert.IsNull(eyes.DontCloseBatches);
+        }
+
+        [Test]
+        public void DontCloseBatches_ClassicRunner_NullIsDefault()
+        {
+            var runner = new ClassicRunner(false);
+            var eyes = new Applitools.Selenium.Eyes(runner);
+
+            Assert.IsNull(eyes.DontCloseBatches);
         }
     }
 }

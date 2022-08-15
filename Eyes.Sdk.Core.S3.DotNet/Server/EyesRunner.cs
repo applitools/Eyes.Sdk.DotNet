@@ -22,7 +22,7 @@ namespace Applitools
         private string managerApplitoolsRefId_;
         private ManagerConfig config_;
         private readonly Assembly _actualAssembly;
-        private bool _dontCloseBatches;
+        private bool? _dontCloseBatches;
         private readonly IList<EyesBase> _eyeses;
 
         protected WebSocketClient SocketClient { get; private set; }
@@ -33,7 +33,7 @@ namespace Applitools
             set => config_ = value;
         }
 
-        public bool DontCloseBatches
+        public bool? DontCloseBatches
         {
             get => _dontCloseBatches;
             set
