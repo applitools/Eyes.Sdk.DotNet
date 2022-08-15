@@ -22,7 +22,7 @@ namespace Applitools
         private string managerApplitoolsRefId_;
         private ManagerConfig config_;
         private readonly Assembly _actualAssembly;
-        private readonly IList<EyesBase> _eyeses;
+        private readonly IList<EyesBaseConfig> _eyeses;
         private bool? _dontCloseBatches;
 
         protected WebSocketClient SocketClient { get; private set; }
@@ -98,7 +98,7 @@ namespace Applitools
                 Logger.SetLogHandler(logHandler);
             }
 
-            _eyeses = new List<EyesBase>();
+            _eyeses = new List<EyesBaseConfig>();
             if (startServer)
             {
                 StartServer();
@@ -174,7 +174,7 @@ namespace Applitools
             }
         }
 
-        public void AddEyes(EyesBase eyesBase)
+        public void AddEyes(EyesBaseConfig eyesBase)
         {
             _eyeses.Add(eyesBase);
         }
@@ -201,7 +201,7 @@ namespace Applitools
 
         protected abstract ManagerConfig InitConfig();
 
-        protected virtual IEnumerable<EyesBase> GetAllEyes()
+        protected virtual IEnumerable<EyesBaseConfig> GetAllEyes()
         {
             return _eyeses;
         }

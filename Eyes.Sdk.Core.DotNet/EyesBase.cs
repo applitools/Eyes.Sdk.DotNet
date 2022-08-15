@@ -22,8 +22,6 @@ namespace Applitools
     [ComVisible(true)]
     public abstract class EyesBase : EyesBaseConfig//, IEyesBase, IBatchCloser
     {
-        internal EyesRunner Runner { get; private set; }
-
         public override bool IsDisabled
         {
             get => Runner.IsDisabled;
@@ -31,10 +29,8 @@ namespace Applitools
         }
 
         protected EyesBase(EyesRunner runner = null, Configuration configuration = null, ILogHandler logHandler = null)
-            : base(configuration, logHandler)
+            : base(configuration, logHandler, runner)
         {
-            Runner = runner ?? new ClassicRunner(logHandler);
-            Runner.AddEyes(this);
         }
         
         public TestResults AbortIfNotClosed()
