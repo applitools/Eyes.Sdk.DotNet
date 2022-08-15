@@ -1,16 +1,20 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.14] - 2022-08-15
 ### Fixed
 - DontCloseBatches for Runner [Trello 2968] (https://trello.com/c/5Sjvt505)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.7] - 2022-08-15
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium 3.15] - 2022-08-15
 ### Fixed
 - DontCloseBatches for Runner [Trello 2968] (https://trello.com/c/5Sjvt505)
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Sdk.Core 3.13] - 2022-08-15
 ### Fixed
 - DontCloseBatches for Runner [Trello 2968] (https://trello.com/c/5Sjvt505)
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Sdk.Core.S3 3.13] - 2022-08-15
 ### Fixed
 - DontCloseBatches for Runner [Trello 2968] (https://trello.com/c/5Sjvt505)
 
