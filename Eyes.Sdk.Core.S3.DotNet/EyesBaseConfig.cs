@@ -17,6 +17,24 @@ namespace Applitools
             set => Config.SetApiKey(value);
         }
 
+        public string ServerUrl
+        {
+            get => Config.ServerUrl ?? Runner.ServerUrl;
+            set => Config.SetServerUrl(value);
+        }
+
+        public ProxySettings Proxy
+        {
+            get => Config.Proxy ?? Runner.Proxy;
+            set => Config.SetProxy(value);
+        }
+
+        public bool? DontCloseBatches
+        {
+            get => Config.DontCloseBatches ?? Runner.DontCloseBatches;
+            set => Config.SetDontCloseBatches(value);
+        }
+
         public string TestName
         {
             get => Config.TestName;
@@ -35,18 +53,6 @@ namespace Applitools
             set => Config.SetViewportSize(value);
         }
 
-        public string ServerUrl
-        {
-            get => Config.ServerUrl ?? Runner.ServerUrl;
-            set => Config.SetServerUrl(value);
-        }
-
-        public ProxySettings Proxy
-        {
-            get => Config.Proxy ?? Runner.Proxy;
-            set => Config.SetProxy(value);
-        }
-
         public DebugScreenshotHandler DebugScreenshotProvider
         {
             get => Config.DebugScreenshotProvider;
@@ -59,12 +65,6 @@ namespace Applitools
         {
             get => Config.StitchMode;
             set => Config.SetStitchMode(value);
-        }
-
-        public bool? DontCloseBatches
-        {
-            get => Config.DontCloseBatches ?? Runner.DontCloseBatches;
-            set => Config.SetDontCloseBatches(value);
         }
 
         public int? WaitBeforeScreenshots
