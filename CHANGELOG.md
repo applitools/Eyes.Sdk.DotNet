@@ -1,3 +1,7 @@
+## [Eyes.Selenium4 3.15] - 2022-08-15
+### Updated
+- Match to latest Eyes.Selenium
+
 ## [Eyes.Selenium4 3.14] - 2022-08-15
 ### Fixed
 - DontCloseBatches for Runner [Trello 2968] (https://trello.com/c/5Sjvt505)
