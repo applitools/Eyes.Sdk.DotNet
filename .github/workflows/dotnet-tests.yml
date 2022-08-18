@@ -19,4 +19,4 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           java-version: ${{ matrix.dotnet-version }}
-      - run: dotnet --version
+      - run: dotnet test /Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj

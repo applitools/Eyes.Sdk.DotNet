@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		buildProjects.sh = buildProjects.sh
 		CHANGELOG.md = CHANGELOG.md
 		deploy.sh = deploy.sh
+		.github\workflows\dotnet-tests.yml = .github\workflows\dotnet-tests.yml
 		extractChangeLog.sh = extractChangeLog.sh
 		genericSelenium4.sh = genericSelenium4.sh
 		genericTests.sh = genericTests.sh
@@ -71,7 +72,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium4.Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.E2ETests", "Tests\Eyes.Selenium.E2ETests\Eyes.Selenium.E2ETests.csproj", "{FB82C15F-5702-4C21-8A45-447E7C6179AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Selenium.UnitTests", "Tests\Eyes.Selenium.UnitTests\Eyes.Selenium.UnitTests.csproj", "{F50AFD70-EEAF-4605-A29E-40BCAAF2E1E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.UnitTests", "Tests\Eyes.Selenium.UnitTests\Eyes.Selenium.UnitTests.csproj", "{F50AFD70-EEAF-4605-A29E-40BCAAF2E1E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
