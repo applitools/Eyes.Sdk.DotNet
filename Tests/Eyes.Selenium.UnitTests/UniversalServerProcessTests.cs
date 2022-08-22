@@ -22,7 +22,7 @@ namespace Eyes.Selenium.UnitTests
             var processName = "UniversalServerRunner";
             var processFileName = $"{processName}.exe";
 
-            _toolProcess = StartToolProcess(processFileName, "1000");
+            _toolProcess = StartToolProcess(processFileName);
 
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
@@ -30,11 +30,12 @@ namespace Eyes.Selenium.UnitTests
             var universalServerProcessName = GetUniversalServerProcessName();
             var universalServerProcess = GetUniversalServerProcess(universalServerRunnerProcess, universalServerProcessName);
             Assert.NotNull(universalServerProcess, $"{universalServerProcessName} Process should Exist");
-            
-            Thread.Sleep(2000);
+
+            Console.WriteLine("1");
+            Thread.Sleep(5000);
 
             universalServerProcess = GetUniversalServerProcess(universalServerRunnerProcess, universalServerProcessName);
-            Assert.Null(universalServerProcess, $"{universalServerProcessName} Process should be Exited");
+            Assert.Null(universalServerProcess, $"{universalServerProcessName} Process should not Exists");
         }
 
         [Test]
@@ -44,7 +45,7 @@ namespace Eyes.Selenium.UnitTests
 
             var processName = "UniversalServerRunner";
             var processFileName = $"{processName}.exe";
-
+            Debug.WriteLine(processFileName);
             _toolProcess = StartToolProcess(processFileName);
 
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
@@ -59,7 +60,7 @@ namespace Eyes.Selenium.UnitTests
             Thread.Sleep(2000);
 
             universalServerProcess = GetUniversalServerProcess(universalServerRunnerProcess, universalServerProcessName);
-            Assert.Null(universalServerProcess, $"{universalServerProcessName} Process should be Exited");
+            Assert.Null(universalServerProcess, $"{universalServerProcessName} Process should not Exists");
         }
 
         [TearDown]
@@ -74,16 +75,16 @@ namespace Eyes.Selenium.UnitTests
             return universalServerRunnerProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == universalServerProcessName);
         }
 
-        private static Process StartToolProcess(string processFileName, string timeout = null)
+        private static Process StartToolProcess(string processFileName)
         {
             var process = new Process
             {
-                StartInfo = new ProcessStartInfo(processFileName, timeout)
+                StartInfo = new ProcessStartInfo(processFileName)
                 {
                     UseShellExecute = false,
-                    RedirectStandardInput = false,
-                    RedirectStandardOutput = false,
-                    CreateNoWindow = false
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
                 }
             };
             process.Start();

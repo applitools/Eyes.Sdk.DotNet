@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using Applitools;
 
 namespace UniversalServerRunner
@@ -13,15 +10,9 @@ namespace UniversalServerRunner
         static void Main(string[] args)
         {
             _port = UniversalSdkNativeLoader.Start();
-
-            int timeoutMilliseconds;
-            if (int.TryParse(args.FirstOrDefault(), out timeoutMilliseconds))
-            {
-                Thread.Sleep(timeoutMilliseconds);
-                return;
-            }
-
+            
             Console.ReadKey();
+            Environment.Exit(0);
         }
     }
 }
