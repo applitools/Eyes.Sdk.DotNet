@@ -10,8 +10,13 @@ namespace UniversalServerRunner
         static void Main(string[] args)
         {
             _port = UniversalSdkNativeLoader.Start();
+
+            char key;
+            do
+            {
+                key = Console.ReadKey().KeyChar;
+            } while (key != '1');
             
-            Console.ReadKey();
             Environment.Exit(0);
         }
     }
