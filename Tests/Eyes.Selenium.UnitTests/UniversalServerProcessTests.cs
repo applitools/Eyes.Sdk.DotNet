@@ -24,7 +24,7 @@ namespace Eyes.Selenium.UnitTests
             var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
             var processFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processFileName);
             _toolProcess = StartToolProcess(processFilePath);
-
+            Thread.Sleep(2000);
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
 
@@ -48,7 +48,7 @@ namespace Eyes.Selenium.UnitTests
             var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
             var processFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processFileName);
             _toolProcess = StartToolProcess(processFilePath);
-
+            Thread.Sleep(2000);
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
 
