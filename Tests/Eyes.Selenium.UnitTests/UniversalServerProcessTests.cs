@@ -44,7 +44,7 @@ namespace Eyes.Selenium.UnitTests
             var currentProcess = Process.GetCurrentProcess();
 
             var processName = "UniversalServerRunner";
-            var processFileName = $"{processName}.exe";
+            var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
             Debug.WriteLine(processFileName);
             _toolProcess = StartToolProcess(processFileName);
 
