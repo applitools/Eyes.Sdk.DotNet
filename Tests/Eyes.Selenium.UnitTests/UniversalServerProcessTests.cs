@@ -15,7 +15,7 @@ namespace Eyes.Selenium.UnitTests
     {
         private Process _toolProcess;
 
-        [Test]
+        //[Test]
         public void UniversalServerProcess_NormalToolProcessExit_UniversalServerProcessExited()
         {
             var currentProcess = Process.GetCurrentProcess();
@@ -39,7 +39,7 @@ namespace Eyes.Selenium.UnitTests
             Assert.Null(universalServerProcess, $"{universalServerProcessName} Process should not Exists");
         }
 
-        [Test]
+        //[Test]
         public void UniversalServerProcess_KillToolProcess_UniversalServerProcessExited()
         {
             var currentProcess = Process.GetCurrentProcess();
