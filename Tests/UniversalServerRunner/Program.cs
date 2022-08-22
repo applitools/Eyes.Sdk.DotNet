@@ -17,12 +17,10 @@ namespace UniversalServerRunner
             int timeoutMilliseconds;
             if (int.TryParse(args.FirstOrDefault(), out timeoutMilliseconds))
             {
-                File.WriteAllText(@"C:\Users\EP\Documents\1.txt", timeoutMilliseconds.ToString());
                 Thread.Sleep(timeoutMilliseconds);
                 return;
             }
 
-            File.WriteAllText(@"C:\Users\EP\Documents\1.txt", "ReadKey");
             Console.ReadKey();
         }
     }
