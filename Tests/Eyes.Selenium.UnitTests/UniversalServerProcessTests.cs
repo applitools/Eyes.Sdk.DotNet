@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
@@ -20,7 +21,7 @@ namespace Eyes.Selenium.UnitTests
             var currentProcess = Process.GetCurrentProcess();
 
             var processName = "UniversalServerRunner";
-            var processFileName = $"{processName}.exe";
+            var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
 
             _toolProcess = StartToolProcess(processFileName);
 
@@ -77,6 +78,11 @@ namespace Eyes.Selenium.UnitTests
 
         private static Process StartToolProcess(string processFileName)
         {
+            if (File.Exists(processFileName) == false)
+            {
+                throw new Exception($"The file {processFileName} does not exist.");
+            }
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo(processFileName)
@@ -87,6 +93,7 @@ namespace Eyes.Selenium.UnitTests
                     CreateNoWindow = true
                 }
             };
+
             process.Start();
             return process;
         }
