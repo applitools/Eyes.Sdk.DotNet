@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Applitools;
 
 namespace UniversalServerRunner
@@ -11,12 +12,8 @@ namespace UniversalServerRunner
         {
             _port = UniversalSdkNativeLoader.Start();
 
-            char key;
-            do
-            {
-                key = Console.ReadKey().KeyChar;
-            } while (key != '1');
-            
+            Thread.Sleep(30000);
+
             Environment.Exit(0);
         }
     }
