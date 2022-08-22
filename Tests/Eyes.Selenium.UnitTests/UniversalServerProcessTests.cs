@@ -22,8 +22,8 @@ namespace Eyes.Selenium.UnitTests
 
             var processName = "UniversalServerRunner";
             var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
-
-            _toolProcess = StartToolProcess(processFileName);
+            var processFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processFileName);
+            _toolProcess = StartToolProcess(processFilePath);
 
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
@@ -46,8 +46,8 @@ namespace Eyes.Selenium.UnitTests
 
             var processName = "UniversalServerRunner";
             var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
-            Debug.WriteLine(processFileName);
-            _toolProcess = StartToolProcess(processFileName);
+            var processFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processFileName);
+            _toolProcess = StartToolProcess(processFilePath);
 
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
