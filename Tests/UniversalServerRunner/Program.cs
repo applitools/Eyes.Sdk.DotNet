@@ -10,7 +10,7 @@ namespace UniversalServerRunner
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Started");
+            Console.WriteLine("Started!");
 
             _port = UniversalSdkNativeLoader.Start();
 
