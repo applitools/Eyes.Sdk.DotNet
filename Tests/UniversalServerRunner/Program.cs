@@ -11,6 +11,8 @@ namespace UniversalServerRunner
         {
             _port = UniversalSdkNativeLoader.Start();
 
+            Console.WriteLine("Runner Started");
+
             char key;
             do
             {
