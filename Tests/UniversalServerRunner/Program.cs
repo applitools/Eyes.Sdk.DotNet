@@ -13,13 +13,7 @@ namespace UniversalServerRunner
 
             Console.WriteLine("Runner Started");
 
-            char key;
-            do
-            {
-                key = Console.ReadKey().KeyChar;
-            } while (key != '1');
-            
-            Environment.Exit(0);
+            Console.ReadLine();
         }
     }
 }
