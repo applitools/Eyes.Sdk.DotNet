@@ -18,7 +18,7 @@ CUR_BINARY = str(CUR_BINARY) + ".exe" if sys.platform == 'win32' else ''
 
 @pytest.mark.parametrize("reason", ["normal"])
 def test_automatic_eyes_universal_termination_on_python_termination(reason):
-    net_process = Popen([CUR_BINARY], stdin=PIPE, stdout=PIPE)
+    net_process = Popen(["dotnet", CUR_BINARY], stdin=PIPE, stdout=PIPE)
     output_line = net_process.stdout.readline()
     assert output_line.startswith(b"Runner Started")
     (eyes_universal,) = psutil.Process(net_process.pid).children()
