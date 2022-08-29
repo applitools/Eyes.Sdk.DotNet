@@ -36,7 +36,7 @@ def test_automatic_eyes_universal_termination_on_python_termination(reason):
 def test_parallel_eyes_universal_termination_on_python_termination(reason):
     processes = []
     for _ in range(2):
-        net_process = Popen([CUR_BINARY], stdin=PIPE, stdout=PIPE)
+        net_process = Popen(["dotnet", CUR_BINARY], stdin=PIPE, stdout=PIPE)
         output_line = net_process.stdout.readline()
         assert output_line.startswith(b"Runner Started")
         (eyes_universal,) = psutil.Process(net_process.pid).children()
