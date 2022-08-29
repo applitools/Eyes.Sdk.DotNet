@@ -15,7 +15,6 @@ platform2dir = {
 BINARIES_DIR = Path(__file__).parent / "UniversalServerRunner" / "build"
 CUR_BINARY = BINARIES_DIR / "UniversalServerRunner"
 CUR_BINARY = str(CUR_BINARY) + (".exe" if sys.platform == 'win32' else '')
-os.chmod (CUR_BINARY, 0o755)
 
 @pytest.mark.parametrize("reason", ["normal"])
 def test_automatic_eyes_universal_termination_on_python_termination(reason):
