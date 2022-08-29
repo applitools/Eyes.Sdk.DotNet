@@ -5,6 +5,7 @@ from time import sleep
 
 import psutil
 import pytest
+import os
 
 platform2dir = {
     "win32": "win",
@@ -14,11 +15,11 @@ platform2dir = {
 BINARIES_DIR = Path(__file__).parent / "UniversalServerRunner" / "build"
 CUR_BINARY = BINARIES_DIR / "UniversalServerRunner"
 CUR_BINARY = str(CUR_BINARY) + ".exe" if sys.platform == 'win32' else ''
-
+os.chmod (CUR_BINARY, 0o755)
 
 @pytest.mark.parametrize("reason", ["normal"])
 def test_automatic_eyes_universal_termination_on_python_termination(reason):
-    net_process = Popen(["dotnet", CUR_BINARY], stdin=PIPE, stdout=PIPE)
+    net_process = Popen([CUR_BINARY], stdin=PIPE, stdout=PIPE)
     output_line = net_process.stdout.readline()
     assert output_line.startswith(b"Runner Started")
     (eyes_universal,) = psutil.Process(net_process.pid).children()
@@ -36,7 +37,7 @@ def test_automatic_eyes_universal_termination_on_python_termination(reason):
 def test_parallel_eyes_universal_termination_on_python_termination(reason):
     processes = []
     for _ in range(2):
-        net_process = Popen(["dotnet", CUR_BINARY], stdin=PIPE, stdout=PIPE)
+        net_process = Popen([CUR_BINARY], stdin=PIPE, stdout=PIPE)
         output_line = net_process.stdout.readline()
         assert output_line.startswith(b"Runner Started")
         (eyes_universal,) = psutil.Process(net_process.pid).children()
