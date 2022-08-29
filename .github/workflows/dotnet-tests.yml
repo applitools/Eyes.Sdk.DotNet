@@ -7,16 +7,22 @@ jobs:
 
   dotnet-tests:
     strategy:
+      fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        dotnet-version: [ "5.0.x" ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
       - uses: actions/setup-dotnet@v2
         with:
-          java-version: ${{ matrix.dotnet-version }}
-      - run: dotnet test /Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
+          dotnet-version: "3.1"
+      - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
+      - run: dotnet build Tests/UniversalServerRunner/UniversalServerRunner.csproj
+      - run: pip install pytest psutil
+      - run: pytest -vv Tests/test_usdk_terminates.py
