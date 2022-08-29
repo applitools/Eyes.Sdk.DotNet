@@ -11,8 +11,8 @@ platform2dir = {
     "linux": "linux",
     "darwin": "mac"
 }
-BINARIES_DIR = Path(__file__).parent / "UniversalServerRunner"
-CUR_BINARY = BINARIES_DIR / platform2dir[sys.platform] / "UniversalServerRunner"
+BINARIES_DIR = Path(__file__).parent / "UniversalServerRunner" / "build"
+CUR_BINARY = BINARIES_DIR / "UniversalServerRunner"
 CUR_BINARY = str(CUR_BINARY) + ".exe" if sys.platform == 'win32' else ''
 
 
