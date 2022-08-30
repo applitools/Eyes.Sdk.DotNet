@@ -5,16 +5,16 @@ from time import sleep
 
 import psutil
 import pytest
+import os
 
 platform2dir = {
     "win32": "win",
     "linux": "linux",
     "darwin": "mac"
 }
-BINARIES_DIR = Path(__file__).parent / "UniversalServerRunner"
-CUR_BINARY = BINARIES_DIR / platform2dir[sys.platform] / "UniversalServerRunner"
-CUR_BINARY = str(CUR_BINARY) + ".exe" if sys.platform == 'win32' else ''
-
+BINARIES_DIR = Path(__file__).parent / "UniversalServerRunner" / "build"
+CUR_BINARY = BINARIES_DIR / "UniversalServerRunner"
+CUR_BINARY = str(CUR_BINARY) + (".exe" if sys.platform == 'win32' else '')
 
 @pytest.mark.parametrize("reason", ["normal"])
 def test_automatic_eyes_universal_termination_on_python_termination(reason):
