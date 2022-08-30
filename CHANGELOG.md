@@ -6,9 +6,9 @@
 ### Fixed
 - Universal Server Child Process
 
-## [Eyes.Sdk.Universal.Core 2.10.5] - 2022-08-15
+## [Eyes.Sdk.Universal.Core 2.10.8] - 2022-08-30
 ### Updated
-- Universal Server Version to 2.10.5
+- Universal Server Version to 2.10.8
 
 ## [Eyes.Selenium4 3.15] - 2022-08-15
 ### Updated
