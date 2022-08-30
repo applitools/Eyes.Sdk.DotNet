@@ -93,13 +93,14 @@ namespace Applitools
         {
             var process = new Process
             {
-                StartInfo = new ProcessStartInfo
+                StartInfo = new ProcessStartInfo(path, "--no-singleton --shutdown-mode stdin")
                 {
-                    FileName = path,
                     UseShellExecute = false,
+                    RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true
-                }
+                },
+                EnableRaisingEvents = true
             };
 
             process.Start();

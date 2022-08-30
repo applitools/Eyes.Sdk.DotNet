@@ -1,3 +1,15 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Universal Server Child Process
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Universal Server Child Process
+
+## [Eyes.Sdk.Universal.Core 2.10.5] - 2022-08-15
+### Updated
+- Universal Server Version to 2.10.5
+
 ## [Eyes.Selenium4 3.15] - 2022-08-15
 ### Updated
 - Match to latest Eyes.Selenium
