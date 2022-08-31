@@ -9,7 +9,7 @@ namespace Applitools
 
     public class UniversalSdkNativeLoader
     {
-        private static int port_ = 21077;
+        private static int port_;
         private static Process nativeProc_;
 
         public static int Start()
@@ -110,14 +110,23 @@ namespace Applitools
 
         private static int GetPort(Process process)
         {
+            string portStr;
             try
             {
-                var portStr = process.StandardOutput.ReadLine();
-                return string.IsNullOrEmpty(portStr) ? port_ : int.Parse(portStr);
+                portStr = process.StandardOutput.ReadLine();
             }
-            catch
+            catch (Exception e)
             {
-                return port_;
+                throw new Exception($"Unable to read Universal Server StandardOutput. Process HasExited: {process.HasExited}", e);
+            }
+
+            try
+            {
+                return int.Parse(portStr);
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"'{portStr}' is not valid port number", e);
             }
         }
 
