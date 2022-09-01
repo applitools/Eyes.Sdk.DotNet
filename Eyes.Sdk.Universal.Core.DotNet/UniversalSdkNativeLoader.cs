@@ -11,6 +11,7 @@ namespace Applitools
     {
         private static int port_;
         private static Process nativeProc_;
+        private static object _lockObject = new object();
 
         public static int Start()
         {
@@ -26,51 +27,54 @@ namespace Applitools
 
         private static int TryStartProcess_()
         {
-            if (nativeProc_ == null || nativeProc_.HasExited)
+            lock (_lockObject)
             {
-                string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                string path;
-                string os, suffix;
-                if (OperatingSystemChecker.IsWindows())
+                if (nativeProc_ == null || nativeProc_.HasExited)
                 {
-                    os = "win-x64";
-                    suffix = "win.exe";
-                    path = GetServerFilePath(basePath, os, suffix);
+                    string basePath = AppDomain.CurrentDomain.BaseDirectory;
+                    string path;
+                    string os, suffix;
+                    if (OperatingSystemChecker.IsWindows())
+                    {
+                        os = "win-x64";
+                        suffix = "win.exe";
+                        path = GetServerFilePath(basePath, os, suffix);
+
+                        if (File.Exists(path) == false)
+                        {
+                            CopyCorePackageFolder(basePath);
+                        }
+                    }
+                    else if (OperatingSystemChecker.IsMacOs())
+                    {
+                        os = "osx-x64";
+                        suffix = "macos";
+                        path = GetServerFilePath(basePath, os, suffix);
+                        CommandExecutor.ExecCommand($"chmod 755 {path}");
+                    }
+                    else if (OperatingSystemChecker.IsLinux())
+                    {
+                        os = "linux-x64";
+                        suffix = "linux";
+                        path = GetServerFilePath(basePath, os, suffix);
+                        CommandExecutor.ExecCommand($"chmod 755 {path}");
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
+                    }
 
                     if (File.Exists(path) == false)
                     {
-                        CopyCorePackageFolder(basePath);
+                        throw new Exception($"Universal Server file '{path}' does not exist.");
                     }
-                }
-                else if (OperatingSystemChecker.IsMacOs())
-                {
-                    os = "osx-x64";
-                    suffix = "macos";
-                    path = GetServerFilePath(basePath, os, suffix);
-                    CommandExecutor.ExecCommand($"chmod 755 {path}");
-                }
-                else if (OperatingSystemChecker.IsLinux())
-                {
-                    os = "linux-x64";
-                    suffix = "linux";
-                    path = GetServerFilePath(basePath, os, suffix);
-                    CommandExecutor.ExecCommand($"chmod 755 {path}");
-                }
-                else
-                {
-                    throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
-                }
 
-                if (File.Exists(path) == false)
-                {
-                    throw new Exception($"Universal Server file '{path}' does not exist.");
+                    nativeProc_ = StartProcess(path);
+
+                    port_ = GetPort(nativeProc_);
+
+                    Debug.WriteLine($"Universal Server process ID: {nativeProc_.Id}.");
                 }
-
-                nativeProc_ = StartProcess(path);
-                
-                port_ = GetPort(nativeProc_);
-
-                Debug.WriteLine($"Universal Server process ID: {nativeProc_.Id}.");
             }
 
             return port_;
