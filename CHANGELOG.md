@@ -1,8 +1,12 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.16] - 2022-09-02
 ### Fixed
 - Universal Server Child Process
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.8] - 2022-09-02
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium 3.16] - 2022-09-02
 ### Fixed
 - Universal Server Child Process
 
