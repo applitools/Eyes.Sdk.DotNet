@@ -38,4 +38,4 @@ jobs:
       - run: chmod +x dotnet-install.sh
       - run: ./dotnet-install.sh -c 3.1 --install-dir /usr/share/dotnet
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
-      - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.E2ETests.csproj
+      - run: dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
