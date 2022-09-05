@@ -87,4 +87,8 @@
 		<None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
 		<None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="runtimes\linux-alpine\native\" />
+	</ItemGroup>
 </Project>

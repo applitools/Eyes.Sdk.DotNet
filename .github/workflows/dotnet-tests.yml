@@ -26,3 +26,21 @@ jobs:
       - run: dotnet build Tests/UniversalServerRunner/UniversalServerRunner.csproj
       - run: pip install pytest psutil
       - run: pytest -vv Tests/test_usdk_terminates.py
+
+  unit-tests-alpine:
+    needs: dist-build
+    runs-on: ubuntu-latest
+    container: "alpine:latest"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{inputs.ref || github.ref}}
+      - uses: actions/download-artifact@v3
+        with:
+          name: packages
+      - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib wget
+      - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
+      - run: wget https://dot.net/v1/dotnet-install.sh
+      - run: chmod +x dotnet-install.sh
+      - run: ./dotnet-install.sh -c 3.1 --install-dir /usr/share/dotnet
+      - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj

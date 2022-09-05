@@ -22,7 +22,7 @@ namespace Applitools.Generated.Selenium.Tests
         protected IWebDriver driver;
         protected IWebDriver webDriver;
         protected EyesRunner runner;
-        protected Eyes eyes;
+        protected Applitools.Selenium.Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
@@ -57,7 +57,7 @@ namespace Applitools.Generated.Selenium.Tests
                     }
                     else
                     {
-                        driver = CreateChromeDriver(headless: headless);
+                        driver = CreateChromeDriver2(headless: headless);
                     }
                     break;
                 case browserType.Firefox:
