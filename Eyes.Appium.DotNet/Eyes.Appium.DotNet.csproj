@@ -8,13 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>5.8</Version>
+    <Version>5.9</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes appium</PackageTags>
     <PackageReleaseNotes>### Updated
-- Match to latest Eyes.Selenium
+- Removed Galaxy S8, S8 Plus, Note 8 and TWO_VERSIONS_BACK for Android
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Appium</PackageId>
