@@ -28,7 +28,6 @@ jobs:
       - run: pytest -vv Tests/test_usdk_terminates.py
 
   unit-tests-alpine:
-    needs: dist-build
     runs-on: ubuntu-latest
     container: "alpine:latest"
     steps:
