@@ -27,16 +27,11 @@ jobs:
       - run: pip install pytest psutil
       - run: pytest -vv Tests/test_usdk_terminates.py
 
-  unit-tests-alpine:
+  dotnet-tests-alpine:
     runs-on: ubuntu-latest
     container: "alpine:latest"
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{inputs.ref || github.ref}}
-      - uses: actions/download-artifact@v3
-        with:
-          name: packages
       - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib wget
       - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
       - run: wget https://dot.net/v1/dotnet-install.sh
