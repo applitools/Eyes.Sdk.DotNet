@@ -9,7 +9,6 @@ namespace Applitools.VisualGrid
     {
         [EnumMember(Value = "latest")] LATEST,
         [EnumMember(Value = "latest-1")] ONE_VERSION_BACK,
-        [EnumMember(Value = "latest-2")] TWO_VERSIONS_BACK,
         [EnumMember(Value = "canary")] CANARY,
     }
 }

@@ -1,3 +1,19 @@
+## [Eyes.Appium vNext]
+### Updated
+- Removed Galaxy S8, S8 Plus, Note 8 and TWO_VERSIONS_BACK for Android
+
+## [Eyes.Selenium vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Universal.Core 2.10.9] - 2022-09-05
+### Updated
+- Universal Server Version to 2.10.9
+
 ## [Eyes.Selenium4 3.16] - 2022-09-02
 ### Fixed
 - Universal Server Child Process
