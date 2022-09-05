@@ -1,6 +1,5 @@
 ﻿using Applitools.Tests.Utils;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
@@ -22,7 +21,7 @@ namespace Applitools.Generated.Selenium.Tests
         protected IWebDriver driver;
         protected IWebDriver webDriver;
         protected EyesRunner runner;
-        protected Applitools.Selenium.Eyes eyes;
+        protected Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
@@ -57,7 +56,7 @@ namespace Applitools.Generated.Selenium.Tests
                     }
                     else
                     {
-                        driver = CreateChromeDriver2(headless: headless);
+                        driver = CreateChromeDriver(headless: headless);
                     }
                     break;
                 case browserType.Firefox:
