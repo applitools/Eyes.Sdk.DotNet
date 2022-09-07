@@ -39,4 +39,4 @@ jobs:
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
       - run: dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
         env:
-          DRIVER_PATH: /usr/bin/chromedriver
+          DRIVER_PATH: /usr/bin
