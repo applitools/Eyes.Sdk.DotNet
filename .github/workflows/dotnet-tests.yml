@@ -35,7 +35,7 @@ jobs:
       - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib wget
       - run: apk add chromium chromium-chromedriver xvfb
       - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
-      - run: wget https://dot.net/v1/dotnet-install.sh
+      - run: curl -OL https://dot.net/v1/dotnet-install.sh
       - run: chmod +x dotnet-install.sh
       - run: ./dotnet-install.sh -c 3.1 --install-dir /usr/share/dotnet
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
