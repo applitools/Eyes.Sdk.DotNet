@@ -1,9 +1,13 @@
-## [Eyes.Selenium4 vNext]
+## [Eyes.Selenium4 3.18] - 2022-09-07
 ### Updated
 - Match to latest Universal Server
 - Added Support for Alpine
 
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 5.10] - 2022-09-07
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium 3.18] - 2022-09-07
 ### Updated
 - Match to latest Universal Server
 - Added Support for Alpine
