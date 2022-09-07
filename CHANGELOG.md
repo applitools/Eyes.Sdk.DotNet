@@ -1,3 +1,17 @@
+## [Eyes.Selenium4 vNext]
+### Updated
+- Match to latest Universal Server
+- Added Support for Alpine
+
+## [Eyes.Selenium vNext]
+### Updated
+- Match to latest Universal Server
+- Added Support for Alpine
+
+## [Eyes.Sdk.Universal.Core 2.11.1] - 2022-09-08
+### Updated
+- Universal Server Version to 2.11.1
+
 ## [Eyes.Selenium4 3.17] - 2022-09-05
 ### Updated
 - Match to latest Universal Server
