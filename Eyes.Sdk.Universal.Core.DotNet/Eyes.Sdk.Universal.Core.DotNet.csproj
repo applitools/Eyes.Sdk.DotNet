@@ -10,7 +10,7 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>2.10.9</Version>
+		<Version>2.11.1</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
@@ -86,5 +86,9 @@
 	<ItemGroup>
 		<None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
 		<None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="runtimes\linux-alpine\native\" />
 	</ItemGroup>
 </Project>

@@ -25,6 +25,7 @@ namespace Eyes.Selenium.E2ETests
             //  if (CI != null)
             {
                 options.AddArguments("headless");
+                options.AddArguments("no-sandbox");
             }
             // Use Chrome browser
             driver = new ChromeDriver(DRIVER_PATH, options);

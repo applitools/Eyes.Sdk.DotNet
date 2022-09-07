@@ -54,8 +54,16 @@ namespace Applitools
                     }
                     else if (OperatingSystemChecker.IsLinux())
                     {
-                        os = "linux-x64";
-                        suffix = "linux";
+                        if (File.Exists("/etc/alpine-release"))
+                        {
+                            os = "linux-alpine";
+                            suffix = "alpine";
+                        }
+                        else
+                        {
+                            os = "linux-x64";
+                            suffix = "linux";
+                        }
                         path = GetServerFilePath(basePath, os, suffix);
                         CommandExecutor.ExecCommand($"chmod 755 {path}");
                     }

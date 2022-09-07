@@ -1,6 +1,5 @@
 ﻿using Applitools.Tests.Utils;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
