@@ -32,7 +32,7 @@ jobs:
     container: "alpine:latest"
     steps:
       - uses: actions/checkout@v3
-      - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib wget
+      - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib curl
       - run: apk add chromium chromium-chromedriver xvfb
       - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
       - run: curl -OL https://dot.net/v1/dotnet-install.sh
