@@ -95,6 +95,8 @@ namespace Applitools.Appium
 
             ApiKey = seleniumEyes_.ApiKey;
             Runner.ApiKey = seleniumEyes_.Runner.ApiKey;
+            Runner.ServerUrl = seleniumEyes_.Runner.ServerUrl;
+            Runner.Proxy = seleniumEyes_.Runner.Proxy;
             AppName = seleniumEyes_.AppName;
             TestName = seleniumEyes_.TestName;
             ViewportSize = seleniumEyes_.ViewportSize;
