@@ -1,20 +1,20 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.19] - 2022-09-13
 ### Fixed
 - Universal C# 3.5.0 - Delete Test Result not Working (#2) [Trello 2884] (https://trello.com/c/1D5u95rZ)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.11] - 2022-09-13
 ### Fixed
 - Universal C# 3.5.0 - Delete Test Result not Working (#2) [Trello 2884] (https://trello.com/c/1D5u95rZ)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.19] - 2022-09-13
 ### Fixed
 - Universal C# 3.5.0 - Delete Test Result not Working (#2) [Trello 2884] (https://trello.com/c/1D5u95rZ)
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Sdk.Core 3.14] - 2022-09-13
 ### Fixed
 - Universal C# 3.5.0 - Delete Test Result not Working (#2) [Trello 2884] (https://trello.com/c/1D5u95rZ)
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Sdk.Core.S3 3.14] - 2022-09-13
 ### Fixed
 - Universal C# 3.5.0 - Delete Test Result not Working (#2) [Trello 2884] (https://trello.com/c/1D5u95rZ)
 
