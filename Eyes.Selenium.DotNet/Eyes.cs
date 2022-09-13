@@ -629,6 +629,8 @@ namespace Applitools.Selenium
             }
             driver_ = driver;
             Runner.ApiKey = ApiKey;
+            Runner.ServerUrl = ServerUrl;
+            Runner.Proxy = Proxy;
 
             if (IsDisabled)
             {

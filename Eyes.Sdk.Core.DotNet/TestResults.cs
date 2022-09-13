@@ -151,9 +151,10 @@ namespace Applitools
                     {
                         TestId = Id,
                         BatchId = BatchId,
-                        ServerUrl = CommonData.DefaultServerUrl,
+                        SecretToken = SecretToken,
+                        ServerUrl = Runner.ServerUrl,
                         ApiKey = Runner.ApiKey,
-                        SecretToken = SecretToken
+                        Proxy = Runner.Proxy
                     }
                 }
             }).Wait();
