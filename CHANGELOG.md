@@ -1,12 +1,12 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.20] - 2022-09-16
 ### Updated
 - Match to latest Universal Server
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.12] - 2022-09-16
 ### Updated
 - Match to latest Universal Server
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.20] - 2022-09-16
 ### Updated
 - Match to latest Universal Server
 
