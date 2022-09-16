@@ -1,21 +1,20 @@
-## [Eyes.Selenium4 vNext]
+## [Eyes.Selenium4 3.21] - 2022-09-16
 ### Updated
 - Created testing client for eyes-universal
 - Using lazyLoad.waitingTime as a delay between stitches by default
 - Using proxy while polling for the result of the nml command
 
-## [Eyes.Appium vNext]
+## [Eyes.Appium 5.13] - 2022-09-16
 ### Updated
 - Created testing client for eyes-universal
 - Using lazyLoad.waitingTime as a delay between stitches by default
 - Using proxy while polling for the result of the nml command
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.21] - 2022-09-16
 ### Updated
 - Created testing client for eyes-universal
 - Using lazyLoad.waitingTime as a delay between stitches by default
 - Using proxy while polling for the result of the nml command
-
 ## [Eyes.Sdk.Universal.Core 2.12.1]
 ### Updated
 - Universal Server Version to 2.12.1
