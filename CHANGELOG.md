@@ -1,3 +1,19 @@
+## [Eyes.Selenium vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Appium vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Universal.Core 2.12.0] - 2022-09-16
+### Updated
+- Universal Server Version to 2.12.0
+
 ## [Eyes.Selenium4 3.19] - 2022-09-13
 ### Fixed
 - Universal C# 3.5.0 - Delete Test Result not Working (#2) [Trello 2884] (https://trello.com/c/1D5u95rZ)
