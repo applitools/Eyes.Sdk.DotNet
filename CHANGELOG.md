@@ -1,3 +1,7 @@
+## [Eyes.Appium vNext]
+### Fixed
+- C# Appium | Error using IWebElement for Region on Web [Trello 3028] (https://trello.com/c/RsA9XpkO)
+
 ## [Eyes.Selenium4 3.21] - 2022-09-16
 ### Updated
 - Created testing client for eyes-universal

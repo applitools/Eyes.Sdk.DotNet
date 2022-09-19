@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Applitools.Fluent;
-using Applitools.Utils;
+using Eyes.Appium.DotNet.Utils;
 using OpenQA.Selenium;
 
 namespace Applitools.Appium
@@ -21,12 +21,12 @@ namespace Applitools.Appium
         
         public TRegion ToRegion()
         {
-            var elementId = element_.GetPrivateFieldValue<string>("elementId");
+            var elementId = element_.GetElementId("elementId");
 
             return new RegionElement
             {
                 ElementId = elementId
             };
-        }
+        } 
     }
 }
