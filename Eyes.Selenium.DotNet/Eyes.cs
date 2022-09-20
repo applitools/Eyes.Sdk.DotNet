@@ -801,7 +801,7 @@ namespace Applitools.Selenium
                         {
                             region = new RegionElement
                             {
-                                ElementId = element.GetPrivateFieldValue<string>("elementId")
+                                ElementId = element.GetElementId()
                             };
                         }
                     }
@@ -811,7 +811,7 @@ namespace Applitools.Selenium
             return region;
         }
 
-        private IWebElement GetTargetElement(ITargetContainer checkSettings)
+        private IWebElementWrapper GetTargetElement(ITargetContainer checkSettings)
         {
             return checkSettings.GetTargetElement();
         }

@@ -21,7 +21,7 @@ namespace Applitools.Appium
         
         public TRegion ToRegion()
         {
-            var elementId = element_.GetElementId("elementId");
+            var elementId = element_.GetElementId();
 
             return new RegionElement
             {

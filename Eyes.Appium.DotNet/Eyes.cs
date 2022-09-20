@@ -57,15 +57,91 @@ namespace Applitools.Appium
         {
             return Config;
         }
-        
+
         #endregion
 
         #region Properties
-        
+
         //public Rectangle CachedViewport { get; private set; }
 
         #endregion
-        
+
+        public static void SetNMGCapabilities(DesiredCapabilities caps)
+        {
+            SetNMGCapabilities(caps, null, null, null);
+        }
+
+        public static void SetNMGCapabilities(DesiredCapabilities caps, string apiKey)
+        {
+            SetNMGCapabilities(caps, apiKey, null, null);
+        }
+
+        public static void SetNMGCapabilities(DesiredCapabilities caps, string apiKey, string eyesServerUrl)
+        {
+            SetNMGCapabilities(caps, apiKey, eyesServerUrl, null);
+        }
+
+        public static void SetNMGCapabilities(DesiredCapabilities caps, string apiKey, string eyesServerUrl, ProxySettings proxySettings)
+        {
+            var iosCapsKey = "processArguments";
+            var iosCapValue = "{\"args\": [], \"env\":"
+                    + "{\"DYLD_INSERT_LIBRARIES\":\"@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib"
+                    + ":"
+                    + "@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64_x86_64-simulator/UFG_lib.framework/UFG_lib\",";
+
+            var iosCapValueSuffix = "}}";
+
+            var androidCapKey = "optionalIntentArguments";
+            var androidCapValue = "--es APPLITOOLS \'{";
+            var androidCapValueSuffix = "}\'";
+
+            // Take the API key from the environment if it's not explicitly given.
+            if (apiKey == null)
+            {
+                apiKey = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
+                if (string.IsNullOrEmpty(apiKey))
+                {
+                    throw new EyesException("No API key was given, or is an empty string.");
+                }
+            }
+
+            androidCapValue += "\"NML_API_KEY\":\"" + apiKey + "\",";
+            iosCapValue += "\"NML_API_KEY\":\"" + apiKey + "\",";
+
+            // Check for the server URL in the env variable. (might still be null and this is fine.
+            if (eyesServerUrl == null)
+            {
+                eyesServerUrl = Environment.GetEnvironmentVariable("APPLITOOLS_SERVER_URL");
+            }
+
+            if (!string.IsNullOrEmpty(eyesServerUrl))
+            {
+                androidCapValue += "\"NML_SERVER_URL\":\"" + eyesServerUrl + "\",";
+                iosCapValue += "\"NML_SERVER_URL\":\"" + eyesServerUrl + "\",";
+            }
+
+            if (proxySettings == null)
+            {
+                var proxyFromEnv = Environment.GetEnvironmentVariable("APPLITOOLS_HTTP_PROXY");
+                if (!string.IsNullOrEmpty(proxyFromEnv))
+                {
+                    proxySettings = new ProxySettings(proxyFromEnv);
+                }
+            }
+
+            if (proxySettings != null)
+            {
+                androidCapValue += "\"NML_PROXY_URL\":\"" + proxySettings + "\",";
+                iosCapValue += "\"NML_PROXY_URL\":\"" + proxySettings + "\",";
+            }
+
+            androidCapValue += androidCapValueSuffix;
+            iosCapValue += iosCapValueSuffix;
+
+            caps.SetCapability(androidCapKey, androidCapValue);
+            caps.SetCapability(iosCapsKey, iosCapValue);
+        }
+
         public RemoteWebDriver Open(RemoteWebDriver driver, string appName, string testName)
         {
             Logger.GetILogHandler().Open();

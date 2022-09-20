@@ -1,3 +1,33 @@
+## [Eyes.Appium vNext]
+### Added
+- SetNMGCapabilities support
+### Fixed
+- C# Appium | Error using IWebElement for Region on Web for Target.Region [Trello 3028] (https://trello.com/c/RsA9XpkO)
+
+## [Eyes.Selenium vNext]
+### Updated
+- Match to latest Universal Server
+### Fixed
+- C# Appium | Error using IWebElement for Region on Web for Target.Region [Trello 3028] (https://trello.com/c/RsA9XpkO)
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Core.S3 vNext]
+### Updated
+- Match to latest Universal Server
+### Fixed
+- C# Appium | Error using IWebElement for Region on Web for Target.Region [Trello 3028] (https://trello.com/c/RsA9XpkO)
+
+## [Eyes.Sdk.Universal.Core 2.12.3] - 2022-09-20
+### Updated
+- Universal Server Version to 2.12.3
+
 ## [Eyes.Appium 5.14] - 2022-09-19
 ### Fixed
 - C# Appium | Error using IWebElement for Region on Web [Trello 3028] (https://trello.com/c/RsA9XpkO)
@@ -19,6 +49,7 @@
 - Created testing client for eyes-universal
 - Using lazyLoad.waitingTime as a delay between stitches by default
 - Using proxy while polling for the result of the nml command
+
 ## [Eyes.Sdk.Universal.Core 2.12.1]
 ### Updated
 - Universal Server Version to 2.12.1

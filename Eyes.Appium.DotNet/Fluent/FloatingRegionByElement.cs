@@ -42,7 +42,7 @@ namespace Applitools.Appium
                 MaxRightOffset = maxRightOffset_,
                 Region = new RegionElement
                 {
-                    ElementId = element_.GetElementId("elementId")
+                    ElementId = element_.GetElementId()
                 }
             };
         }

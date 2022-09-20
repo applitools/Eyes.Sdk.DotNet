@@ -3,14 +3,28 @@ using System.Collections.Generic;
 using System.Drawing;
 using Applitools.Utils;
 using Applitools.VisualGrid;
+using Eyes.Appium.DotNet.Utils;
 using OpenQA.Selenium;
 
 namespace Applitools.Appium
 {
+    internal class AppiumWebElementWrapper : WebElementWrapper
+    {
+        public AppiumWebElementWrapper(IWebElement webElement) 
+            : base(webElement)
+        {
+        }
+
+        public override string GetElementId()
+        {
+            return WebElement.GetElementId();
+        }
+    }
+
     public class AppiumCheckSettings : CheckSettings, IAppiumCheckTarget
     {
         private By targetSelector_;
-        private IWebElement targetElement_;
+        private IWebElementWrapper targetElement_;
         private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
@@ -30,7 +44,7 @@ namespace Applitools.Appium
 
         internal AppiumCheckSettings(IWebElement targetElement)
         {
-            targetElement_ = targetElement;
+            targetElement_ = new AppiumWebElementWrapper(targetElement);
             fluentCode_.Clear();
             fluentCode_.Append($"Target.Region({targetElement})");
         }
@@ -45,7 +59,7 @@ namespace Applitools.Appium
             return targetSelector_;
         }
 
-        IWebElement ITargetContainer.GetTargetElement()
+        IWebElementWrapper ITargetContainer.GetTargetElement()
         {
             return targetElement_;
         }
@@ -101,7 +115,7 @@ namespace Applitools.Appium
         public AppiumCheckSettings Region(IWebElement targetElement)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.targetElement_ = targetElement;
+            clone.targetElement_ = new AppiumWebElementWrapper(targetElement);
             clone.fluentCode_.Append($".Region({targetElement})");
             return clone;
         }
