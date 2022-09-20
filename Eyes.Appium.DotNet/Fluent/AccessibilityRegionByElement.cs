@@ -25,7 +25,7 @@ namespace Applitools.Appium
                 Type = regionType_,
                 Region = new RegionElement
                 {
-                    ElementId = element_.GetElementId("elementId")
+                    ElementId = element_.GetElementId()
                 }
             };
         }

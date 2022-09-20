@@ -90,5 +90,10 @@ namespace Applitools
             if (webProxy == null) return null;
             return new ProxySettings(webProxy);
         }
+
+        public override string ToString()
+        {
+            return Url.ToString();
+        }
     }
 }

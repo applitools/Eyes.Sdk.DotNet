@@ -10,7 +10,7 @@ namespace Applitools.Selenium.Fluent
     public class SeleniumCheckSettings : CheckSettings, ISeleniumCheckTarget
     {
         private By targetSelector_;
-        private IWebElement targetElement_;
+        private IWebElementWrapper targetElement_;
         private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Fluent
 
         internal SeleniumCheckSettings(IWebElement targetElement)
         {
-            targetElement_ = targetElement;
+            targetElement_ = new WebElementWrapper(targetElement);
             fluentCode_.Clear();
             fluentCode_.Append($"Target.Region({targetElement})");
         }
@@ -45,7 +45,7 @@ namespace Applitools.Selenium.Fluent
             return targetSelector_;
         }
 
-        IWebElement ITargetContainer.GetTargetElement()
+        IWebElementWrapper ITargetContainer.GetTargetElement()
         {
             return targetElement_;
         }
@@ -98,22 +98,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append($".Frame({frameReference})");
             return clone;
         }
-
-        internal void SanitizeSettings(Logger logger, IWebDriver driver, CheckState state)
-        {
-            bool isFully = state.StitchContent;
-            if (frameChain_.Count > 0 && targetElement_ == null && targetSelector_ == null && !isFully/* &&
-                ((Applitools.Fluent.ICheckSettingsInternal)this).GetTargetRegion() == null*/)
-            {
-                FrameLocator lastFrame = frameChain_[frameChain_.Count - 1];
-                frameChain_.RemoveAt(frameChain_.Count - 1);
-                //targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
-                state.FrameToSwitchTo = targetElement_;
-                logger.Log(TraceLevel.Notice, Stage.Check,
-                    new { message = "Using Target.Frame() for the purpose of Target.Region()" });
-            }
-        }
-
+        
         public SeleniumCheckSettings Region(Rectangle rect)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -133,7 +118,7 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Region(IWebElement targetElement)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.targetElement_ = targetElement;
+            clone.targetElement_ = new WebElementWrapper(targetElement);
             clone.fluentCode_.Append($".Region({targetElement})");
             return clone;
         }

@@ -6,7 +6,7 @@ namespace Eyes.Appium.DotNet.Utils
 {
     public static class ElementUtils
     {
-        public static string GetElementId(this IWebElement webElement, string fieldName)
+        public static string GetElementId(this IWebElement webElement)
         {
             if (webElement is AppiumWebElement element)
             {
