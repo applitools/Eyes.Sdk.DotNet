@@ -13,10 +13,8 @@ To learn more, visit https://applitools.com/ .</Description>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes appium</PackageTags>
-    <PackageReleaseNotes>### Added
-- SetNMGCapabilities support
-### Fixed
-- C# Appium | Error using IWebElement for Region on Web for Target.Region [Trello 3028] (https://trello.com/c/RsA9XpkO)
+    <PackageReleaseNotes>### Fixed
+- Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Appium</PackageId>

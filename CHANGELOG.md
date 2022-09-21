@@ -1,12 +1,12 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 5.15] - 2022-09-21
 ### Fixed
 - Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.23] - 2022-09-21
 ### Fixed
 - Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Sdk.Core.S3 3.16] - 2022-09-21
 ### Fixed
 - Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
 
