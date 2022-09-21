@@ -1,12 +1,14 @@
-## [Eyes.Selenium4 3.22] - 2022-09-20
-### Updated
-- Match to latest Universal Server
-
-## [Eyes.Appium 5.15] - 2022-09-20
-### Added
-- SetNMGCapabilities support
+## [Eyes.Selenium vNext]
 ### Fixed
-- C# Appium | Error using IWebElement for Region on Web for Target.Region [Trello 3028] (https://trello.com/c/RsA9XpkO)
+- Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
+
+## [Eyes.Appium vNext]
+### Fixed
+- Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
+
+## [Eyes.Sdk.Core.S3 vNext]
+### Fixed
+- Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
 
 ## [Eyes.Selenium 3.22] - 2022-09-20
 ### Updated
