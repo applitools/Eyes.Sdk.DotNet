@@ -42,7 +42,7 @@ namespace Applitools.Selenium.Fluent
                 MaxRightOffset = maxRightOffset_,
                 Region = new RegionElement
                 {
-                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                    ElementId = element_.GetElementId()
                 }
             };
         }

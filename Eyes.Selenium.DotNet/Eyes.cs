@@ -735,7 +735,7 @@ namespace Applitools.Selenium
                 {
                     return new RegionElement
                     {
-                        ElementId = element.GetPrivateFieldValue<string>("elementId")
+                        ElementId = element.GetElementId()
                     };
                 }
             }
@@ -772,7 +772,7 @@ namespace Applitools.Selenium
                     {
                         frames.Add(new FrameElement
                         {
-                            ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
+                            ElementId = item.FrameReference.GetElementId()
                         });
                     }
                 }
@@ -811,7 +811,7 @@ namespace Applitools.Selenium
             return region;
         }
 
-        private IWebElementWrapper GetTargetElement(ITargetContainer checkSettings)
+        private IWebElement GetTargetElement(ITargetContainer checkSettings)
         {
             return checkSettings.GetTargetElement();
         }

@@ -22,7 +22,7 @@ namespace Applitools.Selenium.Fluent
         
         public TRegion ToRegion()
         {
-            var elementId = element_.GetPrivateFieldValue<string>("elementId");
+            var elementId = element_.GetElementId();
 
             return new RegionElement
             {

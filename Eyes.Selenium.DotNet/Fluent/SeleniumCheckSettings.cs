@@ -10,7 +10,7 @@ namespace Applitools.Selenium.Fluent
     public class SeleniumCheckSettings : CheckSettings, ISeleniumCheckTarget
     {
         private By targetSelector_;
-        private IWebElementWrapper targetElement_;
+        private IWebElement targetElement_;
         private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
@@ -30,7 +30,7 @@ namespace Applitools.Selenium.Fluent
 
         internal SeleniumCheckSettings(IWebElement targetElement)
         {
-            targetElement_ = new WebElementWrapper(targetElement);
+            targetElement_ = targetElement;
             fluentCode_.Clear();
             fluentCode_.Append($"Target.Region({targetElement})");
         }
@@ -45,7 +45,7 @@ namespace Applitools.Selenium.Fluent
             return targetSelector_;
         }
 
-        IWebElementWrapper ITargetContainer.GetTargetElement()
+        IWebElement ITargetContainer.GetTargetElement()
         {
             return targetElement_;
         }
@@ -118,7 +118,7 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings Region(IWebElement targetElement)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.targetElement_ = new WebElementWrapper(targetElement);
+            clone.targetElement_ = targetElement;
             clone.fluentCode_.Append($".Region({targetElement})");
             return clone;
         }

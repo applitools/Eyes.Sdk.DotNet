@@ -25,7 +25,7 @@ namespace Applitools.Selenium.Fluent
                 Type = regionType_,
                 Region = new RegionElement
                 {
-                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                    ElementId = element_.GetElementId()
                 }
             };
         }
