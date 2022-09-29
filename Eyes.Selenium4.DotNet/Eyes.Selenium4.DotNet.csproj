@@ -14,7 +14,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Updated
-- Match to latest Universal Server
+- Match to latest Eyes.Sdk.Core
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium4</PackageId>

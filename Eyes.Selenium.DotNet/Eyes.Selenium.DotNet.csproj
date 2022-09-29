@@ -8,13 +8,14 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.23</Version>
+    <Version>3.24</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
+    <PackageReleaseNotes>### Updated
+- Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73] (https://trello.com/c/M1YiwtHb)
+- Universal Server Version to 2.15.0
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
