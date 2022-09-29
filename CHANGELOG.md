@@ -1,4 +1,28 @@
-## [Eyes.Appium 5.15] - 2022-09-21
+## [Eyes.Appium vNext]
+### Updated
+- Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73] (https://trello.com/c/M1YiwtHb)
+- Universal Server Version to 2.15.0
+
+## [Eyes.Selenium vNext]
+### Updated
+- Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73] (https://trello.com/c/M1YiwtHb)
+- Universal Server Version to 2.15.0
+
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73] (https://trello.com/c/M1YiwtHb)
+- Universal Server Version to 2.15.0
+
+## [Eyes.Sdk.Core.S3 vNext]
+### Updated
+- Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73] (https://trello.com/c/M1YiwtHb)
+- Universal Server Version to 2.15.0
+
+## [Eyes.Sdk.Universal.Core 2.15.0] - 2022-09-29
+### Updated
+- Universal Server Version to 2.15.0
+
+## [Eyes.Appium 5.16] - 2022-09-21
 ### Fixed
 - Element Id for IOSElement [Trello 3028] (https://trello.com/c/RsA9XpkO)
 
