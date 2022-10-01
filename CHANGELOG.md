@@ -1,4 +1,4 @@
-## [Eyes.Appium vNext]
+## [Eyes.Appium 5.18] - 2022-10-01
 ### Fixed
 - Namespace for Eyes
 
