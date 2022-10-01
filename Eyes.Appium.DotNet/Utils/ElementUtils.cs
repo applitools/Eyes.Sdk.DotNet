@@ -2,7 +2,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 
-namespace Eyes.Appium.DotNet.Utils
+namespace Applitools.Appium.Utils
 {
     public static class ElementUtils
     {
