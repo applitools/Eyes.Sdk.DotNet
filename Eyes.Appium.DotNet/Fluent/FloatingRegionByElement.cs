@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Applitools.Appium.Utils;
 using Applitools.Fluent;
-using Eyes.Appium.DotNet.Utils;
 using OpenQA.Selenium;
 
 namespace Applitools.Appium
