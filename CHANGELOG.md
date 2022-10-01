@@ -1,3 +1,7 @@
+## [Eyes.Appium vNext]
+### Fixed
+- Namespace for Eyes
+
 ## [Eyes.Selenium4 3.22] - 2022-09-29
 ### Updated
 - Match to latest Eyes.Sdk.Core
