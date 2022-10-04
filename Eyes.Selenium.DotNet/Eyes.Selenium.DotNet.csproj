@@ -8,14 +8,15 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.24</Version>
+    <Version>3.25</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Updated
-- Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73] (https://trello.com/c/M1YiwtHb)
-- Universal Server Version to 2.15.0
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

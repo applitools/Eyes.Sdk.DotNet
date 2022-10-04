@@ -1,28 +1,28 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.23] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1
 ### Fixed
 - Issue with screenshots being taken on chrome-emulated devices
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.19] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1
 ### Fixed
 - Issue with screenshots being taken on chrome-emulated devices
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.25] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1
 ### Fixed
 - Issue with screenshots being taken on chrome-emulated devices
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Sdk.Core 3.17] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1
 ### Fixed
 - Issue with screenshots being taken on chrome-emulated devices
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Sdk.Core.S3 3.18] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1
 ### Fixed
