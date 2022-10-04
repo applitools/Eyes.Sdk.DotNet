@@ -1,3 +1,39 @@
+## [Eyes.Selenium vNext]
+### Updated
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
+
+## [Eyes.Appium vNext]
+### Updated
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
+
+## [Eyes.Sdk.Core.S3 vNext]
+### Updated
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
+
+## [Eyes.Sdk.Core vNext]
+### Updated
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
+
+## [Eyes.Sdk.Universal.Core 2.16.1] - 2022-10-04
+### Updated
+- Universal Server Version to 2.16.1
+### Fixed
+- Issue with screenshots being taken on chrome-emulated devices
+
 ## [Eyes.Appium 5.18] - 2022-10-01
 ### Fixed
 - Namespace for Eyes
