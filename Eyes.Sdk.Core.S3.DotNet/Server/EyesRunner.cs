@@ -65,11 +65,11 @@ namespace Applitools
         {
             var json = data.ToJson();
 
-            await SocketClient.SendData(json);
+            await SocketClient.SendData(json).ConfigureAwait(false);
 
             for (int i = 0; i < 5; i++)
             {
-                var response = await SocketClient.ReceiveMessage();
+                var response = await SocketClient.ReceiveMessage().ConfigureAwait(false);
 
                 if (response != null)
                 {
@@ -95,7 +95,7 @@ namespace Applitools
         {
             var json = data.ToJson();
 
-            await SocketClient.SendData(json);
+            await SocketClient.SendData(json).ConfigureAwait(false);
         }
 
         public TestResultsSummary GetAllTestResults()
@@ -144,7 +144,7 @@ namespace Applitools
 
                 var coreMakeManager = CreateCoreMakeManager();
 
-                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).Result;
+                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).GetAwaiter().GetResult();
                 managerApplitoolsRefId_ = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
             }
 
@@ -164,7 +164,7 @@ namespace Applitools
 
             var request = CreateEyesManageCloseAllEyes(shouldThrowException);
 
-            var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).Result;
+            var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).GetAwaiter().GetResult();
             var payload = response.Payload;
             if (payload != null)
             {

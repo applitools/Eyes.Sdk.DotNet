@@ -157,7 +157,7 @@ namespace Applitools
                         Proxy = Runner.Proxy
                     }
                 }
-            }).Wait();
+            }).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
