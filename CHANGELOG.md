@@ -1,3 +1,7 @@
+## [Eyes.Sdk.Universal.Core 2.16.9] - 2022-10-30
+### Updated
+- Universal Server Version to 2.16.9
+
 ## [Eyes.Selenium4 3.23] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1
