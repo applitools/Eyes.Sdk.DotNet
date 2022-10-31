@@ -1,3 +1,45 @@
+## [Eyes.Sdk.Core vNext]
+### Fixed
+- Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Core.S3 vNext]
+### Fixed
+- Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Appium vNext]
+### Fixed
+- Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Universal.Core 2.16.9] - 2022-10-30
+### Updated
+- Universal Server Version to 2.16.9
+
+## [Eyes.Selenium4 3.25] - 2022-10-30
+### Updated
+- Match to latest Universal Server
+
+## [Eyes.Sdk.Core 3.18] - 2022-10-30
+### Updated
+- Match to latest Universal Server
+
 ## [Eyes.Selenium4 3.23] - 2022-10-04
 ### Updated
 - Universal Server Version to 2.16.1

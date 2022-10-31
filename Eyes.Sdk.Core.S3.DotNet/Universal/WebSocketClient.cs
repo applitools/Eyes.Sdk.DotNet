@@ -45,7 +45,7 @@ namespace Applitools.Selenium
 
             do
             {
-                result = await clientWebSocket_.ReceiveAsync(buffer, CancellationToken.None);
+                result = await clientWebSocket_.ReceiveAsync(buffer, CancellationToken.None).ConfigureAwait(false);
                 for (int i = 0; i < result.Count; i++)
                 {
                     allBytes.Add(buffer.Array[i]);
@@ -77,7 +77,7 @@ namespace Applitools.Selenium
         {
             var encoded = Encoding.UTF8.GetBytes(data);
             var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
-            await clientWebSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
+            await clientWebSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).ConfigureAwait(false);
         }
     }
 }

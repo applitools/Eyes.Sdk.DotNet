@@ -86,7 +86,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Result.Payload;
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).GetAwaiter().GetResult().Payload;
 
             foreach (var testResults in payload.Result)
             {
@@ -450,7 +450,7 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).Result;
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).GetAwaiter().GetResult();
 
             IsOpen = false;
 
@@ -593,7 +593,7 @@ namespace Applitools.Selenium
                 }
             };
 
-            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).GetAwaiter().GetResult();
             var error = result?.Payload?.Error;
             if (error != null)
             {
@@ -644,7 +644,7 @@ namespace Applitools.Selenium
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
             
-            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
+            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).GetAwaiter().GetResult().Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;
