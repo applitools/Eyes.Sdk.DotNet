@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Fluent;
 
 namespace Applitools
 {
@@ -19,14 +20,25 @@ namespace Applitools
         ICheckSettings Ignore(Rectangle region, params Rectangle[] regions);
 
         /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings Ignore(Rectangle region, Padding padding = null, string regionId = null);
+
+        /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
         /// <param name="regions">An enumerbale of regions to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        ICheckSettings Ignore(IEnumerable<Rectangle> regions);
+        ICheckSettings Ignore(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null);
 
         /// <summary>
-        /// Adds one or more content regions.
+        /// Adds one content region.
         /// </summary>
         /// <param name="region">A region to match using the Content method.</param>
         /// <param name="regions">Optional extra regions to match using the Content method.</param>
@@ -34,11 +46,22 @@ namespace Applitools
         ICheckSettings Content(Rectangle region, params Rectangle[] regions);
 
         /// <summary>
+        /// Adds one content region.
+        /// </summary>
+        /// <param name="region">A region to match using the Content method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings Content(Rectangle region, Padding padding = null, string regionId = null);
+
+        /// <summary>
         /// Adds one or more content regions.
         /// </summary>
         /// <param name="regions">An enumerbale of regions to match using the Content method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        ICheckSettings Content(IEnumerable<Rectangle> regions);
+        ICheckSettings Content(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null);
 
         /// <summary>
         /// Adds one or more layout regions.
@@ -49,11 +72,22 @@ namespace Applitools
         ICheckSettings Layout(Rectangle region, params Rectangle[] regions);
 
         /// <summary>
+        /// Adds one layout region.
+        /// </summary>
+        /// <param name="region">A region to match using the Layout method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings Layout(Rectangle region, Padding padding = null, string regionId = null);
+
+        /// <summary>
         /// Adds one or more layout regions.
         /// </summary>
         /// <param name="regions">An enumerbale of regions to match using the Layout method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        ICheckSettings Layout(IEnumerable<Rectangle> regions);
+        ICheckSettings Layout(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null);
 
         /// <summary>
         /// Adds one or more strict regions.
@@ -64,11 +98,22 @@ namespace Applitools
         ICheckSettings Strict(Rectangle region, params Rectangle[] regions);
 
         /// <summary>
+        /// Adds one strict region.
+        /// </summary>
+        /// <param name="region">A region to match using the Strict method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings Strict(Rectangle region, Padding padding = null, string regionId = null);
+
+        /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
         /// <param name="regions">An enumerbale of regions to match using the Strict method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        ICheckSettings Strict(IEnumerable<Rectangle> regions);
+        ICheckSettings Strict(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null);
 
         /// <summary>
         /// Defines that the screenshot will contain the entire element or region, even if it's outside the view.

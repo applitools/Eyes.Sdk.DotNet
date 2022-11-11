@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Fluent;
 using Applitools.Utils;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;
@@ -107,6 +108,19 @@ namespace Applitools.Appium
         }
 
         /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Ignore(By region, Padding padding = null, string regionId = null)
+        {
+            var list = new List<By> { region };
+            return Ignore(list, padding, regionId);
+        }
+
+        /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
         /// <param name="selector">A selector representing a region to ignore when validating the screenshot.</param>
@@ -114,12 +128,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Ignore(By selector, params By[] selectors)
         {
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="selectors">An enumerbale of selectors representing regions to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Ignore(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
+        {
             AppiumCheckSettings clone = Clone_();
-            clone.Ignore_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Ignore)}({selector}");
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (By sel in selectors)
             {
-                clone.Ignore_(new SimpleRegionBySelector(sel));
+                clone.Ignore_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
@@ -127,21 +154,16 @@ namespace Applitools.Appium
         }
 
         /// <summary>
-        /// Adds one or more ignore regions.
+        /// Adds one ignore region.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing regions to ignore when validating the screenshot.</param>
+        /// <param name="element">An element to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Ignore(IEnumerable<By> selectors)
+        public AppiumCheckSettings Ignore(IWebElement element, Padding padding = null, string regionId = null)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Ignore)}(");
-            foreach (By sel in selectors)
-            {
-                clone.Ignore_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            return Ignore(list, padding, regionId);
         }
 
         /// <summary>
@@ -152,12 +174,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Ignore(IWebElement element, params IWebElement[] elements)
         {
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="elements">An enumerbale of elements to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Ignore(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
+        {
             AppiumCheckSettings clone = Clone_();
-            clone.Ignore_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Ignore)}({element}");
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Ignore_(new SimpleRegionByElement(elem));
+                clone.Ignore_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -165,21 +200,16 @@ namespace Applitools.Appium
         }
 
         /// <summary>
-        /// Adds one or more ignore regions.
+        /// Adds one layout region.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements to ignore when validating the screenshot.</param>
+        /// <param name="selector">A selector representing a layout region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Ignore(IEnumerable<IWebElement> elements)
+        public AppiumCheckSettings Layout(By selector, Padding padding = null, string regionId = null)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Ignore)}(");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Ignore_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            return Layout(list, padding, regionId);
         }
 
         /// <summary>
@@ -190,12 +220,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Layout(By selector, params By[] selectors)
         {
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more layout regions.
+        /// </summary>
+        /// <param name="selectors">An enumerbale of selectors representing layout regions.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Layout(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
+        {
             AppiumCheckSettings clone = Clone_();
-            clone.Layout_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Layout)}({selector}");
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (By sel in selectors)
             {
-                clone.Layout_(new SimpleRegionBySelector(sel));
+                clone.Layout_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
@@ -203,21 +246,16 @@ namespace Applitools.Appium
         }
 
         /// <summary>
-        /// Adds one or more layout regions.
+        /// Adds one layout region.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing layout regions.</param>
+        /// <param name="element">An element representing a layout region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Layout(IEnumerable<By> selectors)
+        public AppiumCheckSettings Layout(IWebElement element, Padding padding = null, string regionId = null)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Layout)}(");
-            foreach (By sel in selectors)
-            {
-                clone.Layout_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            return Layout(list, padding, regionId);
         }
 
         /// <summary>
@@ -228,12 +266,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Layout(IWebElement element, params IWebElement[] elements)
         {
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more layout regions.
+        /// </summary>
+        /// <param name="elements">An enumerbale of elements, each representing a layout region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Layout(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
+        {
             AppiumCheckSettings clone = Clone_();
-            clone.Layout_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Layout)}({element}");
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Layout_(new SimpleRegionByElement(elem));
+                clone.Layout_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -241,21 +292,16 @@ namespace Applitools.Appium
         }
 
         /// <summary>
-        /// Adds one or more layout regions.
+        /// Adds one strict region.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a layout region.</param>
+        /// <param name="selector">A selector representing a strict region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Layout(IEnumerable<IWebElement> elements)
+        public AppiumCheckSettings Strict(By selector, Padding padding = null, string regionId = null)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Layout)}(");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Layout_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            return Strict(list, padding, regionId);
         }
 
         /// <summary>
@@ -266,33 +312,42 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Strict(By selector, params By[] selectors)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.Strict_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Strict)}({selector}");
-            foreach (By sel in selectors)
-            {
-                clone.Strict_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Ignore(list);
         }
+
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
         /// <param name="selectors">An enumerbale of selectors representing strict regions.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Strict(IEnumerable<By> selectors)
+        public AppiumCheckSettings Strict(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
         {
             AppiumCheckSettings clone = Clone_();
             clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (By sel in selectors)
             {
-                clone.Strict_(new SimpleRegionBySelector(sel));
+                clone.Strict_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
             return clone;
+        }
+
+        /// <summary>
+        /// Adds one strict region.
+        /// </summary>
+        /// <param name="element">An element representing a strict region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Strict(IWebElement element, Padding padding = null, string regionId = null)
+        {
+            var list = new List<IWebElement> { element };
+            return Strict(list, padding, regionId);
         }
 
         /// <summary>
@@ -303,12 +358,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Strict(IWebElement element, params IWebElement[] elements)
         {
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more strict regions.
+        /// </summary>
+        /// <param name="elements">An enumerbale of elements, each representing a strict region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Strict(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
+        {
             AppiumCheckSettings clone = Clone_();
-            clone.Strict_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Strict)}({element}");
+            clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Strict_(new SimpleRegionByElement(elem));
+                clone.Strict_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -316,21 +384,16 @@ namespace Applitools.Appium
         }
 
         /// <summary>
-        /// Adds one or more strict regions.
+        /// Adds one content region.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a strict region.</param>
+        /// <param name="selector">A selector representing a content region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Strict(IEnumerable<IWebElement> elements)
+        public AppiumCheckSettings Content(By selector, Padding padding = null, string regionId = null)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Strict)}(");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Strict_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            return Content(list, padding, regionId);
         }
 
         /// <summary>
@@ -341,12 +404,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Content(By selector, params By[] selectors)
         {
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more content regions.
+        /// </summary>
+        /// <param name="selectors">An enumerbale of selectors representing content regions.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public AppiumCheckSettings Content(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
+        {
             AppiumCheckSettings clone = Clone_();
-            clone.Content_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Content)}({selector}");
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (By sel in selectors)
             {
-                clone.Content_(new SimpleRegionBySelector(sel));
+                clone.Content_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
@@ -354,21 +430,16 @@ namespace Applitools.Appium
         }
 
         /// <summary>
-        /// Adds one or more content regions.
+        /// Adds one content region.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing content regions.</param>
+        /// <param name="element">An element representing a content region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Content(IEnumerable<By> selectors)
+        public AppiumCheckSettings Content(IWebElement element, Padding padding = null, string regionId = null)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Content)}(");
-            foreach (By sel in selectors)
-            {
-                clone.Content_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            return Content(list, padding, regionId);
         }
 
         /// <summary>
@@ -379,30 +450,25 @@ namespace Applitools.Appium
         /// <returns>An updated clone of this settings object.</returns>
         public AppiumCheckSettings Content(IWebElement element, params IWebElement[] elements)
         {
-            AppiumCheckSettings clone = Clone_();
-            clone.Content_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Content)}({element}");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Content_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Ignore(list);
         }
 
         /// <summary>
         /// Adds one or more content regions.
         /// </summary>
         /// <param name="elements">An enumerbale of elements, each representing a content region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public AppiumCheckSettings Content(IEnumerable<IWebElement> elements)
+        public AppiumCheckSettings Content(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
         {
             AppiumCheckSettings clone = Clone_();
             clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Content_(new SimpleRegionByElement(elem));
+                clone.Content_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");

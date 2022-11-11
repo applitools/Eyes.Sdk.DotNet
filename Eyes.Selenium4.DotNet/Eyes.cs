@@ -743,7 +743,7 @@ namespace Applitools.Selenium
             return null;
         }
 
-        private IList<TRegion> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
+        private IList<CodedRegionReference> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
         {
             return checkSettings.GetIgnoreRegions().Select(i => i.ToRegion()).ToList();
         }

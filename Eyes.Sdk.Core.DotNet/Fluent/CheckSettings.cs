@@ -315,6 +315,19 @@ namespace Applitools
         }
 
         /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Ignore(Rectangle region, Padding padding = null, string regionId = null)
+        {
+            var list = new List<Rectangle> { region };
+            return Ignore(list, padding, regionId);
+        }
+
+        /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
         /// <param name="region">A region to ignore when validating the screenshot.</param>
@@ -322,12 +335,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Ignore(Rectangle region, params Rectangle[] regions)
         {
+            var list = new List<Rectangle> {region};
+            list.AddRange(regions);
+            return Ignore(list);
+        }
+        
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="regions">An enumerbale of regions to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Ignore(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
+        {
             CheckSettings clone = Clone();
-            clone.Ignore_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Ignore)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Ignore_(new SimpleRegionByRectangle(r));
+                clone.Ignore_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -335,21 +361,16 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Adds one or more ignore regions.
+        /// Adds one content region.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to ignore when validating the screenshot.</param>
+        /// <param name="region">A region to match using the Content method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Ignore(IEnumerable<Rectangle> regions)
+        public ICheckSettings Content(Rectangle region, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
-            clone.fluentCode_.Append($".{nameof(Ignore)}(");
-            foreach (Rectangle r in regions)
-            {
-                clone.Ignore_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            return Content(list, padding, regionId);
         }
 
         /// <summary>
@@ -360,12 +381,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Content(Rectangle region, params Rectangle[] regions)
         {
+            var list = new List<Rectangle> { region };
+            list.AddRange(regions);
+            return Content(list);
+        }
+
+        /// <summary>
+        /// Adds one or more content regions.
+        /// </summary>
+        /// <param name="regions">An enumerbale of regions to match using the Content method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Content(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
+        {
             CheckSettings clone = Clone();
-            clone.Content_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Content)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Content_(new SimpleRegionByRectangle(r));
+                clone.Content_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -373,21 +407,16 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Adds one or more content regions.
+        /// Adds one layout region.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Content method.</param>
+        /// <param name="region">A region to match using the Layout method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Content(IEnumerable<Rectangle> regions)
+        public ICheckSettings Layout(Rectangle region, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
-            clone.fluentCode_.Append($".{nameof(Content)}(");
-            foreach (Rectangle r in regions)
-            {
-                clone.Content_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            return Layout(list, padding, regionId);
         }
 
         /// <summary>
@@ -398,12 +427,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Layout(Rectangle region, params Rectangle[] regions)
         {
+            var list = new List<Rectangle> { region };
+            list.AddRange(regions);
+            return Layout(list);
+        }
+
+        /// <summary>
+        /// Adds one or more layout regions.
+        /// </summary>
+        /// <param name="regions">An enumerbale of regions to match using the Layout method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Layout(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
+        {
             CheckSettings clone = Clone();
-            clone.Layout_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Layout)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Layout_(new SimpleRegionByRectangle(r));
+                clone.Layout_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -411,21 +453,16 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Adds one or more layout regions.
+        /// Adds one strict region.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Layout method.</param>
+        /// <param name="region">A region to match using the Strict method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Layout(IEnumerable<Rectangle> regions)
+        public ICheckSettings Strict(Rectangle region, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
-            clone.fluentCode_.Append($".{nameof(Layout)}(");
-            foreach (Rectangle r in regions)
-            {
-                clone.Layout_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            return Strict(list, padding, regionId);
         }
 
         /// <summary>
@@ -436,30 +473,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Strict(Rectangle region, params Rectangle[] regions)
         {
-            CheckSettings clone = Clone();
-            clone.Strict_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Strict)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
-            foreach (Rectangle r in regions)
-            {
-                clone.Strict_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            list.AddRange(regions);
+            return Strict(list);
         }
 
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
         /// <param name="regions">An enumerbale of regions to match using the Strict method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Strict(IEnumerable<Rectangle> regions)
+        public ICheckSettings Strict(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
         {
             CheckSettings clone = Clone();
             clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Strict_(new SimpleRegionByRectangle(r));
+                clone.Strict_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
