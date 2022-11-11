@@ -98,5 +98,10 @@ namespace Applitools.Generated.Utils
         {
             Assert.AreEqual(expected.ToString(), actual.ToString());
         }
+
+        public static void compareProcedure(Region[] actualLocation, Region[] expectedLocation, string type)
+        {
+            CollectionAssert.AreEquivalent(expectedLocation, actualLocation, type);
+        }
     }
 }
