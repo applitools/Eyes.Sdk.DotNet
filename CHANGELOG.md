@@ -1,24 +1,24 @@
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium4 3.27] - 2022-11-11
 ### Implemented
 - Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
 - Support for Region Id
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.21] - 2022-11-11
 ### Implemented
 - Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
 - Support for Region Id
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.27] - 2022-11-11
 ### Implemented
 - Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
 - Support for Region Id
 
-## [Eyes.Sdk.Core vNext]
+## [Eyes.Sdk.Core 3.20] - 2022-11-11
 ### Implemented
 - Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
 - Support for Region Id
 
-## [Eyes.Sdk.Core.S3 vNext]
+## [Eyes.Sdk.Core.S3 3.20] - 2022-11-11
 ### Implemented
 - Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
 - Support for Region Id
