@@ -131,7 +131,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Ignore(By selector, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Ignore(By selector, Padding padding = null, string regionId = null)
         {
             var list = new List<By> { selector };
             return Ignore(list, padding, regionId);
@@ -177,7 +177,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Ignore(IWebElement element, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Ignore(IWebElement element, Padding padding = null, string regionId = null)
         {
             var list = new List<IWebElement> { element };
             return Ignore(list, padding, regionId);
@@ -223,7 +223,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Layout(By selector, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Layout(By selector, Padding padding = null, string regionId = null)
         {
             var list = new List<By> { selector };
             return Layout(list, padding, regionId);
@@ -269,7 +269,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Layout(IWebElement element, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Layout(IWebElement element, Padding padding = null, string regionId = null)
         {
             var list = new List<IWebElement> { element };
             return Layout(list, padding, regionId);
@@ -315,7 +315,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Strict(By selector, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Strict(By selector, Padding padding = null, string regionId = null)
         {
             var list = new List<By> { selector };
             return Strict(list, padding, regionId);
@@ -361,7 +361,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Strict(IWebElement element, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Strict(IWebElement element, Padding padding = null, string regionId = null)
         {
             var list = new List<IWebElement> { element };
             return Strict(list, padding, regionId);
@@ -407,7 +407,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Content(By selector, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Content(By selector, Padding padding = null, string regionId = null)
         {
             var list = new List<By> { selector };
             return Content(list, padding, regionId);
@@ -453,7 +453,7 @@ namespace Applitools.Selenium.Fluent
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Content(IWebElement element, Padding padding = null, string regionId = null)
+        public SeleniumCheckSettings Content(IWebElement element, Padding padding = null, string regionId = null)
         {
             var list = new List<IWebElement> { element };
             return Content(list, padding, regionId);
