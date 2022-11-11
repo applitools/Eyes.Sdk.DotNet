@@ -171,7 +171,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Exact()
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Exact;
             clone.fluentCode_.Append($".{nameof(Exact)}()");
             return clone;
@@ -183,7 +183,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Layout()
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Layout;
             clone.fluentCode_.Append($".{nameof(Layout)}()");
             return clone;
@@ -195,7 +195,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Strict()
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Strict;
             clone.fluentCode_.Append($".{nameof(Strict)}()");
             return clone;
@@ -207,7 +207,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Content()
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.Content;
             clone.fluentCode_.Append($".{nameof(Content)}()");
             return clone;
@@ -220,7 +220,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings MatchLevel(MatchLevel matchLevel)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.matchLevel_ = matchLevel;
             clone.fluentCode_.Append($".{nameof(MatchLevel)}({nameof(MatchLevel)}.{matchLevel})");
             return clone;
@@ -238,7 +238,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Floating(int maxOffset, params Rectangle[] regions)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.fluentCode_.Append($"{nameof(Floating)}({maxOffset}");
             foreach (Rectangle region in regions)
             {
@@ -261,7 +261,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Floating(Rectangle region, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.Floating_(region, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
             clone.fluentCode_.Append($"{nameof(Floating)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height}),{maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset})");
             return clone;
@@ -273,7 +273,7 @@ namespace Applitools
 
         public ICheckSettings Accessibility(AccessibilityRegionByRectangle region)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.Accessibility_(region);
             clone.fluentCode_.Append($"{nameof(Accessibility)}(new {nameof(AccessibilityRegionByRectangle)}({region.Left},{region.Top},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{region.Type}))");
             return clone;
@@ -281,7 +281,7 @@ namespace Applitools
 
         public ICheckSettings Accessibility(Rectangle region, AccessibilityRegionType regionType)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.Accessibility_(region, regionType);
             clone.fluentCode_.Append($"{nameof(Accessibility)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{regionType}))");
             return clone;
@@ -295,7 +295,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Fully()
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.stitchContent_ = true;
             clone.fluentCode_.Append($".{nameof(Fully)}()");
             return clone;
@@ -308,10 +308,23 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Fully(bool fully)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.stitchContent_ = fully;
             clone.fluentCode_.Append($".{nameof(Fully)}({fully})");
             return clone;
+        }
+
+        /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Ignore(Rectangle region, Padding padding = null, string regionId = null)
+        {
+            var list = new List<Rectangle> { region };
+            return Ignore(list, padding, regionId);
         }
 
         /// <summary>
@@ -322,12 +335,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Ignore(Rectangle region, params Rectangle[] regions)
         {
-            CheckSettings clone = Clone();
-            clone.Ignore_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Ignore)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
+            var list = new List<Rectangle> {region};
+            list.AddRange(regions);
+            return Ignore(list);
+        }
+        
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="regions">An enumerbale of regions to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Ignore(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
+        {
+            var clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Ignore_(new SimpleRegionByRectangle(r));
+                clone.Ignore_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -335,21 +361,16 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Adds one or more ignore regions.
+        /// Adds one content region.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to ignore when validating the screenshot.</param>
+        /// <param name="region">A region to match using the Content method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Ignore(IEnumerable<Rectangle> regions)
+        public ICheckSettings Content(Rectangle region, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
-            clone.fluentCode_.Append($".{nameof(Ignore)}(");
-            foreach (Rectangle r in regions)
-            {
-                clone.Ignore_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            return Content(list, padding, regionId);
         }
 
         /// <summary>
@@ -360,12 +381,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Content(Rectangle region, params Rectangle[] regions)
         {
-            CheckSettings clone = Clone();
-            clone.Content_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Content)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
+            var list = new List<Rectangle> { region };
+            list.AddRange(regions);
+            return Content(list);
+        }
+
+        /// <summary>
+        /// Adds one or more content regions.
+        /// </summary>
+        /// <param name="regions">An enumerbale of regions to match using the Content method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Content(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
+        {
+            var clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Content_(new SimpleRegionByRectangle(r));
+                clone.Content_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -373,21 +407,16 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Adds one or more content regions.
+        /// Adds one layout region.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Content method.</param>
+        /// <param name="region">A region to match using the Layout method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Content(IEnumerable<Rectangle> regions)
+        public ICheckSettings Layout(Rectangle region, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
-            clone.fluentCode_.Append($".{nameof(Content)}(");
-            foreach (Rectangle r in regions)
-            {
-                clone.Content_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            return Layout(list, padding, regionId);
         }
 
         /// <summary>
@@ -398,12 +427,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Layout(Rectangle region, params Rectangle[] regions)
         {
-            CheckSettings clone = Clone();
-            clone.Layout_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Layout)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
+            var list = new List<Rectangle> { region };
+            list.AddRange(regions);
+            return Layout(list);
+        }
+
+        /// <summary>
+        /// Adds one or more layout regions.
+        /// </summary>
+        /// <param name="regions">An enumerbale of regions to match using the Layout method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Layout(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
+        {
+            var clone = Clone();
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Layout_(new SimpleRegionByRectangle(r));
+                clone.Layout_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -411,21 +453,16 @@ namespace Applitools
         }
 
         /// <summary>
-        /// Adds one or more layout regions.
+        /// Adds one strict region.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Layout method.</param>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Layout(IEnumerable<Rectangle> regions)
+        public ICheckSettings Strict(Rectangle region, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
-            clone.fluentCode_.Append($".{nameof(Layout)}(");
-            foreach (Rectangle r in regions)
-            {
-                clone.Layout_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            return Strict(list, padding, regionId);
         }
 
         /// <summary>
@@ -436,30 +473,25 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Strict(Rectangle region, params Rectangle[] regions)
         {
-            CheckSettings clone = Clone();
-            clone.Strict_(new SimpleRegionByRectangle(region));
-            clone.fluentCode_.Append($".{nameof(Strict)}(new Rectangle({region.X},{region.Y},{region.Width},{region.Height})");
-            foreach (Rectangle r in regions)
-            {
-                clone.Strict_(new SimpleRegionByRectangle(r));
-                clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<Rectangle> { region };
+            list.AddRange(regions);
+            return Strict(list);
         }
 
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
         /// <param name="regions">An enumerbale of regions to match using the Strict method.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Strict(IEnumerable<Rectangle> regions)
+        public ICheckSettings Strict(IEnumerable<Rectangle> regions, Padding padding = null, string regionId = null)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (Rectangle r in regions)
             {
-                clone.Strict_(new SimpleRegionByRectangle(r));
+                clone.Strict_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
             clone.fluentCode_.Append(")");
@@ -473,7 +505,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Timeout(TimeSpan timeout)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.timeout_ = (int)timeout.TotalMilliseconds;
             clone.fluentCode_.Append($".{nameof(Timeout)}({timeout.TotalMilliseconds})");
             return clone;
@@ -486,7 +518,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings IgnoreCaret(bool ignoreCaret = true)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.ignoreCaret_ = ignoreCaret;
             clone.fluentCode_.Append($".{nameof(IgnoreCaret)}({ignoreCaret})");
             return clone;
@@ -499,7 +531,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns> 
         public ICheckSettings SendDom(bool sendDom = true)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.sendDom_ = sendDom;
             clone.fluentCode_.Append($".{nameof(SendDom)}({sendDom})");
             return clone;
@@ -512,7 +544,7 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings WithName(string name)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.name_ = name;
             clone.fluentCode_.Append($".{nameof(WithName)}(\"{name}\")");
             return clone;
@@ -520,14 +552,14 @@ namespace Applitools
 
         public ICheckSettings UseDom(bool useDom = true)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.useDom_ = useDom;
             clone.fluentCode_.Append($".{nameof(UseDom)}({useDom})");
             return clone;
         }
         public ICheckSettings ReplaceLast(bool replaceLast = true)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.replaceLast_ = replaceLast;
             clone.fluentCode_.Append($".{nameof(ReplaceLast)}({replaceLast})");
             return clone;
@@ -535,7 +567,7 @@ namespace Applitools
 
         public ICheckSettings EnablePatterns(bool enablePatterns = true)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.enablePatterns_ = enablePatterns;
             clone.fluentCode_.Append($".{nameof(EnablePatterns)}({enablePatterns})");
             return clone;
@@ -543,7 +575,7 @@ namespace Applitools
 
         public ICheckSettings IgnoreDisplacements(bool ignoreDisplacements = true)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.ignoreDisplacements_ = ignoreDisplacements;
             clone.fluentCode_.Append($".{nameof(IgnoreDisplacements)}({ignoreDisplacements})");
             return clone;
@@ -552,7 +584,7 @@ namespace Applitools
         [Obsolete("Use " + nameof(BeforeRenderScreenshotHook) + " instead.")]
         public ICheckSettings ScriptHook(string hook)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.scriptHooks_.Add(BEFORE_CAPTURE_SCREENSHOT, hook);
             clone.fluentCode_.Append($".{nameof(ScriptHook)}({hook})");
             return clone;
@@ -560,7 +592,7 @@ namespace Applitools
 
         public ICheckSettings BeforeRenderScreenshotHook(string hook)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.scriptHooks_.Add(BEFORE_CAPTURE_SCREENSHOT, hook);
             clone.fluentCode_.Append($".{nameof(BeforeRenderScreenshotHook)}({hook})");
             return clone;
@@ -568,7 +600,7 @@ namespace Applitools
 
         public ICheckSettings VisualGridOptions(params VisualGridOption[] options)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             if (options == null) return clone;
             clone.visualGridOptions_ = (VisualGridOption[])options.Clone();
             clone.fluentCode_.Append($".{nameof(VisualGridOptions)}(");
@@ -620,7 +652,7 @@ namespace Applitools
 
         protected virtual CheckSettings Clone()
         {
-            CheckSettings clone = new CheckSettings();
+            var clone = new CheckSettings();
             PopulateClone_(clone);
             return clone;
         }
@@ -698,7 +730,7 @@ namespace Applitools
         
         public ICheckSettings VariationGroupId(string variationGroupId)
         {
-            CheckSettings clone = Clone();
+            var clone = Clone();
             clone.variationGroupId_ = variationGroupId;
             return clone;
         }
@@ -738,6 +770,5 @@ namespace Applitools
         {
             return fluentCode_.ToString();
         }
-
     }
 }

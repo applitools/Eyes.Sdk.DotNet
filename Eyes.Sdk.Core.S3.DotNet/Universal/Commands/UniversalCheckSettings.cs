@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Applitools;
 using Applitools.Fluent;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -57,10 +56,10 @@ namespace Applitools.Selenium.Commands
            public bool? IgnoreCaret { get; set; }
            public bool? IgnoreDisplacements { get; set; }
            public AccessibilitySettings AccessibilitySettings { get; set; }
-           public TRegion[] IgnoreRegions { get; set; }
-           public TRegion[] LayoutRegions { get; set; }
-           public TRegion[] StrictRegions { get; set; }
-           public TRegion[] ContentRegions { get; set; }
+           public CodedRegionReference[] IgnoreRegions { get; set; }
+           public CodedRegionReference[] LayoutRegions { get; set; }
+           public CodedRegionReference[] StrictRegions { get; set; }
+           public CodedRegionReference[] ContentRegions { get; set; }
            public TFloatingRegion[] FloatingRegions { get; set; }
            public TAccessibilityRegion[] AccessibilityRegions { get; set; }
 
@@ -79,10 +78,10 @@ namespace Applitools.Selenium.Commands
 
         public UniversalCheckSettings()
         {
-            IgnoreRegions = new TRegion[0];
-            LayoutRegions = new TRegion[0];
-            StrictRegions = new TRegion[0];
-            ContentRegions = new TRegion[0];
+            IgnoreRegions = new CodedRegionReference[0];
+            LayoutRegions = new CodedRegionReference[0];
+            StrictRegions = new CodedRegionReference[0];
+            ContentRegions = new CodedRegionReference[0];
             FloatingRegions = new TFloatingRegion[0];
             AccessibilityRegions = new TAccessibilityRegion[0];
             Frames = new List<IFrame>();
