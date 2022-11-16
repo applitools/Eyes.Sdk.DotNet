@@ -1,5 +1,4 @@
-﻿using Applitools.Common;
-using Applitools.Tests.Utils;
+﻿using Applitools.Tests.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;

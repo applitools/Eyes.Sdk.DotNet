@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+
 namespace Applitools.Selenium.Commands.Responses
 {
     public class EyesCloseAbortResponsePayload
     {
-        public IList<TestResults> Result { get; set; }
+        public ICollection<TestResults> Result { get; set; }
         public ResponsePayloadError Error { get; set; }
 
         public EyesCloseAbortResponsePayload()

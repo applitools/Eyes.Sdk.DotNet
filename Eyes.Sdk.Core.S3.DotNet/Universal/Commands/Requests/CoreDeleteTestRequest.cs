@@ -1,23 +1,20 @@
-﻿namespace Applitools.Selenium.Commands.Requests
-{
-    public class CoreDeleteTestSettings
-    {
-        public string TestId { get; set; }
-        public string BatchId { get; set; }
-        public string ServerUrl { get; set; }
-        public string SecretToken { get; set; }
-        public string ApiKey { get; set; }
-        public ProxySettings Proxy { get; set; }
-    }
+﻿using System.Collections.Generic;
 
-    public class CoreDeleteTestRequestPayload
+namespace Applitools.Selenium.Commands.Requests
+{
+    public class DeleteTestRequestPayload
     {
-        public CoreDeleteTestSettings Settings { get; set; }
+        public ICollection<DeleteTestSettings> Settings { get; set; }
+
+        public DeleteTestRequestPayload()
+        {
+            Settings = new List<DeleteTestSettings>();
+        }
     }
 
     public class CoreDeleteTestRequest : CommandBase
     {
-        public CoreDeleteTestRequestPayload Payload { get; set; }
+        public DeleteTestRequestPayload Payload { get; set; }
 
         public CoreDeleteTestRequest()
         {

@@ -1,28 +1,32 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 
 namespace Applitools.Selenium.Commands.Requests
 {
-    public class CloseBatchesSettings
+    public class CloseBatchSettings
     {
         public string BatchIds { get; set; }
         public string ServerUrl { get; set; }
         public WebProxy Proxy { get; set; }
     }
 
-    public class CoreCloseBatchesRequestPayload
+    public class CloseBatchRequestPayload
     {
-        public EyesRef Eyes { get; set; }
-        public CloseBatchesSettings Settings { get; set; }
-        public EyesConfig Config { get; set; }
+        public ICollection<CloseBatchSettings> Settings { get; set; }
+
+        public CloseBatchRequestPayload()
+        {
+            Settings = new List<CloseBatchSettings>();
+        }
     }
 
     public class CoreCloseBatchesRequest : CommandBase
     {
-        public CoreCloseBatchesRequestPayload Payload { get; set; }
+        public CloseBatchRequestPayload Payload { get; set; }
 
         public CoreCloseBatchesRequest()
         {
-            Name = "Core.closeBatches";
+            Name = "Core.closeBatch";
         }
     }
 }

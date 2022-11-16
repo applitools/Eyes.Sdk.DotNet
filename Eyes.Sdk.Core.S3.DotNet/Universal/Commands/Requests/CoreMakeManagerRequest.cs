@@ -1,15 +1,16 @@
 ﻿namespace Applitools.Selenium.Commands.Requests
 {
-    public class ManagerConfig
+    public class MakeManagerRequestPayload
     {
         public string Type { get; set; }
         public int? Concurrency { get; set; }
         public bool? Legacy { get; set; }
+        public string AgentId { get; set; }
     }
 
     public class CoreMakeManagerRequest : CommandBase
     {
-        public ManagerConfig Payload { get; set; }
+        public MakeManagerRequestPayload Payload { get; set; }
 
         public CoreMakeManagerRequest()
         {

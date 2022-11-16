@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Applitools.Utils;
+using AutoMapper;
 
 namespace Applitools
 {
@@ -65,5 +66,43 @@ namespace Applitools
 
         public abstract TestResults Abort();
         public abstract TestResults Close(bool throwEx = true);
+
+        protected Config ToConfig(Configuration configuration)
+        {
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<MapProfiler>();
+            });
+            var mapper = config.CreateMapper();
+
+            var openConfig = mapper.Map<OpenConfig>(configuration);
+            var checkConfig = mapper.Map<CheckConfig>(configuration);
+            var closeConfig = mapper.Map<CloseConfig>(configuration);
+            
+            return new Config(openConfig, checkConfig, closeConfig);
+        }
+
+        protected OpenSettings ToOpenSettings(Configuration configuration)
+        {
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<MapProfiler>();
+            });
+            var mapper = config.CreateMapper();
+
+            var settings = mapper.Map<OpenSettings>(configuration);
+
+            return settings;
+        }
+
+        protected CloseSettings ToCloseSettings(Configuration configuration)
+        {
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<MapProfiler>();
+            });
+            var mapper = config.CreateMapper();
+
+            var settings = mapper.Map<CloseSettings>(configuration);
+            
+            return settings;
+        }
     }
 }

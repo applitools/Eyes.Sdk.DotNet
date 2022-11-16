@@ -1,4 +1,6 @@
-﻿namespace Applitools.Selenium.Commands.Requests
+﻿using System.Collections.Generic;
+
+namespace Applitools.Selenium.Commands.Requests
 {
     public class CoreDeleteTestSettings
     {
@@ -12,7 +14,12 @@
 
     public class CoreDeleteTestRequestPayload
     {
-        public CoreDeleteTestSettings Settings { get; set; }
+        public ICollection<CoreDeleteTestSettings> Settings { get; set; }
+
+        public CoreDeleteTestRequestPayload()
+        {
+            Settings = new List<CoreDeleteTestSettings>();
+        }
     }
 
     public class CoreDeleteTestRequest : CommandBase

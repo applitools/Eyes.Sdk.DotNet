@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using Applitools.Fluent;
 
 namespace Applitools
 {
@@ -51,17 +50,10 @@ namespace Applitools
         {
             return new RectangleFloatingRegion
             {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = new RegionRectangle
-                {
-                    X = rect_.Left,
-                    Y = rect_.Top,
-                    Width = rect_.Width,
-                    Height = rect_.Height
-                }
+                X = rect_.Left,
+                Y = rect_.Top,
+                Width = rect_.Width,
+                Height = rect_.Height
             };
         }
     }

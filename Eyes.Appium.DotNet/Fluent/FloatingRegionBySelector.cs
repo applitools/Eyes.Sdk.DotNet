@@ -35,14 +35,19 @@ namespace Applitools.Appium
         
         public TFloatingRegion ToRegion()
         {
-            return new SelectorFloatingRegion
+            return new RegionFloatingRegion // ?
             {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = selectorTransformer_.GetRegionSelector(selector_)
+
             };
+
+            //return new SelectorFloatingRegion
+            //{
+            //    Bottom = maxDownOffset_,
+            //    Top = maxUpOffset_,
+            //    Left = maxLeftOffset_,
+            //    Right = maxRightOffset_,
+            //    Region = selectorTransformer_.GetRegionSelector(selector_)
+            //};
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)

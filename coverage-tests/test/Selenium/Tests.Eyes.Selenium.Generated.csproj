@@ -31,4 +31,8 @@
     <ProjectReference Include="..\..\..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="coverage\generic\" />
+  </ItemGroup>
+
 </Project>

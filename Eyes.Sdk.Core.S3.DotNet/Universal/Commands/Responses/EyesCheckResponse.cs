@@ -1,9 +1,16 @@
-﻿namespace Applitools.Selenium.Commands.Responses
+﻿using System.Collections.Generic;
+
+namespace Applitools.Selenium.Commands.Responses
 {
     public class EyesCheckResponsePayload
     {
-        public MatchResult Result { get; set; }
+        public ICollection<MatchResult> Result { get; set; }
         public ResponsePayloadError Error { get; set; }
+
+        public EyesCheckResponsePayload()
+        {
+            Result = new List<MatchResult>();
+        }
     }
 
     public class EyesCheckResponse : CommandBase

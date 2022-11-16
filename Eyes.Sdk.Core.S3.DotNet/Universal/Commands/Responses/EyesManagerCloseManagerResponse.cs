@@ -2,10 +2,9 @@
 using Applitools.Selenium.Commands;
 using Newtonsoft.Json;
 
-
 namespace Applitools
 {
-    public class UniversalBrowserInfo
+    public class Renderer
     {
         public string Name { get; set; }
         public int? Width { get; set; }
@@ -22,7 +21,7 @@ namespace Applitools
         public string Version { get; set; }
     }
     
-    public class UniversalException
+    public class Error
     {
         public string Message { get; set; }
         public string Stack { get; set; }
@@ -31,15 +30,16 @@ namespace Applitools
 
     public class CloseAllResult
     {
-        public TestResults TestResults { get; set; }
-        public UniversalException Exception { get; set; }
+        public TestResults Result { get; set; }
+        public string UserTestId { get; set; }
+        public Error Error { get; set; }
         [JsonProperty]
-        public UniversalBrowserInfo BrowserInfo { get; set; }
+        public Renderer Renderer { get; set; }
     }
 
     public class EyesManagerCloseManagerResult
     {
-        public IList<CloseAllResult> Results { get; set; }
+        public ICollection<CloseAllResult> Results { get; set; }
 
         public int Passed { get; set; }
         public int Unresolved { get; set; }
@@ -55,7 +55,7 @@ namespace Applitools
         }
     }
 
-    public class EyesManagerCloseManagerResponsePayload
+    public class CloseManagerResponsePayload
     {
         public EyesManagerCloseManagerResult Result { get; set; }
         public ResponsePayloadError Error { get; set; }
@@ -63,6 +63,6 @@ namespace Applitools
 
     public class EyesManagerCloseManagerResponse : CommandBase
     {
-        public EyesManagerCloseManagerResponsePayload Payload { get; set; }
+        public CloseManagerResponsePayload Payload { get; set; }
     }
 }

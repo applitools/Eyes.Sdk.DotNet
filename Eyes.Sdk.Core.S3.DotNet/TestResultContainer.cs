@@ -19,11 +19,11 @@ namespace Applitools
 
         public TestResultContainer(CloseAllResult closeAllResult)
         {
-            TestResults = closeAllResult.TestResults;
-            BrowserInfo = CreateRenderBrowserInfo(closeAllResult.BrowserInfo);
-            if (closeAllResult.Exception != null)
+            TestResults = closeAllResult.Result;
+            BrowserInfo = CreateRenderBrowserInfo(closeAllResult.Renderer);
+            if (closeAllResult.Error != null)
             {
-                Exception = new Exception(closeAllResult.Exception.Message);
+                Exception = new Exception(closeAllResult.Error.Message);
             }
         }
 
@@ -37,40 +37,40 @@ namespace Applitools
                     '}';
         }
 
-        private RenderBrowserInfo CreateRenderBrowserInfo(UniversalBrowserInfo universalBrowserInfo)
+        private RenderBrowserInfo CreateRenderBrowserInfo(Renderer renderer)
         {
-            if (universalBrowserInfo == null)
+            if (renderer == null)
             {
                 return null;
             }
 
-            var chromeEmulationInfo = universalBrowserInfo.ChromeEmulationInfo;
+            var chromeEmulationInfo = renderer.ChromeEmulationInfo;
             if (chromeEmulationInfo != null)
             {
                 var name = chromeEmulationInfo.DeviceName.ToDeviceName();
                 var orientation = chromeEmulationInfo.ScreenOrientation.ToScreenOrientation();
                 return new RenderBrowserInfo(new ChromeEmulationInfo(name, orientation));
             }
-            var android = universalBrowserInfo.AndroidDeviceInfo;
+            var android = renderer.AndroidDeviceInfo;
             if (android != null)
             {
                 var name = android.DeviceName.ToAndroidDeviceName();
                 var orientation = android.ScreenOrientation.ToScreenOrientation();
                 return new RenderBrowserInfo(new AndroidDeviceInfo(name, orientation));
             }
-            var ios = universalBrowserInfo.IosDeviceInfo;
+            var ios = renderer.IosDeviceInfo;
             if (ios != null)
             {
                 var name = ios.DeviceName.ToIosDeviceName();
                 var orientation = ios.ScreenOrientation.ToScreenOrientation();
                 return new RenderBrowserInfo(new IosDeviceInfo(name, orientation));
             }
-            if (string.IsNullOrEmpty(universalBrowserInfo.Name) == false)
+            if (string.IsNullOrEmpty(renderer.Name) == false)
             {
-                var browserType = universalBrowserInfo.Name.ToBrowserType();
+                var browserType = renderer.Name.ToBrowserType();
                 return new RenderBrowserInfo(new DesktopBrowserInfo(
-                    universalBrowserInfo.Width.Value, 
-                    universalBrowserInfo.Height.Value,
+                    renderer.Width.Value, 
+                    renderer.Height.Value,
                     browserType));
             }
 

@@ -23,9 +23,9 @@ namespace Applitools.Selenium.Fluent
             return new ElementAccessibilityRegion
             {
                 Type = regionType_,
-                Region = new RegionElement
+                Region = new RegionElement // ?
                 {
-                    ElementId = element_.GetElementId()
+                    //ElementId = element_.GetElementId()
                 }
             };
         }

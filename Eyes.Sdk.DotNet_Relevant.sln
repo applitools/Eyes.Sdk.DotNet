@@ -80,7 +80,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Appium.UnitTests", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Appium.E2ETests", "Tests\Eyes.Appium.E2ETests\Eyes.Appium.E2ETests.csproj", "{3676B3CA-2927-484F-924A-3DFAA2FEAC6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Selenium.xUnitTests", "Tests\Eyes.Selenium.xUnitTests\Eyes.Selenium.xUnitTests.csproj", "{7C128703-CEE6-4386-BCE8-48150A761DE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.xUnitTests", "Tests\Eyes.Selenium.xUnitTests\Eyes.Selenium.xUnitTests.csproj", "{7C128703-CEE6-4386-BCE8-48150A761DE1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Images.DotNet", "Eyes.Images.DotNet\Eyes.Images.DotNet.csproj", "{8150C9ED-551D-4406-A34B-84930712E94B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -164,6 +166,10 @@ Global
 		{7C128703-CEE6-4386-BCE8-48150A761DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C128703-CEE6-4386-BCE8-48150A761DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C128703-CEE6-4386-BCE8-48150A761DE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8150C9ED-551D-4406-A34B-84930712E94B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8150C9ED-551D-4406-A34B-84930712E94B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8150C9ED-551D-4406-A34B-84930712E94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8150C9ED-551D-4406-A34B-84930712E94B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

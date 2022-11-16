@@ -147,14 +147,17 @@ namespace Applitools
             {
                 Payload = new CoreDeleteTestRequestPayload
                 {
-                    Settings = new CoreDeleteTestSettings
+                    Settings = new[]
                     {
-                        TestId = Id,
-                        BatchId = BatchId,
-                        SecretToken = SecretToken,
-                        ServerUrl = Runner.ServerUrl,
-                        ApiKey = Runner.ApiKey,
-                        Proxy = Runner.Proxy
+                        new CoreDeleteTestSettings
+                        {
+                            TestId = Id,
+                            BatchId = BatchId,
+                            SecretToken = SecretToken,
+                            ServerUrl = Runner.ServerUrl,
+                            ApiKey = Runner.ApiKey,
+                            Proxy = Runner.Proxy
+                        }
                     }
                 }
             }).GetAwaiter().GetResult();

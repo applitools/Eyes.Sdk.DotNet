@@ -2,6 +2,6 @@
 {
     public class DriverRequestPayload
     {
-        public UniversalDriverConfig Driver { get; set; }
+        public DriverTarget Target { get; set; }
     }
 }

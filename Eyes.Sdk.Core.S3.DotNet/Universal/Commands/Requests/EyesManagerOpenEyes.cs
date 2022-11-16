@@ -8,18 +8,17 @@ namespace Applitools.Selenium.Commands.Requests
         public string ApplitoolsRefId { get; set; }
     }
 
-    public class EyesManagerOpenEyesRequestPayload
+    public class OpenEyesRequestPayload
     {
         public ManagerRef Manager { get; set; }
-
-        public UniversalDriverConfig Driver { get; set; }
-
-        public EyesConfig Config { get; set; }
+        public DriverTarget Target { get; set; }
+        public OpenSettings Settings { get; set; }
+        public Config Config { get; set; }
     }
 
     public class EyesManagerOpenEyes : CommandBase
     {
-        public EyesManagerOpenEyesRequestPayload Payload { get; set; }
+        public OpenEyesRequestPayload Payload { get; set; }
 
         public EyesManagerOpenEyes()
         {

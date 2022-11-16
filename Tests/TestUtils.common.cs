@@ -63,7 +63,7 @@ namespace Applitools.Tests.Utils
             }
         }
 
-        public static SessionResults GetSessionResults(string apiKey, TestResults testResults)
+        public static SessionResults GetSessionResults(string apiKey, Applitools.TestResults testResults)
         {
             string apiSessionUrl = testResults?.ApiUrls?.Session;
             if (string.IsNullOrWhiteSpace(apiSessionUrl)) return null;
@@ -89,7 +89,7 @@ namespace Applitools.Tests.Utils
             return sessionResults;
         }
 
-        public static string GetDom(string apiKey, TestResults testResults, string domId)
+        public static string GetDom(string apiKey, Applitools.TestResults testResults, string domId)
         {
             string apiSessionUrl = testResults?.AppUrls?.Session;
             if (string.IsNullOrWhiteSpace(apiSessionUrl)) return null;

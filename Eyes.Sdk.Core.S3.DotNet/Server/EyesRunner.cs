@@ -17,13 +17,13 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private string managerApplitoolsRefId_;
-        private ManagerConfig config_;
+        private MakeManagerRequestPayload config_;
         private readonly Assembly _actualAssembly;
         private readonly IList<EyesBaseConfig> _eyeses;
 
         protected WebSocketClient SocketClient { get; private set; }
 
-        public ManagerConfig Config
+        public MakeManagerRequestPayload Config
         {
             get => config_ ?? (config_ = InitConfig());
             set => config_ = value;
@@ -176,12 +176,12 @@ namespace Applitools
 
                 foreach (var closeAllTestResults in payload.Result.Results)
                 {
-                    if (closeAllTestResults.Exception != null && shouldThrowException)
+                    if (closeAllTestResults.Error != null && shouldThrowException)
                     {
-                        throw new EyesException(closeAllTestResults.Exception.ToString());
+                        throw new EyesException(closeAllTestResults.Error.ToString());
                     }
                     
-                    var testResults = closeAllTestResults.TestResults;
+                    var testResults = closeAllTestResults.Result;
                     if (testResults != null)
                     {
                         testResults.Runner = this;
@@ -194,7 +194,7 @@ namespace Applitools
             return results;
         }
 
-        protected abstract ManagerConfig InitConfig();
+        protected abstract MakeManagerRequestPayload InitConfig();
 
         protected virtual IEnumerable<EyesBaseConfig> GetAllEyes()
         {
@@ -220,13 +220,16 @@ namespace Applitools
         {
             var closeAllEyes = new EyesManagerCloseManagerRequest
             {
-                Payload = new EyesManageCloseManagerRequestPayload
+                Payload = new CloseManagerRequestPayload
                 {
                     Manager = new ManagerRef
                     {
                         ApplitoolsRefId = managerApplitoolsRefId_
                     },
-                    ThrowErr = shouldThrowException
+                    Settings = new CloseSettings
+                    {
+                        ThrowErr = shouldThrowException
+                    }
                 }
             };
 

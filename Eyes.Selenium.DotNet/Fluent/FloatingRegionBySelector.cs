@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using System;
+using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -32,16 +33,18 @@ namespace Applitools.Selenium.Fluent
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
         
-        public TFloatingRegion ToRegion()
+        public TFloatingRegion ToRegion() // ?
         {
-            return new SelectorFloatingRegion
-            {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = selectorTransformer_.GetRegionSelector(selector_)
-            };
+            throw new Exception("test");
+
+            //return new SelectorFloatingRegion
+            //{
+            //    Bottom = maxDownOffset_,
+            //    Top = maxUpOffset_,
+            //    Left = maxLeftOffset_,
+            //    Right = maxRightOffset_,
+            //    Region = selectorTransformer_.GetRegionSelector(selector_)
+            //};
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)

@@ -1,4 +1,5 @@
-﻿using Applitools.Fluent;
+﻿using System.Collections.Generic;
+using Applitools.Fluent;
 
 namespace Applitools.Selenium.Commands.Requests
 {
@@ -6,15 +7,20 @@ namespace Applitools.Selenium.Commands.Requests
     {
         public TRegion Target { get; set; }
         public string Hint { get; set; }
-        public int? minMatch { get; set; }
+        public int? MinMatch { get; set; }
         public string Language { get; set; }
     }
 
     public class EyesExtractTextRequestPayload
     {
         public EyesRef Eyes { get; set; }
-        public OCRExtractSettings[] Regions { get; set; }
+        public ICollection<OCRExtractSettings> Regions { get; set; }
         public EyesConfig Config { get; set; }
+
+        public EyesExtractTextRequestPayload()
+        {
+            Regions = new List<OCRExtractSettings>();
+        }
     }
 
     public class EyesExtractTextRequest : CommandBase

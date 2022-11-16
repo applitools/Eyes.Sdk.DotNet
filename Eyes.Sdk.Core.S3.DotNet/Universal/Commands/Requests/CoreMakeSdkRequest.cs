@@ -4,7 +4,7 @@
     {
         public CoreMakeSdkRequest()
         {
-            Name = "Core.makeSDK";
+            Name = "Core.makeCore";
         }
     }
 }

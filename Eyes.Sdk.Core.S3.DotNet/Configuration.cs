@@ -11,6 +11,7 @@ namespace Applitools
     public class Configuration : IConfiguration
     {
         private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
+
         public Configuration()
         {
             DefaultMatchSettings = new ImageMatchSettings();
@@ -71,8 +72,6 @@ namespace Applitools
         public StitchModes? StitchMode { get; set; }
 
         public bool? HideCaret { get; set; }
-
-        public bool? DisableBrowserFetching { get; set; }
 
         /// <summary>
         /// Get the batch in which context future tests will run or <c>null</c>
@@ -254,7 +253,6 @@ namespace Applitools
         }
 
         public string TestName { get; set; }
-
         public IConfiguration SetTestName(string value)
         {
             TestName = value;
@@ -399,8 +397,14 @@ namespace Applitools
             return this;
         }
 
-        public ProxySettings Proxy { get; set; }
+        public bool? DisableBrowserFetching { get; set; }
+        public IConfiguration SetDisableBrowserFetching(bool? value)
+        {
+            DisableBrowserFetching = value;
+            return this;
+        }
 
+        public ProxySettings Proxy { get; set; }
         public IConfiguration SetProxy(ProxySettings proxy)
         {
             Proxy = proxy;
@@ -453,13 +457,7 @@ namespace Applitools
             HideCaret = value;
             return this;
         }
-
-        public IConfiguration SetDisableBrowserFetching(bool? value)
-        {
-            DisableBrowserFetching = value;
-            return this;
-        }
-
+        
         public bool? EnablePatterns
         {
             get => DefaultMatchSettings.EnablePatterns;
@@ -539,6 +537,7 @@ namespace Applitools
         }
 
         private readonly IList<int> layoutBreakpoints_ = new List<int>();
+
         public IList<int> LayoutBreakpoints
         {
             get => layoutBreakpoints_;

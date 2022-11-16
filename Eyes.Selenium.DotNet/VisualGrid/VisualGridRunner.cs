@@ -62,9 +62,9 @@ namespace Applitools.VisualGrid
             if (logHandler != null) Logger.SetLogHandler(logHandler);
         }
 
-        protected override ManagerConfig InitConfig()
+        protected override MakeManagerRequestPayload InitConfig()
         {
-            return new ManagerConfig
+            return new MakeManagerRequestPayload
             {
                 Type = "vg",
                 Concurrency = testConcurrency_.UserConcurrency,

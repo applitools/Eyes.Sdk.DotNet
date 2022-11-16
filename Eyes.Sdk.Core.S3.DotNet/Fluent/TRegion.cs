@@ -4,7 +4,6 @@ namespace Applitools.Fluent
 {
     public class TRegion
     {
-
     }
 
     public class RegionRectangle : TRegion
@@ -20,10 +19,13 @@ namespace Applitools.Fluent
         public string Type { get; set; }
         public string Selector { get; set; }
     }
-
+    
     public class RegionElement : TRegion
     {
-        public string ElementId { get; set; }
+        //public string ElementId { get; set; } // ?
+
+        public RegionSelector Region { get; set; }
+        public string RegionId { get; set; }
     }
 
     public interface IGetRegions<T> where T : TRegion

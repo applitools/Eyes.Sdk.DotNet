@@ -576,17 +576,24 @@ namespace Applitools.Selenium
             }
 
             var seleniumCheckSettings = (ICheckSettingsInternal)checkSettings;
-            var eyesConfig = new EyesConfig(Config)
-            {
-                Properties = properties_.ToArray()
-            };
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.OpenConfig.Properties = properties_;
+            var remoteWebDriver = (RemoteWebDriver)driver_;
+            var serverUrl = GetServerUrl(remoteWebDriver);
             var request = new EyesCheckRequest
             {
                 Key = Guid.NewGuid().ToString(),
-                Payload = new EyesCheckRequestPayload
+                Payload = new CheckRequestPayload
                 {
                     Eyes = eyes_,
                     Config = eyesConfig,
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
                     Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
                 }
             };
@@ -598,11 +605,14 @@ namespace Applitools.Selenium
                 throw new EyesException(error.ToString());
             }
 
-            if (result?.Payload?.Result?.AsExpected == false)
+            foreach (var matchResult in result.Payload.Result)
             {
-                if (FailureReports == FailureReports.Immediate)
+                if (matchResult.AsExpected == false)
                 {
-                    throw new EyesException();
+                    if (FailureReports == FailureReports.Immediate)
+                    {
+                        throw new EyesException($"Unexpected match result for {matchResult}");
+                    }
                 }
             }
         }
@@ -659,9 +669,10 @@ namespace Applitools.Selenium
         {
             var eyesCloseRequest = new EyesCloseRequest
             {
-                Payload = new EyesCloseRequestPayload
+                Payload = new CloseResponsePayload
                 {
-                    Eyes = eyes_
+                    Eyes = eyes_,
+                    Settings = ToCloseSettings(Config)
                 }
             };
             return eyesCloseRequest;
@@ -671,17 +682,17 @@ namespace Applitools.Selenium
         {
             var request = new EyesAbortRequest
             {
-                Payload = new EyesAbortRequestPayload
+                Payload = new AbortPayload
                 {
                     Eyes = eyes_
                 }
             };
             return request;
         }
-
-        private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
+        
+        private Applitools.Commands.CheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            var settings = new UniversalCheckSettings
+            var settings = new Applitools.Commands.CheckSettings
             {
                 Hooks = new Hooks
                 {
@@ -692,7 +703,7 @@ namespace Applitools.Selenium
                 Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettingsInternal),
                 Fully = checkSettingsInternal.GetStitchContent(),
-                VariationGroupId = checkSettingsInternal.GetVariationGroupId(),
+                UserCommandId = checkSettingsInternal.GetVariationGroupId(),
                 IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
                 SendDom = checkSettingsInternal.GetSendDom(),
                 UseDom = checkSettingsInternal.GetUseDom(),
@@ -733,9 +744,9 @@ namespace Applitools.Selenium
                 var element = container.GetScrollRootElement();
                 if (element != null)
                 {
-                    return new RegionElement
+                    return new RegionElement // ?
                     {
-                        ElementId = element.GetElementId()
+                       // ElementId = element.GetElementId()
                     };
                 }
             }
@@ -799,9 +810,9 @@ namespace Applitools.Selenium
                         var element = GetTargetElement(seleniumCheckTarget);
                         if (element != null)
                         {
-                            region = new RegionElement
+                            region = new RegionElement // ?
                             {
-                                ElementId = element.GetElementId()
+                               // ElementId = element.GetElementId()
                             };
                         }
                     }
@@ -857,25 +868,24 @@ namespace Applitools.Selenium
             var result = new EyesManagerOpenEyes
             {
                 Key = Guid.NewGuid().ToString(),
-                Payload = new EyesManagerOpenEyesRequestPayload
+                Payload = new OpenEyesRequestPayload
                 {
                     Manager = new ManagerRef
                     {
                         ApplitoolsRefId = applitoolsRefId
                     },
-                    Driver = new UniversalDriverConfig
+                    Target = new DriverTarget
                     {
                         ServerUrl = serverUrl,
                         Capabilities = GetCapabilities(remoteWebDriver),
-                        SessionId = remoteWebDriver.SessionId.ToString()
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
                     },
-                    Config = new EyesConfig(Config)
-                    {
-                        Properties = properties_.ToArray()
-                    }
+                    Config = ToConfig(Config),
+                    Settings = ToOpenSettings(Config)
                 }
             };
-
+            result.Payload.Config.OpenConfig.Properties = properties_; // ?
             return result;
         }
         

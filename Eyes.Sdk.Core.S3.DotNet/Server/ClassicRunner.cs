@@ -19,9 +19,9 @@ namespace Applitools
         {
         }
 
-        protected override ManagerConfig InitConfig()
+        protected override MakeManagerRequestPayload InitConfig()
         {
-            return new ManagerConfig
+            return new MakeManagerRequestPayload
             {
                 Type = "classic"
             };

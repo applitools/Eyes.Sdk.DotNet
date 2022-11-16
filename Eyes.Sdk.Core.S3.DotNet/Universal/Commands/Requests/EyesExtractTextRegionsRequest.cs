@@ -1,27 +1,20 @@
 ﻿namespace Applitools.Selenium.Commands.Requests
 {
-    public class OCRSearchSettings
-    {
-        public object[] Patterns { get; set; }
-        public bool? IgnoreCase { get; set; }
-        public bool? FirstOnly { get; set; }
-        public string Language { get; set; }
-    }
-
-    public class EyesExtractTextRegionsRequestPayload
+    public class LocateTextRequestPayload
     {
         public EyesRef Eyes { get; set; }
-        public OCRSearchSettings Settings { get; set; }
+        public ITarget Target { get; set; }
+        public LocateTextSettings Settings { get; set; }
         public EyesConfig Config { get; set; }
     }
 
     public class EyesExtractTextRegionsRequest : CommandBase
     {
-        public EyesExtractTextRegionsRequestPayload Payload { get; set; }
+        public LocateTextRequestPayload Payload { get; set; }
 
         public EyesExtractTextRegionsRequest()
         {
-            Name = "Eyes.extractTextRegions";
+            Name = "Eyes.locateText";
         }
     }
 }

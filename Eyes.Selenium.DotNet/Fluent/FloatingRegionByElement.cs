@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
-using Applitools.Fluent;
 using Applitools.Utils;
 
 namespace Applitools.Selenium.Fluent
@@ -36,14 +35,7 @@ namespace Applitools.Selenium.Fluent
         {
             return new ElementFloatingRegion
             {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = new RegionElement
-                {
-                    ElementId = element_.GetElementId()
-                }
+                ElementId = element_.GetElementId()
             };
         }
 

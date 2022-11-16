@@ -1,0 +1,28 @@
+﻿using System.Collections.Generic;
+using Applitools.Fluent;
+using Applitools.Selenium.Commands;
+
+namespace Applitools
+{
+    public abstract class SettingsBase
+    {
+        public TRegion Region { get; set; }
+        public ICollection<IFrame> Frames { get; set; }
+        public string Webview { get; set; }
+        public bool? Fully { get; set; }
+        public TRegion ScrollRootElement { get; set; }
+        public StitchModes? StitchMode { get; set; }
+        public bool? HideScrollbars { get; set; }
+        public bool? HideCaret { get; set; }
+        public Overlap Overlap { get; set; }
+        public int? WaitBeforeCapture { get; set; }
+        public LazyLoad LazyLoad { get; set; }
+        public Normalization Normalization { get; set; }
+        public DebugImages DebugImages { get; set; }
+
+        protected SettingsBase()
+        {
+            Frames = new List<IFrame>();
+        }
+    }
+}

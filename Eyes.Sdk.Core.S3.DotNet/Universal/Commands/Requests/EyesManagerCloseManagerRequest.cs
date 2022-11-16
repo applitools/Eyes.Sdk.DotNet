@@ -1,14 +1,14 @@
 ﻿namespace Applitools.Selenium.Commands.Requests
 {
-    public class EyesManageCloseManagerRequestPayload
+    public class CloseManagerRequestPayload
     {
         public ManagerRef Manager { get; set; }
-        public bool ThrowErr { get; set; }
+        public CloseSettings Settings { get; set; }
     }
 
     public class EyesManagerCloseManagerRequest : CommandBase
     {
-        public EyesManageCloseManagerRequestPayload Payload { get; set; }
+        public CloseManagerRequestPayload Payload { get; set; }
 
         public EyesManagerCloseManagerRequest()
         {

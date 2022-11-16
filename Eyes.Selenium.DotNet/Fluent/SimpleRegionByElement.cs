@@ -23,10 +23,12 @@ namespace Applitools.Selenium.Fluent
         public TRegion ToRegion()
         {
             var elementId = element_.GetElementId();
+            
 
-            return new RegionElement
+
+            return new RegionElement // ?
             {
-                ElementId = elementId
+               // ElementId = elementId
             };
         }
     }

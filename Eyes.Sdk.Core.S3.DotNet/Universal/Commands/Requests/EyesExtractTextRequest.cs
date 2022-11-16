@@ -1,25 +1,23 @@
-﻿using Applitools.Fluent;
+﻿using System.Collections.Generic;
 
 namespace Applitools.Selenium.Commands.Requests
 {
-    public class OCRExtractSettings
-    {
-        public TRegion Target { get; set; }
-        public string Hint { get; set; }
-        public int? minMatch { get; set; }
-        public string Language { get; set; }
-    }
-
-    public class EyesExtractTextRequestPayload
+    public class ExtractTextRequestPayload
     {
         public EyesRef Eyes { get; set; }
-        public OCRExtractSettings[] Regions { get; set; }
+        public ITarget Target { get; set; }
+        public ICollection<ExtractTextSettings> Settings { get; set; }
         public EyesConfig Config { get; set; }
+
+        public ExtractTextRequestPayload()
+        {
+            Settings = new List<ExtractTextSettings>();
+        }
     }
 
     public class EyesExtractTextRequest : CommandBase
     {
-        public EyesExtractTextRequestPayload Payload { get; set; }
+        public ExtractTextRequestPayload Payload { get; set; }
 
         public EyesExtractTextRequest()
         {

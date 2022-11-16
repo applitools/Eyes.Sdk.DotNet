@@ -34,16 +34,16 @@ namespace Applitools.Appium
         
         public TFloatingRegion ToRegion()
         {
-            return new ElementFloatingRegion
+            return new ElementFloatingRegion // ?
             {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = new RegionElement
-                {
-                    ElementId = element_.GetElementId()
-                }
+                //Bottom = maxDownOffset_,
+                //Top = maxUpOffset_,
+                //Left = maxLeftOffset_,
+                //Right = maxRightOffset_,
+                //Region = new RegionElement
+                //{
+                //    ElementId = element_.GetElementId()
+                //}
             };
         }
 

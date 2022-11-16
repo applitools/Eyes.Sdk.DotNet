@@ -23,9 +23,9 @@ namespace Applitools.Appium
         {
             var elementId = element_.GetElementId();
 
-            return new RegionElement
+            return new RegionElement // ?
             {
-                ElementId = elementId
+                //ElementId = elementId
             };
         } 
     }

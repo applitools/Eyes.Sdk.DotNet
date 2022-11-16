@@ -25,20 +25,6 @@ namespace Applitools.Selenium.Commands
 
     public class EyesConfig
     {
-        //export type EyesBaseConfig = {
-        //    logs?: LogHandler
-        //    debugScreenshots?: DebugScreenshotHandler
-        //    agentId?: string
-        //    apiKey?: string
-        //    serverUrl?: string
-        //    proxy?: Proxy
-        //    isDisabled?: boolean
-        //    connectionTimeout?: number
-        //    removeSession?: boolean
-        //    remoteEvents?: {serverUrl: string; accessKey?: string; timeout?: number
-        //    }
-        //}
-
         public DebugScreenshotHandler DebugScreenshots { get; set; }
 
         public string AgentId { get; set; }
@@ -49,34 +35,7 @@ namespace Applitools.Selenium.Commands
         public int? ConnectionTimeout { get; set; }
         public bool? RemoveSession { get; set; }
         public RemoteEvents RemoteEvents { get; set; }
-
-        //export type EyesOpenConfig = {
-        //    appName?: string
-        //    testName?: string
-        //    displayName?: string
-        //    viewportSize?: Size
-        //    sessionType?: SessionType
-        //    properties?: CustomProperty[]
-        //    batch?: Batch
-        //    defaultMatchSettings?: MatchSettings<Region>
-        //                           hostApp?: string
-        //    hostOS?: string
-        //    hostAppInfo?: string
-        //    hostOSInfo?: string
-        //    deviceInfo?: string
-        //    baselineEnvName?: string
-        //    environmentName?: string
-        //    branchName?: string
-        //    parentBranchName?: string
-        //    baselineBranchName?: string
-        //    compareWithParentBranch?: boolean
-        //    ignoreBaseline?: boolean
-        //    saveFailedTests?: boolean
-        //    saveNewTests?: boolean
-        //    saveDiffs?: boolean
-        //    dontCloseBatches?: boolean
-        //}
-
+        
         public string AppName { get; set; }
         public string TestName { get; set; }
         public string DisplayName { get; set; }
@@ -102,29 +61,11 @@ namespace Applitools.Selenium.Commands
         public bool? SaveNewTests { get; set; }
         public bool? SaveDiffs { get; set; }
         public bool? DontCloseBatches { get; set; }
-
-        //  export type EyesCheckConfig = {
-        //  sendDom?: boolean
-        //  matchTimeout?: number
-        //  forceFullPageScreenshot?: boolean
-        //}
-
+        
         public bool? SendDom { get; set; }
         public int? MatchTimeout { get; set; }
         public bool? ForceFullPageScreenshot { get; set; }
-
-        // export type EyesClassicConfig<TElement = unknown, TSelector = unknown> = {
-        //  waitBeforeScreenshots?: number
-        //  stitchMode?: StitchMode
-        //  hideScrollbars?: boolean
-        //  hideCaret?: boolean
-        //  stitchOverlap?: number
-        //  scrollRootElement?: TElement | TSelector
-        //  cut?: ImageCropRect | ImageCropRegion
-        //  rotation?: ImageRotation
-        //  scaleRatio?: number
-        //}
-
+        
         public IImageCrop Cut { get; set; }
         public int? WaitBeforeScreenshots { get; set; }
 
@@ -135,25 +76,12 @@ namespace Applitools.Selenium.Commands
         public int? StitchOverlap { get; set; }
 
         public object ScrollRootElement { get; set; }
-
-        //  cut?: ImageCropRect | ImageCropRegion
-        //public ImageRotation? rotation { get; set; }
+        
         public int? ScaleRatio { get; set; }
-
-        // export type EyesUFGConfig = {
-        //  concurrentSessions?: number
-        //  browsersInfo?: (DesktopBrowserRenderer | ChromeEmulationDeviceRenderer | IOSDeviceRenderer)[]
-        //  visualGridOptions?: Record<string, any>
-        //  layoutBreakpoints?: boolean | number[]
-        //  disableBrowserFetching?: boolean
-        //}
-
+        
         public int? ConcurrentSessions { get; set; }
         public IDictionary<string, object> VisualGridOptions { get; set; }
-
-        //  browsersInfo?: (DesktopBrowserRenderer | ChromeEmulationDeviceRenderer | IOSDeviceRenderer)[]
-        //  visualGridOptions?: Record<string, any>
-        //  layoutBreakpoints?: boolean | number[]
+        
         public IRenderBrowserInfo[] BrowsersInfo { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public object LayoutBreakpoints { get; set; }

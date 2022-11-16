@@ -1,13 +1,15 @@
 ﻿namespace Applitools.Selenium.Commands.Requests
 {
-    public class EyesCloseRequestPayload
+    public class CloseResponsePayload
     {
         public EyesRef Eyes { get; set; }
+        public CloseSettings Settings { get; set; }
+        public EyesConfig Config { get; set; }
     }
 
     public class EyesCloseRequest : CommandBase
     {
-        public EyesCloseRequestPayload Payload { get; set; }
+        public CloseResponsePayload Payload { get; set; }
 
         public EyesCloseRequest()
         {

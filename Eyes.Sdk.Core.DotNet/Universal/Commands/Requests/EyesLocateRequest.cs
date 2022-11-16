@@ -1,4 +1,7 @@
-﻿namespace Applitools.Selenium.Commands.Requests
+﻿using System.Collections.Generic;
+using Applitools.Fluent;
+
+namespace Applitools.Selenium.Commands.Requests
 {
     public class LocateSettings
     {
@@ -18,6 +21,16 @@
         public EyesLocateRequestPayload Payload { get; set; }
 
         public EyesLocateRequest()
+        {
+            Name = "Eyes.locate";
+        }
+    }
+
+    public class LocateResponse : CommandBase
+    {
+        public EyesLocateRequestPayload Payload { get; set; }
+
+        public LocateResponse()
         {
             Name = "Eyes.locate";
         }

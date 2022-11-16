@@ -1,27 +1,44 @@
 ﻿using Applitools.Fluent;
+using Applitools.Utils.Geometry;
 
 namespace Applitools
 {
     public abstract class TFloatingRegion
     {
-        public int MaxUpOffset { get; set; }
-        public int MaxDownOffset { get; set; }
-        public int MaxLeftOffset { get; set; }
-        public int MaxRightOffset { get; set; }
     }
 
     public class RectangleFloatingRegion : TFloatingRegion
     {
-        public RegionRectangle Region { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 
-    public class SelectorFloatingRegion : TFloatingRegion
+    public class RegionFloatingRegion : TFloatingRegion
     {
         public RegionSelector Region { get; set; }
+        public Region Offset { get; set; }
     }
 
     public class ElementFloatingRegion : TFloatingRegion
     {
-        public RegionElement Region { get; set; }
+        public string ElementId { get; set; }
     }
+
+
+    //public class RectangleFloatingRegion : TFloatingRegion // ?
+    //{
+    //    public RegionRectangle Region { get; set; }
+    //}
+
+    //public class SelectorFloatingRegion : TFloatingRegion
+    //{
+    //    public RegionSelector Region { get; set; }
+    //}
+
+    //public class ElementFloatingRegion : TFloatingRegion
+    //{
+    //    public RegionElement Region { get; set; }
+    //}
 }
