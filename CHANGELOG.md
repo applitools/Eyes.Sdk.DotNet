@@ -1,3 +1,28 @@
+## [Eyes.Selenium4 3.27] - 2022-11-11
+### Implemented
+- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
+- Support for Region Id
+
+## [Eyes.Appium 5.21] - 2022-11-11
+### Implemented
+- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
+- Support for Region Id
+
+## [Eyes.Selenium 3.27] - 2022-11-11
+### Implemented
+- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
+- Support for Region Id
+
+## [Eyes.Sdk.Core 3.20] - 2022-11-11
+### Implemented
+- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
+- Support for Region Id
+
+## [Eyes.Sdk.Core.S3 3.20] - 2022-11-11
+### Implemented
+- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
+- Support for Region Id
+
 ## [Eyes.Sdk.Core 3.19] - 2022-10-31
 ### Fixed
 - Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)

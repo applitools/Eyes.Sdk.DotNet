@@ -23,7 +23,8 @@ namespace Applitools.Utils.Geometry
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="coordinateType"></param>
-        public Region(int left, int top, int width, int height, CoordinatesTypeEnum coordinateType = CoordinatesTypeEnum.SCREENSHOT_AS_IS)
+        /// <param name="regionId"></param>
+        public Region(int left, int top, int width, int height, CoordinatesTypeEnum coordinateType = CoordinatesTypeEnum.SCREENSHOT_AS_IS, string regionId = null)
         {
             ArgumentGuard.GreaterOrEqual(width, 0, nameof(width));
             ArgumentGuard.GreaterOrEqual(height, 0, nameof(height));
@@ -33,6 +34,7 @@ namespace Applitools.Utils.Geometry
             Width = width;
             Height = height;
             CoordinatesType = coordinateType;
+            RegionId = regionId;
         }
 
         /// <summary>
@@ -41,8 +43,9 @@ namespace Applitools.Utils.Geometry
         /// <param name="position"></param>
         /// <param name="size"></param>
         /// <param name="coordinateType"></param>
-        public Region(Point position, Size size, CoordinatesTypeEnum coordinateType = CoordinatesTypeEnum.SCREENSHOT_AS_IS)
-            : this(position.X, position.Y, size.Width, size.Height, coordinateType)
+        /// <param name="regionId"></param>
+        public Region(Point position, Size size, CoordinatesTypeEnum coordinateType = CoordinatesTypeEnum.SCREENSHOT_AS_IS, string regionId = null)
+            : this(position.X, position.Y, size.Width, size.Height, coordinateType, regionId)
         {
         }
 
@@ -51,8 +54,9 @@ namespace Applitools.Utils.Geometry
         /// </summary>
         /// <param name="rectangle"></param>
         /// <param name="coordinateType"></param>
-        public Region(Rectangle rectangle, CoordinatesTypeEnum coordinateType = CoordinatesTypeEnum.SCREENSHOT_AS_IS)
-            : this(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, coordinateType)
+        /// <param name="regionId"></param>
+        public Region(Rectangle rectangle, CoordinatesTypeEnum coordinateType = CoordinatesTypeEnum.SCREENSHOT_AS_IS, string regionId = null)
+            : this(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, coordinateType, regionId)
         {
         }
 
@@ -61,6 +65,11 @@ namespace Applitools.Utils.Geometry
         /// </summary>
         /// <param name="region">Some region. Can be <see cref="MutableRegion"/>.</param>
         public Region(IRegion region) : this(region.Rectangle) { }
+
+        /// <summary>
+        /// Returns the region of this <see cref="Region"/>
+        /// </summary>
+        public string RegionId { get; private set; }
 
         /// <summary>
         /// Returns the location of this <see cref="Region"/> on the X axis.

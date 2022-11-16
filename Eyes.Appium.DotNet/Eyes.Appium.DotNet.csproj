@@ -8,15 +8,14 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>5.20</Version>
+    <Version>5.21</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes appium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- Multithreading issue on uSDK using xUnit [Trello 3048] (https://trello.com/c/nkcG69eG)
-### Updated
-- Match to latest Universal Server
+    <PackageReleaseNotes>### Implemented
+- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
+- Support for Region Id
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Appium</PackageId>

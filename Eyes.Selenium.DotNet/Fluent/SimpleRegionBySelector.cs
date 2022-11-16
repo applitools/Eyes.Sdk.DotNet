@@ -7,24 +7,33 @@
 
     internal class SimpleRegionBySelector : IGetRegions, IGetSeleniumRegion
     {
-        private readonly By selector_;
-        private readonly ISelectorTransformer selectorTransformer_;
+        private readonly By _selector;
+        private readonly Padding _padding;
+        private readonly string _regionId;
+        private readonly ISelectorTransformer _selectorTransformer;
         
-        public SimpleRegionBySelector(By by)
+        public SimpleRegionBySelector(By by, Padding padding = null, string regionId = null)
         {
-            selector_ = by;
-            selectorTransformer_ = new SeleniumSelectorTransformer();
+            _selector = by;
+            _padding = padding;
+            _regionId = regionId;
+            _selectorTransformer = new SeleniumSelectorTransformer();
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
-            ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector_);
+            ReadOnlyCollection<IWebElement> elements = driver.FindElements(_selector);
             return elements;
         }
         
-        public TRegion ToRegion()
+        public CodedRegionReference ToRegion()
         {
-            return selectorTransformer_.GetRegionSelector(selector_);
+            return new CodedRegionReference
+            {
+                Region = _selectorTransformer.GetRegionSelector(_selector),
+                Padding = _padding,
+                RegionId = _regionId
+            };
         }
     }
 }

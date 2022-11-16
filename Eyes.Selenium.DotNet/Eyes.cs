@@ -650,6 +650,7 @@ namespace Applitools.Selenium
             
             managerApplitoolsRefId_ = Runner.GetCoreMakeManager();
 
+            var remoteWebDriver = (RemoteWebDriver)driver;
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
 
             var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).GetAwaiter().GetResult().Payload;
@@ -754,7 +755,7 @@ namespace Applitools.Selenium
             return null;
         }
 
-        private IList<TRegion> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
+        private IList<CodedRegionReference> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
         {
             return checkSettings.GetIgnoreRegions().Select(i => i.ToRegion()).ToList();
         }

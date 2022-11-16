@@ -10,10 +10,10 @@ namespace Applitools.Commands
         public bool? IgnoreDisplacements { get; set; }
         public string Name { get; set; }
         public string PageId { get; set; }
-        public TRegion[] IgnoreRegions { get; set; }
-        public TRegion[] LayoutRegions { get; set; }
-        public TRegion[] StrictRegions { get; set; }
-        public TRegion[] ContentRegions { get; set; }
+        public CodedRegionReference[] IgnoreRegions { get; set; }
+        public CodedRegionReference[] LayoutRegions { get; set; }
+        public CodedRegionReference[] StrictRegions { get; set; }
+        public CodedRegionReference[] ContentRegions { get; set; }
         public TFloatingRegion[] FloatingRegions { get; set; }
         public TAccessibilityRegion[] AccessibilityRegions { get; set; }
         public AccessibilitySettings AccessibilitySettings { get; set; }
