@@ -93,7 +93,7 @@ namespace Applitools
             return settings;
         }
 
-        protected CloseSettings ToCloseSettings(Configuration configuration)
+        protected CloseSettings ToCloseSettings(Configuration configuration, bool throwEx)
         {
             var config = new MapperConfiguration(cfg => {
                 cfg.AddProfile<MapProfiler>();
@@ -101,7 +101,8 @@ namespace Applitools
             var mapper = config.CreateMapper();
 
             var settings = mapper.Map<CloseSettings>(configuration);
-            
+            settings.ThrowErr = throwEx;
+
             return settings;
         }
     }

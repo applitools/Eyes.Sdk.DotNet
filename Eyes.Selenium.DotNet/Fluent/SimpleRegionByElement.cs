@@ -32,7 +32,7 @@ namespace Applitools.Selenium.Fluent
             {
                 Region = new RegionElement
                 {
-                    //ElementId = elementId // ?
+                    ElementId = elementId
                 },
                 Padding = _padding,
                 RegionId = _regionId

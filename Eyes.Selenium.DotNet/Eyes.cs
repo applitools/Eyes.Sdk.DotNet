@@ -451,7 +451,7 @@ namespace Applitools.Selenium
                 return new TestResults();
             }
 
-            var eyesCloseRequest = CreateEyesCloseRequest();
+            var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
 
             var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).GetAwaiter().GetResult();
 
@@ -666,14 +666,14 @@ namespace Applitools.Selenium
             return driver;
         }
 
-        private EyesCloseRequest CreateEyesCloseRequest()
+        private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)
         {
             var eyesCloseRequest = new EyesCloseRequest
             {
                 Payload = new CloseResponsePayload
                 {
                     Eyes = eyes_,
-                    Settings = ToCloseSettings(Config)
+                    Settings = ToCloseSettings(Config, throwEx)
                 }
             };
             return eyesCloseRequest;
@@ -745,9 +745,9 @@ namespace Applitools.Selenium
                 var element = container.GetScrollRootElement();
                 if (element != null)
                 {
-                    return new RegionElement // ?
+                    return new RegionElement
                     {
-                       // ElementId = element.GetElementId()
+                        ElementId = element.GetElementId()
                     };
                 }
             }
@@ -811,9 +811,9 @@ namespace Applitools.Selenium
                         var element = GetTargetElement(seleniumCheckTarget);
                         if (element != null)
                         {
-                            region = new RegionElement // ?
+                            region = new RegionElement
                             {
-                               // ElementId = element.GetElementId()
+                                ElementId = element.GetElementId()
                             };
                         }
                     }
