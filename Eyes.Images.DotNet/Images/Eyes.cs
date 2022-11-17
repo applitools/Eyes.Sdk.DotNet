@@ -191,7 +191,7 @@ namespace Applitools.Images
             IImagesCheckTarget imagesCheckTarget = checkSettings as IImagesCheckTarget;
             ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
             var eyesConfig = ToConfig(Config);
-            //eyesConfig.OpenConfig.Properties = properties_;
+            //eyesConfig.Open.Properties = _properties;
             var request = new EyesCheckRequest
             {
                 Key = Guid.NewGuid().ToString(),
@@ -307,7 +307,7 @@ namespace Applitools.Images
                     Config = ToConfig(Config)
                 }
             };
-            //result.Payload.Config.OpenConfig.Properties = properties_;
+            //result.Payload.Config.Open.Properties = properties_;
             return result;
         }
 

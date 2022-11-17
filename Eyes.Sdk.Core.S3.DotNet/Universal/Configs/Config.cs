@@ -2,15 +2,15 @@
 {
     public class Config
     {
-        public IOpenConfig OpenConfig { get; }
-        public ICheckConfig CheckConfig { get; }
-        public ICloseConfig CloseConfig { get; }
+        public IOpenConfig Open { get; }
+        public ICheckConfig Check { get; }
+        public ICloseConfig Close { get; }
 
-        public Config(IOpenConfig openConfig, ICheckConfig checkConfig, ICloseConfig closeConfig)
+        public Config(IOpenConfig open, ICheckConfig check, ICloseConfig close)
         {
-            OpenConfig = openConfig;
-            CheckConfig = checkConfig;
-            CloseConfig = closeConfig;
+            Open = open;
+            Check = check;
+            Close = close;
         }
     }
 }

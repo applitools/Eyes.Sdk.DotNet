@@ -577,7 +577,7 @@ namespace Applitools.Selenium
 
             var seleniumCheckSettings = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
-            eyesConfig.OpenConfig.Properties = properties_;
+            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var request = new EyesCheckRequest
@@ -885,7 +885,7 @@ namespace Applitools.Selenium
                     Settings = ToOpenSettings(Config)
                 }
             };
-            result.Payload.Config.OpenConfig.Properties = properties_; // ?
+            result.Payload.Config.Open.Properties = properties_; // ?
             return result;
         }
         
