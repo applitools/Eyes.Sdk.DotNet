@@ -776,7 +776,10 @@ namespace Applitools.Selenium
 
                     if (item.FrameSelector != null)
                     {
-                        frames.Add(selectorTransformer_.GetRegionSelector(item.FrameSelector));
+                        frames.Add(new FrameSelector
+                        {
+                            Frame = selectorTransformer_.GetRegionSelector(item.FrameSelector)
+                        });
                     }
 
                     if (item.FrameReference != null)

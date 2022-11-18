@@ -1,4 +1,6 @@
-﻿namespace Applitools.Selenium.Commands
+﻿using Applitools.Fluent;
+
+namespace Applitools.Selenium.Commands
 {
     public interface IElementReference
     {
@@ -44,6 +46,11 @@
         public string Frame { get; set; }
     }
     
+    public class FrameSelector : IFrame
+    {
+        public RegionSelector Frame { get; set; }
+    }
+
     public class FrameElement : IFrame
     {
         public string ElementId { get; set; }

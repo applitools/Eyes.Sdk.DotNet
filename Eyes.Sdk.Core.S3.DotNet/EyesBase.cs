@@ -75,10 +75,11 @@ namespace Applitools
             var mapper = config.CreateMapper();
 
             var openConfig = mapper.Map<OpenConfig>(configuration);
+            var screenshotConfig = mapper.Map<ScreenshotConfig>(configuration);
             var checkConfig = mapper.Map<CheckConfig>(configuration);
             var closeConfig = mapper.Map<CloseConfig>(configuration);
             
-            return new Config(openConfig, checkConfig, closeConfig);
+            return new Config(openConfig, screenshotConfig, checkConfig, closeConfig);
         }
 
         protected OpenSettings ToOpenSettings(Configuration configuration)
