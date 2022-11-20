@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Applitools.Fluent;
 using Applitools.Selenium.Commands;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools
 {
@@ -11,6 +13,7 @@ namespace Applitools
         public string Webview { get; set; }
         public bool? Fully { get; set; }
         public TRegion ScrollRootElement { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public StitchModes? StitchMode { get; set; }
         public bool? HideScrollbars { get; set; }
         public bool? HideCaret { get; set; }

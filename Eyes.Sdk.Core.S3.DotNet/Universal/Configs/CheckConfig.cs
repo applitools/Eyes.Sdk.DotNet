@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Applitools.Fluent;
 using Applitools.VisualGrid;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Applitools
 {
@@ -42,6 +44,7 @@ namespace Applitools
         public TFloatingRegion[] FloatingRegions { get; set; }
         public TFloatingRegion[] AccessibilityRegions { get; set; }
         public AccessibilitySettings AccessibilitySettings { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public MatchLevel? MatchLevel { get; set; }
         public TimeSpan? RetryTimeout { get; set; }
         public bool? SendDom { get; set; }

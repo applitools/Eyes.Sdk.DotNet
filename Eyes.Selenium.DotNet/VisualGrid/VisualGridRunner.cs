@@ -66,7 +66,7 @@ namespace Applitools.VisualGrid
         {
             return new MakeManagerRequestPayload
             {
-                Type = "vg",
+                Type = "ufg",
                 Concurrency = testConcurrency_.UserConcurrency,
                 Legacy = testConcurrency_.IsLegacy
             };
