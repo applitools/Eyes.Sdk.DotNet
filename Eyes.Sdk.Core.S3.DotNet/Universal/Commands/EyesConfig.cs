@@ -149,11 +149,11 @@ namespace Applitools.Selenium.Commands
                         IosDeviceInfo = browserInfo.IosDeviceInfo
                     });
                 }
-                if (browserInfo.EmulationInfo != null)
+                if (browserInfo.ChromeEmulationInfo != null)
                 {
                     browsers.Add(new ChromeEmulation
                     {
-                        ChromeEmulationInfo = (ChromeEmulationInfo)browserInfo.EmulationInfo
+                        ChromeEmulationInfo = (ChromeEmulationInfo)browserInfo.ChromeEmulationInfo
                     });
                 }
                 if (browserInfo.AndroidDeviceInfo != null)

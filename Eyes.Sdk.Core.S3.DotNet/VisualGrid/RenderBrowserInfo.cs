@@ -23,9 +23,9 @@ namespace Applitools.VisualGrid
             BrowserType = BrowserType.SAFARI;
         }
 
-        public RenderBrowserInfo(EmulationBaseInfo emulationInfo, string baselineEnvName = null)
+        public RenderBrowserInfo(EmulationBaseInfo chromeEmulationInfo, string baselineEnvName = null)
         {
-            EmulationInfo = emulationInfo;
+            ChromeEmulationInfo = chromeEmulationInfo;
             BaselineEnvName = baselineEnvName;
             BrowserType = BrowserType.CHROME;
         }
@@ -40,22 +40,22 @@ namespace Applitools.VisualGrid
         public RectangleSize GetDeviceSize()
         {
             return ViewportSize ??
-                   EmulationInfo?.Size ??
+                   ChromeEmulationInfo?.Size ??
                    IosDeviceInfo?.Size ??
                    Size.Empty;
         }
 
         public void SetEmulationDeviceSize(DeviceSize size)
         {
-            if (size != null && EmulationInfo != null)
+            if (size != null && ChromeEmulationInfo != null)
             {
-                if (EmulationInfo.ScreenOrientation == ScreenOrientation.Portrait)
+                if (ChromeEmulationInfo.ScreenOrientation == ScreenOrientation.Portrait)
                 {
-                    EmulationInfo.Size = size.Portrait;
+                    ChromeEmulationInfo.Size = size.Portrait;
                 }
                 else
                 {
-                    EmulationInfo.Size = size.Landscape;
+                    ChromeEmulationInfo.Size = size.Landscape;
                 }
             }
         }
@@ -75,8 +75,9 @@ namespace Applitools.VisualGrid
             }
         }
 
+        [JsonIgnore]
         public DesktopBrowserInfo DesktopBrowserInfo { get; }
-        public EmulationBaseInfo EmulationInfo { get; }
+        public EmulationBaseInfo ChromeEmulationInfo { get; }
         public IosDeviceInfo IosDeviceInfo { get; }
         public AndroidDeviceInfo AndroidDeviceInfo { get; }
 
@@ -85,10 +86,10 @@ namespace Applitools.VisualGrid
         [JsonProperty("name")]
         public BrowserType BrowserType { get; }
 
-        public int Width => ViewportSize?.Width ?? 0;
-        public int Height => ViewportSize?.Height ?? 0;
+        public int? Width => ViewportSize?.Width;
+        public int? Height => ViewportSize?.Height;
+        [JsonIgnore]
         public RectangleSize ViewportSize { get; set; }
-
         public string Platform
         {
             get
@@ -119,7 +120,7 @@ namespace Applitools.VisualGrid
 
         public override string ToString()
         {
-            return (DesktopBrowserInfo ?? IosDeviceInfo ?? (IRenderBrowserInfo)EmulationInfo).ToString();
+            return (DesktopBrowserInfo ?? IosDeviceInfo ?? (IRenderBrowserInfo)ChromeEmulationInfo).ToString();
         }
     }
 }
