@@ -24,7 +24,7 @@ namespace Applitools
         bool? UseDom { get; set; }
         bool? EnablePatterns { get; set; }
         bool? IgnoreCaret { get; set; }
-        VisualGridOption[] UfgOptions { get; }
+        IDictionary<string, object> UfgOptions { get; }
         ICollection<int> LayoutBreakpoints { get; set; }
         bool? DisableBrowserFetching { get; set; }
         AutProxy AutProxy { get; set; }
@@ -51,7 +51,7 @@ namespace Applitools
         public bool? UseDom { get; set; }
         public bool? EnablePatterns { get; set; }
         public bool? IgnoreCaret { get; set; }
-        public VisualGridOption[] UfgOptions { get; set; }
+        public IDictionary<string, object> UfgOptions { get; set; }
         public ICollection<int> LayoutBreakpoints { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public AutProxy AutProxy { get; set; }

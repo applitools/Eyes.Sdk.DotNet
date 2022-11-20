@@ -94,6 +94,18 @@ namespace Applitools
             return settings;
         }
 
+        protected LocateSettings ToLocateSettings(Configuration configuration)
+        {
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<MapProfiler>();
+            });
+            var mapper = config.CreateMapper();
+
+            var settings = mapper.Map<LocateSettings>(configuration);
+
+            return settings;
+        }
+
         protected CloseSettings ToCloseSettings(Configuration configuration, bool throwEx)
         {
             var config = new MapperConfiguration(cfg => {

@@ -1,4 +1,5 @@
-﻿using Applitools.Metadata;
+﻿using System.Linq;
+using Applitools.Metadata;
 using AutoMapper;
 
 namespace Applitools
@@ -19,7 +20,8 @@ namespace Applitools
             CreateMap<Configuration, CheckConfig>()
                 .ForMember(dest => dest.Renderers, act => act.MapFrom(src => src.GetBrowsersInfo()))
                 .ForMember(dest => dest.RetryTimeout, act => act.MapFrom(src => src.MatchTimeout))
-                .ForMember(dest => dest.UfgOptions, act => act.MapFrom(src => src.VisualGridOptions));
+                .ForMember(dest => dest.UfgOptions, act => act.MapFrom(src => 
+                    src.VisualGridOptions.ToDictionary(k => k.Key, v => v.Value)));
             CreateMap<Configuration, CloseConfig>()
                 .ForMember(dest => dest.UpdateBaselineIfNew, act => act.MapFrom(src => src.SaveNewTests))
                 .ForMember(dest => dest.UpdateBaselineIfDifferent, act => act.MapFrom(src => src.SaveFailedTests));
@@ -32,6 +34,7 @@ namespace Applitools
                         HostingApp = src.HostApp,
                         ViewportSize = src.ViewportSize
                     }));
+            CreateMap<Configuration, LocateSettings>();
             CreateMap<Configuration, CloseSettings>();
         }
     }

@@ -438,6 +438,41 @@ namespace Applitools.Selenium
             return driver_;
         }
 
+        public IDictionary<string, Utils.Geometry.Region> Locate(params string[] locatorNames)
+        {
+            Logger.Log("Locate");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, Utils.Geometry.Region>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = properties_;
+            var remoteWebDriver = (RemoteWebDriver)driver_;
+            var serverUrl = GetServerUrl(remoteWebDriver);
+            var locateRequest = new EyesLocateRequest
+            {
+                Payload = new EyesLocateRequestPayload
+                {
+                    Config = ToConfig(Config),
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = ToLocateSettings(Config)
+                }
+            };
+
+            var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(locateRequest).GetAwaiter().GetResult();
+
+            return response.Payload;
+        }
+
         /// <summary>
         /// Ends the test and returns its results.
         /// </summary>

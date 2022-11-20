@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
-using Applitools.Fluent;
+using Applitools.Utils.Geometry;
 
 namespace Applitools.Selenium.Commands.Requests
 {
-    public class LocateResponsePayload : Dictionary<string, RegionRectangle>
+    public class LocateResponsePayload : Dictionary<string, Region>
     {
+    }
+
+    public class EyesLocateResponse : CommandBase
+    {
+        public LocateResponsePayload Payload { get; set; }
     }
 }

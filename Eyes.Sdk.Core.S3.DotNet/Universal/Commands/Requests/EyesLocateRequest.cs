@@ -4,7 +4,7 @@
     {
         public ITarget Target { get; set; }
         public LocateSettings Settings { get; set; }
-        public EyesConfig Config { get; set; }
+        public Config Config { get; set; }
     }
      
     public class EyesLocateRequest : CommandBase
