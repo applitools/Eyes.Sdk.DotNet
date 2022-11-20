@@ -15,6 +15,7 @@ namespace Applitools
         public AccessibilityLevel Level { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("version")]
         public AccessibilityGuidelinesVersion GuidelinesVersion { get; set; }
     }
 }
