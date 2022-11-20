@@ -16,7 +16,8 @@ namespace Applitools
                                     HostingApp = src.HostApp,
                                     ViewportSize = src.ViewportSize
                                 }));
-            CreateMap<Configuration, ScreenshotConfig>();
+            CreateMap<Configuration, ScreenshotConfig>()
+                .ForMember(dest => dest.Fully, act => act.MapFrom(src => src.IsForceFullPageScreenshot));
             CreateMap<Configuration, CheckConfig>()
                 .ForMember(dest => dest.Renderers, act => act.MapFrom(src => src.GetBrowsersInfo()))
                 .ForMember(dest => dest.RetryTimeout, act => act.MapFrom(src => src.MatchTimeout))
