@@ -31,7 +31,7 @@ namespace Applitools.Appium
             {
                 Region = new RegionElement
                 {
-                    //ElementId = elementId // ?
+                    ElementId = elementId
                 },
                 Padding = _padding,
                 RegionId = _regionId

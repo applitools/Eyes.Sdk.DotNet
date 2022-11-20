@@ -18,7 +18,7 @@ namespace Applitools
     public class RegionFloatingRegion : TFloatingRegion
     {
         public RegionSelector Region { get; set; }
-        public Region Offset { get; set; }
+        public Padding Offset { get; set; }
     }
 
     public class ElementFloatingRegion : TFloatingRegion

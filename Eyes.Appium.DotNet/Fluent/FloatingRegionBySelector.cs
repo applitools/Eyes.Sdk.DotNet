@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Applitools.Fluent;
 using Applitools.Selenium;
 using OpenQA.Selenium;
 
@@ -35,19 +36,11 @@ namespace Applitools.Appium
         
         public TFloatingRegion ToRegion()
         {
-            return new RegionFloatingRegion // ?
+            return new RegionFloatingRegion
             {
-
+                Region = selectorTransformer_.GetRegionSelector(selector_),
+                Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)
             };
-
-            //return new SelectorFloatingRegion
-            //{
-            //    Bottom = maxDownOffset_,
-            //    Top = maxUpOffset_,
-            //    Left = maxLeftOffset_,
-            //    Right = maxRightOffset_,
-            //    Region = selectorTransformer_.GetRegionSelector(selector_)
-            //};
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
