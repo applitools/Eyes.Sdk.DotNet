@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Applitools.Commands;
 using Applitools.Fluent;
-using Applitools.Selenium.Commands;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

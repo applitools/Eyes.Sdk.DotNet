@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Applitools.Selenium.Commands
+namespace Applitools.Commands
 {
     public class ResponsePayloadError
     {

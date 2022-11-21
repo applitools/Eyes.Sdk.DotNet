@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Applitools.Selenium.Commands;
+using Applitools.Commands;
 using Newtonsoft.Json;
 
 namespace Applitools

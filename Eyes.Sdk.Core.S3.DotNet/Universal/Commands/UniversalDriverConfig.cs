@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Applitools.Selenium.Commands
+namespace Applitools.Commands
 {
     public class UniversalDriverConfig
     {

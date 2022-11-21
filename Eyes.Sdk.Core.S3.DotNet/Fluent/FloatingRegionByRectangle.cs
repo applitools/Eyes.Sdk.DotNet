@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using Applitools.Commands;
 using Applitools.Fluent;
-using Applitools.Selenium.Commands;
 
 namespace Applitools
 {

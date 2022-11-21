@@ -1,6 +1,6 @@
 ﻿using Applitools.Utils.Geometry;
 
-namespace Applitools.Selenium.Commands
+namespace Applitools.Commands
 {
     public class ImageTarget : ITarget
     {

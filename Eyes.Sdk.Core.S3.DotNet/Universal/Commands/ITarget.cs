@@ -1,4 +1,4 @@
-﻿namespace Applitools.Selenium.Commands
+﻿namespace Applitools.Commands
 {
     public interface ITarget
     {

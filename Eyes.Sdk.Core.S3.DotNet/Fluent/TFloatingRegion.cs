@@ -1,5 +1,5 @@
-﻿using Applitools.Fluent;
-using Applitools.Selenium.Commands;
+﻿using Applitools.Commands;
+using Applitools.Fluent;
 
 namespace Applitools
 {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using Applitools.Selenium.Commands.Requests;
+using Applitools.Commands.Requests;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 

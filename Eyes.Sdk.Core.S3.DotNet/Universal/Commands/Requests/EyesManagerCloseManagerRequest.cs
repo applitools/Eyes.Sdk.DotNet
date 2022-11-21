@@ -1,4 +1,4 @@
-﻿namespace Applitools.Selenium.Commands.Requests
+﻿namespace Applitools.Commands.Requests
 {
     public class CloseManagerRequestPayload
     {

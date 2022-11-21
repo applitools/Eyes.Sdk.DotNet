@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-namespace Applitools.Selenium.Commands.Requests
+namespace Applitools.Commands.Requests
 {
     public class CloseBatchSettings
     {

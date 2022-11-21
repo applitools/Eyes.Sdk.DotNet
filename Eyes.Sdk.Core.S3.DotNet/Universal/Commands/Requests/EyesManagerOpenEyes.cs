@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Applitools.Selenium.Commands.Requests
+namespace Applitools.Commands.Requests
 {
     public class ManagerRef
     {

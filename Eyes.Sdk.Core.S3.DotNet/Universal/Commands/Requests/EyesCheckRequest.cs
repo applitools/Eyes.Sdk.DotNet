@@ -1,10 +1,10 @@
-﻿namespace Applitools.Selenium.Commands.Requests
+﻿namespace Applitools.Commands.Requests
 {
     public class CheckRequestPayload
     {
         public EyesRef Eyes { get; set; }
         public ITarget Target { get; set; }
-        public Applitools.Commands.CheckSettings Settings { get; set; }
+        public UniversalCheckSettings Settings { get; set; }
         public Config Config { get; set; }
     }
 

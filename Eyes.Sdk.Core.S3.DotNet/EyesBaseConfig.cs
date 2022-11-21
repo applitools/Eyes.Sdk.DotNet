@@ -1,5 +1,5 @@
 ﻿using System;
-using Applitools.Selenium.Commands;
+using Applitools.Commands;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 

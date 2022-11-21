@@ -1,4 +1,4 @@
-﻿using Applitools.Selenium.Commands;
+﻿using Applitools.Commands;
 
 namespace Applitools.Fluent
 {

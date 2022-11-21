@@ -2,8 +2,8 @@
 using Applitools.Utils.Geometry;
 using System;
 using System.Collections.Generic;
+using Applitools.Commands;
 using Applitools.Selenium;
-using Applitools.Selenium.Commands;
 using Applitools.VisualGrid;
 
 namespace Applitools

@@ -1,4 +1,4 @@
-﻿namespace Applitools.Commands
+﻿namespace Applitools
 {
     public class CheckAndCloseSettings : CheckSettings
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Applitools.Utils.Geometry;
 
-namespace Applitools.Selenium.Commands.Requests
+namespace Applitools.Commands.Requests
 {
     public class LocateResponsePayload : Dictionary<string, Region>
     {

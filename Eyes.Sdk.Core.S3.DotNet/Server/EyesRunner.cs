@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Applitools.Commands;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Selenium;
-using Applitools.Selenium.Commands;
-using Applitools.Selenium.Commands.Requests;
-using Applitools.Selenium.Commands.Responses;
 using Applitools.Utils;
 using Newtonsoft.Json;
 

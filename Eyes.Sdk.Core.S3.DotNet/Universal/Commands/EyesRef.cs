@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Applitools.Selenium.Commands
+namespace Applitools.Commands
 {
     public class EyesRef
     {

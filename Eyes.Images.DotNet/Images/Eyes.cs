@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Applitools.Fluent;
-using Applitools.Selenium.Commands;
-using Applitools.Selenium.Commands.Requests;
-using Applitools.Selenium.Commands.Responses;
+using Applitools.Commands;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Utils;
 
 namespace Applitools.Images
@@ -311,9 +311,9 @@ namespace Applitools.Images
             return result;
         }
 
-        private Applitools.Commands.CheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
+        private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            var settings = new Applitools.Commands.CheckSettings
+            var settings = new UniversalCheckSettings
             {
                 Hooks = new Hooks
                 {

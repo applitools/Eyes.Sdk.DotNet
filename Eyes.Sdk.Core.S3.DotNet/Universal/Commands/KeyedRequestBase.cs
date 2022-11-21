@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Applitools.Selenium.Commands
+namespace Applitools.Commands
 {
     public abstract class KeyedRequestBase : CommandBase
     {

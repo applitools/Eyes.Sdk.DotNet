@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Applitools.Commands;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Fluent;
 using Applitools.Selenium.Fluent;
-using Applitools.Selenium.Commands;
-using Applitools.Selenium.Commands.Requests;
-using Applitools.Selenium.Commands.Responses;
 using OpenQA.Selenium.Remote;
 
 namespace Applitools.Selenium
@@ -725,9 +725,9 @@ namespace Applitools.Selenium
             return request;
         }
         
-        private Applitools.Commands.CheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
+        private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            var settings = new Applitools.Commands.CheckSettings
+            var settings = new UniversalCheckSettings
             {
                 Hooks = new Hooks
                 {

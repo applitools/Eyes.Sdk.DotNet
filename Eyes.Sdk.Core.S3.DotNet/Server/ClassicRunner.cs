@@ -1,4 +1,4 @@
-﻿using Applitools.Selenium.Commands.Requests;
+﻿using Applitools.Commands.Requests;
 
 namespace Applitools
 {

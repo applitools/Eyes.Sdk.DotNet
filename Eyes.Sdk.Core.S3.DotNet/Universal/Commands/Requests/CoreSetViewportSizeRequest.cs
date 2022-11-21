@@ -1,6 +1,6 @@
 ﻿using Applitools.Utils.Geometry;
 
-namespace Applitools.Selenium.Commands.Requests
+namespace Applitools.Commands.Requests
 {
     public class SetViewportSizeRequestPayload : DriverRequestPayload
     {

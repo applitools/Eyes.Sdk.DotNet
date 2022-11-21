@@ -1,4 +1,4 @@
-﻿namespace Applitools.Selenium.Commands.Responses
+﻿namespace Applitools.Commands.Responses
 {
     public class EyesManagerOpenEyesResponsePayload
     {

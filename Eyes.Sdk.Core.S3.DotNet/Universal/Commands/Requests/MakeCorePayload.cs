@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Applitools.Selenium.Commands.Requests
+namespace Applitools.Commands.Requests
 {
     public class MakeCorePayload
     {

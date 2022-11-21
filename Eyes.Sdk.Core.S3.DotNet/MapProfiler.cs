@@ -40,7 +40,7 @@ namespace Applitools
                         HostingApp = src.HostApp,
                         ViewportSize = src.ViewportSize
                     }));
-            CreateMap<Configuration, Commands.CheckSettings>()
+            CreateMap<Configuration, UniversalCheckSettings>()
                 .ForMember(dest => dest.AccessibilitySettings, act =>
                     {
                         act.Condition(src => src.AccessibilityValidation != null);

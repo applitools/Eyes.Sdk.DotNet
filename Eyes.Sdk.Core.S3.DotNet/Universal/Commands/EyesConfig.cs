@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Applitools.Selenium;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Applitools.Selenium.Commands
+namespace Applitools.Commands
 {
     public class RemoteEvents
     {
