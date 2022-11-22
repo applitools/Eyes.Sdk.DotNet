@@ -30,7 +30,6 @@ namespace Applitools.Images
         private readonly Uri serverUrl_;
         private string managerApplitoolsRefId_;
         private EyesRef eyes_;
-        private readonly ISelectorTransformer selectorTransformer_;
 
         #endregion
 
@@ -322,14 +321,12 @@ namespace Applitools.Images
                 LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
-                Region = GetUniversalRegion(checkSettingsInternal),
                 Fully = checkSettingsInternal.GetStitchContent(),
                 UserCommandId = checkSettingsInternal.GetVariationGroupId(),
                 IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
                 SendDom = checkSettingsInternal.GetSendDom(),
                 UseDom = checkSettingsInternal.GetUseDom(),
                 //Frames = GetFrames(checkSettingsInternal),
-                ScrollRootElement = GetScrollRootElement(checkSettingsInternal),
                 IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
                 StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
                 LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
@@ -349,37 +346,7 @@ namespace Applitools.Images
 
             return settings.GetLayoutBreakpointsEnabled();
         }
-
-        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
-        {
-            TRegion region = null;
-            if (checkSettings is ICheckSettingsInternal checkSettingsInternal)
-            {
-                region = CreateCheckSettingsTargetRegion(checkSettingsInternal);
-            }
-
-            if (region == null)
-            {
-                if (checkSettings is ITargetContainer seleniumCheckTarget)
-                {
-                    region = CreateCheckSettingsRegionSelector(seleniumCheckTarget);
-                    if (region == null)
-                    {
-                        //var element = GetTargetElement(seleniumCheckTarget);
-                        //if (element != null)
-                        //{
-                        //    region = new RegionElement
-                        //    {
-                        //        // ElementId = element.GetElementId()
-                        //    };
-                        //}
-                    }
-                }
-            }
-
-            return region;
-        }
-
+        
         private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
         {
             TRegion region = null;
@@ -397,43 +364,6 @@ namespace Applitools.Images
             }
 
             return region;
-        }
-
-        private RegionSelector CreateCheckSettingsRegionSelector(ITargetContainer settings)
-        {
-            RegionSelector regionSelector = null;
-
-            var targetSelector = settings.GetTargetSelector();
-            if (targetSelector != null)
-            {
-                regionSelector = selectorTransformer_.GetRegionSelector(targetSelector);
-            }
-
-            return regionSelector;
-        }
-
-        private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)
-        {
-            var container = checkSettings as IScrollRootElementContainer;
-            if (container != null)
-            {
-                var selector = container.GetScrollRootSelector();
-                if (selector != null)
-                {
-                    return selectorTransformer_.GetRegionSelector(selector);
-                }
-
-                var element = container.GetScrollRootElement();
-                if (element != null)
-                {
-                    return new RegionElement
-                    {
-                        // ElementId = element.GetElementId()
-                    };
-                }
-            }
-
-            return null;
         }
     }
 }
