@@ -1,3 +1,25 @@
+## [Eyes.Selenium vNext]
+### Updated
+- Migrated to Universal SDK v.3
+- Removed Test.Eyes.Sdk.Core.S3.DotNet dependency
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Migrated to Universal SDK v.3
+- Removed Test.Eyes.Sdk.Core.DotNet dependency
+
+## [Eyes.Appium vNext]
+### Updated
+- Migrated to Universal SDK v.3
+
+## [Eyes.Images 3.0] - 2022-11-23
+### Updated
+- Migrated to Universal SDK v.3
+
+## [Eyes.Universal.Core.Image 3.0.2] - 2022-11-23
+### Updated
+- Universal Server Version to 3.0.2
+
 ## [Eyes.Selenium4 3.27] - 2022-11-11
 ### Implemented
 - Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
