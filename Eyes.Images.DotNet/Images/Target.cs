@@ -9,7 +9,7 @@ namespace Applitools.Images
         {
             return new ImagesCheckSettings(image);
         }
-
+        
         public static ImagesCheckSettings Image(string path)
         {
             Bitmap image = new Bitmap(path);

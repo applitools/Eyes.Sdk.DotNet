@@ -84,6 +84,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.xUnitTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Images.DotNet", "Eyes.Images.DotNet\Eyes.Images.DotNet.csproj", "{8150C9ED-551D-4406-A34B-84930712E94B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Images.E2ETests", "Tests\Eyes.Images.E2ETests\Eyes.Images.E2ETests.csproj", "{B5EC3AC3-14B5-43A2-9D31-B59179896506}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -170,6 +172,10 @@ Global
 		{8150C9ED-551D-4406-A34B-84930712E94B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8150C9ED-551D-4406-A34B-84930712E94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8150C9ED-551D-4406-A34B-84930712E94B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5EC3AC3-14B5-43A2-9D31-B59179896506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5EC3AC3-14B5-43A2-9D31-B59179896506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5EC3AC3-14B5-43A2-9D31-B59179896506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5EC3AC3-14B5-43A2-9D31-B59179896506}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,6 +193,7 @@ Global
 		{F94DEEFE-84EB-450D-B2E1-3D836274FA5D} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
 		{3676B3CA-2927-484F-924A-3DFAA2FEAC6A} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
 		{7C128703-CEE6-4386-BCE8-48150A761DE1} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
+		{B5EC3AC3-14B5-43A2-9D31-B59179896506} = {233F520B-DF1A-4A89-9267-8EA90D313D06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2D3A563-3BF6-42B1-B7A9-7A7DCD842A2E}

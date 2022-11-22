@@ -123,6 +123,31 @@ namespace Applitools.Tests.Utils
             }
         }
 
+        public static void compareProcedure(Region actualRegion, Region expectedRegion, string type = null)
+        {
+            Region[] actualRegions = new Region[] { actualRegion };
+            HashSet<Region> expectedRegions = new HashSet<Region> { expectedRegion };
+            TestUtils.CompareSimpleRegionsList_(actualRegions, expectedRegions, "Region");
+        }
+
+        public static void compareProcedure(FloatingMatchSettings actualRegion, FloatingMatchSettings expectedRegion, string type = "Floating")
+        {
+            FloatingMatchSettings[] actualRegions = new FloatingMatchSettings[] { actualRegion };
+            HashSet<FloatingMatchSettings> expectedRegions = new HashSet<FloatingMatchSettings> { expectedRegion };
+            HashSet<FloatingMatchSettings> expectedRegionsClone = new HashSet<FloatingMatchSettings>(expectedRegions);
+            if (expectedRegions.Count > 0)
+            {
+                foreach (FloatingMatchSettings region in actualRegions)
+                {
+                    if (!expectedRegionsClone.Remove(region))
+                    {
+                        Assert.Fail("actual {0} region {1} not found in expected regions list", type, region);
+                    }
+                }
+                Assert.IsEmpty(expectedRegionsClone, "not all expected regions found in actual regions list.", type);
+            }
+        }
+
         public static void CompareSimpleRegionsList_(Region[] actualRegions, HashSet<Region> expectedRegions, string type)
         {
             HashSet<Region> expectedRegionsClone = new HashSet<Region>(expectedRegions);

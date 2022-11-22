@@ -8,5 +8,7 @@ namespace Applitools.Images
         Bitmap Image { get; }
 
         Uri ImageUri { get; }
+
+        string ToImage();
     }
 }

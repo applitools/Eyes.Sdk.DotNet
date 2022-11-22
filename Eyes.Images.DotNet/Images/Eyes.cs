@@ -82,6 +82,11 @@ namespace Applitools.Images
 
         #region Public
 
+        public Configuration GetConfiguration()
+        {
+            return Config;
+        }
+
         /// <summary>
         /// Starts a test.
         /// </summary>
@@ -153,6 +158,7 @@ namespace Applitools.Images
             using (Stream s = new MemoryStream(image))
             {
                 Bitmap bmp = new Bitmap(s);
+
                 return CheckImage(bmp, tag, replaceLast);
             }
         }
@@ -178,6 +184,17 @@ namespace Applitools.Images
             return Check(tag, Target.Image(image).Region(region));
         }
 
+        /// <summary>
+        /// Perform visual validation for the current image.
+        /// </summary>
+        /// <param name="image">The image to perform visual validation for.</param>
+        /// <param name="region">The region to validate within the image.</param>
+        public AppImage CheckRegion(Bitmap image, Rectangle region)
+        {
+            ArgumentGuard.NotNull(image, nameof(image));
+            return Check(Target.Image(image).Region(region));
+        }
+
         public AppImage Check(ICheckSettings checkSettings)
         {
             if (IsDisabled)
@@ -188,7 +205,7 @@ namespace Applitools.Images
             ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
             checkSettings = checkSettings.Timeout(TimeSpan.Zero); // no need for automatic retry when dealing with images.
             IImagesCheckTarget imagesCheckTarget = checkSettings as IImagesCheckTarget;
-            ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
+            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
             //eyesConfig.Open.Properties = _properties;
             var request = new EyesCheckRequest
@@ -197,6 +214,10 @@ namespace Applitools.Images
                 Payload = new CheckRequestPayload
                 {
                     Eyes = eyes_,
+                    Target = new ImageTarget
+                    {
+                        Image = imagesCheckTarget.ToImage()
+                    },
                     Config = eyesConfig,
                     Settings = CreateUniversalCheckSettings(checkSettingsInternal)
                 }
@@ -231,17 +252,83 @@ namespace Applitools.Images
         }
 
         #endregion
-        
+
         #endregion
 
         public override TestResults Abort()
         {
-            throw new NotImplementedException();
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            Logger.Verbose("enter. Abort");
+
+            if (IsOpen == false)
+            {
+                return new TestResults
+                {
+                    Runner = Runner
+                };
+            }
+
+            var request = CreateEyesAbortRequest();
+
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).GetAwaiter().GetResult().Payload;
+
+            foreach (var testResults in payload.Result)
+            {
+                if (testResults != null)
+                {
+                    testResults.Runner = Runner;
+                }
+            }
+
+            if (payload.Error != null)
+            {
+                throw new EyesException(payload.Error.ToString());
+            }
+
+            IsOpen = false;
+
+            return payload.Result?.FirstOrDefault();
         }
 
         public override TestResults Close(bool throwEx = true)
         {
-            throw new NotImplementedException();
+            Logger.Log("Close");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
+
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).GetAwaiter().GetResult();
+
+            IsOpen = false;
+
+            var error = response.Payload.Error;
+            if (error != null && throwEx)
+            {
+                throw new TestFailedException(error.ToString());
+            }
+
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
+            {
+                testResult.Runner = Runner;
+                if (testResult.IsPassed == false && throwEx)
+                {
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
+                }
+            }
+
+            return testResults.First();
         }
 
         private void OpenEyes(string appName = null, string testName = null, Size? viewportSize = null)
@@ -310,6 +397,31 @@ namespace Applitools.Images
             return result;
         }
 
+        private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)
+        {
+            var eyesCloseRequest = new EyesCloseRequest
+            {
+                Payload = new CloseResponsePayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToCloseSettings(Config, throwEx)
+                }
+            };
+            return eyesCloseRequest;
+        }
+
+        private EyesAbortRequest CreateEyesAbortRequest()
+        {
+            var request = new EyesAbortRequest
+            {
+                Payload = new AbortPayload
+                {
+                    Eyes = eyes_
+                }
+            };
+            return request;
+        }
+
         private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
             var settings = new UniversalCheckSettings
@@ -321,11 +433,13 @@ namespace Applitools.Images
                 LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
+                Region = GetUniversalRegion(checkSettingsInternal),
                 Fully = checkSettingsInternal.GetStitchContent(),
                 UserCommandId = checkSettingsInternal.GetVariationGroupId(),
                 IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
                 SendDom = checkSettingsInternal.GetSendDom(),
                 UseDom = checkSettingsInternal.GetUseDom(),
+                EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
                 //Frames = GetFrames(checkSettingsInternal),
                 IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
                 StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
@@ -346,7 +460,18 @@ namespace Applitools.Images
 
             return settings.GetLayoutBreakpointsEnabled();
         }
-        
+
+        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
+        {
+            TRegion region = null;
+            if (checkSettings is ICheckSettingsInternal checkSettingsInternal)
+            {
+                region = CreateCheckSettingsTargetRegion(checkSettingsInternal);
+            }
+            
+            return region;
+        }
+
         private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
         {
             TRegion region = null;

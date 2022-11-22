@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Applitools.Utils;
 
 namespace Applitools.Images
 {
@@ -12,6 +13,7 @@ namespace Applitools.Images
         {
             image_ = image;
         }
+
         public ImagesCheckSettings(Uri imageUri)
         {
             imageUri_ = imageUri;
@@ -28,6 +30,11 @@ namespace Applitools.Images
             ImagesCheckSettings clone = Clone_();
             clone.UpdateTargetRegion(region);
             return clone;
+        }
+
+        public string ToImage()
+        {
+            return image_ != null ? image_.ToBase64() : imageUri_.ToString();
         }
 
         private ImagesCheckSettings Clone_()

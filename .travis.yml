@@ -61,73 +61,83 @@ before_script:
 jobs:
   include:
     - stage: Test
-      name: Generic Tests Selenium 3
-      mono: none
-      dotnet: 3.1.407
-      addons:
-        chrome: stable
-        firefox: latest
-      script:
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./genericTests.sh && ./genericTests.sh
+    #  name: Generic Tests Selenium 3
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - chmod +x ./genericTests.sh && ./genericTests.sh
 
-    - name: Generic Tests Selenium 4
-      mono: none
-      dotnet: 3.1.407
-      addons:
-        chrome: stable
-        firefox: latest
-      script:
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh    
+    #- name: Generic Tests Selenium 4
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh    
         
-    - name: E2E Tests Selenium
-      mono: none
-      dotnet: 3.1.407
-      addons:
-        chrome: stable
-        firefox: latest
-      script:
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
+    #- name: E2E Tests Selenium
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - dotnet test ./Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
 
-    - name: Unit Tests Selenium
-      mono: none
-      dotnet: 3.1.407
-      addons:
-        chrome: stable
-        firefox: latest
-      script:
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj -- NUnit.NumberOfTestWorkers=15
+    #- name: Unit Tests Selenium
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - dotnet test ./Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj -- NUnit.NumberOfTestWorkers=15
 
-    - name: xUnit Tests Selenium
-      mono: none
-      dotnet: 3.1.407
-      addons:
-        chrome: stable
-        firefox: latest
-      script:
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./Tests/Eyes.Selenium.xUnitTests/Eyes.Selenium.xUnitTests.csproj -- NUnit.NumberOfTestWorkers=15
+    #- name: xUnit Tests Selenium
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - dotnet test ./Tests/Eyes.Selenium.xUnitTests/Eyes.Selenium.xUnitTests.csproj -- NUnit.NumberOfTestWorkers=15
 
-    - name: Unit Tests Appium
-      mono: none
-      dotnet: 3.1.407
-      addons:
-        chrome: stable
-        firefox: latest
-      script:
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./Tests/Eyes.Appium.UnitTests/Eyes.Appium.UnitTests.csproj -- NUnit.NumberOfTestWorkers=15
+    #- name: Unit Tests Appium
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - dotnet test ./Tests/Eyes.Appium.UnitTests/Eyes.Appium.UnitTests.csproj -- NUnit.NumberOfTestWorkers=15
 
-    - name: E2E Tests Appium
+    #- name: E2E Tests Appium
+    #  mono: none
+    #  dotnet: 3.1.407
+    #  addons:
+    #    chrome: stable
+    #    firefox: latest
+    #  script:
+    #    - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+    #    - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+    #    - dotnet test ./Tests/Eyes.Appium.E2ETests/Eyes.Appium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
+    - name: E2E Tests Images
       mono: none
       dotnet: 3.1.407
       addons:
@@ -136,7 +146,7 @@ jobs:
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - dotnet test ./Tests/Eyes.Appium.E2ETests/Eyes.Appium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
+        - dotnet test ./Tests/Eyes.Images.E2ETests/Eyes.Images.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
 
     # Skipped TODO fix specific tests
     # - name: Images

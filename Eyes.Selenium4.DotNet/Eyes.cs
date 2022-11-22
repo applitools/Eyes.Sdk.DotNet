@@ -743,6 +743,7 @@ namespace Applitools.Selenium
                 IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
                 SendDom = checkSettingsInternal.GetSendDom(),
                 UseDom = checkSettingsInternal.GetUseDom(),
+                EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
                 Frames = GetFrames(checkSettings),
                 ScrollRootElement = GetScrollRootElement(checkSettings),
                 IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
