@@ -26,7 +26,7 @@ namespace Applitools.Selenium.Fluent
         
         public CodedRegionReference ToRegion()
         {
-            var elementId = _element.GetPrivateFieldValue<string>("elementId");
+            var elementId = _element.GetElementId();
 
             return new CodedRegionReference
             {

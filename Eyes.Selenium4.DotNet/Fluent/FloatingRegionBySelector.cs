@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Applitools.Fluent;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -35,13 +34,10 @@ namespace Applitools.Selenium.Fluent
         
         public TFloatingRegion ToRegion()
         {
-            return new SelectorFloatingRegion
+            return new RegionFloatingRegion
             {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = selectorTransformer_.GetRegionSelector(selector_.ToString())
+                Region = selectorTransformer_.GetRegionSelector(selector_.ToString()),
+                Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)
             };
         }
 

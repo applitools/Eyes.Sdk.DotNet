@@ -4,7 +4,6 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Applitools.Fluent;
 
 namespace Applitools.Selenium.Fluent
@@ -42,12 +41,12 @@ namespace Applitools.Selenium.Fluent
         {
         }
 
-        By ISeleniumCheckTarget.GetTargetSelector()
+        By ITargetContainer.GetTargetSelector()
         {
             return targetSelector_;
         }
 
-        IWebElement ISeleniumCheckTarget.GetTargetElement()
+        IWebElement ITargetContainer.GetTargetElement()
         {
             return targetElement_;
         }
@@ -100,22 +99,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append($".Frame({frameReference})");
             return clone;
         }
-
-        internal void SanitizeSettings(Logger logger, IWebDriver driver, CheckState state)
-        {
-            bool isFully = state.StitchContent;
-            if (frameChain_.Count > 0 && targetElement_ == null && targetSelector_ == null && !isFully/* &&
-                ((Applitools.Fluent.ICheckSettingsInternal)this).GetTargetRegion() == null*/)
-            {
-                FrameLocator lastFrame = frameChain_[frameChain_.Count - 1];
-                frameChain_.RemoveAt(frameChain_.Count - 1);
-                //targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
-                state.FrameToSwitchTo = targetElement_;
-                logger.Log(TraceLevel.Notice, Stage.Check,
-                    new { message = "Using Target.Frame() for the purpose of Target.Region()" });
-            }
-        }
-
+        
         public SeleniumCheckSettings Region(Rectangle rect)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -552,9 +536,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append(")");
             return clone;
         }
-
-
-
+        
         public SeleniumCheckSettings Accessibility(By regionSelector, AccessibilityRegionType regionType)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -562,8 +544,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append($".{nameof(Accessibility)}({regionSelector},{nameof(AccessibilityRegionType)}.{regionType})");
             return clone;
         }
-
-
+        
         public SeleniumCheckSettings Accessibility(IWebElement element, AccessibilityRegionType regionType)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -584,9 +565,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append(")");
             return clone;
         }
-
-
-
+        
         public SeleniumCheckSettings ScrollRootElement(By selector)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -648,7 +627,17 @@ namespace Applitools.Selenium.Fluent
             clone.layoutBreakpoints_.Sort();
             return clone;
         }
-        
+
+        List<int> ISeleniumCheckTarget.GetLayoutBreakpoints()
+        {
+            return layoutBreakpoints_;
+        }
+
+        bool? ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
+        {
+            return layoutBreakpointsEnabled_;
+        }
+
         public SeleniumCheckSettings UseCookies(bool useCookies)
         {
             SeleniumCheckSettings clone = Clone_();

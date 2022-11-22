@@ -1,8 +1,5 @@
 ﻿using Applitools.Utils.Geometry;
-using Applitools.VisualGrid;
 using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace Applitools.Selenium
 {

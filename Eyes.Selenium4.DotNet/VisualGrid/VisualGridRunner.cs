@@ -1,4 +1,4 @@
-﻿using Applitools.Selenium.Commands.Requests;
+﻿using Applitools.Commands.Requests;
 
 namespace Applitools.VisualGrid
 {
@@ -77,11 +77,11 @@ namespace Applitools.VisualGrid
         {
         }
 
-        protected override ManagerConfig InitConfig()
+        protected override MakeManagerRequestPayload InitConfig()
         {
-            return new ManagerConfig
+            return new MakeManagerRequestPayload
             {
-                Type = "vg",
+                Type = "ufg",
                 Concurrency = testConcurrency_.UserConcurrency,
                 Legacy = testConcurrency_.IsLegacy
             };

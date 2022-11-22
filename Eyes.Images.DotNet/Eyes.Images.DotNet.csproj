@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
@@ -27,6 +27,7 @@ To learn more, visit https://applitools.com/ .</Description>
 
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="4.3.1" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
@@ -47,8 +48,24 @@ To learn more, visit https://applitools.com/ .</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Sdk.Core.S3.DotNet\Eyes.Sdk.Core.S3.DotNet.csproj" />
-    <ProjectReference Include="..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Sdk.Universal.Core.DotNet\Eyes.Sdk.Universal.Core.DotNet.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="AutoMapper">
+      <Version>10.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="AutoMapper">
+      <Version>10.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   
 </Project>

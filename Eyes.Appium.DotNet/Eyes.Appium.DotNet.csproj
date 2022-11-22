@@ -48,7 +48,6 @@ To learn more, visit https://applitools.com/ .</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Sdk.Core.S3.DotNet\Eyes.Sdk.Core.S3.DotNet.csproj" />
     <ProjectReference Include="..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
   </ItemGroup>
   

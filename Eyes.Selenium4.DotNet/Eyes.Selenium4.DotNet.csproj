@@ -42,9 +42,8 @@ To learn more, visit https://applitools.com/ .</Description>
     <ProjectReference Include="..\CssParser\CssParser.csproj">
 		  <PrivateAssets>all</PrivateAssets>
 	  </ProjectReference>
+    <ProjectReference Include="..\Eyes.Images.DotNet\Eyes.Images.DotNet.csproj" />
     <ProjectReference Include="..\Eyes.Sdk.Universal.Core.DotNet\Eyes.Sdk.Universal.Core.DotNet.csproj" />
-    <ProjectReference Include="..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj">
-    </ProjectReference>
   </ItemGroup>
 
   <PropertyGroup>

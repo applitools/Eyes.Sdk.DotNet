@@ -18,7 +18,7 @@ namespace Applitools.Selenium.Fluent
         }
 
         AccessibilityRegionType IGetAccessibilityRegionType.AccessibilityRegionType => regionType_;
-        
+
         public TAccessibilityRegion ToRegion()
         {
             return new SelectorAccessibilityRegion

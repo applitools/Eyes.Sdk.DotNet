@@ -2,7 +2,6 @@
 {
     using System.Drawing;
     using Utils;
-    using Utils.Images;
 
     /// <summary>
     /// Scale provider which determines the scale ratio according to the context.

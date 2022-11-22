@@ -64,7 +64,7 @@ namespace Applitools.Selenium
             return Config;
         }
 
-        public void SetConfiguration(Applitools.Configuration config)
+        public void SetConfiguration(Configuration config)
         {
             Config = config;
         }
