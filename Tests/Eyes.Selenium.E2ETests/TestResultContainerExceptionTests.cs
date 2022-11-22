@@ -75,7 +75,6 @@ namespace Eyes.Selenium.E2ETests
             foreach (var testResult in allTestResults)
             {
                 Assert.NotNull(testResult.Exception);
-                Assert.NotNull(testResult.BrowserInfo);
             }
         }
     }

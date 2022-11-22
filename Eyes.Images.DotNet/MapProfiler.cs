@@ -25,12 +25,12 @@ namespace Applitools
                 .ForMember(dest => dest.RetryTimeout, act => act.MapFrom(src => src.MatchTimeout))
                 .ForMember(dest => dest.UfgOptions, act =>
                 {
-                    act.Condition(src => src.VisualGridOptions != null);
+                    act.PreCondition(src => src.VisualGridOptions != null);
                     act.MapFrom(src => src.VisualGridOptions.ToDictionary(k => k.Key, v => v.Value));
                 })
                 .ForMember(dest => dest.AccessibilitySettings, act =>
                 {
-                    act.Condition(src => src.AccessibilityValidation != null);
+                    act.PreCondition(src => src.AccessibilityValidation != null);
                     act.MapFrom(src => new AccessibilitySettings(src.AccessibilityValidation.Level, src.AccessibilityValidation.GuidelinesVersion));
                 });
             CreateMap<Configuration, CloseConfig>()
@@ -48,7 +48,7 @@ namespace Applitools
             CreateMap<Configuration, UniversalCheckSettings>()
                 .ForMember(dest => dest.AccessibilitySettings, act =>
                     {
-                        act.Condition(src => src.AccessibilityValidation != null);
+                        act.PreCondition(src => src.AccessibilityValidation != null);
                         act.MapFrom(src => new AccessibilitySettings(src.AccessibilityValidation.Level, src.AccessibilityValidation.GuidelinesVersion));
                     });
             CreateMap<Configuration, LocateSettings>();
