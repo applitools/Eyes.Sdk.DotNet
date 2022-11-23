@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
@@ -8,14 +8,14 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.27</Version>
+    <Version>3.28</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Implemented
-- Support for Padded regions [Trello 42] (https://trello.com/c/PYKqJLbg)
-- Support for Region Id
+    <PackageReleaseNotes>### Updated
+- Migrated to Universal SDK v.3
+- Removed Test.Eyes.Sdk.Core.S3.DotNet dependency
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>

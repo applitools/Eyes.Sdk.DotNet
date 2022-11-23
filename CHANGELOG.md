@@ -1,16 +1,16 @@
-## [Eyes.Selenium vNext]
-### Updated
-- Migrated to Universal SDK v.3
-- Removed Test.Eyes.Sdk.Core.S3.DotNet dependency
-
-## [Eyes.Selenium4 vNext]
+## [Eyes.Selenium4 3.28] - 2022-11-23
 ### Updated
 - Migrated to Universal SDK v.3
 - Removed Test.Eyes.Sdk.Core.DotNet dependency
 
-## [Eyes.Appium vNext]
+## [Eyes.Appium 5.22] - 2022-11-23
 ### Updated
 - Migrated to Universal SDK v.3
+
+## [Eyes.Selenium 3.28] - 2022-11-23
+### Updated
+- Migrated to Universal SDK v.3
+- Removed Test.Eyes.Sdk.Core.S3.DotNet dependency
 
 ## [Eyes.Images 3.0] - 2022-11-23
 ### Updated
