@@ -1,14 +1,14 @@
-## [Eyes.Selenium4 3.29] - 2022-12-04
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Fixed namespace for Applitools.Selenium.Configuration
+
+## [Eyes.Selenium vNext]
 ### Fixed
 - Fixed namespace for Applitools.Selenium.Configuration
 
 ## [Eyes.Appium 5.23] - 2022-12-04
 ### Updated
 - Match to latest Eyes.Selenium
-
-## [Eyes.Selenium 3.29] - 2022-12-04
-### Fixed
-- Fixed namespace for Applitools.Selenium.Configuration
 
 ## [Eyes.Selenium4 3.28] - 2022-11-23
 ### Updated

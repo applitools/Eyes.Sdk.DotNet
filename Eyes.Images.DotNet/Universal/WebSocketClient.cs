@@ -37,12 +37,15 @@ namespace Applitools
             return SendStringAsync(message, cancellationToken);
         }
 
+        private object _lockObject = new object();
+        private AutoResetEvent _event = new AutoResetEvent(true);
+
         public async Task<string> ReceiveMessage()
         {
             var buffer = new ArraySegment<byte>(new byte[1024]);
             WebSocketReceiveResult result;
             var allBytes = new List<byte>();
-
+            _event.WaitOne();
             do
             {
                 result = await clientWebSocket_.ReceiveAsync(buffer, CancellationToken.None).ConfigureAwait(false);
@@ -53,7 +56,7 @@ namespace Applitools
             } while (!result.EndOfMessage);
 
             var text = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
-
+            _event.Set();
             return text;
         }
 
