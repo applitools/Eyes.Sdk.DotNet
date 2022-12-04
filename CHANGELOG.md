@@ -1,3 +1,11 @@
+## [Eyes.Selenium vNext]
+### Fixed
+- Fixed namespace for Applitools.Selenium.Configuration
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Fixed namespace for Applitools.Selenium.Configuration
+
 ## [Eyes.Selenium4 3.28] - 2022-11-23
 ### Updated
 - Migrated to Universal SDK v.3
