@@ -13,8 +13,8 @@ To learn more, visit https://applitools.com/ .</Description>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- Fixed namespace for Applitools.Selenium.Configuration
+    <PackageReleaseNotes>### Updated
+- WebSocketClient
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium4</PackageId>
