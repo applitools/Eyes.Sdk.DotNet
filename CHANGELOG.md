@@ -1,10 +1,10 @@
 ## [Eyes.Selenium4 vNext]
-### Fixed
-- Fixed namespace for Applitools.Selenium.Configuration
+### Updated
+- WebSocketClient
 
 ## [Eyes.Selenium vNext]
-### Fixed
-- Fixed namespace for Applitools.Selenium.Configuration
+### Updated
+- WebSocketClient
 
 ## [Eyes.Appium 5.23] - 2022-12-04
 ### Updated
