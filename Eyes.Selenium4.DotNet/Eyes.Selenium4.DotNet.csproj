@@ -8,14 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.28</Version>
+    <Version>3.29</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Migrated to Universal SDK v.3
-- Removed Test.Eyes.Sdk.Core.DotNet dependency
+    <PackageReleaseNotes>### Fixed
+- Fixed namespace for Applitools.Selenium.Configuration
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium4</PackageId>
