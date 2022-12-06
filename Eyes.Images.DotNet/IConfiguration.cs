@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Applitools.Commands;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 
@@ -77,11 +78,14 @@ namespace Applitools
         bool? HideCaret { get; set; }
 
         bool? DisableBrowserFetching { get; set; }
+        IImageCrop Cut { get; set; }
 
 
         VisualGridOption[] VisualGridOptions { get; set; }
 
         bool? UseCookies { get; set; }
+        bool? DontCloseBatches { get; set; }
+        DebugScreenshotHandler DebugScreenshotProvider { get; set; }
 
 
         List<RenderBrowserInfo> GetBrowsersInfo();
@@ -133,6 +137,9 @@ namespace Applitools
         IConfiguration SetMatchLevel(MatchLevel? value);
         IConfiguration SetServerUrl(string value);
         IConfiguration SetApiKey(string value);
+        IConfiguration SetDontCloseBatches(bool? value);
+        IConfiguration SetDebugScreenshotProvider(DebugScreenshotHandler value);
+        IConfiguration SetCut(IImageCrop value);
 
         IConfiguration SetProxy(ProxySettings value);
         IConfiguration SetIgnoreDisplacements(bool? value);

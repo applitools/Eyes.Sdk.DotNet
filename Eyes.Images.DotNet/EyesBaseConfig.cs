@@ -246,6 +246,11 @@ namespace Applitools
             {
                 Proxy = proxy;
             }
+
+            if (configuration is Configuration config)
+            {
+                Config = config;
+            }
         }
     }
 }
