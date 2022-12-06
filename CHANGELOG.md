@@ -1,3 +1,11 @@
+## [Eyes.Images vNext]
+### Fixed
+- Set Configuration
+
+## [Eyes.Appium vNext]
+### Fixed
+- Appium Config
+
 ## [Eyes.Selenium4 3.29] - 2022-12-04
 ### Updated
 - WebSocketClient
