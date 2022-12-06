@@ -1,8 +1,8 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.1] - 2022-12-06
 ### Fixed
 - Set Configuration
 
-## [Eyes.Appium vNext]
+## [Eyes.Appium 5.25] - 2022-12-06
 ### Fixed
 - Appium Config
 
