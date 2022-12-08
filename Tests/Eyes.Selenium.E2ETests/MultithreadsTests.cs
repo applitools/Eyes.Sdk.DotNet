@@ -14,7 +14,6 @@ namespace Eyes.Selenium.E2ETests
     public class MultithreadsTests
     {
         private EyesRunner runner;
-        private IWebDriver driver;
 
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Multithreads Test");
@@ -22,27 +21,9 @@ namespace Eyes.Selenium.E2ETests
         [SetUp]
         public void Setup()
         {
-            var CI = Environment.GetEnvironmentVariable("CI");
-            var options = new ChromeOptions();
-            //  if (CI != null)
-            {
-                options.AddArguments("headless");
-                options.AddArguments("no-sandbox");
-            }
-            // Use Chrome browser
-            driver = new ChromeDriver(DRIVER_PATH, options);
-            //Initialize the Runner for your test with concurrency of 5.
-            // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
             runner = new ClassicRunner();
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            // Close the browser.
-            driver.Quit();
-        }
-
+        
         [Test]
         public void MultiThreadSimpleTest()
         {
@@ -61,6 +42,17 @@ namespace Eyes.Selenium.E2ETests
         public void SimpleTest(int i)
         {
             var eyes = new Applitools.Selenium.Eyes(runner);
+            // Use Chrome browser
+            var CI = Environment.GetEnvironmentVariable("CI");
+            var options = new ChromeOptions();
+            //  if (CI != null)
+            {
+                options.AddArguments("headless");
+                options.AddArguments("no-sandbox");
+            }
+            //Initialize the Runner for your test with concurrency of 5.
+            // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
+            IWebDriver driver = new ChromeDriver(DRIVER_PATH, options);
             try
             {
                 eyes.Batch = BatchInfo;
@@ -82,6 +74,7 @@ namespace Eyes.Selenium.E2ETests
             {
                 // If the test was aborted before eyes.close was called, ends the test as aborted.
                 eyes.AbortIfNotClosed();
+                driver.Quit();
             }
         }
     }

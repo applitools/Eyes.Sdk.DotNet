@@ -52,19 +52,16 @@ namespace Applitools
         {
             var json = data.ToJson();
 
-            lock (_lock)
+            SendData(json);
+
+            var message = WaitForMessage(data.Key);
+            if (message == null)
             {
-                SendData(json);
-
-                var message = WaitForMessage(data.Key);
-                if (message == null)
-                {
-                    throw new Exception($"Server did not respond for {data.Name}");
-                }
-
-                var result = JsonConvert.DeserializeObject<TResponse>(message);
-                return result;
+                throw new Exception($"Server did not respond for {data.Name}");
             }
+
+            var result = JsonConvert.DeserializeObject<TResponse>(message);
+            return result;
         }
 
         public void SendData<TRequest>(TRequest data)
@@ -76,7 +73,7 @@ namespace Applitools
 
         public void SendData(string message)
         {
-            SendStringAsync(message, CancellationToken.None);
+            SendString(message, CancellationToken.None);
         }
 
         public string ReceiveMessage(string key)
@@ -130,7 +127,10 @@ namespace Applitools
                 var response = JsonConvert.DeserializeObject<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
-                    _messages.TryAdd(response.Key, textMessage);
+                    if (_messages.TryAdd(response.Key, textMessage) == false)
+                    {
+                        throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
+                    }
                 }
             }
         }
@@ -155,7 +155,7 @@ namespace Applitools
             return text;
         }
 
-        private void SendStringAsync(string data, CancellationToken cancellationToken)
+        private void SendString(string data, CancellationToken cancellationToken)
         {
             lock (_lock)
             {
