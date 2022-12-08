@@ -223,7 +223,7 @@ namespace Applitools.Images
                 }
             };
 
-            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request).Result;
+            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request);
             var error = result.Payload.Error;
             if (error != null)
             {
@@ -275,7 +275,7 @@ namespace Applitools.Images
 
             var request = CreateEyesAbortRequest();
 
-            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).GetAwaiter().GetResult().Payload;
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
 
             foreach (var testResults in payload.Result)
             {
@@ -307,7 +307,7 @@ namespace Applitools.Images
 
             var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
 
-            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest).GetAwaiter().GetResult();
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
 
             IsOpen = false;
 
@@ -366,7 +366,7 @@ namespace Applitools.Images
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_);
 
-            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Result.Payload;
+            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;

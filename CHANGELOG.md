@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+
+## [Eyes.Appium vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+
 ## [Eyes.Images 3.1] - 2022-12-06
 ### Fixed
 - Set Configuration
