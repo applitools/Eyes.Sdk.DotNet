@@ -108,7 +108,7 @@ namespace Applitools
 
         private string WaitForMessage(string key)
         {
-            for (int i = 0; i < 150; i++)
+            for (int i = 0; i < 2000; i++)
             {
                 var message = ReceiveMessage(key);
                 if (message != null)
