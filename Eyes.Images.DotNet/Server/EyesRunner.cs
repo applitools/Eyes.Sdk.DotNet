@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Utils;
-using Newtonsoft.Json;
 
 namespace Applitools
 {
@@ -58,43 +55,17 @@ namespace Applitools
             _actualAssembly = GetActualAssembly();
         }
 
-        public async Task<TResponse> SendRequest<TRequest, TResponse>(TRequest data) 
+        public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
             where TRequest : CommandBase 
             where TResponse : CommandBase
         {
-            var json = data.ToJson();
-
-            await SocketClient.SendData(json).ConfigureAwait(false);
-
-            for (int i = 0; i < 5; i++)
-            {
-                var response = await SocketClient.ReceiveMessage().ConfigureAwait(false);
-
-                if (response != null)
-                {
-                    if (response.Contains(data.Name))
-                    {
-                        var result = JsonConvert.DeserializeObject<TResponse>(response);
-                        if (result.Key == data.Key)
-                        {
-                            return result;
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(50);
-                    }
-                }
-            }
-
-            throw new EyesException($"Did not get a response for command: {data.Name}, key: {data.Name}");
+            var result = SocketClient.SendRequest<TRequest, TResponse>(data);
+            return result;
         }
 
-        public async Task SendRequest<TRequest>(TRequest data)
+        public void SendRequest<TRequest>(TRequest data)
         {
-            var json = data.ToJson();
-
-            await SocketClient.SendData(json).ConfigureAwait(false);
+            SocketClient.SendData(data);
         }
 
         public TestResultsSummary GetAllTestResults()
@@ -143,7 +114,7 @@ namespace Applitools
 
                 var coreMakeManager = CreateCoreMakeManager();
 
-                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager).GetAwaiter().GetResult();
+                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager);
                 managerApplitoolsRefId_ = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
             }
 
@@ -163,7 +134,7 @@ namespace Applitools
 
             var request = CreateEyesManageCloseAllEyes(shouldThrowException);
 
-            var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request).GetAwaiter().GetResult();
+            var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request);
             var payload = response.Payload;
             if (payload != null)
             {
@@ -244,7 +215,7 @@ namespace Applitools
             var url = GetSocketUrl(serverPort);
             Logger.Log($"Server url: {url}");
 
-            SocketClient.ConnectAsync(url).GetAwaiter().GetResult();
+            SocketClient.ConnectAsync(url);
 
             Logger.Log("Connected to Server");
         }

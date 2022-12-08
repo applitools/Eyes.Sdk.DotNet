@@ -160,7 +160,7 @@ namespace Applitools
                         }
                     }
                 }
-            }).GetAwaiter().GetResult();
+            });
         }
 
         /// <inheritdoc />

@@ -48,8 +48,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Selenium.Generat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Eyes.Appium.Generated", "coverage-tests\test\Appium\Tests.Eyes.Appium.Generated.csproj", "{B1990708-3C60-42B6-A7DD-F47810B1D0B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Ufg.DotNet", "Eyes.Ufg.DotNet\Eyes.Ufg.DotNet\Eyes.Ufg.DotNet.csproj", "{A4DA651E-5D95-4C3D-BE46-82A495B6673E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "coverage-tests", "coverage-tests", "{13C182C9-852E-4320-9D41-D10DC92F2DF8}"
 	ProjectSection(SolutionItems) = preProject
 		coverage-tests\package-lock.json = coverage-tests\package-lock.json
@@ -84,7 +82,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Selenium.xUnitTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Images.DotNet", "Eyes.Images.DotNet\Eyes.Images.DotNet.csproj", "{8150C9ED-551D-4406-A34B-84930712E94B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Images.E2ETests", "Tests\Eyes.Images.E2ETests\Eyes.Images.E2ETests.csproj", "{B5EC3AC3-14B5-43A2-9D31-B59179896506}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Images.E2ETests", "Tests\Eyes.Images.E2ETests\Eyes.Images.E2ETests.csproj", "{B5EC3AC3-14B5-43A2-9D31-B59179896506}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,10 +122,6 @@ Global
 		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1990708-3C60-42B6-A7DD-F47810B1D0B3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4DA651E-5D95-4C3D-BE46-82A495B6673E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73D94EFC-1F58-454E-9CEE-0632429E62FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73D94EFC-1F58-454E-9CEE-0632429E62FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73D94EFC-1F58-454E-9CEE-0632429E62FE}.Release|Any CPU.ActiveCfg = Release|Any CPU

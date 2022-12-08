@@ -216,6 +216,7 @@ namespace Applitools
         protected EyesBaseConfig(Configuration configuration, ILogHandler logHandler = null, EyesRunner runner = null)
         {
             Config = configuration ?? new Configuration();
+            Batch = new BatchInfo();
             Logger = new Logger();
             if (logHandler != null)
             {

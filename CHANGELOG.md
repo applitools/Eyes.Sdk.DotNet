@@ -1,3 +1,23 @@
+## [Eyes.Images vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+- Set default Batch Info
+
+## [Eyes.Appium vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+- Set default Batch Info
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+- Set default Batch Info
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
+- Set default Batch Info
+
 ## [Eyes.Images 3.1] - 2022-12-06
 ### Fixed
 - Set Configuration
