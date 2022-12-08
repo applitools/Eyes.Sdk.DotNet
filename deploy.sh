@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 echo "DEPLOY"
-git remote set-url origin https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}
+git remote set-url origin git@github.com:${TRAVIS_REPO_SLUG}.git
 git add */*.csproj CHANGELOG.md
 git commit -m 'Updated CHANGELOG and bumped versions.'
 git push origin HEAD:$RELEASE_BRANCH
