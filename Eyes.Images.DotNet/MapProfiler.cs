@@ -38,6 +38,7 @@ namespace Applitools
                 .ForMember(dest => dest.UpdateBaselineIfDifferent, act => act.MapFrom(src => src.SaveFailedTests));
 
             CreateMap<Configuration, OpenSettings>()
+                .ForMember(dest => dest.KeepBatchOpen, act => act.MapFrom(src => src.DontCloseBatches))
                 .ForMember(dest => dest.Environment, act => act.MapFrom(
                     src => new BaselineEnv
                     {
