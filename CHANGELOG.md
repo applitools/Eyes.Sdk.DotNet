@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.3] - 2022-12-11
 ### Fixed
 - DontCloseBatches/KeepBatchOpen
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Selenium4 3.31] - 2022-12-11
 ### Fixed
 - DontCloseBatches/KeepBatchOpen
 
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 5.27] - 2022-12-11
 ### Fixed
 - DontCloseBatches/KeepBatchOpen
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.31] - 2022-12-11
 ### Fixed
 - DontCloseBatches/KeepBatchOpen
 
