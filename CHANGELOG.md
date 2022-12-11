@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Fixed
+- DontCloseBatches/KeepBatchOpen
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- DontCloseBatches/KeepBatchOpen
+
+## [Eyes.Selenium vNext]
+### Fixed
+- DontCloseBatches/KeepBatchOpen
+
+## [Eyes.Appium vNext]
+### Fixed
+- DontCloseBatches/KeepBatchOpen
+
 ## [Eyes.Images 3.2] - 2022-12-08
 ### Fixed
 - Made Eyes Thread safe [Trello 3009] (https://trello.com/c/5S5OWP79)
