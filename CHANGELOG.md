@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.4] - 2022-12-12
 ### Fixed
 - Implemented BatchClose
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Selenium4 3.32] - 2022-12-12
 ### Fixed
 - Implemented BatchClose
 
-## [Eyes.Selenium vNext]
+## [Eyes.Appium 5.28] - 2022-12-12
 ### Fixed
 - Implemented BatchClose
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium 3.32] - 2022-12-12
 ### Fixed
 - Implemented BatchClose
 
