@@ -35,15 +35,23 @@ namespace Applitools
 
         public void ConnectAsync(string url)
         {
-            cancellationTokenSource_ = new CancellationTokenSource();
-            _webSocket.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).GetAwaiter().GetResult();
-
-            while (_webSocket.State == WebSocketState.Connecting) { }
-            if (_webSocket.State != WebSocketState.Open)
+            lock (_lock)
             {
-                throw new Exception("Connection is not opened.");
+                if (_webSocket.State == WebSocketState.Open)
+                {
+                    return;
+                }
+
+                cancellationTokenSource_ = new CancellationTokenSource();
+                _webSocket.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).GetAwaiter().GetResult();
+
+                while (_webSocket.State == WebSocketState.Connecting) { }
+                if (_webSocket.State != WebSocketState.Open)
+                {
+                    throw new Exception("Connection is not opened.");
+                }
+                Task.Factory.StartNew(ReadMessage, TaskCreationOptions.LongRunning);
             }
-            Task.Factory.StartNew(ReadMessage, TaskCreationOptions.LongRunning);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data)

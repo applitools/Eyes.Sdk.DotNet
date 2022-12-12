@@ -107,10 +107,7 @@ namespace Applitools
 
             if (managerApplitoolsRefId_ == null)
             {
-                var makeSdk = CreateCoreMakeSdk();
-                var makeSdkJson = makeSdk.ToJson();
-
-                SocketClient.SendData(makeSdkJson);
+                CreateCoreSdk();
 
                 var coreMakeManager = CreateCoreMakeManager();
 
@@ -119,6 +116,14 @@ namespace Applitools
             }
 
             return managerApplitoolsRefId_;
+        }
+
+        internal void CreateCoreSdk()
+        {
+            var makeSdk = CreateCoreMakeSdk();
+            var makeSdkJson = makeSdk.ToJson();
+
+            SocketClient.SendData(makeSdkJson);
         }
 
         private IList<CloseAllResult> CloseAllEyes(bool shouldThrowException)

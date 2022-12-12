@@ -5,9 +5,10 @@ namespace Applitools.Commands.Requests
 {
     public class CloseBatchSettings
     {
-        public string BatchIds { get; set; }
+        public string BatchId { get; set; }
         public string ServerUrl { get; set; }
         public WebProxy Proxy { get; set; }
+        public string ApiKey { get; set; }
     }
 
     public class CloseBatchRequestPayload

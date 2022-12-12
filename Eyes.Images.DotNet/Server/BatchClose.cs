@@ -28,6 +28,7 @@ namespace Applitools
 
         public virtual BatchClose SetUrl(Uri url)
         {
+            ApiKey = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
             ServerUrl = url;
             return this;
         }
