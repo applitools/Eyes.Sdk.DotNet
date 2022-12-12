@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Fixed
+- Implemented BatchClose
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Implemented BatchClose
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Implemented BatchClose
+
+## [Eyes.Appium vNext]
+### Fixed
+- Implemented BatchClose
+
 ## [Eyes.Images 3.3] - 2022-12-11
 ### Fixed
 - DontCloseBatches/KeepBatchOpen
