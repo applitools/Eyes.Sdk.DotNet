@@ -1,3 +1,23 @@
+## [Eyes.Universal.Core.Image 3.1.0] - 2022-12-19
+### Updated
+- Universal Server Version to 3.1.0
+
+## [Eyes.Images vNext]
+### Updated
+- Universal Server Version to 3.1.0
+
+## [Eyes.Selenium vNext]
+### Updated
+- Universal Server Version to 3.1.0
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Universal Server Version to 3.1.0
+
+## [Eyes.Appium vNext]
+### Updated
+- Universal Server Version to 3.1.0
+
 ## [Eyes.Images 3.4] - 2022-12-12
 ### Fixed
 - Implemented BatchClose
