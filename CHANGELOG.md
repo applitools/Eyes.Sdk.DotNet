@@ -1,7 +1,3 @@
-## [Eyes.Universal.Core.Image 3.1.0] - 2022-12-19
-### Updated
-- Universal Server Version to 3.1.0
-
 ## [Eyes.Images vNext]
 ### Updated
 - Universal Server Version to 3.1.0
@@ -15,6 +11,10 @@
 - Universal Server Version to 3.1.0
 
 ## [Eyes.Appium vNext]
+### Updated
+- Universal Server Version to 3.1.0
+
+## [Eyes.Universal.Core.Image 3.1.0] - 2022-12-19
 ### Updated
 - Universal Server Version to 3.1.0
 
