@@ -60,12 +60,15 @@ namespace Applitools
             where TResponse : CommandBase
         {
             var result = SocketClient.SendRequest<TRequest, TResponse>(data);
+            Logger.Log($"Request {data.Name} sent to Server and received Response");
             return result;
         }
 
         public void SendRequest<TRequest>(TRequest data)
+            where TRequest : CommandBase
         {
             SocketClient.SendData(data);
+            Logger.Log($"Request {data.Name} sent to Server");
         }
 
         public TestResultsSummary GetAllTestResults()
@@ -124,6 +127,7 @@ namespace Applitools
             var makeSdkJson = makeSdk.ToJson();
 
             SocketClient.SendData(makeSdkJson);
+            Logger.Log($"Request {makeSdk.Name} sent to Server");
         }
 
         private IList<CloseAllResult> CloseAllEyes(bool shouldThrowException)

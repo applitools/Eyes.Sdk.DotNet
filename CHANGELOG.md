@@ -1,3 +1,23 @@
+## [Eyes.Universal.Core.Image 3.2.1] - 2023-01-02
+### Updated
+- Universal Server Version to 3.2.1
+
+## [Eyes.Images vNext]
+### Updated
+- Universal Server Version to 3.2.1
+
+## [Eyes.Selenium vNext]
+### Updated
+- Universal Server Version to 3.2.1
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Universal Server Version to 3.2.1
+
+## [Eyes.Appium vNext]
+### Updated
+- Universal Server Version to 3.2.1
+
 ## [Eyes.Images 3.5] - 2022-12-19
 ### Updated
 - Universal Server Version to 3.1.0
