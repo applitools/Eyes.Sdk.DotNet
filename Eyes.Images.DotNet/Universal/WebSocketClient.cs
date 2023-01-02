@@ -25,8 +25,14 @@ namespace Applitools
         private readonly ConcurrentDictionary<string, string> _messages;
         private readonly object _lock = new object();
 
-        public WebSocketClient()
+        public Logger Logger { get; } = new Logger();
+
+        public WebSocketClient(ILogHandler logHandler = null)
         {
+            if (logHandler != null)
+            {
+                Logger.SetLogHandler(logHandler);
+            }
             _webSocket = new ClientWebSocket();
             _messages = new ConcurrentDictionary<string, string>();
         }
@@ -73,6 +79,7 @@ namespace Applitools
         }
 
         public void SendData<TRequest>(TRequest data)
+            where TRequest : CommandBase
         {
             var json = data.ToJson();
 
@@ -104,6 +111,11 @@ namespace Applitools
         {
             cancellationTokenSource_.Dispose();
             _webSocket.Dispose();
+        }
+
+        public void SetLogHandler(ILogHandler logHandler)
+        {
+            Logger.SetLogHandler(logHandler);
         }
 
         protected virtual void OnMessageReceived(string message)
@@ -160,6 +172,7 @@ namespace Applitools
 
             var text = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
 
+            Logger.Log($"In message: {Environment.NewLine} {text}");
             return text;
         }
 
@@ -170,6 +183,8 @@ namespace Applitools
                 var encoded = Encoding.UTF8.GetBytes(data);
                 var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
                 _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter().GetResult();
+
+                Logger.Log($"Request sent to Server: {Environment.NewLine} {data}");
             }
         }
     }

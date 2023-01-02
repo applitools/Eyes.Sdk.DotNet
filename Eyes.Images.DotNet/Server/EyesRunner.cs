@@ -60,7 +60,6 @@ namespace Applitools
             where TResponse : CommandBase
         {
             var result = SocketClient.SendRequest<TRequest, TResponse>(data);
-            Logger.Log($"Request {data.Name} sent to Server and received Response");
             return result;
         }
 
@@ -68,7 +67,6 @@ namespace Applitools
             where TRequest : CommandBase
         {
             SocketClient.SendData(data);
-            Logger.Log($"Request {data.Name} sent to Server");
         }
 
         public TestResultsSummary GetAllTestResults()
@@ -93,6 +91,7 @@ namespace Applitools
         public void SetLogHandler(ILogHandler logHandler)
         {
             Logger.SetLogHandler(logHandler);
+            SocketClient?.SetLogHandler(logHandler);
             if (!logHandler.IsOpen)
             {
                 logHandler.Open();
@@ -127,7 +126,6 @@ namespace Applitools
             var makeSdkJson = makeSdk.ToJson();
 
             SocketClient.SendData(makeSdkJson);
-            Logger.Log($"Request {makeSdk.Name} sent to Server");
         }
 
         private IList<CloseAllResult> CloseAllEyes(bool shouldThrowException)
@@ -219,7 +217,7 @@ namespace Applitools
         {
             int serverPort = UniversalSdkNativeLoader.Start();
 
-            SocketClient = new WebSocketClient();
+            SocketClient = new WebSocketClient(Logger?.GetILogHandler());
 
             var url = GetSocketUrl(serverPort);
             Logger.Log($"Server url: {url}");
