@@ -1,26 +1,26 @@
+## [Eyes.Images 3.6] - 2023-01-02
+### Updated
+- Universal Server Version to 3.2.1
+- Added Request and Response Server's messages 
+
+## [Eyes.Selenium4 3.34] - 2023-01-02
+### Updated
+- Universal Server Version to 3.2.1
+- Added Request and Response Server's messages 
+
+## [Eyes.Appium 5.30] - 2023-01-02
+### Updated
+- Universal Server Version to 3.2.1
+- Added Request and Response Server's messages 
+
+## [Eyes.Selenium 3.34] - 2023-01-02
+### Updated
+- Universal Server Version to 3.2.1
+- Added Request and Response Server's messages 
+
 ## [Eyes.Universal.Core.Image 3.2.1] - 2023-01-02
 ### Updated
 - Universal Server Version to 3.2.1
-
-## [Eyes.Images vNext]
-### Updated
-- Universal Server Version to 3.2.1
-- Added Request and Response Server's messages 
-
-## [Eyes.Selenium vNext]
-### Updated
-- Universal Server Version to 3.2.1
-- Added Request and Response Server's messages 
-
-## [Eyes.Selenium4 vNext]
-### Updated
-- Universal Server Version to 3.2.1
-- Added Request and Response Server's messages 
-
-## [Eyes.Appium vNext]
-### Updated
-- Universal Server Version to 3.2.1
-- Added Request and Response Server's messages 
 
 ## [Eyes.Images 3.5] - 2022-12-19
 ### Updated
