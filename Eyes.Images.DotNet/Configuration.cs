@@ -15,7 +15,6 @@ namespace Applitools
         public Configuration()
         {
             DefaultMatchSettings = new ImageMatchSettings();
-            SaveNewTests = true;
         }
 
         public Configuration(IConfiguration configuration) : this()
