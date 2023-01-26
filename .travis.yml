@@ -5,7 +5,7 @@ node_js:
   - "14"
 
 os: linux
-dist: xenial
+dist: focal
 
 services:
   - docker
@@ -32,6 +32,7 @@ before_install:
 before_script:
   - export DRIVER_PATH=/home/travis/build/
   - export APPLITOOLS_REPORT_ID=${TRAVIS_COMMIT:0:7}-$TRAVIS_BUILD_NUMBER
+  - sudo apt-get -f install
   - sudo apt-get install -y libgdiplus
   #- export APPLITOOLS_PROXY=http://127.0.0.1:8080
   #- sudo chmod +x ./setup_proxy.sh && ./setup_proxy.sh

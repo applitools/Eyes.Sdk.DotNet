@@ -2,8 +2,8 @@
 {
     public class CloseSettings
     {
-        public bool ThrowErr { get; set; }
-        public bool UpdateBaselineIfNew { get; set; }
-        public bool UpdateBaselineIfDifferent { get; set; }
+        public bool? ThrowErr { get; set; }
+        public bool? UpdateBaselineIfNew { get; set; }
+        public bool? UpdateBaselineIfDifferent { get; set; }
     }
 }

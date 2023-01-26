@@ -1,3 +1,23 @@
+## [Eyes.Images vNext]
+### Fixed
+- Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+
+## [Eyes.Appium vNext]
+### Fixed
+- Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+
+## [Eyes.Universal.Core.Image 3.2.2] - 2023-01-25
+### Updated
+- Universal Server Version to 3.2.2
+
 ## [Eyes.Images 3.6] - 2023-01-02
 ### Updated
 - Universal Server Version to 3.2.1
