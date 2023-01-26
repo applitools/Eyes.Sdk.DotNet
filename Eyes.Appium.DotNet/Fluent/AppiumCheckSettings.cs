@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Applitools.Fluent;
 using Applitools.Utils;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;

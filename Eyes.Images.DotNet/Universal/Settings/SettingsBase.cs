@@ -19,7 +19,7 @@ namespace Applitools
         public bool? HideCaret { get; set; }
         public Overlap Overlap { get; set; }
         public int? WaitBeforeCapture { get; set; }
-        public LazyLoad LazyLoad { get; set; }
+        public LazyLoadOptions LazyLoad { get; set; }
         public Normalization Normalization { get; set; }
         public DebugImages DebugImages { get; set; }
 

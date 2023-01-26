@@ -745,6 +745,16 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Fully(fully);
         }
 
+        public new SeleniumCheckSettings LazyLoad()
+        {
+            return (SeleniumCheckSettings)base.LazyLoad();
+        }
+
+        public new SeleniumCheckSettings LazyLoad(LazyLoadOptions lazyLoad)
+        {
+            return (SeleniumCheckSettings)base.LazyLoad(lazyLoad);
+        }
+
         public new SeleniumCheckSettings Timeout(TimeSpan timeout)
         {
             return (SeleniumCheckSettings)base.Timeout(timeout);

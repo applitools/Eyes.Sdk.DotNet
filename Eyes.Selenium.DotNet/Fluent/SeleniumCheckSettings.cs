@@ -4,7 +4,6 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Applitools.Fluent;
 
 namespace Applitools.Selenium.Fluent
 {
@@ -743,6 +742,16 @@ namespace Applitools.Selenium.Fluent
         public new SeleniumCheckSettings Fully(bool fully)
         {
             return (SeleniumCheckSettings)base.Fully(fully);
+        }
+
+        public new SeleniumCheckSettings LazyLoad()
+        {
+            return (SeleniumCheckSettings)base.LazyLoad();
+        }
+
+        public new SeleniumCheckSettings LazyLoad(LazyLoadOptions lazyLoad)
+        {
+            return (SeleniumCheckSettings)base.LazyLoad(lazyLoad);
         }
 
         public new SeleniumCheckSettings Timeout(TimeSpan timeout)

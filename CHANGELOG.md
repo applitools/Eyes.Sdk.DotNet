@@ -1,18 +1,26 @@
 ## [Eyes.Images vNext]
 ### Fixed
 - Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+### Implemented
+- LazyLoad [Trello 3132] (https://trello.com/c/5KtPC4n1)
 
 ## [Eyes.Selenium vNext]
 ### Fixed
 - Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+### Implemented
+- LazyLoad [Trello 3132] (https://trello.com/c/5KtPC4n1)
 
 ## [Eyes.Selenium4 vNext]
 ### Fixed
 - Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+### Implemented
+- LazyLoad [Trello 3132] (https://trello.com/c/5KtPC4n1)
 
 ## [Eyes.Appium vNext]
 ### Fixed
 - Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
+### Implemented
+- LazyLoad [Trello 3132] (https://trello.com/c/5KtPC4n1)
 
 ## [Eyes.Universal.Core.Image 3.2.2] - 2023-01-25
 ### Updated
