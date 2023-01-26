@@ -56,7 +56,7 @@ namespace Applitools.Generated.Selenium.Tests
                     }
                     else
                     {
-                        driver = CreateChromeDriver(headless: headless);
+                        driver = CreateChromeDriver2(headless: headless);
                     }
                     break;
                 case browserType.Firefox:

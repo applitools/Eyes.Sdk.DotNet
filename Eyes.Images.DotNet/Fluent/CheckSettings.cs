@@ -20,6 +20,7 @@ namespace Applitools
         private List<IGetAccessibilityRegion> accessibilityRegions_ = new List<IGetAccessibilityRegion>();
         private int timeout_ = -1;
         private bool? stitchContent_;
+        private LazyLoadOptions lazyLoad_;
         private Rectangle? targetRegion_;
         private bool? ignoreCaret_ = null;
         private MatchLevel? matchLevel_ = null;
@@ -103,6 +104,11 @@ namespace Applitools
         IGetAccessibilityRegion[] ICheckSettingsInternal.GetAccessibilityRegions()
         {
             return accessibilityRegions_.ToArray();
+        }
+
+        LazyLoadOptions ICheckSettingsInternal.GetLazyLoad()
+        {
+            return lazyLoad_;
         }
 
         bool? Fluent.ICheckSettingsInternal.GetIgnoreCaret() { return ignoreCaret_; }
@@ -311,6 +317,23 @@ namespace Applitools
             var clone = Clone();
             clone.stitchContent_ = fully;
             clone.fluentCode_.Append($".{nameof(Fully)}({fully})");
+            return clone;
+        }
+
+        public ICheckSettings LazyLoad(LazyLoadOptions lazyLoad)
+        {
+            var clone = Clone();
+            clone.lazyLoad_ = lazyLoad;
+            clone.fluentCode_.Append($"Target.LazyLoad(new LazyLoad({lazyLoad.ScrollLength},{lazyLoad.WaitingTime},{lazyLoad.MaxAmountToScroll}))");
+            return clone;
+        }
+
+        public ICheckSettings LazyLoad()
+        {
+            var clone = Clone();
+            var lazyLoad = new LazyLoadOptions(300, 2000, 15000);
+            clone.lazyLoad_ = lazyLoad;
+            clone.fluentCode_.Append($"Target.LazyLoad(new LazyLoad({lazyLoad.ScrollLength},{lazyLoad.WaitingTime},{lazyLoad.MaxAmountToScroll}))");
             return clone;
         }
 

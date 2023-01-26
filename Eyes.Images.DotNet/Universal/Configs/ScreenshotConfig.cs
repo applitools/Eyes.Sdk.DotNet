@@ -17,7 +17,7 @@ namespace Applitools
         bool? HideCaret { get; }
         Overlap Overlap { get; }
         int? WaitBeforeCapture { get; }
-        LazyLoad LazyLoad { get; }
+        LazyLoadOptions LazyLoad { get; }
         bool? IgnoreDisplacements { get; }
         Normalization Normalization { get; }
         DebugImages DebugImages { get; }
@@ -35,7 +35,7 @@ namespace Applitools
         public bool? HideCaret { get; set; }
         public Overlap Overlap { get; set; }
         public int? WaitBeforeCapture { get; set; }
-        public LazyLoad LazyLoad { get; set; }
+        public LazyLoadOptions LazyLoad { get; set; }
         public bool? IgnoreDisplacements { get; set; }
         public Normalization Normalization { get; set; }
         public DebugImages DebugImages { get; set; }

@@ -39,5 +39,6 @@ namespace Applitools.Fluent
         bool? GetLayoutBreakpointsEnabled();
 
         IList<int> GetLayoutBreakpoints();
+        LazyLoadOptions GetLazyLoad();
     }
 }
