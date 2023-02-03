@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.8] - 2023-02-03
 ### Fixed
 - Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.36] - 2023-02-03
 ### Fixed
 - Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.32] - 2023-02-03
 ### Fixed
 - Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.36] - 2023-02-03
 ### Fixed
 - Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
 
