@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Applitools.Utils;
@@ -97,7 +96,7 @@ namespace Applitools
             return settings;
         }
 
-        protected LocateSettings ToLocateSettings(Configuration configuration)
+        protected LocateSettings ToLocateSettings(Configuration configuration, ICollection<string> locatorNames)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -106,6 +105,7 @@ namespace Applitools
             var mapper = config.CreateMapper();
 
             var settings = mapper.Map<LocateSettings>(configuration);
+            settings.LocatorNames = locatorNames;
 
             return settings;
         }

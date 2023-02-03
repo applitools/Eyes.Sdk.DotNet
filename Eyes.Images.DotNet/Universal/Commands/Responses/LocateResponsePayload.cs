@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
-using Applitools.Utils.Geometry;
 
-namespace Applitools.Commands.Requests
+namespace Applitools.Commands.Responses
 {
-    public class LocateResponsePayload : Dictionary<string, Region>
+    public class LocateResponseResult : Dictionary<string, IList<Locate>>
     {
+    }
+
+    public class LocateResponsePayload //: Dictionary<string, Region>
+    {
+        public LocateResponseResult Result { get; set; }
     }
 
     public class EyesLocateResponse : CommandBase
