@@ -15,6 +15,7 @@ namespace Eyes.Selenium.E2ETests
     /// </summary>
     public class VisualLocatorReproducer
     {
+        public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
         // Test control inputs to read once and share for all tests
         private static string? ApplitoolsApiKey;
         private static bool Headless;
@@ -88,7 +89,7 @@ namespace Eyes.Selenium.E2ETests
             // it still needs to run the test one time locally to capture snapshots.
             ChromeOptions options = new ChromeOptions();
             if (Headless) options.AddArgument("headless");
-            Driver = new ChromeDriver(options);
+            Driver = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options, TimeSpan.FromMinutes(4)) : new ChromeDriver(options);
 
             // Set an implicit wait of 10 seconds.
             // For larger projects, use explicit waits for better control.
