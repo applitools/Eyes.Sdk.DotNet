@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Fixed
+- Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
+
+## [Eyes.Appium vNext]
+### Fixed
+- Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
+
 ## [Eyes.Images 3.7] - 2023-01-26
 ### Fixed
 - Selenium .NET SDK does not default Eyes.SaveNewTests to true [Trello 3109] (https://trello.com/c/WVo1QJn8)
