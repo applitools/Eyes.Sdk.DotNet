@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Applitools.Fluent;
 
@@ -11,7 +12,7 @@ namespace Applitools
         public WebProxy Proxy { get; set; }
         public TRegion Region { get; set; }
         public string AppName { get; set; }
-        public object[] LocatorNames { get; set; }
+        public ICollection<string> LocatorNames { get; set; }
         public bool? FirstOnly { get; set; }
     }
 }

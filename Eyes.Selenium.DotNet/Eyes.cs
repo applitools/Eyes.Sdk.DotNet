@@ -439,14 +439,19 @@ namespace Applitools.Selenium
             return driver_;
         }
 
-        public IDictionary<string, Utils.Geometry.Region> Locate(params string[] locatorNames)
+        public IDictionary<string, IList<Locate>> Locate(params string[] locatorNames)
+        {
+            return Locate(locatorNames.ToList());
+        }
+
+        public IDictionary<string, IList<Locate>> Locate(ICollection<string> locatorNames)
         {
             Logger.Log("Locate");
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, Utils.Geometry.Region>();
+                return new Dictionary<string, IList<Locate>>();
             }
 
             var eyesConfig = ToConfig(Config);
@@ -465,13 +470,13 @@ namespace Applitools.Selenium
                         SessionId = remoteWebDriver.SessionId.ToString(),
                         Proxy = Config.Proxy
                     },
-                    Settings = ToLocateSettings(Config)
+                    Settings = ToLocateSettings(Config, locatorNames)
                 }
             };
 
             var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(locateRequest);
 
-            return response.Payload;
+            return response.Payload.Result;
         }
 
         /// <summary>
