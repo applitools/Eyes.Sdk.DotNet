@@ -32,5 +32,11 @@ namespace Applitools.Utils
 
             return base64;
         }
+
+        public static string ToBase64(this string filePath)
+        {
+            var bytes = File.ReadAllBytes(filePath);
+            return Convert.ToBase64String(bytes);
+        }
     }
 }
