@@ -150,6 +150,17 @@ jobs:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - dotnet test ./Tests/Eyes.Images.E2ETests/Eyes.Images.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
 
+    - name: E2E Tests Images Core
+      mono: none
+      dotnet: 7.0.102
+      addons:
+        chrome: stable
+        firefox: latest
+      script:
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - dotnet test ./Tests/Eyes.Images.Core.E2ETests/Eyes.Images.Core.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
+
     # Skipped TODO fix specific tests
     # - name: Images
     #   mono: latest

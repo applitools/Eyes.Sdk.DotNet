@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Fixed
+- Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
+
+## [Eyes.Appium vNext]
+### Fixed
+- Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
+
 ## [Eyes.Images 3.8] - 2023-02-03
 ### Fixed
 - Visual Locators not identified as expected in .NET [Trello 3122] (https://trello.com/c/2S8Sa9Uj)
