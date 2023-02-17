@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.9] - 2023-02-17
 ### Fixed
 - Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.37] - 2023-02-17
 ### Fixed
 - Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.33] - 2023-02-17
 ### Fixed
 - Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.37] - 2023-02-17
 ### Fixed
 - Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
 
