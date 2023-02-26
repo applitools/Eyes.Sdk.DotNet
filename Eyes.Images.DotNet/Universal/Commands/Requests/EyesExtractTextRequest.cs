@@ -7,7 +7,7 @@ namespace Applitools.Commands.Requests
         public EyesRef Eyes { get; set; }
         public ITarget Target { get; set; }
         public ICollection<ExtractTextSettings> Settings { get; set; }
-        public EyesConfig Config { get; set; }
+        public Config Config { get; set; }
 
         public ExtractTextRequestPayload()
         {

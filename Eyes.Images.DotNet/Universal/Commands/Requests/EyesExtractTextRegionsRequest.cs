@@ -1,20 +1,20 @@
 ﻿namespace Applitools.Commands.Requests
 {
-    public class LocateTextRequestPayload
+    public class ExtractTextRegionsRequestPayload
     {
         public EyesRef Eyes { get; set; }
         public ITarget Target { get; set; }
-        public LocateTextSettings Settings { get; set; }
-        public EyesConfig Config { get; set; }
+        public TextRegionSettings Settings { get; set; }
+        public Config Config { get; set; }
     }
 
     public class EyesExtractTextRegionsRequest : CommandBase
     {
-        public LocateTextRequestPayload Payload { get; set; }
+        public ExtractTextRegionsRequestPayload Payload { get; set; }
 
         public EyesExtractTextRegionsRequest()
         {
-            Name = "Eyes.locateText";
+            Name = "Eyes.extractText";
         }
     }
 }
