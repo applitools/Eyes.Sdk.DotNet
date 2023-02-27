@@ -441,12 +441,12 @@ namespace Applitools.Selenium
             return driver_;
         }
 
-        public ICollection<string> ExtractText(params OcrRegion[] regions)
+        public ICollection<string> ExtractText(params OcrRegionBase[] regions)
         {
             return ExtractText(regions.ToList());
         }
 
-        public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
+        public ICollection<string> ExtractText(ICollection<OcrRegionBase> regions)
         {
             Logger.Log("ExtractText");
 
@@ -1033,12 +1033,12 @@ namespace Applitools.Selenium
             return webDriver.Capabilities.GetPrivateFieldValue<IDictionary<string, object>>("capabilities");
         }
 
-        private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegion> regions)
+        private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegionBase> regions)
         {
 	        var extractTextSettings = new List<ExtractTextSettings>();
 	        foreach (var region in regions)
 	        {
-		        var ocrRegion = _ocrRegionTransformer.GetRegion(region);
+		        var ocrRegion = _ocrRegionTransformer.GetRegion((OcrRegion)region);
 		        var extractTextSetting = new ExtractTextSettings
 		        {
 			        Region = ocrRegion,

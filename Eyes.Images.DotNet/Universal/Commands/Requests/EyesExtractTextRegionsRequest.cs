@@ -14,7 +14,7 @@
 
         public EyesExtractTextRegionsRequest()
         {
-            Name = "Eyes.extractText";
+            Name = "Eyes.locateText";
         }
     }
 }

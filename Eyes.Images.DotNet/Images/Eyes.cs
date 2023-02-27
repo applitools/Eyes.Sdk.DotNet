@@ -246,7 +246,53 @@ namespace Applitools.Images
             
             return new AppImage(asExpected);
         }
-        
+
+        public ICollection<string> ExtractText(params OcrRegion[] regions)
+        {
+	        return ExtractText(regions.ToList());
+        }
+
+        public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
+        {
+            if (IsDisabled)
+            {
+	            return new List<string>();
+            }
+
+            var firstRegion = regions.FirstOrDefault();
+            if (firstRegion == null)
+            {
+	            throw new Exception("At least one region is required");
+            }
+
+            var eyesConfig = ToConfig(Config);
+            //eyesConfig.Open.Properties = _properties;
+            var eyesExtractTextRequest = new EyesExtractTextRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRequestPayload
+                {
+                    Eyes = eyes_,
+					Target = new ImageTarget
+					{
+						Image = firstRegion.GetImage()
+					},
+					Config = eyesConfig,
+                    Settings = regions.Select(r => new ExtractTextSettings
+                    {
+                        Hint = r.GetHint(),
+                        MinMatch = r.GetMinMatch(),
+                        Language = r.GetLanguage(),
+                        Region = GetRegion(r)
+                    }).ToList()
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
+
+            return response.Payload.Result;
+        }
+
         public void SetTitle(string title)
         {
             title_ = title;
@@ -421,6 +467,23 @@ namespace Applitools.Images
                 }
             };
             return request;
+        }
+
+        private RegionRectangle GetRegion(OcrRegion ocrRegion)
+        {
+	        var region = ocrRegion.GetRegion();
+	        if (region == null)
+	        {
+		        return null;
+	        }
+
+	        return new RegionRectangle
+	        {
+		        Width = region.Value.Width,
+		        Height = region.Value.Height,
+		        X = region.Value.Left,
+		        Y = region.Value.Top,
+	        };
         }
 
         private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)

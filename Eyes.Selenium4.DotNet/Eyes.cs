@@ -463,7 +463,8 @@ namespace Applitools.Selenium
             {
 	            Payload = new ExtractTextRequestPayload
                 {
-		            Config = ToConfig(Config),
+                    Eyes = eyes_,
+		            Config = eyesConfig,
 		            Target = new DriverTarget
 		            {
 			            ServerUrl = serverUrl,
