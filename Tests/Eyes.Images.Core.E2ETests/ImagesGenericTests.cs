@@ -8,6 +8,7 @@ namespace Eyes.Images.Core.E2ETests
         private static string IMAGE_PATH_JPEG = "resources/minions_jpeg.jpeg";
         private static string IMAGE_PATH_PNG = "resources/minions_png.png";
         private static string IMAGE_PATH_BMP = "resources/minions_bitmap.bmp";
+        private static string EXTRACT_IMAGE_PATH_PNG = "resources/extractText.png";
         private const int ImageWidth = 800;
         private const int ImageHeight = 500;
         
@@ -43,6 +44,16 @@ namespace Eyes.Images.Core.E2ETests
             var image = File.ReadAllBytes(IMAGE_PATH_PNG);
             eyes.Open("Applitools Eyes SDK", "TestPNGFromBuffer - Core", new RectangleSize(ImageWidth, ImageHeight));
             eyes.Check(Target.Image(image));
+            eyes.Close();
+        }
+        
+        [Test]
+        public void ExtractTextTest()
+        {
+            eyes.Open("Applitools Eyes SDK", "ExtractText", new RectangleSize(ImageWidth, ImageHeight));
+            var result = eyes.ExtractText(new OcrRegion(EXTRACT_IMAGE_PATH_PNG));
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("This is the navigation bar", result.ElementAt(0));
             eyes.Close();
         }
     }

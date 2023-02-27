@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using Applitools;
 using Applitools.Images;
 using Applitools.Tests.Utils;
@@ -340,6 +341,17 @@ namespace Eyes.Images.E2ETests
             eyes.Open(GetApplicationName(), "TestCheckRegionNonFluent", new RectangleSize(TEST_IMAGE.Width, TEST_IMAGE.Height));
             eyes.CheckRegion(TEST_IMAGE, new Rectangle(50, 50, 50, 50));
             eyes.Close();
+        }
+
+        [Test]
+        public void ExtractTextTest()
+        {
+	        var image = EXTRACT_TEXT_IMAGE;
+	        eyes.Open("Applitools Eyes SDK", "ExtractText", new RectangleSize(image.Width, image.Height));
+	        var result = eyes.ExtractText(new OcrRegion(image));
+	        Assert.AreEqual(result.Count, 1);
+	        Assert.AreEqual(result.ElementAt(0), "This is the navigation bar");
+	        eyes.Close();
         }
     }
 }
