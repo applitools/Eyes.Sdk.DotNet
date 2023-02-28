@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Implemented
+- Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
+
+## [Eyes.Selenium vNext]
+### Implemented
+- Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
+
+## [Eyes.Selenium4 vNext]
+### Implemented
+- Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
+
+## [Eyes.Appium vNext]
+### Implemented
+- Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
+
 ## [Eyes.Images 3.9] - 2023-02-17
 ### Fixed
 - Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
