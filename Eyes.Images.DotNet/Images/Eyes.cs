@@ -266,7 +266,6 @@ namespace Applitools.Images
             }
 
             var eyesConfig = ToConfig(Config);
-            //eyesConfig.Open.Properties = _properties;
             var eyesExtractTextRequest = new EyesExtractTextRequest
             {
                 Key = Guid.NewGuid().ToString(),
@@ -289,6 +288,37 @@ namespace Applitools.Images
             };
 
             var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
+
+            return response.Payload.Result;
+        }
+
+        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        {
+            Logger.Log("ExtractTextRegions");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, ICollection<TextRegion>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRegionsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Target = new ImageTarget
+                    {
+                        Image = textRegionSettings.Image
+                    },
+                    Config = eyesConfig,
+                    Settings = textRegionSettings
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
 
             return response.Payload.Result;
         }

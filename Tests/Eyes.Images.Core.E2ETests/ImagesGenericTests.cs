@@ -1,3 +1,5 @@
+using Applitools;
+using Applitools.Commands;
 using Applitools.Images;
 using Applitools.Utils.Geometry;
 
@@ -54,6 +56,20 @@ namespace Eyes.Images.Core.E2ETests
             var result = eyes.ExtractText(new OcrRegion(EXTRACT_IMAGE_PATH_PNG));
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual("This is the navigation bar", result.ElementAt(0));
+            eyes.Close();
+        }
+
+        [Test]
+        public void ExtractTextRegionsTest()
+        {
+            var image = EXTRACT_IMAGE_PATH_PNG;
+            eyes.Open("Applitools Eyes SDK", "ExtractTextRegions");
+            var result = eyes.ExtractTextRegions(new TextRegionSettings(".+").SetImage(image));
+            Assert.AreEqual(1, result.Count);
+            var regions = result.First().Value;
+            Assert.AreEqual(1, regions.Count);
+            var region = regions.First();
+            Assert.AreEqual(new TextRegion(10, 11, 18, 214, "Thisisthenavigationbar"), region);
             eyes.Close();
         }
     }
