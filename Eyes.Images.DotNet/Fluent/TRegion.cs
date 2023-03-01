@@ -23,9 +23,6 @@ namespace Applitools.Fluent
     public class RegionElement : TRegion
     {
         public string ElementId { get; set; }
-
-        //public RegionSelector Region { get; set; } // ?
-        //public string RegionId { get; set; }
     }
 
     public interface IGetRegions<T> where T : TRegion

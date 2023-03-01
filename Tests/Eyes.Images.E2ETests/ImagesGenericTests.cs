@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using Applitools;
+using Applitools.Commands;
 using Applitools.Images;
 using Applitools.Tests.Utils;
 using Applitools.Utils.Geometry;
@@ -15,6 +17,7 @@ namespace Eyes.Images.E2ETests
         private static string IMAGE_URL_JPEG = "https://applitools.github.io/demo/images/minions_jpeg.jpeg";
         private static string IMAGE_URL_PNG = "https://applitools.github.io/upload/appium.png";
         private static string IMAGE_URL_BMP = "https://applitools.github.io/demo/images/minions_bitmap.bmp";
+        private static string EXTRACT_TEXT_IMAGE_PNG = "resources/extractText.png";
 
         private static string IMAGE_PATH_JPEG = "resources/minions_jpeg.jpeg";
         private static string IMAGE_PATH_JPG = "";
@@ -22,7 +25,7 @@ namespace Eyes.Images.E2ETests
         private static string IMAGE_PATH_BMP = "resources/minions_bitmap.bmp";
 
         private Bitmap TEST_IMAGE = new Bitmap(IMAGE_PATH_JPEG);
-        private Bitmap EXTRACT_TEXT_IMAGE = new Bitmap("resources/extractText.png");
+        private Bitmap EXTRACT_TEXT_IMAGE = new Bitmap(EXTRACT_TEXT_IMAGE_PNG);
         
         [Test]
         public void BitMapFromPathTest()
@@ -340,6 +343,31 @@ namespace Eyes.Images.E2ETests
             eyes.Open(GetApplicationName(), "TestCheckRegionNonFluent", new RectangleSize(TEST_IMAGE.Width, TEST_IMAGE.Height));
             eyes.CheckRegion(TEST_IMAGE, new Rectangle(50, 50, 50, 50));
             eyes.Close();
+        }
+
+        [Test]
+        public void ExtractTextTest()
+        {
+	        var image = EXTRACT_TEXT_IMAGE;
+	        eyes.Open("Applitools Eyes SDK", "ExtractText", new RectangleSize(image.Width, image.Height));
+	        var result = eyes.ExtractText(new OcrRegion(image));
+	        Assert.AreEqual(1, result.Count);
+	        Assert.AreEqual("This is the navigation bar", result.ElementAt(0));
+	        eyes.Close();
+        }
+
+        [Test]
+        public void ExtractTextRegionsTest()
+        {
+	        var image = EXTRACT_TEXT_IMAGE_PNG;
+	        eyes.Open("Applitools Eyes SDK", "ExtractTextRegions");
+	        var result = eyes.ExtractTextRegions(new TextRegionSettings(".+").SetImage(image));
+	        Assert.AreEqual(1, result.Count);
+            var regions = result.First().Value;
+            Assert.AreEqual(1, regions.Count);
+            var region = regions.First();
+            Assert.AreEqual(new TextRegion(10, 11, 18, 214, "Thisisthenavigationbar"), region);
+	        eyes.Close();
         }
     }
 }

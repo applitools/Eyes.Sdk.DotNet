@@ -25,6 +25,7 @@ namespace Applitools.Selenium
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly string serverUrlFieldName_;
         private readonly ISelectorTransformer selectorTransformer_;
+        private readonly IOcrRegionTransformer _ocrRegionTransformer;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -55,6 +56,7 @@ namespace Applitools.Selenium
             serverUrlFieldName_ = serverUrlFieldName;
 
             selectorTransformer_ = selectorTransformer ?? new SeleniumSelectorTransformer();
+            _ocrRegionTransformer = new OcrRegionTransformer(selectorTransformer_);
         }
 
         #endregion
@@ -437,6 +439,83 @@ namespace Applitools.Selenium
         public IWebDriver GetDriver()
         {
             return driver_;
+        }
+
+        public ICollection<string> ExtractText(params OcrRegionBase[] regions)
+        {
+            return ExtractText(regions.ToList());
+        }
+
+        public ICollection<string> ExtractText(ICollection<OcrRegionBase> regions)
+        {
+            Logger.Log("ExtractText");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new List<string>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = properties_;
+            var remoteWebDriver = (RemoteWebDriver) driver_;
+            var serverUrl = GetServerUrl(remoteWebDriver);
+            var extractTextRequest = new EyesExtractTextRequest
+            {
+                Payload = new ExtractTextRequestPayload
+                {
+                    Eyes = eyes_,
+                    Config = ToConfig(Config),
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = ToExtractTextSettings(regions)
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(extractTextRequest);
+
+            return response.Payload.Result;
+        }
+
+        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        {
+            Logger.Log("ExtractTextRegions");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, ICollection<TextRegion>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = properties_;
+            var remoteWebDriver = (RemoteWebDriver) driver_;
+            var serverUrl = GetServerUrl(remoteWebDriver);
+            var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
+            {
+                Payload = new ExtractTextRegionsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Config = eyesConfig,
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = textRegionSettings
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
+
+            return response.Payload.Result;
         }
 
         public IDictionary<string, IList<Locate>> Locate(params string[] locatorNames)
@@ -952,6 +1031,25 @@ namespace Applitools.Selenium
         private IDictionary<string, object> GetCapabilities(RemoteWebDriver webDriver)
         {
             return webDriver.Capabilities.GetPrivateFieldValue<IDictionary<string, object>>("capabilities");
+        }
+
+        private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegionBase> regions)
+        {
+	        var extractTextSettings = new List<ExtractTextSettings>();
+	        foreach (var region in regions)
+	        {
+		        var ocrRegion = _ocrRegionTransformer.GetRegion((OcrRegion)region);
+		        var extractTextSetting = new ExtractTextSettings
+		        {
+			        Region = ocrRegion,
+			        Hint = region.GetHint(),
+			        Language = region.GetLanguage(),
+			        MinMatch = region.GetMinMatch()
+		        };
+		        extractTextSettings.Add(extractTextSetting);
+	        }
+
+	        return extractTextSettings;
         }
     }
 }

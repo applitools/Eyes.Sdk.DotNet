@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -245,7 +246,83 @@ namespace Applitools.Images
             
             return new AppImage(asExpected);
         }
-        
+
+        public ICollection<string> ExtractText(params OcrRegion[] regions)
+        {
+	        return ExtractText(regions.ToList());
+        }
+
+        public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
+        {
+            if (IsDisabled)
+            {
+	            return new List<string>();
+            }
+
+            var firstRegion = regions.FirstOrDefault();
+            if (firstRegion == null)
+            {
+	            throw new Exception("At least one region is required");
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var eyesExtractTextRequest = new EyesExtractTextRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRequestPayload
+                {
+                    Eyes = eyes_,
+					Target = new ImageTarget
+					{
+						Image = firstRegion.GetImage()
+					},
+					Config = eyesConfig,
+                    Settings = regions.Select(r => new ExtractTextSettings
+                    {
+                        Hint = r.GetHint(),
+                        MinMatch = r.GetMinMatch(),
+                        Language = r.GetLanguage(),
+                        Region = GetRegion(r)
+                    }).ToList()
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
+
+            return response.Payload.Result;
+        }
+
+        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        {
+            Logger.Log("ExtractTextRegions");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, ICollection<TextRegion>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRegionsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Target = new ImageTarget
+                    {
+                        Image = textRegionSettings.Image
+                    },
+                    Config = eyesConfig,
+                    Settings = textRegionSettings
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
+
+            return response.Payload.Result;
+        }
+
         public void SetTitle(string title)
         {
             title_ = title;
@@ -420,6 +497,23 @@ namespace Applitools.Images
                 }
             };
             return request;
+        }
+
+        private RegionRectangle GetRegion(OcrRegion ocrRegion)
+        {
+	        var region = ocrRegion.GetRegion();
+	        if (region == null)
+	        {
+		        return null;
+	        }
+
+	        return new RegionRectangle
+	        {
+		        Width = region.Value.Width,
+		        Height = region.Value.Height,
+		        X = region.Value.Left,
+		        Y = region.Value.Top,
+	        };
         }
 
         private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)

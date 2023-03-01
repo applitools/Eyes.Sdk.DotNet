@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace Applitools.Utils.Geometry
 {
-    /// <summary>
+	/// <summary>
     /// A rectangular region.
     /// </summary>
     public struct Region : IRegion
