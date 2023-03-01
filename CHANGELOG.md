@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.10] - 2023-03-01
 ### Implemented
 - Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.38] - 2023-03-01
 ### Implemented
 - Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.34] - 2023-03-01
 ### Implemented
 - Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.38] - 2023-03-01
 ### Implemented
 - Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
 

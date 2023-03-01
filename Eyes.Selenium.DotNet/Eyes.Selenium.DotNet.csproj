@@ -8,13 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.37</Version>
+    <Version>3.38</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
-    <PackageReleaseNotes>### Fixed
-- Introduced overloaded Image method with byte[] and base64 string parameter to support .NET 7 [Trello 3121] (https://trello.com/c/tleubWtm)
+    <PackageReleaseNotes>### Implemented
+- Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
