@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.11] - 2023-03-07
 ### Implemented
 - Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.39] - 2023-03-07
 ### Implemented
 - Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.35] - 2023-03-07
 ### Implemented
 - Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.39] - 2023-03-07
 ### Implemented
 - Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
 
