@@ -47,14 +47,15 @@ namespace Applitools
             }
 
             _eyeses = new List<EyesBaseConfig>();
-            if (startServer)
-            {
-                StartServer();
-            }
 
             _actualAssembly = GetActualAssembly();
 
-            CreateCoreSdk();
+            if (startServer)
+            {
+                StartServer();
+
+                CreateCoreSdk();
+            }
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
