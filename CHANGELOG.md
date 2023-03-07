@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Implemented
+- Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
+## [Eyes.Selenium vNext]
+### Implemented
+- Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
+## [Eyes.Selenium4 vNext]
+### Implemented
+- Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
+## [Eyes.Appium vNext]
+### Implemented
+- Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
 ## [Eyes.Images 3.10] - 2023-03-01
 ### Implemented
 - Eyes.ExtractTextRegions and Eyes.ExtractText [Trello 3139] (https://trello.com/c/26ruEr2N)

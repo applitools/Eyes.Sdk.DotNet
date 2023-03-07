@@ -152,6 +152,8 @@ namespace Applitools
                         throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
                     }
                 }
+
+                Thread.Sleep(100);
             }
         }
 
