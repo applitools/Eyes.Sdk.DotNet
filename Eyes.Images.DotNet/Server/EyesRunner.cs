@@ -53,6 +53,8 @@ namespace Applitools
             }
 
             _actualAssembly = GetActualAssembly();
+
+            CreateCoreSdk();
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
@@ -109,8 +111,6 @@ namespace Applitools
 
             if (managerApplitoolsRefId_ == null)
             {
-                CreateCoreSdk();
-
                 var coreMakeManager = CreateCoreMakeManager();
 
                 var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager);

@@ -17,6 +17,7 @@ namespace Applitools
             ServerUrl = serverUrl;
             _batchIds = batchIds;
             _runner = new ClassicRunner();
+            _runner.CreateCoreSdk();
         }
 
         public new EnabledBatchClose SetUrl(string url)
@@ -39,8 +40,6 @@ namespace Applitools
 
         public void Close()
         {
-            _runner.CreateCoreSdk();
-
             var batchIds = _batchIds.Any() ? _batchIds : new List<string> {CommonUtils.GetEnvVar("APPLITOOLS_BATCH_ID")};
 
             logger_.Log(TraceLevel.Notice, Stage.Close, StageType.CloseBatch, new {batches = _batchIds});
