@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Reflection;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
@@ -14,7 +12,6 @@ namespace Applitools
 {
     public abstract class EyesRunner
     {
-        private string managerApplitoolsRefId_;
         private MakeManagerRequestPayload config_;
         private readonly Assembly _actualAssembly;
         private readonly IList<EyesBaseConfig> _eyeses;
@@ -27,7 +24,7 @@ namespace Applitools
             set => config_ = value;
         }
 
-        public string ManagerApplitoolsRefId { get; }
+        public string ManagerApplitoolsRefId { get; protected set; }
 
         public bool? DontCloseBatches { get; set; }
 
@@ -43,7 +40,7 @@ namespace Applitools
 
         public Logger Logger { get; } = new Logger();
 
-        protected EyesRunner(ILogHandler logHandler, bool startServer = true)
+        protected EyesRunner(ILogHandler logHandler)
         {
             if (logHandler != null)
             {
@@ -53,12 +50,8 @@ namespace Applitools
             _eyeses = new List<EyesBaseConfig>();
             _actualAssembly = GetActualAssembly();
 
-            if (startServer)
-            {
-                var sdkEvent = CreateCoreSdk();
-                CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
-                ManagerApplitoolsRefId = GetCoreMakeManager();
-            }
+            var sdkEvent = CreateCoreSdk();
+            CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
@@ -113,15 +106,12 @@ namespace Applitools
         {
             Logger.Log("CoreMakeManager");
 
-            if (managerApplitoolsRefId_ == null)
-            {
-                var coreMakeManager = CreateCoreMakeManager();
+            var coreMakeManager = CreateCoreMakeManager();
 
-                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager);
-                managerApplitoolsRefId_ = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
-            }
+            var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager);
+            var managerApplitoolsRefId = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
 
-            return managerApplitoolsRefId_;
+            return managerApplitoolsRefId;
         }
 
         internal string CreateCoreSdk()
@@ -205,7 +195,7 @@ namespace Applitools
                 {
                     Manager = new ManagerRef
                     {
-                        ApplitoolsRefId = managerApplitoolsRefId_
+                        ApplitoolsRefId = ManagerApplitoolsRefId
                     },
                     Settings = new CloseSettings
                     {

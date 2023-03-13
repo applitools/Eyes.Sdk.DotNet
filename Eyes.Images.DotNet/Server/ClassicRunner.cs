@@ -8,15 +8,16 @@ namespace Applitools
 
         public ClassicRunner() : this(true) { }
 
-        public ClassicRunner(bool startServer = true) : this(NullLogHandler.Instance, startServer) { }
+        public ClassicRunner(bool startServer = true) : this(NullLogHandler.Instance) { }
 
-        public ClassicRunner(ILogHandler logHandler, bool startServer = true) : this(logHandler, null, startServer)
+        public ClassicRunner(ILogHandler logHandler) : this(logHandler, null)
         {
         }
 
-        internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory, bool startServer = true)
-            : base(logHandler, startServer)
+        internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory)
+            : base(logHandler)
         {
+            ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
         protected override MakeManagerRequestPayload InitConfig()
