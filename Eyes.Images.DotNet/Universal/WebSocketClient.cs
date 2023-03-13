@@ -25,8 +25,12 @@ namespace Applitools
         private readonly ConcurrentDictionary<string, string> _messages;
         private readonly object _lock = new object();
 
-        public Logger Logger { get; } = new Logger();
+        private static WebSocketClient _instance;
 
+        public event SocketMessageReceivedHandler MessageReceived;
+
+        public Logger Logger { get; } = new Logger();
+        
         public WebSocketClient(ILogHandler logHandler = null)
         {
             if (logHandler != null)
@@ -36,8 +40,6 @@ namespace Applitools
             _webSocket = new ClientWebSocket();
             _messages = new ConcurrentDictionary<string, string>();
         }
-
-        public event SocketMessageReceivedHandler MessageReceived;
 
         public void ConnectAsync(string url)
         {
@@ -49,7 +51,7 @@ namespace Applitools
                 }
 
                 cancellationTokenSource_ = new CancellationTokenSource();
-                _webSocket.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).GetAwaiter().GetResult();
+                _webSocket.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).ConfigureAwait(false).GetAwaiter().GetResult();
 
                 while (_webSocket.State == WebSocketState.Connecting) { }
                 if (_webSocket.State != WebSocketState.Open)
