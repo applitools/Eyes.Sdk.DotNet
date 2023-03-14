@@ -60,6 +60,8 @@ namespace Applitools.VisualGrid
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
             if (logHandler != null) Logger.SetLogHandler(logHandler);
+
+            ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
         protected override MakeManagerRequestPayload InitConfig()
