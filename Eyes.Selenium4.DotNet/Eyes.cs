@@ -17,7 +17,6 @@ namespace Applitools.Selenium
     public class Eyes : EyesBase
     {
         private PropertiesCollection properties_;
-        private string managerApplitoolsRefId_;
         private EyesRef eyes_;
         private IWebDriver driver_;
 
@@ -765,10 +764,8 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
                 return driver;
             }
-
-            managerApplitoolsRefId_ = Runner.GetCoreMakeManager();
-
-            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_, driver);
+            
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
 
             var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
             eyes_ = openEyesResponsePayload.Result;
