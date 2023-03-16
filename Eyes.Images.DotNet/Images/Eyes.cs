@@ -27,9 +27,7 @@ namespace Applitools.Images
         private readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
 
         private string title_;
-        private string screenshotUrl_;
         private readonly Uri serverUrl_;
-        private string managerApplitoolsRefId_;
         private EyesRef eyes_;
 
         #endregion
@@ -438,10 +436,8 @@ namespace Applitools.Images
                 Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
                 return;
             }
-
-            managerApplitoolsRefId_ = Runner.GetCoreMakeManager();
-
-            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(managerApplitoolsRefId_);
+            
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId);
 
             var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
             eyes_ = openEyesResponsePayload.Result;

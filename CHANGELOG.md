@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Implemented
+- Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
+## [Eyes.Selenium vNext]
+### Implemented
+- Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
+## [Eyes.Selenium4 vNext]
+### Implemented
+- Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
+## [Eyes.Appium vNext]
+### Implemented
+- Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+
 ## [Eyes.Images 3.11] - 2023-03-07
 ### Implemented
 - Fixed Missing Server Response for Core.makeManager [Trello 3120] (https://trello.com/c/K0kZfnEc)
