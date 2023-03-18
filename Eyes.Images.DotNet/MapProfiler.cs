@@ -11,13 +11,17 @@ namespace Applitools
         public MapProfiler()
         {
             CreateMap<Configuration, OpenConfig>()
-                .ForMember(dest => dest.Environment, act => act.MapFrom(
-                    src => new BaselineEnv
-                    {
-                        Os = src.HostOS,
-                        HostingApp = src.HostApp,
-                        ViewportSize = src.ViewportSize
-                    }));
+                .ForMember(dest => dest.Environment, act =>
+                {
+                    act.Condition(src => string.IsNullOrEmpty(src.HostOS) == false || string.IsNullOrEmpty(src.HostApp) == false || src.ViewportSize != null);
+                    act.MapFrom(
+                        src => new BaselineEnv
+                        {
+                            Os = src.HostOS,
+                            HostingApp = src.HostApp,
+                            ViewportSize = src.ViewportSize
+                        });
+                });
             CreateMap<Configuration, ScreenshotConfig>()
                 .ForMember(dest => dest.Fully, act => act.MapFrom(src => src.IsForceFullPageScreenshot));
             CreateMap<Configuration, CheckConfig>()
