@@ -9,6 +9,7 @@ using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Utils;
+using Applitools.Utils.Geometry;
 
 namespace Applitools.Images
 {
@@ -317,6 +318,36 @@ namespace Applitools.Images
             };
 
             var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
+
+            return response.Payload.Result;
+        }
+        
+        public IDictionary<string, IList<Locate>> Locate(VisualLocatorSettings settings)
+        {
+            Logger.Log("Locate");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, IList<Locate>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var eyesLocateRequest = new EyesLocateRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new EyesLocateRequestPayload
+                {
+                    Config = eyesConfig,
+                    Target = new ImageTarget
+                    {
+                        Image = settings.GetImage()
+                    },
+                    Settings = ToLocateSettings(Config, settings.GetNames())
+                }
+            };
+
+            var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(eyesLocateRequest);
 
             return response.Payload.Result;
         }
