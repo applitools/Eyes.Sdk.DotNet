@@ -17,7 +17,7 @@ namespace Applitools
             ServerUrl = serverUrl;
             _batchIds = batchIds;
             _runner = new ClassicRunner();
-            _runner.CreateCoreSdk();
+            _runner.CreateCoreSdk("netImagesBatchClose");
         }
 
         public new EnabledBatchClose SetUrl(string url)

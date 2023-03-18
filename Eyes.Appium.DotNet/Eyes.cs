@@ -217,6 +217,11 @@ namespace Applitools.Appium
             Check(name, Target.Window().Fully());
         }
         
+        public override TestResults GetResults(bool throwEx = true)
+        {
+            return seleniumEyes_.GetResults(throwEx);
+        }
+
         public override TestResults Abort()
         {
             IsOpen = false;

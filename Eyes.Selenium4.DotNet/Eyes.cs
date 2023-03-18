@@ -92,23 +92,14 @@ namespace Applitools.Selenium
             var request = CreateEyesAbortRequest();
 
             var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
-
-            foreach (var testResults in payload.Result)
-            {
-                if (testResults != null)
-                {
-                    testResults.Runner = Runner;
-                }
-            }
-
+            
             if (payload.Error != null)
             {
+                IsOpen = false;
                 throw new EyesException(payload.Error.ToString());
             }
-
-            IsOpen = false;
-
-            return payload.Result?.FirstOrDefault();
+            
+            return GetResults();
         }
 
         public override void AbortAsync()
@@ -122,7 +113,13 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            Runner.SendRequest(request);
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
+
+            if (payload.Error != null)
+            {
+                IsOpen = false;
+                throw new EyesException(payload.Error.ToString());
+            }
 
             IsOpen = false;
         }
@@ -461,18 +458,17 @@ namespace Applitools.Selenium
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var eyesExtractTextRequest = new EyesExtractTextRequest
             {
-	            Payload = new ExtractTextRequestPayload
+                Payload = new ExtractTextRequestPayload
                 {
-                    Eyes = eyes_,
-		            Config = eyesConfig,
-		            Target = new DriverTarget
-		            {
-			            ServerUrl = serverUrl,
-			            Capabilities = GetCapabilities(remoteWebDriver),
-			            SessionId = remoteWebDriver.SessionId.ToString(),
-			            Proxy = Config.Proxy
-		            },
-		            Settings = ToExtractTextSettings(regions)
+                    Config = eyesConfig,
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = ToExtractTextSettings(regions)
                 }
             };
 
@@ -497,17 +493,17 @@ namespace Applitools.Selenium
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
             {
-	            Payload = new ExtractTextRegionsRequestPayload
+                Payload = new ExtractTextRegionsRequestPayload
                 {
-		            Config = ToConfig(Config),
-		            Target = new DriverTarget
-		            {
-			            ServerUrl = serverUrl,
-			            Capabilities = GetCapabilities(remoteWebDriver),
-			            SessionId = remoteWebDriver.SessionId.ToString(),
-			            Proxy = Config.Proxy
-		            },
-		            Settings = textRegionSettings
+                    Config = ToConfig(Config),
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = textRegionSettings
                 }
             };
 
@@ -556,6 +552,30 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
+        public override TestResults GetResults(bool throwEx = true)
+        {
+            Logger.Log("Close");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            var request = CreateEyesGetResultsRequest(throwEx);
+
+            var response = Runner.SendRequest<EyesGetResultsRequest, EyesCloseAbortResponse>(request);
+
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
+            
+            return GetResults(throwEx);
+        }
+
         /// <summary>
         /// Ends the test and returns its results.
         /// </summary>
@@ -573,26 +593,14 @@ namespace Applitools.Selenium
 
             var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
 
-            IsOpen = false;
-
             var error = response.Payload.Error;
-            if (error != null && throwEx)
+            if (error != null)
             {
+                IsOpen = false;
                 throw new TestFailedException(error.ToString());
             }
-
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            return testResults.First();
+            
+            return GetResults(throwEx);
         }
 
         /// <summary>
@@ -611,7 +619,14 @@ namespace Applitools.Selenium
 
             var eyesCloseRequest = CreateEyesCloseRequest();
 
-            Runner.SendRequest(eyesCloseRequest);
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
+
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
 
             IsOpen = false;
         }
@@ -781,6 +796,19 @@ namespace Applitools.Selenium
 
             IsOpen = true;
             return driver;
+        }
+
+        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false)
+        {
+            var eyesCloseRequest = new EyesGetResultsRequest
+            {
+                Payload = new EyesGetResultsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToResultsSettings(Config, throwEx)
+                }
+            };
+            return eyesCloseRequest;
         }
 
         private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)
@@ -1024,21 +1052,21 @@ namespace Applitools.Selenium
 
         private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegion> regions)
         {
-	        var extractTextSettings = new List<ExtractTextSettings>();
-	        foreach (var region in regions)
-	        {
-		        var ocrRegion = _ocrRegionTransformer.GetRegion(region);
-		        var extractTextSetting = new ExtractTextSettings
-		        {
-			        Region = ocrRegion,
-			        Hint = region.GetHint(),
-			        Language = region.GetLanguage(),
-			        MinMatch = region.GetMinMatch()
-		        };
-		        extractTextSettings.Add(extractTextSetting);
-	        }
+            var extractTextSettings = new List<ExtractTextSettings>();
+            foreach (var region in regions)
+            {
+                var ocrRegion = _ocrRegionTransformer.GetRegion(region);
+                var extractTextSetting = new ExtractTextSettings
+                {
+                    Region = ocrRegion,
+                    Hint = region.GetHint(),
+                    Language = region.GetLanguage(),
+                    MinMatch = region.GetMinMatch()
+                };
+                extractTextSettings.Add(extractTextSetting);
+            }
 
-	        return extractTextSettings;
+            return extractTextSettings;
         }
     }
 }

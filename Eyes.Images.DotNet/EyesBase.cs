@@ -66,6 +66,7 @@ namespace Applitools
 
         public abstract TestResults Abort();
         public abstract TestResults Close(bool throwEx = true);
+        public abstract TestResults GetResults(bool throwEx = true);
 
         protected Config ToConfig(Configuration configuration)
         {
@@ -119,6 +120,20 @@ namespace Applitools
             var mapper = config.CreateMapper();
 
             var settings = mapper.Map<CloseSettings>(configuration);
+            settings.ThrowErr = throwEx;
+
+            return settings;
+        }
+
+        protected ResultsSettings ToResultsSettings(Configuration configuration, bool throwEx)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MapProfiler>();
+            });
+            var mapper = config.CreateMapper();
+
+            var settings = mapper.Map<ResultsSettings>(configuration);
             settings.ThrowErr = throwEx;
 
             return settings;

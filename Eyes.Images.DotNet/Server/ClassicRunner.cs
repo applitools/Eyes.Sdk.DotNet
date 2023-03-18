@@ -15,7 +15,7 @@ namespace Applitools
         }
 
         internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory, bool startServer = true)
-            : base(logHandler, startServer)
+            : base(logHandler, "netImages", startServer)
         {
         }
 

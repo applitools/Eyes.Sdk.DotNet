@@ -92,23 +92,14 @@ namespace Applitools.Selenium
             var request = CreateEyesAbortRequest();
 
             var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
-
-            foreach (var testResults in payload.Result)
-            {
-                if (testResults != null)
-                {
-                    testResults.Runner = Runner;
-                }
-            }
-
+            
             if (payload.Error != null)
             {
+                IsOpen = false;
                 throw new EyesException(payload.Error.ToString());
             }
 
-            IsOpen = false;
-
-            return payload.Result?.FirstOrDefault();
+            return GetResults();
         }
         
         public override void AbortAsync()
@@ -122,7 +113,13 @@ namespace Applitools.Selenium
 
             var request = CreateEyesAbortRequest();
 
-            Runner.SendRequest(request);
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
+
+            if (payload.Error != null)
+            {
+                IsOpen = false;
+                throw new EyesException(payload.Error.ToString());
+            }
 
             IsOpen = false;
         }
@@ -464,7 +461,6 @@ namespace Applitools.Selenium
             {
                 Payload = new ExtractTextRequestPayload
                 {
-                    Eyes = eyes_,
                     Config = ToConfig(Config),
                     Target = new DriverTarget
                     {
@@ -500,7 +496,6 @@ namespace Applitools.Selenium
             {
                 Payload = new ExtractTextRegionsRequestPayload
                 {
-                    Eyes = eyes_,
                     Config = eyesConfig,
                     Target = new DriverTarget
                     {
@@ -558,6 +553,45 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
+
+        public override TestResults GetResults(bool throwEx = true)
+        {
+            Logger.Log("GetResults");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            var request = CreateEyesGetResultsRequest(throwEx);
+
+            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
+
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
+
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
+            {
+                testResult.Runner = Runner;
+                if (testResult.IsPassed == false && throwEx)
+                {
+                    IsOpen = false;
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
+                }
+            }
+
+            IsOpen = false;
+            return testResults.First();
+        }
+
+
         /// <summary>
         /// Ends the test and returns its results.
         /// </summary>
@@ -575,26 +609,14 @@ namespace Applitools.Selenium
 
             var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
 
-            IsOpen = false;
-
             var error = response.Payload.Error;
-            if (error != null && throwEx)
+            if (error != null)
             {
+                IsOpen = false;
                 throw new TestFailedException(error.ToString());
             }
 
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            return testResults.First();
+            return GetResults(throwEx);
         }
 
         /// <summary>
@@ -612,8 +634,15 @@ namespace Applitools.Selenium
             Logger.Verbose("enter. CloseAsync");
 
             var eyesCloseRequest = CreateEyesCloseRequest();
+            
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
 
-            Runner.SendRequest(eyesCloseRequest);
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
 
             IsOpen = false;
         }
@@ -783,6 +812,19 @@ namespace Applitools.Selenium
 
             IsOpen = true;
             return driver;
+        }
+
+        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false)
+        {
+            var request = new EyesGetResultsRequest
+            {
+                Payload = new EyesGetResultsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToResultsSettings(Config, throwEx)
+                }
+            };
+            return request;
         }
 
         private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)

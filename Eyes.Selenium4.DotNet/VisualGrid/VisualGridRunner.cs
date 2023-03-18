@@ -55,7 +55,7 @@ namespace Applitools.VisualGrid
         { }
 
         public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null, bool startServer = true) 
-            : base(logHandler, startServer)
+            : base(logHandler, "netSelenium4", startServer)
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
@@ -64,7 +64,7 @@ namespace Applitools.VisualGrid
 
         public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
             IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null) 
-            : base(logHandler)
+            : base(logHandler, "netSelenium4")
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);

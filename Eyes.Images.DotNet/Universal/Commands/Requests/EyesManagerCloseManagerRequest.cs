@@ -12,7 +12,7 @@
 
         public EyesManagerCloseManagerRequest()
         {
-            Name = "EyesManager.closeManager";
+            Name = "EyesManager.getResults";
         }
     }
 }

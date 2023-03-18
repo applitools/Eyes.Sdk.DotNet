@@ -39,7 +39,7 @@ namespace Applitools
 
         public Logger Logger { get; } = new Logger();
 
-        protected EyesRunner(ILogHandler logHandler, bool startServer = true)
+        protected EyesRunner(ILogHandler logHandler, string agentId, bool startServer = true)
         {
             if (logHandler != null)
             {
@@ -54,7 +54,7 @@ namespace Applitools
             {
                 StartServer();
 
-                CreateCoreSdk();
+                CreateCoreSdk(agentId);
             }
         }
 
@@ -121,9 +121,9 @@ namespace Applitools
             return managerApplitoolsRefId_;
         }
 
-        internal void CreateCoreSdk()
+        internal void CreateCoreSdk(string agentId)
         {
-            var makeSdk = CreateCoreMakeSdk();
+            var makeSdk = CreateCoreMakeSdk(agentId);
             var makeSdkJson = makeSdk.ToJson();
 
             SocketClient.SendData(makeSdkJson);
@@ -233,12 +233,11 @@ namespace Applitools
             return $"ws://localhost:{port}/eyes";
         }
 
-        private CoreMakeSdkRequest CreateCoreMakeSdk()
+        private CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
             var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("name", "netUniversal3");
-            result.AddOrUpdatePayload("protocol", "webdriver");
-            result.AddOrUpdatePayload("version", _actualAssembly.GetName().Version.ToString());
+            result.AddOrUpdatePayload("agentId", $"{name}:{_actualAssembly.GetName().Version}");
+            result.AddOrUpdatePayload("spec", "webdriver");
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 
             return result;

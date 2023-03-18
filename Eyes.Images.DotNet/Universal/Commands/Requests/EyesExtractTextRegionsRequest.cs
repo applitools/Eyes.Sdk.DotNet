@@ -2,7 +2,6 @@
 {
     public class ExtractTextRegionsRequestPayload
     {
-        public EyesRef Eyes { get; set; }
         public ITarget Target { get; set; }
         public TextRegionSettings Settings { get; set; }
         public Config Config { get; set; }
@@ -14,7 +13,7 @@
 
         public EyesExtractTextRegionsRequest()
         {
-            Name = "Eyes.locateText";
+            Name = "Core.locateText";
         }
     }
 }

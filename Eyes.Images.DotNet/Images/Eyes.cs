@@ -249,20 +249,20 @@ namespace Applitools.Images
 
         public ICollection<string> ExtractText(params OcrRegion[] regions)
         {
-	        return ExtractText(regions.ToList());
+            return ExtractText(regions.ToList());
         }
 
         public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
         {
             if (IsDisabled)
             {
-	            return new List<string>();
+                return new List<string>();
             }
 
             var firstRegion = regions.FirstOrDefault();
             if (firstRegion == null)
             {
-	            throw new Exception("At least one region is required");
+                throw new Exception("At least one region is required");
             }
 
             var eyesConfig = ToConfig(Config);
@@ -271,12 +271,11 @@ namespace Applitools.Images
                 Key = Guid.NewGuid().ToString(),
                 Payload = new ExtractTextRequestPayload
                 {
-                    Eyes = eyes_,
-					Target = new ImageTarget
-					{
-						Image = firstRegion.GetImage()
-					},
-					Config = eyesConfig,
+                    Target = new ImageTarget
+                    {
+                        Image = firstRegion.GetImage()
+                    },
+                    Config = eyesConfig,
                     Settings = regions.Select(r => new ExtractTextSettings
                     {
                         Hint = r.GetHint(),
@@ -308,7 +307,6 @@ namespace Applitools.Images
                 Key = Guid.NewGuid().ToString(),
                 Payload = new ExtractTextRegionsRequestPayload
                 {
-                    Eyes = eyes_,
                     Target = new ImageTarget
                     {
                         Image = textRegionSettings.Image
@@ -332,6 +330,43 @@ namespace Applitools.Images
 
         #endregion
 
+        public override TestResults GetResults(bool throwEx = true)
+        {
+            Logger.Log("GetResults");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            var request = CreateEyesGetResultsRequest(throwEx);
+
+            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
+
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
+
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
+            {
+                testResult.Runner = Runner;
+                if (testResult.IsPassed == false && throwEx)
+                {
+                    IsOpen = false;
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
+                }
+            }
+
+            IsOpen = false;
+            return testResults.First();
+        }
+
         public override TestResults Abort()
         {
             if (IsDisabled)
@@ -353,23 +388,14 @@ namespace Applitools.Images
             var request = CreateEyesAbortRequest();
 
             var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
-
-            foreach (var testResults in payload.Result)
-            {
-                if (testResults != null)
-                {
-                    testResults.Runner = Runner;
-                }
-            }
-
+            
             if (payload.Error != null)
             {
+                IsOpen = false;
                 throw new EyesException(payload.Error.ToString());
             }
 
-            IsOpen = false;
-
-            return payload.Result?.FirstOrDefault();
+            return GetResults();
         }
 
         public override TestResults Close(bool throwEx = true)
@@ -386,26 +412,14 @@ namespace Applitools.Images
 
             var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
 
-            IsOpen = false;
-
             var error = response.Payload.Error;
             if (error != null && throwEx)
             {
+                IsOpen = false;
                 throw new TestFailedException(error.ToString());
             }
 
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            return testResults.First();
+            return GetResults(throwEx);
         }
 
         private void OpenEyes(string appName = null, string testName = null, Size? viewportSize = null)
@@ -455,8 +469,7 @@ namespace Applitools.Images
             IsOpen = true;
         }
 
-        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
-            string applitoolsRefId)
+        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(string applitoolsRefId)
         {
             var result = new EyesManagerOpenEyes
             {
@@ -487,6 +500,19 @@ namespace Applitools.Images
             return eyesCloseRequest;
         }
 
+        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false)
+        {
+            var eyesCloseRequest = new EyesGetResultsRequest
+            {
+                Payload = new EyesGetResultsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToResultsSettings(Config, throwEx)
+                }
+            };
+            return eyesCloseRequest;
+        }
+
         private EyesAbortRequest CreateEyesAbortRequest()
         {
             var request = new EyesAbortRequest
@@ -501,19 +527,19 @@ namespace Applitools.Images
 
         private RegionRectangle GetRegion(OcrRegion ocrRegion)
         {
-	        var region = ocrRegion.GetRegion();
-	        if (region == null)
-	        {
-		        return null;
-	        }
+            var region = ocrRegion.GetRegion();
+            if (region == null)
+            {
+                return null;
+            }
 
-	        return new RegionRectangle
-	        {
-		        Width = region.Value.Width,
-		        Height = region.Value.Height,
-		        X = region.Value.Left,
-		        Y = region.Value.Top,
-	        };
+            return new RegionRectangle
+            {
+                Width = region.Value.Width,
+                Height = region.Value.Height,
+                X = region.Value.Left,
+                Y = region.Value.Top,
+            };
         }
 
         private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)

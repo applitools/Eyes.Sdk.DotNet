@@ -90,7 +90,7 @@ namespace Applitools
 
         private static string GetServerFilePath(string basePath, string os, string suffix)
         {
-            return Path.Combine(Path.GetDirectoryName(basePath), "runtimes", os, "native", "eyes-universal-" + suffix);
+            return Path.Combine(Path.GetDirectoryName(basePath), "runtimes", os, "native", "core-" + suffix);
         }
 
         private void TryStopProcess_()
@@ -105,7 +105,7 @@ namespace Applitools
         {
             var process = new Process
             {
-                StartInfo = new ProcessStartInfo(path, "--no-singleton --shutdown-mode stdin")
+                StartInfo = new ProcessStartInfo(path, "universal --no-singleton --shutdown-mode stdin")
                 {
                     UseShellExecute = false,
                     RedirectStandardInput = true,

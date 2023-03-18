@@ -4,7 +4,6 @@ namespace Applitools.Commands.Requests
 {
     public class ExtractTextRequestPayload
     {
-        public EyesRef Eyes { get; set; }
         public ITarget Target { get; set; }
         public ICollection<ExtractTextSettings> Settings { get; set; }
         public Config Config { get; set; }
@@ -21,7 +20,7 @@ namespace Applitools.Commands.Requests
 
         public EyesExtractTextRequest()
         {
-            Name = "Eyes.extractText";
+            Name = "Core.extractText";
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Applitools.VisualGrid
         { }
 
         public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null, bool startServer = true)
-            : base(logHandler, startServer)
+            : base(logHandler, "netSelenium3", startServer)
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);

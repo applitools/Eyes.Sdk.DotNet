@@ -4,13 +4,7 @@ namespace Applitools.Commands.Responses
 {
     public class EyesCloseAbortResponsePayload
     {
-        public ICollection<TestResults> Result { get; set; }
         public ResponsePayloadError Error { get; set; }
-
-        public EyesCloseAbortResponsePayload()
-        {
-            Result = new List<TestResults>();
-        }
     }
 
     public class EyesCloseAbortResponse : CommandBase
