@@ -14,9 +14,10 @@ namespace Applitools
         {
         }
 
-        internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory, bool startServer = true)
+        internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory)
             : base(logHandler, "netImages")
         {
+            ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
         protected override MakeManagerRequestPayload InitConfig()
