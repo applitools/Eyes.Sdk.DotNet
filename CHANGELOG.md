@@ -1,22 +1,30 @@
 ## [Eyes.Images vNext]
 ### Implemented
 - Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+- Added Eyes Locate support for C# Images sdk [Trello 3173] (https://trello.com/c/xI7r70ML)
 - Moved C# sdk to Core Server [Trello 3177] (https://trello.com/c/eYQCLXJm)
 
 ## [Eyes.Selenium vNext]
 ### Implemented
 - Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+- Added Eyes Locate support for C# Images sdk [Trello 3173] (https://trello.com/c/xI7r70ML)
 - Moved C# sdk to Core Server [Trello 3177] (https://trello.com/c/eYQCLXJm)
 
 ## [Eyes.Selenium4 vNext]
 ### Implemented
 - Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+- Added Eyes Locate support for C# Images sdk [Trello 3173] (https://trello.com/c/xI7r70ML)
 - Moved C# sdk to Core Server [Trello 3177] (https://trello.com/c/eYQCLXJm)
 
 ## [Eyes.Appium vNext]
 ### Implemented
 - Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
+- Added Eyes Locate support for C# Images sdk [Trello 3173] (https://trello.com/c/xI7r70ML)
 - Moved C# sdk to Core Server [Trello 3177] (https://trello.com/c/eYQCLXJm)
+
+## [Eyes.Image.Core 2.4.2] - 2023-03-18
+### Introduced
+- Eyes.Image.Core 2.4.2
 
 ## [Eyes.Images 3.11] - 2023-03-07
 ### Implemented
