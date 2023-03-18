@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Applitools;
 using Applitools.Selenium;
@@ -25,18 +24,17 @@ namespace Eyes.Selenium.E2ETests
           //  Trace.Listeners.Add(new ConsoleTraceListener());
             runner = new ClassicRunner();
         }
-        
+
         [Test]
         public void MultiThreadSimpleTest()
         {
-
-            Console.WriteLine();
-            int threadCount = 1;
+            int threadCount = 10;
             var tasks = new List<Task>();
             for (int i = 0; i < threadCount; i++)
             {
                 var i1 = i;
-                SimpleTest(i1);
+                var task = Task.Factory.StartNew(() => SimpleTest(i1));
+                tasks.Add(task);
             }
 
             Task.WaitAll(tasks.ToArray());
