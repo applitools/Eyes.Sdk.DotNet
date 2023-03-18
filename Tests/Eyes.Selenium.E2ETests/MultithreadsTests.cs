@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Applitools;
 using Applitools.Selenium;
@@ -21,19 +22,21 @@ namespace Eyes.Selenium.E2ETests
         [SetUp]
         public void Setup()
         {
+          //  Trace.Listeners.Add(new ConsoleTraceListener());
             runner = new ClassicRunner();
         }
         
         [Test]
         public void MultiThreadSimpleTest()
         {
-            int threadCount = 10;
+
+            Console.WriteLine();
+            int threadCount = 1;
             var tasks = new List<Task>();
             for (int i = 0; i < threadCount; i++)
             {
                 var i1 = i;
-                var task = Task.Factory.StartNew(() => SimpleTest(i1));
-                tasks.Add(task);
+                SimpleTest(i1);
             }
 
             Task.WaitAll(tasks.ToArray());
@@ -69,6 +72,7 @@ namespace Eyes.Selenium.E2ETests
                 driver = eyes.Open(driver, "Eyes Selenium SDK - Multithreading", $"SimpleTest - {i}", new RectangleSize(width: 700, height: 460));
                 eyes.Check(Target.Region(By.CssSelector("#fixed")).Fully());
                 eyes.Close(true);
+                var a = eyes.GetResults(false);
             }
             finally
             {

@@ -12,18 +12,19 @@ namespace Applitools
 {
     public abstract class EyesRunner
     {
-        private string managerApplitoolsRefId_;
         private MakeManagerRequestPayload config_;
         private readonly Assembly _actualAssembly;
         private readonly IList<EyesBaseConfig> _eyeses;
 
-        protected WebSocketClient SocketClient { get; private set; }
+        protected CommandExecutor CommandExecutor { get; private set; }
 
         public MakeManagerRequestPayload Config
         {
             get => config_ ?? (config_ = InitConfig());
             set => config_ = value;
         }
+
+        public string ManagerApplitoolsRefId { get; protected set; }
 
         public bool? DontCloseBatches { get; set; }
 
@@ -39,7 +40,7 @@ namespace Applitools
 
         public Logger Logger { get; } = new Logger();
 
-        protected EyesRunner(ILogHandler logHandler, string agentId, bool startServer = true)
+        protected EyesRunner(ILogHandler logHandler, string agentId)
         {
             if (logHandler != null)
             {
@@ -47,29 +48,24 @@ namespace Applitools
             }
 
             _eyeses = new List<EyesBaseConfig>();
-
             _actualAssembly = GetActualAssembly();
 
-            if (startServer)
-            {
-                StartServer();
-
-                CreateCoreSdk(agentId);
-            }
+            var sdkEvent = CreateCoreSdk(agentId);
+            CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
             where TRequest : CommandBase 
             where TResponse : CommandBase
         {
-            var result = SocketClient.SendRequest<TRequest, TResponse>(data);
+            var result = CommandExecutor.SendRequest<TRequest, TResponse>(data);
             return result;
         }
 
         public void SendRequest<TRequest>(TRequest data)
             where TRequest : CommandBase
         {
-            SocketClient.SendData(data);
+            CommandExecutor.SendData(data);
         }
 
         public TestResultsSummary GetAllTestResults()
@@ -94,7 +90,7 @@ namespace Applitools
         public void SetLogHandler(ILogHandler logHandler)
         {
             Logger.SetLogHandler(logHandler);
-            SocketClient?.SetLogHandler(logHandler);
+            CommandExecutor?.SetLogHandler(logHandler);
             if (!logHandler.IsOpen)
             {
                 logHandler.Open();
@@ -110,23 +106,20 @@ namespace Applitools
         {
             Logger.Log("CoreMakeManager");
 
-            if (managerApplitoolsRefId_ == null)
-            {
-                var coreMakeManager = CreateCoreMakeManager();
+            var coreMakeManager = CreateCoreMakeManager();
 
-                var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager);
-                managerApplitoolsRefId_ = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
-            }
+            var coreMakeManagerResponse = SendRequest<CoreMakeManagerRequest, CoreMakeManagerResponse>(coreMakeManager);
+            var managerApplitoolsRefId = coreMakeManagerResponse.Payload.Result.ApplitoolsRefId;
 
-            return managerApplitoolsRefId_;
+            return managerApplitoolsRefId;
         }
 
-        internal void CreateCoreSdk(string agentId)
+        internal string CreateCoreSdk(string agentId)
         {
             var makeSdk = CreateCoreMakeSdk(agentId);
             var makeSdkJson = makeSdk.ToJson();
 
-            SocketClient.SendData(makeSdkJson);
+            return makeSdkJson;
         }
 
         private IList<CloseAllResult> CloseAllEyes(bool shouldThrowException)
@@ -202,7 +195,7 @@ namespace Applitools
                 {
                     Manager = new ManagerRef
                     {
-                        ApplitoolsRefId = managerApplitoolsRefId_
+                        ApplitoolsRefId = ManagerApplitoolsRefId
                     },
                     Settings = new CloseSettings
                     {
@@ -212,25 +205,6 @@ namespace Applitools
             };
 
             return closeAllEyes;
-        }
-
-        private void StartServer()
-        {
-            int serverPort = UniversalSdkNativeLoader.Start();
-
-            SocketClient = new WebSocketClient(Logger?.GetILogHandler());
-
-            var url = GetSocketUrl(serverPort);
-            Logger.Log($"Server url: {url}");
-
-            SocketClient.ConnectAsync(url);
-
-            Logger.Log("Connected to Server");
-        }
-
-        private string GetSocketUrl(int port)
-        {
-            return $"ws://localhost:{port}/eyes";
         }
 
         private CoreMakeSdkRequest CreateCoreMakeSdk(string name)
