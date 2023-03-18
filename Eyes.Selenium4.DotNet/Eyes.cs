@@ -563,7 +563,7 @@ namespace Applitools.Selenium
 
             var request = CreateEyesGetResultsRequest(throwEx);
 
-            var response = Runner.SendRequest<EyesGetResultsRequest, EyesCloseAbortResponse>(request);
+            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
 
             var error = response.Payload.Error;
             if (error != null)
@@ -571,8 +571,21 @@ namespace Applitools.Selenium
                 IsOpen = false;
                 throw new TestFailedException(error.ToString());
             }
-            
-            return GetResults(throwEx);
+
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
+            {
+                testResult.Runner = Runner;
+                if (testResult.IsPassed == false && throwEx)
+                {
+                    IsOpen = false;
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
+                }
+            }
+
+            IsOpen = false;
+            return testResults.First();
         }
 
         /// <summary>
