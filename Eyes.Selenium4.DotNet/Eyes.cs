@@ -98,7 +98,7 @@ namespace Applitools.Selenium
                 throw new EyesException(payload.Error.ToString());
             }
             
-            return GetResults();
+            return GetResults(false);
         }
 
         public override void AbortAsync()
