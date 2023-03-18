@@ -15,7 +15,7 @@ namespace Applitools
         }
 
         internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory)
-            : base(logHandler, "netImages")
+            : base(logHandler)
         {
             ManagerApplitoolsRefId = GetCoreMakeManager();
         }

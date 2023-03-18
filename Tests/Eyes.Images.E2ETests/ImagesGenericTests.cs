@@ -369,5 +369,20 @@ namespace Eyes.Images.E2ETests
             Assert.AreEqual(new TextRegion(10, 11, 18, 214, "Thisisthenavigationbar"), region);
 	        eyes.Close();
         }
+
+        [Test]
+        public void LocateTest()
+        {
+            var image = EXTRACT_TEXT_IMAGE;
+            eyes.Open("Eyes Images SDK", "Locate", new RectangleSize(image.Width, image.Height));
+            eyes.Check(Target.Image(image));
+
+            var result = eyes.Locate(new VisualLocatorSettings().Name("the").Image(image));
+            var regions = result["the"];
+            Assert.AreEqual(1, regions.Count);
+            Locate region = regions.First();
+            Assert.AreEqual(region, new Locate(9, 31, 20, 69));
+            eyes.Close();
+        }
     }
 }

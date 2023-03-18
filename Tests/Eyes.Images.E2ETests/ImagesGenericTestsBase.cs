@@ -1,7 +1,6 @@
 using System;
 using Applitools;
 using NUnit.Framework;
-using Applitools.Images;
 
 namespace Eyes.Images.E2ETests
 {
@@ -16,7 +15,8 @@ namespace Eyes.Images.E2ETests
         {
             eyes = new Applitools.Images.Eyes
             {
-                ApiKey = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY"),
+                ApiKey = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY"), 
+                BranchName = "master_java",
                 //eyes.Logger = new Logger();
                 //LogHandler logHandler = new StdoutLogHandler(verboseLogs);
                 SaveNewTests = true,
