@@ -48,7 +48,7 @@ namespace Eyes.Selenium.xUnitTests
             driver.Quit();
 
             // If the test was aborted before eyes.close was called, ends the test as aborted.
-            eyes.AbortIfNotClosed();
+            eyes.CloseAsync();
         }
 
         [SkippableTheory]
