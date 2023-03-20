@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Utils;
 using AutoMapper;
 
@@ -135,6 +138,19 @@ namespace Applitools
 
             var settings = mapper.Map<ResultsSettings>(configuration);
             settings.ThrowErr = throwEx;
+
+            return settings;
+        }
+
+        protected static EGClientSettings ToEGClientSettings(Configuration configuration)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MapProfiler>();
+            });
+            var mapper = config.CreateMapper();
+
+            var settings = mapper.Map<EGClientSettings>(configuration);
 
             return settings;
         }

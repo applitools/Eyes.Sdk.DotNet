@@ -70,6 +70,35 @@ namespace Applitools.Selenium
             Config = config;
         }
 
+        public static string GetExecutionCloudURL(string apiKey = null, Uri serverUrl = null, ProxySettings proxySettings = null)
+        {
+            var runner = new ClassicRunner();
+            var request = new CoreMakeECClientRequest
+            {
+                Payload = new CoreMakeECClientRequestPayload
+                {
+                    Settings = new EGClientSettings
+                    {
+                        Capabilities = new ECClientCapabilities
+                        {
+                            ApiKey = apiKey,
+                            ServerUrl = serverUrl
+                        },
+                        Proxy = proxySettings
+                    }
+                }
+            };
+
+            var response = runner.SendRequest<CoreMakeECClientRequest, CoreMakeECClientResponse>(request);
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                throw new TestFailedException(error.ToString());
+            }
+
+            return response.Payload.Result.Url;
+        }
+
         public override TestResults Abort()
         {
             if (IsDisabled)

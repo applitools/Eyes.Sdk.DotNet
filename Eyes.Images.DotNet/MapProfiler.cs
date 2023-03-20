@@ -59,6 +59,7 @@ namespace Applitools
                         act.MapFrom(src => new AccessibilitySettings(src.AccessibilityValidation.Level, src.AccessibilityValidation.GuidelinesVersion));
                     });
             CreateMap<Configuration, LocateSettings>();
+            CreateMap<Configuration, EGClientSettings>();
             CreateMap<Configuration, CloseSettings>()
                 .ForMember(dest => dest.UpdateBaselineIfNew, act => act.MapFrom(src => src.SaveNewTests))
                 .ForMember(dest => dest.UpdateBaselineIfDifferent, act => act.MapFrom(src => src.SaveFailedTests));
