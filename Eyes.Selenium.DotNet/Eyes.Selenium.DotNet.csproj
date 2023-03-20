@@ -8,15 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.40</Version>
+    <Version>3.41</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes selenium</PackageTags>
     <PackageReleaseNotes>### Implemented
-- Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
-- Added Eyes Locate support for C# Images sdk [Trello 3173] (https://trello.com/c/xI7r70ML)
-- Moved C# sdk to Core Server [Trello 3177] (https://trello.com/c/eYQCLXJm)
+- ExecutionCloudURL for C# SDK [Trello 3178] (https://trello.com/c/JMoqMWZ4)
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Selenium</PackageId>
