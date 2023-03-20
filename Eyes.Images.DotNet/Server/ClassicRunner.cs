@@ -5,10 +5,8 @@ namespace Applitools
     public class ClassicRunner : EyesRunner
     {
         public EyesException Exception { get; set; }
-
-        public ClassicRunner() : this(true) { }
-
-        public ClassicRunner(bool startServer = true) : this(NullLogHandler.Instance) { }
+        
+        public ClassicRunner() : this(NullLogHandler.Instance) { }
 
         public ClassicRunner(ILogHandler logHandler) : this(logHandler, null)
         {

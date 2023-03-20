@@ -1,3 +1,19 @@
+## [Eyes.Images vNext]
+### Introduced
+- CoreMakeECClient
+
+## [Eyes.Selenium vNext]
+### Implemented
+- ExecutionCloudURL for C# SDK [Trello 3178] (https://trello.com/c/JMoqMWZ4)
+
+## [Eyes.Selenium4 vNext]
+### Implemented
+- ExecutionCloudURL for C# SDK [Trello 3178] (https://trello.com/c/JMoqMWZ4)
+
+## [Eyes.Appium vNext]
+### Implemented
+- ExecutionCloudURL for C# SDK [Trello 3178] (https://trello.com/c/JMoqMWZ4)
+
 ## [Eyes.Images 3.12] - 2023-03-18
 ### Implemented
 - Introduced Command Executor [Trello 3120] (https://trello.com/c/K0kZfnEc)
