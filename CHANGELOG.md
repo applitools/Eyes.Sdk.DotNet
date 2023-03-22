@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.14] - 2023-03-22
 ### Updated
 - Universal Server Core to 2.4.3
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.42] - 2023-03-22
 ### Updated
 - Universal Server Core to 2.4.3
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.38] - 2023-03-22
 ### Updated
 - Universal Server Core to 2.4.3
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.42] - 2023-03-22
 ### Updated
 - Universal Server Core to 2.4.3
 
