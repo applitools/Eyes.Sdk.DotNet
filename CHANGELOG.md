@@ -1,3 +1,23 @@
+## [Eyes.Images vNext]
+### Updated
+- Universal Server Core to 2.4.3
+
+## [Eyes.Selenium vNext]
+### Updated
+- Universal Server Core to 2.4.3
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Universal Server Core to 2.4.3
+
+## [Eyes.Appium vNext]
+### Updated
+- Universal Server Core to 2.4.3
+
+## [Eyes.Image.Core 2.4.3] - 2023-03-22
+### Updated
+- Universal Server Core to 2.4.3
+
 ## [Eyes.Images 3.13] - 2023-03-20
 ### Introduced
 - CoreMakeECClient
