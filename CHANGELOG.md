@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.15] - 2023-03-25
 ### Fixed
 - Copy Core Server binaries for .Net Framework
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.43] - 2023-03-25
 ### Fixed
 - Copy Core Server binaries for .Net Framework
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.39] - 2023-03-25
 ### Fixed
 - Copy Core Server binaries for .Net Framework
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.43] - 2023-03-25
 ### Fixed
 - Copy Core Server binaries for .Net Framework
 
