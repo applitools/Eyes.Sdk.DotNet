@@ -1,3 +1,23 @@
+## [Eyes.Images vNext]
+### Fixed
+- Copy Core Server binaries for .Net Framework
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Copy Core Server binaries for .Net Framework
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Copy Core Server binaries for .Net Framework
+
+## [Eyes.Appium vNext]
+### Fixed
+- Copy Core Server binaries for .Net Framework
+
+## [Eyes.Image.Core 2.4.3.2] - 2023-03-24
+### Fixed
+- Copy Core Server binaries for .Net Framework
+
 ## [Eyes.Images 3.14] - 2023-03-22
 ### Updated
 - Universal Server Core to 2.4.3
