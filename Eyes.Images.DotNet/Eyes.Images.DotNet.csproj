@@ -47,7 +47,7 @@ To learn more, visit https://applitools.com/ .</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Sdk.Universal.Core.DotNet\Eyes.Sdk.Universal.Core.DotNet.csproj" />
+    <ProjectReference Include="..\Eyes.Image.Core.DotNet\Eyes.Image.Core.DotNet.csproj" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">

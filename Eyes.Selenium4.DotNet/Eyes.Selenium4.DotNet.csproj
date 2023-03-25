@@ -42,7 +42,6 @@ To learn more, visit https://applitools.com/ .</Description>
 		  <PrivateAssets>all</PrivateAssets>
 	  </ProjectReference>
     <ProjectReference Include="..\Eyes.Images.DotNet\Eyes.Images.DotNet.csproj" />
-    <ProjectReference Include="..\Eyes.Sdk.Universal.Core.DotNet\Eyes.Sdk.Universal.Core.DotNet.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
