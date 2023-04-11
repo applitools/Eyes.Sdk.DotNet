@@ -144,7 +144,7 @@ namespace Applitools
 
         private static void CopyCorePackageFolder(string basePath)
         {
-            var packageName = "eyes.sdk.universal.core";
+            var packageName = "eyes.image.core";
             var packageFolderPathEnv = @"%userprofile%\.nuget\packages";
             var nugetFolder = Environment.ExpandEnvironmentVariables(packageFolderPathEnv);
             var packageFolderPath = Path.Combine(nugetFolder, packageName);

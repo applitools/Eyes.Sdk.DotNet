@@ -540,19 +540,19 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-        public IDictionary<string, IList<Locate>> Locate(params string[] locatorNames)
+        public IDictionary<string, IList<UniversalRegion>> Locate(params string[] locatorNames)
         {
             return Locate(locatorNames.ToList());
         }
 
-        public IDictionary<string, IList<Locate>> Locate(ICollection<string> locatorNames)
+        public IDictionary<string, IList<UniversalRegion>> Locate(ICollection<string> locatorNames)
         {
             Logger.Log("Locate");
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, IList<Locate>>();
+                return new Dictionary<string, IList<UniversalRegion>>();
             }
 
             var eyesConfig = ToConfig(Config);

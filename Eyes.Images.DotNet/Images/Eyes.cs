@@ -320,14 +320,14 @@ namespace Applitools.Images
             return response.Payload.Result;
         }
         
-        public IDictionary<string, IList<Locate>> Locate(VisualLocatorSettings settings)
+        public IDictionary<string, IList<UniversalRegion>> Locate(VisualLocatorSettings settings)
         {
             Logger.Log("Locate");
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, IList<Locate>>();
+                return new Dictionary<string, IList<UniversalRegion>>();
             }
 
             var eyesConfig = ToConfig(Config);
