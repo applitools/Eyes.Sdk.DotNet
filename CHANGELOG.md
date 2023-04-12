@@ -1,3 +1,25 @@
+## [Eyes.Images vNext]
+### Fixed
+- Copied Server file in case it does not exist in output folder
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Copied Server file in case it does not exist in output folder
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Copied Server file in case it does not exist in output folder
+
+## [Eyes.Appium vNext]
+### Fixed
+- Copied Server file in case it does not exist in output folder
+
+## [Eyes.Image.Core 2.4.7.1] - 2023-04-12
+### Updated
+- Server Core to 2.4.7.1
+### Fixed
+- Copied Server file in case it does not exist in output folder
+
 ## [Eyes.Images 3.16] - 2023-04-05
 ### Updated
 - Server Core to 2.4.7
