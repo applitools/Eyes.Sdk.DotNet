@@ -1,25 +1,25 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.17] - 2023-04-12
 ### Updated
 - Server Core to 2.4.11
 - Locate method due to Server expectation
 ### Fixed
 - Copied Server file in case it does not exist in output folder
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.45] - 2023-04-12
 ### Updated
 - Server Core to 2.4.11
 - Locate method due to Server expectation
 ### Fixed
 - Copied Server file in case it does not exist in output folder
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.41] - 2023-04-12
 ### Updated
 - Server Core to 2.4.11
 - Locate method due to Server expectation
 ### Fixed
 - Copied Server file in case it does not exist in output folder
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.45] - 2023-04-12
 ### Updated
 - Server Core to 2.4.11
 - Locate method due to Server expectation
