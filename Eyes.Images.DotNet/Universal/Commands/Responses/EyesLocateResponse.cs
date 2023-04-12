@@ -2,7 +2,7 @@
 
 namespace Applitools.Commands.Responses
 {
-    public class LocateResponseResult : Dictionary<string, IList<Locate>>
+    public class LocateResponseResult : Dictionary<string, IList<UniversalRegion>>
     {
     }
 

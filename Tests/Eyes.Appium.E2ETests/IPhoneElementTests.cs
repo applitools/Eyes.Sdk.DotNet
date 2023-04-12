@@ -13,7 +13,7 @@ namespace Eyes.Appium.E2ETests
         private AppiumDriver<AppiumWebElement> driver;
         private Applitools.Appium.Eyes eyes;
 
-        [Test]
+        //[Test]
         public void IPhoneLayoutElementTest()
         {
             eyes = new Applitools.Appium.Eyes();

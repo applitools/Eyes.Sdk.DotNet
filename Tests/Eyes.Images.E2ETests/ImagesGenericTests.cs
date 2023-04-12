@@ -380,8 +380,8 @@ namespace Eyes.Images.E2ETests
             var result = eyes.Locate(new VisualLocatorSettings().Name("the").Image(image));
             var regions = result["the"];
             Assert.AreEqual(1, regions.Count);
-            Locate region = regions.First();
-            Assert.AreEqual(region, new Locate(9, 31, 20, 69));
+            var region = regions.First();
+            Assert.AreEqual(new UniversalRegion(69, 9, 20, 31), region);
             eyes.Close();
         }
     }
