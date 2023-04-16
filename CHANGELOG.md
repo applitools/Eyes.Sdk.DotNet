@@ -1,3 +1,11 @@
+## [Eyes.Images vNext]
+### Updated
+- Server Core to 2.4.13
+
+## [Eyes.Image.Core 2.4.13] - 2023-04-16
+### Updated
+- Server Core to 2.4.13
+
 ## [Eyes.Images 3.17] - 2023-04-12
 ### Updated
 - Server Core to 2.4.11
