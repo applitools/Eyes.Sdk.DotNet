@@ -590,7 +590,7 @@ namespace Applitools.Selenium
                 return new TestResults();
             }
 
-            var request = CreateEyesGetResultsRequest(throwEx);
+            var request = CreateEyesGetResultsRequest(throwEx, Runner.RemoveDuplicateTests);
 
             var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
 
@@ -837,14 +837,14 @@ namespace Applitools.Selenium
             return driver;
         }
 
-        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false)
+        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false, bool? removeDuplicateTests = null)
         {
             var eyesCloseRequest = new EyesGetResultsRequest
             {
                 Payload = new EyesGetResultsRequestPayload
                 {
                     Eyes = eyes_,
-                    Settings = ToResultsSettings(Config, throwEx)
+                    Settings = ToResultsSettings(Config, throwEx, removeDuplicateTests)
                 }
             };
             return eyesCloseRequest;
@@ -857,7 +857,7 @@ namespace Applitools.Selenium
                 Payload = new CloseResponsePayload
                 {
                     Eyes = eyes_,
-                    Settings = ToCloseSettings(Config, throwEx)
+                    Settings = ToCloseSettings(Config, throwEx, Runner.RemoveDuplicateTests)
                 }
             };
             return eyesCloseRequest;

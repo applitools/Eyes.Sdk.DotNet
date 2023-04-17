@@ -114,7 +114,7 @@ namespace Applitools
             return settings;
         }
 
-        protected CloseSettings ToCloseSettings(Configuration configuration, bool throwEx)
+        protected CloseSettings ToCloseSettings(Configuration configuration, bool throwEx, bool? removeDuplicateTests)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -124,11 +124,12 @@ namespace Applitools
 
             var settings = mapper.Map<CloseSettings>(configuration);
             settings.ThrowErr = throwEx;
+            settings.RemoveDuplicateTests = removeDuplicateTests;
 
             return settings;
         }
 
-        protected ResultsSettings ToResultsSettings(Configuration configuration, bool throwEx)
+        protected ResultsSettings ToResultsSettings(Configuration configuration, bool throwEx, bool? removeDuplicateTests)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -138,6 +139,7 @@ namespace Applitools
 
             var settings = mapper.Map<ResultsSettings>(configuration);
             settings.ThrowErr = throwEx;
+            settings.RemoveDuplicateTests = removeDuplicateTests;
 
             return settings;
         }

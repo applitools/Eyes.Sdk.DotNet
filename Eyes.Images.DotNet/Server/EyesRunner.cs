@@ -40,6 +40,8 @@ namespace Applitools
 
         public Logger Logger { get; } = new Logger();
 
+        public bool? RemoveDuplicateTests { get; private set; }
+
         protected EyesRunner(ILogHandler logHandler, string agentId)
         {
             if (logHandler != null)
@@ -52,6 +54,11 @@ namespace Applitools
 
             var sdkEvent = CreateCoreSdk(agentId);
             CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
+        }
+
+        public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
+        {
+            RemoveDuplicateTests = removeDuplicateTests;
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
@@ -133,7 +140,7 @@ namespace Applitools
                 return results;
             }
 
-            var request = CreateEyesManageCloseAllEyes(shouldThrowException);
+            var request = CreateEyesManageCloseAllEyes(shouldThrowException, RemoveDuplicateTests);
 
             var response = SendRequest<EyesManagerCloseManagerRequest, EyesManagerCloseManagerResponse>(request);
             var payload = response.Payload;
@@ -187,7 +194,7 @@ namespace Applitools
             return Assembly.GetExecutingAssembly();
         }
 
-        private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes(bool shouldThrowException)
+        private EyesManagerCloseManagerRequest CreateEyesManageCloseAllEyes(bool shouldThrowException, bool? removeDuplicateTests)
         {
             var closeAllEyes = new EyesManagerCloseManagerRequest
             {
@@ -199,7 +206,8 @@ namespace Applitools
                     },
                     Settings = new CloseSettings
                     {
-                        ThrowErr = shouldThrowException
+                        ThrowErr = shouldThrowException,
+                        RemoveDuplicateTests = removeDuplicateTests
                     }
                 }
             };
