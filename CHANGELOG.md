@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.19] - 2023-04-17
 ### Updated
 - Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.47] - 2023-04-17
 ### Updated
 - Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.43] - 2023-04-17
 ### Updated
 - Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.47] - 2023-04-17
 ### Updated
 - Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
 
