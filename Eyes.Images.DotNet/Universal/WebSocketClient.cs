@@ -127,7 +127,8 @@ namespace Applitools
 
         private string WaitForMessage(string key)
         {
-            for (int i = 0; i < 2000; i++)
+            // timeout 9 mins
+            for (int i = 0; i < 2700; i++)
             {
                 var message = ReceiveMessage(key);
                 if (message != null)
