@@ -1,3 +1,23 @@
+## [Eyes.Images vNext]
+### Updated
+- Server Core to 2.5.0
+
+## [Eyes.Selenium vNext]
+### Updated
+- Server Core to 2.5.0
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Server Core to 2.5.0
+
+## [Eyes.Appium vNext]
+### Updated
+- Server Core to 2.5.0
+
+## [Eyes.Image.Core 2.5.0] - 2023-04-18
+### Updated
+- Server Core to 2.5.0
+
 ## [Eyes.Images 3.19] - 2023-04-17
 ### Updated
 - Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
