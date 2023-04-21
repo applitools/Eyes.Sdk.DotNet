@@ -1,16 +1,16 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.21] - 2023-04-21
 ### Fixed
 - Locate method
 
-## [Eyes.Selenium vNext]
+## [Eyes.Selenium 3.49] - 2023-04-21
 ### Fixed
 - Locate method
 
-## [Eyes.Selenium4 vNext]
+## [Eyes.Appium 5.45] - 2023-04-21
 ### Fixed
 - Locate method
 
-## [Eyes.Appium vNext]
+## [Eyes.Selenium4 3.49] - 2023-04-21
 ### Fixed
 - Locate method
 
