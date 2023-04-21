@@ -11,6 +11,7 @@ using Applitools.Commands.Responses;
 using Applitools.Fluent;
 using Applitools.Selenium.Fluent;
 using OpenQA.Selenium.Remote;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Selenium
 {
@@ -540,19 +541,19 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-        public IDictionary<string, IList<UniversalRegion>> Locate(params string[] locatorNames)
+        public IDictionary<string, IList<Region>> Locate(params string[] locatorNames)
         {
             return Locate(locatorNames.ToList());
         }
 
-        public IDictionary<string, IList<UniversalRegion>> Locate(ICollection<string> locatorNames)
+        public IDictionary<string, IList<Region>> Locate(ICollection<string> locatorNames)
         {
             Logger.Log("Locate");
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, IList<UniversalRegion>>();
+                return new Dictionary<string, IList<Region>>();
             }
 
             var eyesConfig = ToConfig(Config);

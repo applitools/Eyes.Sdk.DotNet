@@ -1,3 +1,23 @@
+## [Eyes.Images vNext]
+### Fixed
+- Locate method
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Locate method
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Locate method
+
+## [Eyes.Appium vNext]
+### Fixed
+- Locate method
+
+## [Eyes.Image.Core 2.5.3] - 2023-04-21
+### Updated
+- Server Core to 2.5.3
+
 ## [Eyes.Images 3.20] - 2023-04-18
 ### Updated
 - Server Core to 2.5.0

@@ -9,6 +9,7 @@ using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Utils;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Images
 {
@@ -319,14 +320,14 @@ namespace Applitools.Images
             return response.Payload.Result;
         }
         
-        public IDictionary<string, IList<UniversalRegion>> Locate(VisualLocatorSettings settings)
+        public IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
         {
             Logger.Log("Locate");
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, IList<UniversalRegion>>();
+                return new Dictionary<string, IList<Region>>();
             }
 
             var eyesConfig = ToConfig(Config);
