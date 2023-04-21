@@ -90,11 +90,13 @@ namespace Applitools.Utils.Geometry
         /// </summary>
         public int Y { set => Top = value; }
 
+        [JsonProperty]
         /// <summary>
         /// Returns the width component of the size of this <see cref="Region"/>.
         /// </summary>
         public int Width { get; private set; }
 
+        [JsonProperty]
         /// <summary>
         /// Returns the height component of the size of this <see cref="Region"/>.
         /// </summary>

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Applitools.Utils.Geometry;
 
 namespace Applitools.Commands.Responses
 {
-    public class LocateResponseResult : Dictionary<string, IList<UniversalRegion>>
+    public class LocateResponseResult : Dictionary<string, IList<Region>>
     {
     }
 

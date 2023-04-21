@@ -381,7 +381,8 @@ namespace Eyes.Images.E2ETests
             var regions = result["the"];
             Assert.AreEqual(1, regions.Count);
             var region = regions.First();
-            Assert.AreEqual(new UniversalRegion(69, 9, 20, 31), region);
+            
+            Assert.AreEqual(new Region(69, 9, 31, 20), region);
             eyes.Close();
         }
     }
