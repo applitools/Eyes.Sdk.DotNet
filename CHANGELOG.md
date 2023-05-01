@@ -1,3 +1,25 @@
+## [Eyes.Images vNext]
+### Fixed
+- Tunnel issue
+
+## [Eyes.Selenium vNext]
+### Fixed
+- Tunnel issue
+
+## [Eyes.Selenium4 vNext]
+### Fixed
+- Tunnel issue
+
+## [Eyes.Appium vNext]
+### Fixed
+- Tunnel issue
+
+## [Eyes.Image.Core 2.5.8] - 2023-05-01
+### Updated
+- Server Core to 2.5.8
+### Fixed
+- Tunnel issue
+
 ## [Eyes.Images 3.21] - 2023-04-21
 ### Fixed
 - Locate method
