@@ -85,7 +85,8 @@ namespace Applitools.Appium
         {
             var iosCapsKey = "processArguments";
             var iosCapValue = "{\"args\": [], \"env\":"
-                    + "{\"DYLD_INSERT_LIBRARIES\":\"@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib"
+                              // ReSharper disable once StringLiteralTypo
+                              + "{\"DYLD_INSERT_LIBRARIES\":\"@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib"
                     + ":"
                     + "@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64_x86_64-simulator/UFG_lib.framework/UFG_lib\",";
 

@@ -27,9 +27,12 @@ To learn more, visit https://applitools.com/ .</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" Condition="'$(TargetFramework)' == 'net45'" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" Condition="'$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" Condition="$(TargetFramework.Contains('.'))" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -49,22 +52,4 @@ To learn more, visit https://applitools.com/ .</Description>
   <ItemGroup>
     <ProjectReference Include="..\Eyes.Image.Core.DotNet\Eyes.Image.Core.DotNet.csproj" />
   </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-    <PackageReference Include="AutoMapper">
-      <Version>10.1.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="AutoMapper">
-      <Version>10.1.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="System.Management" />
-    <Reference Include="System.Web" />
-  </ItemGroup>
-  
 </Project>

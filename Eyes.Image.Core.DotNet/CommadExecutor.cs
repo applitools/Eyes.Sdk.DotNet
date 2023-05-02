@@ -2,7 +2,7 @@
 
 namespace Applitools
 {
-    public static class CommandExecutor
+    internal static class CommandExecutor
     {
         public static void ExecCommand(string cmd)
         {

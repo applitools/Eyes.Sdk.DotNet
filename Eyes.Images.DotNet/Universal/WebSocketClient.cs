@@ -25,11 +25,9 @@ namespace Applitools
         private readonly ConcurrentDictionary<string, string> _messages;
         private readonly object _lock = new object();
 
-        private static WebSocketClient _instance;
-
         public event SocketMessageReceivedHandler MessageReceived;
 
-        public Logger Logger { get; } = new Logger();
+        private Logger Logger { get; } = new Logger();
         
         public WebSocketClient(ILogHandler logHandler = null)
         {

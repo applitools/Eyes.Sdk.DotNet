@@ -33,50 +33,6 @@
             return request;
         }
 
-        #region URLs
-
-        /// <summary>
-        /// URL encodes value while working around issues with <see cref="HttpUtility.UrlEncode(String)"/>.
-        /// </summary>
-        /// <param name="value">The string to encode.</param>
-        /// <returns>The encoded string.</returns>
-        public static string UrlEncode(string value)
-        {
-            var encoded = HttpUtility.UrlEncode(value);
-            if (encoded != null)
-            {
-                encoded = encoded.Replace("+", "%20");
-            }
-
-            return encoded;
-        }
-
-        /// <summary>
-        /// Encodes and adds the input query argument to the input URI and returns the resulting 
-        /// URI.
-        /// </summary>
-        public static Uri AddUriQueryArg(this Uri uri, string name, string value)
-        {
-            ArgumentGuard.NotNull(uri, nameof(uri));
-            ArgumentGuard.TrimNotEmpty(ref name, nameof(name));
-            ArgumentGuard.TrimNotNull(ref value, nameof(value));
-
-            var fragment = "{0}={1}".Fmt(name, UrlEncode(value));
-            var query = uri.Query.Trim();
-            if (query.Length == 0)
-            {
-                query = "?" + fragment;
-            }
-            else
-            {
-                query = query + "&" + fragment;
-            }
-
-            return new Uri(uri.GetLeftPart(UriPartial.Path) + query);
-        }
-
-        #endregion
-
         #region Json
 
         /// <summary>
