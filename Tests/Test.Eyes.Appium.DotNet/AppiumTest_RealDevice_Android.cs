@@ -18,13 +18,13 @@ namespace Applitools.Appium.Tests
     {
         private Eyes eyes_;
         private AndroidDriver<AppiumWebElement> driver_;
-        private ICutProvider cutProvider_ = null;
+        //private ICutProvider cutProvider_ = null;
 
-        private By firstElementSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().index(0)");
-        private By containerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image_container\")");
-        private By labelInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().textContains(\"You successfully clicked the button!\")");
-        private By imageInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image\")");
-        private By buttonSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.Button\")");
+        private readonly By firstElementSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().index(0)");
+        private readonly By containerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image_container\")");
+        private readonly By labelInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().textContains(\"You successfully clicked the button!\")");
+        private readonly By imageInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image\")");
+        private readonly By buttonSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.Button\")");
 
         private HashSet<Region> expectedIgnoreRegions_ = new HashSet<Region>();
 

@@ -632,7 +632,7 @@ namespace Applitools.Appium
             return (AppiumCheckSettings)base.Ignore(region, regions);
         }
 
-        public new AppiumCheckSettings Ignore(IEnumerable<Rectangle> regions)
+        public AppiumCheckSettings Ignore(IEnumerable<Rectangle> regions)
         {
             return (AppiumCheckSettings)base.Ignore(regions);
         }
@@ -642,7 +642,7 @@ namespace Applitools.Appium
             return (AppiumCheckSettings)base.Content(region, regions);
         }
 
-        public new AppiumCheckSettings Content(IEnumerable<Rectangle> regions)
+        public AppiumCheckSettings Content(IEnumerable<Rectangle> regions)
         {
             return (AppiumCheckSettings)base.Content(regions);
         }
@@ -652,7 +652,7 @@ namespace Applitools.Appium
             return (AppiumCheckSettings)base.Layout(region, regions);
         }
 
-        public new AppiumCheckSettings Layout(IEnumerable<Rectangle> regions)
+        public AppiumCheckSettings Layout(IEnumerable<Rectangle> regions)
         {
             return (AppiumCheckSettings)base.Layout(regions);
         }
@@ -662,7 +662,7 @@ namespace Applitools.Appium
             return (AppiumCheckSettings)base.Strict(region, regions);
         }
 
-        public new AppiumCheckSettings Strict(IEnumerable<Rectangle> regions)
+        public AppiumCheckSettings Strict(IEnumerable<Rectangle> regions)
         {
             return (AppiumCheckSettings)base.Strict(regions);
         }

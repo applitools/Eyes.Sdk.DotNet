@@ -18,13 +18,13 @@ namespace Applitools.Appium.Tests
     {
         private Eyes eyes_;
         private IOSDriver<AppiumWebElement> driver_;
-        private ICutProvider cutProvider_ = null;
+        //private ICutProvider cutProvider_ = null;
 
-        private By firstElementSelector_ = By.XPath("//XCUIElementTypeWindow[1]");
-        private By containerSelector_ = MobileBy.AccessibilityId("BottomContainer");
-        private By labelInContainerSelector_ = MobileBy.AccessibilityId("BottomLabel");
-        private By imageInContainerSelector_ = MobileBy.AccessibilityId("BottomImage");
-        private By buttonSelector_ = MobileBy.IosNSPredicate("type == 'XCUIElementTypeButton'");
+        private readonly By firstElementSelector_ = By.XPath("//XCUIElementTypeWindow[1]");
+        private readonly By containerSelector_ = MobileBy.AccessibilityId("BottomContainer");
+        private readonly By labelInContainerSelector_ = MobileBy.AccessibilityId("BottomLabel");
+        private readonly By imageInContainerSelector_ = MobileBy.AccessibilityId("BottomImage");
+        private readonly By buttonSelector_ = MobileBy.IosNSPredicate("type == 'XCUIElementTypeButton'");
 
         private HashSet<Region> expectedIgnoreRegions_ = new HashSet<Region>();
 

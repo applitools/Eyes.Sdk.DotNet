@@ -774,7 +774,7 @@ namespace Applitools.Selenium
             };
 
             var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request);
-            var error = result?.Payload?.Error;
+            var error = result.Payload.Error;
             if (error != null)
             {
                 throw new EyesException(error.ToString());
@@ -784,10 +784,12 @@ namespace Applitools.Selenium
             {
                 if (matchResult.AsExpected == false)
                 {
+#pragma warning disable CS0612
                     if (FailureReports == FailureReports.Immediate)
                     {
                         throw new EyesException($"Unexpected match result for {matchResult}");
                     }
+#pragma warning restore CS0612
                 }
             }
         }
