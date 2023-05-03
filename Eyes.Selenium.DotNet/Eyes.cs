@@ -17,7 +17,7 @@ namespace Applitools.Selenium
 {
     public class Eyes : EyesBase
     {
-        private PropertiesCollection properties_;
+        private readonly PropertiesCollection properties_;
         private EyesRef eyes_;
         private IWebDriver driver_;
 
@@ -25,7 +25,7 @@ namespace Applitools.Selenium
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly string serverUrlFieldName_;
         private readonly ISelectorTransformer selectorTransformer_;
-        private readonly IOcrRegionTransformer _ocrRegionTransformer;
+        private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -56,7 +56,7 @@ namespace Applitools.Selenium
             serverUrlFieldName_ = serverUrlFieldName;
 
             selectorTransformer_ = selectorTransformer ?? new SeleniumSelectorTransformer();
-            _ocrRegionTransformer = new OcrRegionTransformer(selectorTransformer_);
+            ocrRegionTransformer_ = new OcrRegionTransformer(selectorTransformer_);
         }
 
         #endregion
@@ -1109,7 +1109,7 @@ namespace Applitools.Selenium
 	        var extractTextSettings = new List<ExtractTextSettings>();
 	        foreach (var region in regions)
 	        {
-		        var ocrRegion = _ocrRegionTransformer.GetRegion((OcrRegion)region);
+		        var ocrRegion = ocrRegionTransformer_.GetRegion((OcrRegion)region);
 		        var extractTextSetting = new ExtractTextSettings
 		        {
 			        Region = ocrRegion,
