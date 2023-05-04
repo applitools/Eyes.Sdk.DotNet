@@ -56,7 +56,7 @@ namespace Applitools.Appium.Tests
         public void Appium_iOS_CheckWindow()
         {
             eyes_.Check("Window", Target.Window().Ignore(buttonSelector_));
-            expectedIgnoreRegions_ = new HashSet<Region>() { new Region(155, 258, 65, 30) };
+            expectedIgnoreRegions_ = new HashSet<Region> { new (155, 258, 65, 30) };
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace Applitools.Appium.Tests
         {
             var labelInContainer = driver_.FindElement(labelInContainerSelector_);
             eyes_.Check("Image Container", Target.Region(containerSelector_).Ignore(labelInContainer).Ignore(imageInContainerSelector_));
-            expectedIgnoreRegions_ = new HashSet<Region>() { new Region(115, 35, 113, 65), new Region(0, 0, 343, 21) };
+            expectedIgnoreRegions_ = new HashSet<Region> { new (115, 35, 113, 65), new (0, 0, 343, 21) };
         }
 
         [Test]

@@ -8,7 +8,7 @@ namespace Applitools.Utils.Geometry
 	/// <summary>
     /// A rectangular region.
     /// </summary>
-    public struct Region : IRegion
+    public struct Region : IRegion, IEquatable<Region>
     {
         /// <summary>
         /// An empty region.
@@ -81,25 +81,25 @@ namespace Applitools.Utils.Geometry
         public int Top { get; private set; }
 
         /// <summary>
-        /// Sysnonym for <see cref="Left"/>. Used for deserialization.
+        /// Synonym for <see cref="Left"/>. Used for deserialization.
         /// </summary>
         public int X { set => Left = value; }
 
         /// <summary>
-        /// Sysnonym for <see cref="Top"/>. Used for deserialization.
+        /// Synonym for <see cref="Top"/>. Used for deserialization.
         /// </summary>
         public int Y { set => Top = value; }
 
-        [JsonProperty]
         /// <summary>
         /// Returns the width component of the size of this <see cref="Region"/>.
         /// </summary>
+        [JsonProperty]
         public int Width { get; private set; }
 
-        [JsonProperty]
         /// <summary>
         /// Returns the height component of the size of this <see cref="Region"/>.
         /// </summary>
+        [JsonProperty]
         public int Height { get; private set; }
 
         /// <summary>
@@ -557,6 +557,33 @@ namespace Applitools.Utils.Geometry
         public static implicit operator Region(Rectangle rect)
         {
             return new Region(rect);
+        }
+
+        public bool Equals(Region other)
+        {
+            return Left == other.Left && 
+                   Top == other.Top && 
+                   Width == other.Width && 
+                   Height == other.Height && 
+                   CoordinatesType == other.CoordinatesType;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Region other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Left;
+                hashCode = (hashCode * 397) ^ Top;
+                hashCode = (hashCode * 397) ^ Width;
+                hashCode = (hashCode * 397) ^ Height;
+                hashCode = (hashCode * 397) ^ (int)CoordinatesType;
+                return hashCode;
+            }
         }
     }
 }
