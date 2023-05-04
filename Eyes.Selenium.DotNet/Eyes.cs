@@ -783,17 +783,24 @@ namespace Applitools.Selenium
                 throw new EyesException(error.ToString());
             }
 
+            if (result?.Payload?.Result == null)
+            {
+                return;
+            }
+            
             foreach (var matchResult in result.Payload.Result)
             {
-                if (matchResult.AsExpected == false)
+                if (matchResult.AsExpected)
                 {
-#pragma warning disable CS0612
-                    if (FailureReports == FailureReports.Immediate)
-                    {
-                        throw new EyesException($"Unexpected match result for {matchResult}");
-                    }
-#pragma warning restore CS0612
+                    continue;
                 }
+                
+#pragma warning disable CS0612
+                if (FailureReports == FailureReports.Immediate)
+                {
+                    throw new EyesException($"Unexpected match result for {matchResult}");
+                }
+#pragma warning restore CS0612
             }
         }
 
@@ -925,8 +932,7 @@ namespace Applitools.Selenium
 
         private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)
         {
-            var container = checkSettings as IScrollRootElementContainer;
-            if (container != null)
+            if (checkSettings is IScrollRootElementContainer container)
             {
                 var selector = container.GetScrollRootSelector();
                 if (selector != null)
