@@ -150,7 +150,7 @@ namespace Applitools.Generated.Selenium.Tests
             {
                 var options = new FirefoxOptions();
                 if (headless) options.AddArgument("--headless");
-                FirefoxDriver webDriverRet = new FirefoxDriver(DRIVER_PATH, options);
+                FirefoxDriver webDriverRet = DRIVER_PATH != null ?  new FirefoxDriver(DRIVER_PATH, options) : new FirefoxDriver(options);
                 return webDriverRet;
             });
             return webDriver;
