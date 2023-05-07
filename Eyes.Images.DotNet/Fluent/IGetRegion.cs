@@ -1,7 +1,6 @@
 ﻿namespace Applitools.Fluent
 {
-    public interface IGetRegions
+    public interface IGetRegion
     {
-        CodedRegionReference ToRegion();
     }
 }

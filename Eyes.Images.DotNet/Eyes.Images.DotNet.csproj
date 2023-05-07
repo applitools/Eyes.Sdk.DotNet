@@ -12,7 +12,7 @@ To learn more, visit https://applitools.com/ .</Description>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
-    <PackageTags>applitools eyes appium</PackageTags>
+    <PackageTags>applitools eyes images</PackageTags>
     <PackageReleaseNotes>### Fixed
 - Tunnel issue
 </PackageReleaseNotes>

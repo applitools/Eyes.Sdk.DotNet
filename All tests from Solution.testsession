@@ -1,0 +1,71 @@
+Tests (35 tests) Failed: 35 tests failed
+  Test.Eyes.Appium.DotNet (9 tests) Failed: 9 tests failed
+    Applitools.Appium.Tests (9 tests) Failed: 9 tests failed
+      TestAPI (3 tests) Failed: One or more child tests had errors: 3 tests failed
+        TestEyesConstructor_PassServerUrl Failed:   Expected: "https://eyesapi.applitools.com/"
+        TestFullAgentId_1 Failed:   Expected: String starting with "Eyes.Appium.DotNet/"
+        TestFullAgentId_2 Failed:   Expected: String starting with "Eyes.Appium.DotNet/"
+      TestAppium_RealDevice_Android (3 tests) Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.: 3 tests failed
+        Appium_Android_CheckRegion Failed: OneTimeSetUp: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+        Appium_Android_CheckRegionWithIgnoreRegion Failed: OneTimeSetUp: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+        Appium_Android_CheckWindow Failed: OneTimeSetUp: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      TestAppium_RealDevice_iOS (3 tests) Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.: 3 tests failed
+        Appium_iOS_CheckRegion Failed: OneTimeSetUp: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+        Appium_iOS_CheckRegionWithIgnoreRegion Failed: OneTimeSetUp: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+        Appium_iOS_CheckWindow Failed: OneTimeSetUp: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+  Tests.Eyes.Appium.Generated (7 tests) Failed: 7 tests failed
+    Applitools.Generated.Appium.Tests (7 tests) Failed: 7 tests failed
+      AppiumAndroidCheckRegionClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumAndroidCheckRegion Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      AppiumAndroidCheckRegionWithIgnoreRegionClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumAndroidCheckRegionWithIgnoreRegion Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      AppiumAndroidCheckWindowClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumAndroidCheckWindow Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      AppiumIOSCheckRegionClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumIOSCheckRegion Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      AppiumIOSCheckRegionWithIgnoreRegionClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumIOSCheckRegionWithIgnoreRegion Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      AppiumIOSCheckWindowClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumIOSCheckWindow Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+      AppiumIOSNavBarCheckRegionClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        AppiumIOSNavBarCheckRegion Failed: OpenQA.Selenium.WebDriverException : Unexpected error. Misconfigured -- Sauce Labs Authentication Error.
+  Tests.Eyes.Selenium.Generated (19 tests) Failed: 19 tests failed
+    Applitools.Generated.Selenium.Tests (19 tests) Failed: 19 tests failed
+      CheckRegionBySelectorOnIeClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        CheckRegionBySelectorOnIe Failed: OpenQA.Selenium.WebDriverException : Unexpected error. {"status": 13, "sessionId": "new_request:35959", "value": {"message": "Misconfigured --...
+      CheckWindowAfterManualScrollOnSafari12Class (1 test) Failed: One or more child tests had errors: 1 test failed
+        CheckWindowAfterManualScrollOnSafari12 Failed: OpenQA.Selenium.WebDriverException : Unexpected error. {"status": 13, "sessionId": "new_request:36120", "value": {"message": "Misconfigured --...
+      ShouldReturnActualViewportSizeClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldReturnActualViewportSize Failed: Applitools.EyesException : Failed to set viewport size!
+      ShouldSendDomAndLocationWhenCheckFrameClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckFrame Failed: System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index'...
+      ShouldSendDomAndLocationWhenCheckFrameFullyClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckFrameFully Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelector Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorFullyClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorFully Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorFullyWithCustomScrollRootClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorFullyWithCustomScrollRoot Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorFullyWithVgClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorFullyWithVg Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorInFrameClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorInFrame Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorWithCustomScrollRootClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorWithCustomScrollRoot Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorWithCustomScrollRootWithVgClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorWithCustomScrollRootWithVg Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckRegionBySelectorWithVgClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckRegionBySelectorWithVg Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckWindowClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckWindow Failed: System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index'...
+      ShouldSendDomAndLocationWhenCheckWindowFullyClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckWindowFully Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckWindowFullyWithVgClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckWindowFullyWithVg Failed:   Expected: 1
+      ShouldSendDomAndLocationWhenCheckWindowWithVgClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomAndLocationWhenCheckWindowWithVg Failed: System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index'...
+      ShouldSendDomOnIeClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldSendDomOnIe Failed: OpenQA.Selenium.WebDriverException : Unexpected error. {"status": 13, "sessionId": "new_request:35717", "value": {"message": "Misconfigured --...
+      ShouldThrowIfNoCheckpointsBeforeCloseClass (1 test) Failed: One or more child tests had errors: 1 test failed
+        ShouldThrowIfNoCheckpointsBeforeClose Failed:   Expected: an exception to be thrown

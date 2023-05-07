@@ -9,8 +9,8 @@ namespace Applitools
 {
     public class Configuration : IConfiguration
     {
-        private readonly IList<int> _layoutBreakpoints = new List<int>();
-        private readonly List<RenderBrowserInfo> _browsersInfo = new List<RenderBrowserInfo>();
+        private readonly IList<int> layoutBreakpoints_ = new List<int>();
+        private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
 
         public Configuration()
         {
@@ -51,14 +51,14 @@ namespace Applitools
             HideScrollbars = configuration.HideScrollbars;
             DisableBrowserFetching = configuration.DisableBrowserFetching;
             LayoutBreakpointsEnabled = configuration.LayoutBreakpointsEnabled;
-            _layoutBreakpoints = new List<int>(configuration.LayoutBreakpoints);
+            layoutBreakpoints_ = new List<int>(configuration.LayoutBreakpoints);
 
             VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
 
 
             if (configuration is Configuration config)
             {
-                _browsersInfo.AddRange(config._browsersInfo);
+                browsersInfo_.AddRange(config.browsersInfo_);
             }
         }
         public string Type { get; set; }
@@ -538,13 +538,13 @@ namespace Applitools
 
         public IList<int> LayoutBreakpoints
         {
-            get => _layoutBreakpoints;
+            get => layoutBreakpoints_;
             set => SetLayoutBreakpoints_(value);
         }
 
         public List<RenderBrowserInfo> GetBrowsersInfo()
         {
-            return _browsersInfo;
+            return browsersInfo_;
         }
         
         public IConfiguration AddBrowsers(params IRenderBrowserInfo[] browsersInfo)
@@ -599,34 +599,34 @@ namespace Applitools
         public Configuration AddMobileDevice(AndroidDeviceInfo androidDeviceInfo)
         {
             RenderBrowserInfo renderBrowserInfo = new RenderBrowserInfo(androidDeviceInfo);
-            _browsersInfo.Add(renderBrowserInfo);
+            browsersInfo_.Add(renderBrowserInfo);
             return this;
         }
 
         public IConfiguration AddBrowser(DesktopBrowserInfo desktopBrowserInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(desktopBrowserInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
         public IConfiguration AddBrowser(ChromeEmulationInfo emulationInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(emulationInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
 
         public IConfiguration AddBrowser(IosDeviceInfo deviceInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
 
         public IConfiguration AddBrowser(AndroidDeviceInfo deviceInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
 
