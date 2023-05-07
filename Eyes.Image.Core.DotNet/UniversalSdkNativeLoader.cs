@@ -7,11 +7,11 @@ namespace Applitools
 {
     using System.Runtime.InteropServices;
 
-    public class UniversalSdkNativeLoader
+    public abstract class UniversalSdkNativeLoader
     {
         private static int port_;
         private static Process nativeProc_;
-        private static object _lockObject = new object();
+        private static readonly object lockObject_ = new object();
 
         public static int Start()
         {
@@ -27,7 +27,7 @@ namespace Applitools
 
         private static int TryStartProcess_()
         {
-            lock (_lockObject)
+            lock (lockObject_)
             {
                 if (nativeProc_ == null || nativeProc_.HasExited)
                 {

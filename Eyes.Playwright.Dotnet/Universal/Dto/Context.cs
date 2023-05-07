@@ -1,6 +1,9 @@
-package com.applitools.eyes.playwright.universal.dto;
+using Applitools.Universal;
 
-import com.applitools.eyes.universal.Reference;
+namespace Applitools.Playwright.Universal.Dto
+{
 
-public class Context extends Reference {
+    public class Context : Reference
+    {
+    }
 }

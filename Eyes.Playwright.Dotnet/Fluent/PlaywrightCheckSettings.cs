@@ -218,7 +218,7 @@ namespace Applitools.Playwright.Fluent
      * @param regionId  the region ID
      * @return an updated instance of this settings object
      */
-        public PlaywrightCheckSettings Ignore(@Nonnull @string selector, @Nonnull String regionId) {
+        public PlaywrightCheckSettings Ignore(string selector, string regionId) {
             return Ignore(new Selector(selector), regionId);
         }
 
@@ -310,12 +310,7 @@ namespace Applitools.Playwright.Fluent
             clone.ignoreRegions.add(element);
             return clone;
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+            
         public PlaywrightCheckSettings Ignore(@Nonnull region[] regions)
         {
             PlaywrightCheckSettings clone = this.Clone();
@@ -325,12 +320,7 @@ namespace Applitools.Playwright.Fluent
             }
             return clone;
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings Ignore(@Nonnull region region, Region... regions) {
             PlaywrightCheckSettings clone = this.Clone();
             clone.ignore_(region);
@@ -342,7 +332,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         protected void ignore_(Region region)
         {
@@ -499,10 +489,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Layout(@Nonnull region[] regions)
         {
@@ -514,10 +501,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Layout(@Nonnull region region, Region... regions) {
             PlaywrightCheckSettings clone = this.Clone();
@@ -530,7 +514,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         protected void layout_(Region region)
         {
@@ -687,10 +671,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Strict(@Nonnull region[] regions)
         {
@@ -702,10 +683,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Strict(@Nonnull region region, Region... regions) {
             PlaywrightCheckSettings clone = this.Clone();
@@ -718,7 +696,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         protected void strict_(Region region)
         {
@@ -1031,10 +1009,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Floating(int maxOffset, Region...regions)
         {
@@ -1046,10 +1021,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Floating(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
@@ -1060,7 +1032,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         protected void floating_(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
@@ -1076,8 +1048,8 @@ namespace Applitools.Playwright.Fluent
      * @param type          the accessibility region type
      * @return an updated clone of this settings object
      */
-        public PlaywrightCheckSettings Accessibility(@Nonnull @string selector, AccessibilityRegionType Type) {
-            return Accessibility(new AccessibilitySelector(selector, type));
+        public PlaywrightCheckSettings Accessibility(string selector, AccessibilityRegionType type) {
+            return Accessibility(new AccessibilitySelector(selector, this.Type()));
         }
 
         /**
@@ -1118,10 +1090,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Accessibility(Region region, AccessibilityRegionType regionType)
         {
@@ -1130,10 +1099,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         protected void accessibility_(Region rect, AccessibilityRegionType regionType)
         {
@@ -1227,10 +1193,7 @@ namespace Applitools.Playwright.Fluent
             return SetLayoutBreakpoints(shouldSet);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings SetLayoutBreakpoints(int...breakpoints)
         {
@@ -1252,10 +1215,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings SetLayoutBreakpoints(Boolean shouldSet)
         {
@@ -1265,221 +1225,133 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public List<Integer> GetLayoutBreakpoints()
         {
             return layoutBreakpoints_;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public Boolean IsDefaultLayoutBreakpointsSet()
         {
             return IsDefaultLayoutBreakpointsSet;
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Fully()
         {
             return Fully(true);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings Fully(Boolean fully)
         {
             return (PlaywrightCheckSettings)super.fully(fully);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings WithName(String name)
         {
             return (PlaywrightCheckSettings)super.withName(name);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings IgnoreCaret(Boolean ignoreCaret)
         {
             return (PlaywrightCheckSettings)super.ignoreCaret(ignoreCaret);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings SendDom(Boolean sendDom)
         {
             return (PlaywrightCheckSettings)super.sendDom(sendDom);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings SendDom()
         {
             return (PlaywrightCheckSettings)super.sendDom();
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings EnablePatterns(Boolean enablePatterns)
         {
             return (PlaywrightCheckSettings)super.enablePatterns(enablePatterns);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings EnablePatterns()
         {
             return (PlaywrightCheckSettings)super.enablePatterns();
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings BeforeRenderScreenshotHook(String hook)
         {
             return (PlaywrightCheckSettings)super.beforeRenderScreenshotHook(hook);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings Timeout(Integer timeoutMilliseconds)
         {
             return (PlaywrightCheckSettings)super.timeout(timeoutMilliseconds);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
 
         public PlaywrightCheckSettings UseDom(Boolean useDom)
         {
             return (PlaywrightCheckSettings)super.useDom(useDom);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings VariationGroupId(String variationGroupId)
         {
             return (PlaywrightCheckSettings)super.variationGroupId(variationGroupId);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
 
         public PlaywrightCheckSettings VisualGridOptions(VisualGridOption...options)
         {
             return (PlaywrightCheckSettings)super.visualGridOptions(options);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings WaitBeforeCapture(Integer milliSec)
         {
             return (PlaywrightCheckSettings)super.waitBeforeCapture(milliSec);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings SetDisableBrowserFetching(Boolean disableBrowserFetching)
         {
             return (PlaywrightCheckSettings)super.setDisableBrowserFetching(disableBrowserFetching);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings AutProxy(AutProxySettings autProxy)
         {
             return (PlaywrightCheckSettings)super.autProxy(autProxy);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
 
         public PlaywrightCheckSettings SetAccessibilityValidation(AccessibilitySettings accessibilitySettings)
         {
             return (PlaywrightCheckSettings)super.setAccessibilityValidation(accessibilitySettings);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings StitchMode(StitchMode stitchMode)
         {
             return (PlaywrightCheckSettings)super.stitchMode(stitchMode);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings SetHideScrollBars(Boolean hideScrollBars)
         {
             return (PlaywrightCheckSettings)super.setHideScrollBars(hideScrollBars);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings SetHideCaret(Boolean hideCaret)
         {
             return (PlaywrightCheckSettings)super.setHideCaret(hideCaret);
@@ -1495,114 +1367,64 @@ namespace Applitools.Playwright.Fluent
             return (PlaywrightCheckSettings)super.stitchOverlap(stitchOverlap);
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings PageId(String pageId)
         {
             return (PlaywrightCheckSettings)super.pageId(pageId);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings IgnoreDisplacements(Boolean ignoreDisplacements)
         {
             return (PlaywrightCheckSettings)super.ignoreDisplacements(ignoreDisplacements);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings IgnoreDisplacements()
         {
             return (PlaywrightCheckSettings)super.ignoreDisplacements();
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings IgnoreCaret()
         {
             return (PlaywrightCheckSettings)super.ignoreCaret();
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings MatchLevel(MatchLevel matchLevel)
         {
             return (PlaywrightCheckSettings)super.matchLevel(matchLevel);
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings Strict()
         {
             return (PlaywrightCheckSettings)super.strict();
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
 
         public PlaywrightCheckSettings Layout()
         {
             return (PlaywrightCheckSettings)super.layout();
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
         public PlaywrightCheckSettings Exact()
         {
             return (PlaywrightCheckSettings)super.exact();
         }
-
-        /**
-     * {@inheritDoc}
-     */
-        @Override
-
+        
         public PlaywrightCheckSettings LazyLoad()
         {
             return (PlaywrightCheckSettings)super.lazyLoad();
         }
 
-        /**
-     * {@inheritDoc}
-     */
-        @Override
+
 
         public PlaywrightCheckSettings LazyLoad(LazyLoadOptions lazyLoadOptions)
         {
             return (PlaywrightCheckSettings)super.lazyLoad(lazyLoadOptions);
         }
 
-        @Override
-
         public PlaywrightCheckSettings DensityMetrics(int xDpi, int yDpi)
         {
-            return (PlaywrightCheckSettings)super.densityMetrics(xDpi, yDpi);
+            return (PlaywrightCheckSettings)base.DensityMetrics(xDpi, yDpi);
         }
 
-        @Override
+
 
         public PlaywrightCheckSettings DensityMetrics(int xDpi, int yDpi, Double scaleRatio)
         {
@@ -1616,7 +1438,7 @@ namespace Applitools.Playwright.Fluent
      */
         @SuppressWarnings("MethodDoesntCallSuperMethod")
 
-        @Override
+
 
         public PlaywrightCheckSettings Clone()
         {
@@ -1649,7 +1471,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public LazyLoadOptions GetLazyLoadOptions()
         {
@@ -1657,7 +1479,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public GetRegion[] GetIgnoreRegions()
         {
@@ -1665,7 +1487,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public GetRegion[] GetLayoutRegions()
         {
@@ -1673,7 +1495,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public GetRegion[] GetStrictRegions()
         {
@@ -1681,7 +1503,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public GetRegion[] GetContentRegions()
         {
@@ -1689,7 +1511,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public GetRegion[] GetFloatingRegions()
         {
@@ -1697,7 +1519,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         /** internal */
-        @Override
+
 
         public GetRegion[] GetAccessibilityRegions()
         {
@@ -1706,7 +1528,7 @@ namespace Applitools.Playwright.Fluent
 
         /** see {@link #ignoreColors()} */
         @Deprecated
-            @Override
+    
 
         public PlaywrightCheckSettings Content()
         {

@@ -11,7 +11,7 @@ using Microsoft.Playwright;
 
 namespace Applitools.Playwright
 {
-    public class Eyes : IEyesBase
+    public class Eyes : EyesBase
     {
         /// <summary>the runner.</summary>
         private readonly EyesRunner runner_;
@@ -100,7 +100,7 @@ namespace Applitools.Playwright
             }
 
             driver_ = new Driver(page);
-            driver_.setApplitoolsRefId(getRefer().ref (page, driver_.getRoot()));
+            driver_.setApplitoolsRefId(GetRefer_().ref (page, driver_.getRoot()));
             driver_.setWebDriverProxy(configuration_.getWebDriverProxy());
 
             configuration_.setAppName(appName).setTestName(testName);
@@ -157,9 +157,9 @@ namespace Applitools.Playwright
             ArgumentGuard.NotOfType(checkSettings, typeof(IPlaywrightCheckSettings), nameof(checkSettings));
             IPlaywrightCheckSettings playwrightCheckSettings = (IPlaywrightCheckSettings)checkSettings;
 
-            CheckSettingsDto checkSettingsDto = PlaywrightCheckSettingsMapper.toCheckSettingsDto(
+            EyesConfig checkSettingsDto = PlaywrightCheckSettingsMapper.toCheckSettingsDto(
                 playwrightCheckSettings,
-                configure(), getRefer(), driver_.getRoot());
+                configure(), GetRefer_(), driver_.getRoot());
 
             checkDto(checkSettingsDto, driver_);
         }
@@ -179,7 +179,7 @@ namespace Applitools.Playwright
             }
 
             List<OCRExtractSettingsDto> ocrExtractSettingsDtoList = PlaywrightOCRExtractSettingsDtoMapper
-                .toOCRExtractSettingsDtoList(Arrays.asList(ocrRegions), getRefer(), driver_.getRoot());
+                .toOCRExtractSettingsDtoList(Arrays.asList(ocrRegions), GetRefer_(), driver_.getRoot());
             ConfigurationDto configurationDto = ConfigurationMapper
                 .toConfigurationDto(configure(), false);
 
@@ -266,7 +266,7 @@ namespace Applitools.Playwright
 
             eyesRef_ = null;
             isClosed_ = true;
-            getRefer().destroy(driver_.getRoot());
+            GetRefer_().destroy(driver_.getRoot());
             driver_ = null;
 
             List<TestResults> testResults =
@@ -685,211 +685,19 @@ namespace Applitools.Playwright
             return config;
         }
 
-        public Configuration setEnvironmentName(string environmentName)
-        {
-            return configure().setEnvironmentName(environmentName);
-        }
-
-        /**
-     * If not {@code null}, determines the name of the environment of the baseline.
-     * @return The name of the baseline's environment, or {@code null} if no such name was set.
-     */
-        public string getBaselineEnvName()
-        {
-            return configure().getBaselineEnvName();
-        }
-
-        public string getEnvironmentName()
-        {
-            return configure().getEnvironmentName();
-        }
-
-
-        /**
-     * If not {@code null} specifies a name for the environment in which the application under test is running.
-     * @param envName The name of the environment of the baseline.
-     */
-        public void setEnvName(string envName)
-        {
-            if (envName == null || envName.isEmpty())
-            {
-                configure().setEnvironmentName(null);
-            }
-            else
-            {
-                configure().setEnvironmentName(envName.trim());
-            }
-        }
-
-        /**
-     * If not {@code null} specifies a name for the environment in which the application under test is running.
-     * @return The name of the environment of the baseline, or {@code null} if no such name was set.
-     */
-        public string getEnvName()
-        {
-            return configure().getEnvironmentName();
-        }
-
-
-        /**
-     * Superseded by {@link #setHostOS(String)} and {@link #setHostApp(String)}.
-     * Sets the OS (e.g., Windows) and application (e.g., Chrome) that host the application under test.
-     * @param hostOS  The name of the OS hosting the application under test or {@code null} to auto-detect.
-     * @param hostApp The name of the application hosting the application under test or {@code null} to auto-detect.
-     */
-        @Deprecated
-
-        public void setAppEnvironment(string hostOS, string hostApp)
-        {
-            if (getIsDisabled())
-            {
-                return;
-            }
-
-            setHostOS(hostOS);
-            setHostApp(hostApp);
-        }
-
-        public void setConfiguration(Configuration configuration)
-        {
-            ArgumentGuard.notNull(configuration, "configuration");
-            string apiKey = configuration.getApiKey();
-            if (apiKey != null)
-            {
-                this.setApiKey(apiKey);
-            }
-
-            URI serverUrl = configuration.getServerUrl();
-            if (serverUrl != null)
-            {
-                this.setServerUrl(serverUrl.toString());
-            }
-
-            AbstractProxySettings proxy = configuration.getProxy();
-            if (proxy != null)
-            {
-                this.setProxy(proxy);
-            }
-
-            this.configuration_ = new Configuration(configuration);
-        }
-
-        public Configuration getConfiguration()
-        {
-            return new Configuration(configuration_);
-        }
-
-        public void setProxy(AbstractProxySettings proxySettings)
-        {
-            configure().setProxy(proxySettings);
-        }
-
-        public AbstractProxySettings getProxy()
-        {
-            return configure().getProxy();
-        }
-
-        @Override
-
-        public string getApiKey()
-        {
-            return configure().getApiKey();
-        }
-
-        public void setApiKey(string apiKey)
-        {
-            configure().setApiKey(apiKey);
-        }
-
-        @Override
-
-        public URI getServerUrl()
-        {
-            return configure().getServerUrl();
-        }
-
-        public void setServerUrl(string serverUrl)
-        {
-            configure().setServerUrl(serverUrl);
-        }
-
-        @Override
-
-        public void setIsDisabled(bool isDisabled)
-        {
-            configure().setIsDisabled(isDisabled);
-        }
-
-        @Override
-
-        public bool getIsDisabled()
-        {
-            return configure().getIsDisabled();
-        }
-
-        @Override
-
-        public string getFullAgentId()
-        {
-            return configure().getAgentId();
-        }
 
         /**
      * Gets is open.
      * @return Whether a session is open.
      */
-        public boolean getIsOpen()
+        public bool getIsOpen()
         {
             return eyesRef_ != null;
         }
 
-        @Override
-
-        public void setLogHandler(LogHandler logHandler)
-        {
-            // For backward compatibility
-        }
-
-        @Override
-
-        public LogHandler getLogHandler()
-        {
-            return new NullLogHandler();
-        }
-
-        @Override
-
-        public Logger getLogger()
-        {
-            return new Logger();
-        }
-
-        @Override
-
-        public void addProperty(string name, string value)
-        {
-            configure().addProperty(name, value);
-        }
-
-        @Override
-
-        public void clearProperties()
-        {
-            configure().clearProperties();
-        }
-
-        @Override
-
-        public TestResults abortIfNotClosed()
-        {
-            return abort();
-        }
-
-        @Override
-
         public void closeAsync()
         {
-            if (bool.TRUE.equals(getIsDisabled()))
+            if (IsDisabled)
             {
                 return;
             }
@@ -906,13 +714,11 @@ namespace Applitools.Playwright
             commandExecutor_.close(eyesRef_, settings, configurationDto);
             eyesRef_ = null;
             isClosed_ = true;
-            getRefer().destroy(driver_.getRoot());
+            GetRefer_().destroy(driver_.getRoot());
             driver_ = null;
         }
 
-        @Override
-
-        public void abortAsync()
+        public override void AbortAsync()
         {
             if (!isClosed_ && getIsOpen())
             {
@@ -920,14 +726,12 @@ namespace Applitools.Playwright
                 commandExecutor_.abort(eyesRef_, settings);
 
                 eyesRef_ = null;
-                getRefer().destroy(driver_.getRoot());
+                GetRefer_().destroy(driver_.getRoot());
                 driver_ = null;
             }
         }
 
-        @Override
-
-        public TestResults abort()
+        public override TestResults Abort()
         {
             if (!isClosed_ && getIsOpen())
             {
@@ -939,7 +743,7 @@ namespace Applitools.Playwright
                     commandExecutor_.eyesGetResults(eyesRef_, getResultsSettings);
 
                 eyesRef_ = null;
-                getRefer().destroy(driver_.getRoot());
+                GetRefer_().destroy(driver_.getRoot());
                 driver_ = null;
 
                 List<TestResults> testResults =
@@ -953,112 +757,60 @@ namespace Applitools.Playwright
             return null;
         }
 
-        public void setImageCut(UnscaledFixedCutProvider unscaledFixedCutProvider)
+        private void checkDto(CheckSettingsDto checkSettingsDto, ITargetDto driverTargetDto)
         {
-            configure().setCutProvider(unscaledFixedCutProvider);
+            if (IsDisabled)
+            {
+                return;
+            }
+
+            if (!IsOpen)
+            {
+                this.Abort();
+                throw new EyesException("you must call open() before checking");
+            }
+
+            ArgumentGuard.NotNull(checkSettingsDto, "checkSettings");
+
+            ConfigurationDto configurationDto = ConfigurationMapper
+                .toConfigurationDto(configuration, runner.isDontCloseBatches());
+            commandExecutor.eyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
         }
 
-        /**
-     * Sets debug screenshots path.
-     * @param pathToSave Path where you want to save the debug screenshots.
-     */
-        public void setDebugScreenshotsPath(string pathToSave)
+        private List<string> extractTextDto(ITargetDto target, List<OCRExtractSettingsDto> settings,
+            ConfigurationDto config)
         {
-            configure().setDebugScreenshotsPath(pathToSave);
+            return commandExecutor.extractText(target, settings, config);
         }
 
-        /**
-     * Gets debug screenshots path.
-     * @return The path where you want to save the debug screenshots.
-     */
-        public string getDebugScreenshotsPath()
+        private Map<string, List<TextRegion>> locateTextDto(ITargetDto target, OCRSearchSettingsDto settings,
+            ConfigurationDto config)
         {
-            return configure().getDebugScreenshotsPath();
+            return commandExecutor.locateText(target, settings, config);
         }
 
-        /**
-     * Sets debug screenshots prefix.
-     * @param prefix The prefix for the screenshots' names.
-     */
-        public void setDebugScreenshotsPrefix(string prefix)
+        private Map<string, List<Region>> locateDto(ITargetDto target, VisualLocatorSettingsDto settings,
+            ConfigurationDto config)
         {
-            configure().setDebugScreenshotsPrefix(prefix);
+            Map<string, List<RegionDto>> response = commandExecutor.locate(target, settings, config);
+            return LocateMapper.toLocateFromDto(response);
         }
 
-        /**
-     * Gets debug screenshots prefix.
-     * @return The prefix for the screenshots' names.
-     */
-        public string getDebugScreenshotsPrefix()
+        private Refer GetRefer_()
         {
-            return configure().getDebugScreenshotsPrefix();
-        }
+            try
+            {
+                Method getRef = runner.getClass().getDeclaredMethod("getRefer");
+                getRef.setAccessible(true);
+                return (Refer)getRef.invoke(runner);
+            }
+            catch (IllegalAccessException |
 
-        public void setHideScrollbars(bool hideScrollbars)
-        {
-            configure().setHideScrollbars(hideScrollbars);
+            InvocationTargetException | NoSuchMethodException e) {
+                string message =
+                    GeneralUtils.createErrorMessageFromExceptionWithText(e, "got an error trying to getRef!");
+                throw new EyesException(message);
+            }
         }
-
-        public void setHideCaret(bool hideCaret)
-        {
-            configure().setHideCaret(hideCaret);
-        }
-
-        public void setStitchMode(StitchMode stitchMode)
-        {
-            configure().setStitchMode(stitchMode);
-        }
-
-        private void checkDto(CheckSettingsDto checkSettingsDto, ITargetDto driverTargetDto) throws EyesException {
-            if (getIsDisabled()) {
-            return;
-        }
-
-    if (!getIsOpen())
-    {
-        this.abort();
-        throw new EyesException("you must call open() before checking");
     }
-
-    ArgumentGuard.notNull(checkSettingsDto, "checkSettings");
-
-    ConfigurationDto configurationDto = ConfigurationMapper
-        .toConfigurationDto(configuration, runner.isDontCloseBatches());
-    commandExecutor.eyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
-}
-
-private List<string> extractTextDto(ITargetDto target, List<OCRExtractSettingsDto> settings, ConfigurationDto config)
-throws EyesException {
-    return commandExecutor.extractText(target, settings, config);
-}
-
-private Map<string, List<TextRegion>> locateTextDto(ITargetDto target, OCRSearchSettingsDto settings,
-    ConfigurationDto config)
-{
-    return commandExecutor.locateText(target, settings, config);
-}
-
-private Map<string, List<Region>> locateDto(ITargetDto target, VisualLocatorSettingsDto settings,
-    ConfigurationDto config)
-{
-    Map<string, List<RegionDto>> response = commandExecutor.locate(target, settings, config);
-    return LocateMapper.toLocateFromDto(response);
-}
-
-private Refer getRefer()
-{
-    try
-    {
-        Method getRef = runner.getClass().getDeclaredMethod("getRefer");
-        getRef.setAccessible(true);
-        return (Refer)getRef.invoke(runner);
-    }
-    catch (IllegalAccessException |
-
-    InvocationTargetException | NoSuchMethodException e) {
-        string message = GeneralUtils.createErrorMessageFromExceptionWithText(e, "got an error trying to getRef!");
-        throw new EyesException(message);
-    }
-}
-}
 }

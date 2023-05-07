@@ -1,58 +1,56 @@
-package com.applitools.eyes.playwright;
+using System;
+using System.Reflection;
+using Applitools.Playwright.Universal;
+using System.Diagnostics;
 
-import com.applitools.eyes.EyesRunner;
-import com.applitools.eyes.exceptions.StaleElementReferenceException;
-import com.applitools.eyes.playwright.universal.PSDKListener;
-import com.applitools.eyes.playwright.universal.PlaywrightStaleElementReferenceException;
-import com.applitools.eyes.playwright.universal.Refer;
-import com.applitools.eyes.playwright.universal.driver.SpecDriverPlaywright;
-import com.applitools.utils.ClassVersionGetter;
+namespace Applitools.Playwright
+{
+    public class ClassicRunner : EyesRunner
+    {
+        /// <summary>
+        /// name of the client sdk
+        /// </summary>
+        protected static string BASE_AGENT_ID = "eyes.playwright.java";
 
-public class ClassicRunner extends EyesRunner {
-    /**
-     * name of the client sdk
-     */
-    protected static String BASE_AGENT_ID = "eyes.playwright.java";
+        /// <summary>
+        /// version of the client sdk
+        /// </summary>
+        protected static string VERSION = FileVersionInfo.GetVersionInfo(typeof(ClassicRunner).Assembly.Location).FileVersion;
 
-    /**
-     * version of the client sdk
-     */
-    protected static String VERSION = ClassVersionGetter.CURRENT_VERSION;
+        /// <summary>
+        /// spec-driver
+        /// </summary>
+        protected static string[] COMMANDS = SpecDriverPlaywright.getMethodNames();
 
-    /**
-     * spec-driver
-     */
-    protected static String[] COMMANDS = SpecDriverPlaywright.getMethodNames();
+        /// <summary>
+        /// universal server listener
+        /// </summary>
+        private static readonly PSDKListener listener_ = PSDKListener.getInstance();
 
-    /**
-     * universal server listener
-     */
-    private static final PSDKListener listener = PSDKListener.getInstance();
+        /// <summary>
+        /// used for instantiating Playwright Runner
+        /// </summary>
+        public ClassicRunner() : this(BASE_AGENT_ID, VERSION)
+        {
+        }
 
-    /**
-     * used for instantiating Playwright Runner
-     */
-    public ClassicRunner() {
-        this(BASE_AGENT_ID, VERSION);
+        /// <summary>
+        /// used for instantiating Playwright Runner
+        /// </summary>
+        public ClassicRunner(string baseAgentId, string version)
+            : base(baseAgentId, version, null, COMMANDS, listener_)
+        {
+            managerRef = commandExecutor.coreMakeManager("classic", null);
+        }
+
+        public StaleElementReferenceException getStaleElementException()
+        {
+            return new PlaywrightStaleElementReferenceException();
+        }
+
+        protected Refer getRefer()
+        {
+            return listener_.getRefer();
+        }
     }
-
-    /**
-     * used for instantiating Playwright Runner
-     */
-    public ClassicRunner(String baseAgentId, String version) {
-        super(baseAgentId, version, null, COMMANDS, listener);
-        managerRef = commandExecutor.coreMakeManager("classic", null);
-
-    }
-
-    @Override
-    public StaleElementReferenceException getStaleElementException() {
-        return new PlaywrightStaleElementReferenceException();
-    }
-
-    @Override
-    protected Refer getRefer() {
-        return listener.getRefer();
-    }
-
 }
