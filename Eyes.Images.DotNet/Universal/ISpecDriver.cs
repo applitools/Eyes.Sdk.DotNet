@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Net;
+using Applitools.Universal.Driver;
 using Applitools.Utils.Geometry;
 
 namespace Applitools.Universal
@@ -47,7 +47,7 @@ namespace Applitools.Universal
     
     RectangleSize GetViewportSize(Reference driver);
     
-    List<Cookie> GetCookies(Reference driver, Reference context);
+    List<ICookie> GetCookies(Reference driver, Reference context);
     
     object GetDriverInfo(Reference driver);
     
@@ -57,7 +57,7 @@ namespace Applitools.Universal
     
     string GetUrl(Reference driver);
     
-    object TakeScreenshot(Reference driver);
+    byte[] TakeScreenshot(Reference driver);
     
     void Click();
     

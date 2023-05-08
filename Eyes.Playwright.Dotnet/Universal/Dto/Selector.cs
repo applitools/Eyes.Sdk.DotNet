@@ -1,3 +1,4 @@
+using Applitools.Universal;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
 
@@ -10,7 +11,7 @@ namespace Applitools.Playwright.Universal.Dto
         [JsonIgnore]
         public ILocator Locator { get; set; }
 
-        public string SelectorName { get; set; }
+        public string SelectorPath { get; set; }
 
         public Padding Padding { get; set; }
 
@@ -22,7 +23,7 @@ namespace Applitools.Playwright.Universal.Dto
 
         public Selector(string selector)
         {
-            SelectorName = selector;
+            SelectorPath = selector;
         }
 
         public Selector(ILocator locator)

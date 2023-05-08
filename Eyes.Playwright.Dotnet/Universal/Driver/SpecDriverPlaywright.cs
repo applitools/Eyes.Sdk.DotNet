@@ -1,9 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
+using Applitools.Universal.Driver;
+using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
 
 namespace Applitools.Playwright.Universal.Driver
@@ -12,7 +16,8 @@ namespace Applitools.Playwright.Universal.Driver
     {
         private readonly Refer refer_;
 
-        public SpecDriverPlaywright(Refer refer) {
+        public SpecDriverPlaywright(Refer refer)
+        {
             refer_ = refer;
         }
 
@@ -36,12 +41,18 @@ namespace Applitools.Playwright.Universal.Driver
             throw new NotSupportedException("IsSelector is not supported");
         }
 
+        public bool IsEqualElements()
+        {
+            throw new NotSupportedException("IsEqualElements is not supported");
+
+        }
+
         public Reference MainContext(Reference context)
         {
             IFrame mainFrame = ExtractContextUtil_(context);
-            while (mainFrame.parentFrame() != null)
+            while (mainFrame.ParentFrame != null)
             {
-                mainFrame = mainFrame.parentFrame();
+                mainFrame = mainFrame.ParentFrame;
             }
 
             Context frameContext = new Context
@@ -55,14 +66,14 @@ namespace Applitools.Playwright.Universal.Driver
         {
             IFrame frame = ExtractContextUtil_(context);
 
-            if (frame.parentFrame() == null)
+            if (frame.ParentFrame == null)
             {
                 return null;
             }
 
             Context frameContext = new Context
             {
-                ApplitoolsRefId = refer_.Ref(frame.parentFrame(), context)
+                ApplitoolsRefId = refer_.Ref(frame.ParentFrame, context)
             };
             return frameContext;
         }
@@ -71,10 +82,11 @@ namespace Applitools.Playwright.Universal.Driver
         {
             object root = refer_.Deref(element);
 
-            if (root is IElementHandle eh) {
+            if (root is IElementHandle eh)
+            {
                 Context frameContext = new Context();
                 IFrame frame = eh.ContentFrameAsync().GetAwaiter().GetResult();
-                frameContext.setApplitoolsRefId(refer_.ref (frame, element));
+                frameContext.ApplitoolsRefId = refer_.Ref(frame, element);
 
                 return frameContext;
             }
@@ -82,40 +94,44 @@ namespace Applitools.Playwright.Universal.Driver
             return null;
         }
 
-        @Override
-
         public object ExecuteScript(Reference context, string script, object arg)
         {
-            object ctx = refer_.deref(context);
-            JSHandle res = null;
+            object ctx = refer_.Deref(context);
+            IJSHandle res = null;
 
-            object args = derefArgsUtil(arg);
+            object args = DerefArgsUtil(arg);
 
-            if (ctx instanceof Frame) {
-                res = ((Frame)ctx).evaluateHandle(script, args);
-            } else if (ctx instanceof Page) {
-                res = ((Page)ctx).evaluateHandle(script, args);
+            if (ctx is IFrame frame)
+            {
+                res = frame.EvaluateHandleAsync(script, args).GetAwaiter().GetResult();
+            }
+            else if (ctx is IPage page)
+            {
+                res = page.EvaluateHandleAsync(script, args).GetAwaiter().GetResult();
             }
 
-            return handlerToObjectUtil(res, context);
+            return HandlerToObjectUtil(res, context);
         }
 
-        @Override
-
-        public Element findElement(Reference driver, Reference selector, Reference parent)
+        public Reference FindElement(Reference driver, Reference selector, Reference parent)
         {
-            object context = refer_.deref(driver);
-            object root = parent == null ? context : refer_.deref(parent);
-            object locator = refer_.deref(selector);
+            object context = refer_.Deref(driver);
+            object root = parent == null ? context : refer_.Deref(parent);
+            object locator = refer_.Deref(selector);
 
-            ElementHandle elementHandle = null;
-            string _selector = ((Selector)selector).getSelector();
-            if (locator instanceof Locator) {
-                elementHandle = ((Locator)locator).elementHandle();
-            } else if (root instanceof Frame) {
-                elementHandle = ((Frame)root).querySelector(_selector);
-            } else if (root instanceof Page) {
-                elementHandle = ((Page)root).querySelector(_selector);
+            IElementHandle elementHandle = null;
+            string selectorPath = ((Selector)selector).SelectorPath;
+            if (locator is ILocator loc)
+            {
+                elementHandle = loc.ElementHandleAsync().GetAwaiter().GetResult();
+            }
+            else if (root is IFrame frame)
+            {
+                elementHandle = frame.QuerySelectorAsync(selectorPath).GetAwaiter().GetResult();
+            }
+            else if (root is IPage page)
+            {
+                elementHandle = page.QuerySelectorAsync(selectorPath).GetAwaiter().GetResult();
             }
 
             if (elementHandle == null)
@@ -123,118 +139,158 @@ namespace Applitools.Playwright.Universal.Driver
                 return null;
             }
 
-            Element element = new Element();
-            element.setApplitoolsRefId(refer_.ref (elementHandle, driver));
+            Element element = new Element
+            {
+                ApplitoolsRefId = refer_.Ref(elementHandle, driver)
+            };
             return element;
         }
 
-        @Override
-
-        public List<Reference> FindElements(Reference context, Reference selector, Reference parent)
+        public List<Reference> FindElements(Reference driver, Reference selector, Reference parent)
         {
-            object ctx = refer_.deref(context);
-            object root = parent == null ? ctx : refer_.deref(parent);
-            object locator = refer_.deref(selector);
+            object context = refer_.Deref(driver);
+            object root = parent == null ? context : refer_.Deref(parent);
+            object locator = refer_.Deref(selector);
 
-            List<ElementHandle> elementHandles = new ArrayList<>();
-            string _selector = ((Selector)selector).getSelector();
-            if (locator instanceof Locator) {
-                elementHandles = ((Locator)locator).elementHandles();
-            } else if (root instanceof Frame) {
-                elementHandles = ((Frame)root).querySelectorAll(_selector);
-            } else if (root instanceof Page) {
-                elementHandles = ((Page)root).querySelectorAll(_selector);
+            IEnumerable<IElementHandle> elementHandles = null;
+            string selectorPath = ((Selector)selector).SelectorPath;
+            if (locator is ILocator loc)
+            {
+                elementHandles = loc.ElementHandlesAsync().GetAwaiter().GetResult();
+            }
+            else if (root is IFrame frame)
+            {
+                elementHandles = frame.QuerySelectorAllAsync(selectorPath).GetAwaiter().GetResult();
+            }
+            else if (root is IPage page)
+            {
+                elementHandles = page.QuerySelectorAllAsync(selectorPath).GetAwaiter().GetResult();
             }
 
-            return elementHandles.stream()
-                .map(elementHandle-> {
-                Element element = new Element(elementHandle);
-                element.setApplitoolsRefId(refer_.ref (elementHandle, context));
-                return element;
-            })
-            .collect(Collectors.toList());
+            if (elementHandles == null)
+            {
+                return new List<Reference>();
+            }
+
+            List<Reference> result = elementHandles.Select<IElementHandle, Reference>(
+                    eh =>
+                    {
+                        Element e = new Element(eh)
+                        {
+                            ApplitoolsRefId = refer_.Ref(eh, driver)
+                        };
+                        return e;
+                    })
+                .ToList();
+            return result;
         }
 
-        @Override
-
-        public void setViewportSize(Reference driver, RectangleSizeDto windowSize)
+        public void SetElementText()
         {
-            object page = refer_.deref(driver);
-            ((Page)page).setViewportSize(windowSize.getWidth(), windowSize.getHeight());
+            throw new NotSupportedException("SetElementText is not supported");
         }
 
-        @Override
-
-        public RectangleSizeDto getViewportSize(Reference driver)
+        public string GetElementText()
         {
-            object page = refer_.deref(driver);
-            RectangleSizeDto viewportSize = new RectangleSizeDto();
-            viewportSize.setWidth(((Page)page).viewportSize().width);
-            viewportSize.setHeight(((Page)page).viewportSize().height);
+            throw new NotSupportedException("GetElementText is not supported");
+        }
+
+        public void SetWindowSize(Reference driver, RectangleSize windowSize)
+        {
+            throw new NotSupportedException("SetWindowSize is not supported");
+        }
+
+        public RectangleSize GetWindowSize(Reference driver)
+        {
+            throw new NotSupportedException("GetWindowSize is not supported");
+        }
+
+        public void SetViewportSize(Reference driver, RectangleSize windowSize)
+        {
+            object page = refer_.Deref(driver);
+            ((IPage)page).SetViewportSizeAsync(windowSize.Width, windowSize.Height);
+        }
+
+        public RectangleSize GetViewportSize(Reference driver)
+        {
+            object page = refer_.Deref(driver);
+            RectangleSize viewportSize = new RectangleSize();
+            PageViewportSizeResult pageVpSize = ((IPage)page).ViewportSize;
+            viewportSize.Width = pageVpSize?.Width ?? 0;
+            viewportSize.Height = pageVpSize?.Height ?? 0;
             return viewportSize;
         }
 
-        @Override
-
-        public List<ICookie> getCookies(Reference driver, Reference context)
+        public List<ICookie> GetCookies(Reference driver, Reference context)
         {
-            Page ctx = (Page)refer_.deref(driver);
-            List<Cookie> cookies = ctx.context().cookies();
+            IPage ctx = (IPage)refer_.Deref(driver);
+            IReadOnlyList<BrowserContextCookiesResult> cookies = ctx.Context.CookiesAsync().GetAwaiter().GetResult();
 
-            return cookies.stream()
-                .map(TCookie::new)
-                .collect(Collectors.toList());
+            return cookies.Select<BrowserContextCookiesResult, ICookie>(cookie => new TCookie(cookie)).ToList();
         }
 
-        @Override
-
-        public DriverInfoDto getDriverInfo(Reference driver)
+        public object GetDriverInfo(Reference driver)
         {
             return new DriverInfoDto();
         }
 
-        @Override
+        public Dictionary<string, object> GetCapabilities(Reference driver)
+        {
+            throw new NotSupportedException("GetCapabilities is not supported");
+        }
 
         public string GetTitle(Reference driver)
         {
-            Page context = (Page)refer_.deref(driver);
-            return context.title();
+            IPage context = (IPage)refer_.Deref(driver);
+            return context.TitleAsync().GetAwaiter().GetResult();
         }
-
-        @Override
 
         public string GetUrl(Reference driver)
         {
-            Page context = (Page)refer_.deref(driver);
-            return context.url();
+            IPage context = (IPage)refer_.Deref(driver);
+            return context.Url;
         }
 
-        @Override
+        public void Click()
+        {
+            throw new NotSupportedException("Click is not supported");
+        }
 
         public void Visit(Reference driver, string url)
         {
-            Page context = (Page)refer_.deref(driver);
-            context.navigate(url);
+            IPage context = (IPage)refer_.Deref(driver);
+            context.GotoAsync(url);
         }
 
-        @Override
-
-        public byte[] takeScreenshot(Reference driver)
+        public void Hover(Reference context, Reference element)
         {
-            Page context = (Page)refer_.deref(driver);
-            return context.screenshot();
+            throw new NotSupportedException("Hover is not supported");
         }
 
-        static public string[] getMethodNames()
+        public void ScrollIntoView(Reference context, Reference element, bool align)
         {
-            Method[] methods = SpecDriverPlaywright.class.getDeclaredMethods();
-            return Stream.of(methods)
-                .map(Method::getName)
-                .filter(name-> !name.contains("getMethodNames") && !name.contains("Util"))
-                .toArray(string[]::new);
+            throw new NotSupportedException("ScrollIntoView is not supported");
         }
 
-        private object handlerToObjectUtil(JSHandle jsHandle, Reference context)
+        public void WaitUntilDisplayed(Reference context, Reference selector)
+        {
+            throw new NotSupportedException("WaitUntilDisplayed is not supported");
+        }
+
+        public byte[] TakeScreenshot(Reference driver)
+        {
+            IPage context = (IPage)refer_.Deref(driver);
+            return context.ScreenshotAsync().GetAwaiter().GetResult();
+        }
+
+        public static string[] GetMethodNames()
+        {
+            MethodInfo[] methods = typeof(SpecDriverPlaywright).GetMethods();
+            return methods.Where(m => !m.Name.Contains("GetMethodNames") && !m.Name.Contains("Util"))
+                .Select(m => m.Name).ToArray();
+        }
+
+        private object HandlerToObjectUtil(IJSHandle jsHandle, Reference context)
         {
             if (jsHandle == null)
             {
@@ -242,78 +298,100 @@ namespace Applitools.Playwright.Universal.Driver
             }
 
             string type = "";
-            Pattern pattern = Pattern.compile("(?:.+@)?(\\w*)(?:\\(\\d+\\))?", Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(jsHandle.toString());
-            if (matcher.find())
+            Regex jsHandlePattern = new Regex("(?:.+@)?(\\w*)(?:\\(\\d+\\))?",
+                RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Match jsHandleMatcher = jsHandlePattern.Match(jsHandle.ToString());
+            if (jsHandleMatcher.Success)
             {
-                type = matcher.group(0).toLowerCase();
+                type = jsHandleMatcher.Groups[0].Value.ToLower();
             }
 
-            if (type.matches("array\\(\\d+\\)"))
+            Regex arrayPattern = new Regex("array\\(\\d+\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (arrayPattern.Match(type).Success)
             {
-                Map<string, JSHandle> map = jsHandle.getProperties();
-                List<object> arrayValues = new ArrayList<>();
-                for (JSHandle jsHandle1:
-                map.values()) {
-                    arrayValues.add(handlerToObjectUtil(jsHandle1, context));
+                var map = jsHandle.GetPropertiesAsync().GetAwaiter().GetResult();
+                var arrayValues = new List<object>();
+                foreach (IJSHandle jsHandle1 in map.Values)
+                {
+                    arrayValues.Add(HandlerToObjectUtil(jsHandle1, context));
                 }
+
                 return arrayValues;
             }
-            else if (type.equals("object"))
+
+            if (type.Equals("object"))
             {
-                Map<string, JSHandle> map = jsHandle.getProperties();
-                Map<string, object> resultMap = new HashMap<>();
-                for (Map.Entry < string, JSHandle > entry: map.entrySet())
+                var map = jsHandle.GetPropertiesAsync().GetAwaiter().GetResult();
+                var resultMap = new Dictionary<string, object>();
+                foreach (var entry in map)
                 {
-                    resultMap.put(entry.getKey(), handlerToObjectUtil(entry.getValue(), context));
+                    resultMap.Add(entry.Key, HandlerToObjectUtil(entry.Value, context));
                 }
+
                 return resultMap;
             }
-            else if (type.equals("jshandle@node"))
+
+            if (type.Equals("jshandle@node"))
             {
-                Element element = new Element();
-                element.setApplitoolsRefId(refer_.ref (jsHandle.asElement(), context));
+                Element element = new Element
+                {
+                    ApplitoolsRefId = refer_.Ref(jsHandle.AsElement(), context)
+                };
                 return element;
             }
 
-            return jsHandle.jsonValue();
+            return jsHandle.JsonValueAsync<object>().GetAwaiter().GetResult();
         }
 
-        private object derefArgsUtil(object arg)
+        private object DerefArgsUtil(object arg)
         {
             if (arg == null)
             {
                 return null;
             }
 
-            ArrayList<object> derefArg = new ArrayList<>();
+            var derefArg = new List<object>();
 
-            if (arg instanceof ArrayList) {
-                for (object argument:
-                (ArrayList)arg) {
-                    if (argument instanceof ArrayList) {
-                        derefArg.add(derefArgsUtil(argument));
-                    } else {
-                        derefArg.add(refer_.deref(argument));
+            if (arg is IDictionary argsDict)
+            {
+                var map = new Dictionary<object, object>();
+                var enumerator = argsDict.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    if (enumerator.Key != null)
+                    {
+                        map.Add(enumerator.Key, refer_.Deref(enumerator.Value));
                     }
                 }
-                return derefArg;
-            } else if (arg instanceof HashMap){
-                HashMap<object, object> map = new HashMap<>();
-                for (Map.Entry < ?, ?> entry :
-                ((HashMap < ?,  ?>) arg).entrySet()) {
-                    map.put(entry.getKey(), refer_.deref(entry.getValue()));
-                }
+
                 return map;
             }
 
-            return refer_.deref(arg);
+            if (arg is IEnumerable argsList)
+            {
+                foreach (object argument in argsList)
+                {
+                    if (argument is IEnumerable)
+                    {
+                        derefArg.Add(DerefArgsUtil(argument));
+                    }
+                    else
+                    {
+                        derefArg.Add(refer_.Deref(argument));
+                    }
+                }
+
+                return derefArg;
+            }
+
+
+            return refer_.Deref(arg);
         }
 
         private IFrame ExtractContextUtil_(Reference context)
         {
             object root = refer_.Deref(context);
-            return IsDriver(root) ? ((IPage)root).mainFrame() : (IFrame)root;
+            return IsDriver(root) ? ((IPage)root).MainFrame : (IFrame)root;
         }
     }
 }

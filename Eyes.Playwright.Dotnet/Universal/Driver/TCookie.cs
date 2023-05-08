@@ -1,36 +1,37 @@
-package com.applitools.eyes.playwright.universal.driver;
+using Applitools.Universal.Driver;
+using Microsoft.Playwright;
 
-import com.applitools.eyes.universal.driver.ICookie;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.microsoft.playwright.options.Cookie;
+namespace Applitools.Playwright.Universal.Driver
+{
+    public class TCookie : Cookie, ICookie
+    {
+        public TCookie(BrowserContextCookiesResult cookie)
+            : this(cookie.Name, cookie.Value)
+        {
+            Expires = cookie.Expires;
+            Domain = cookie.Domain;
+            Path = cookie.Path;
+            Secure = cookie.Secure;
+            HttpOnly = cookie.HttpOnly;
+            SameSite = cookie.SameSite;
+        }
 
-public class TCookie extends Cookie implements ICookie {
+        public TCookie(Cookie cookie)
+            : this(cookie.Name, cookie.Value)
+        {
+            Expires = cookie.Expires;
+            Domain = cookie.Domain;
+            Path = cookie.Path;
+            Url = cookie.Url;
+            Secure = cookie.Secure;
+            HttpOnly = cookie.HttpOnly;
+            SameSite = cookie.SameSite;
+        }
 
-    private Double expiry;
-
-    public TCookie(Cookie cookie) {
-        this(cookie.name, cookie.value);
-        setExpires(cookie.expires);
-        setDomain(cookie.domain);
-        setPath(cookie.path);
-        setUrl(cookie.url);
-        setSecure(cookie.secure);
-        setHttpOnly(cookie.httpOnly);
-        setSameSite(cookie.sameSite);
-    }
-
-    private TCookie(String name, String value) {
-        super(name, value);
-    }
-
-    public Double getExpires() {
-        return expiry;
-    }
-
-    @JsonProperty("expiry")
-    @Override
-    public TCookie setExpires(double expires) {
-        this.expiry = expires;
-        return this;
+        private TCookie(string name, string value)
+        {
+            Name = name;
+            Value = value;
+        }
     }
 }
