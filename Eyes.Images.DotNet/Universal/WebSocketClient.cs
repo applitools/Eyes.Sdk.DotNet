@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Applitools.Commands;
+using Applitools.Universal;
 using Applitools.Utils;
 using Newtonsoft.Json;
 
@@ -25,12 +26,17 @@ namespace Applitools
         private readonly ConcurrentDictionary<string, string> messages_;
         private readonly object lock_ = new object();
 
+        private ISpecDriverMessageAdaptor messageAdaptor_;
+
         public event SocketMessageReceivedHandler MessageReceived;
 
         private Logger Logger { get; } = new Logger();
         
-        public WebSocketClient(ILogHandler logHandler = null)
+        public WebSocketClient(ISpecDriverMessageAdaptor messageAdaptor, ILogHandler logHandler = null)
         {
+            ArgumentGuard.NotNull(messageAdaptor, nameof(messageAdaptor));
+            messageAdaptor_ = messageAdaptor;
+            
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
@@ -78,7 +84,8 @@ namespace Applitools
                 throw new Exception($"Server did not respond for {data.Name}");
             }
 
-            var result = JsonConvert.DeserializeObject<TResponse>(message);
+            var result = messageAdaptor_.HandleMessage<TResponse>(message);
+
             return result;
         }
 

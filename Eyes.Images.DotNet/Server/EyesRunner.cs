@@ -53,9 +53,11 @@ namespace Applitools
             _actualAssembly = GetActualAssembly();
 
             var sdkEvent = CreateCoreSdk(agentId);
-            CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
+            CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageAdaptor, logHandler, sdkEvent);
         }
 
+        protected virtual ISpecDriverMessageAdaptor SpecDriverMessageAdaptor { get; } = new SpecDriverMessageAdaptor();
+        
         public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
         {
             RemoveDuplicateTests = removeDuplicateTests;
@@ -215,7 +217,7 @@ namespace Applitools
             return closeAllEyes;
         }
 
-        private CoreMakeSdkRequest CreateCoreMakeSdk(string name)
+        protected virtual CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
             var result = new CoreMakeSdkRequest();
             result.AddOrUpdatePayload("agentId", $"{name}:{_actualAssembly.GetName().Version}");

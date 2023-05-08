@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Applitools.Playwright.Universal;
 using System.Diagnostics;
+using Applitools.Playwright.Universal.Driver;
 
 namespace Applitools.Playwright
 {
@@ -10,7 +11,7 @@ namespace Applitools.Playwright
         /// <summary>
         /// name of the client sdk
         /// </summary>
-        protected static string BASE_AGENT_ID = "eyes.playwright.java";
+        protected static string BASE_AGENT_ID = "eyes.playwright.dotnet";
 
         /// <summary>
         /// version of the client sdk
@@ -20,12 +21,12 @@ namespace Applitools.Playwright
         /// <summary>
         /// spec-driver
         /// </summary>
-        protected static string[] COMMANDS = SpecDriverPlaywright.getMethodNames();
+        protected static string[] COMMANDS = SpecDriverPlaywright.GetMethodNames();
 
         /// <summary>
         /// universal server listener
         /// </summary>
-        private static readonly PSDKListener listener_ = PSDKListener.getInstance();
+        private static readonly PSdkListener listener_ = PSdkListener.getInstance();
 
         /// <summary>
         /// used for instantiating Playwright Runner
@@ -43,12 +44,12 @@ namespace Applitools.Playwright
             managerRef = commandExecutor.coreMakeManager("classic", null);
         }
 
-        public StaleElementReferenceException getStaleElementException()
+        public PlaywrightStaleElementReferenceException GetStaleElementException()
         {
             return new PlaywrightStaleElementReferenceException();
         }
 
-        protected Refer getRefer()
+        protected Refer GtRefer()
         {
             return listener_.getRefer();
         }

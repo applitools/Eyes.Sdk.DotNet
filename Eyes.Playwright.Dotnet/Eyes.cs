@@ -94,7 +94,7 @@ namespace Applitools.Playwright
         public IPage Open(IPage page, string appName, string testName,
             RectangleSize viewportSize)
         {
-            if (getIsDisabled())
+            if (IsDisabled)
             {
                 return page;
             }
@@ -114,6 +114,12 @@ namespace Applitools.Playwright
             OpenSettingsDto settingsDto =
                 SettingsMapper.toOpenSettingsDto(configuration_, runner_.isDontCloseBatches());
 
+        /*
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
+
+            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
+          */
+        
             eyesRef_ = commandExecutor_.managerOpenEyes(runner_.getManagerRef(), driver_, settingsDto,
                 configurationDto);
             return page;

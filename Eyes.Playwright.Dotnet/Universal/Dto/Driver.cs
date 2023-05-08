@@ -1,28 +1,17 @@
 using System;
+using Applitools.Universal;
+using Microsoft.Playwright;
 
 namespace Applitools.Playwright.Universal.Dto
 {
-
-    import com.applitools.eyes.WebDriverProxySettings;
-    import com.applitools.eyes.universal.Reference;
-    import com.applitools.eyes.universal.dto.ITargetDto;
-    import com.applitools.eyes.universal.dto.ProxyDto;
-    import com.fasterxml.jackson.annotation.JsonIgnore;
-    import com.fasterxml.jackson.annotation.JsonInclude;
-    import com.microsoft.playwright.Page;
-
-    import java.util.UUID;
-
-// @JsonInclude(JsonInclude.Include.NON_NULL)
     public class Driver : Reference, ITargetDto
     {
 
         private ProxyDto proxy = null;
 
-        @JsonIgnore
-        private Page page;
-        @JsonIgnore
-        private Reference root;
+
+        public IPage Page { get; set; }
+        public Reference root;
 
         public Driver()
         {

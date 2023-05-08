@@ -9,9 +9,10 @@ namespace Applitools
 
         private Logger Logger { get; } = new Logger();
 
-        public static CommandExecutor GetInstance(ILogHandler logHandler = null, string initMessage = null)
+        public static CommandExecutor GetInstance(ISpecDriverMessageAdaptor specDriverMessageAdaptor,
+            ILogHandler logHandler = null, string initMessage = null)
         {
-            return instance_ ?? (instance_ = new CommandExecutor(logHandler, initMessage));
+            return instance_ ?? (instance_ = new CommandExecutor(specDriverMessageAdaptor, logHandler, initMessage));
         }
 
         public void SendData<TRequest>(TRequest data) where TRequest : CommandBase
@@ -31,14 +32,14 @@ namespace Applitools
             webSocket_.SetLogHandler(logHandler);
         }
 
-        private CommandExecutor(ILogHandler logHandler = null, string initMessage = null)
+        private CommandExecutor(ISpecDriverMessageAdaptor specDriverMessageAdaptor, ILogHandler logHandler = null, string initMessage = null)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
             }
 
-            StartServer();
+            StartServer(specDriverMessageAdaptor);
 
             if (string.IsNullOrEmpty(initMessage) == false)
             {
@@ -46,11 +47,11 @@ namespace Applitools
             }
         }
 
-        private void StartServer()
+        private void StartServer(ISpecDriverMessageAdaptor specDriverMessageAdaptor)
         {
             int serverPort = UniversalSdkNativeLoader.Start();
 
-            webSocket_ = new WebSocketClient(Logger.GetILogHandler());
+            webSocket_ = new WebSocketClient(specDriverMessageAdaptor, Logger.GetILogHandler());
 
             var url = GetSocketUrl(serverPort);
             Logger.Log($"Server url: {url}");
