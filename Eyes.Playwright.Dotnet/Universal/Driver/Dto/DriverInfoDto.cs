@@ -1,43 +1,39 @@
-package com.applitools.eyes.playwright.universal.driver.dto;
+namespace Applitools.Playwright.Universal.Driver.Dto
+{
+    public class DriverInfoDto
+    {
+        private readonly DriverInfoFeaturesDto features_;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+        public DriverInfoDto()
+        {
+            features_ = new DriverInfoFeaturesDto();
+        }
 
-import java.util.Objects;
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DriverInfoDto {
+            if (!(o is DriverInfoDto other))
+            {
+                return false;
+            }
 
-    private DriverInfoFeaturesDto features;
+            return features_.Equals(other.features_);
+        }
 
-    public DriverInfoDto() {
-        this.features = new DriverInfoFeaturesDto();
-    }
+        public override int GetHashCode()
+        {
+            return features_?.GetHashCode() ?? 0;
+        }
 
-    public DriverInfoFeaturesDto getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(DriverInfoFeaturesDto features) {
-        this.features = features;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DriverInfoDto that = (DriverInfoDto) o;
-        return Objects.equals(features, that.features);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(features);
-    }
-
-    @Override
-    public String toString() {
-        return "DriverInfoDto{" +
-                "features=" + features +
-                '}';
+        public override string ToString()
+        {
+            return "DriverInfoDto{" +
+                   "features=" + features_ +
+                   '}';
+        }
     }
 }

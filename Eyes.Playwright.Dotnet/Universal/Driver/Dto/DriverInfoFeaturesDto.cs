@@ -1,53 +1,43 @@
-package com.applitools.eyes.playwright.universal.driver.dto;
+namespace Applitools.Playwright.Universal.Driver.Dto
+{
+    public class DriverInfoFeaturesDto
+    {
+        public bool AllCookies { get; set; }
+        public bool CanExecuteOnlyFunctionScripts { get; set; }
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+        public DriverInfoFeaturesDto()
+        {
+            AllCookies = true;
+            CanExecuteOnlyFunctionScripts = true;
+        }
 
-import java.util.Objects;
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DriverInfoFeaturesDto {
-    private Boolean allCookies;
-    private Boolean canExecuteOnlyFunctionScripts;
+            if (!(o is DriverInfoFeaturesDto other))
+            {
+                return false;
+            }
 
-    public DriverInfoFeaturesDto() {
-        this.allCookies = true;
-        this.canExecuteOnlyFunctionScripts = true;
-    }
+            return other.AllCookies.Equals(AllCookies) &&
+                   other.CanExecuteOnlyFunctionScripts.Equals(CanExecuteOnlyFunctionScripts);
+        }
 
-    public Boolean getAllCookies() {
-        return allCookies;
-    }
+        public override int GetHashCode()
+        {
+            return (AllCookies ? 1 : 0) + (CanExecuteOnlyFunctionScripts ? 2 : 0);
+        }
 
-    public void setAllCookies(Boolean allCookies) {
-        this.allCookies = allCookies;
-    }
-
-    public Boolean getCanExecuteOnlyFunctionScripts() {
-        return canExecuteOnlyFunctionScripts;
-    }
-
-    public void setCanExecuteOnlyFunctionScripts(Boolean canExecuteOnlyFunctionScripts) {
-        this.canExecuteOnlyFunctionScripts = canExecuteOnlyFunctionScripts;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DriverInfoFeaturesDto that = (DriverInfoFeaturesDto) o;
-        return Objects.equals(allCookies, that.allCookies) && Objects.equals(canExecuteOnlyFunctionScripts, that.canExecuteOnlyFunctionScripts);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(allCookies, canExecuteOnlyFunctionScripts);
-    }
-
-    @Override
-    public String toString() {
-        return "DriverInfoFeaturesDto{" +
-                "allCookies=" + allCookies +
-                ", canExecuteOnlyFunctionScripts=" + canExecuteOnlyFunctionScripts +
-                '}';
+        public override string ToString()
+        {
+            return "DriverInfoFeaturesDto{" +
+                   "allCookies=" + AllCookies +
+                   ", canExecuteOnlyFunctionScripts=" + CanExecuteOnlyFunctionScripts +
+                   '}';
+        }
     }
 }

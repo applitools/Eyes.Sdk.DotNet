@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Applitools.Playwright.Universal.Driver.Dto;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
 using Applitools.Universal.Driver;

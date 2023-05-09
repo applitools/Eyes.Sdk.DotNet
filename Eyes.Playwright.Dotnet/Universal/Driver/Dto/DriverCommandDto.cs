@@ -1,132 +1,52 @@
-package com.applitools.eyes.playwright.universal.driver.dto;
+using Applitools.Playwright.Universal.Dto;
+using Applitools.Universal;
+using Applitools.Utils.Geometry;
+using Newtonsoft.Json;
 
-import com.applitools.eyes.playwright.deserializers.ExecuteScriptDeserializer;
-import com.applitools.eyes.playwright.universal.dto.Selector;
-import com.applitools.eyes.universal.Reference;
-import com.applitools.eyes.universal.dto.RectangleSizeDto;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+namespace Applitools.Playwright.Universal.Driver.Dto
+{
+    public class DriverCommandDto
+    {
+        [JsonProperty("driver")]
+        public Reference Driver { get; set; }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DriverCommandDto {
+        [JsonProperty("context")]
+        public Reference Context { get; set; }
 
-    @JsonProperty("driver")
-    protected Reference driver;
+        [JsonProperty("element")]
+        public Reference Element { get; set; }
 
-    @JsonProperty("context")
-    protected Reference context;
+        [JsonProperty("parent")]
+        public Reference Parent { get; set; }
 
-    @JsonProperty("element")
-    protected Reference element;
+        [JsonProperty("selector")]
+        public Selector Selector { get; set; }
 
-    @JsonProperty("parent")
-    protected Reference parent;
+        [JsonProperty("script")]
+        public string Script { get; set; }
 
-    @JsonProperty("selector")
-    protected Selector selector;
+        [JsonProperty("arg")]
+        public object Arg { get; set; }
 
-    @JsonProperty("script")
-    protected String script;
+        [JsonProperty("size")]
+        public RectangleSize Size { get; set; }
 
-    @JsonDeserialize(using = ExecuteScriptDeserializer.class)
-    @JsonProperty("arg")
-    protected Object arg;
+        [JsonProperty("url")]
+        public string Url { get; set; }
 
-    @JsonProperty("size")
-    protected RectangleSizeDto size;
-
-    @JsonProperty("url")
-    protected String url;
-
-    DriverCommandDto() {
-
-    }
-
-    public Reference getDriver() {
-        return driver;
-    }
-
-    public void setDriver(Reference driver) {
-        this.driver = driver;
-    }
-
-    public Reference getContext() {
-        return context;
-    }
-
-    public void setContext(Reference context) {
-        this.context = context;
-    }
-
-    public Reference getElement() {
-        return element;
-    }
-
-    public void setElement(Reference element) {
-        this.element = element;
-    }
-
-    public Reference getParent() {
-        return parent;
-    }
-
-    public void setParent(Reference parent) {
-        this.parent = parent;
-    }
-
-    public Selector getSelector() {
-        return selector;
-    }
-
-    public void setSelector(Selector selector) {
-        this.selector = selector;
-    }
-
-    public String getScript() {
-        return script;
-    }
-
-    public void setScript(String script) {
-        this.script = script;
-    }
-
-    public Object getArg() {
-        return arg;
-    }
-
-    public void setArg(Object arg) {
-        this.arg = arg;
-    }
-
-    public RectangleSizeDto getSize() {
-        return size;
-    }
-
-    public void setSize(RectangleSizeDto size) {
-        this.size = size;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @Override
-    public String toString() {
-        return "DriverCommandDto{" +
-                "driver=" + driver +
-                ", context=" + context +
-                ", element=" + element +
-                ", parent=" + parent +
-                ", selector=" + selector +
-                ", script='" + script + '\'' +
-                ", arg=" + arg +
-                ", size=" + size +
-                ", url='" + url + '\'' +
-                '}';
+        public override string ToString()
+        {
+            return "DriverCommandDto{" +
+                   "driver=" + Driver +
+                   ", context=" + Context +
+                   ", element=" + Element +
+                   ", parent=" + Parent +
+                   ", selector=" + Selector +
+                   ", script='" + Script + '\'' +
+                   ", arg=" + Arg +
+                   ", size=" + Size +
+                   ", url='" + Url + '\'' +
+                   '}';
+        }
     }
 }
