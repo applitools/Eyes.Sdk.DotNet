@@ -34,6 +34,12 @@ namespace Applitools.Playwright.Universal.Driver.Dto
         [JsonProperty("url")]
         public string Url { get; set; }
 
+        [JsonProperty("message")]
+        public string Message { get; set; }
+        
+        [JsonProperty("level")]
+        public string Level { get; set; }
+        
         public override string ToString()
         {
             return "DriverCommandDto{" +

@@ -15,6 +15,7 @@ namespace Applitools
         Locate,
         TestFramework,
         Reporting,
-        Setup
+        Setup,
+        SpecDriver
     }
 }

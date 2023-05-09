@@ -1,13 +1,7 @@
 using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
 using Applitools.Commands;
 using Applitools.Playwright.Universal.Driver.Dto;
-using Applitools.Playwright.Universal.Dto;
-using Applitools.Universal;
-using Applitools.Universal.Driver;
 using Applitools.Utils;
-using Eyes.Images.DotNet.Universal.Commands.Responses;
 using Newtonsoft.Json;
 
 namespace Applitools.Playwright.Universal.Driver
@@ -16,12 +10,15 @@ namespace Applitools.Playwright.Universal.Driver
     {
         private readonly SpecDriverPlaywright driver_;
         private readonly WebSocketClient webSocket_;
-        public PlaywrightSpecDriverMessageAdaptor(SpecDriverPlaywright driver, WebSocketClient webSocket)
+        private readonly Logger logger_;
+
+        public PlaywrightSpecDriverMessageAdaptor(SpecDriverPlaywright driver, WebSocketClient webSocket, Logger logger)
         {
             driver_ = driver;
             webSocket_ = webSocket;
+            logger_ = logger;
         }
-        
+
         public TResponse HandleMessage<TResponse>(string message) where TResponse : CommandBase
         {
             var response = JsonConvert.DeserializeObject<DriverCommand>(message);
@@ -30,6 +27,7 @@ namespace Applitools.Playwright.Universal.Driver
             switch (response.Name)
             {
                 case "Driver.getDriverInfo":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var driverInfo = (DriverInfoDto)driver_.GetDriverInfo(payload.Driver);
                     commandResponse.Payload = driverInfo;
 
@@ -61,9 +59,10 @@ namespace Applitools.Playwright.Universal.Driver
                      webSocket.sendTextFrame(objectMapper.writeValueAsString(getDriverInfoResponse));*/
                     break;
                 case "Driver.executeScript":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     object executionResponse = driver_.ExecuteScript(
-                        payload.Context, 
-                        payload.Script, 
+                        payload.Context,
+                        payload.Script,
                         payload.Arg);
 
                     commandResponse.Payload = executionResponse;
@@ -94,6 +93,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(executeScriptResponse));*/
                     break;
                 case "Driver.getViewportSize":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var viewportSize = driver_.GetViewportSize(payload.Driver);
                     commandResponse.Payload = viewportSize;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -123,6 +123,7 @@ namespace Applitools.Playwright.Universal.Driver
                        webSocket.sendTextFrame(objectMapper.writeValueAsString(getViewportSizeResponse));*/
                     break;
                 case "Driver.setViewportSize":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     driver_.SetViewportSize(payload.Driver, payload.Size);
                     commandResponse.Payload = "complete";
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -153,6 +154,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(setViewportSize));*/
                     break;
                 case "Driver.findElement":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var el = driver_.FindElement(payload.Context, payload.Selector, payload.Parent);
                     commandResponse.Payload = el;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -184,6 +186,7 @@ namespace Applitools.Playwright.Universal.Driver
                       webSocket.sendTextFrame(objectMapper.writeValueAsString(findElement));*/
                     break;
                 case "Driver.findElements":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var els = driver_.FindElements(payload.Context, payload.Selector, payload.Parent);
                     commandResponse.Payload = els;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -215,6 +218,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(findElements));*/
                     break;
                 case "Driver.takeScreenshot":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     byte[] screenshot = driver_.TakeScreenshot(payload.Context);
                     commandResponse.Payload = Convert.ToBase64String(screenshot);
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -246,6 +250,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(takeScreenshot));*/
                     break;
                 case "Driver.getTitle":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     string title = driver_.GetTitle(payload.Driver);
                     commandResponse.Payload = title;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -276,6 +281,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(getTitle));*/
                     break;
                 case "Driver.getUrl":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     string url = driver_.GetUrl(payload.Driver);
                     commandResponse.Payload = url;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -306,6 +312,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(getUrl));*/
                     break;
                 case "Driver.visit":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     driver_.Visit(payload.Driver, payload.Url);
                     commandResponse.Payload = "complete";
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -336,6 +343,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(visit));*/
                     break;
                 case "Driver.getCookies":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var cookies = driver_.GetCookies(payload.Driver, payload.Context);
                     commandResponse.Payload = cookies;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -366,6 +374,7 @@ namespace Applitools.Playwright.Universal.Driver
                      webSocket.sendTextFrame(objectMapper.writeValueAsString(getCookies));*/
                     break;
                 case "Driver.childContext":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var childContext = driver_.ChildContext(payload.Context, payload.Element);
                     commandResponse.Payload = childContext;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -396,6 +405,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(childContext));*/
                     break;
                 case "Driver.mainContext":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var mainContext = driver_.MainContext(payload.Context);
                     commandResponse.Payload = mainContext;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -426,6 +436,7 @@ namespace Applitools.Playwright.Universal.Driver
                     webSocket.sendTextFrame(objectMapper.writeValueAsString(mainContext));*/
                     break;
                 case "Driver.parentContext":
+                    logger_.Log(TraceLevel.Info, Stage.SpecDriver, $"Executing {response.Name} with target: {payload}");
                     var parentContext = driver_.ParentContext(payload.Context);
                     commandResponse.Payload = parentContext;
                     webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
@@ -475,25 +486,17 @@ namespace Applitools.Playwright.Universal.Driver
                 case "Logger.log":
                     try
                     {
-                        LogResponseDto serverLogResponse = objectMapper.readValue(payload,
-                            new TypeReference<LogResponseDto>()
-                            {
-                            });
-                        string message1 = "eyes | " + new Timestamp(System.currentTimeMillis())
-                                                    + " | [" + serverLogResponse.getPayload().getLevel() + "] | "
-                                                    + serverLogResponse.getPayload().getMessage();
-                        logger.log(TraceLevel.Debug, Stage.GENERAL, message1);
-                        System.out.println(message1);
+                        string logMsg = $"eyes | [{payload.Level}] | {payload.Message}";
+                        logger_.Log(TraceLevel.Debug, Stage.General, logMsg);
                     }
                     catch (Exception e)
                     {
-                        CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e, testIds_);
+                        CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e);
                     }
-
                     break;
 
                 default:
-                    throw new EyesException("Unknown server command " + response.getName());
+                    throw new EyesException("Unknown server command " + response.Name);
             }
 
             var result = JsonConvert.DeserializeObject<TResponse>(message);
