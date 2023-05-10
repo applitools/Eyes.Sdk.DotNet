@@ -25,11 +25,7 @@ namespace Applitools.Playwright.Fluent
         private bool isDefaultLayoutBreakpointsSet_;
 
         private string pageId_;
-
-        public PlaywrightCheckSettings()
-        {
-        }
-
+        
         /// <summary>Specify the target as a region.</summary>
         /// <param name="region">the region</param>
         /// <returns>an updated instance of this settings object</returns>
@@ -847,7 +843,7 @@ namespace Applitools.Playwright.Fluent
             PlaywrightCheckSettings clone = Clone_();
             foreach (Region r in regions)
             {
-                clone.ignoreColors_(r);
+                clone.IgnoreColors_(r);
             }
 
             return clone;
@@ -863,20 +859,19 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings IgnoreColors(Region region, params Region[] regions)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.ignoreColors_(region);
+            clone.IgnoreColors_(region);
             foreach (Region r in regions)
             {
-                clone.ignoreColors_(r);
+                clone.IgnoreColors_(r);
             }
 
             return clone;
         }
 
-        /** internal */
-        private void ignoreColors_(Region region)
+        private void IgnoreColors_(Region region)
         {
             SimpleRegionByRectangle simpleRegionByRectangle = new SimpleRegionByRectangle(region.Rectangle);
-            this.contentRegions_.Add(simpleRegionByRectangle);
+            contentRegions_.Add(simpleRegionByRectangle);
         }
 
         /**
@@ -1183,26 +1178,16 @@ namespace Applitools.Playwright.Fluent
             return (PlaywrightCheckSettings)base.IgnoreCaret(ignoreCaret);
         }
         
-        public new PlaywrightCheckSettings SendDom(bool sendDom)
+        public new PlaywrightCheckSettings SendDom(bool sendDom = true)
         {
             return (PlaywrightCheckSettings)base.SendDom(sendDom);
         }
 
-        public new PlaywrightCheckSettings SendDom()
-        {
-            return (PlaywrightCheckSettings)base.SendDom();
-        }
-
-        public new PlaywrightCheckSettings EnablePatterns(bool enablePatterns)
+        public new PlaywrightCheckSettings EnablePatterns(bool enablePatterns = true)
         {
             return (PlaywrightCheckSettings)base.EnablePatterns(enablePatterns);
         }
-        
-        public new PlaywrightCheckSettings EnablePatterns()
-        {
-            return (PlaywrightCheckSettings)base.EnablePatterns();
-        }
-        
+
         public new PlaywrightCheckSettings BeforeRenderScreenshotHook(string hook)
         {
             return (PlaywrightCheckSettings)base.BeforeRenderScreenshotHook(hook);
@@ -1228,51 +1213,6 @@ namespace Applitools.Playwright.Fluent
             return (PlaywrightCheckSettings)base.VisualGridOptions(options);
         }
 
-        public new PlaywrightCheckSettings WaitBeforeCapture(int milliSec)
-        {
-            return (PlaywrightCheckSettings)base.WaitBeforeCapture(milliSec);
-        }
-
-        public PlaywrightCheckSettings SetDisableBrowserFetching(bool disableBrowserFetching)
-        {
-            return (PlaywrightCheckSettings)base.SetDisableBrowserFetching(disableBrowserFetching);
-        }
-
-        public PlaywrightCheckSettings AutProxy(AutProxySettings autProxy)
-        {
-            return (PlaywrightCheckSettings)base.autProxy(autProxy);
-        }
-
-        public PlaywrightCheckSettings SetAccessibilityValidation(AccessibilitySettings accessibilitySettings)
-        {
-            return (PlaywrightCheckSettings)base.SetAccessibilityValidation(accessibilitySettings);
-        }
-
-        public PlaywrightCheckSettings StitchMode(StitchMode stitchMode)
-        {
-            return (PlaywrightCheckSettings)base.StitchMode(stitchMode);
-        }
-
-        public PlaywrightCheckSettings SetHideScrollBars(bool hideScrollBars)
-        {
-            return (PlaywrightCheckSettings)base.SetHideScrollBars(hideScrollBars);
-        }
-
-        public PlaywrightCheckSettings SetHideCaret(bool hideCaret)
-        {
-            return (PlaywrightCheckSettings)base.SetHideCaret(hideCaret);
-        }
-
-        public new PlaywrightCheckSettings StitchOverlap(int? overlap)
-        {
-            return (PlaywrightCheckSettings)base.StitchOverlap(overlap);
-        }
-
-        public PlaywrightCheckSettings StitchOverlap(StitchOverlap stitchOverlap)
-        {
-            return (PlaywrightCheckSettings)base.StitchOverlap(stitchOverlap);
-        }
-
         public PlaywrightCheckSettings PageId(string pageId)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -1283,11 +1223,6 @@ namespace Applitools.Playwright.Fluent
         public new PlaywrightCheckSettings IgnoreDisplacements(bool ignoreDisplacements = true)
         {
             return (PlaywrightCheckSettings)base.IgnoreDisplacements(ignoreDisplacements);
-        }
-
-        public new PlaywrightCheckSettings IgnoreCaret()
-        {
-            return (PlaywrightCheckSettings)base.IgnoreCaret();
         }
 
         public new PlaywrightCheckSettings MatchLevel(MatchLevel matchLevel)
@@ -1356,71 +1291,61 @@ namespace Applitools.Playwright.Fluent
             return IgnoreColors(selector);
         }
 
-        /** see {@link #ignoreColors(Locator)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(ILocator locator)
         {
             return IgnoreColors(locator.ElementHandleAsync().GetAwaiter().GetResult());
         }
 
-        /** see {@link #ignoreColors(ElementHandle)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(IElementHandle element)
         {
             return IgnoreColors(element);
         }
 
-        /** see {@link #ignoreColors(String, String)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(string selector, string regionId)
         {
             return IgnoreColors(selector, regionId);
         }
 
-        /** see {@link #ignoreColors(Locator, String)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(ILocator locator, string regionId)
         {
             return IgnoreColors(locator, regionId);
         }
 
-        /** see {@link #ignoreColors(ElementHandle, String)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(IElementHandle element, string regionId)
         {
             return IgnoreColors(element, regionId);
         }
 
-        /** see {@link #ignoreColors(String, Padding)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(string selector, Padding padding)
         {
             return IgnoreColors(selector, padding);
         }
 
-        /** see {@link #ignoreColors(Locator, Padding)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(ILocator locator, Padding padding)
         {
             return IgnoreColors(locator.ElementHandleAsync().GetAwaiter().GetResult(), padding);
         }
 
-        /** see {@link #ignoreColors(Locator, Padding)} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(IElementHandle element, Padding padding)
         {
             return IgnoreColors(element, padding);
         }
 
-        /** see {@link #ignoreColors(Region[])} )} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(Region[] regions)
         {
             return IgnoreColors(regions);
         }
 
-        /** see {@link #ignoreColors(Region, Region...)} )} )} */
-        [Obsolete]
+        [Obsolete("Use IgnoreColors")]
         public PlaywrightCheckSettings Content(Region region, params Region[] regions)
         {
             return IgnoreColors(region, regions);

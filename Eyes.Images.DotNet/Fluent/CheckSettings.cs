@@ -39,7 +39,10 @@ namespace Applitools
 
         public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
-        internal protected CheckSettings() { fluentCode_.Append("Target.Window()"); }
+        internal protected CheckSettings()
+        {
+            fluentCode_.Append("Target.Window()");
+        }
 
         internal protected CheckSettings(Rectangle region)
         {
@@ -58,11 +61,20 @@ namespace Applitools
 
         #region ICheckSettingsInternal
 
-        Rectangle? Fluent.ICheckSettingsInternal.GetTargetRegion() { return targetRegion_; }
+        Rectangle? Fluent.ICheckSettingsInternal.GetTargetRegion()
+        {
+            return targetRegion_;
+        }
 
-        int Fluent.ICheckSettingsInternal.GetTimeout() { return timeout_; }
+        int Fluent.ICheckSettingsInternal.GetTimeout()
+        {
+            return timeout_;
+        }
 
-        bool? Fluent.ICheckSettingsInternal.GetStitchContent() { return stitchContent_; }
+        bool? Fluent.ICheckSettingsInternal.GetStitchContent()
+        {
+            return stitchContent_;
+        }
 
         MatchLevel? Fluent.ICheckSettingsInternal.GetMatchLevel()
         {
@@ -104,12 +116,16 @@ namespace Applitools
             return lazyLoad_;
         }
 
-        bool? Fluent.ICheckSettingsInternal.GetIgnoreCaret() { return ignoreCaret_; }
+        bool? Fluent.ICheckSettingsInternal.GetIgnoreCaret()
+        {
+            return ignoreCaret_;
+        }
 
         string ICheckSettingsInternal.GetVariationGroupId()
         {
             return variationGroupId_;
         }
+
         #endregion
 
         protected void Floating_(IGetFloatingRegion floatingRegionProvider)
@@ -117,7 +133,8 @@ namespace Applitools
             floatingRegions_.Add(floatingRegionProvider);
         }
 
-        protected void Floating_(Rectangle rect, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
+        protected void Floating_(Rectangle rect, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
+            int maxRightOffset)
         {
             Floating_(new FloatingRegionByRectangle(rect, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset));
         }
@@ -208,17 +225,19 @@ namespace Applitools
         public ICheckSettings Content()
         {
             var clone = Clone();
+#pragma warning disable CS0618
             clone.matchLevel_ = Applitools.MatchLevel.Content;
+#pragma warning restore CS0618
             clone.fluentCode_.Append($".{nameof(Content)}()");
             return clone;
         }
 
-    public ICheckSettings IgnoreColors()
-    {
-        CheckSettings clone = Clone();
-        clone.matchLevel_ = Applitools.MatchLevel.IgnoreColors;
-        return clone;
-    }
+        public ICheckSettings IgnoreColors()
+        {
+            CheckSettings clone = Clone();
+            clone.matchLevel_ = Applitools.MatchLevel.IgnoreColors;
+            return clone;
+        }
 
         /// <summary>
         /// Set the match level by which to compare the screenshot.
@@ -250,8 +269,10 @@ namespace Applitools
             foreach (Rectangle region in regions)
             {
                 clone.Floating_(region, maxOffset, maxOffset, maxOffset, maxOffset);
-                clone.fluentCode_.Append($", new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height})");
+                clone.fluentCode_.Append(
+                    $", new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height})");
             }
+
             clone.fluentCode_.Append(")");
             return clone;
         }
@@ -266,11 +287,13 @@ namespace Applitools
         /// <param name="maxRightOffset">How much the content can move to the right.</param>
         /// <remarks>A floating region is a a region that can be placed within the boundaries of a bigger region.</remarks>
         /// <returns>An updated clone of this settings object.</returns>
-        public ICheckSettings Floating(Rectangle region, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
+        public ICheckSettings Floating(Rectangle region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
+            int maxRightOffset)
         {
             var clone = Clone();
             clone.Floating_(region, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
-            clone.fluentCode_.Append($"{nameof(Floating)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height}),{maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset})");
+            clone.fluentCode_.Append(
+                $"{nameof(Floating)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height}),{maxUpOffset},{maxDownOffset},{maxLeftOffset},{maxRightOffset})");
             return clone;
         }
 
@@ -282,7 +305,8 @@ namespace Applitools
         {
             var clone = Clone();
             clone.Accessibility_(region);
-            clone.fluentCode_.Append($"{nameof(Accessibility)}(new {nameof(AccessibilityRegionByRectangle)}({region.Left},{region.Top},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{region.Type}))");
+            clone.fluentCode_.Append(
+                $"{nameof(Accessibility)}(new {nameof(AccessibilityRegionByRectangle)}({region.Left},{region.Top},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{region.Type}))");
             return clone;
         }
 
@@ -290,7 +314,8 @@ namespace Applitools
         {
             var clone = Clone();
             clone.Accessibility_(region, regionType);
-            clone.fluentCode_.Append($"{nameof(Accessibility)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{regionType}))");
+            clone.fluentCode_.Append(
+                $"{nameof(Accessibility)}(new {nameof(Rectangle)}({region.X},{region.Y},{region.Width},{region.Height},{nameof(AccessibilityRegionType)}.{regionType}))");
             return clone;
         }
 
@@ -325,7 +350,8 @@ namespace Applitools
         {
             var clone = Clone();
             clone.lazyLoad_ = lazyLoad;
-            clone.fluentCode_.Append($"Target.LazyLoad(new LazyLoad({lazyLoad.ScrollLength},{lazyLoad.WaitingTime},{lazyLoad.MaxAmountToScroll}))");
+            clone.fluentCode_.Append(
+                $"Target.LazyLoad(new LazyLoad({lazyLoad.ScrollLength},{lazyLoad.WaitingTime},{lazyLoad.MaxAmountToScroll}))");
             return clone;
         }
 
@@ -334,7 +360,8 @@ namespace Applitools
             var clone = Clone();
             var lazyLoad = new LazyLoadOptions(300, 2000, 15000);
             clone.lazyLoad_ = lazyLoad;
-            clone.fluentCode_.Append($"Target.LazyLoad(new LazyLoad({lazyLoad.ScrollLength},{lazyLoad.WaitingTime},{lazyLoad.MaxAmountToScroll}))");
+            clone.fluentCode_.Append(
+                $"Target.LazyLoad(new LazyLoad({lazyLoad.ScrollLength},{lazyLoad.WaitingTime},{lazyLoad.MaxAmountToScroll}))");
             return clone;
         }
 
@@ -359,11 +386,11 @@ namespace Applitools
         /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings Ignore(Rectangle region, params Rectangle[] regions)
         {
-            var list = new List<Rectangle> {region};
+            var list = new List<Rectangle> { region };
             list.AddRange(regions);
             return Ignore(list);
         }
-        
+
         /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
@@ -380,6 +407,7 @@ namespace Applitools
                 clone.Ignore_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+
             clone.fluentCode_.Append(")");
             return clone;
         }
@@ -426,6 +454,7 @@ namespace Applitools
                 clone.Content_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+
             clone.fluentCode_.Append(")");
             return clone;
         }
@@ -472,6 +501,7 @@ namespace Applitools
                 clone.Layout_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+
             clone.fluentCode_.Append(")");
             return clone;
         }
@@ -518,6 +548,7 @@ namespace Applitools
                 clone.Strict_(new SimpleRegionByRectangle(r, padding, regionId));
                 clone.fluentCode_.Append($", new Rectangle({r.X},{r.Y},{r.Width},{r.Height})");
             }
+
             clone.fluentCode_.Append(")");
             return clone;
         }
@@ -581,6 +612,7 @@ namespace Applitools
             clone.fluentCode_.Append($".{nameof(UseDom)}({useDom})");
             return clone;
         }
+
         public ICheckSettings ReplaceLast(bool replaceLast = true)
         {
             var clone = Clone();
@@ -632,6 +664,7 @@ namespace Applitools
             {
                 clone.fluentCode_.Append($"new {nameof(VisualGridOption)}(\"{option.Key}\", {option.Value})");
             }
+
             clone.fluentCode_.Append(")");
             return clone;
         }
@@ -639,10 +672,10 @@ namespace Applitools
         public ICheckSettings DensityMetrics(int xDpi, int yDpi, double? scaleRatio = null)
         {
             var clone = Clone();
-            clone.densityMetrics_ = new DensityMetrics { XDpi = xDpi, YDpi = yDpi, ScaleRatio = scaleRatio};
+            clone.densityMetrics_ = new DensityMetrics { XDpi = xDpi, YDpi = yDpi, ScaleRatio = scaleRatio };
             return clone;
         }
-        
+
         protected void UpdateTargetRegion(Rectangle region)
         {
             targetRegion_ = region;
@@ -688,7 +721,10 @@ namespace Applitools
             return clone;
         }
 
-        ICheckSettings ICheckSettings.Clone() { return Clone(); }
+        ICheckSettings ICheckSettings.Clone()
+        {
+            return Clone();
+        }
 
         string ICheckSettingsInternal.GetName()
         {
@@ -749,18 +785,18 @@ namespace Applitools
             {
                 return stitchContent ? SizeMode.FullPage : SizeMode.Viewport;
             }
-            
+
             if (region != null)
             {
                 return SizeMode.Region;
             }
-            
+
             /* if (selector != null) */
             {
                 return stitchContent ? SizeMode.FullSelector : SizeMode.Selector;
             }
         }
-        
+
         public ICheckSettings VariationGroupId(string variationGroupId)
         {
             var clone = Clone();
@@ -803,7 +839,7 @@ namespace Applitools
         {
             return fluentCode_.ToString();
         }
-        
+
         DensityMetrics ICheckSettingsInternal.GetDensityMetrics()
         {
             return densityMetrics_;

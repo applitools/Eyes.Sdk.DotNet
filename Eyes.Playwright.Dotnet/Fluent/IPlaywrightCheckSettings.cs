@@ -1,3 +1,4 @@
+using System;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
 
@@ -76,22 +77,37 @@ namespace Applitools.Playwright.Fluent
 
         PlaywrightCheckSettings Strict(IElementHandle elementHandle, Padding padding);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(string selector);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(ILocator locator);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(IElementHandle elementHandle);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(string selector, string regionId);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(ILocator locator, string regionId);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(IElementHandle elementHandle, string regionId);
 
+        [Obsolete("Use IgnoreColors")]
+        PlaywrightCheckSettings Content(Region[] regions);
+
+        [Obsolete("Use IgnoreColors")]
+        PlaywrightCheckSettings Content(Region region, params Region[] regions);
+        
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(string selector, Padding padding);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(ILocator locator, Padding padding);
 
+        [Obsolete("Use IgnoreColors")]
         PlaywrightCheckSettings Content(IElementHandle elementHandle, Padding padding);
 
         PlaywrightCheckSettings IgnoreColors(string selector);
@@ -112,6 +128,10 @@ namespace Applitools.Playwright.Fluent
 
         PlaywrightCheckSettings IgnoreColors(IElementHandle elementHandle, Padding padding);
 
+        PlaywrightCheckSettings IgnoreColors(Region[] regions);
+        
+        PlaywrightCheckSettings IgnoreColors(Region region, params Region[] regions);
+        
         PlaywrightCheckSettings Floating(string selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset);
 
@@ -141,6 +161,6 @@ namespace Applitools.Playwright.Fluent
 
         PlaywrightCheckSettings LayoutBreakpoints(params int[] breakpoints);
 
-        PlaywrightCheckSettings LayoutBreakpoints(bool shouldSet);
+        PlaywrightCheckSettings LayoutBreakpointsEnabled(bool shouldSet);
     }
 }
