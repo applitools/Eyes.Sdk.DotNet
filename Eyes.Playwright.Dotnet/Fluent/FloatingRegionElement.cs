@@ -1,3 +1,4 @@
+using System;
 using Applitools.Commands;
 using Applitools.Playwright.Universal.Dto;
 using Microsoft.Playwright;
@@ -33,18 +34,19 @@ namespace Applitools.Playwright.Fluent
         public int MaxRightOffset { get; }
         public int MaxDownOffset { get; }
         
-        public TFloatingRegion ToRegion()
+        TFloatingRegion IGetFloatingRegion.ToRegion()
         {
+            var bbox = ElementHandle.BoundingBoxAsync().GetAwaiter().GetResult();
             return new RectangleFloatingRegion
             {
                 Region = new UniversalRegion
                 {
-                    X = rect_.Left,
-                    Y = rect_.Top,
-                    Width = rect_.Width,
-                    Height = rect_.Height
+                    X = (int)Math.Round(bbox.X),
+                    Y = (int)Math.Round(bbox.Y),
+                    Width = (int)Math.Round(bbox.Width),
+                    Height = (int)Math.Round(bbox.Height)
                 },
-                Offset = new Padding(_maxLeftOffset, _maxUpOffset, _maxRightOffset, _maxDownOffset)
+                Offset = new Padding(MaxLeftOffset, MaxUpOffset, MaxRightOffset, MaxDownOffset)
             };
         }
     }

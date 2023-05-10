@@ -213,6 +213,13 @@ namespace Applitools
             return clone;
         }
 
+    public ICheckSettings IgnoreColors()
+    {
+        CheckSettings clone = Clone();
+        clone.matchLevel_ = Applitools.MatchLevel.IgnoreColors;
+        return clone;
+    }
+
         /// <summary>
         /// Set the match level by which to compare the screenshot.
         /// </summary>

@@ -94,8 +94,6 @@ namespace Applitools.Playwright.Fluent
 
         PlaywrightCheckSettings Content(IElementHandle elementHandle, Padding padding);
 
-        PlaywrightCheckSettings IgnoreColors();
-
         PlaywrightCheckSettings IgnoreColors(string selector);
 
         PlaywrightCheckSettings IgnoreColors(ILocator locator);

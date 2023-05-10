@@ -180,8 +180,15 @@ namespace Applitools
         /// Shortcut to set the match level to <see cref="MatchLevel.Content"/>.
         /// </summary>
         /// <returns>An updated clone of this settings object.</returns>
+        [Obsolete("Use IgnoreColors")]
         ICheckSettings Content();
 
+        /// <summary>
+        /// Shortcut to set the match level to <see cref="MatchLevel.IgnoreColors"/>.
+        /// </summary>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings IgnoreColors();
+        
         /// <summary>
         /// Set the match level by which to compare the screenshot.
         /// </summary>
@@ -229,6 +236,10 @@ namespace Applitools
         ICheckSettings VisualGridOptions(params VisualGridOption[] options);
 
         ICheckSettings VariationGroupId(string variationGroupId);
+        
+        ICheckSettings LazyLoad(LazyLoadOptions lazyLoad);
+        
+        ICheckSettings LazyLoad();
 
         ICheckSettings DensityMetrics(int xDpi, int yDpi, double? scaleRatio = null);
 

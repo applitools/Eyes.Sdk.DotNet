@@ -1,4 +1,6 @@
-﻿namespace Applitools
+﻿using System;
+
+namespace Applitools
 {
     /// <summary>
     /// The extent in which two images match (or are expected to match).
@@ -11,7 +13,7 @@
         None,
 
         /// <summary>
-        /// Images have the same layout (comapred using the latest layout comparison engine).
+        /// Images have the same layout (compared using the latest layout comparison engine).
         /// </summary>
         Layout,
 
@@ -28,6 +30,7 @@
         /// <summary>
         /// Images have the same content.
         /// </summary>
+        [Obsolete("Use IgnoreColors")]
         Content,
 
         /// <summary>
@@ -38,6 +41,12 @@
         /// <summary>
         /// Images are identical.
         /// </summary>
-        Exact
+        Exact,
+
+        /// <summary>
+        /// Images have the same  outline.
+        /// Formerly known as Content.
+        /// </summary>
+        IgnoreColors
     }
 }

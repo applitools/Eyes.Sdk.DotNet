@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
 using Applitools.Utils;
@@ -23,6 +24,8 @@ namespace Applitools.Playwright.Fluent
         /** Used to determine if using default layout breakpoints. */
         private bool isDefaultLayoutBreakpointsSet_;
 
+        private string pageId_;
+
         public PlaywrightCheckSettings()
         {
         }
@@ -32,7 +35,7 @@ namespace Applitools.Playwright.Fluent
         /// <returns>an updated instance of this settings object</returns>
         public PlaywrightCheckSettings Region(Region region)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.UpdateTargetRegion(region.Rectangle);
             return clone;
         }
@@ -63,14 +66,14 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Region(Selector selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.targetElement_ = selector;
             return clone;
         }
 
         private PlaywrightCheckSettings Region(Element element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.targetElement_ = element;
             return clone;
         }
@@ -136,7 +139,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings Frame(FrameLocator frameLocator)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.frameChain_.Add(frameLocator);
             return clone;
         }
@@ -168,14 +171,14 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Ignore(Selector selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.ignoreRegions_.Add(selector);
             return clone;
         }
 
         private PlaywrightCheckSettings Ignore(Element element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.ignoreRegions_.Add(element);
             return clone;
         }
@@ -209,7 +212,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Ignore(Selector selector, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.RegionId = regionId;
             clone.ignoreRegions_.Add(selector);
             return clone;
@@ -217,7 +220,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Ignore(Element element, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.RegionId = regionId;
             clone.ignoreRegions_.Add(element);
             return clone;
@@ -261,7 +264,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Ignore(Selector selector, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.Padding = padding;
             clone.ignoreRegions_.Add(selector);
             return clone;
@@ -269,7 +272,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Ignore(Element element, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.Padding = padding;
             clone.ignoreRegions_.Add(element);
             return clone;
@@ -277,7 +280,7 @@ namespace Applitools.Playwright.Fluent
 
         public PlaywrightCheckSettings Ignore(Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             foreach (Region r in regions)
             {
                 clone.Ignore_(r);
@@ -288,7 +291,7 @@ namespace Applitools.Playwright.Fluent
 
         public PlaywrightCheckSettings Ignore(Region region, params Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.Ignore_(region);
             foreach (Region r in regions)
             {
@@ -340,7 +343,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings Layout(Selector selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.layoutRegions_.Add(selector);
             return clone;
         }
@@ -348,7 +351,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings Layout(Element element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.layoutRegions_.Add(element);
             return clone;
         }
@@ -391,7 +394,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Layout(Selector selector, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.RegionId = regionId;
             clone.layoutRegions_.Add(selector);
             return clone;
@@ -399,7 +402,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Layout(Element element, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.RegionId = regionId;
             clone.layoutRegions_.Add(element);
             return clone;
@@ -443,7 +446,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Layout(Selector selector, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.Padding = padding;
             clone.layoutRegions_.Add(selector);
             return clone;
@@ -451,7 +454,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Layout(Element element, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.Padding = padding;
             clone.layoutRegions_.Add(element);
             return clone;
@@ -459,7 +462,7 @@ namespace Applitools.Playwright.Fluent
 
         public PlaywrightCheckSettings Layout(Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             foreach (Region r in regions)
             {
                 clone.Layout_(r);
@@ -471,7 +474,7 @@ namespace Applitools.Playwright.Fluent
 
         public PlaywrightCheckSettings Layout(Region region, params Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.Layout_(region);
             foreach (Region r in regions)
             {
@@ -522,14 +525,14 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Strict(Selector selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.strictRegions_.Add(selector);
             return clone;
         }
 
         private PlaywrightCheckSettings Strict(Element element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.strictRegions_.Add(element);
             return clone;
         }
@@ -572,7 +575,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Strict(Selector selector, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.RegionId = regionId;
             clone.strictRegions_.Add(selector);
             return clone;
@@ -581,7 +584,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings Strict(Element element, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.RegionId = regionId;
             clone.strictRegions_.Add(element);
             return clone;
@@ -626,7 +629,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings Strict(Selector selector, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.Padding = padding;
             clone.strictRegions_.Add(selector);
             return clone;
@@ -634,7 +637,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Strict(Element element, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.Padding = padding;
             clone.strictRegions_.Add(element);
             return clone;
@@ -642,7 +645,7 @@ namespace Applitools.Playwright.Fluent
 
         public PlaywrightCheckSettings Strict(Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             foreach (Region r in regions)
             {
                 clone.Strict_(r);
@@ -653,7 +656,7 @@ namespace Applitools.Playwright.Fluent
 
         public PlaywrightCheckSettings Strict(Region region, params Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.Strict_(region);
             foreach (Region r in regions)
             {
@@ -673,7 +676,7 @@ namespace Applitools.Playwright.Fluent
      * Shortcut to set the match level to {@code MatchLevel.CONTENT}.
      * @return An updated clone of this settings object.
      */
-        public PlaywrightCheckSettings IgnoreColors()
+        public new PlaywrightCheckSettings IgnoreColors()
         {
             return (PlaywrightCheckSettings)base.IgnoreColors();
         }
@@ -714,7 +717,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings IgnoreColors(Selector selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.contentRegions_.Add(selector);
             return clone;
         }
@@ -722,7 +725,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings IgnoreColors(Element element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.contentRegions_.Add(element);
             return clone;
         }
@@ -736,7 +739,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(string selector, string regionId)
         {
-            return ignoreColors(new Selector(selector), regionId);
+            return IgnoreColors(new Selector(selector), regionId);
         }
 
         /**
@@ -748,7 +751,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(ILocator locator, string regionId)
         {
-            return ignoreColors(new Selector(locator), regionId);
+            return IgnoreColors(new Selector(locator), regionId);
         }
 
         /**
@@ -760,13 +763,13 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(IElementHandle element, string regionId)
         {
-            return ignoreColors(new Element(element), regionId);
+            return IgnoreColors(new Element(element), regionId);
         }
 
         /** internal */
         private PlaywrightCheckSettings IgnoreColors(Selector selector, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.RegionId = regionId;
             clone.contentRegions_.Add(selector);
             return clone;
@@ -775,7 +778,7 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings IgnoreColors(Element element, string regionId)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.RegionId = regionId;
             clone.contentRegions_.Add(element);
             return clone;
@@ -790,7 +793,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(string selector, Padding padding)
         {
-            return ignoreColors(new Selector(selector), padding);
+            return IgnoreColors(new Selector(selector), padding);
         }
 
         /**
@@ -802,7 +805,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(ILocator locator, Padding padding)
         {
-            return ignoreColors(new Selector(locator), padding);
+            return IgnoreColors(new Selector(locator), padding);
         }
 
         /**
@@ -814,12 +817,12 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(IElementHandle element, Padding padding)
         {
-            return ignoreColors(new Element(element), padding);
+            return IgnoreColors(new Element(element), padding);
         }
 
         private PlaywrightCheckSettings IgnoreColors(Selector selector, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             selector.Padding = padding;
             clone.contentRegions_.Add(selector);
             return clone;
@@ -827,7 +830,7 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings IgnoreColors(Element element, Padding padding)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             element.Padding = padding;
             clone.contentRegions_.Add(element);
             return clone;
@@ -841,7 +844,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             foreach (Region r in regions)
             {
                 clone.ignoreColors_(r);
@@ -859,7 +862,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings IgnoreColors(Region region, params Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.ignoreColors_(region);
             foreach (Region r in regions)
             {
@@ -890,7 +893,7 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings Floating(string selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.floatingRegions_.Add(new FloatingRegionSelector(selector, maxUpOffset, maxDownOffset, maxLeftOffset,
                 maxRightOffset));
             return clone;
@@ -910,8 +913,8 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings Floating(ILocator locator, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.floatingRegions.add(new FloatingRegionSelector(locator, maxUpOffset, maxDownOffset, maxLeftOffset,
+            PlaywrightCheckSettings clone = Clone_();
+            clone.floatingRegions_.Add(new FloatingRegionSelector(locator, maxUpOffset, maxDownOffset, maxLeftOffset,
                 maxRightOffset));
             return clone;
         }
@@ -930,8 +933,8 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings Floating(IElementHandle element, int maxUpOffset, int maxDownOffset,
             int maxLeftOffset, int maxRightOffset)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.floatingRegions.add(new FloatingRegionElement(element, maxUpOffset, maxDownOffset, maxLeftOffset,
+            PlaywrightCheckSettings clone = Clone_();
+            clone.floatingRegions_.Add(new FloatingRegionElement(element, maxUpOffset, maxDownOffset, maxLeftOffset,
                 maxRightOffset));
             return clone;
         }
@@ -946,8 +949,8 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings Floating(int maxOffset, string selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.floatingRegions.add(new FloatingRegionSelector(selector, maxOffset));
+            PlaywrightCheckSettings clone = Clone_();
+            clone.floatingRegions_.Add(new FloatingRegionSelector(selector, maxOffset));
             return clone;
         }
 
@@ -959,10 +962,10 @@ namespace Applitools.Playwright.Fluent
      * @param locator       the locator
      * @return an updated clone of this settings object
      */
-        public PlaywrightCheckSettings Floating(int maxOffset, Locator locator)
+        public PlaywrightCheckSettings Floating(int maxOffset, ILocator locator)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.floatingRegions.add(new FloatingRegionSelector(locator, maxOffset));
+            PlaywrightCheckSettings clone = Clone_();
+            clone.floatingRegions_.Add(new FloatingRegionSelector(locator, maxOffset));
             return clone;
         }
 
@@ -974,21 +977,22 @@ namespace Applitools.Playwright.Fluent
      * @param element       the element
      * @return an updated clone of this settings object
      */
-        public PlaywrightCheckSettings Floating(int maxOffset, ElementHandle element)
+        public PlaywrightCheckSettings Floating(int maxOffset, IElementHandle element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.floatingRegions.add(new FloatingRegionElement(element, maxOffset));
+            PlaywrightCheckSettings clone = Clone_();
+            clone.floatingRegions_.Add(new FloatingRegionElement(element, maxOffset));
             return clone;
         }
 
 
-        public PlaywrightCheckSettings Floating(int maxOffset, Region...regions)
+        public PlaywrightCheckSettings Floating(int maxOffset, params Region[] regions)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            for (Region r:
-            regions) {
-                clone.floating_(r, maxOffset, maxOffset, maxOffset, maxOffset);
+            PlaywrightCheckSettings clone = Clone_();
+            foreach (Region r in regions)
+            {
+                clone.Floating_(r, maxOffset, maxOffset, maxOffset, maxOffset);
             }
+
             return clone;
         }
 
@@ -996,16 +1000,19 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings Floating(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.floating_(region, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
+            PlaywrightCheckSettings clone = Clone_();
+            clone.Floating_(region, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
             return clone;
         }
 
         /** internal */
-        protected void floating_(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
+        private void Floating_(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
-            this.floatingRegions.add(new FloatingRegionByRectangle(region, maxUpOffset, maxDownOffset, maxLeftOffset,
+            floatingRegions_.Add(new FloatingRegionByRectangle(region.Rectangle,
+                maxUpOffset,
+                maxDownOffset,
+                maxLeftOffset,
                 maxRightOffset));
         }
 
@@ -1018,7 +1025,7 @@ namespace Applitools.Playwright.Fluent
      */
         public PlaywrightCheckSettings Accessibility(string selector, AccessibilityRegionType type)
         {
-            return Accessibility(new AccessibilityRegionBySelector(selector, this.Type));
+            return Accessibility(new AccessibilityRegionBySelector(selector, type));
         }
 
         public PlaywrightCheckSettings Accessibility(ILocator locator, AccessibilityRegionType type)
@@ -1033,26 +1040,26 @@ namespace Applitools.Playwright.Fluent
 
         private PlaywrightCheckSettings Accessibility(AccessibilityRegionBySelector accessibilityRegionBySelector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.accessibilityRegions_.Add(accessibilityRegionBySelector);
             return clone;
         }
 
         private PlaywrightCheckSettings Accessibility(AccessibilityRegionByElement accessibilityRegionByElement)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.accessibilityRegions_.Add(accessibilityRegionByElement);
             return clone;
         }
 
         public PlaywrightCheckSettings Accessibility(Region region, AccessibilityRegionType regionType)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
+            PlaywrightCheckSettings clone = Clone_();
             clone.Accessibility_(region, regionType);
             return clone;
         }
 
-        protected void Accessibility_(Region rect, AccessibilityRegionType regionType)
+        private void Accessibility_(Region rect, AccessibilityRegionType regionType)
         {
             accessibilityRegions_.Add(new AccessibilityRegionByRectangle(rect.Rectangle, regionType));
         }
@@ -1093,14 +1100,14 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings ScrollRootElement(Selector selector)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            if (frameChain_.size() == 0)
+            PlaywrightCheckSettings clone = Clone_();
+            if (frameChain_.Count == 0)
             {
-                clone.scrollRootElement = selector;
+                clone.scrollRootElement_ = selector;
             }
             else
             {
-                frameChain_.get(frameChain_.size() - 1).setScrollRootSelector(selector);
+                frameChain_.Last().ScrollRootSelector = selector;
             }
 
             return clone;
@@ -1109,14 +1116,14 @@ namespace Applitools.Playwright.Fluent
         /** internal */
         private PlaywrightCheckSettings ScrollRootElement(Element element)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            if (frameChain_.size() == 0)
+            PlaywrightCheckSettings clone = Clone_();
+            if (frameChain_.Count == 0)
             {
-                clone.scrollRootElement = element;
+                clone.scrollRootElement_ = element;
             }
             else
             {
-                frameChain_.get(frameChain_.size() - 1).setScrollRootElement(element);
+                frameChain_.Last().ScrollRootElement = element;
             }
 
             return clone;
@@ -1128,228 +1135,185 @@ namespace Applitools.Playwright.Fluent
      * @param breakpoints  one or more viewport widths explicitly
      * @return an updated clone of this settings object
      */
-        public PlaywrightCheckSettings LayoutBreakpoints(int...breakpoints)
+        public PlaywrightCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
-            return setLayoutBreakpoints(breakpoints);
-        }
-
-        /**
-     * Enable layout breakpoints for the current target.
-     *
-     * @param shouldSet  should enable this feature
-     * @return an updated clone of this settings object
-     */
-        public PlaywrightCheckSettings LayoutBreakpoints(bool shouldSet)
-        {
-            return SetLayoutBreakpoints(shouldSet);
-        }
-
-
-        public PlaywrightCheckSettings SetLayoutBreakpoints(int...breakpoints)
-        {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.IsDefaultLayoutBreakpointsSet = false;
-            clone.layoutBreakpoints_.clear();
-            if (breakpoints == null || breakpoints.length == 0)
+            PlaywrightCheckSettings clone = Clone_();
+            clone.layoutBreakpointsEnabled_ = false;
+            clone.layoutBreakpoints_.Clear();
+            if (breakpoints == null || breakpoints.Length == 0)
             {
-                return this;
+                return clone;
             }
 
-            for (int breakpoint :
-            breakpoints) {
-                ArgumentGuard.greaterThanZero(breakpoint, "breakpoint");
-                clone.layoutBreakpoints_.add(breakpoint);
+            foreach (int breakpoint in breakpoints)
+            {
+                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
+                clone.layoutBreakpoints_.Add(breakpoint);
             }
 
-            Collections.sort(clone.layoutBreakpoints_);
+            clone.layoutBreakpoints_.Sort();
             return clone;
         }
 
-
-        public PlaywrightCheckSettings SetLayoutBreakpoints(bool shouldSet)
+        public PlaywrightCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
-            PlaywrightCheckSettings clone = (PlaywrightCheckSettings)Clone();
-            clone.IsDefaultLayoutBreakpointsSet = shouldSet;
-            clone.layoutBreakpoints_.clear();
+            PlaywrightCheckSettings clone = Clone_();
+            clone.layoutBreakpointsEnabled_ = shouldSet;
+            clone.layoutBreakpoints_.Clear();
             return clone;
         }
 
-
-        public List<Integer> GetLayoutBreakpoints()
+        public new PlaywrightCheckSettings Fully()
         {
-            return layoutBreakpoints_;
+            return (PlaywrightCheckSettings)base.Fully();
         }
 
-
-        public bool IsDefaultLayoutBreakpointsSet()
+        public new PlaywrightCheckSettings Fully(bool fully)
         {
-            return IsDefaultLayoutBreakpointsSet;
+            return (PlaywrightCheckSettings)base.Fully(fully);
+        }
+        
+        public new PlaywrightCheckSettings WithName(string name)
+        {
+            return (PlaywrightCheckSettings)base.WithName(name);
+        }
+        
+        public new PlaywrightCheckSettings IgnoreCaret(bool ignoreCaret)
+        {
+            return (PlaywrightCheckSettings)base.IgnoreCaret(ignoreCaret);
+        }
+        
+        public new PlaywrightCheckSettings SendDom(bool sendDom)
+        {
+            return (PlaywrightCheckSettings)base.SendDom(sendDom);
         }
 
-
-        public PlaywrightCheckSettings Fully()
+        public new PlaywrightCheckSettings SendDom()
         {
-            return Fully(true);
+            return (PlaywrightCheckSettings)base.SendDom();
         }
 
-
-        public PlaywrightCheckSettings Fully(bool fully)
+        public new PlaywrightCheckSettings EnablePatterns(bool enablePatterns)
         {
-            return (PlaywrightCheckSettings)super.fully(fully);
+            return (PlaywrightCheckSettings)base.EnablePatterns(enablePatterns);
+        }
+        
+        public new PlaywrightCheckSettings EnablePatterns()
+        {
+            return (PlaywrightCheckSettings)base.EnablePatterns();
+        }
+        
+        public new PlaywrightCheckSettings BeforeRenderScreenshotHook(string hook)
+        {
+            return (PlaywrightCheckSettings)base.BeforeRenderScreenshotHook(hook);
         }
 
-
-        public PlaywrightCheckSettings WithName(string name)
+        public new PlaywrightCheckSettings Timeout(TimeSpan timeSpan)
         {
-            return (PlaywrightCheckSettings)super.withName(name);
+            return (PlaywrightCheckSettings)base.Timeout(timeSpan);
         }
 
-
-        public PlaywrightCheckSettings IgnoreCaret(bool ignoreCaret)
+        public new PlaywrightCheckSettings UseDom(bool useDom)
         {
-            return (PlaywrightCheckSettings)super.ignoreCaret(ignoreCaret);
+            return (PlaywrightCheckSettings)base.UseDom(useDom);
         }
 
-
-        public PlaywrightCheckSettings SendDom(bool sendDom)
+        public new PlaywrightCheckSettings VariationGroupId(string variationGroupId)
         {
-            return (PlaywrightCheckSettings)super.sendDom(sendDom);
+            return (PlaywrightCheckSettings)base.VariationGroupId(variationGroupId);
         }
 
-
-        public PlaywrightCheckSettings SendDom()
+        public new PlaywrightCheckSettings VisualGridOptions(params VisualGridOption[] options)
         {
-            return (PlaywrightCheckSettings)super.sendDom();
+            return (PlaywrightCheckSettings)base.VisualGridOptions(options);
         }
 
-
-        public PlaywrightCheckSettings EnablePatterns(bool enablePatterns)
+        public new PlaywrightCheckSettings WaitBeforeCapture(int milliSec)
         {
-            return (PlaywrightCheckSettings)super.enablePatterns(enablePatterns);
-        }
-
-
-        public PlaywrightCheckSettings EnablePatterns()
-        {
-            return (PlaywrightCheckSettings)super.enablePatterns();
-        }
-
-
-        public PlaywrightCheckSettings BeforeRenderScreenshotHook(string hook)
-        {
-            return (PlaywrightCheckSettings)super.beforeRenderScreenshotHook(hook);
-        }
-
-        public PlaywrightCheckSettings Timeout(Integer timeoutMilliseconds)
-        {
-            return (PlaywrightCheckSettings)super.timeout(timeoutMilliseconds);
-        }
-
-        public PlaywrightCheckSettings UseDom(bool useDom)
-        {
-            return (PlaywrightCheckSettings)super.useDom(useDom);
-        }
-
-        public PlaywrightCheckSettings VariationGroupId(string variationGroupId)
-        {
-            return (PlaywrightCheckSettings)super.variationGroupId(variationGroupId);
-        }
-
-        public PlaywrightCheckSettings VisualGridOptions(VisualGridOption...options)
-        {
-            return (PlaywrightCheckSettings)super.visualGridOptions(options);
-        }
-
-        public PlaywrightCheckSettings WaitBeforeCapture(Integer milliSec)
-        {
-            return (PlaywrightCheckSettings)super.waitBeforeCapture(milliSec);
+            return (PlaywrightCheckSettings)base.WaitBeforeCapture(milliSec);
         }
 
         public PlaywrightCheckSettings SetDisableBrowserFetching(bool disableBrowserFetching)
         {
-            return (PlaywrightCheckSettings)super.setDisableBrowserFetching(disableBrowserFetching);
+            return (PlaywrightCheckSettings)base.SetDisableBrowserFetching(disableBrowserFetching);
         }
 
         public PlaywrightCheckSettings AutProxy(AutProxySettings autProxy)
         {
-            return (PlaywrightCheckSettings)super.autProxy(autProxy);
+            return (PlaywrightCheckSettings)base.autProxy(autProxy);
         }
 
         public PlaywrightCheckSettings SetAccessibilityValidation(AccessibilitySettings accessibilitySettings)
         {
-            return (PlaywrightCheckSettings)super.setAccessibilityValidation(accessibilitySettings);
+            return (PlaywrightCheckSettings)base.SetAccessibilityValidation(accessibilitySettings);
         }
 
         public PlaywrightCheckSettings StitchMode(StitchMode stitchMode)
         {
-            return (PlaywrightCheckSettings)super.stitchMode(stitchMode);
+            return (PlaywrightCheckSettings)base.StitchMode(stitchMode);
         }
 
         public PlaywrightCheckSettings SetHideScrollBars(bool hideScrollBars)
         {
-            return (PlaywrightCheckSettings)super.setHideScrollBars(hideScrollBars);
+            return (PlaywrightCheckSettings)base.SetHideScrollBars(hideScrollBars);
         }
 
         public PlaywrightCheckSettings SetHideCaret(bool hideCaret)
         {
-            return (PlaywrightCheckSettings)super.setHideCaret(hideCaret);
+            return (PlaywrightCheckSettings)base.SetHideCaret(hideCaret);
         }
 
-        public override PlaywrightCheckSettings StitchOverlap(int? overlap)
+        public new PlaywrightCheckSettings StitchOverlap(int? overlap)
         {
-            return (PlaywrightCheckSettings)base.stitchOverlap(overlap);
+            return (PlaywrightCheckSettings)base.StitchOverlap(overlap);
         }
 
         public PlaywrightCheckSettings StitchOverlap(StitchOverlap stitchOverlap)
         {
-            return (PlaywrightCheckSettings)super.stitchOverlap(stitchOverlap);
+            return (PlaywrightCheckSettings)base.StitchOverlap(stitchOverlap);
         }
 
         public PlaywrightCheckSettings PageId(string pageId)
         {
-            return (PlaywrightCheckSettings)super.pageId(pageId);
+            PlaywrightCheckSettings clone = Clone_();
+            clone.pageId_ = pageId;
+            return clone;
         }
 
-        public PlaywrightCheckSettings IgnoreDisplacements(bool ignoreDisplacements)
+        public new PlaywrightCheckSettings IgnoreDisplacements(bool ignoreDisplacements = true)
         {
-            return (PlaywrightCheckSettings)super.ignoreDisplacements(ignoreDisplacements);
+            return (PlaywrightCheckSettings)base.IgnoreDisplacements(ignoreDisplacements);
         }
 
-        public PlaywrightCheckSettings IgnoreDisplacements()
+        public new PlaywrightCheckSettings IgnoreCaret()
         {
-            return (PlaywrightCheckSettings)super.ignoreDisplacements();
+            return (PlaywrightCheckSettings)base.IgnoreCaret();
         }
 
-        public PlaywrightCheckSettings IgnoreCaret()
+        public new PlaywrightCheckSettings MatchLevel(MatchLevel matchLevel)
         {
-            return (PlaywrightCheckSettings)super.ignoreCaret();
+            return (PlaywrightCheckSettings)base.MatchLevel(matchLevel);
         }
 
-        public PlaywrightCheckSettings MatchLevel(MatchLevel matchLevel)
+        public new PlaywrightCheckSettings Strict()
         {
-            return (PlaywrightCheckSettings)super.matchLevel(matchLevel);
+            return (PlaywrightCheckSettings)base.Strict();
         }
 
-        public PlaywrightCheckSettings Strict()
+        public new PlaywrightCheckSettings Layout()
         {
-            return (PlaywrightCheckSettings)super.strict();
+            return (PlaywrightCheckSettings)base.Layout();
         }
 
-        public PlaywrightCheckSettings Layout()
+        public new PlaywrightCheckSettings Exact()
         {
-            return (PlaywrightCheckSettings)super.layout();
+            return (PlaywrightCheckSettings)base.Exact();
         }
 
-        public PlaywrightCheckSettings Exact()
+        public new PlaywrightCheckSettings LazyLoad()
         {
-            return (PlaywrightCheckSettings)super.exact();
+            return (PlaywrightCheckSettings)base.LazyLoad();
         }
-
-        public PlaywrightCheckSettings LazyLoad()
-        {
-            return (PlaywrightCheckSettings)super.lazyLoad();
-        }
-
 
         public new PlaywrightCheckSettings LazyLoad(LazyLoadOptions lazyLoadOptions)
         {
@@ -1361,62 +1325,26 @@ namespace Applitools.Playwright.Fluent
             return (PlaywrightCheckSettings)base.DensityMetrics(xDpi, yDpi, scaleRatio);
         }
 
+        private PlaywrightCheckSettings Clone_()
+        {
+            return (PlaywrightCheckSettings)Clone();
+        }
+
         protected override CheckSettings Clone()
         {
             PlaywrightCheckSettings clone = new PlaywrightCheckSettings();
             PopulateClone_(clone);
             clone.targetElement_ = targetElement_;
-            clone.ScrollRootElement = this.ScrollRootElement;
-            clone.frameChain_.addAll(this.frameChain_);
-            clone.IsDefaultLayoutBreakpointsSet = this.IsDefaultLayoutBreakpointsSet;
-            clone.layoutBreakpoints_.addAll(this.layoutBreakpoints_);
+            clone.scrollRootElement_ = scrollRootElement_;
+            clone.frameChain_.AddRange(frameChain_);
+            clone.isDefaultLayoutBreakpointsSet_ = isDefaultLayoutBreakpointsSet_;
+            clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             return clone;
-        }
-
-        public LazyLoadOptions GetLazyLoadOptions()
-        {
-            return super.getLazyLoadOptions();
-        }
-
-        /** internal */
-        public GetRegion[] GetIgnoreRegions()
-        {
-            return ignoreRegions.toArray(new GetRegion[0]);
-        }
-
-        /** internal */
-        public GetRegion[] GetLayoutRegions()
-        {
-            return layoutRegions.toArray(new GetRegion[0]);
-        }
-
-        /** internal */
-        public GetRegion[] GetStrictRegions()
-        {
-            return strictRegions.toArray(new GetRegion[0]);
-        }
-
-        /** internal */
-        public GetRegion[] GetContentRegions()
-        {
-            return contentRegions.toArray(new GetRegion[0]);
-        }
-
-        /** internal */
-        public GetRegion[] GetFloatingRegions()
-        {
-            return floatingRegions.toArray(new GetRegion[0]);
-        }
-
-        /** internal */
-        public GetRegion[] GetAccessibilityRegions()
-        {
-            return accessibilityRegions.toArray(new GetRegion[0]);
         }
 
         /** see {@link #ignoreColors()} */
         [Obsolete]
-        public PlaywrightCheckSettings Content()
+        public new PlaywrightCheckSettings Content()
         {
             return IgnoreColors();
         }
@@ -1425,77 +1353,77 @@ namespace Applitools.Playwright.Fluent
         [Obsolete]
         public PlaywrightCheckSettings Content(string selector)
         {
-            return ignoreColors(selector);
+            return IgnoreColors(selector);
         }
 
         /** see {@link #ignoreColors(Locator)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(ILocator locator)
         {
-            return ignoreColors(locator.elementHandle());
+            return IgnoreColors(locator.ElementHandleAsync().GetAwaiter().GetResult());
         }
 
         /** see {@link #ignoreColors(ElementHandle)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(IElementHandle element)
         {
-            return ignoreColors(element);
+            return IgnoreColors(element);
         }
 
         /** see {@link #ignoreColors(String, String)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(string selector, string regionId)
         {
-            return ignoreColors(selector, regionId);
+            return IgnoreColors(selector, regionId);
         }
 
         /** see {@link #ignoreColors(Locator, String)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(ILocator locator, string regionId)
         {
-            return ignoreColors(locator, regionId);
+            return IgnoreColors(locator, regionId);
         }
 
         /** see {@link #ignoreColors(ElementHandle, String)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(IElementHandle element, string regionId)
         {
-            return ignoreColors(element, regionId);
+            return IgnoreColors(element, regionId);
         }
 
         /** see {@link #ignoreColors(String, Padding)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(string selector, Padding padding)
         {
-            return ignoreColors(selector, padding);
+            return IgnoreColors(selector, padding);
         }
 
         /** see {@link #ignoreColors(Locator, Padding)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(ILocator locator, Padding padding)
         {
-            return ignoreColors(locator.elementHandle(), padding);
+            return IgnoreColors(locator.ElementHandleAsync().GetAwaiter().GetResult(), padding);
         }
 
         /** see {@link #ignoreColors(Locator, Padding)} */
         [Obsolete]
         public PlaywrightCheckSettings Content(IElementHandle element, Padding padding)
         {
-            return ignoreColors(element, padding);
+            return IgnoreColors(element, padding);
         }
 
         /** see {@link #ignoreColors(Region[])} )} */
         [Obsolete]
         public PlaywrightCheckSettings Content(Region[] regions)
         {
-            return ignoreColors(regions);
+            return IgnoreColors(regions);
         }
 
         /** see {@link #ignoreColors(Region, Region...)} )} )} */
         [Obsolete]
         public PlaywrightCheckSettings Content(Region region, params Region[] regions)
         {
-            return ignoreColors(region, regions);
+            return IgnoreColors(region, regions);
         }
     }
 }

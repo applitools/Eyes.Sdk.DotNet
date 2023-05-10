@@ -22,7 +22,7 @@ namespace Applitools.Universal
                 '}';
         }
 
-        public CodedRegionReference ToRegion()
+        public virtual CodedRegionReference ToRegion()
         {
             return new CodedRegionReference
             {
