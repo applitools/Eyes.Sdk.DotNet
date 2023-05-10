@@ -1,7 +1,7 @@
 using Applitools.Commands;
 using Newtonsoft.Json;
 
-namespace Applitools
+namespace Applitools.Universal
 {
     public class SpecDriverMessageAdaptor : ISpecDriverMessageAdaptor
     {

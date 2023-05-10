@@ -205,7 +205,7 @@ namespace Applitools.Images
 
             ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
             checkSettings = checkSettings.Timeout(TimeSpan.Zero); // no need for automatic retry when dealing with images.
-            IImagesCheckTarget imagesCheckTarget = checkSettings as IImagesCheckTarget;
+            IImagesCheckTarget imagesCheckTarget = (IImagesCheckTarget)checkSettings;
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
             //eyesConfig.Open.Properties = _properties;

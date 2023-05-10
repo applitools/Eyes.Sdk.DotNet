@@ -6,6 +6,7 @@ using System.Reflection;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
+using Applitools.Universal;
 using Applitools.Utils;
 
 namespace Applitools
@@ -13,10 +14,10 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private MakeManagerRequestPayload config_;
-        private readonly Assembly _actualAssembly;
-        private readonly IList<EyesBaseConfig> _eyeses;
+        protected Assembly ActualAssembly { get; }
+        private readonly IList<EyesBaseConfig> eyesConfigs_;
 
-        protected CommandExecutor CommandExecutor { get; private set; }
+        public CommandExecutor CommandExecutor { get; }
 
         public MakeManagerRequestPayload Config
         {
@@ -49,8 +50,8 @@ namespace Applitools
                 Logger.SetLogHandler(logHandler);
             }
 
-            _eyeses = new List<EyesBaseConfig>();
-            _actualAssembly = GetActualAssembly();
+            eyesConfigs_ = new List<EyesBaseConfig>();
+            ActualAssembly = GetActualAssembly();
 
             var sdkEvent = CreateCoreSdk(agentId);
             CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageAdaptor, logHandler, sdkEvent);
@@ -108,7 +109,7 @@ namespace Applitools
 
         public void AddEyes(EyesBaseConfig eyesBase)
         {
-            _eyeses.Add(eyesBase);
+            eyesConfigs_.Add(eyesBase);
         }
 
         public string GetCoreMakeManager()
@@ -178,7 +179,7 @@ namespace Applitools
 
         protected virtual IEnumerable<EyesBaseConfig> GetAllEyes()
         {
-            return _eyeses;
+            return eyesConfigs_;
         }
 
         private Assembly GetActualAssembly()
@@ -220,7 +221,7 @@ namespace Applitools
         protected virtual CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
             var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{_actualAssembly.GetName().Version}");
+            result.AddOrUpdatePayload("agentId", $"{name}:{ActualAssembly.GetName().Version}");
             result.AddOrUpdatePayload("spec", "webdriver");
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 

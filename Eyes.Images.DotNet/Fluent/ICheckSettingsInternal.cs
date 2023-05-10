@@ -40,5 +40,6 @@ namespace Applitools.Fluent
 
         IList<int> GetLayoutBreakpoints();
         LazyLoadOptions GetLazyLoad();
+        DensityMetrics GetDensityMetrics();
     }
 }

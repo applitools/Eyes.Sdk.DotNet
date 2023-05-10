@@ -6,13 +6,12 @@ namespace Applitools.Playwright.Universal.Dto
 {
     public class Driver : Reference
     {
-
         public IPage Page { get; set; }
-        public Reference root;
+        public Reference Root { get; }
 
         public Driver()
         {
-            root = new Reference
+            Root = new Reference
             {
                 ApplitoolsRefId = Guid.NewGuid().ToString()
             };
@@ -22,8 +21,8 @@ namespace Applitools.Playwright.Universal.Dto
         {
             Page = page;
 
-            root = new Driver();
-            root.ApplitoolsRefId = Guid.NewGuid().ToString();
+            Root = new Driver();
+            Root.ApplitoolsRefId = Guid.NewGuid().ToString();
         }
 
         public void SetWebDriverProxy(ProxySettings proxySettings)

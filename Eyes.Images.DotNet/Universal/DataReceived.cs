@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Applitools.Selenium
+namespace Applitools.Universal
 {
     public delegate void DataReceived(object sender, EventArgs args);
 }

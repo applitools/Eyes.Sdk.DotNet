@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Applitools.Commands.Requests;
-using Applitools.Commands.Responses;
 using Applitools.Utils;
 using AutoMapper;
 
@@ -21,9 +18,9 @@ namespace Applitools
     /// the entire window.</param>
     public delegate string CreateImageHandler(Rectangle region);
 
-    //    /// <summary>
-    //    /// Applitools Eyes base class.
-    //    /// </summary>
+    /// <summary>
+    /// Applitools Eyes base class.
+    /// </summary>
     [ComVisible(true)]
     public abstract class EyesBase : EyesBaseConfig//, IEyesBase, IBatchCloser
     {
@@ -144,7 +141,7 @@ namespace Applitools
             return settings;
         }
 
-        protected static EGClientSettings ToEGClientSettings(Configuration configuration)
+        protected static EGClientSettings ToEgClientSettings(Configuration configuration)
         {
             var config = new MapperConfiguration(cfg =>
             {

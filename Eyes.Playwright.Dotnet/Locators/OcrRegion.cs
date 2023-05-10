@@ -1,53 +1,36 @@
-package com.applitools.eyes.playwright.locators;
+using Applitools.Utils.Geometry;
+using Microsoft.Playwright;
 
-import com.applitools.eyes.Region;
-import com.applitools.eyes.locators.BaseOcrRegion;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.microsoft.playwright.ElementHandle;
-import com.microsoft.playwright.Locator;
+namespace Applitools.Playwright.Locators
+{
+    public class OcrRegion : OcrRegionBase
+    {
+        public IElementHandle Element { get; set; }
 
-public class OcrRegion extends BaseOcrRegion {
-    @JsonIgnore
-    private ElementHandle element;
+        public ILocator Locator { get; set; }
 
-    @JsonIgnore
-    private Locator locator;
+        public string Selector { get; set; }
 
-    @JsonIgnore
-    private String selector;
+        public Region Region { get; set; }
 
-    @JsonIgnore
-    private Region region;
+        public OcrRegion(IElementHandle element)
+        {
+            Element = element;
+        }
 
-    public OcrRegion(ElementHandle element) {
-        this.element = element;
-    }
+        public OcrRegion(ILocator locator)
+        {
+            Locator = locator;
+        }
 
-    public OcrRegion(Locator locator) {
-        this.locator = locator;
-    }
+        public OcrRegion(Region region)
+        {
+            Region = region;
+        }
 
-    public OcrRegion(Region region) {
-        this.region = region;
-    }
-
-    public OcrRegion(String selector) {
-        this.selector = selector;
-    }
-
-    public ElementHandle getElement() {
-        return element;
-    }
-
-    public Locator getLocator() {
-        return locator;
-    }
-
-    public String getSelector() {
-        return selector;
-    }
-
-    public Region getRegion() {
-        return region;
+        public OcrRegion(string selector)
+        {
+            Selector = selector;
+        }
     }
 }

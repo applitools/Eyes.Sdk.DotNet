@@ -30,7 +30,7 @@ namespace Applitools
         /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to ignore when validating the screenshot.</param>
+        /// <param name="regions">An enumerable of regions to ignore when validating the screenshot.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -56,7 +56,7 @@ namespace Applitools
         /// <summary>
         /// Adds one or more content regions.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Content method.</param>
+        /// <param name="regions">An enumerable of regions to match using the Content method.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -82,7 +82,7 @@ namespace Applitools
         /// <summary>
         /// Adds one or more layout regions.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Layout method.</param>
+        /// <param name="regions">An enumerable of regions to match using the Layout method.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -108,7 +108,7 @@ namespace Applitools
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
-        /// <param name="regions">An enumerbale of regions to match using the Strict method.</param>
+        /// <param name="regions">An enumerable of regions to match using the Strict method.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -144,7 +144,7 @@ namespace Applitools
         /// <param name="maxDownOffset">How much the content can move down.</param>
         /// <param name="maxLeftOffset">How much the content can move to the left.</param>
         /// <param name="maxRightOffset">How much the content can move to the right.</param>
-        /// <remarks>A floating region is a a region that can be placed within the boundries of a bigger region.</remarks>
+        /// <remarks>A floating region is a a region that can be placed within the boundaries of a bigger region.</remarks>
         /// <returns>An updated clone of this settings object.</returns>
         ICheckSettings Floating(Rectangle region, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset);
 
@@ -222,13 +222,15 @@ namespace Applitools
         ICheckSettings IgnoreDisplacements(bool ignoreDisplacements = true);
 
         [Obsolete("Use " + nameof(BeforeRenderScreenshotHook) + " instead.")]
-        ICheckSettings ScriptHook(string jshook);
+        ICheckSettings ScriptHook(string jsHook);
 
         ICheckSettings BeforeRenderScreenshotHook(string hook);
 
         ICheckSettings VisualGridOptions(params VisualGridOption[] options);
 
         ICheckSettings VariationGroupId(string variationGroupId);
+
+        ICheckSettings DensityMetrics(int xDpi, int yDpi, double? scaleRatio = null);
 
         ICheckSettings Clone();
     }

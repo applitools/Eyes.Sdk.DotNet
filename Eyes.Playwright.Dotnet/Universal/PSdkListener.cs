@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace Applitools.Playwright.Universal
 {
+    /*
     public class PSdkListener //: AbstractSDKListener
     {
         public static PSdkListener Instance { get; } = new PSdkListener();
@@ -473,4 +474,5 @@ namespace Applitools.Playwright.Universal
             }
         }
     }
+    */
 }

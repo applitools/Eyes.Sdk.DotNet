@@ -2,34 +2,34 @@
 using Applitools.Utils;
 using Region = Applitools.Utils.Geometry.Region;
 
-namespace Applitools.Images
+namespace Applitools
 {
     public class OcrRegion : OcrRegionBase
     {
-        private readonly string _image;
-        private readonly Bitmap _bitmapImage;
-        private readonly Region? _region;
+        private readonly string image_;
+        private readonly Bitmap bitmapImage_;
+        private readonly Region? region_;
 			
         public OcrRegion(Bitmap image, Region? region = null)
         {
-	        _bitmapImage = image;
-	        _region = region;
+	        bitmapImage_ = image;
+	        region_ = region;
         }
         
 		public OcrRegion(string image, Region? region = null)
 		{
-			_image = image;
-			_region = region;
+			image_ = image;
+			region_ = region;
 		}
 
 		public string GetImage()
         {
-	        return _bitmapImage != null ? _bitmapImage.ToBase64() : _image;
+	        return bitmapImage_ != null ? bitmapImage_.ToBase64() : image_;
         }
 
 		public Region? GetRegion()
         {
-	        return _region;
+	        return region_;
         }
     }
 }

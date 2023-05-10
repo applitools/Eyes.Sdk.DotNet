@@ -1,6 +1,6 @@
 using Applitools.Commands;
 
-namespace Applitools
+namespace Applitools.Universal
 {
     public interface ISpecDriverMessageAdaptor
     {

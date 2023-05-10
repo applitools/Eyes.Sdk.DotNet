@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using Applitools;
 using Applitools.Commands;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
+using Applitools.Playwright.Universal.Mapper;
 using Applitools.Universal;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
@@ -13,86 +12,70 @@ namespace Applitools.Playwright
 {
     public class Eyes : EyesBase
     {
-        /// <summary>the runner.</summary>
+        /// <summary>
+        /// The runner.
+        /// </summary>
         private readonly EyesRunner runner_;
 
-        /**
-     * the command executor to execute the commands.
-     */
+        /// <summary>
+        /// The command executor to execute the commands.
+        /// </summary>
         private readonly CommandExecutor commandExecutor_;
 
-        /**
-     * the configuration that will be used in eyes related requests.
-     */
+        /// <summary>
+        /// The configuration that will be used in eyes related requests.
+        /// </summary>
         private Configuration configuration_ = new Configuration();
 
-        /**
-     * this reference has to be used in eyes related requests (Eyes.check, Eyes.locate, Eyes.extractTextRegions, Eyes.extractText, Eyes.close, Eyes.abort)
-     */
+        /// <summary>
+        /// This reference has to be used in eyes related requests
+        /// (Eyes.Check, Eyes.Locate, Eyes.ExtractTextRegions, Eyes.ExtractText, Eyes.Close, Eyes.Abort)
+        /// </summary>
         private Reference eyesRef_;
 
-        /**
-     * is eyes closed, used to check abort after close.
-     */
+        /// <summary>
+        /// Is eyes closed, used to check abort after close.
+        /// </summary>
         private bool isClosed_;
 
-        /**
-     * the driver reference associated with the test.
-     */
+        /// <summary>
+        /// The driver reference associated with the test.
+        /// </summary>
         private Driver driver_;
 
-
-        /// <summary>Instantiates a new Eyes.</summary>
+        /// <summary>
+        /// Instantiates a new Eyes.
+        /// </summary>
         public Eyes() : this(new ClassicRunner())
         {
         }
 
-        /**
-     * Instantiates a new Eyes.
-     *
-     * @param runner0  the runner
-     */
-        public Eyes(EyesRunner runner0)
+        /// <summary>
+        /// Instantiates a new Eyes.
+        /// </summary>
+        /// <param name="runner">The runner</param>
+        public Eyes(EyesRunner runner)
         {
-            this.runner_ = runner0 == null ? new ClassicRunner() : runner0;
-            commandExecutor_ = runner_.getCommandExecutor();
+            runner_ = runner ?? new ClassicRunner();
+            commandExecutor_ = runner_.CommandExecutor;
         }
 
-        /**
-     * Starts a test.
-     *
-     * @param page   The web driver that controls the browser hosting the application under test.
-     * @return the page
-     */
+        /// <summary>
+        /// Starts a test.
+        /// </summary>
+        /// <param name="page">The web driver that controls the browser hosting the application under test.</param>
+        /// <returns>The Page</returns>
         public IPage Open(IPage page)
         {
-            return Open(page, configuration_.getAppName(), configuration_.getTestName());
+            return Open(page, configuration_.AppName, configuration_.TestName);
         }
-
-        /**
-     * Starts a test.
-     *
-     * @param page      The web driver that controls the browser hosting the application under test.
-     * @param appName   The name of the application under test.
-     * @param testName  The test name. (i.e., the visible part of the document's body) or {@code null} to use the current window's viewport.
-     * @return the page
-     */
+        
         public IPage Open(IPage page, string appName, string testName)
         {
-            return Open(page, appName, testName, configuration_.getViewportSize());
+            return Open(page, appName, testName, configuration_.ViewportSize);
         }
 
-        /**
-     * Starts a test.
-     *
-     * @param page          The web driver that controls the browser hosting the application under test.
-     * @param appName       The name of the application under test.
-     * @param testName      The test name.
-     * @param viewportSize  The required browser's viewport size (i.e., the visible part of the document's body) or {@code null} to use the current window's viewport.
-     * @return the page
-     */
-        public IPage Open(IPage page, string appName, string testName,
-            RectangleSize viewportSize)
+        public IPage Open(IPage page, string appName, string testName, RectangleSize viewportSize)
         {
             if (IsDisabled)
             {
@@ -100,7 +83,8 @@ namespace Applitools.Playwright
             }
 
             driver_ = new Driver(page);
-            driver_.setApplitoolsRefId(GetRefer_().ref (page, driver_.getRoot()));
+            Refer refer = GetRefer_();
+            driver_.ApplitoolsRefId = refer.Ref(page, driver_.Root);
             driver_.setWebDriverProxy(configuration_.getWebDriverProxy());
 
             configuration_.setAppName(appName).setTestName(testName);
@@ -114,14 +98,15 @@ namespace Applitools.Playwright
             OpenSettingsDto settingsDto =
                 SettingsMapper.toOpenSettingsDto(configuration_, runner_.isDontCloseBatches());
 
-        /*
-            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
+            /*
+                var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
+    
+                var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
+              */
 
-            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
-          */
-        
             eyesRef_ = commandExecutor_.managerOpenEyes(runner_.getManagerRef(), driver_, settingsDto,
                 configurationDto);
+            IsOpen = true;
             return page;
         }
 
@@ -137,24 +122,14 @@ namespace Applitools.Playwright
             }
         }
 
-        /**
-     * Check.
-     * @param tag           the tag
-     * @param checkSettings the check settings
-     */
         public void Check(string tag, ICheckSettings checkSettings)
         {
             Check(checkSettings.WithName(tag));
         }
 
-        /**
-     * Check.
-     *
-     * @param checkSettings the check settings
-     */
         public void Check(ICheckSettings checkSettings)
         {
-            if (getIsDisabled())
+            if (IsDisabled)
             {
                 return;
             }
@@ -163,33 +138,27 @@ namespace Applitools.Playwright
             ArgumentGuard.NotOfType(checkSettings, typeof(IPlaywrightCheckSettings), nameof(checkSettings));
             IPlaywrightCheckSettings playwrightCheckSettings = (IPlaywrightCheckSettings)checkSettings;
 
-            EyesConfig checkSettingsDto = PlaywrightCheckSettingsMapper.toCheckSettingsDto(
+            EyesConfig checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
                 playwrightCheckSettings,
-                configure(), GetRefer_(), driver_.getRoot());
+                Configure(), GetRefer_(), driver_.getRoot());
 
             checkDto(checkSettingsDto, driver_);
         }
 
-        /**
-     * Extract text.
-     *
-     * @param ocrRegions  the ocrRegions.
-     * @return the extracted text
-     */
-        public List<string> extractText(BaseOcrRegion...ocrRegions)
+        public List<string> ExtractText(params BaseOcrRegion[] ocrRegions)
         {
-            if (!getIsOpen())
+            if (!IsOpen)
             {
-                this.abort();
+                Abort();
                 throw new EyesException("Eyes not open");
             }
 
             List<OCRExtractSettingsDto> ocrExtractSettingsDtoList = PlaywrightOCRExtractSettingsDtoMapper
                 .toOCRExtractSettingsDtoList(Arrays.asList(ocrRegions), GetRefer_(), driver_.getRoot());
             ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configure(), false);
+                .toConfigurationDto(Configure(), false);
 
-            return extractTextDto(driver_, ocrExtractSettingsDtoList, configurationDto);
+            return ExtractTextDto(driver_, ocrExtractSettingsDtoList, configurationDto);
         }
 
         /**
@@ -198,12 +167,12 @@ namespace Applitools.Playwright
      * @param textRegionSettings  the image from which the location of the text will be extracted.
      * @return mapping of the located text regions
      */
-        public Map<string, List<TextRegion>> extractTextRegions(TextRegionSettings textRegionSettings)
+        public Map<string, List<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
             OCRSearchSettingsDto ocrSearchSettingsDto =
                 OCRSearchSettingsMapper.toOCRSearchSettingsDto(textRegionSettings);
             ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configure(), false);
+                .toConfigurationDto(Configure(), false);
 
             return locateTextDto(driver_, ocrSearchSettingsDto, configurationDto);
         }
@@ -213,11 +182,11 @@ namespace Applitools.Playwright
      * @param visualLocatorSettings the locator settings.
      * @return mapping of the region locations.
      */
-        public Map<string, List<Region>> locate(VisualLocatorSettings visualLocatorSettings)
+        public Map<string, List<Region>> Locate(VisualLocatorSettings visualLocatorSettings)
         {
             ArgumentGuard.notNull(visualLocatorSettings, "visualLocatorSettings");
 
-            if (!getIsOpen())
+            if (!IsOpen)
             {
                 this.abort();
                 throw new EyesException("Eyes not open");
@@ -227,36 +196,24 @@ namespace Applitools.Playwright
                 .toVisualLocatorSettingsDto(visualLocatorSettings);
 
             ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configure(), false);
+                .toConfigurationDto(Configure(), false);
 
             return locateDto(driver_, visualLocatorSettingsDto, configurationDto);
         }
 
-        /**
-     * See {@link #close(boolean)}.
-     * {@code throwEx} defaults to {@code true}.
-     *
-     * @return The test results.
-     */
-        public TestResults close()
+        /// <summary>
+        /// Close test results.
+        /// </summary>
+        /// <param name="shouldThrowException">Throw exception if a diff is found</param>
+        /// <returns>The test results</returns>
+        public override TestResults Close(bool shouldThrowException = true)
         {
-            return close(true);
-        }
-
-        /**
-     * Close test results.
-     *
-     * @param shouldThrowException the should throw exception
-     * @return the test results
-     */
-        public TestResults close(boolean shouldThrowException)
-        {
-            if (getIsDisabled())
+            if (IsDisabled)
             {
                 return null;
             }
 
-            if (!getIsOpen())
+            if (!IsOpen)
             {
                 throw new EyesException("Eyes not open");
             }
@@ -272,7 +229,8 @@ namespace Applitools.Playwright
 
             eyesRef_ = null;
             isClosed_ = true;
-            GetRefer_().destroy(driver_.getRoot());
+            IsOpen = false;
+            GetRefer_().Destroy(driver_.Root);
             driver_ = null;
 
             List<TestResults> testResults =
@@ -284,37 +242,11 @@ namespace Applitools.Playwright
             return testResults.get(0);
         }
 
-        public Configuration configure()
+        public Configuration Configure()
         {
-            return this.configuration_;
+            return configuration_;
         }
-
-        /**
-     * @param appName The name of the application under test.
-     */
-        public Configuration setAppName(string appName)
-        {
-            return configure().setAppName(appName);
-        }
-
-        public Configuration setTestName(string testName)
-        {
-            return configure().setTestName(testName);
-        }
-
-        /**
-     * @return The name of the application under test.
-     */
-        public string getAppName()
-        {
-            return configure().getAppName();
-        }
-
-        public string getTestName()
-        {
-            return configure().getTestName();
-        }
-
+        
         /**
      * Sets the branch in which the baseline for subsequent test runs resides.
      * If the branch does not already exist it will be created under the
@@ -325,12 +257,12 @@ namespace Applitools.Playwright
      */
         public Configuration setBranchName(string branchName)
         {
-            return configure().setBranchName(branchName);
+            return Configure().setBranchName(branchName);
         }
 
         public Configuration setAgentId(string agentId)
         {
-            return configure().setAgentId(agentId);
+            return Configure().setAgentId(agentId);
         }
 
         /**
@@ -338,12 +270,12 @@ namespace Applitools.Playwright
      */
         public string getBranchName()
         {
-            return configure().getBranchName();
+            return Configure().getBranchName();
         }
 
         public string getAgentId()
         {
-            return configure().getAgentId();
+            return Configure().getAgentId();
         }
 
         /**
@@ -353,7 +285,7 @@ namespace Applitools.Playwright
      */
         public Configuration setParentBranchName(string branchName)
         {
-            return configure().setParentBranchName(branchName);
+            return Configure().setParentBranchName(branchName);
         }
 
         /**
@@ -362,7 +294,7 @@ namespace Applitools.Playwright
      */
         public string getParentBranchName()
         {
-            return configure().getParentBranchName();
+            return Configure().getParentBranchName();
         }
 
         /**
@@ -372,7 +304,7 @@ namespace Applitools.Playwright
      */
         public Configuration setBaselineBranchName(string branchName)
         {
-            return configure().setBaselineBranchName(branchName);
+            return Configure().setBaselineBranchName(branchName);
         }
 
         /**
@@ -381,7 +313,7 @@ namespace Applitools.Playwright
      */
         public string getBaselineBranchName()
         {
-            return configure().getBaselineBranchName();
+            return Configure().getBaselineBranchName();
         }
 
         /**
@@ -390,7 +322,7 @@ namespace Applitools.Playwright
      */
         public Configuration setSaveDiffs(bool saveDiffs)
         {
-            return configure().setSaveDiffs(saveDiffs);
+            return Configure().setSaveDiffs(saveDiffs);
         }
 
         /**
@@ -399,7 +331,7 @@ namespace Applitools.Playwright
      */
         public bool getSaveDiffs()
         {
-            return configure().getSaveDiffs();
+            return Configure().getSaveDiffs();
         }
 
         /**
@@ -408,7 +340,7 @@ namespace Applitools.Playwright
      */
         public Configuration setMatchTimeout(int ms)
         {
-            return configure().setMatchTimeout(ms);
+            return Configure().setMatchTimeout(ms);
         }
 
         /**
@@ -416,7 +348,7 @@ namespace Applitools.Playwright
      */
         public int getMatchTimeout()
         {
-            return configure().getMatchTimeout();
+            return Configure().getMatchTimeout();
         }
 
         /**
@@ -425,7 +357,7 @@ namespace Applitools.Playwright
      */
         public Configuration setSaveNewTests(boolean saveNewTests)
         {
-            return configure().setSaveNewTests(saveNewTests);
+            return Configure().setSaveNewTests(saveNewTests);
         }
 
         /**
@@ -433,7 +365,7 @@ namespace Applitools.Playwright
      */
         public boolean getSaveNewTests()
         {
-            return configure().getSaveNewTests();
+            return Configure().getSaveNewTests();
         }
 
         /**
@@ -442,7 +374,7 @@ namespace Applitools.Playwright
      */
         public Configuration setSaveFailedTests(boolean saveFailedTests)
         {
-            return configure().setSaveFailedTests(saveFailedTests);
+            return Configure().setSaveFailedTests(saveFailedTests);
         }
 
         /**
@@ -450,7 +382,7 @@ namespace Applitools.Playwright
      */
         public boolean getSaveFailedTests()
         {
-            return configure().getSaveFailedTests();
+            return Configure().getSaveFailedTests();
         }
 
         /**
@@ -460,12 +392,12 @@ namespace Applitools.Playwright
      */
         public Configuration setBatch(BatchInfo batch)
         {
-            if (getIsDisabled())
+            if (IsDisabled)
             {
-                return configure();
+                return Configure();
             }
 
-            return configure().setBatch(batch);
+            return Configure().setBatch(batch);
         }
 
         /**
@@ -473,7 +405,7 @@ namespace Applitools.Playwright
      */
         public BatchInfo getBatch()
         {
-            return configure().getBatch();
+            return Configure().getBatch();
         }
 
 
@@ -486,7 +418,7 @@ namespace Applitools.Playwright
         {
             ArgumentGuard.notNull(defaultMatchSettings, "defaultMatchSettings");
 
-            return configure().setDefaultMatchSettings(defaultMatchSettings);
+            return Configure().setDefaultMatchSettings(defaultMatchSettings);
         }
 
         /**
@@ -494,7 +426,7 @@ namespace Applitools.Playwright
      */
         public ImageMatchSettings getDefaultMatchSettings()
         {
-            return configure().getDefaultMatchSettings();
+            return Configure().getDefaultMatchSettings();
         }
 
         /**
@@ -508,29 +440,29 @@ namespace Applitools.Playwright
      */
         public Configuration setMatchLevel(MatchLevel matchLevel)
         {
-            Configuration config = configure();
+            Configuration config = Configure();
             config.getDefaultMatchSettings().setMatchLevel(matchLevel);
             return config;
         }
 
         public Configuration setIgnoreDisplacements(boolean isIgnoreDisplacements)
         {
-            return configure().setIgnoreDisplacements(isIgnoreDisplacements);
+            return Configure().setIgnoreDisplacements(isIgnoreDisplacements);
         }
 
         public Configuration setAccessibilityValidation(AccessibilitySettings accessibilityValidation)
         {
-            return configure().setAccessibilityValidation(accessibilityValidation);
+            return Configure().setAccessibilityValidation(accessibilityValidation);
         }
 
         public Configuration setUseDom(boolean useDom)
         {
-            return configure().setUseDom(useDom);
+            return Configure().setUseDom(useDom);
         }
 
         public Configuration setEnablePatterns(boolean enablePatterns)
         {
-            return configure().setEnablePatterns(enablePatterns);
+            return Configure().setEnablePatterns(enablePatterns);
         }
 
         /**
@@ -539,27 +471,27 @@ namespace Applitools.Playwright
      */
         public MatchLevel getMatchLevel()
         {
-            return configure().getDefaultMatchSettings().getMatchLevel();
+            return Configure().getDefaultMatchSettings().getMatchLevel();
         }
 
         public boolean getIgnoreDisplacements()
         {
-            return configure().getIgnoreDisplacements();
+            return Configure().getIgnoreDisplacements();
         }
 
         public AccessibilitySettings getAccessibilityValidation()
         {
-            return configure().getAccessibilityValidation();
+            return Configure().getAccessibilityValidation();
         }
 
         public boolean getUseDom()
         {
-            return configure().getUseDom();
+            return Configure().getUseDom();
         }
 
         public boolean getEnablePatterns()
         {
-            return configure().getEnablePatterns();
+            return Configure().getEnablePatterns();
         }
 
         /**
@@ -567,7 +499,7 @@ namespace Applitools.Playwright
      */
         public boolean getIgnoreCaret()
         {
-            bool ignoreCaret = configure().getDefaultMatchSettings().getIgnoreCaret();
+            bool ignoreCaret = Configure().getDefaultMatchSettings().getIgnoreCaret();
             return ignoreCaret == null || ignoreCaret;
         }
 
@@ -577,8 +509,8 @@ namespace Applitools.Playwright
      */
         public Configuration setIgnoreCaret(boolean value)
         {
-            Configuration config = configure();
-            configure().getDefaultMatchSettings().setIgnoreCaret(value);
+            Configuration config = Configure();
+            Configure().getDefaultMatchSettings().setIgnoreCaret(value);
             return config;
         }
 
@@ -587,7 +519,7 @@ namespace Applitools.Playwright
      */
         public int getStitchOverlap()
         {
-            return configure().getStitchOverlap();
+            return Configure().getStitchOverlap();
         }
 
         /**
@@ -596,7 +528,7 @@ namespace Applitools.Playwright
      */
         public Configuration setStitchOverlap(int pixels)
         {
-            return configure().setStitchOverlap(pixels);
+            return Configure().setStitchOverlap(pixels);
         }
 
         /**
@@ -604,7 +536,7 @@ namespace Applitools.Playwright
      */
         public Configuration setHostOS(string hostOS)
         {
-            Configuration config = configure();
+            Configuration config = Configure();
             if (hostOS == null || hostOS.isEmpty())
             {
                 config.setHostOS(null);
@@ -622,7 +554,7 @@ namespace Applitools.Playwright
      */
         public string getHostOS()
         {
-            return configure().getHostOS();
+            return Configure().getHostOS();
         }
 
         /**
@@ -630,7 +562,7 @@ namespace Applitools.Playwright
      */
         public Configuration setHostApp(string hostApp)
         {
-            Configuration config = configure();
+            Configuration config = Configure();
             if (hostApp == null || hostApp.isEmpty())
             {
                 config.setHostApp(null);
@@ -648,7 +580,7 @@ namespace Applitools.Playwright
      */
         public string getHostApp()
         {
-            return configure().getHostApp();
+            return Configure().getHostApp();
         }
 
         /**
@@ -678,7 +610,7 @@ namespace Applitools.Playwright
      */
         public Configuration setBaselineEnvName(string baselineEnvName)
         {
-            Configuration config = configure();
+            Configuration config = Configure();
             if (baselineEnvName == null || baselineEnvName.isEmpty())
             {
                 config.setBaselineEnvName(null);
@@ -690,25 +622,15 @@ namespace Applitools.Playwright
 
             return config;
         }
-
-
-        /**
-     * Gets is open.
-     * @return Whether a session is open.
-     */
-        public bool getIsOpen()
-        {
-            return eyesRef_ != null;
-        }
-
-        public void closeAsync()
+        
+        public void CloseAsync()
         {
             if (IsDisabled)
             {
                 return;
             }
 
-            if (!getIsOpen())
+            if (!IsOpen)
             {
                 throw new EyesException("Eyes not open");
             }
@@ -720,18 +642,20 @@ namespace Applitools.Playwright
             commandExecutor_.close(eyesRef_, settings, configurationDto);
             eyesRef_ = null;
             isClosed_ = true;
+            IsOpen = false;
             GetRefer_().destroy(driver_.getRoot());
             driver_ = null;
         }
 
         public override void AbortAsync()
         {
-            if (!isClosed_ && getIsOpen())
+            if (!isClosed_ && IsOpen)
             {
                 CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-                commandExecutor_.abort(eyesRef_, settings);
+                commandExecutor_.Abort(eyesRef_, settings);
 
                 eyesRef_ = null;
+                IsOpen = false;
                 GetRefer_().destroy(driver_.getRoot());
                 driver_ = null;
             }
@@ -739,7 +663,7 @@ namespace Applitools.Playwright
 
         public override TestResults Abort()
         {
-            if (!isClosed_ && getIsOpen())
+            if (!isClosed_ && IsOpen)
             {
                 CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
                 commandExecutor_.abort(eyesRef_, settings);
@@ -749,6 +673,7 @@ namespace Applitools.Playwright
                     commandExecutor_.eyesGetResults(eyesRef_, getResultsSettings);
 
                 eyesRef_ = null;
+                IsOpen = false;
                 GetRefer_().destroy(driver_.getRoot());
                 driver_ = null;
 
@@ -804,19 +729,20 @@ namespace Applitools.Playwright
 
         private Refer GetRefer_()
         {
-            try
-            {
-                Method getRef = runner.getClass().getDeclaredMethod("getRefer");
-                getRef.setAccessible(true);
-                return (Refer)getRef.invoke(runner);
-            }
-            catch (IllegalAccessException |
-
-            InvocationTargetException | NoSuchMethodException e) {
-                string message =
-                    GeneralUtils.createErrorMessageFromExceptionWithText(e, "got an error trying to getRef!");
-                throw new EyesException(message);
-            }
+            return refer_;
+            // try
+            // {
+            //     Method getRef = runner.getClass().getDeclaredMethod("getRefer");
+            //     getRef.setAccessible(true);
+            //     return (Refer)getRef.invoke(runner);
+            // }
+            // catch (IllegalAccessException |
+            //
+            // InvocationTargetException | NoSuchMethodException e) {
+            //     string message =
+            //         GeneralUtils.createErrorMessageFromExceptionWithText(e, "got an error trying to getRef!");
+            //     throw new EyesException(message);
+            // }
         }
     }
 }

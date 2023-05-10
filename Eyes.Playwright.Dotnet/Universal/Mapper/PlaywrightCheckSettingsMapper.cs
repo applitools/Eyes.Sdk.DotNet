@@ -5,10 +5,11 @@ namespace Applitools.Playwright.Universal.Mapper
 {
     public class PlaywrightCheckSettingsMapper
     {
-        public static CheckSettings toCheckSettingsDto(ICheckSettings checkSettings, Configuration config,
+        public static CheckSettings ToCheckSettingsDto(ICheckSettings checkSettings, Configuration config,
             Refer refer, Reference root)
         {
-            if (!(checkSettings is PlaywrightCheckSettings playwrightCheckSettings)) {
+            if (!(checkSettings is PlaywrightCheckSettings playwrightCheckSettings))
+            {
                 return null;
             }
 
@@ -17,7 +18,7 @@ namespace Applitools.Playwright.Universal.Mapper
             checkSettingsDto.setRegion(
                 TRegionMapper.toTRegionFromCheckSettings(playwrightCheckSettings, refer, root));
             checkSettingsDto.setFrames(
-                TFramesMapper.toTFramesFromCheckSettings(playwrightCheckSettings.getFrameChain(), refer,
+                TFramesMapper.toTFramesFromCheckSettings(playwrightCheckSettings.FrameChain, refer,
                     root));
             checkSettingsDto.setFully(playwrightCheckSettings.getStitchContent());
             checkSettingsDto.setScrollRootElement(

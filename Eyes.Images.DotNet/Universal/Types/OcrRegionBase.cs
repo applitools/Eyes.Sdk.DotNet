@@ -2,43 +2,43 @@
 {
 	public abstract class OcrRegionBase
 	{
-		private string _hint;
-		private string _language;
-		private int? _minMatch;
+		private string hint_;
+		private string language_;
+		private int? minMatch_;
 		public OcrRegionBase Hint(string hint)
 		{
-			_hint = hint;
+			hint_ = hint;
 
 			return this;
 		}
 
 		public string GetHint()
 		{
-			return _hint;
+			return hint_;
 		}
 
 		public OcrRegionBase Language(string language)
 		{
-			_language = language;
+			language_ = language;
 
 			return this;
 		}
 
 		public string GetLanguage()
 		{
-			return _language;
+			return language_;
 		}
 
 		public OcrRegionBase MinMatch(int? minMatch)
 		{
-			_minMatch = minMatch;
+			minMatch_ = minMatch;
 
 			return this;
 		}
 
 		public int? GetMinMatch()
 		{
-			return _minMatch;
+			return minMatch_;
 		}
 	}
 }

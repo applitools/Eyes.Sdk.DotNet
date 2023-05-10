@@ -16,8 +16,8 @@ namespace Applitools
         protected List<IGetRegions> contentRegions_ = new List<IGetRegions>();
         protected List<IGetRegions> layoutRegions_ = new List<IGetRegions>();
         protected List<IGetRegions> strictRegions_ = new List<IGetRegions>();
-        private List<IGetFloatingRegion> floatingRegions_ = new List<IGetFloatingRegion>();
-        private List<IGetAccessibilityRegion> accessibilityRegions_ = new List<IGetAccessibilityRegion>();
+        protected List<IGetFloatingRegion> floatingRegions_ = new List<IGetFloatingRegion>();
+        protected List<IGetAccessibilityRegion> accessibilityRegions_ = new List<IGetAccessibilityRegion>();
         private int timeout_ = -1;
         private bool? stitchContent_;
         private LazyLoadOptions lazyLoad_;
@@ -39,15 +39,8 @@ namespace Applitools
 
         public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
-        /// <summary>
-        /// 
-        /// </summary>
         internal protected CheckSettings() { fluentCode_.Append("Target.Window()"); }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="region"></param>
         internal protected CheckSettings(Rectangle region)
         {
             targetRegion_ = region;
@@ -160,6 +153,7 @@ namespace Applitools
         }
 
         protected StringBuilder fluentCode_ = new StringBuilder();
+        private DensityMetrics densityMetrics_;
 
         public bool? GetLayoutBreakpointsEnabled()
         {
@@ -635,6 +629,13 @@ namespace Applitools
             return clone;
         }
 
+        public ICheckSettings DensityMetrics(int xDpi, int yDpi, double? scaleRatio = null)
+        {
+            var clone = Clone();
+            clone.densityMetrics_ = new DensityMetrics { XDpi = xDpi, YDpi = yDpi, ScaleRatio = scaleRatio};
+            return clone;
+        }
+        
         protected void UpdateTargetRegion(Rectangle region)
         {
             targetRegion_ = region;
@@ -741,11 +742,13 @@ namespace Applitools
             {
                 return stitchContent ? SizeMode.FullPage : SizeMode.Viewport;
             }
-            else if (region != null)
+            
+            if (region != null)
             {
                 return SizeMode.Region;
             }
-            else /* if (selector != null) */
+            
+            /* if (selector != null) */
             {
                 return stitchContent ? SizeMode.FullSelector : SizeMode.Selector;
             }
@@ -792,6 +795,11 @@ namespace Applitools
         string ICheckSettingsInternal.GetFluentCommandString()
         {
             return fluentCode_.ToString();
+        }
+        
+        DensityMetrics ICheckSettingsInternal.GetDensityMetrics()
+        {
+            return densityMetrics_;
         }
     }
 }

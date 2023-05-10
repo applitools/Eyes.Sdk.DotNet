@@ -1,9 +1,10 @@
+using Applitools.Commands;
 using Applitools.Playwright.Universal.Dto;
 using Microsoft.Playwright;
 
 namespace Applitools.Playwright.Fluent
 {
-    public class FloatingRegionElement : Element, IGetFloatingRegionOffsets
+    public class FloatingRegionElement : Element, IGetFloatingRegionOffsets, IGetFloatingRegion
     {
         public FloatingRegionElement(IElementHandle element, 
             int maxUpOffset, 
@@ -31,5 +32,20 @@ namespace Applitools.Playwright.Fluent
         public int MaxUpOffset { get; }
         public int MaxRightOffset { get; }
         public int MaxDownOffset { get; }
+        
+        public TFloatingRegion ToRegion()
+        {
+            return new RectangleFloatingRegion
+            {
+                Region = new UniversalRegion
+                {
+                    X = rect_.Left,
+                    Y = rect_.Top,
+                    Width = rect_.Width,
+                    Height = rect_.Height
+                },
+                Offset = new Padding(_maxLeftOffset, _maxUpOffset, _maxRightOffset, _maxDownOffset)
+            };
+        }
     }
 }

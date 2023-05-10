@@ -1,4 +1,5 @@
 ﻿using Applitools.Commands;
+using Applitools.Universal;
 
 namespace Applitools
 {

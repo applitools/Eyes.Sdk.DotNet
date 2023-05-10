@@ -7,25 +7,25 @@ namespace Applitools.Appium
 {
     internal class SimpleRegionByElement : IGetRegions, IGetAppiumRegion
     {
-        private readonly IWebElement _element;
-        private readonly Padding _padding;
-        private readonly string _regionId;
+        private readonly IWebElement element_;
+        private readonly Padding padding_;
+        private readonly string regionId_;
 
         public SimpleRegionByElement(IWebElement element, Padding padding = null, string regionId = null)
         {
-            _element = element;
-            _padding = padding;
-            _regionId = regionId;
+            element_ = element;
+            padding_ = padding;
+            regionId_ = regionId;
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement> { _element };
+            return new List<IWebElement> { element_ };
         }
         
         public CodedRegionReference ToRegion()
         {
-            var elementId = _element.GetElementId();
+            var elementId = element_.GetElementId();
 
             return new CodedRegionReference
             {
@@ -33,8 +33,8 @@ namespace Applitools.Appium
                 {
                     ElementId = elementId
                 },
-                Padding = _padding,
-                RegionId = _regionId
+                Padding = padding_,
+                RegionId = regionId_
             };
         } 
     }

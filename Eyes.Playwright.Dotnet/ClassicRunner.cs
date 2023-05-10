@@ -1,7 +1,7 @@
 using System;
-using System.Reflection;
 using Applitools.Playwright.Universal;
 using System.Diagnostics;
+using Applitools.Commands.Requests;
 using Applitools.Playwright.Universal.Driver;
 
 namespace Applitools.Playwright
@@ -11,7 +11,7 @@ namespace Applitools.Playwright
         /// <summary>
         /// name of the client sdk
         /// </summary>
-        protected static string BASE_AGENT_ID = "eyes.playwright.dotnet";
+        protected static string BASE_AGENT_ID = "Eyes.Playwright.DotNet";
 
         /// <summary>
         /// version of the client sdk
@@ -22,11 +22,6 @@ namespace Applitools.Playwright
         /// spec-driver
         /// </summary>
         protected static string[] COMMANDS = SpecDriverPlaywright.GetMethodNames();
-
-        /// <summary>
-        /// universal server listener
-        /// </summary>
-        private static readonly PSdkListener listener_ = PSdkListener.getInstance();
 
         /// <summary>
         /// used for instantiating Playwright Runner
@@ -47,6 +42,16 @@ namespace Applitools.Playwright
         public PlaywrightStaleElementReferenceException GetStaleElementException()
         {
             return new PlaywrightStaleElementReferenceException();
+        }
+        
+        protected override CoreMakeSdkRequest CreateCoreMakeSdk(string name)
+        {
+            var result = new CoreMakeSdkRequest();
+            result.AddOrUpdatePayload("agentId", $"{name}:{ActualAssembly.GetName().Version}");
+            result.AddOrUpdatePayload("spec", "playwright");
+            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
+
+            return result;
         }
 
         protected Refer GtRefer()

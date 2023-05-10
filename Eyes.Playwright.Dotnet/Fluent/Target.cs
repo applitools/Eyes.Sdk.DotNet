@@ -1,99 +1,101 @@
-package com.applitools.eyes.playwright.fluent;
+using System;
+using Applitools.Utils.Geometry;
+using Microsoft.Playwright;
 
-import com.applitools.eyes.Region;
-import com.microsoft.playwright.ElementHandle;
-import com.microsoft.playwright.Frame;
-import com.microsoft.playwright.Locator;
-
-public class Target {
-
-    /**
-     * Specify the target as window.
-     *
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings window()
+namespace Applitools.Playwright.Fluent
+{
+    public class Target
     {
-        return new PlaywrightCheckSettings();
-    }
+        /// <summary>
+        /// Specify the target as window.
+        /// </summary>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Window()
+        {
+            return new PlaywrightCheckSettings();
+        }
 
-    /**
-     * Specify the target as a region.
-     *
-     * @param region the region to capture.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings region(Region region) {
-        return new PlaywrightCheckSettings().region(region);
-    }
+        /// <summary>
+        /// Specify the target as a region.
+        /// </summary>
+        /// <param name="region">The region</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Region(Region region)
+        {
+            return new PlaywrightCheckSettings().Region(region);
+        }
 
-    /**
-     * Specify the target as a region.
-     *
-     * @param selector the locator.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings region(String selector) {
-        return new PlaywrightCheckSettings().region(selector);
-    }
+        /// <summary>
+        /// Specify the target as a region.
+        /// </summary>
+        /// <param name="selector">The selector for the region</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Region(string selector)
+        {
+            return new PlaywrightCheckSettings().Region(selector);
+        }
+        
+        /// <summary>
+        /// Specify the target as a region.
+        /// </summary>
+        /// <param name="locator">The locator for the region</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Region(ILocator locator)
+        {
+            return new PlaywrightCheckSettings().Region(locator);
+        }
 
-    /**
-     * Specify the target as a region.
-     *
-     * @param locator the locator.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings region(Locator locator) {
-        return new PlaywrightCheckSettings().region(locator);
-    }
+        /// <summary>
+        /// Specify the target as a region.
+        /// </summary>
+        /// <param name="element">The element for the region</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Region(IElementHandle element)
+        {
+            return new PlaywrightCheckSettings().Region(element);
+        }
 
-    /**
-     * Specify the target as a region.
-     *
-     * @param element  the element.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings region(ElementHandle element) {
-        return new PlaywrightCheckSettings().region(element);
-    }
+        /// <summary>
+        /// Specify the target as a frame.
+        /// </summary>
+        /// <param name="frameNameOrId">The locator for the frame</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Frame(string frameNameOrId)
+        {
+            return new PlaywrightCheckSettings().Frame(frameNameOrId);
+        }
 
-    /**
-     * Specify the target as a frame.
-     *
-     * @param frameNameOrId the locator of the frame.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings frame(String frameNameOrId) {
-        return new PlaywrightCheckSettings().frame(frameNameOrId);
-    }
+        /**
+ * Specify the target as a frame.
+ *
+ * @param frameIndex  the index of the frame.
+ * @return the check settings
+ */
+        public static PlaywrightCheckSettings Frame(Integer frameIndex)
+        {
+            return new PlaywrightCheckSettings().frame(frameIndex);
+        }
 
-    /**
-     * Specify the target as a frame.
-     *
-     * @param frameIndex  the index of the frame.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings frame(Integer frameIndex) {
-        return new PlaywrightCheckSettings().frame(frameIndex);
-    }
+        /**
+ * Specify the target as a frame.
+ *
+ * @param locator the frame locator.
+ * @return the check settings
+ */
+        public static PlaywrightCheckSettings Frame(Locator locator)
+        {
+            return new PlaywrightCheckSettings().frame(locator);
+        }
 
-    /**
-     * Specify the target as a frame.
-     *
-     * @param locator the frame locator.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings frame(Locator locator) {
-        return new PlaywrightCheckSettings().frame(locator);
-    }
-
-    /**
-     * Specify the target as a frame.
-     *
-     * @param frameElement  the frame element.
-     * @return the check settings
-     */
-    public static PlaywrightCheckSettings frame(ElementHandle frameElement) {
-        return new PlaywrightCheckSettings().frame(frameElement);
+        /**
+ * Specify the target as a frame.
+ *
+ * @param frameElement  the frame element.
+ * @return the check settings
+ */
+        public static PlaywrightCheckSettings Frame(ElementHandle frameElement)
+        {
+            return new PlaywrightCheckSettings().frame(frameElement);
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace Applitools.Selenium
+namespace Applitools.Universal
 {
     public class SocketMessageManager
     {

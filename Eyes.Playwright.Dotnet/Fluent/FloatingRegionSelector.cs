@@ -1,71 +1,59 @@
-package com.applitools.eyes.playwright.fluent;
+using Applitools.Playwright.Universal.Dto;
+using Microsoft.Playwright;
 
-import com.applitools.eyes.playwright.universal.dto.Selector;
-import com.applitools.eyes.visualgrid.model.IGetFloatingRegionOffsets;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.microsoft.playwright.Locator;
+namespace Applitools.Playwright.Fluent
+{
+    /// <summary>
+    /// Used internally to represent a ref of an accessibility element
+    /// </summary>
+    public class FloatingRegionSelector : Selector, IGetFloatingRegionOffsets, IGetFloatingRegion
+    {
+        public int MaxUpOffset { get; }
+        public int MaxDownOffset { get; }
+        public int MaxLeftOffset { get; }
+        public int MaxRightOffset { get; }
 
-/**
- * Used internally to represent a ref of a floating region selector
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class FloatingRegionSelector extends Selector implements IGetFloatingRegionOffsets {
+        public FloatingRegionSelector(string selector, 
+            int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
+            : base(selector)
+        {
+            MaxUpOffset = maxUpOffset;
+            MaxDownOffset = maxDownOffset;
+            MaxLeftOffset = maxLeftOffset;
+            MaxRightOffset = maxRightOffset;
+        }
 
-    private final int maxUpOffset;
-    private final int maxDownOffset;
-    private final int maxLeftOffset;
-    private final int maxRightOffset;
+        public FloatingRegionSelector(string selector, int maxOffset)
+            : base(selector)
+        {
+            MaxUpOffset = maxOffset;
+            MaxDownOffset = maxOffset;
+            MaxLeftOffset = maxOffset;
+            MaxRightOffset = maxOffset;
+        }
 
-    public FloatingRegionSelector(String selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset) {
-        super(selector);
-        this.maxUpOffset = maxUpOffset;
-        this.maxDownOffset = maxDownOffset;
-        this.maxLeftOffset = maxLeftOffset;
-        this.maxRightOffset = maxRightOffset;
-    }
+        public FloatingRegionSelector(ILocator locator,
+            int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset) 
+            : base(locator)
+        {
+            MaxUpOffset = maxUpOffset;
+            MaxDownOffset = maxDownOffset;
+            MaxLeftOffset = maxLeftOffset;
+            MaxRightOffset = maxRightOffset;
+        }
 
-    public FloatingRegionSelector(String selector, int maxOffset) {
-        super(selector);
-        this.maxUpOffset = maxOffset;
-        this.maxDownOffset = maxOffset;
-        this.maxLeftOffset = maxOffset;
-        this.maxRightOffset = maxOffset;
-    }
+        public FloatingRegionSelector(ILocator locator, int maxOffset)
+            : base(locator)
+        {
+            MaxUpOffset = maxOffset;
+            MaxDownOffset = maxOffset;
+            MaxLeftOffset = maxOffset;
+            MaxRightOffset = maxOffset;
+        }
 
-    public FloatingRegionSelector(Locator locator, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset) {
-        super(locator);
-        this.maxUpOffset = maxUpOffset;
-        this.maxDownOffset = maxDownOffset;
-        this.maxLeftOffset = maxLeftOffset;
-        this.maxRightOffset = maxRightOffset;
-    }
-
-    public FloatingRegionSelector(Locator locator, int maxOffset) {
-        super(locator);
-        this.maxUpOffset = maxOffset;
-        this.maxDownOffset = maxOffset;
-        this.maxLeftOffset = maxOffset;
-        this.maxRightOffset = maxOffset;
-    }
-
-    @Override
-    public int getMaxLeftOffset() {
-        return maxLeftOffset;
-    }
-
-    @Override
-    public int getMaxUpOffset() {
-        return maxUpOffset;
-    }
-
-    @Override
-    public int getMaxRightOffset() {
-        return maxRightOffset;
-    }
-
-    @Override
-    public int getMaxDownOffset() {
-        return maxDownOffset;
+        public TFloatingRegion ToRegion()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
-
