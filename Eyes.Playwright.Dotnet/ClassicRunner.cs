@@ -16,7 +16,7 @@ namespace Applitools.Playwright
         /// <summary>
         /// version of the client sdk
         /// </summary>
-        protected static string VERSION = FileVersionInfo.GetVersionInfo(typeof(ClassicRunner).Assembly.Location).FileVersion;
+        protected static string VERSION = typeof(ClassicRunner).Assembly.GetName().Version.ToString();
 
         /// <summary>
         /// spec-driver
@@ -43,7 +43,12 @@ namespace Applitools.Playwright
         {
             return new PlaywrightStaleElementReferenceException();
         }
-        
+
+        protected override MakeManagerRequestPayload InitConfig()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
             var result = new CoreMakeSdkRequest();

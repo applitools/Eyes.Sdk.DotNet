@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Applitools.Commands;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Playwright.Universal.Mapper;
@@ -138,9 +142,9 @@ namespace Applitools.Playwright
             ArgumentGuard.NotOfType(checkSettings, typeof(IPlaywrightCheckSettings), nameof(checkSettings));
             IPlaywrightCheckSettings playwrightCheckSettings = (IPlaywrightCheckSettings)checkSettings;
 
-            EyesConfig checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
+            ICheckSettings checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
                 playwrightCheckSettings,
-                Configure(), GetRefer_(), driver_.getRoot());
+                Configure(), GetRefer_(), driver_.Root);
 
             checkDto(checkSettingsDto, driver_);
         }
@@ -240,6 +244,50 @@ namespace Applitools.Playwright
             testResults.forEach(
                 testResults1->runner.logSessionResultsAndThrowException(shouldThrowException, testResults1));
             return testResults.get(0);
+        }
+
+        public override TestResults GetResults(bool throwEx = true)
+        {
+            Logger.Log("GetResults");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+            
+            var request = new EyesGetResultsRequest
+            {
+                Payload = new EyesGetResultsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToResultsSettings(Config, throwEx, removeDuplicateTests)
+                }
+            };
+
+            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
+
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
+
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
+            {
+                testResult.Runner = Runner;
+                if (testResult.IsPassed == false && throwEx)
+                {
+                    IsOpen = false;
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
+                }
+            }
+
+            IsOpen = false;
+            return testResults.First();
         }
 
         public Configuration Configure()
@@ -597,8 +645,6 @@ namespace Applitools.Playwright
      * @return The baseline name, if specified.
      * @deprecated Only available for backward compatibility. See {@link #getBaselineEnvName()}.
      */
-        @SuppressWarnings("UnusedDeclaration")
-
         public string getBaselineName()
         {
             return getBaselineEnvName();
@@ -688,7 +734,7 @@ namespace Applitools.Playwright
             return null;
         }
 
-        private void checkDto(CheckSettingsDto checkSettingsDto, ITargetDto driverTargetDto)
+        private void checkDto(ICheckSettings checkSettingsDto, ITargetDto driverTargetDto)
         {
             if (IsDisabled)
             {
