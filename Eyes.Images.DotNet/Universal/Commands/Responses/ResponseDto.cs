@@ -1,6 +1,4 @@
-using Applitools.Commands;
-
-namespace Eyes.Images.DotNet.Universal.Commands.Responses
+namespace Applitools.Commands.Responses
 {
     public class ResponseDto<T>
     {
