@@ -1,3 +1,23 @@
+## [Eyes.Images.Core vNext]
+### Updated
+- Server Core to 3.0.1
+
+## [Eyes.Images vNext]
+### Updated
+- Server Core to 3.0.1
+
+## [Eyes.Selenium vNext]
+### Updated
+- Server Core to 3.0.1
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Server Core to 3.0.1
+
+## [Eyes.Appium vNext]
+### Updated
+- Server Core to 3.0.1
+
 ## [Eyes.Images 3.22] - 2023-05-01
 ### Fixed
 - Tunnel issue
