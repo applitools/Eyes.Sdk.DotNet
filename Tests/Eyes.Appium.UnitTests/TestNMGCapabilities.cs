@@ -1,7 +1,7 @@
 ﻿using System;
 using Applitools;
 using NUnit.Framework;
-using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Appium;
 
 namespace Eyes.Appium.UnitTests
 {
@@ -20,11 +20,12 @@ namespace Eyes.Appium.UnitTests
             var caps = GetCaps();
 
             Applitools.Appium.Eyes.SetNMGCapabilities(caps, API_KEY, SERVER_URL, proxySettings);
-
-            string androidArgs = (string)caps.GetCapability("optionalIntentArguments");
+            
+            caps.ToDictionary().TryGetValue("optionalIntentArguments", out object androidArgs);
             Assert.NotNull(androidArgs);
+            Assert.IsInstanceOf<string>(androidArgs);
 
-            string[] androidIntentArguments = androidArgs.Split(" ", 3);
+            string[] androidIntentArguments = ((string)androidArgs).Split(" ", 3);
             Assert.AreEqual(androidIntentArguments[0], "--es");
             Assert.AreEqual(androidIntentArguments[1], "APPLITOOLS");
             Assert.AreEqual(androidIntentArguments[2],
@@ -38,10 +39,11 @@ namespace Eyes.Appium.UnitTests
 
             Applitools.Appium.Eyes.SetNMGCapabilities(caps, API_KEY, SERVER_URL, proxySettings);
 
-            string iosArgs = (string)caps.GetCapability("processArguments");
+            caps.ToDictionary().TryGetValue("processArguments", out object iosArgs);
             Assert.NotNull(iosArgs);
+            Assert.IsInstanceOf<string>(iosArgs);
 
-            string[] iosIntentArguments = iosArgs.Split(" ", 3);
+            string[] iosIntentArguments = ((string)iosArgs).Split(" ", 3);
             Assert.AreEqual(iosIntentArguments[0], "{\"args\":");
             Assert.AreEqual(iosIntentArguments[1], "[],");
             Assert.AreEqual(iosIntentArguments[2],
@@ -62,25 +64,26 @@ namespace Eyes.Appium.UnitTests
             Environment.SetEnvironmentVariable("APPLITOOLS_HTTP_PROXY", FAKE_PROXY_URI);
 
             Applitools.Appium.Eyes.SetNMGCapabilities(caps);
-
-            string androidArgs = (string) caps.GetCapability("optionalIntentArguments");
+            
+            caps.ToDictionary().TryGetValue("optionalIntentArguments", out object androidArgs);
             Assert.NotNull(androidArgs);
+            Assert.IsInstanceOf<string>(androidArgs);
 
-            string[] androidIntentArguments = androidArgs.Split(" ", 3);
+            string[] androidIntentArguments = ((string)androidArgs).Split(" ", 3);
             Assert.AreEqual(androidIntentArguments[0], "--es");
             Assert.AreEqual(androidIntentArguments[1], "APPLITOOLS");
             Assert.AreEqual(androidIntentArguments[2],
                 $"'{{\"NML_API_KEY\":\"{FAKE_API_KEY}\",\"NML_SERVER_URL\":\"{FAKE_SERVER_URL}\",\"NML_PROXY_URL\":\"{FAKE_PROXY_URI}\",}}'");
         }
 
-        private DesiredCapabilities GetCaps()
+        private AppiumOptions GetCaps()
         {
-            var caps = new DesiredCapabilities();
-            caps.SetCapability("deviceName", "Google Pixel 5 GoogleAPI Emulator");
-            caps.SetCapability("deviceOrientation", "portrait");
-            caps.SetCapability("platformVersion", "11.0");
-            caps.SetCapability("platformName", "Android");
-            caps.SetCapability("automationName", "UiAutomator2");
+            var caps = new AppiumOptions();
+            caps.AddAdditionalCapability("deviceName", "Google Pixel 5 GoogleAPI Emulator");
+            caps.AddAdditionalCapability("deviceOrientation", "portrait");
+            caps.AddAdditionalCapability("platformVersion", "11.0");
+            caps.AddAdditionalCapability("platformName", "Android");
+            caps.AddAdditionalCapability("automationName", "UiAutomator2");
 
             return caps;
         }

@@ -64,7 +64,7 @@ jobs:
     - stage: Test
       name: Generic Tests Selenium 3
       mono: none
-      dotnet: 3.1.407
+      dotnet: 6.0.408
       addons:
         chrome: stable
         firefox: latest
