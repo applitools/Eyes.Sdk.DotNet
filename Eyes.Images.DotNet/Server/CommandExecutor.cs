@@ -54,7 +54,7 @@ namespace Applitools
 
             webSocket_ = new WebSocketClient(specDriverMessageAdaptor, Logger.GetILogHandler());
 
-            var url = GetSocketUrl(serverPort);
+            var url = GetSocketUrl_(serverPort);
             Logger.Log($"Server url: {url}");
 
             webSocket_.ConnectAsync(url);
@@ -62,7 +62,7 @@ namespace Applitools
             Logger.Log("Connected to Server");
         }
 
-        private string GetSocketUrl(int port)
+        private static string GetSocketUrl_(int port)
         {
             return $"ws://localhost:{port}/eyes";
         }

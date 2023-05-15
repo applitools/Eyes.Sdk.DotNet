@@ -24,6 +24,8 @@ namespace Applitools
     [ComVisible(true)]
     public abstract class EyesBase : EyesBaseConfig//, IEyesBase, IBatchCloser
     {
+        protected PropertiesCollection Properties { get; set; }
+        
         public override bool IsDisabled
         {
             get => Runner.IsDisabled;

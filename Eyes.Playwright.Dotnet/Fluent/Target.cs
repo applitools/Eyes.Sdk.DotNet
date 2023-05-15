@@ -1,10 +1,9 @@
-using System;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
 
 namespace Applitools.Playwright.Fluent
 {
-    public class Target
+    public static class Target
     {
         /// <summary>
         /// Specify the target as window.
@@ -34,7 +33,7 @@ namespace Applitools.Playwright.Fluent
         {
             return new PlaywrightCheckSettings().Region(selector);
         }
-        
+
         /// <summary>
         /// Specify the target as a region.
         /// </summary>
@@ -58,44 +57,41 @@ namespace Applitools.Playwright.Fluent
         /// <summary>
         /// Specify the target as a frame.
         /// </summary>
-        /// <param name="frameNameOrId">The locator for the frame</param>
+        /// <param name="frameNameOrId">The frame's name or id</param>
         /// <returns>The check settings</returns>
         public static PlaywrightCheckSettings Frame(string frameNameOrId)
         {
             return new PlaywrightCheckSettings().Frame(frameNameOrId);
         }
 
-        /**
- * Specify the target as a frame.
- *
- * @param frameIndex  the index of the frame.
- * @return the check settings
- */
-        public static PlaywrightCheckSettings Frame(Integer frameIndex)
+        /// <summary>
+        /// Specify the target as a frame.
+        /// </summary>
+        /// <param name="frameIndex">The index of the frame</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Frame(int frameIndex)
         {
-            return new PlaywrightCheckSettings().frame(frameIndex);
+            return new PlaywrightCheckSettings().Frame(frameIndex);
         }
 
-        /**
- * Specify the target as a frame.
- *
- * @param locator the frame locator.
- * @return the check settings
- */
-        public static PlaywrightCheckSettings Frame(Locator locator)
+        /// <summary>
+        /// Specify the target as a frame.
+        /// </summary>
+        /// <param name="locator">The locator for the frame</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Frame(ILocator locator)
         {
-            return new PlaywrightCheckSettings().frame(locator);
+            return new PlaywrightCheckSettings().Frame(locator);
         }
 
-        /**
- * Specify the target as a frame.
- *
- * @param frameElement  the frame element.
- * @return the check settings
- */
-        public static PlaywrightCheckSettings Frame(ElementHandle frameElement)
+        /// <summary>
+        /// Specify the target as a frame.
+        /// </summary>
+        /// <param name="frameElement">The frame element</param>
+        /// <returns>The check settings</returns>
+        public static PlaywrightCheckSettings Frame(IElementHandle frameElement)
         {
-            return new PlaywrightCheckSettings().frame(frameElement);
+            return new PlaywrightCheckSettings().Frame(frameElement);
         }
     }
 }

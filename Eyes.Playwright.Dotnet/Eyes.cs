@@ -6,7 +6,6 @@ using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
-using Applitools.Playwright.Universal.Mapper;
 using Applitools.Universal;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
@@ -46,12 +45,40 @@ namespace Applitools.Playwright
         /// The driver reference associated with the test.
         /// </summary>
         private Driver driver_;
+        
+        private readonly IOcrRegionTransformer ocrRegionTransformer_;
+
+        #region ctors
+
+        
 
         /// <summary>
         /// Instantiates a new Eyes.
         /// </summary>
         public Eyes() : this(new ClassicRunner())
         {
+        }
+        
+        public Eyes(ILogHandler logHandler = null)
+            : this(new ClassicRunner(), logHandler: logHandler)
+        {
+        }
+        
+        public Eyes(Uri serverUrl, ILogHandler logHandler = null)
+            : this(new ClassicRunner(), serverUrl?.AbsolutePath, logHandler)
+        {
+        }
+
+        public Eyes(
+            EyesRunner runner,
+            string serverUrlFieldName = "remoteServerUri",
+            ILogHandler logHandler = null)
+            : base(runner, logHandler: logHandler)
+        {
+            Properties = new PropertiesCollection();
+            serverUrlFieldName_ = serverUrlFieldName;
+
+            ocrRegionTransformer_ = new OcrRegionTransformer(selectorTransformer_);
         }
 
         /// <summary>
@@ -64,6 +91,8 @@ namespace Applitools.Playwright
             commandExecutor_ = runner_.CommandExecutor;
         }
 
+        #endregion
+        
         /// <summary>
         /// Starts a test.
         /// </summary>
@@ -149,36 +178,57 @@ namespace Applitools.Playwright
             checkDto(checkSettingsDto, driver_);
         }
 
-        public List<string> ExtractText(params BaseOcrRegion[] ocrRegions)
+        public ICollection<string> ExtractText(ICollection<OcrRegion> ocrRegions)
         {
-            if (!IsOpen)
+            Logger.Log("ExtractText");
+
+            if (IsDisabled)
             {
-                Abort();
-                throw new EyesException("Eyes not open");
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new List<string>();
             }
 
-            List<OCRExtractSettingsDto> ocrExtractSettingsDtoList = PlaywrightOCRExtractSettingsDtoMapper
-                .toOCRExtractSettingsDtoList(Arrays.asList(ocrRegions), GetRefer_(), driver_.getRoot());
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(Configure(), false);
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = Properties;
+            var serverUrl = GetServerUrl(CommandExecutor);
+            var eyesExtractTextRequest = new EyesExtractTextRequest
+            {
+                Payload = new ExtractTextRequestPayload
+                {
+                    Config = eyesConfig,
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = ToExtractTextSettings(regions)
+                }
+            };
 
-            return ExtractTextDto(driver_, ocrExtractSettingsDtoList, configurationDto);
+            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
+
+            return response.Payload.Result;
         }
 
-        /**
-     * Locate text. Formerly known as extractTextRegions.
-     *
-     * @param textRegionSettings  the image from which the location of the text will be extracted.
-     * @return mapping of the located text regions
-     */
-        public Map<string, List<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegion> regions)
         {
-            OCRSearchSettingsDto ocrSearchSettingsDto =
-                OCRSearchSettingsMapper.toOCRSearchSettingsDto(textRegionSettings);
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(Configure(), false);
+            var extractTextSettings = new List<ExtractTextSettings>();
+            foreach (var region in regions)
+            {
+                var ocrRegion = ocrRegionTransformer_.GetRegion(region);
+                var extractTextSetting = new ExtractTextSettings
+                {
+                    Region = ocrRegion,
+                    Hint = region.GetHint(),
+                    Language = region.GetLanguage(),
+                    MinMatch = region.GetMinMatch()
+                };
+                extractTextSettings.Add(extractTextSetting);
+            }
 
-            return locateTextDto(driver_, ocrSearchSettingsDto, configurationDto);
+            return extractTextSettings;
         }
 
         /**

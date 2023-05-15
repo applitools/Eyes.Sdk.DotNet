@@ -1,8 +1,9 @@
 using System;
 using Applitools.Playwright.Universal;
-using System.Diagnostics;
 using Applitools.Commands.Requests;
 using Applitools.Playwright.Universal.Driver;
+using Applitools.Universal;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright
 {
@@ -33,10 +34,17 @@ namespace Applitools.Playwright
         /// <summary>
         /// used for instantiating Playwright Runner
         /// </summary>
-        public ClassicRunner(string baseAgentId, string version)
-            : base(baseAgentId, version, null, COMMANDS, listener_)
+        private ClassicRunner(string baseAgentId, string version)
+            : this(NullLogHandler.Instance, baseAgentId, version)
         {
-            managerRef = commandExecutor.coreMakeManager("classic", null);
+        }
+
+        /// <summary>
+        /// used for instantiating Playwright Runner
+        /// </summary>
+        private ClassicRunner(ILogHandler logHandler, string baseAgentId, string version)
+            : base(logHandler, baseAgentId + "-" + version)
+        {
         }
 
         public PlaywrightStaleElementReferenceException GetStaleElementException()
@@ -59,9 +67,27 @@ namespace Applitools.Playwright
             return result;
         }
 
+
+        private static PlaywrightSpecDriverMessageAdaptor messageAdaptor_ = null;
+
+        protected override ISpecDriverMessageAdaptor SpecDriverMessageAdaptor
+        {
+            get
+            {
+                if (messageAdaptor_ == null)
+                {
+                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(driver, webSocket, Logger);
+                }
+
+                return messageAdaptor_;
+            }
+        }
+
+        private static readonly Refer refer_ = new Refer();
+
         protected Refer GtRefer()
         {
-            return listener_.getRefer();
+            return refer_;
         }
     }
 }

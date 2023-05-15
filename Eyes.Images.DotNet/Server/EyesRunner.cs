@@ -54,6 +54,8 @@ namespace Applitools
             ActualAssembly = GetActualAssembly();
 
             var sdkEvent = CreateCoreSdk(agentId);
+            
+            // ReSharper disable once VirtualMemberCallInConstructor
             CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageAdaptor, logHandler, sdkEvent);
         }
 

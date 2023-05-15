@@ -17,7 +17,6 @@ namespace Applitools.Selenium
 {
     public class Eyes : EyesBase
     {
-        private PropertiesCollection properties_;
         private EyesRef eyes_;
         private IWebDriver driver_;
 
@@ -25,7 +24,7 @@ namespace Applitools.Selenium
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly string serverUrlFieldName_;
         private readonly SelectorTransformer selectorTransformer_;
-        private readonly IOcrRegionTransformer _ocrRegionTransformer;
+        private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -41,7 +40,7 @@ namespace Applitools.Selenium
         }
 
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
-        : this(new ClassicRunner(), serverUrl?.AbsolutePath, logHandler)
+            : this(new ClassicRunner(), serverUrl?.AbsolutePath, logHandler)
         {
         }
 
@@ -52,11 +51,11 @@ namespace Applitools.Selenium
             SelectorTransformer selectorTransformer = null)
             : base(runner, logHandler: logHandler)
         {
-            properties_ = new PropertiesCollection();
+            Properties = new PropertiesCollection();
             serverUrlFieldName_ = serverUrlFieldName;
 
             selectorTransformer_ = selectorTransformer ?? new SelectorTransformer();
-            _ocrRegionTransformer = new OcrRegionTransformer(selectorTransformer_);
+            ocrRegionTransformer_ = new OcrRegionTransformer(selectorTransformer_);
         }
 
         #endregion
@@ -71,7 +70,8 @@ namespace Applitools.Selenium
             Config = config;
         }
 
-        public static string GetExecutionCloudURL(string apiKey = null, Uri serverUrl = null, ProxySettings proxySettings = null)
+        public static string GetExecutionCloudURL(string apiKey = null, Uri serverUrl = null,
+            ProxySettings proxySettings = null)
         {
             var runner = new ClassicRunner();
             var request = new CoreMakeECClientRequest
@@ -121,13 +121,13 @@ namespace Applitools.Selenium
             var request = CreateEyesAbortRequest();
 
             var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
-            
+
             if (payload.Error != null)
             {
                 IsOpen = false;
                 throw new EyesException(payload.Error.ToString());
             }
-            
+
             return GetResults(false);
         }
 
@@ -180,11 +180,6 @@ namespace Applitools.Selenium
         /// </summary>
         /// <param name="driver">The web driver that controls the browser 
         /// hosting the application under test.</param>
-        /// <param name="appName">The name of the application under test.</param>
-        /// <param name="testName">The test name.</param>
-        /// <param name="viewportSize">The required browser's viewport size 
-        /// (i.e., the visible part of the document's body) or <c>Size.Empty</c>
-        /// to allow any viewport size.</param>
         public IWebDriver Open(IWebDriver driver)
         {
             return OpenEyes(driver);
@@ -266,6 +261,7 @@ namespace Applitools.Selenium
             {
                 settings = settings.Fully(fully.Value);
             }
+
             Check(tag, settings);
         }
 
@@ -285,6 +281,7 @@ namespace Applitools.Selenium
             {
                 settings = settings.Fully(fully.Value);
             }
+
             Check(tag, settings);
         }
 
@@ -296,9 +293,9 @@ namespace Applitools.Selenium
         /// <param name="tag">A tag to be associated with the snapshot.</param>
         /// <param name="stitchContent">
         /// If <paramref name="stitchContent"/> is <code>false</code> then behaves the same as <see cref="CheckRegion(By, string, int)"/>.
+        /// </param>
         /// Otherwise, behaves the same as <see cref="CheckElement(By, string, int)"/>
         /// <param name="matchTimeout">The amount of milliseconds to retry matching</param>
-        /// </param>
         public void CheckRegion(By selector, string tag, bool stitchContent, int matchTimeout = -1)
         {
             Check(tag, Target.Region(selector).Fully(stitchContent).Timeout(TimeSpan.FromMilliseconds(matchTimeout)));
@@ -361,9 +358,12 @@ namespace Applitools.Selenium
             Check(tag, Target.Region(region).Timeout(matchTimeout));
         }
 
-        public void CheckRegionInFrame(string frameNameOrId, By by, string tag, bool stitchContent, int matchTimeout = -1)
+        public void CheckRegionInFrame(string frameNameOrId, By by, string tag, bool stitchContent,
+            int matchTimeout = -1)
         {
-            Check(tag, Target.Frame(frameNameOrId).Region(by).Fully(stitchContent).Timeout(TimeSpan.FromMilliseconds(matchTimeout)));
+            Check(tag,
+                Target.Frame(frameNameOrId).Region(by).Fully(stitchContent)
+                    .Timeout(TimeSpan.FromMilliseconds(matchTimeout)));
         }
 
         /// <summary>
@@ -433,10 +433,11 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, tag, Stage.Check, StageType.Disabled);
                 return;
             }
+
             ArgumentGuard.NotNull(framePath, nameof(framePath));
             ArgumentGuard.GreaterThan(framePath.Length, 0, nameof(framePath.Length));
 
-            Fluent.SeleniumCheckSettings settings = Target.Frame(framePath[0]);
+            SeleniumCheckSettings settings = Target.Frame(framePath[0]);
             for (int i = 1; i < framePath.Length; i++)
             {
                 settings.Frame(framePath[i]);
@@ -482,7 +483,7 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
+            eyesConfig.Open.Properties = Properties;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var eyesExtractTextRequest = new EyesExtractTextRequest
@@ -517,7 +518,7 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
+            eyesConfig.Open.Properties = Properties;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
@@ -536,7 +537,9 @@ namespace Applitools.Selenium
                 }
             };
 
-            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
+            var response =
+                Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(
+                    extractTextRegionsRequest);
 
             return response.Payload.Result;
         }
@@ -557,7 +560,7 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
+            eyesConfig.Open.Properties = Properties;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var locateRequest = new EyesLocateRequest
@@ -641,7 +644,7 @@ namespace Applitools.Selenium
                 IsOpen = false;
                 throw new TestFailedException(error.ToString());
             }
-            
+
             return GetResults(throwEx);
         }
 
@@ -657,6 +660,7 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
                 return;
             }
+
             Logger.Verbose("enter. CloseAsync");
 
             var eyesCloseRequest = CreateEyesCloseRequest();
@@ -686,7 +690,7 @@ namespace Applitools.Selenium
                 return;
             }
 
-            properties_.Add(name, value);
+            Properties.Add(name, value);
         }
 
         public void ClearProperties()
@@ -697,18 +701,18 @@ namespace Applitools.Selenium
                 return;
             }
 
-            properties_.Clear();
+            Properties.Clear();
         }
 
         /// <summary>
         /// Sets the OS (e.g., Windows) and application (e.g., Chrome) 
         /// that host the application under test.
         /// </summary>
-        /// <param name="hostOS">The name of the OS hosting the application under test or 
+        /// <param name="hostOs">The name of the OS hosting the application under test or 
         /// <c>null</c> to auto-detect.</param>
         /// <param name="hostApp">The name of the application hosting the application under
         /// test or <c>null</c> to auto-detect.</param>
-        public void SetAppEnvironment(string hostOS, string hostApp)
+        public void SetAppEnvironment(string hostOs, string hostApp)
         {
             if (IsDisabled)
             {
@@ -716,15 +720,15 @@ namespace Applitools.Selenium
                 return;
             }
 
-            Logger.Verbose("SetAppEnvironment({0}, {1})", hostOS, hostApp);
+            Logger.Verbose("SetAppEnvironment({0}, {1})", hostOs, hostApp);
 
-            if (string.IsNullOrWhiteSpace(hostOS))
+            if (string.IsNullOrWhiteSpace(hostOs))
             {
-                hostOS = null;
+                hostOs = null;
             }
             else
             {
-                hostOS = hostOS.Trim();
+                hostOs = hostOs.Trim();
             }
 
             if (string.IsNullOrWhiteSpace(hostApp))
@@ -736,7 +740,7 @@ namespace Applitools.Selenium
                 hostApp = hostApp.Trim();
             }
 
-            Config.SetHostOS(hostOS);
+            Config.SetHostOS(hostOs);
             Config.SetHostApp(hostApp);
         }
 
@@ -752,7 +756,7 @@ namespace Applitools.Selenium
 
             var seleniumCheckSettings = (SeleniumCheckSettings)checkSettings;
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
+            eyesConfig.Open.Properties = Properties;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var request = new EyesCheckRequest
@@ -794,7 +798,8 @@ namespace Applitools.Selenium
             }
         }
 
-        private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null, Size? viewportSize = null)
+        private IWebDriver OpenEyes(IWebDriver driver, string appName = null, string testName = null,
+            Size? viewportSize = null)
         {
             Logger.Log("OpenEyes");
 
@@ -802,18 +807,22 @@ namespace Applitools.Selenium
             {
                 ApiKey = API_KEY;
             }
+
             if (string.IsNullOrEmpty(appName) == false)
             {
                 AppName = appName;
             }
+
             if (string.IsNullOrEmpty(testName) == false)
             {
                 TestName = testName;
             }
+
             if (viewportSize != null)
             {
                 ViewportSize = viewportSize;
             }
+
             driver_ = driver;
             Runner.ApiKey = ApiKey;
             Runner.ServerUrl = ServerUrl;
@@ -824,10 +833,11 @@ namespace Applitools.Selenium
                 Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
                 return driver;
             }
-            
+
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
 
-            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
+            var openEyesResponsePayload =
+                Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
             eyes_ = openEyesResponsePayload.Result;
 
             var error = openEyesResponsePayload.Error;
@@ -840,7 +850,8 @@ namespace Applitools.Selenium
             return driver;
         }
 
-        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false, bool? removeDuplicateTests = null)
+        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false,
+            bool? removeDuplicateTests = null)
         {
             var eyesCloseRequest = new EyesGetResultsRequest
             {
@@ -885,7 +896,8 @@ namespace Applitools.Selenium
             {
                 Hooks = new Hooks
                 {
-                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
+                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks()
+                        .FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
                 },
                 LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
@@ -904,7 +916,8 @@ namespace Applitools.Selenium
                 LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
                 ContentRegions = checkSettingsInternal.GetContentRegions().Select(i => i.ToRegion()).ToArray(),
                 FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
-                AccessibilityRegions = checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
+                AccessibilityRegions =
+                    checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
                 LazyLoad = checkSettingsInternal.GetLazyLoad()
             };
 
@@ -990,21 +1003,18 @@ namespace Applitools.Selenium
                 region = CreateCheckSettingsTargetRegion(checkSettingsInternal);
             }
 
-            if (region == null)
+            if (region == null && checkSettings is ISeleniumCheckTarget seleniumCheckTarget)
             {
-                if (checkSettings is ISeleniumCheckTarget seleniumCheckTarget)
+                region = CreateCheckSettingsRegionSelector(seleniumCheckTarget);
+                if (region == null)
                 {
-                    region = CreateCheckSettingsRegionSelector(seleniumCheckTarget);
-                    if (region == null)
+                    var element = GetTargetElement(seleniumCheckTarget);
+                    if (element != null)
                     {
-                        var element = GetTargetElement(seleniumCheckTarget);
-                        if (element != null)
+                        region = new RegionElement
                         {
-                            region = new RegionElement
-                            {
-                                ElementId = element.GetPrivateFieldValue<string>("elementId")
-                            };
-                        }
+                            ElementId = element.GetPrivateFieldValue<string>("elementId")
+                        };
                     }
                 }
             }
@@ -1075,14 +1085,15 @@ namespace Applitools.Selenium
                     Settings = ToOpenSettings(Config)
                 }
             };
-            result.Payload.Config.Open.Properties = properties_; // ?
+            result.Payload.Config.Open.Properties = Properties; // ?
             return result;
         }
 
         private string GetServerUrl(ICommandExecutor commandExecutor)
         {
-            var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;
-            var instance = driverServiceCommandExecutor != null ? driverServiceCommandExecutor.HttpExecutor : commandExecutor;
+            var instance = commandExecutor is DriverServiceCommandExecutor driverServiceCommandExecutor
+                ? driverServiceCommandExecutor.HttpExecutor
+                : commandExecutor;
 
             return instance.GetPrivateFieldValue<Uri>(serverUrlFieldName_).AbsoluteUri;
         }
@@ -1097,7 +1108,7 @@ namespace Applitools.Selenium
             var extractTextSettings = new List<ExtractTextSettings>();
             foreach (var region in regions)
             {
-                var ocrRegion = _ocrRegionTransformer.GetRegion(region);
+                var ocrRegion = ocrRegionTransformer_.GetRegion(region);
                 var extractTextSetting = new ExtractTextSettings
                 {
                     Region = ocrRegion,

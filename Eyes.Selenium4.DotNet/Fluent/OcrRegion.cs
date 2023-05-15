@@ -6,78 +6,78 @@ namespace Applitools.Selenium
 {
     public class OcrRegion
     {
-        private readonly Region _region;
-        private readonly IWebElement _element;
-        private readonly By _selector;
-        private string _hint;
-        private string _language;
-        private int? _minMatch;
+        private readonly Region region_;
+        private readonly IWebElement element_;
+        private readonly By selector_;
+        private string hint_;
+        private string language_;
+        private int? minMatch_;
         public TRegion Region { get; set; }
 
         public OcrRegion(By selector)
         {
-            _selector = selector;
+            selector_ = selector;
         }
 
         public OcrRegion(IWebElement element)
         {
-            _element = element;
+            element_ = element;
         }
 
         public OcrRegion(Region region)
         {
-            _region = region;
+            region_ = region;
         }
 
         public OcrRegion Hint(string hint)
         {
-            _hint = hint;
+            hint_ = hint;
 
             return this;
         }
 
         public string GetHint()
         {
-            return _hint;
+            return hint_;
         }
 
         public OcrRegion Language(string language)
         {
-            _language = language;
+            language_ = language;
 
             return this;
         }
 
         public string GetLanguage()
         {
-            return _language;
+            return language_;
         }
 
         public OcrRegion MinMatch(int? minMatch)
         {
-            _minMatch = minMatch;
+            minMatch_ = minMatch;
 
             return this;
         }
 
         public int? GetMinMatch()
         {
-            return _minMatch;
+            return minMatch_;
         }
 
         internal By GetSelector()
         {
-            return _selector;
+            return selector_;
         }
 
         internal IWebElement GetWebElement()
         {
-            return _element;
+            return element_;
         }
 
         internal Region GetRegion()
         {
-            return _region;
+            return region_;
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using Applitools.Commands;
 using Applitools.Playwright.Universal.Driver.Dto;
+using Applitools.Universal;
 using Applitools.Utils;
 using Newtonsoft.Json;
 

@@ -2,6 +2,8 @@ using System;
 using Applitools.Commands.Requests;
 using Applitools.Playwright.Universal;
 using Applitools.Playwright.Universal.Driver;
+using Applitools.Universal;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.VisualGrid
 {
@@ -30,60 +32,52 @@ namespace Applitools.VisualGrid
         internal const int CONCURRENCY_FACTOR = 5;
         static readonly int DEFAULT_CONCURRENCY = 5;
 
-        private RunnerOptions runnerOptions;
-      
+        private readonly RunnerOptions runnerOptions_;
 
-        internal class TestConcurrency
-        {
-            public int UserConcurrency { get; }
-            public int ActualConcurrency { get; }
-            public bool IsLegacy { get; }
-            public bool IsDefault { get; }
-
-            public TestConcurrency()
-            {
-                IsDefault = true;
-                IsLegacy = false;
-                UserConcurrency = DEFAULT_CONCURRENCY;
-                ActualConcurrency = DEFAULT_CONCURRENCY;
-            }
-
-            public TestConcurrency(int userConcurrency, bool isLegacy)
-            {
-                UserConcurrency = userConcurrency;
-                ActualConcurrency = isLegacy ? userConcurrency * CONCURRENCY_FACTOR : userConcurrency;
-                IsLegacy = isLegacy;
-                IsDefault = false;
-            }
-        }
-
-        internal readonly TestConcurrency testConcurrency_;
-
-        public VisualGridRunner() :
-            this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY))
+        public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null)
+            : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), suiteName, logHandler)
         {
         }
 
-        public VisualGridRunner(int testConcurrency)
-            : base(BASE_AGENT_ID, VERSION, null, COMMANDS, listener)
+        public VisualGridRunner(int concurrentOpenSessions, ILogHandler logHandler = null)
+            : this(concurrentOpenSessions, null, logHandler)
+        { }
+
+        public VisualGridRunner(int concurrentOpenSessions, string suiteName, ILogHandler logHandler = null)
+            : this(new RunnerOptions().TestConcurrency(concurrentOpenSessions * CONCURRENCY_FACTOR), suiteName, logHandler)
         {
-            this.runnerOptions = new RunnerOptions().testConcurrency(testConcurrency);
-            EyesManagerSettings managerSettings = new EyesManagerSettings(null, testConcurrency, null);
-            managerRef = commandExecutor.coreMakeManager(ManagerType.VISUAL_GRID.value, managerSettings);
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions)
-            : base(BASE_AGENT_ID, VERSION, null, COMMANDS, listener, runnerOptions);
+        public VisualGridRunner(RunnerOptions runnerOptions, ILogHandler logHandler = null)
+            : this(runnerOptions, null, logHandler)
+        { }
+
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null) 
+            : base(logHandler, BASE_AGENT_ID)
         {
-            this.runnerOptions = runnerOptions;
-            int testConcurrency = runnerOptions.getTestConcurrency() == null
-                ? DEFAULT_CONCURRENCY
-                : runnerOptions.getTestConcurrency();
-            EyesManagerSettings managerSettings = new EyesManagerSettings(testConcurrency, null, null);
-            managerRef = commandExecutor.coreMakeManager(ManagerType.VISUAL_GRID.value, managerSettings);
+            runnerOptions_ = runnerOptions;
+            if (logHandler != null) Logger.SetLogHandler(logHandler);
+
+            ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
-        public StaleElementReferenceException getStaleElementException()
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
+            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null) 
+            : base(logHandler, BASE_AGENT_ID)
+        {
+            runnerOptions_ = runnerOptions;
+            if (logHandler != null) Logger.SetLogHandler(logHandler);
+
+            ManagerApplitoolsRefId = GetCoreMakeManager();
+        }
+
+        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
+            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
+            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory, logHandler)
+        {
+        }
+
+        public PlaywrightStaleElementReferenceException GetStaleElementException()
         {
             return new PlaywrightStaleElementReferenceException();
         }
@@ -93,8 +87,8 @@ namespace Applitools.VisualGrid
             return new MakeManagerRequestPayload
             {
                 Type = "ufg",
-                Concurrency = testConcurrency_.UserConcurrency,
-                Legacy = testConcurrency_.IsLegacy
+                Concurrency = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency(),
+                Legacy = false
             };
         }
 
@@ -108,9 +102,26 @@ namespace Applitools.VisualGrid
             return result;
         }
 
+        private static PlaywrightSpecDriverMessageAdaptor messageAdaptor_ = null;
+
+        protected override ISpecDriverMessageAdaptor SpecDriverMessageAdaptor
+        {
+            get
+            {
+                if (messageAdaptor_ == null)
+                {
+                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(driver, webSocket, Logger);
+                }
+
+                return messageAdaptor_;
+            }
+        }
+
+        private static readonly Refer refer_ = new Refer();
+
         protected Refer GtRefer()
         {
-            return listener_.getRefer();
+            return refer_;
         }
     }
 }

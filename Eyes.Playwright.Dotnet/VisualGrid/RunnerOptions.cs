@@ -2,18 +2,21 @@
 {
     public class RunnerOptions : IRunnerOptionsInternal
     {
-        public RunnerOptions() { }
+        private int concurrency_;
+
+        public RunnerOptions()
+        {
+        }
+
         internal RunnerOptions(int concurrency)
         {
             concurrency_ = concurrency;
         }
 
-        RunnerOptions(RunnerOptions other)
+        private RunnerOptions(RunnerOptions other)
         {
             concurrency_ = other.concurrency_;
         }
-
-        int concurrency_;
 
         public RunnerOptions TestConcurrency(int concurrency)
         {
