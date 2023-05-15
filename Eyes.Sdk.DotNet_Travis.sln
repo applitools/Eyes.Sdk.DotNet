@@ -44,6 +44,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eyes.Image.Core.DotNet", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Appium.UnitTests", "Tests\Eyes.Appium.UnitTests\Eyes.Appium.UnitTests.csproj", "{3988FD2A-2A77-484D-9E77-5B23CB7E0BE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eyes.Appium.E2ETests", "Tests\Eyes.Appium.E2ETests\Eyes.Appium.E2ETests.csproj", "{AEE34448-E8B6-4AEF-BB13-83F670255A2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{3988FD2A-2A77-484D-9E77-5B23CB7E0BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3988FD2A-2A77-484D-9E77-5B23CB7E0BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3988FD2A-2A77-484D-9E77-5B23CB7E0BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEE34448-E8B6-4AEF-BB13-83F670255A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEE34448-E8B6-4AEF-BB13-83F670255A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEE34448-E8B6-4AEF-BB13-83F670255A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEE34448-E8B6-4AEF-BB13-83F670255A2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{182D5566-9009-47AA-A3E2-B3FA6BF1B930} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
 		{0C0307A7-E06E-468B-95AD-3A74375802DF} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
 		{3988FD2A-2A77-484D-9E77-5B23CB7E0BE5} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
+		{AEE34448-E8B6-4AEF-BB13-83F670255A2D} = {3929CF7C-FF84-40C1-8961-D76B61DAC67C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2D3A563-3BF6-42B1-B7A9-7A7DCD842A2E}
