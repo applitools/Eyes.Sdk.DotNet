@@ -4,31 +4,31 @@ namespace Applitools
 {
     public class CommandExecutor
     {
-        private WebSocketClient _webSocket;
-        private static CommandExecutor _instance;
-        
-        public Logger Logger { get; } = new Logger();
+        private WebSocketClient webSocket_;
+        private static CommandExecutor instance_;
+
+        private Logger Logger { get; } = new Logger();
 
         public static CommandExecutor GetInstance(ILogHandler logHandler = null, string initMessage = null)
         {
-            return _instance ?? (_instance = new CommandExecutor(logHandler, initMessage));
+            return instance_ ?? (instance_ = new CommandExecutor(logHandler, initMessage));
         }
 
         public void SendData<TRequest>(TRequest data) where TRequest : CommandBase
         {
-            _webSocket.SendData(data);
+            webSocket_.SendData(data);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest data) 
             where TRequest : CommandBase 
             where TResponse : CommandBase
         {
-            return _webSocket.SendRequest<TRequest, TResponse>(data);
+            return webSocket_.SendRequest<TRequest, TResponse>(data);
         }
 
         public void SetLogHandler(ILogHandler logHandler)
         {
-            _webSocket.SetLogHandler(logHandler);
+            webSocket_.SetLogHandler(logHandler);
         }
 
         private CommandExecutor(ILogHandler logHandler = null, string initMessage = null)
@@ -42,7 +42,7 @@ namespace Applitools
 
             if (string.IsNullOrEmpty(initMessage) == false)
             {
-                _webSocket.SendData(initMessage);
+                webSocket_.SendData(initMessage);
             }
         }
 
@@ -50,12 +50,12 @@ namespace Applitools
         {
             int serverPort = UniversalSdkNativeLoader.Start();
 
-            _webSocket = new WebSocketClient(Logger?.GetILogHandler());
+            webSocket_ = new WebSocketClient(Logger.GetILogHandler());
 
             var url = GetSocketUrl(serverPort);
             Logger.Log($"Server url: {url}");
 
-            _webSocket.ConnectAsync(url);
+            webSocket_.ConnectAsync(url);
 
             Logger.Log("Connected to Server");
         }

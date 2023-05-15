@@ -18,13 +18,13 @@ namespace Applitools.Appium.Tests
     {
         private Eyes eyes_;
         private AndroidDriver<AppiumWebElement> driver_;
-        private ICutProvider cutProvider_ = null;
+        //private ICutProvider cutProvider_ = null;
 
-        private By firstElementSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().index(0)");
-        private By containerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image_container\")");
-        private By labelInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().textContains(\"You successfully clicked the button!\")");
-        private By imageInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image\")");
-        private By buttonSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.Button\")");
+        private readonly By firstElementSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().index(0)");
+        private readonly By containerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image_container\")");
+        private readonly By labelInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().textContains(\"You successfully clicked the button!\")");
+        private readonly By imageInContainerSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().resourceId(\"com.applitools.helloworld.android:id/image\")");
+        private readonly By buttonSelector_ = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.Button\")");
 
         private HashSet<Region> expectedIgnoreRegions_ = new HashSet<Region>();
 
@@ -57,7 +57,7 @@ namespace Applitools.Appium.Tests
         public void Appium_Android_CheckWindow()
         {
             eyes_.Check("Window", Target.Window().Ignore(buttonSelector_));
-            expectedIgnoreRegions_ = new HashSet<Region>() { new Region(136, 237, 90, 48) };
+            expectedIgnoreRegions_ = new HashSet<Region> { new(135, 236, 90, 48) };
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Applitools.Appium.Tests
         {
             var labelInContainer = driver_.FindElement(labelInContainerSelector_);
             eyes_.Check("Image Container", Target.Region(containerSelector_).Ignore(labelInContainer).Ignore(imageInContainerSelector_));
-            expectedIgnoreRegions_ = new HashSet<Region>() { new Region(53, 0, 254, 22), new Region(0, 21, 360, 234) };
+            expectedIgnoreRegions_ = new HashSet<Region> { new(53, 0, 254, 22), new(0, 22, 360, 234) };
         }
 
         [Test]

@@ -40,6 +40,7 @@ namespace Applitools.Images
         /// specified url.
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
+        /// <param name="logHandler">Optional log handler</param>
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
             : this(new ClassicRunner(), serverUrl, logHandler)
         {
@@ -236,10 +237,12 @@ namespace Applitools.Images
                 if (matchResult.AsExpected == false)
                 {
                     asExpected = false;
+#pragma warning disable CS0612
                     if (FailureReports == FailureReports.Immediate)
                     {
                         throw new EyesException($"Unexpected match result for {matchResult}");
                     }
+#pragma warning restore CS0612
                 }
             }
             

@@ -17,7 +17,7 @@ namespace Applitools.Selenium
 {
     public class Eyes : EyesBase
     {
-        private PropertiesCollection properties_;
+        private readonly PropertiesCollection properties_;
         private EyesRef eyes_;
         private IWebDriver driver_;
 
@@ -25,7 +25,7 @@ namespace Applitools.Selenium
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly string serverUrlFieldName_;
         private readonly ISelectorTransformer selectorTransformer_;
-        private readonly IOcrRegionTransformer _ocrRegionTransformer;
+        private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
         /// <summary>
         /// Specifies how detected mismatches are reported.
@@ -56,7 +56,7 @@ namespace Applitools.Selenium
             serverUrlFieldName_ = serverUrlFieldName;
 
             selectorTransformer_ = selectorTransformer ?? new SeleniumSelectorTransformer();
-            _ocrRegionTransformer = new OcrRegionTransformer(selectorTransformer_);
+            ocrRegionTransformer_ = new OcrRegionTransformer(selectorTransformer_);
         }
 
         #endregion
@@ -783,15 +783,24 @@ namespace Applitools.Selenium
                 throw new EyesException(error.ToString());
             }
 
+            if (result?.Payload?.Result == null)
+            {
+                return;
+            }
+            
             foreach (var matchResult in result.Payload.Result)
             {
-                if (matchResult.AsExpected == false)
+                if (matchResult.AsExpected)
                 {
-                    if (FailureReports == FailureReports.Immediate)
-                    {
-                        throw new EyesException($"Unexpected match result for {matchResult}");
-                    }
+                    continue;
                 }
+                
+#pragma warning disable CS0612
+                if (FailureReports == FailureReports.Immediate)
+                {
+                    throw new EyesException($"Unexpected match result for {matchResult}");
+                }
+#pragma warning restore CS0612
             }
         }
 
@@ -923,8 +932,7 @@ namespace Applitools.Selenium
 
         private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)
         {
-            var container = checkSettings as IScrollRootElementContainer;
-            if (container != null)
+            if (checkSettings is IScrollRootElementContainer container)
             {
                 var selector = container.GetScrollRootSelector();
                 if (selector != null)
@@ -1107,7 +1115,7 @@ namespace Applitools.Selenium
 	        var extractTextSettings = new List<ExtractTextSettings>();
 	        foreach (var region in regions)
 	        {
-		        var ocrRegion = _ocrRegionTransformer.GetRegion((OcrRegion)region);
+		        var ocrRegion = ocrRegionTransformer_.GetRegion((OcrRegion)region);
 		        var extractTextSetting = new ExtractTextSettings
 		        {
 			        Region = ocrRegion,

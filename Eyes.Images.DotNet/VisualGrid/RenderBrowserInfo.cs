@@ -100,7 +100,9 @@ namespace Applitools.VisualGrid
                     {
                         case BrowserType.IE_10:
                         case BrowserType.IE_11:
+#pragma warning disable CS0618
                         case BrowserType.EDGE:
+#pragma warning restore CS0618
                         case BrowserType.EDGE_LEGACY:
                         case BrowserType.EDGE_CHROMIUM:
                         case BrowserType.EDGE_CHROMIUM_ONE_VERSION_BACK:

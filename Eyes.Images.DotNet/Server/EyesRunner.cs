@@ -13,8 +13,8 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private MakeManagerRequestPayload config_;
-        private readonly Assembly _actualAssembly;
-        private readonly IList<EyesBaseConfig> _eyeses;
+        private readonly Assembly actualAssembly_;
+        private readonly IList<EyesBaseConfig> eyesConfigs_;
 
         protected CommandExecutor CommandExecutor { get; private set; }
 
@@ -49,8 +49,8 @@ namespace Applitools
                 Logger.SetLogHandler(logHandler);
             }
 
-            _eyeses = new List<EyesBaseConfig>();
-            _actualAssembly = GetActualAssembly();
+            eyesConfigs_ = new List<EyesBaseConfig>();
+            actualAssembly_ = GetActualAssembly();
 
             var sdkEvent = CreateCoreSdk(agentId);
             CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
@@ -106,7 +106,7 @@ namespace Applitools
 
         public void AddEyes(EyesBaseConfig eyesBase)
         {
-            _eyeses.Add(eyesBase);
+            eyesConfigs_.Add(eyesBase);
         }
 
         public string GetCoreMakeManager()
@@ -176,10 +176,10 @@ namespace Applitools
 
         protected virtual IEnumerable<EyesBaseConfig> GetAllEyes()
         {
-            return _eyeses;
+            return eyesConfigs_;
         }
 
-        private Assembly GetActualAssembly()
+        private static Assembly GetActualAssembly()
         {
             StackTrace stackTrace = new StackTrace();
             StackFrame[] stackFrames = stackTrace.GetFrames();
@@ -218,7 +218,7 @@ namespace Applitools
         private CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
             var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{_actualAssembly.GetName().Version}");
+            result.AddOrUpdatePayload("agentId", $"{name}:{actualAssembly_.GetName().Version}");
             result.AddOrUpdatePayload("spec", "webdriver");
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 

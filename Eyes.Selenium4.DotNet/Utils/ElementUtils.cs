@@ -8,10 +8,9 @@ namespace Applitools.Utils
         public static string GetElementId(this IWebElement webElement)
         {
             var fieldName = "elementId";
-            var remoteElement = webElement as RemoteWebElement;
-            if (remoteElement != null)
+            if (webElement is WebElement remoteElement)
             {
-                return remoteElement.GetBaseTypePrivateFieldValue<RemoteWebElement, string>(fieldName);
+                return remoteElement.GetBaseTypePrivateFieldValue<WebElement, string>(fieldName);
             }
 
             return webElement.GetPrivateFieldValue<string>(fieldName);

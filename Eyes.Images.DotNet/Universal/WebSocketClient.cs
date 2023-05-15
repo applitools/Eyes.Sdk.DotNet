@@ -20,16 +20,14 @@ namespace Applitools
 
     public class WebSocketClient //: IUniversalSocketClient
     {
-        private readonly ClientWebSocket _webSocket;
+        private readonly ClientWebSocket webSocket_;
         private CancellationTokenSource cancellationTokenSource_;
-        private readonly ConcurrentDictionary<string, string> _messages;
-        private readonly object _lock = new object();
-
-        private static WebSocketClient _instance;
+        private readonly ConcurrentDictionary<string, string> messages_;
+        private readonly object lock_ = new object();
 
         public event SocketMessageReceivedHandler MessageReceived;
 
-        public Logger Logger { get; } = new Logger();
+        private Logger Logger { get; } = new Logger();
         
         public WebSocketClient(ILogHandler logHandler = null)
         {
@@ -37,24 +35,28 @@ namespace Applitools
             {
                 Logger.SetLogHandler(logHandler);
             }
-            _webSocket = new ClientWebSocket();
-            _messages = new ConcurrentDictionary<string, string>();
+            webSocket_ = new ClientWebSocket();
+            messages_ = new ConcurrentDictionary<string, string>();
         }
 
         public void ConnectAsync(string url)
         {
-            lock (_lock)
+            lock (lock_)
             {
-                if (_webSocket.State == WebSocketState.Open)
+                if (webSocket_.State == WebSocketState.Open)
                 {
                     return;
                 }
 
                 cancellationTokenSource_ = new CancellationTokenSource();
-                _webSocket.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).ConfigureAwait(false).GetAwaiter().GetResult();
+                webSocket_.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).ConfigureAwait(false).GetAwaiter().GetResult();
 
-                while (_webSocket.State == WebSocketState.Connecting) { }
-                if (_webSocket.State != WebSocketState.Open)
+                while (webSocket_.State == WebSocketState.Connecting)
+                {
+                    Thread.Sleep(10);
+                }
+                
+                if (webSocket_.State != WebSocketState.Open)
                 {
                     throw new Exception("Connection is not opened.");
                 }
@@ -95,8 +97,7 @@ namespace Applitools
 
         public string ReceiveMessage(string key)
         {
-            string value;
-            if (_messages.TryRemove(key, out value))
+            if (messages_.TryRemove(key, out string value))
             {
                 return value;
             }
@@ -112,7 +113,7 @@ namespace Applitools
         public void Dispose()
         {
             cancellationTokenSource_.Dispose();
-            _webSocket.Dispose();
+            webSocket_.Dispose();
         }
 
         public void SetLogHandler(ILogHandler logHandler)
@@ -127,7 +128,7 @@ namespace Applitools
 
         private string WaitForMessage(string key)
         {
-            // timeout 9 mins
+            // timeout 9 minutes
             for (int i = 0; i < 2700; i++)
             {
                 var message = ReceiveMessage(key);
@@ -150,7 +151,7 @@ namespace Applitools
                 var response = JsonConvert.DeserializeObject<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
-                    if (_messages.TryAdd(response.Key, textMessage) == false)
+                    if (messages_.TryAdd(response.Key, textMessage) == false)
                     {
                         throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
                     }
@@ -168,9 +169,10 @@ namespace Applitools
 
             do
             {
-                result = _webSocket.ReceiveAsync(buffer, CancellationToken.None).GetAwaiter().GetResult();
+                result = webSocket_.ReceiveAsync(buffer, CancellationToken.None).GetAwaiter().GetResult();
                 for (int i = 0; i < result.Count; i++)
                 {
+                    // ReSharper disable once PossibleNullReferenceException
                     allBytes.Add(buffer.Array[i]);
                 }
             } while (!result.EndOfMessage);
@@ -183,11 +185,11 @@ namespace Applitools
 
         private void SendString(string data, CancellationToken cancellationToken)
         {
-            lock (_lock)
+            lock (lock_)
             {
-                var encoded = Encoding.UTF8.GetBytes(data);
+                byte[] encoded = Encoding.UTF8.GetBytes(data);
                 var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
-                _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter().GetResult();
+                webSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter().GetResult();
 
                 Logger.Log($"Request sent to Server: {Environment.NewLine} {data}");
             }

@@ -35,7 +35,9 @@
                 case BrowserType.IE_11: return IE + " 11";
 
                 case BrowserType.EDGE_LEGACY:
+#pragma warning disable CS0618
                 case BrowserType.EDGE: return Edge;
+#pragma warning restore CS0618
 
                 case BrowserType.EDGE_CHROMIUM:
                 case BrowserType.EDGE_CHROMIUM_ONE_VERSION_BACK:

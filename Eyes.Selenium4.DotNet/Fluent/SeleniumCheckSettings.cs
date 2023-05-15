@@ -665,7 +665,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Ignore(region, regions);
         }
 
-        public new SeleniumCheckSettings Ignore(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Ignore(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Ignore(regions);
         }
@@ -675,7 +675,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Content(region, regions);
         }
 
-        public new SeleniumCheckSettings Content(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Content(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Content(regions);
         }
@@ -685,7 +685,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Layout(region, regions);
         }
 
-        public new SeleniumCheckSettings Layout(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Layout(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Layout(regions);
         }
@@ -695,7 +695,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Strict(region, regions);
         }
 
-        public new SeleniumCheckSettings Strict(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Strict(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Strict(regions);
         }

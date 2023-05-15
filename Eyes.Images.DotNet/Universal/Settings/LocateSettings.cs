@@ -10,7 +10,6 @@ namespace Applitools
         public Uri ServerUrl { get; set; }
         public string ApiKey { get; set; }
         public WebProxy Proxy { get; set; }
-        public TRegion Region { get; set; }
         public string AppName { get; set; }
         public ICollection<string> LocatorNames { get; set; }
         public bool? FirstOnly { get; set; }

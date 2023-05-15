@@ -66,26 +66,27 @@ namespace Applitools.Appium
 
         #endregion
 
-        public static void SetNMGCapabilities(DesiredCapabilities caps)
+        public static void SetNMGCapabilities(AppiumOptions caps)
         {
             SetNMGCapabilities(caps, null, null, null);
         }
 
-        public static void SetNMGCapabilities(DesiredCapabilities caps, string apiKey)
+        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey)
         {
             SetNMGCapabilities(caps, apiKey, null, null);
         }
 
-        public static void SetNMGCapabilities(DesiredCapabilities caps, string apiKey, string eyesServerUrl)
+        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl)
         {
             SetNMGCapabilities(caps, apiKey, eyesServerUrl, null);
         }
 
-        public static void SetNMGCapabilities(DesiredCapabilities caps, string apiKey, string eyesServerUrl, ProxySettings proxySettings)
+        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl, ProxySettings proxySettings)
         {
             var iosCapsKey = "processArguments";
             var iosCapValue = "{\"args\": [], \"env\":"
-                    + "{\"DYLD_INSERT_LIBRARIES\":\"@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib"
+                              // ReSharper disable once StringLiteralTypo
+                              + "{\"DYLD_INSERT_LIBRARIES\":\"@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib"
                     + ":"
                     + "@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64_x86_64-simulator/UFG_lib.framework/UFG_lib\",";
 
@@ -138,8 +139,8 @@ namespace Applitools.Appium
             androidCapValue += androidCapValueSuffix;
             iosCapValue += iosCapValueSuffix;
 
-            caps.SetCapability(androidCapKey, androidCapValue);
-            caps.SetCapability(iosCapsKey, iosCapValue);
+            caps.AddAdditionalCapability(androidCapKey, androidCapValue);
+            caps.AddAdditionalCapability(iosCapsKey, iosCapValue);
         }
 
         public RemoteWebDriver Open(RemoteWebDriver driver, string appName, string testName)

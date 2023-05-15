@@ -21,7 +21,7 @@ jobs:
           python-version: "3.10"
       - uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: "7.0"
+          dotnet-version: "6.0"
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
       - run: dotnet build Tests/UniversalServerRunner/UniversalServerRunner.csproj
       - run: pip install pytest psutil
