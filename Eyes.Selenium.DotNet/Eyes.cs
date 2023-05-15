@@ -17,12 +17,9 @@ namespace Applitools.Selenium
 {
     public class Eyes : EyesBase
     {
-        private readonly PropertiesCollection properties_;
         private EyesRef eyes_;
         private IWebDriver driver_;
-
-        // TODO: remove
-        protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
+        
         private readonly string serverUrlFieldName_;
         private readonly ISelectorTransformer selectorTransformer_;
         private readonly IOcrRegionTransformer ocrRegionTransformer_;

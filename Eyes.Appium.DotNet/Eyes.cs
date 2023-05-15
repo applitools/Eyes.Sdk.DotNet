@@ -11,37 +11,40 @@ namespace Applitools.Appium
         private RemoteWebDriver driver_;
 
         //public IDictionary<string, object> CachedSessionDetails { get; private set; }
-        
+
         //public static Func<IWebDriver, bool> IsLandscapeOrientation = IsLandscapeOrientationImpl_;
 
         #region Constructors
 
         /// <summary>
-        /// Creates a new Eyes instance that interacts with the Eyes Server at the 
-        /// specified url.
-        /// </summary>
-        /// <param name="serverUrl">The Eyes server URL.</param>
-        public Eyes(Uri serverUrl)
-            : this()
-        {
-            Init_();
-        }
-
-        /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
-        public Eyes()
-            : this(new ClassicRunner()) 
+        public Eyes(ILogHandler logHandler = null)
+            : this(new ClassicRunner(), serverUri: (string)null, logHandler: logHandler)
         {
-            Init_();
         }
 
-        public Eyes(EyesRunner runner, ILogHandler logHandler = null)
+        public Eyes(Uri serverUrl, ILogHandler logHandler = null)
+            : this(new ClassicRunner(), serverUrl.AbsoluteUri, logHandler)
+        {
+        }
+
+        public Eyes(string serverUrl, ILogHandler logHandler = null)
+            : this(new ClassicRunner(), serverUrl, logHandler)
+        {
+        }
+
+        public Eyes(EyesRunner runner, Uri serverUri, ILogHandler logHandler = null)
+            : this(runner, serverUri.AbsoluteUri, logHandler: logHandler)
+        {
+        }
+
+        public Eyes(EyesRunner runner, string serverUri, ILogHandler logHandler = null)
             : base(runner, logHandler: logHandler)
         {
             var selectorTransformer = new AppiumSelectorTransformer();
             seleniumEyes_ = new Selenium.Eyes(Runner, "URL", logHandler, selectorTransformer);
-
+            ServerUrl = serverUri;
             Init_();
         }
 
@@ -81,14 +84,15 @@ namespace Applitools.Appium
             SetNMGCapabilities(caps, apiKey, eyesServerUrl, null);
         }
 
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl, ProxySettings proxySettings)
+        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl,
+            ProxySettings proxySettings)
         {
             var iosCapsKey = "processArguments";
             var iosCapValue = "{\"args\": [], \"env\":"
                               // ReSharper disable once StringLiteralTypo
                               + "{\"DYLD_INSERT_LIBRARIES\":\"@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib"
-                    + ":"
-                    + "@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64_x86_64-simulator/UFG_lib.framework/UFG_lib\",";
+                              + ":"
+                              + "@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64_x86_64-simulator/UFG_lib.framework/UFG_lib\",";
 
             var iosCapValueSuffix = "}}";
 
@@ -160,6 +164,7 @@ namespace Applitools.Appium
             {
                 throw new EyesException($"driver is not an AppiumDriver<IWebElement>");
             }
+
             Type argType = driverType.GenericTypeArguments[0];
             Type appiumDriverType = typeof(AppiumDriver<>).MakeGenericType(argType);
             if (!appiumDriverType.IsAssignableFrom(driverType))
@@ -178,10 +183,10 @@ namespace Applitools.Appium
             TestName = seleniumEyes_.TestName;
             ViewportSize = seleniumEyes_.ViewportSize;
             IsOpen = true;
-            
+
             return driver_;
         }
-        
+
         public void Check(ICheckSettings checkSettings)
         {
             if (IsDisabled)
@@ -192,7 +197,7 @@ namespace Applitools.Appium
 
             seleniumEyes_.Check(checkSettings);
         }
-        
+
         public void Check(string name, ICheckSettings checkSettings)
         {
             if (IsDisabled)
@@ -217,7 +222,7 @@ namespace Applitools.Appium
 
             Check(name, Target.Window().Fully());
         }
-        
+
         public override TestResults GetResults(bool throwEx = true)
         {
             return seleniumEyes_.GetResults(throwEx);
@@ -228,7 +233,7 @@ namespace Applitools.Appium
             IsOpen = false;
             return seleniumEyes_.Abort();
         }
-        
+
         public override TestResults Close(bool throwEx = true)
         {
             return seleniumEyes_.Close(throwEx);
