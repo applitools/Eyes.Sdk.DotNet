@@ -1,4 +1,4 @@
-## [Eyes.Images.Core vNext]
+## [Eyes.Image.Core vNext]
 ### Updated
 - Server Core to 3.0.1
 
