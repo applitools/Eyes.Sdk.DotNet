@@ -20,8 +20,6 @@ namespace Applitools.Selenium
         private EyesRef eyes_;
         private IWebDriver driver_;
 
-        // TODO: remove
-        protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         private readonly string serverUrlFieldName_;
         private readonly SelectorTransformer selectorTransformer_;
         private readonly IOcrRegionTransformer ocrRegionTransformer_;

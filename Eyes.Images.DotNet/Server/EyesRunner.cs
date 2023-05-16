@@ -6,7 +6,6 @@ using System.Reflection;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
-using Applitools.Universal;
 using Applitools.Utils;
 
 namespace Applitools
@@ -14,10 +13,10 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private MakeManagerRequestPayload config_;
-        protected Assembly ActualAssembly { get; }
+        private readonly Assembly actualAssembly_;
         private readonly IList<EyesBaseConfig> eyesConfigs_;
 
-        public CommandExecutor CommandExecutor { get; }
+        protected CommandExecutor CommandExecutor { get; private set; }
 
         public MakeManagerRequestPayload Config
         {
@@ -51,16 +50,12 @@ namespace Applitools
             }
 
             eyesConfigs_ = new List<EyesBaseConfig>();
-            ActualAssembly = GetActualAssembly();
+            actualAssembly_ = GetActualAssembly();
 
             var sdkEvent = CreateCoreSdk(agentId);
-            
-            // ReSharper disable once VirtualMemberCallInConstructor
-            CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageAdaptor, logHandler, sdkEvent);
+            CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
         }
 
-        protected virtual ISpecDriverMessageAdaptor SpecDriverMessageAdaptor { get; } = new SpecDriverMessageAdaptor();
-        
         public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
         {
             RemoveDuplicateTests = removeDuplicateTests;
@@ -184,7 +179,7 @@ namespace Applitools
             return eyesConfigs_;
         }
 
-        private Assembly GetActualAssembly()
+        private static Assembly GetActualAssembly()
         {
             StackTrace stackTrace = new StackTrace();
             StackFrame[] stackFrames = stackTrace.GetFrames();
@@ -220,10 +215,10 @@ namespace Applitools
             return closeAllEyes;
         }
 
-        protected virtual CoreMakeSdkRequest CreateCoreMakeSdk(string name)
+        private CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
             var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{ActualAssembly.GetName().Version}");
+            result.AddOrUpdatePayload("agentId", $"{name}:{actualAssembly_.GetName().Version}");
             result.AddOrUpdatePayload("spec", "webdriver");
             result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
 

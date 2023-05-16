@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Applitools.Utils;
@@ -24,8 +25,9 @@ namespace Applitools
     [ComVisible(true)]
     public abstract class EyesBase : EyesBaseConfig//, IEyesBase, IBatchCloser
     {
-        protected PropertiesCollection Properties { get; set; }
-        
+        protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
+        protected PropertiesCollection properties_;
+
         public override bool IsDisabled
         {
             get => Runner.IsDisabled;

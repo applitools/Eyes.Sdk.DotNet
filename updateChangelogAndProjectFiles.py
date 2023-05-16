@@ -26,13 +26,13 @@ def upSemanticVersion(currentVersion, part):
     return vNext
 
 def getDependentPackages(packageName, packageNextVersions, versionPart):
-    packageDependecies = {
+    packageDependencies = {
+        "Eyes.Image.Core": ["Eyes.Images"],
         "Eyes.Images": ["Eyes.Selenium", "Eyes.Selenium4"],
         "Eyes.Selenium": ["Eyes.Appium"],
-        "Eyes.Sdk.Universal.Core.Image": ["Eyes.Images"],
     }
     dependencyDefaultChangelogStr="### Updated\n- Match to latest {}\n"
-    dependentPackages = packageDependecies.get(packageName)
+    dependentPackages = packageDependencies.get(packageName)
     if dependentPackages:
         for dependentPackageName in dependentPackages:
             if not dependentPackageName in packageNextVersions:
@@ -130,6 +130,7 @@ if __name__ == '__main__':
     originalLines = data["orig"]
     newLines = ""
     updated_projects = []
+    new_tags = []
     reported_version = "RELEASE_CANDIDATE"
     dateStr = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -137,7 +138,8 @@ if __name__ == '__main__':
         newLines += "## [" + p + " " + v['version'] + "] - " + dateStr + "\n"
         newLines += v['changelog'] + "\n"
         update_csproj(p, v['version'], v['changelog'])
-        updated_projects.append(p + "@" + v['version'] + "\n")
+        new_tags.append(p + "@" + v['version'] + "\n")
+        updated_projects.append(p + "\n")
         reported_version += ";" + p + "@" + v['version']
     
     f = open("RECENT_CHANGES.md", "w")
@@ -156,5 +158,9 @@ if __name__ == '__main__':
     f.close()
 
     f = open("NEW_TAGS.txt", "w")
+    f.writelines(new_tags)
+    f.close()
+
+    f = open("UPDATED_PROJECTS.txt", "w")
     f.writelines(updated_projects)
     f.close()

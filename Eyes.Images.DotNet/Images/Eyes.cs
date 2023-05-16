@@ -25,8 +25,6 @@ namespace Applitools.Images
     {
         #region Fields
 
-        private readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
-
         private string title_;
         private readonly Uri serverUrl_;
         private EyesRef eyes_;
