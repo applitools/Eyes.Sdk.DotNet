@@ -201,6 +201,7 @@ jobs:
     - stage: Deploy
       if: tag =~ ^RELEASE_CANDIDATE AND fork == false
       mono: none
+      dotnet: 6.0.408
       script:
         - chmod +x ./deploy.sh && ./deploy.sh
         - chmod +x ./sendMail.sh && ./sendMail.sh
