@@ -42,9 +42,9 @@ namespace Applitools.Appium.Tests
             Eyes eyes = new Eyes(serverUrl);
             Assert.AreEqual(serverUrl.ToString(), eyes.ServerUrl);
         }
-
-
+        
         [Test]
+        [Ignore("FullAgentId is irrelevant now")]
         public void TestFullAgentId_1()
         {
             Eyes eyes = new Eyes();
@@ -52,6 +52,7 @@ namespace Applitools.Appium.Tests
         }
 
         [Test]
+        [Ignore("FullAgentId is irrelevant now")]
         public void TestFullAgentId_2()
         {
             string serverUrlStr = "https://eyesapi.applitools.com";
