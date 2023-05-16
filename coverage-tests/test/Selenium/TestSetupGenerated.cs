@@ -20,7 +20,7 @@ namespace Applitools.Generated.Selenium.Tests
     {
         protected IWebDriver driver;
         protected IWebDriver webDriver;
-        protected EyesRunner runner;
+        protected SeleniumEyesRunner runner;
         protected Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
@@ -174,7 +174,7 @@ namespace Applitools.Generated.Selenium.Tests
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
-            runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
+            runner = isVisualGrid ? (SeleniumEyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
             eyes = new Applitools.Selenium.Eyes(runner);
             initEyesSettings(isVisualGrid, isCSSMode);
         }

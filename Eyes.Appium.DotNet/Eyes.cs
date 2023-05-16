@@ -34,16 +34,16 @@ namespace Applitools.Appium
         {
         }
 
-        public Eyes(EyesRunner runner, Uri serverUri, ILogHandler logHandler = null)
+        public Eyes(AppiumEyesRunner runner, Uri serverUri, ILogHandler logHandler = null)
             : this(runner, serverUri.AbsoluteUri, logHandler: logHandler)
         {
         }
 
-        public Eyes(EyesRunner runner, string serverUri, ILogHandler logHandler = null)
+        public Eyes(AppiumEyesRunner runner, string serverUri, ILogHandler logHandler = null)
             : base(runner, logHandler: logHandler)
         {
             var selectorTransformer = new AppiumSelectorTransformer();
-            seleniumEyes_ = new Selenium.Eyes(Runner, "URL", logHandler, selectorTransformer);
+            seleniumEyes_ = new Selenium.Eyes((AppiumEyesRunner)Runner, "URL", logHandler, selectorTransformer);
             ServerUrl = serverUri;
         }
 

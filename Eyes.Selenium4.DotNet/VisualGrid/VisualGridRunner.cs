@@ -2,7 +2,7 @@
 
 namespace Applitools.VisualGrid
 {
-    public class VisualGridRunner : EyesRunner//, IVisualGridRunner
+    public class VisualGridRunner : Selenium.SeleniumEyesRunner//, IVisualGridRunner
     {
         internal const int CONCURRENCY_FACTOR = 5;
         internal const int DEFAULT_CONCURRENCY = 5;

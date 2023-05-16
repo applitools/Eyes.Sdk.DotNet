@@ -10,7 +10,7 @@ using Microsoft.Playwright;
 
 namespace Applitools.Playwright.Fluent
 {
-    public class PlaywrightCheckSettings : CheckSettings, IPlaywrightCheckSettings
+    public class PlaywrightCheckSettings : CheckSettings, IPlaywrightCheckSettings, IPlaywrightCheckTarget
     {
         /** The target region. */
         private Reference targetElement_;
@@ -1349,6 +1349,16 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings Content(Region region, params Region[] regions)
         {
             return IgnoreColors(region, regions);
+        }
+
+        IList<FrameLocator> IPlaywrightCheckTarget.GetFrameChain()
+        {
+            return frameChain_;
+        }
+
+        Reference IPlaywrightCheckTarget.GetScrollRootElement()
+        {
+            return scrollRootElement_;
         }
     }
 }

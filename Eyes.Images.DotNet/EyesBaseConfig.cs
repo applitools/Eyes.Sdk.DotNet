@@ -222,7 +222,7 @@ namespace Applitools
             {
                 Logger.SetLogHandler(logHandler);
             }
-            Runner = runner ?? new ClassicRunner(logHandler);
+            Runner = runner ?? new Images.ClassicRunner(logHandler);
             Runner.AddEyes(this);
         }
 

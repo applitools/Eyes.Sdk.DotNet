@@ -7,7 +7,7 @@ using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright
 {
-    public class ClassicRunner : EyesRunner
+    public class ClassicRunner : PlaywrightEyesRunner
     {
         /// <summary>
         /// name of the client sdk

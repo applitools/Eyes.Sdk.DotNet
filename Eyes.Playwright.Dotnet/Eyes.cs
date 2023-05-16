@@ -6,7 +6,9 @@ using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
+using Applitools.Playwright.Universal.Mapper;
 using Applitools.Universal;
+using Applitools.Universal.Dto;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
@@ -19,18 +21,12 @@ namespace Applitools.Playwright
         /// <summary>
         /// The runner.
         /// </summary>
-        private readonly EyesRunner runner_;
+        internal PlaywrightEyesRunner Runner { get; }
 
         /// <summary>
         /// The command executor to execute the commands.
         /// </summary>
         private readonly CommandExecutor commandExecutor_;
-
-        /// <summary>
-        /// This reference has to be used in eyes related requests
-        /// (Eyes.Check, Eyes.Locate, Eyes.ExtractTextRegions, Eyes.ExtractText, Eyes.Close, Eyes.Abort)
-        /// </summary>
-        private Reference eyesRef_;
 
         /// <summary>
         /// Is eyes closed, used to check abort after close.
@@ -41,6 +37,7 @@ namespace Applitools.Playwright
         /// The driver reference associated with the test.
         /// </summary>
         private Driver driver_;
+        private EyesRef eyes_;
 
         private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
@@ -64,7 +61,7 @@ namespace Applitools.Playwright
         }
 
         public Eyes(
-            EyesRunner runner,
+            PlaywrightEyesRunner runner,
             string serverUrlFieldName = "remoteServerUri",
             ILogHandler logHandler = null)
             : base(runner, serverUrlFieldName: serverUrlFieldName, logHandler: logHandler)
@@ -76,10 +73,10 @@ namespace Applitools.Playwright
         /// Instantiates a new Eyes.
         /// </summary>
         /// <param name="runner">The runner</param>
-        public Eyes(EyesRunner runner)
+        public Eyes(PlaywrightEyesRunner runner)
         {
-            runner_ = runner ?? new ClassicRunner();
-            commandExecutor_ = runner_.CommandExecutor;
+            Runner = runner ?? new ClassicRunner();
+            commandExecutor_ = Runner.CommandExecutor;
         }
 
         #endregion
@@ -118,26 +115,52 @@ namespace Applitools.Playwright
             }
 
             // ConfigurationDto configurationDto = ConfigurationMapper
-            //     .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
+            //     .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
             // OpenSettingsDto settingsDto =
-            //     SettingsMapper.toOpenSettingsDto(configuration_, runner_.isDontCloseBatches());
+            //     SettingsMapper.toOpenSettingsDto(configuration_, Runner.isDontCloseBatches());
 
-            /*
-                var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
-    
-                var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
-              */
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_);
+            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
+            eyes_ = openEyesResponsePayload.Result;
+            
+            var error = openEyesResponsePayload.Error;
+            if (error != null)
+            {
+                throw new EyesException($"{error.Message}{Environment.NewLine}{error.Stack}");
+            }
 
-            // eyesRef_ = commandExecutor_.ManagerOpenEyes(runner_.ManagerApplitoolsRefId, driver_, settingsDto,
+                // eyesRef_ = commandExecutor_.ManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_, settingsDto,
             //     configurationDto);
             IsOpen = true;
             return page;
         }
 
-        /**
-     * Takes multiple screenshots at once (given all <code>ICheckSettings</code> objects are on the same level).
-     * @param checkSettings Multiple <code>ICheckSettings</code> object representing different regions in the viewport.
-     */
+        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
+            string applitoolsRefId,
+            Driver driver)
+        {
+            var result = new EyesManagerOpenEyes
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new OpenEyesRequestPayload
+                {
+                    Manager = new ManagerRef
+                    {
+                        ApplitoolsRefId = applitoolsRefId
+                    },
+                    Target = new DriverTarget(),
+                    Config = ToConfig(Config),
+                    Settings = ToOpenSettings(Config)
+                }
+            };
+            result.Payload.Config.Open.Properties = properties_; // ?
+            return result;
+        }
+        
+        /// <summary>
+        /// Takes multiple screenshots at once (given all <see cref="ICheckSettings"/> objects are on the same level).
+        /// </summary>
+        /// <param name="checkSettings">Multiple <see cref="ICheckSettings"/> object representing different regions in the viewport</param>
         public void Check(params ICheckSettings[] checkSettings)
         {
             foreach (ICheckSettings cSs in checkSettings)
@@ -162,10 +185,10 @@ namespace Applitools.Playwright
             ArgumentGuard.NotOfType(checkSettings, typeof(IPlaywrightCheckSettings), nameof(checkSettings));
             IPlaywrightCheckSettings playwrightCheckSettings = (IPlaywrightCheckSettings)checkSettings;
 
-            ICheckSettings checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
+            CheckSettingsDto checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
                 playwrightCheckSettings,
-                Configure(), GetRefer_(), driver_.Root);
-
+                Config, GetRefer_(), driver_.Root);
+            
             CheckDto_(checkSettingsDto, driver_);
         }
 
@@ -264,7 +287,7 @@ namespace Applitools.Playwright
             }
 
             ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
+                .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
             CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
 
             commandExecutor_.Close(eyesRef_, settings, configurationDto);
@@ -344,7 +367,7 @@ namespace Applitools.Playwright
             }
 
             ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
+                .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
             CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
 
             commandExecutor_.Close(eyesRef_, settings, configurationDto);
@@ -395,8 +418,62 @@ namespace Applitools.Playwright
 
             return null;
         }
+     
+        internal virtual void CheckImpl_(ICheckSettings checkSettings)
+        {
+            Logger.Log("CheckImpl");
 
-        private void CheckDto_(ICheckSettings checkSettingsDto, ITargetDto driverTargetDto)
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Check, StageType.Disabled);
+                return;
+            }
+
+            var playwrightCheckSettings = (IPlaywrightCheckTarget)checkSettings;
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = properties_;
+            var request = new EyesCheckRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new CheckRequestPayload
+                {
+                    Eyes = eyes_,
+                    Config = eyesConfig,
+                    Target = new DriverTarget
+                    {
+                        ServerUrl = serverUrl,
+                        Capabilities = GetCapabilities(remoteWebDriver),
+                        SessionId = remoteWebDriver.SessionId.ToString(),
+                        Proxy = Config.Proxy
+                    },
+                    Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
+                }
+            };
+
+            var result = commandExecutor_.SendRequest<EyesCheckRequest, EyesCheckResponse>(request);
+            var error = result?.Payload?.Error;
+            if (error != null)
+            {
+                throw new EyesException(error.ToString());
+            }
+
+            if (result?.Payload?.Result == null)
+            {
+                return;
+            }
+            
+            foreach (var matchResult in result.Payload.Result)
+            {
+                if (matchResult.AsExpected)
+                {
+                    continue;
+                }
+                
+                throw new EyesException($"Unexpected match result for {matchResult}");
+            }
+        }
+        
+        private void CheckDto_(CheckSettingsDto checkSettingsDto, Driver driverTargetDto)
         {
             if (IsDisabled)
             {
@@ -412,23 +489,23 @@ namespace Applitools.Playwright
             ArgumentGuard.NotNull(checkSettingsDto, "checkSettings");
 
             ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration, runner.isDontCloseBatches());
+                .toConfigurationDto(configuration, Runner.DontCloseBatches);
             commandExecutor_.EyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
         }
 
-        private List<string> ExtractTextDto_(ITargetDto target, List<OCRExtractSettingsDto> settings,
+        private List<string> ExtractTextDto_(Driver target, List<OCRExtractSettingsDto> settings,
             ConfigurationDto config)
         {
             return commandExecutor_.ExtractText(target, settings, config);
         }
 
-        private Dictionary<string, List<TextRegion>> LocateTextDto_(ITargetDto target, OCRSearchSettingsDto settings,
+        private Dictionary<string, List<TextRegion>> LocateTextDto_(Driver target, OCRSearchSettingsDto settings,
             ConfigurationDto config)
         {
             return commandExecutor_.LocateText(target, settings, config);
         }
 
-        private Dictionary<string, List<Region>> LocateDto_(ITargetDto target, VisualLocatorSettingsDto settings,
+        private Dictionary<string, List<Region>> LocateDto_(Driver target, VisualLocatorSettingsDto settings,
             ConfigurationDto config)
         {
             Dictionary<string, List<RegionDto>> response = commandExecutor_.Locate(target, settings, config);

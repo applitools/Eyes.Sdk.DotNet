@@ -1,6 +1,6 @@
 ﻿using Applitools.Commands.Requests;
 
-namespace Applitools
+namespace Applitools.Images
 {
     public class ClassicRunner : EyesRunner
     {
@@ -13,7 +13,7 @@ namespace Applitools
         }
 
         internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory)
-            : base(logHandler, "netImageSdk")
+            : base(logHandler, "Eyes.Images.DotNet")
         {
             ManagerApplitoolsRefId = GetCoreMakeManager();
         }

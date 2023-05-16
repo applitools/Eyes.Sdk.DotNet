@@ -1,5 +1,6 @@
 using System;
 using Applitools.Commands.Requests;
+using Applitools.Playwright;
 using Applitools.Playwright.Universal;
 using Applitools.Playwright.Universal.Driver;
 using Applitools.Universal;
@@ -10,7 +11,7 @@ namespace Applitools.VisualGrid
     /// <summary>
     /// Used to manage multiple Eyes sessions when working with the Ultrafast Grid
     /// </summary>
-    public class VisualGridRunner : EyesRunner
+    public class VisualGridRunner : PlaywrightEyesRunner
     {
         /// <summary>
         /// name of the client sdk

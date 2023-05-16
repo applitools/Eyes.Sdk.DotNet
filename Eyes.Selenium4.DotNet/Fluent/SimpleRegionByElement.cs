@@ -1,32 +1,31 @@
 ﻿using Applitools.Utils;
+using Applitools.Fluent;
+using OpenQA.Selenium;
+using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent
 {
-    using OpenQA.Selenium;
-    using Applitools.Fluent;
-    using System.Collections.Generic;
-
     internal class SimpleRegionByElement : IGetRegions, IGetSeleniumRegion
     {
-        private readonly IWebElement _element;
-        private readonly Padding _padding;
-        private readonly string _regionId;
+        private readonly IWebElement element_;
+        private readonly Padding padding_;
+        private readonly string regionId_;
 
         public SimpleRegionByElement(IWebElement element, Padding padding = null, string regionId = null)
         {
-            _element = element;
-            _padding = padding;
-            _regionId = regionId;
+            element_ = element;
+            padding_ = padding;
+            regionId_ = regionId;
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement> { _element };
+            return new List<IWebElement> { element_ };
         }
         
         public CodedRegionReference ToRegion()
         {
-            var elementId = _element.GetElementId();
+            var elementId = element_.GetElementId();
 
             return new CodedRegionReference
             {
@@ -34,8 +33,8 @@ namespace Applitools.Selenium.Fluent
                 {
                     ElementId = elementId
                 },
-                Padding = _padding,
-                RegionId = _regionId
+                Padding = padding_,
+                RegionId = regionId_
             };
         }
     }

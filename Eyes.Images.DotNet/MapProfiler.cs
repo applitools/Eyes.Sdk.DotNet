@@ -2,8 +2,6 @@
 using Applitools.Metadata;
 using AutoMapper;
 
-//using AutoMapper;
-
 namespace Applitools
 {
     public class MapProfiler : Profile

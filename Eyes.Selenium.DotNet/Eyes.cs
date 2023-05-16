@@ -42,7 +42,7 @@ namespace Applitools.Selenium
         }
 
         public Eyes(
-            EyesRunner runner, 
+            SeleniumEyesRunner runner, 
             string serverUrlFieldName = "remoteServerUri", 
             ILogHandler logHandler = null, 
             ISelectorTransformer selectorTransformer = null) 
@@ -1092,8 +1092,9 @@ namespace Applitools.Selenium
 
         private string GetServerUrl(ICommandExecutor commandExecutor)
         {
-            var driverServiceCommandExecutor = commandExecutor as DriverServiceCommandExecutor;
-            var instance = driverServiceCommandExecutor != null ? driverServiceCommandExecutor.HttpExecutor : commandExecutor;
+            var instance = commandExecutor is DriverServiceCommandExecutor driverServiceCommandExecutor 
+                ? driverServiceCommandExecutor.HttpExecutor 
+                : commandExecutor;
 
             return instance.GetPrivateFieldValue<Uri>(serverUrlFieldName_).AbsoluteUri;
         }
