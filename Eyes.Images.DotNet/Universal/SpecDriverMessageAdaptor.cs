@@ -9,5 +9,7 @@ namespace Applitools.Universal
         {
             return JsonConvert.DeserializeObject<TResponse>(message);
         }
+
+        public WebSocketClient WebSocket { get; set; }
     }
 }

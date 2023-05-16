@@ -10,13 +10,13 @@ namespace Applitools.Playwright.Universal.Driver
     public class PlaywrightSpecDriverMessageAdaptor : ISpecDriverMessageAdaptor
     {
         private readonly SpecDriverPlaywright driver_;
-        private readonly WebSocketClient webSocket_;
         private readonly Logger logger_;
+        
+        public WebSocketClient WebSocket { get; set; }
 
-        public PlaywrightSpecDriverMessageAdaptor(SpecDriverPlaywright driver, WebSocketClient webSocket, Logger logger)
+        public PlaywrightSpecDriverMessageAdaptor(Refer refer, Logger logger)
         {
-            driver_ = driver;
-            webSocket_ = webSocket;
+            driver_ = new SpecDriverPlaywright(refer);
             logger_ = logger;
         }
 
@@ -106,7 +106,7 @@ namespace Applitools.Playwright.Universal.Driver
                     case "Eyes.getResults":
                     case "EyesManager.getResults":
                     case "Debug.getHistory":
-                        webSocket_.SendRequest<DriverCommand, TResponse>(response);
+                        WebSocket.SendRequest<DriverCommand, TResponse>(response);
                         break;
                     case "Logger.log":
                         try
@@ -134,7 +134,7 @@ namespace Applitools.Playwright.Universal.Driver
             logger_.Log(level, Stage.SpecDriver,
                 $"Responding to {response.Name} with {commandResponse.Payload}");
 
-            webSocket_.SendRequest<CommandResponse, TResponse>(commandResponse);
+            WebSocket.SendRequest<CommandResponse, TResponse>(commandResponse);
 
             var result = JsonConvert.DeserializeObject<TResponse>(message);
 

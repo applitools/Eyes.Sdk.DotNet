@@ -33,6 +33,8 @@ namespace Applitools.VisualGrid
         static readonly int DEFAULT_CONCURRENCY = 5;
 
         private readonly RunnerOptions runnerOptions_;
+        private readonly Refer refer_;
+        private readonly SpecDriverPlaywright driver_;
 
         public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null)
             : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), suiteName, logHandler)
@@ -56,9 +58,14 @@ namespace Applitools.VisualGrid
             : base(logHandler, BASE_AGENT_ID)
         {
             runnerOptions_ = runnerOptions;
-            if (logHandler != null) Logger.SetLogHandler(logHandler);
+            if (logHandler != null)
+            {
+                Logger.SetLogHandler(logHandler);
+            }
 
             ManagerApplitoolsRefId = GetCoreMakeManager();
+            refer_ = new Refer();
+            driver_ = new SpecDriverPlaywright(refer_);
         }
 
         public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
@@ -66,9 +73,12 @@ namespace Applitools.VisualGrid
             : base(logHandler, BASE_AGENT_ID)
         {
             runnerOptions_ = runnerOptions;
-            if (logHandler != null) Logger.SetLogHandler(logHandler);
-
-            ManagerApplitoolsRefId = GetCoreMakeManager();
+            if (logHandler != null)
+            {
+                Logger.SetLogHandler(logHandler);
+            }
+            refer_ = new Refer();
+            driver_ = new SpecDriverPlaywright(refer_);
         }
 
         internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
@@ -110,15 +120,13 @@ namespace Applitools.VisualGrid
             {
                 if (messageAdaptor_ == null)
                 {
-                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(driver, webSocket, Logger);
+                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(refer_, Logger);
                 }
 
                 return messageAdaptor_;
             }
         }
-
-        private static readonly Refer refer_ = new Refer();
-
+        
         protected Refer GtRefer()
         {
             return refer_;

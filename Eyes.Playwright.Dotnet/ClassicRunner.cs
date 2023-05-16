@@ -24,6 +24,9 @@ namespace Applitools.Playwright
         /// </summary>
         protected static string[] COMMANDS = SpecDriverPlaywright.GetMethodNames();
 
+        private readonly Refer refer_;
+        private readonly SpecDriverPlaywright driver_;
+        
         /// <summary>
         /// used for instantiating Playwright Runner
         /// </summary>
@@ -45,6 +48,8 @@ namespace Applitools.Playwright
         private ClassicRunner(ILogHandler logHandler, string baseAgentId, string version)
             : base(logHandler, baseAgentId + "-" + version)
         {
+            refer_ = new Refer();
+            driver_ = new SpecDriverPlaywright(refer_);
         }
 
         public PlaywrightStaleElementReferenceException GetStaleElementException()
@@ -76,14 +81,12 @@ namespace Applitools.Playwright
             {
                 if (messageAdaptor_ == null)
                 {
-                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(driver, webSocket, Logger);
+                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(refer_, Logger);
                 }
 
                 return messageAdaptor_;
             }
         }
-
-        private static readonly Refer refer_ = new Refer();
 
         protected Refer GtRefer()
         {

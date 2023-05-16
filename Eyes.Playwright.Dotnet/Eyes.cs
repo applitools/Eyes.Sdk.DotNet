@@ -10,6 +10,7 @@ using Applitools.Universal;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright
 {
@@ -26,11 +27,6 @@ namespace Applitools.Playwright
         private readonly CommandExecutor commandExecutor_;
 
         /// <summary>
-        /// The configuration that will be used in eyes related requests.
-        /// </summary>
-        private Configuration configuration_ = new Configuration();
-
-        /// <summary>
         /// This reference has to be used in eyes related requests
         /// (Eyes.Check, Eyes.Locate, Eyes.ExtractTextRegions, Eyes.ExtractText, Eyes.Close, Eyes.Abort)
         /// </summary>
@@ -45,7 +41,7 @@ namespace Applitools.Playwright
         /// The driver reference associated with the test.
         /// </summary>
         private Driver driver_;
-        
+
         private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
         #region ctors
@@ -56,12 +52,12 @@ namespace Applitools.Playwright
         public Eyes() : this(new ClassicRunner())
         {
         }
-        
+
         public Eyes(ILogHandler logHandler = null)
             : this(new ClassicRunner(), logHandler: logHandler)
         {
         }
-        
+
         public Eyes(Uri serverUrl, ILogHandler logHandler = null)
             : this(new ClassicRunner(), serverUrl?.AbsolutePath, logHandler)
         {
@@ -71,12 +67,9 @@ namespace Applitools.Playwright
             EyesRunner runner,
             string serverUrlFieldName = "remoteServerUri",
             ILogHandler logHandler = null)
-            : base(runner, logHandler: logHandler)
+            : base(runner, serverUrlFieldName: serverUrlFieldName, logHandler: logHandler)
         {
-            Properties = new PropertiesCollection();
-            serverUrlFieldName_ = serverUrlFieldName;
-
-            ocrRegionTransformer_ = new OcrRegionTransformer(selectorTransformer_);
+            ocrRegionTransformer_ = new OcrRegionTransformer();
         }
 
         /// <summary>
@@ -90,7 +83,7 @@ namespace Applitools.Playwright
         }
 
         #endregion
-        
+
         /// <summary>
         /// Starts a test.
         /// </summary>
@@ -98,12 +91,12 @@ namespace Applitools.Playwright
         /// <returns>The Page</returns>
         public IPage Open(IPage page)
         {
-            return Open(page, configuration_.AppName, configuration_.TestName);
+            return Open(page, Config.AppName, Config.TestName);
         }
-        
+
         public IPage Open(IPage page, string appName, string testName)
         {
-            return Open(page, appName, testName, configuration_.ViewportSize);
+            return Open(page, appName, testName, Config.ViewportSize);
         }
 
         public IPage Open(IPage page, string appName, string testName, RectangleSize viewportSize)
@@ -116,18 +109,18 @@ namespace Applitools.Playwright
             driver_ = new Driver(page);
             Refer refer = GetRefer_();
             driver_.ApplitoolsRefId = refer.Ref(page, driver_.Root);
-            driver_.setWebDriverProxy(configuration_.getWebDriverProxy());
+            driver_.SetWebDriverProxy(Config.Proxy);
 
-            configuration_.setAppName(appName).setTestName(testName);
-            if (viewportSize != null && !viewportSize.isEmpty())
+            Config.SetAppName(appName).SetTestName(testName);
+            if (viewportSize != null && !viewportSize.IsEmpty())
             {
-                configuration_.setViewportSize(new RectangleSize(viewportSize));
+                Config.SetViewportSize(new RectangleSize(viewportSize));
             }
 
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
-            OpenSettingsDto settingsDto =
-                SettingsMapper.toOpenSettingsDto(configuration_, runner_.isDontCloseBatches());
+            // ConfigurationDto configurationDto = ConfigurationMapper
+            //     .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
+            // OpenSettingsDto settingsDto =
+            //     SettingsMapper.toOpenSettingsDto(configuration_, runner_.isDontCloseBatches());
 
             /*
                 var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver);
@@ -135,8 +128,8 @@ namespace Applitools.Playwright
                 var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
               */
 
-            eyesRef_ = commandExecutor_.managerOpenEyes(runner_.getManagerRef(), driver_, settingsDto,
-                configurationDto);
+            // eyesRef_ = commandExecutor_.ManagerOpenEyes(runner_.ManagerApplitoolsRefId, driver_, settingsDto,
+            //     configurationDto);
             IsOpen = true;
             return page;
         }
@@ -173,7 +166,7 @@ namespace Applitools.Playwright
                 playwrightCheckSettings,
                 Configure(), GetRefer_(), driver_.Root);
 
-            checkDto(checkSettingsDto, driver_);
+            CheckDto_(checkSettingsDto, driver_);
         }
 
         public ICollection<string> ExtractText(ICollection<OcrRegion> ocrRegions)
@@ -187,7 +180,7 @@ namespace Applitools.Playwright
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = Properties;
+            eyesConfig.Open.Properties = properties_;
             var serverUrl = GetServerUrl(CommandExecutor);
             var eyesExtractTextRequest = new EyesExtractTextRequest
             {
@@ -234,13 +227,13 @@ namespace Applitools.Playwright
      * @param visualLocatorSettings the locator settings.
      * @return mapping of the region locations.
      */
-        public Map<string, List<Region>> Locate(VisualLocatorSettings visualLocatorSettings)
+        public Dictionary<string, List<Region>> Locate(VisualLocatorSettings visualLocatorSettings)
         {
-            ArgumentGuard.notNull(visualLocatorSettings, "visualLocatorSettings");
+            ArgumentGuard.NotNull(visualLocatorSettings, nameof(visualLocatorSettings));
 
             if (!IsOpen)
             {
-                this.abort();
+                Abort();
                 throw new EyesException("Eyes not open");
             }
 
@@ -250,7 +243,7 @@ namespace Applitools.Playwright
             ConfigurationDto configurationDto = ConfigurationMapper
                 .toConfigurationDto(Configure(), false);
 
-            return locateDto(driver_, visualLocatorSettingsDto, configurationDto);
+            return LocateDto_(driver_, visualLocatorSettingsDto, configurationDto);
         }
 
         /// <summary>
@@ -274,10 +267,10 @@ namespace Applitools.Playwright
                 .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
             CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
 
-            commandExecutor_.close(eyesRef_, settings, configurationDto);
+            commandExecutor_.Close(eyesRef_, settings, configurationDto);
             GetResultsSettings getResultsSettings = new GetResultsSettings(shouldThrowException);
             List<CommandEyesGetResultsResponseDto> getResultsResponse =
-                commandExecutor_.eyesGetResults(eyesRef_, getResultsSettings);
+                commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
 
             eyesRef_ = null;
             isClosed_ = true;
@@ -303,7 +296,7 @@ namespace Applitools.Playwright
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
                 return new TestResults();
             }
-            
+
             var request = new EyesGetResultsRequest
             {
                 Payload = new EyesGetResultsRequestPayload
@@ -338,385 +331,6 @@ namespace Applitools.Playwright
             return testResults.First();
         }
 
-        public Configuration Configure()
-        {
-            return configuration_;
-        }
-        
-        /**
-     * Sets the branch in which the baseline for subsequent test runs resides.
-     * If the branch does not already exist it will be created under the
-     * specified parent branch (see {@link #setParentBranchName}).
-     * Changes to the baseline or model of a branch do not propagate to other
-     * branches.
-     * @param branchName Branch name or {@code null} to specify the default branch.
-     */
-        public Configuration setBranchName(string branchName)
-        {
-            return Configure().setBranchName(branchName);
-        }
-
-        public Configuration setAgentId(string agentId)
-        {
-            return Configure().setAgentId(agentId);
-        }
-
-        /**
-     * @return The current branch (see {@link #setBranchName(String)}).
-     */
-        public string getBranchName()
-        {
-            return Configure().getBranchName();
-        }
-
-        public string getAgentId()
-        {
-            return Configure().getAgentId();
-        }
-
-        /**
-     * Sets the branch under which new branches are created. (see {@link
-     * #setBranchName(String)}.
-     * @param branchName Branch name or {@code null} to specify the default branch.
-     */
-        public Configuration setParentBranchName(string branchName)
-        {
-            return Configure().setParentBranchName(branchName);
-        }
-
-        /**
-     * @return The name of the current parent branch under which new branches
-     * will be created. (see {@link #setParentBranchName(String)}).
-     */
-        public string getParentBranchName()
-        {
-            return Configure().getParentBranchName();
-        }
-
-        /**
-     * Sets the branch under which new branches are created. (see {@link
-     * #setBranchName(String)}.
-     * @param branchName Branch name or {@code null} to specify the default branch.
-     */
-        public Configuration setBaselineBranchName(string branchName)
-        {
-            return Configure().setBaselineBranchName(branchName);
-        }
-
-        /**
-     * @return The name of the current parent branch under which new branches
-     * will be created. (see {@link #setBaselineBranchName(String)}).
-     */
-        public string getBaselineBranchName()
-        {
-            return Configure().getBaselineBranchName();
-        }
-
-        /**
-     * Automatically save differences as a baseline.
-     * @param saveDiffs Sets whether to automatically save differences as baseline.
-     */
-        public Configuration setSaveDiffs(bool saveDiffs)
-        {
-            return Configure().setSaveDiffs(saveDiffs);
-        }
-
-        /**
-     * Returns whether to automatically save differences as a baseline.
-     * @return Whether to automatically save differences as baseline.
-     */
-        public bool getSaveDiffs()
-        {
-            return Configure().getSaveDiffs();
-        }
-
-        /**
-     * Sets the maximum time (in ms) a match operation tries to perform a match.
-     * @param ms Total number of ms to wait for a match.
-     */
-        public Configuration setMatchTimeout(int ms)
-        {
-            return Configure().setMatchTimeout(ms);
-        }
-
-        /**
-     * @return The maximum time in ms.
-     */
-        public int getMatchTimeout()
-        {
-            return Configure().getMatchTimeout();
-        }
-
-        /**
-     * Set whether or not new tests are saved by default.
-     * @param saveNewTests True if new tests should be saved by default. False otherwise.
-     */
-        public Configuration setSaveNewTests(boolean saveNewTests)
-        {
-            return Configure().setSaveNewTests(saveNewTests);
-        }
-
-        /**
-     * @return True if new tests are saved by default.
-     */
-        public boolean getSaveNewTests()
-        {
-            return Configure().getSaveNewTests();
-        }
-
-        /**
-     * Set whether or not failed tests are saved by default.
-     * @param saveFailedTests True if failed tests should be saved by default, false otherwise.
-     */
-        public Configuration setSaveFailedTests(boolean saveFailedTests)
-        {
-            return Configure().setSaveFailedTests(saveFailedTests);
-        }
-
-        /**
-     * @return True if failed tests are saved by default.
-     */
-        public boolean getSaveFailedTests()
-        {
-            return Configure().getSaveFailedTests();
-        }
-
-        /**
-     * Sets the batch in which context future tests will run or {@code null}
-     * if tests are to run standalone.
-     * @param batch The batch info to set.
-     */
-        public Configuration setBatch(BatchInfo batch)
-        {
-            if (IsDisabled)
-            {
-                return Configure();
-            }
-
-            return Configure().setBatch(batch);
-        }
-
-        /**
-     * @return The currently set batch info.
-     */
-        public BatchInfo getBatch()
-        {
-            return Configure().getBatch();
-        }
-
-
-        /**
-     * Updates the match settings to be used for the session.
-     * @param defaultMatchSettings The match settings to be used for the session.
-     */
-        public Configuration setDefaultMatchSettings(ImageMatchSettings
-            defaultMatchSettings)
-        {
-            ArgumentGuard.notNull(defaultMatchSettings, "defaultMatchSettings");
-
-            return Configure().setDefaultMatchSettings(defaultMatchSettings);
-        }
-
-        /**
-     * @return The match settings used for the session.
-     */
-        public ImageMatchSettings getDefaultMatchSettings()
-        {
-            return Configure().getDefaultMatchSettings();
-        }
-
-        /**
-     * This function is deprecated. Please use {@link #setDefaultMatchSettings} instead.
-     * <p>
-     * The test-wide match level to use when checking application screenshot
-     * with the expected output.
-     * @param matchLevel The match level setting.
-     * @return The match settings used for the session.
-     * @see com.applitools.eyes.MatchLevel
-     */
-        public Configuration setMatchLevel(MatchLevel matchLevel)
-        {
-            Configuration config = Configure();
-            config.getDefaultMatchSettings().setMatchLevel(matchLevel);
-            return config;
-        }
-
-        public Configuration setIgnoreDisplacements(boolean isIgnoreDisplacements)
-        {
-            return Configure().setIgnoreDisplacements(isIgnoreDisplacements);
-        }
-
-        public Configuration setAccessibilityValidation(AccessibilitySettings accessibilityValidation)
-        {
-            return Configure().setAccessibilityValidation(accessibilityValidation);
-        }
-
-        public Configuration setUseDom(boolean useDom)
-        {
-            return Configure().setUseDom(useDom);
-        }
-
-        public Configuration setEnablePatterns(boolean enablePatterns)
-        {
-            return Configure().setEnablePatterns(enablePatterns);
-        }
-
-        /**
-     * @return The test-wide match level.
-     * @deprecated Please use{@link #getDefaultMatchSettings} instead.
-     */
-        public MatchLevel getMatchLevel()
-        {
-            return Configure().getDefaultMatchSettings().getMatchLevel();
-        }
-
-        public boolean getIgnoreDisplacements()
-        {
-            return Configure().getIgnoreDisplacements();
-        }
-
-        public AccessibilitySettings getAccessibilityValidation()
-        {
-            return Configure().getAccessibilityValidation();
-        }
-
-        public boolean getUseDom()
-        {
-            return Configure().getUseDom();
-        }
-
-        public boolean getEnablePatterns()
-        {
-            return Configure().getEnablePatterns();
-        }
-
-        /**
-     * @return Whether to ignore or the blinking caret or not when comparing images.
-     */
-        public boolean getIgnoreCaret()
-        {
-            bool ignoreCaret = Configure().getDefaultMatchSettings().getIgnoreCaret();
-            return ignoreCaret == null || ignoreCaret;
-        }
-
-        /**
-     * Sets the ignore blinking caret value.
-     * @param value The ignore value.
-     */
-        public Configuration setIgnoreCaret(boolean value)
-        {
-            Configuration config = Configure();
-            Configure().getDefaultMatchSettings().setIgnoreCaret(value);
-            return config;
-        }
-
-        /**
-     * Returns the stitching overlap in pixels.
-     */
-        public int getStitchOverlap()
-        {
-            return Configure().getStitchOverlap();
-        }
-
-        /**
-     * Sets the stitching overlap in pixels.
-     * @param pixels The width (in pixels) of the overlap.
-     */
-        public Configuration setStitchOverlap(int pixels)
-        {
-            return Configure().setStitchOverlap(pixels);
-        }
-
-        /**
-     * @param hostOS The host OS running the AUT.
-     */
-        public Configuration setHostOS(string hostOS)
-        {
-            Configuration config = Configure();
-            if (hostOS == null || hostOS.isEmpty())
-            {
-                config.setHostOS(null);
-            }
-            else
-            {
-                config.setHostOS(hostOS.trim());
-            }
-
-            return config;
-        }
-
-        /**
-     * @return get the host OS running the AUT.
-     */
-        public string getHostOS()
-        {
-            return Configure().getHostOS();
-        }
-
-        /**
-     * @param hostApp The application running the AUT (e.g., Chrome).
-     */
-        public Configuration setHostApp(string hostApp)
-        {
-            Configuration config = Configure();
-            if (hostApp == null || hostApp.isEmpty())
-            {
-                config.setHostApp(null);
-            }
-            else
-            {
-                config.setHostApp(hostApp.trim());
-            }
-
-            return config;
-        }
-
-        /**
-     * @return The application name running the AUT.
-     */
-        public string getHostApp()
-        {
-            return Configure().getHostApp();
-        }
-
-        /**
-     * @param baselineName If specified, determines the baseline to compare
-     *                     with and disables automatic baseline inference.
-     * @deprecated Only available for backward compatibility. See {@link #setBaselineEnvName(String)}.
-     */
-        public void setBaselineName(string baselineName)
-        {
-            setBaselineEnvName(baselineName);
-        }
-
-        /**
-     * @return The baseline name, if specified.
-     * @deprecated Only available for backward compatibility. See {@link #getBaselineEnvName()}.
-     */
-        public string getBaselineName()
-        {
-            return getBaselineEnvName();
-        }
-
-        /**
-     * If not {@code null}, determines the name of the environment of the baseline.
-     * @param baselineEnvName The name of the baseline's environment.
-     */
-        public Configuration setBaselineEnvName(string baselineEnvName)
-        {
-            Configuration config = Configure();
-            if (baselineEnvName == null || baselineEnvName.isEmpty())
-            {
-                config.setBaselineEnvName(null);
-            }
-            else
-            {
-                config.setBaselineEnvName(baselineEnvName.trim());
-            }
-
-            return config;
-        }
-        
         public void CloseAsync()
         {
             if (IsDisabled)
@@ -733,11 +347,11 @@ namespace Applitools.Playwright
                 .toConfigurationDto(configuration_, runner_.isDontCloseBatches());
             CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
 
-            commandExecutor_.close(eyesRef_, settings, configurationDto);
+            commandExecutor_.Close(eyesRef_, settings, configurationDto);
             eyesRef_ = null;
             isClosed_ = true;
             IsOpen = false;
-            GetRefer_().destroy(driver_.getRoot());
+            GetRefer_().Destroy(driver_.Root);
             driver_ = null;
         }
 
@@ -750,7 +364,7 @@ namespace Applitools.Playwright
 
                 eyesRef_ = null;
                 IsOpen = false;
-                GetRefer_().destroy(driver_.getRoot());
+                GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
             }
         }
@@ -760,29 +374,29 @@ namespace Applitools.Playwright
             if (!isClosed_ && IsOpen)
             {
                 CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-                commandExecutor_.abort(eyesRef_, settings);
+                commandExecutor_.Abort(eyesRef_, settings);
 
                 GetResultsSettings getResultsSettings = new GetResultsSettings(false);
                 List<CommandEyesGetResultsResponseDto> getResultsResponse =
-                    commandExecutor_.eyesGetResults(eyesRef_, getResultsSettings);
+                    commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
 
                 eyesRef_ = null;
                 IsOpen = false;
-                GetRefer_().destroy(driver_.getRoot());
+                GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
 
                 List<TestResults> testResults =
                     TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
                 if (testResults != null)
                 {
-                    return testResults.isEmpty() ? null : testResults.get(0);
+                    return testResults.FirstOrDefault();
                 }
             }
 
             return null;
         }
 
-        private void checkDto(ICheckSettings checkSettingsDto, ITargetDto driverTargetDto)
+        private void CheckDto_(ICheckSettings checkSettingsDto, ITargetDto driverTargetDto)
         {
             if (IsDisabled)
             {
@@ -791,7 +405,7 @@ namespace Applitools.Playwright
 
             if (!IsOpen)
             {
-                this.Abort();
+                Abort();
                 throw new EyesException("you must call open() before checking");
             }
 
@@ -799,25 +413,25 @@ namespace Applitools.Playwright
 
             ConfigurationDto configurationDto = ConfigurationMapper
                 .toConfigurationDto(configuration, runner.isDontCloseBatches());
-            commandExecutor.eyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
+            commandExecutor_.EyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
         }
 
-        private List<string> extractTextDto(ITargetDto target, List<OCRExtractSettingsDto> settings,
+        private List<string> ExtractTextDto_(ITargetDto target, List<OCRExtractSettingsDto> settings,
             ConfigurationDto config)
         {
-            return commandExecutor.extractText(target, settings, config);
+            return commandExecutor_.ExtractText(target, settings, config);
         }
 
-        private Map<string, List<TextRegion>> locateTextDto(ITargetDto target, OCRSearchSettingsDto settings,
+        private Dictionary<string, List<TextRegion>> LocateTextDto_(ITargetDto target, OCRSearchSettingsDto settings,
             ConfigurationDto config)
         {
-            return commandExecutor.locateText(target, settings, config);
+            return commandExecutor_.LocateText(target, settings, config);
         }
 
-        private Map<string, List<Region>> locateDto(ITargetDto target, VisualLocatorSettingsDto settings,
+        private Dictionary<string, List<Region>> LocateDto_(ITargetDto target, VisualLocatorSettingsDto settings,
             ConfigurationDto config)
         {
-            Map<string, List<RegionDto>> response = commandExecutor.locate(target, settings, config);
+            Dictionary<string, List<RegionDto>> response = commandExecutor_.Locate(target, settings, config);
             return LocateMapper.toLocateFromDto(response);
         }
 

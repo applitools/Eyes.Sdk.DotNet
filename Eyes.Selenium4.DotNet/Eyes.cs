@@ -20,7 +20,6 @@ namespace Applitools.Selenium
         private EyesRef eyes_;
         private IWebDriver driver_;
 
-        private readonly string serverUrlFieldName_;
         private readonly SelectorTransformer selectorTransformer_;
         private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
@@ -47,11 +46,8 @@ namespace Applitools.Selenium
             string serverUrlFieldName = "remoteServerUri",
             ILogHandler logHandler = null,
             SelectorTransformer selectorTransformer = null)
-            : base(runner, logHandler: logHandler)
+            : base(runner, serverUrlFieldName: serverUrlFieldName, logHandler: logHandler)
         {
-            properties_ = new PropertiesCollection();
-            serverUrlFieldName_ = serverUrlFieldName;
-
             selectorTransformer_ = selectorTransformer ?? new SelectorTransformer();
             ocrRegionTransformer_ = new OcrRegionTransformer(selectorTransformer_);
         }

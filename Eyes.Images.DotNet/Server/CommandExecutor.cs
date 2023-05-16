@@ -53,7 +53,7 @@ namespace Applitools
             int serverPort = UniversalSdkNativeLoader.Start();
 
             webSocket_ = new WebSocketClient(specDriverMessageAdaptor, Logger.GetILogHandler());
-
+            specDriverMessageAdaptor.WebSocket = webSocket_;
             var url = GetSocketUrl_(serverPort);
             Logger.Log($"Server url: {url}");
 

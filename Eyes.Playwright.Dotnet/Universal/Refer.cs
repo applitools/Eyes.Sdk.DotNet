@@ -55,7 +55,7 @@ namespace Applitools.Playwright.Universal
             return @ref;
         }
 
-        protected override void Destroy(Reference root)
+        public override void Destroy(Reference root)
         {
             if (!IsRef(root))
             {

@@ -5,7 +5,7 @@ using OpenQA.Selenium.Appium;
 
 namespace Eyes.Appium.UnitTests
 {
-    public class TestNMGCapabilities
+    public class TestNmgCapabilities
     {
         private const string API_KEY = "asd123";
         private const string SERVER_URL = "https://eyesapi.applitools.com";
@@ -15,11 +15,11 @@ namespace Eyes.Appium.UnitTests
             "@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64/UFG_lib.framework/UFG_lib:@executable_path/Frameworks/UFG_lib.xcframework/ios-arm64_x86_64-simulator/UFG_lib.framework/UFG_lib";
 
         [Test]
-        public void TestAndroidNMGCaps()
+        public void TestAndroidNmgCaps()
         {
             var caps = GetCaps();
 
-            Applitools.Appium.Eyes.SetNMGCapabilities(caps, API_KEY, SERVER_URL, proxySettings);
+            Applitools.Appium.Eyes.SetNmgCapabilities(caps, API_KEY, SERVER_URL, proxySettings);
             
             caps.ToDictionary().TryGetValue("optionalIntentArguments", out object androidArgs);
             Assert.NotNull(androidArgs);
@@ -33,11 +33,11 @@ namespace Eyes.Appium.UnitTests
         }
 
         [Test]
-        public void TestIosNMGCaps()
+        public void TestIosNmgCaps()
         {
             var caps = GetCaps();
 
-            Applitools.Appium.Eyes.SetNMGCapabilities(caps, API_KEY, SERVER_URL, proxySettings);
+            Applitools.Appium.Eyes.SetNmgCapabilities(caps, API_KEY, SERVER_URL, proxySettings);
 
             caps.ToDictionary().TryGetValue("processArguments", out object iosArgs);
             Assert.NotNull(iosArgs);
@@ -51,7 +51,7 @@ namespace Eyes.Appium.UnitTests
         }
 
         [Test]
-        public void testDefaultsFromEnv()
+        public void TestDefaultsFromEnv()
         {
             var caps = GetCaps();
 
@@ -63,7 +63,7 @@ namespace Eyes.Appium.UnitTests
             Environment.SetEnvironmentVariable("APPLITOOLS_SERVER_URL", FAKE_SERVER_URL);
             Environment.SetEnvironmentVariable("APPLITOOLS_HTTP_PROXY", FAKE_PROXY_URI);
 
-            Applitools.Appium.Eyes.SetNMGCapabilities(caps);
+            Applitools.Appium.Eyes.SetNmgCapabilities(caps);
             
             caps.ToDictionary().TryGetValue("optionalIntentArguments", out object androidArgs);
             Assert.NotNull(androidArgs);

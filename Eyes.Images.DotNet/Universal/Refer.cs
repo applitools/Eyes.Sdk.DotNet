@@ -9,6 +9,6 @@ namespace Applitools.Universal
         protected Dictionary<string, object> References = new Dictionary<string, object>();
         protected Dictionary<string, HashSet<Reference>> Relations = new Dictionary<string, HashSet<Reference>>();
 
-        protected abstract void Destroy(Reference root);
+        public abstract void Destroy(Reference root);
     }
 }

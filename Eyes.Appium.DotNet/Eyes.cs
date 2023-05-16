@@ -45,11 +45,6 @@ namespace Applitools.Appium
             var selectorTransformer = new AppiumSelectorTransformer();
             seleniumEyes_ = new Selenium.Eyes(Runner, "URL", logHandler, selectorTransformer);
             ServerUrl = serverUri;
-            Init_();
-        }
-
-        private void Init_()
-        {
         }
 
         #endregion
@@ -69,22 +64,22 @@ namespace Applitools.Appium
 
         #endregion
 
-        public static void SetNMGCapabilities(AppiumOptions caps)
+        public static void SetNmgCapabilities(AppiumOptions caps)
         {
-            SetNMGCapabilities(caps, null, null, null);
+            SetNmgCapabilities(caps, null, null, null);
         }
 
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey)
+        public static void SetNmgCapabilities(AppiumOptions caps, string apiKey)
         {
-            SetNMGCapabilities(caps, apiKey, null, null);
+            SetNmgCapabilities(caps, apiKey, null, null);
         }
 
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl)
+        public static void SetNmgCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl)
         {
-            SetNMGCapabilities(caps, apiKey, eyesServerUrl, null);
+            SetNmgCapabilities(caps, apiKey, eyesServerUrl, null);
         }
 
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl,
+        public static void SetNmgCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl,
             ProxySettings proxySettings)
         {
             var iosCapsKey = "processArguments";

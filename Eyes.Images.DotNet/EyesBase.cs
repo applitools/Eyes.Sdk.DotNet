@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using Applitools.Utils;
 using AutoMapper;
 
+// ReSharper disable InconsistentNaming
+
 namespace Applitools
 {
     /// <summary>
@@ -27,6 +29,7 @@ namespace Applitools
     {
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         protected PropertiesCollection properties_;
+        protected readonly string serverUrlFieldName_;
 
         public override bool IsDisabled
         {
@@ -34,9 +37,14 @@ namespace Applitools
             set => Runner.IsDisabled = value;
         }
 
-        protected EyesBase(EyesRunner runner = null, Configuration configuration = null, ILogHandler logHandler = null) 
+        protected EyesBase(EyesRunner runner = null, 
+            string serverUrlFieldName = "remoteServerUri", 
+            Configuration configuration = null,
+            ILogHandler logHandler = null) 
             : base(configuration, logHandler, runner)
         {
+            properties_ = new PropertiesCollection();
+            serverUrlFieldName_ = serverUrlFieldName;
         }
 
         /// <summary>
