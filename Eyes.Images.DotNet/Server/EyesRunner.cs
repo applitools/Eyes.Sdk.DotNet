@@ -52,7 +52,6 @@ namespace Applitools
 
             eyesConfigs_ = new List<EyesBaseConfig>();
             ActualAssembly = GetActualAssembly();
-            ManagerApplitoolsRefId = GetCoreMakeManager();
 
             var sdkEvent = CreateCoreSdk(agentId);
             // ReSharper disable once VirtualMemberCallInConstructor

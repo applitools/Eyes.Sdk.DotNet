@@ -79,6 +79,7 @@ namespace Applitools.VisualGrid
             }
             refer_ = new Refer();
             driver_ = new SpecDriverPlaywright(refer_);
+            ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
         internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
