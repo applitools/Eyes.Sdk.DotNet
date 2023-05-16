@@ -6,6 +6,7 @@ using System.Reflection;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
+using Applitools.Universal;
 using Applitools.Utils;
 
 namespace Applitools
@@ -53,8 +54,11 @@ namespace Applitools
             actualAssembly_ = GetActualAssembly();
 
             var sdkEvent = CreateCoreSdk(agentId);
-            CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
+            // ReSharper disable once VirtualMemberCallInConstructor
+            CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageAdaptor, logHandler, sdkEvent);
         }
+        
+        protected virtual ISpecDriverMessageAdaptor SpecDriverMessageAdaptor { get; } = new SpecDriverMessageAdaptor();
 
         public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
         {

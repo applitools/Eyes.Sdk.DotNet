@@ -49,7 +49,7 @@ namespace Applitools.Selenium
             SelectorTransformer selectorTransformer = null)
             : base(runner, logHandler: logHandler)
         {
-            Properties = new PropertiesCollection();
+            properties_ = new PropertiesCollection();
             serverUrlFieldName_ = serverUrlFieldName;
 
             selectorTransformer_ = selectorTransformer ?? new SelectorTransformer();
@@ -481,7 +481,7 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = Properties;
+            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var eyesExtractTextRequest = new EyesExtractTextRequest
@@ -516,7 +516,7 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = Properties;
+            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
@@ -558,7 +558,7 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = Properties;
+            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var locateRequest = new EyesLocateRequest
@@ -688,7 +688,7 @@ namespace Applitools.Selenium
                 return;
             }
 
-            Properties.Add(name, value);
+            properties_.Add(name, value);
         }
 
         public void ClearProperties()
@@ -699,7 +699,7 @@ namespace Applitools.Selenium
                 return;
             }
 
-            Properties.Clear();
+            properties_.Clear();
         }
 
         /// <summary>
@@ -754,7 +754,7 @@ namespace Applitools.Selenium
 
             var seleniumCheckSettings = (SeleniumCheckSettings)checkSettings;
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = Properties;
+            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (WebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
             var request = new EyesCheckRequest
@@ -1083,7 +1083,7 @@ namespace Applitools.Selenium
                     Settings = ToOpenSettings(Config)
                 }
             };
-            result.Payload.Config.Open.Properties = Properties; // ?
+            result.Payload.Config.Open.Properties = properties_; // ?
             return result;
         }
 

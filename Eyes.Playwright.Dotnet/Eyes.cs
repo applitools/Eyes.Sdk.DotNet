@@ -50,8 +50,6 @@ namespace Applitools.Playwright
 
         #region ctors
 
-        
-
         /// <summary>
         /// Instantiates a new Eyes.
         /// </summary>
