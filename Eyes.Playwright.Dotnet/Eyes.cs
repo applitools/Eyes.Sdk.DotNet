@@ -201,29 +201,30 @@ namespace Applitools.Playwright
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
                 return new List<string>();
             }
+            return new List<string>();
+            //
+            // var eyesConfig = ToConfig(Config);
+            // eyesConfig.Open.Properties = properties_;
+            // var serverUrl = GetServerUrl(CommandExecutor);
+            // var eyesExtractTextRequest = new EyesExtractTextRequest
+            // {
+            //     Payload = new ExtractTextRequestPayload
+            //     {
+            //         Config = eyesConfig,
+            //         Target = new DriverTarget
+            //         {
+            //             ServerUrl = serverUrl,
+            //             Capabilities = GetCapabilities(remoteWebDriver),
+            //             SessionId = remoteWebDriver.SessionId.ToString(),
+            //             Proxy = Config.Proxy
+            //         },
+            //         Settings = ToExtractTextSettings(regions)
+            //     }
+            // };
 
-            var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
-            var serverUrl = GetServerUrl(CommandExecutor);
-            var eyesExtractTextRequest = new EyesExtractTextRequest
-            {
-                Payload = new ExtractTextRequestPayload
-                {
-                    Config = eyesConfig,
-                    Target = new DriverTarget
-                    {
-                        ServerUrl = serverUrl,
-                        Capabilities = GetCapabilities(remoteWebDriver),
-                        SessionId = remoteWebDriver.SessionId.ToString(),
-                        Proxy = Config.Proxy
-                    },
-                    Settings = ToExtractTextSettings(regions)
-                }
-            };
+            // var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
 
-            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
-
-            return response.Payload.Result;
+            // return response.Payload.Result;
         }
 
         private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegion> regions)
@@ -245,11 +246,9 @@ namespace Applitools.Playwright
             return extractTextSettings;
         }
 
-        /**
-     * Locate.
-     * @param visualLocatorSettings the locator settings.
-     * @return mapping of the region locations.
-     */
+        /// <summary>Locate</summary>
+        /// <param name="visualLocatorSettings">The locator settings.</param>
+        /// <returns>Mapping of the region locations.</returns>
         public Dictionary<string, List<Region>> Locate(VisualLocatorSettings visualLocatorSettings)
         {
             ArgumentGuard.NotNull(visualLocatorSettings, nameof(visualLocatorSettings));
@@ -259,14 +258,15 @@ namespace Applitools.Playwright
                 Abort();
                 throw new EyesException("Eyes not open");
             }
-
-            VisualLocatorSettingsDto visualLocatorSettingsDto = VisualLocatorSettingsMapper
-                .toVisualLocatorSettingsDto(visualLocatorSettings);
-
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(Configure(), false);
-
-            return LocateDto_(driver_, visualLocatorSettingsDto, configurationDto);
+            //
+            // VisualLocatorSettingsDto visualLocatorSettingsDto = VisualLocatorSettingsMapper
+            //     .toVisualLocatorSettingsDto(visualLocatorSettings);
+            //
+            // ConfigurationDto configurationDto = ConfigurationMapper
+            //     .toConfigurationDto(Configure(), false);
+            //
+            // return LocateDto_(driver_, visualLocatorSettingsDto, configurationDto);
+            return new Dictionary<string, List<Region>>();
         }
 
         /// <summary>
@@ -286,28 +286,29 @@ namespace Applitools.Playwright
                 throw new EyesException("Eyes not open");
             }
 
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
-            CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-
-            commandExecutor_.Close(eyesRef_, settings, configurationDto);
-            GetResultsSettings getResultsSettings = new GetResultsSettings(shouldThrowException);
-            List<CommandEyesGetResultsResponseDto> getResultsResponse =
-                commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
-
-            eyesRef_ = null;
-            isClosed_ = true;
-            IsOpen = false;
-            GetRefer_().Destroy(driver_.Root);
-            driver_ = null;
-
-            List<TestResults> testResults =
-                TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
-            if (testResults == null)
-                return null;
-            testResults.forEach(
-                testResults1->runner.logSessionResultsAndThrowException(shouldThrowException, testResults1));
-            return testResults.get(0);
+            // ConfigurationDto configurationDto = ConfigurationMapper
+            //     .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
+            // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
+            //
+            // commandExecutor_.Close(eyesRef_, settings, configurationDto);
+            // GetResultsSettings getResultsSettings = new GetResultsSettings(shouldThrowException);
+            // List<CommandEyesGetResultsResponseDto> getResultsResponse =
+            //     commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
+            //
+            // eyesRef_ = null;
+            // isClosed_ = true;
+            // IsOpen = false;
+            // GetRefer_().Destroy(driver_.Root);
+            // driver_ = null;
+            //
+            // List<TestResults> testResults =
+            //     TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
+            // if (testResults == null)
+            //     return null;
+            // testResults.forEach(
+            //     testResults1->runner.logSessionResultsAndThrowException(shouldThrowException, testResults1));
+            // return testResults.get(0);
+            return null;
         }
 
         public override TestResults GetResults(bool throwEx = true)
@@ -325,7 +326,7 @@ namespace Applitools.Playwright
                 Payload = new EyesGetResultsRequestPayload
                 {
                     Eyes = eyes_,
-                    Settings = ToResultsSettings(Config, throwEx, removeDuplicateTests)
+                    Settings = ToResultsSettings(Config, throwEx, Runner.RemoveDuplicateTests)
                 }
             };
 
@@ -366,12 +367,12 @@ namespace Applitools.Playwright
                 throw new EyesException("Eyes not open");
             }
 
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
-            CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-
-            commandExecutor_.Close(eyesRef_, settings, configurationDto);
-            eyesRef_ = null;
+            // ConfigurationDto configurationDto = ConfigurationMapper
+            //     .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
+            // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
+            //
+            // commandExecutor_.Close(eyesRef_, settings, configurationDto);
+            // eyesRef_ = null;
             isClosed_ = true;
             IsOpen = false;
             GetRefer_().Destroy(driver_.Root);
@@ -382,10 +383,10 @@ namespace Applitools.Playwright
         {
             if (!isClosed_ && IsOpen)
             {
-                CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-                commandExecutor_.Abort(eyesRef_, settings);
-
-                eyesRef_ = null;
+                // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
+                // commandExecutor_.Abort(eyesRef_, settings);
+                //
+                // eyesRef_ = null;
                 IsOpen = false;
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
@@ -396,24 +397,24 @@ namespace Applitools.Playwright
         {
             if (!isClosed_ && IsOpen)
             {
-                CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-                commandExecutor_.Abort(eyesRef_, settings);
-
-                GetResultsSettings getResultsSettings = new GetResultsSettings(false);
-                List<CommandEyesGetResultsResponseDto> getResultsResponse =
-                    commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
-
-                eyesRef_ = null;
+                // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
+                // commandExecutor_.Abort(eyesRef_, settings);
+                //
+                // GetResultsSettings getResultsSettings = new GetResultsSettings(false);
+                // List<CommandEyesGetResultsResponseDto> getResultsResponse =
+                //     commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
+                //
+                // eyesRef_ = null;
                 IsOpen = false;
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
 
-                List<TestResults> testResults =
-                    TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
-                if (testResults != null)
-                {
-                    return testResults.FirstOrDefault();
-                }
+                // List<TestResults> testResults =
+                //     TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
+                // if (testResults != null)
+                // {
+                //     return testResults.FirstOrDefault();
+                // }
             }
 
             return null;
@@ -439,14 +440,14 @@ namespace Applitools.Playwright
                 {
                     Eyes = eyes_,
                     Config = eyesConfig,
-                    Target = new DriverTarget
-                    {
-                        ServerUrl = serverUrl,
-                        Capabilities = GetCapabilities(remoteWebDriver),
-                        SessionId = remoteWebDriver.SessionId.ToString(),
-                        Proxy = Config.Proxy
-                    },
-                    Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
+                    Target = new DriverTarget(),
+                    // {
+                    //     ServerUrl = serverUrl,
+                    //     Capabilities = GetCapabilities(remoteWebDriver),
+                    //     SessionId = remoteWebDriver.SessionId.ToString(),
+                    //     Proxy = Config.Proxy
+                    // },
+                    //Settings = CreateUniversalCheckSettings(playwrightCheckSettings)
                 }
             };
 
@@ -487,47 +488,34 @@ namespace Applitools.Playwright
             }
 
             ArgumentGuard.NotNull(checkSettingsDto, "checkSettings");
-
-            ConfigurationDto configurationDto = ConfigurationMapper
-                .toConfigurationDto(configuration, Runner.DontCloseBatches);
-            commandExecutor_.EyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
+            //
+            // ConfigurationDto configurationDto = ConfigurationMapper
+            //     .toConfigurationDto(configuration, Runner.DontCloseBatches);
+            // commandExecutor_.EyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
         }
 
-        private List<string> ExtractTextDto_(Driver target, List<OCRExtractSettingsDto> settings,
-            ConfigurationDto config)
-        {
-            return commandExecutor_.ExtractText(target, settings, config);
-        }
-
-        private Dictionary<string, List<TextRegion>> LocateTextDto_(Driver target, OCRSearchSettingsDto settings,
-            ConfigurationDto config)
-        {
-            return commandExecutor_.LocateText(target, settings, config);
-        }
-
-        private Dictionary<string, List<Region>> LocateDto_(Driver target, VisualLocatorSettingsDto settings,
-            ConfigurationDto config)
-        {
-            Dictionary<string, List<RegionDto>> response = commandExecutor_.Locate(target, settings, config);
-            return LocateMapper.toLocateFromDto(response);
-        }
+        // private List<string> ExtractTextDto_(Driver target, List<OCRExtractSettingsDto> settings,
+        //     ConfigurationDto config)
+        // {
+        //     return commandExecutor_.ExtractText(target, settings, config);
+        // }
+        
+        // private Dictionary<string, List<TextRegion>> LocateTextDto_(Driver target, OCRSearchSettingsDto settings,
+        //     ConfigurationDto config)
+        // {
+        //     return commandExecutor_.LocateText(target, settings, config);
+        // }
+        
+        // private Dictionary<string, List<Region>> LocateDto_(Driver target, VisualLocatorSettingsDto settings,
+        //     ConfigurationDto config)
+        // {
+        //     Dictionary<string, List<RegionDto>> response = commandExecutor_.Locate(target, settings, config);
+        //     return LocateMapper.toLocateFromDto(response);
+        // }
 
         private Refer GetRefer_()
         {
-            return refer_;
-            // try
-            // {
-            //     Method getRef = runner.getClass().getDeclaredMethod("getRefer");
-            //     getRef.setAccessible(true);
-            //     return (Refer)getRef.invoke(runner);
-            // }
-            // catch (IllegalAccessException |
-            //
-            // InvocationTargetException | NoSuchMethodException e) {
-            //     string message =
-            //         GeneralUtils.createErrorMessageFromExceptionWithText(e, "got an error trying to getRef!");
-            //     throw new EyesException(message);
-            // }
+            return Runner.Refer;
         }
     }
 }

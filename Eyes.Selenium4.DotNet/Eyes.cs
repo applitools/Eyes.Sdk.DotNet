@@ -930,8 +930,7 @@ namespace Applitools.Selenium
 
         private TRegion GetScrollRootElement(CheckSettings checkSettings)
         {
-            var container = checkSettings as IScrollRootElementContainer;
-            if (container != null)
+            if (checkSettings is IScrollRootElementContainer container)
             {
                 var selector = container.GetScrollRootSelector();
                 if (selector != null)

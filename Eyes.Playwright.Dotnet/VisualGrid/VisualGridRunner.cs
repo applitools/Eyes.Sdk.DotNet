@@ -34,7 +34,6 @@ namespace Applitools.VisualGrid
         static readonly int DEFAULT_CONCURRENCY = 5;
 
         private readonly RunnerOptions runnerOptions_;
-        private readonly Refer refer_;
         private readonly SpecDriverPlaywright driver_;
 
         public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null)
@@ -65,8 +64,8 @@ namespace Applitools.VisualGrid
             }
 
             ManagerApplitoolsRefId = GetCoreMakeManager();
-            refer_ = new Refer();
-            driver_ = new SpecDriverPlaywright(refer_);
+            Refer = new Refer();
+            driver_ = new SpecDriverPlaywright(Refer);
         }
 
         public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
@@ -78,8 +77,8 @@ namespace Applitools.VisualGrid
             {
                 Logger.SetLogHandler(logHandler);
             }
-            refer_ = new Refer();
-            driver_ = new SpecDriverPlaywright(refer_);
+            Refer = new Refer();
+            driver_ = new SpecDriverPlaywright(Refer);
             ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
@@ -122,16 +121,11 @@ namespace Applitools.VisualGrid
             {
                 if (messageAdaptor_ == null)
                 {
-                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(refer_, Logger);
+                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(Refer, Logger);
                 }
 
                 return messageAdaptor_;
             }
-        }
-        
-        protected Refer GtRefer()
-        {
-            return refer_;
         }
     }
 }
