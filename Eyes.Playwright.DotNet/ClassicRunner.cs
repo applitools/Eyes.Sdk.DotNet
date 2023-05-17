@@ -32,6 +32,13 @@ namespace Applitools.Playwright
         public ClassicRunner() : this(BASE_AGENT_ID, VERSION)
         {
         }
+  
+        /// <summary>
+        /// used for instantiating Playwright Runner
+        /// </summary>
+        public ClassicRunner(ILogHandler logHandler) : this(logHandler, BASE_AGENT_ID, VERSION)
+        {
+        }
 
         /// <summary>
         /// used for instantiating Playwright Runner
