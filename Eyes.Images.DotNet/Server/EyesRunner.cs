@@ -221,10 +221,14 @@ namespace Applitools
 
         protected virtual CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
-            var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{ActualAssembly.GetName().Version}");
-            result.AddOrUpdatePayload("spec", "webdriver");
-            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
+            var result = new CoreMakeSdkRequest{
+                Payload = new MakeCorePayload
+                {
+                    AgentId = $"{name}:{ActualAssembly.GetName().Version}",
+                    Cwd = Environment.CurrentDirectory,
+                    Protocol = "webdriver"
+                }
+            };
 
             return result;
         }

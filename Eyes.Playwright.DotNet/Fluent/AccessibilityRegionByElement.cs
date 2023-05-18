@@ -17,7 +17,7 @@ namespace Applitools.Playwright.Fluent
             AccessibilityRegionType = type;
         }
 
-        public TAccessibilityRegion ToRegion()
+        public new TAccessibilityRegion ToRegion()
         {
             return new ElementAccessibilityRegion
             {

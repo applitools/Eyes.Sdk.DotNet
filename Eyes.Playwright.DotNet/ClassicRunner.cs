@@ -12,48 +12,39 @@ namespace Applitools.Playwright
         /// <summary>
         /// name of the client sdk
         /// </summary>
-        protected static string BASE_AGENT_ID = "Eyes.Playwright.DotNet";
-
-        /// <summary>
-        /// version of the client sdk
-        /// </summary>
-        protected static string VERSION = typeof(ClassicRunner).Assembly.GetName().Version.ToString();
-
-        /// <summary>
-        /// spec-driver
-        /// </summary>
-        protected static string[] COMMANDS = SpecDriverPlaywright.GetMethodNames();
+        private static readonly string BASE_AGENT_ID = "Eyes.Playwright.DotNet";
 
         private readonly SpecDriverPlaywright driver_;
         
         /// <summary>
         /// used for instantiating Playwright Runner
         /// </summary>
-        public ClassicRunner() : this(BASE_AGENT_ID, VERSION)
+        public ClassicRunner() : this(BASE_AGENT_ID)
         {
         }
   
         /// <summary>
         /// used for instantiating Playwright Runner
         /// </summary>
-        public ClassicRunner(ILogHandler logHandler) : this(logHandler, BASE_AGENT_ID, VERSION)
+        public ClassicRunner(ILogHandler logHandler) : this(logHandler, BASE_AGENT_ID)
         {
         }
 
         /// <summary>
         /// used for instantiating Playwright Runner
         /// </summary>
-        private ClassicRunner(string baseAgentId, string version)
-            : this(NullLogHandler.Instance, baseAgentId, version)
+        private ClassicRunner(string baseAgentId)
+            : this(NullLogHandler.Instance, baseAgentId)
         {
         }
 
         /// <summary>
         /// used for instantiating Playwright Runner
         /// </summary>
-        private ClassicRunner(ILogHandler logHandler, string baseAgentId, string version)
-            : base(logHandler, baseAgentId + "-" + version)
+        private ClassicRunner(ILogHandler logHandler, string baseAgentId)
+            : base(logHandler, baseAgentId)
         {
+            ManagerApplitoolsRefId = GetCoreMakeManager();
             Refer = new Refer();
             driver_ = new SpecDriverPlaywright(Refer);
         }
@@ -65,19 +56,11 @@ namespace Applitools.Playwright
 
         protected override MakeManagerRequestPayload InitConfig()
         {
-            throw new NotImplementedException();
+            return new MakeManagerRequestPayload
+            {
+                Type = "classic"
+            };
         }
-
-        protected override CoreMakeSdkRequest CreateCoreMakeSdk(string name)
-        {
-            var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{ActualAssembly.GetName().Version}");
-            result.AddOrUpdatePayload("spec", "playwright");
-            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
-
-            return result;
-        }
-
 
         private static PlaywrightSpecDriverMessageAdaptor messageAdaptor_ = null;
 

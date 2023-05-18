@@ -9,7 +9,7 @@ namespace Applitools
     {
         protected Configuration Config { get; set; }
 
-        internal EyesRunner Runner { get; }
+        protected internal EyesRunner Runner { get; set; }
 
         public string ApiKey
         {

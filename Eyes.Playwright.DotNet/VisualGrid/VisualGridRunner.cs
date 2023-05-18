@@ -16,17 +16,7 @@ namespace Applitools.VisualGrid
         /// <summary>
         /// name of the client sdk
         /// </summary>
-        protected static string BASE_AGENT_ID = "Eyes.Playwright.DotNet.VisualGrid";
-
-        /// <summary>
-        /// version of the client sdk
-        /// </summary>
-        protected static string VERSION = typeof(VisualGridRunner).Assembly.GetName().Version.ToString();
-
-        /// <summary>
-        /// spec-driver
-        /// </summary>
-        protected static string[] COMMANDS = SpecDriverPlaywright.GetMethodNames();
+        private static readonly string BASE_AGENT_ID = "Eyes.Playwright.DotNet.VisualGrid";
         
         //private static readonly PSdkListener listener = PSdkListener.Instance;
         
@@ -101,16 +91,6 @@ namespace Applitools.VisualGrid
                 Concurrency = ((IRunnerOptionsInternal)runnerOptions_).GetConcurrency(),
                 Legacy = false
             };
-        }
-
-        protected override CoreMakeSdkRequest CreateCoreMakeSdk(string name)
-        {
-            var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{ActualAssembly.GetName().Version}");
-            result.AddOrUpdatePayload("spec", "playwright");
-            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
-
-            return result;
         }
 
         private static PlaywrightSpecDriverMessageAdaptor messageAdaptor_ = null;

@@ -7,7 +7,6 @@ using Applitools.Commands.Responses;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Playwright.Universal.Mapper;
-using Applitools.Universal;
 using Applitools.Universal.Dto;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
@@ -18,11 +17,8 @@ namespace Applitools.Playwright
 {
     public class Eyes : EyesBase
     {
-        /// <summary>
-        /// The runner.
-        /// </summary>
-        internal PlaywrightEyesRunner Runner { get; }
-
+        private PlaywrightEyesRunner runner_;
+        
         /// <summary>
         /// The command executor to execute the commands.
         /// </summary>
@@ -37,6 +33,7 @@ namespace Applitools.Playwright
         /// The driver reference associated with the test.
         /// </summary>
         private Driver driver_;
+
         private EyesRef eyes_;
 
         private readonly IOcrRegionTransformer ocrRegionTransformer_;
@@ -73,9 +70,11 @@ namespace Applitools.Playwright
         /// Instantiates a new Eyes.
         /// </summary>
         /// <param name="runner">The runner</param>
-        public Eyes(PlaywrightEyesRunner runner)
+        public Eyes(PlaywrightEyesRunner runner) 
+            : base(runner)
         {
-            Runner = runner ?? new ClassicRunner();
+            runner_ = runner ?? new ClassicRunner();
+            Runner = runner_;
             commandExecutor_ = Runner.CommandExecutor;
         }
 
@@ -120,16 +119,17 @@ namespace Applitools.Playwright
             //     SettingsMapper.toOpenSettingsDto(configuration_, Runner.isDontCloseBatches());
 
             var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_);
-            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
+            var openEyesResponsePayload =
+                Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
             eyes_ = openEyesResponsePayload.Result;
-            
+
             var error = openEyesResponsePayload.Error;
             if (error != null)
             {
                 throw new EyesException($"{error.Message}{Environment.NewLine}{error.Stack}");
             }
 
-                // eyesRef_ = commandExecutor_.ManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_, settingsDto,
+            // eyesRef_ = commandExecutor_.ManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_, settingsDto,
             //     configurationDto);
             IsOpen = true;
             return page;
@@ -156,7 +156,7 @@ namespace Applitools.Playwright
             result.Payload.Config.Open.Properties = properties_; // ?
             return result;
         }
-        
+
         /// <summary>
         /// Takes multiple screenshots at once (given all <see cref="ICheckSettings"/> objects are on the same level).
         /// </summary>
@@ -188,7 +188,7 @@ namespace Applitools.Playwright
             CheckSettingsDto checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
                 playwrightCheckSettings,
                 Config, GetRefer_(), driver_.Root);
-            
+
             CheckDto_(checkSettingsDto, driver_);
         }
 
@@ -201,6 +201,7 @@ namespace Applitools.Playwright
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
                 return new List<string>();
             }
+
             return new List<string>();
             //
             // var eyesConfig = ToConfig(Config);
@@ -258,6 +259,7 @@ namespace Applitools.Playwright
                 Abort();
                 throw new EyesException("Eyes not open");
             }
+
             //
             // VisualLocatorSettingsDto visualLocatorSettingsDto = VisualLocatorSettingsMapper
             //     .toVisualLocatorSettingsDto(visualLocatorSettings);
@@ -419,7 +421,7 @@ namespace Applitools.Playwright
 
             return null;
         }
-     
+
         internal virtual void CheckImpl_(ICheckSettings checkSettings)
         {
             Logger.Log("CheckImpl");
@@ -462,18 +464,18 @@ namespace Applitools.Playwright
             {
                 return;
             }
-            
+
             foreach (var matchResult in result.Payload.Result)
             {
                 if (matchResult.AsExpected)
                 {
                     continue;
                 }
-                
+
                 throw new EyesException($"Unexpected match result for {matchResult}");
             }
         }
-        
+
         private void CheckDto_(CheckSettingsDto checkSettingsDto, Driver driverTargetDto)
         {
             if (IsDisabled)
@@ -499,13 +501,13 @@ namespace Applitools.Playwright
         // {
         //     return commandExecutor_.ExtractText(target, settings, config);
         // }
-        
+
         // private Dictionary<string, List<TextRegion>> LocateTextDto_(Driver target, OCRSearchSettingsDto settings,
         //     ConfigurationDto config)
         // {
         //     return commandExecutor_.LocateText(target, settings, config);
         // }
-        
+
         // private Dictionary<string, List<Region>> LocateDto_(Driver target, VisualLocatorSettingsDto settings,
         //     ConfigurationDto config)
         // {
@@ -515,7 +517,7 @@ namespace Applitools.Playwright
 
         private Refer GetRefer_()
         {
-            return Runner.Refer;
+            return runner_.Refer;
         }
     }
 }

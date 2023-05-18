@@ -284,13 +284,6 @@ namespace Applitools.Playwright.Universal.Driver
             return context.ScreenshotAsync().GetAwaiter().GetResult();
         }
 
-        public static string[] GetMethodNames()
-        {
-            MethodInfo[] methods = typeof(SpecDriverPlaywright).GetMethods();
-            return methods.Where(m => !m.Name.Contains("GetMethodNames") && !m.Name.Contains("Util"))
-                .Select(m => m.Name).ToArray();
-        }
-
         private object HandlerToObjectUtil(IJSHandle jsHandle, Reference context)
         {
             if (jsHandle == null)

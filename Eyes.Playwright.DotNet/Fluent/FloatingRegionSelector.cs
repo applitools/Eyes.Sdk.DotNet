@@ -51,7 +51,7 @@ namespace Applitools.Playwright.Fluent
             MaxRightOffset = maxOffset;
         }
 
-        public TFloatingRegion ToRegion()
+        public new TFloatingRegion ToRegion()
         {
             throw new System.NotImplementedException();
         }

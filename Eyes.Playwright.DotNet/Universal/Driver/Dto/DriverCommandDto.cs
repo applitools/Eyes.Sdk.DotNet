@@ -1,3 +1,4 @@
+using Applitools.Commands;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
 using Applitools.Utils.Geometry;
@@ -39,6 +40,9 @@ namespace Applitools.Playwright.Universal.Driver.Dto
         
         [JsonProperty("level")]
         public string Level { get; set; }
+        
+        [JsonProperty("error")]
+        public ResponsePayloadError Error { get; set; }
         
         public override string ToString()
         {

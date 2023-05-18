@@ -23,6 +23,11 @@ namespace Applitools.Playwright.Universal.Driver
         public TResponse HandleMessage<TResponse>(string message) where TResponse : CommandBase
         {
             var response = JsonConvert.DeserializeObject<DriverCommand>(message);
+            if (response.Payload.Error != null)
+            {
+                logger_.Log(TraceLevel.Error, Stage.SpecDriver, response);
+                throw new EyesException($"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
+            }
             CommandResponse commandResponse = new CommandResponse { Key = response.Key, Name = response.Name };
             var payload = response.Payload;
             TraceLevel level = TraceLevel.Info;
@@ -139,7 +144,7 @@ namespace Applitools.Playwright.Universal.Driver
             var result = JsonConvert.DeserializeObject<TResponse>(message);
 
             // TODO - if not webdriver invoke specdriver to change result
-            //          - will invoke specdriver command that will send its result to universal
+            //      - will invoke specdriver command that will send its result to universal
             // while (response.GetType() != typeof(TResponse)) {
             //    response = invoke specdriver command
             //    Response = sendResponseToUniversal(response);
