@@ -46,6 +46,7 @@ namespace Applitools
             {
                 webSocket_.SendData(initMessage);
             }
+            //webSocket_.MessageReceived+=
         }
 
         private void StartServer(ISpecDriverMessageAdaptor specDriverMessageAdaptor)

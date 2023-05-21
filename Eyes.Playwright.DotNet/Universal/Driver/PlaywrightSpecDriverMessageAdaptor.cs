@@ -111,8 +111,8 @@ namespace Applitools.Playwright.Universal.Driver
                     case "Eyes.getResults":
                     case "EyesManager.getResults":
                     case "Debug.getHistory":
-                        WebSocket.SendRequest<DriverCommand, TResponse>(response);
-                        break;
+                        return JsonConvert.DeserializeObject<TResponse>(message);
+                        
                     case "Logger.log":
                         try
                         {

@@ -44,9 +44,13 @@ namespace Applitools
         public ICollection<TFloatingRegion> FloatingRegions { get; set; }
         public ICollection<TFloatingRegion> AccessibilityRegions { get; set; }
         public AccessibilitySettings AccessibilitySettings { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public MatchLevel? MatchLevel { get; set; }
+
+        [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan? RetryTimeout { get; set; }
+
         public bool? SendDom { get; set; }
         public bool? UseDom { get; set; }
         public bool? EnablePatterns { get; set; }
@@ -70,6 +74,51 @@ namespace Applitools
             UfgOptions = new Dictionary<string, object>();
             LayoutBreakpoints = new List<int>();
             Renderers = new List<RenderBrowserInfo>();
+        }
+    }
+
+    public class TimeSpanConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (value == null)
+            {
+                writer.WriteNull();
+                return;
+            }
+
+            if (value is TimeSpan timeSpan)
+            {
+                writer.WriteValue(timeSpan.Milliseconds);
+                return;
+            }
+
+            throw new JsonSerializationException($"can't serialize {value} to TimeSpan");
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+
+            if (reader.TokenType == JsonToken.String)
+            {
+                return TimeSpan.Parse(reader.Value?.ToString());
+            }
+
+            if (reader.TokenType == JsonToken.Integer)
+            {
+                return TimeSpan.FromMilliseconds((int)reader.Value); 
+            }
+
+            throw new JsonSerializationException($"can't deserialize TimeSpan from {reader.Value}");
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(int) || objectType == typeof(int?);
         }
     }
 }

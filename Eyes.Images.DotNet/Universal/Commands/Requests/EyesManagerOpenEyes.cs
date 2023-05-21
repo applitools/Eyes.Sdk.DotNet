@@ -11,7 +11,7 @@ namespace Applitools.Commands.Requests
     public class OpenEyesRequestPayload
     {
         public ManagerRef Manager { get; set; }
-        public DriverTarget Target { get; set; }
+        public ITarget Target { get; set; }
         public OpenSettings Settings { get; set; }
         public Config Config { get; set; }
     }

@@ -1,12 +1,17 @@
 using System;
+using Applitools.Commands;
 using Applitools.Universal;
 using Microsoft.Playwright;
+using Newtonsoft.Json;
 
 namespace Applitools.Playwright.Universal.Dto
 {
-    public class Driver : Reference
+    public class Driver : Reference, ITarget
     {
+        [JsonIgnore]
         public IPage Page { get; set; }
+
+        [JsonIgnore]
         public Reference Root { get; }
 
         public Driver()

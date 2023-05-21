@@ -148,7 +148,7 @@ namespace Applitools.Playwright
                     {
                         ApplitoolsRefId = applitoolsRefId
                     },
-                    Target = new DriverTarget(),
+                    Target = driver,
                     Config = ToConfig(Config),
                     Settings = ToOpenSettings(Config)
                 }

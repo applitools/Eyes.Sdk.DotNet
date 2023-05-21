@@ -162,6 +162,8 @@ namespace Applitools
                     {
                         throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
                     }
+
+                    messageAdaptor_.HandleMessage<CommandBase>(textMessage);
                 }
 
                 Thread.Sleep(100);
