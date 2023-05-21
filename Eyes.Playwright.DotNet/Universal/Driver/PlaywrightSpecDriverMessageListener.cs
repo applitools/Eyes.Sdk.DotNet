@@ -11,7 +11,7 @@ namespace Applitools.Playwright.Universal.Driver
     {
         protected internal Refer Refer { get; } = new Refer();
         private readonly SpecDriverPlaywright driver_;
-        
+
         public PlaywrightSpecDriverMessageListener(Logger logger) : base(logger)
         {
             driver_ = new SpecDriverPlaywright(Refer);
@@ -23,8 +23,10 @@ namespace Applitools.Playwright.Universal.Driver
             if (response.Payload.Error != null)
             {
                 Logger.Log(TraceLevel.Error, Stage.SpecDriver, response);
-                throw new EyesException($"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
+                throw new EyesException(
+                    $"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
             }
+
             CommandResponse commandResponse = new CommandResponse { Key = response.Key, Name = response.Name };
             var payload = response.Payload;
             TraceLevel level = TraceLevel.Info;
@@ -110,7 +112,7 @@ namespace Applitools.Playwright.Universal.Driver
                     case "Debug.getHistory":
                         HandleResponse_(message);
                         return;
-                    
+
                     case "Logger.log":
                         try
                         {
@@ -122,7 +124,7 @@ namespace Applitools.Playwright.Universal.Driver
                             CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e);
                         }
 
-                        break;
+                        return;
 
                     default:
                         throw new EyesException("Unknown server command " + response.Name);
@@ -149,7 +151,5 @@ namespace Applitools.Playwright.Universal.Driver
             //    Response = sendResponseToUniversal(response);
             // }
         }
-        
-
     }
 }

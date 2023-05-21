@@ -144,16 +144,13 @@ namespace Applitools
                 var response = JsonConvert.DeserializeObject<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
-                    if (requestKeys_.Contains(response.Key))
+                    if (requestKeys_.Contains(response.Key) && !messages_.TryAdd(response.Key, new WsMessage(textMessage)))
                     {
-                        if (!messages_.TryAdd(response.Key, new WsMessage(textMessage)))
-                        {
-                            throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
-                        }
+                        throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
                     }
-
-                    messageListener_.HandleMessage(textMessage);
                 }
+
+                messageListener_.HandleMessage(textMessage);
 
                 Thread.Sleep(100);
             }

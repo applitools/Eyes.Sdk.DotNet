@@ -13,6 +13,9 @@ namespace Applitools
         private static Process nativeProc_;
         private static readonly object lockObject_ = new object();
 
+        private static readonly string UNIVERSAL_DEBUG =
+            "true" == Environment.GetEnvironmentVariable("APPLITOOLS_UNIVERSAL_DEBUG")?.ToLower() ? "--debug" : "";
+
         public static int Start()
         {
             return TryStartProcess_();
@@ -64,12 +67,14 @@ namespace Applitools
                             os = "linux-x64";
                             suffix = "linux";
                         }
+
                         path = GetServerFilePath(basePath, os, suffix);
                         CommandExecutor.ExecCommand($"chmod 755 {path}");
                     }
                     else
                     {
-                        throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
+                        throw new NotSupportedException(
+                            $"The operation system is not supported: {RuntimeInformation.OSDescription}");
                     }
 
                     if (File.Exists(path) == false)
@@ -105,7 +110,8 @@ namespace Applitools
         {
             var process = new Process
             {
-                StartInfo = new ProcessStartInfo(path, "universal --no-singleton --shutdown-mode stdin")
+                StartInfo = new ProcessStartInfo(path,
+                    $"universal --no-singleton --shutdown-mode stdin {UNIVERSAL_DEBUG}")
                 {
                     UseShellExecute = false,
                     RedirectStandardInput = true,
@@ -129,7 +135,8 @@ namespace Applitools
             }
             catch (Exception e)
             {
-                throw new Exception($"Unable to read Universal Server StandardOutput. Process HasExited: {process.HasExited}", e);
+                throw new Exception(
+                    $"Unable to read Universal Server StandardOutput. Process HasExited: {process.HasExited}", e);
             }
 
             try
@@ -149,7 +156,8 @@ namespace Applitools
             var nugetFolder = Environment.ExpandEnvironmentVariables(packageFolderPathEnv);
             var packageFolderPath = Path.Combine(nugetFolder, packageName);
             var directoryInfo = new DirectoryInfo(packageFolderPath);
-            var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i).FirstOrDefault();
+            var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i)
+                .FirstOrDefault();
 
             if (string.IsNullOrEmpty(latestPackageName) == false)
             {

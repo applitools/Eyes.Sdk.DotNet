@@ -291,6 +291,15 @@ namespace Applitools.Playwright.Universal.Driver
                 return null;
             }
 
+            if (jsHandle is IElementHandle)
+            {
+                Element element = new Element
+                {
+                    ApplitoolsRefId = refer_.Ref(jsHandle.AsElement(), context)
+                };
+                return element;
+            }
+            
             string type = "";
             Regex jsHandlePattern = new Regex("(?:.+@)?(\\w*)(?:\\(\\d+\\))?",
                 RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -324,15 +333,15 @@ namespace Applitools.Playwright.Universal.Driver
 
                 return resultMap;
             }
-
-            if (type.Equals("jshandle@node"))
-            {
-                Element element = new Element
-                {
-                    ApplitoolsRefId = refer_.Ref(jsHandle.AsElement(), context)
-                };
-                return element;
-            }
+            //
+            // if (type.Equals("jshandle@node"))
+            // {
+            //     Element element = new Element
+            //     {
+            //         ApplitoolsRefId = refer_.Ref(jsHandle.AsElement(), context)
+            //     };
+            //     return element;
+            // }
 
             return jsHandle.JsonValueAsync<object>().GetAwaiter().GetResult();
         }
