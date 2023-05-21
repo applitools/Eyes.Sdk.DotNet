@@ -52,13 +52,13 @@ namespace Applitools
 
             eyesConfigs_ = new List<EyesBaseConfig>();
             ActualAssembly = GetActualAssembly();
-
+            SpecDriverMessageListener = new SpecDriverMessageListener(Logger);
             var sdkEvent = CreateCoreSdk(agentId);
             // ReSharper disable once VirtualMemberCallInConstructor
-            CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageAdaptor, logHandler, sdkEvent);
+            CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageListener, logHandler, sdkEvent);
         }
         
-        protected virtual ISpecDriverMessageAdaptor SpecDriverMessageAdaptor { get; } = new SpecDriverMessageAdaptor();
+        protected virtual ISpecDriverMessageListener SpecDriverMessageListener { get; }
 
         public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
         {

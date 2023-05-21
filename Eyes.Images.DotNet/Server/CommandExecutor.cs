@@ -10,10 +10,10 @@ namespace Applitools
 
         private Logger Logger { get; } = new Logger();
 
-        public static CommandExecutor GetInstance(ISpecDriverMessageAdaptor specDriverMessageAdaptor,
+        public static CommandExecutor GetInstance(ISpecDriverMessageListener specDriverMessageListener,
             ILogHandler logHandler = null, string initMessage = null)
         {
-            return instance_ ?? (instance_ = new CommandExecutor(specDriverMessageAdaptor, logHandler, initMessage));
+            return instance_ ?? (instance_ = new CommandExecutor(specDriverMessageListener, logHandler, initMessage));
         }
 
         public void SendData<TRequest>(TRequest data) where TRequest : CommandBase
@@ -33,14 +33,14 @@ namespace Applitools
             webSocket_.SetLogHandler(logHandler);
         }
 
-        private CommandExecutor(ISpecDriverMessageAdaptor specDriverMessageAdaptor, ILogHandler logHandler = null, string initMessage = null)
+        private CommandExecutor(ISpecDriverMessageListener specDriverMessageListener, ILogHandler logHandler = null, string initMessage = null)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
             }
 
-            StartServer(specDriverMessageAdaptor);
+            StartServer(specDriverMessageListener);
 
             if (string.IsNullOrEmpty(initMessage) == false)
             {
@@ -49,12 +49,12 @@ namespace Applitools
             //webSocket_.MessageReceived+=
         }
 
-        private void StartServer(ISpecDriverMessageAdaptor specDriverMessageAdaptor)
+        private void StartServer(ISpecDriverMessageListener specDriverMessageListener)
         {
             int serverPort = UniversalSdkNativeLoader.Start();
 
-            webSocket_ = new WebSocketClient(specDriverMessageAdaptor, Logger.GetILogHandler());
-            specDriverMessageAdaptor.WebSocket = webSocket_;
+            webSocket_ = new WebSocketClient(specDriverMessageListener, Logger.GetILogHandler());
+            specDriverMessageListener.WebSocket = webSocket_;
             var url = GetSocketUrl_(serverPort);
             Logger.Log($"Server url: {url}");
 

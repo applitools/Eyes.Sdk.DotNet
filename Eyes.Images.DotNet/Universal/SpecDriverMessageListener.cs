@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Concurrent;
+using Applitools.Commands;
+using Applitools.Utils;
+using Newtonsoft.Json;
+
+namespace Applitools.Universal
+{
+    public class SpecDriverMessageListener : ISpecDriverMessageListener
+    {
+        private ConcurrentDictionary<string, WsMessage> messages_;
+        protected Logger Logger { get; }
+
+        public SpecDriverMessageListener(Logger logger)
+        {
+            Logger = logger;
+        }
+        
+        public virtual void HandleMessage(string message)
+        {
+            HandleResponse_(message);
+        }
+
+        public WebSocketClient WebSocket { get; set; }
+
+        public void SetMessagesDictionary(ConcurrentDictionary<string, WsMessage> messages)
+        {
+            messages_ = messages;
+        }
+        
+        protected void HandleResponse_(string message)
+        {
+            try
+            {
+                var response = JsonConvert.DeserializeObject<CommandResponse>(message);
+                if (messages_.TryGetValue(response.Key, out WsMessage wsMessage))
+                {
+                    wsMessage.IsHandled = true;
+                }
+            }
+            catch (Exception e)
+            {
+                CommonUtils.LogExceptionStackTrace(Logger, Stage.SpecDriver, e);
+            }
+        }
+    }
+}

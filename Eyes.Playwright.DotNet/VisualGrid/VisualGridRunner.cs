@@ -54,7 +54,7 @@ namespace Applitools.VisualGrid
             }
 
             ManagerApplitoolsRefId = GetCoreMakeManager();
-            Refer = new Refer();
+            Refer = ((PlaywrightSpecDriverMessageListener)SpecDriverMessageListener).Refer;
             driver_ = new SpecDriverPlaywright(Refer);
         }
 
@@ -67,7 +67,7 @@ namespace Applitools.VisualGrid
             {
                 Logger.SetLogHandler(logHandler);
             }
-            Refer = new Refer();
+            Refer = ((PlaywrightSpecDriverMessageListener)SpecDriverMessageListener).Refer;
             driver_ = new SpecDriverPlaywright(Refer);
             ManagerApplitoolsRefId = GetCoreMakeManager();
         }
@@ -93,18 +93,18 @@ namespace Applitools.VisualGrid
             };
         }
 
-        private static PlaywrightSpecDriverMessageAdaptor messageAdaptor_ = null;
+        private static PlaywrightSpecDriverMessageListener messageListener_ = null;
 
-        protected override ISpecDriverMessageAdaptor SpecDriverMessageAdaptor
+        protected override ISpecDriverMessageListener SpecDriverMessageListener
         {
             get
             {
-                if (messageAdaptor_ == null)
+                if (messageListener_ == null)
                 {
-                    messageAdaptor_ = new PlaywrightSpecDriverMessageAdaptor(Refer, Logger);
+                    messageListener_ = new PlaywrightSpecDriverMessageListener(Logger);
                 }
 
-                return messageAdaptor_;
+                return messageListener_;
             }
         }
     }

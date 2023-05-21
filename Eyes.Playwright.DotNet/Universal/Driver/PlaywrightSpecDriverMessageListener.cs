@@ -7,25 +7,22 @@ using Newtonsoft.Json;
 
 namespace Applitools.Playwright.Universal.Driver
 {
-    public class PlaywrightSpecDriverMessageAdaptor : ISpecDriverMessageAdaptor
+    public class PlaywrightSpecDriverMessageListener : SpecDriverMessageListener
     {
+        protected internal Refer Refer { get; } = new Refer();
         private readonly SpecDriverPlaywright driver_;
-        private readonly Logger logger_;
         
-        public WebSocketClient WebSocket { get; set; }
-
-        public PlaywrightSpecDriverMessageAdaptor(Refer refer, Logger logger)
+        public PlaywrightSpecDriverMessageListener(Logger logger) : base(logger)
         {
-            driver_ = new SpecDriverPlaywright(refer);
-            logger_ = logger;
+            driver_ = new SpecDriverPlaywright(Refer);
         }
 
-        public TResponse HandleMessage<TResponse>(string message) where TResponse : CommandBase
+        public override void HandleMessage(string message)
         {
             var response = JsonConvert.DeserializeObject<DriverCommand>(message);
             if (response.Payload.Error != null)
             {
-                logger_.Log(TraceLevel.Error, Stage.SpecDriver, response);
+                Logger.Log(TraceLevel.Error, Stage.SpecDriver, response);
                 throw new EyesException($"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
             }
             CommandResponse commandResponse = new CommandResponse { Key = response.Key, Name = response.Name };
@@ -33,7 +30,7 @@ namespace Applitools.Playwright.Universal.Driver
             TraceLevel level = TraceLevel.Info;
             try
             {
-                logger_.Log(TraceLevel.Info, Stage.SpecDriver,
+                Logger.Log(TraceLevel.Info, Stage.SpecDriver,
                     $"Executing {response.Name} with target: {payload}");
                 switch (response.Name)
                 {
@@ -111,17 +108,18 @@ namespace Applitools.Playwright.Universal.Driver
                     case "Eyes.getResults":
                     case "EyesManager.getResults":
                     case "Debug.getHistory":
-                        return JsonConvert.DeserializeObject<TResponse>(message);
-                        
+                        HandleResponse_(message);
+                        return;
+                    
                     case "Logger.log":
                         try
                         {
                             string logMsg = $"eyes | [{payload.Level}] | {payload.Message}";
-                            logger_.Log(TraceLevel.Debug, Stage.General, logMsg);
+                            Logger.Log(TraceLevel.Debug, Stage.General, logMsg);
                         }
                         catch (Exception e)
                         {
-                            CommonUtils.LogExceptionStackTrace(logger_, Stage.General, e);
+                            CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e);
                         }
 
                         break;
@@ -136,12 +134,13 @@ namespace Applitools.Playwright.Universal.Driver
                 level = TraceLevel.Error;
             }
 
-            logger_.Log(level, Stage.SpecDriver,
+            Logger.Log(level, Stage.SpecDriver,
                 $"Responding to {response.Name} with {commandResponse.Payload}");
 
-            WebSocket.SendRequest<CommandResponse, TResponse>(commandResponse);
-
-            var result = JsonConvert.DeserializeObject<TResponse>(message);
+            string json = JsonConvert.SerializeObject(commandResponse);
+            WebSocket.SendData(json);
+            //
+            // var result = JsonConvert.DeserializeObject<TResponse>(message);
 
             // TODO - if not webdriver invoke specdriver to change result
             //      - will invoke specdriver command that will send its result to universal
@@ -149,8 +148,8 @@ namespace Applitools.Playwright.Universal.Driver
             //    response = invoke specdriver command
             //    Response = sendResponseToUniversal(response);
             // }
-
-            return result;
         }
+        
+
     }
 }

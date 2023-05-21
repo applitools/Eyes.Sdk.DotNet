@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -14,35 +15,37 @@ namespace Applitools
 {
     internal class ResponseMessage
     {
+        // Setter used by Json Deserializer
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Key { get; set; }
     }
 
-    public delegate void SocketMessageReceivedHandler(string message);
-
-    public class WebSocketClient //: IUniversalSocketClient
+    public class WebSocketClient : IDisposable
     {
         private readonly ClientWebSocket webSocket_;
         private CancellationTokenSource cancellationTokenSource_;
-        private readonly ConcurrentDictionary<string, string> messages_;
+        private readonly ConcurrentDictionary<string, WsMessage> messages_;
+        private readonly HashSet<string> requestKeys_ = new HashSet<string>();
         private readonly object lock_ = new object();
+        private static readonly TimeSpan timeout_ = TimeSpan.FromMinutes(9);
 
-        private ISpecDriverMessageAdaptor messageAdaptor_;
-
-        public event SocketMessageReceivedHandler MessageReceived;
+        private readonly ISpecDriverMessageListener messageListener_;
 
         private Logger Logger { get; } = new Logger();
-        
-        public WebSocketClient(ISpecDriverMessageAdaptor messageAdaptor, ILogHandler logHandler = null)
+
+        public WebSocketClient(ISpecDriverMessageListener messageListener, ILogHandler logHandler = null)
         {
-            ArgumentGuard.NotNull(messageAdaptor, nameof(messageAdaptor));
-            messageAdaptor_ = messageAdaptor;
-            
+            ArgumentGuard.NotNull(messageListener, nameof(messageListener));
+            messageListener_ = messageListener;
+
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
             }
+
             webSocket_ = new ClientWebSocket();
-            messages_ = new ConcurrentDictionary<string, string>();
+            messages_ = new ConcurrentDictionary<string, WsMessage>();
+            messageListener_.SetMessagesDictionary(messages_);
         }
 
         public void ConnectAsync(string url)
@@ -55,17 +58,19 @@ namespace Applitools
                 }
 
                 cancellationTokenSource_ = new CancellationTokenSource();
-                webSocket_.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).ConfigureAwait(false).GetAwaiter().GetResult();
+                webSocket_.ConnectAsync(new Uri(url), cancellationTokenSource_.Token).ConfigureAwait(false).GetAwaiter()
+                    .GetResult();
 
                 while (webSocket_.State == WebSocketState.Connecting)
                 {
                     Thread.Sleep(10);
                 }
-                
+
                 if (webSocket_.State != WebSocketState.Open)
                 {
                     throw new Exception("Connection is not opened.");
                 }
+
                 Task.Factory.StartNew(ReadMessage, TaskCreationOptions.LongRunning);
             }
         }
@@ -74,9 +79,7 @@ namespace Applitools
             where TRequest : CommandBase
             where TResponse : CommandBase
         {
-            var json = data.ToJson();
-
-            SendData(json);
+            SendData(data);
 
             var message = WaitForMessage(data.Key);
             if (message == null)
@@ -84,14 +87,14 @@ namespace Applitools
                 throw new Exception($"Server did not respond for {data.Name}");
             }
 
-            var result = messageAdaptor_.HandleMessage<TResponse>(message);
-
+            var result = JsonConvert.DeserializeObject<TResponse>(message);
             return result;
         }
 
         public void SendData<TRequest>(TRequest data)
             where TRequest : CommandBase
         {
+            requestKeys_.Add(data.Key);
             var json = data.ToJson();
 
             SendData(json);
@@ -100,21 +103,6 @@ namespace Applitools
         public void SendData(string message)
         {
             SendString(message, CancellationToken.None);
-        }
-
-        public string ReceiveMessage(string key)
-        {
-            if (messages_.TryRemove(key, out string value))
-            {
-                return value;
-            }
-
-            return null;
-        }
-
-        public void Close()
-        {
-            Dispose();
         }
 
         public void Dispose()
@@ -128,21 +116,19 @@ namespace Applitools
             Logger.SetLogHandler(logHandler);
         }
 
-        protected virtual void OnMessageReceived(string message)
-        {
-            MessageReceived?.Invoke(message);
-        }
-
         private string WaitForMessage(string key)
         {
             // timeout 9 minutes
-            for (int i = 0; i < 2700; i++)
+            Stopwatch sw = Stopwatch.StartNew();
+            while (sw.Elapsed < timeout_)
             {
-                var message = ReceiveMessage(key);
-                if (message != null)
+                if (messages_.TryGetValue(key, out WsMessage message) && message.IsHandled)
                 {
-                    return message;
+                    messages_.TryRemove(key, out _);
+                    requestKeys_.Remove(key);
+                    return message.Message;
                 }
+
                 Thread.Sleep(200);
             }
 
@@ -158,12 +144,15 @@ namespace Applitools
                 var response = JsonConvert.DeserializeObject<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
-                    if (messages_.TryAdd(response.Key, textMessage) == false)
+                    if (requestKeys_.Contains(response.Key))
                     {
-                        throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
+                        if (!messages_.TryAdd(response.Key, new WsMessage(textMessage)))
+                        {
+                            throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
+                        }
                     }
 
-                    messageAdaptor_.HandleMessage<CommandBase>(textMessage);
+                    messageListener_.HandleMessage(textMessage);
                 }
 
                 Thread.Sleep(100);
@@ -198,7 +187,8 @@ namespace Applitools
             {
                 byte[] encoded = Encoding.UTF8.GetBytes(data);
                 var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
-                webSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter().GetResult();
+                webSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter()
+                    .GetResult();
 
                 Logger.Log($"Request sent to Server: {Environment.NewLine} {data}");
             }
