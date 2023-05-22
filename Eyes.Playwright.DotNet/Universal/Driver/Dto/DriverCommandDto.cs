@@ -65,14 +65,14 @@ namespace Applitools.Playwright.Universal.Driver.Dto
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
-            var jsonNode = JObject.Load(reader);
+            var jsonNode = JToken.Load(reader);
 
             switch (jsonNode.Type)
             {
                 case JTokenType.Object:
-                    return HandleObject_(jsonNode);
+                    return HandleObject_((JObject)jsonNode);
                 case JTokenType.Array:
-                    return HandleArray_(jsonNode);
+                    return HandleArray_((JArray)jsonNode);
                 case JTokenType.Boolean:
                     return jsonNode.Value<bool>();
                 case JTokenType.Null:
@@ -112,7 +112,7 @@ namespace Applitools.Playwright.Universal.Driver.Dto
                             obj.Add(subNode.Key, HandleObject_((JObject)subNode.Value));
                             break;
                         case JTokenType.Array:
-                            obj.Add(subNode.Key, HandleArray_((JObject)subNode.Value));
+                            obj.Add(subNode.Key, HandleArray_((JArray)subNode.Value));
                             break;
                         case JTokenType.Boolean:
                             obj.Add(subNode.Key, subNode.Value.Value<bool>());
@@ -138,33 +138,33 @@ namespace Applitools.Playwright.Universal.Driver.Dto
             throw new JsonSerializationException($"failed to deserialize {jsonObject}");
         }
 
-        private object HandleArray_(JObject jsonObject)
+        private object HandleArray_(JArray jsonArray)
         {
             List<object> array = new List<object>();
-            foreach (var subNode in jsonObject)
+            foreach (var subNode in jsonArray)
             {
-                switch (subNode.Value?.Type)
+                switch (subNode.Type)
                 {
                     case JTokenType.Object:
-                        array.Add(HandleObject_((JObject)subNode.Value));
+                        array.Add(HandleObject_((JObject)subNode));
                         break;
                     case JTokenType.Array:
-                        array.Add( HandleArray_((JObject)subNode.Value));
+                        array.Add( HandleArray_((JArray)subNode));
                         break;
                     case JTokenType.Boolean:
-                        array.Add( subNode.Value.Value<bool>());
+                        array.Add( subNode.Value<bool>());
                         break;
                     case JTokenType.Integer:
-                        array.Add( subNode.Value.Value<int>());
+                        array.Add( subNode.Value<int>());
                         break;
                     case JTokenType.Float:
-                        array.Add( subNode.Value.Value<float>());
+                        array.Add( subNode.Value<float>());
                         break;
                     case JTokenType.Null:
                         array.Add( null);
                         break;
                     default:
-                        array.Add(subNode.Value?.ToString());
+                        array.Add(subNode.ToString());
                         break;
                 }
             }
