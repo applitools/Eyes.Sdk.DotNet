@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
+using Applitools.Fluent;
 using Applitools.Utils;
 using AutoMapper;
 
@@ -108,7 +110,7 @@ namespace Applitools
 
             return settings;
         }
-
+     
         protected LocateSettings ToLocateSettings(Configuration configuration, ICollection<string> locatorNames)
         {
             var config = new MapperConfiguration(cfg =>
@@ -164,6 +166,77 @@ namespace Applitools
             var settings = mapper.Map<EGClientSettings>(configuration);
 
             return settings;
+        }
+        
+        protected virtual UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
+        {
+            var settings = new UniversalCheckSettings
+            {
+                Hooks = new Hooks
+                {
+                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
+                },
+                LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
+                MatchLevel = checkSettingsInternal.GetMatchLevel(),
+                Name = checkSettingsInternal.GetName(),
+                Region = GetUniversalRegion(checkSettingsInternal),
+                Fully = checkSettingsInternal.GetStitchContent(),
+                UserCommandId = checkSettingsInternal.GetVariationGroupId(),
+                IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
+                SendDom = checkSettingsInternal.GetSendDom(),
+                UseDom = checkSettingsInternal.GetUseDom(),
+                EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
+                //Frames = GetFrames(checkSettingsInternal),
+                IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
+                StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
+                LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
+                ContentRegions = checkSettingsInternal.GetContentRegions().Select(i => i.ToRegion()).ToArray(),
+                FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
+                AccessibilityRegions = checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
+                LazyLoad = checkSettingsInternal.GetLazyLoad()
+            };
+
+            return settings;
+        }
+        
+        private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
+        {
+            if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
+            {
+                return settings.GetLayoutBreakpoints();
+            }
+
+            return settings.GetLayoutBreakpointsEnabled();
+        }
+
+        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
+        {
+            TRegion region = null;
+            if (checkSettings != null)
+            {
+                region = CreateCheckSettingsTargetRegion(checkSettings);
+            }
+            
+            return region;
+        }
+
+        private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
+        {
+            TRegion region = null;
+
+            var rectangle = settings.GetTargetRegion();
+            if (rectangle.HasValue)
+            {
+                region = new RegionRectangle
+                {
+                    X = rectangle.Value.X,
+                    Y = rectangle.Value.Y,
+                    Width = rectangle.Value.Width,
+                    Height = rectangle.Value.Height
+                };
+            }
+
+            return region;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
+using Applitools.Fluent;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Playwright.Universal.Mapper;
@@ -18,7 +19,7 @@ namespace Applitools.Playwright
     public class Eyes : EyesBase
     {
         private PlaywrightEyesRunner runner_;
-        
+
         /// <summary>
         /// The command executor to execute the commands.
         /// </summary>
@@ -70,7 +71,7 @@ namespace Applitools.Playwright
         /// Instantiates a new Eyes.
         /// </summary>
         /// <param name="runner">The runner</param>
-        public Eyes(PlaywrightEyesRunner runner) 
+        public Eyes(PlaywrightEyesRunner runner)
             : base(runner)
         {
             runner_ = runner ?? new ClassicRunner();
@@ -113,12 +114,7 @@ namespace Applitools.Playwright
                 Config.SetViewportSize(new RectangleSize(viewportSize));
             }
 
-            // ConfigurationDto configurationDto = ConfigurationMapper
-            //     .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
-            // OpenSettingsDto settingsDto =
-            //     SettingsMapper.toOpenSettingsDto(configuration_, Runner.isDontCloseBatches());
-
-            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_);
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId);
             var openEyesResponsePayload =
                 Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
             eyes_ = openEyesResponsePayload.Result;
@@ -129,15 +125,11 @@ namespace Applitools.Playwright
                 throw new EyesException($"{error.Message}{Environment.NewLine}{error.Stack}");
             }
 
-            // eyesRef_ = commandExecutor_.ManagerOpenEyes(Runner.ManagerApplitoolsRefId, driver_, settingsDto,
-            //     configurationDto);
             IsOpen = true;
             return page;
         }
 
-        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
-            string applitoolsRefId,
-            Driver driver)
+        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(string applitoolsRefId)
         {
             var result = new EyesManagerOpenEyes
             {
@@ -148,7 +140,7 @@ namespace Applitools.Playwright
                     {
                         ApplitoolsRefId = applitoolsRefId
                     },
-                    Target = driver,
+                    Target = driver_,
                     Config = ToConfig(Config),
                     Settings = ToOpenSettings(Config)
                 }
@@ -185,11 +177,11 @@ namespace Applitools.Playwright
             ArgumentGuard.NotOfType(checkSettings, typeof(IPlaywrightCheckSettings), nameof(checkSettings));
             IPlaywrightCheckSettings playwrightCheckSettings = (IPlaywrightCheckSettings)checkSettings;
 
-            CheckSettingsDto checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
-                playwrightCheckSettings,
-                Config, GetRefer_(), driver_.Root);
+            // CheckSettingsDto checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
+            //     playwrightCheckSettings,
+            //     Config, GetRefer_(), driver_.Root);
 
-            CheckDto_(checkSettingsDto, driver_);
+            CheckImpl_(playwrightCheckSettings);
         }
 
         public ICollection<string> ExtractText(ICollection<OcrRegion> ocrRegions)
@@ -422,7 +414,7 @@ namespace Applitools.Playwright
             return null;
         }
 
-        internal virtual void CheckImpl_(ICheckSettings checkSettings)
+        private void CheckImpl_(ICheckSettings checkSettings)
         {
             Logger.Log("CheckImpl");
 
@@ -442,14 +434,8 @@ namespace Applitools.Playwright
                 {
                     Eyes = eyes_,
                     Config = eyesConfig,
-                    Target = new DriverTarget(),
-                    // {
-                    //     ServerUrl = serverUrl,
-                    //     Capabilities = GetCapabilities(remoteWebDriver),
-                    //     SessionId = remoteWebDriver.SessionId.ToString(),
-                    //     Proxy = Config.Proxy
-                    // },
-                    //Settings = CreateUniversalCheckSettings(playwrightCheckSettings)
+                    Target = driver_,
+                    Settings = CreateUniversalCheckSettings(playwrightCheckSettings)
                 }
             };
 
@@ -475,26 +461,76 @@ namespace Applitools.Playwright
                 throw new EyesException($"Unexpected match result for {matchResult}");
             }
         }
-
-        private void CheckDto_(CheckSettingsDto checkSettingsDto, Driver driverTargetDto)
+  
+        protected override UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            if (IsDisabled)
-            {
-                return;
-            }
-
-            if (!IsOpen)
-            {
-                Abort();
-                throw new EyesException("you must call open() before checking");
-            }
-
-            ArgumentGuard.NotNull(checkSettingsDto, "checkSettings");
-            //
-            // ConfigurationDto configurationDto = ConfigurationMapper
-            //     .toConfigurationDto(configuration, Runner.DontCloseBatches);
-            // commandExecutor_.EyesCheck(eyesRef, driverTargetDto, checkSettingsDto, configurationDto);
+            var playwrightCheckSettings = (IPlaywrightCheckTarget)checkSettingsInternal;
+            var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
+            //settings.Frames = TFramesMapper.ToTFramesFromCheckSettings(playwrightCheckSettings.GetFrameChain(), GetRefer_(), driver_.Root);
+            settings.ScrollRootElement = TRegionMapper.ToTRegionDtoFromSRE(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(), driver_.Root);
+            return settings;
         }
+
+        private IList<Commands.IFrame> GetFrames(ICheckSettingsInternal checkSettings)
+        {
+            var frames = new List<Commands.IFrame>();
+            if (checkSettings is IPlaywrightCheckTarget playwrightCheckSettings)
+            {
+                foreach (var item in playwrightCheckSettings.GetFrameChain())
+                {
+                    if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
+                    {
+                        frames.Add(new FrameNameOrId
+                        {
+                            Frame = item.FrameNameOrId
+                        });
+                    }
+
+                    if (item.FrameSelector != null)
+                    {
+                        frames.Add(new FrameSelector
+                        {
+                            //Frame = GetRegionSelector_(item.FrameSelector)
+                        });
+                    }
+
+                    if (item.FrameElement != null)
+                    {
+                        frames.Add(new FrameElement
+                        {
+                            ElementId = item.FrameElement.ApplitoolsRefId
+                        });
+                    }
+                }
+            }
+
+            return frames;
+        }
+
+        // private RegionSelector GetRegionSelector_(Selector frameSelector)
+        // {
+        //     RegionSelector result = null;
+        //
+        //     if (frameSelector != null)
+        //     {
+        //         if (frameSelector.Locator != null)
+        //         {
+        //             ILocator locator = frameSelector.Locator;
+        //             frameSelector.ApplitoolsRefId = GetRefer_().Ref(locator, driver_.Root);
+        //         }
+        //
+        //         result.Selector = frameSelector.ApplitoolsRefId;
+        //         result.Type
+        //         contextReferenceDto.Frame = frameSelector;
+        //     }
+        //
+        //     RegionSelector result = new RegionSelector
+        //     {
+        //         Selector = selector.ApplitoolsRefId,
+        //         Type = selector.Type
+        //     };
+        //     return result;
+        // }
 
         // private List<string> ExtractTextDto_(Driver target, List<OCRExtractSettingsDto> settings,
         //     ConfigurationDto config)

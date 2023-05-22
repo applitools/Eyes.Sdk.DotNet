@@ -1,49 +1,42 @@
+using System;
+using System.Collections.Generic;
 using Applitools.Commands;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
 using Applitools.Utils.Geometry;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Applitools.Playwright.Universal.Driver.Dto
 {
     public class DriverCommandDto
     {
-        [JsonProperty("driver")]
-        public Reference Driver { get; set; }
+        [JsonProperty("driver")] public Reference Driver { get; set; }
 
-        [JsonProperty("context")]
-        public Reference Context { get; set; }
+        [JsonProperty("context")] public Reference Context { get; set; }
 
-        [JsonProperty("element")]
-        public Reference Element { get; set; }
+        [JsonProperty("element")] public Reference Element { get; set; }
 
-        [JsonProperty("parent")]
-        public Reference Parent { get; set; }
+        [JsonProperty("parent")] public Reference Parent { get; set; }
 
-        [JsonProperty("selector")]
-        public Selector Selector { get; set; }
+        [JsonProperty("selector")] public Selector Selector { get; set; }
 
-        [JsonProperty("script")]
-        public string Script { get; set; }
+        [JsonProperty("script")] public string Script { get; set; }
 
         [JsonProperty("arg")]
+        [JsonConverter(typeof(ExecuteScriptDeserializer))]
         public object Arg { get; set; }
 
-        [JsonProperty("size")]
-        public RectangleSize Size { get; set; }
+        [JsonProperty("size")] public RectangleSize Size { get; set; }
 
-        [JsonProperty("url")]
-        public string Url { get; set; }
+        [JsonProperty("url")] public string Url { get; set; }
 
-        [JsonProperty("message")]
-        public string Message { get; set; }
-        
-        [JsonProperty("level")]
-        public string Level { get; set; }
-        
-        [JsonProperty("error")]
-        public ResponsePayloadError Error { get; set; }
-        
+        [JsonProperty("message")] public string Message { get; set; }
+
+        [JsonProperty("level")] public string Level { get; set; }
+
+        [JsonProperty("error")] public ResponsePayloadError Error { get; set; }
+
         public override string ToString()
         {
             return "DriverCommandDto{" +
@@ -57,6 +50,130 @@ namespace Applitools.Playwright.Universal.Driver.Dto
                    ", size=" + Size +
                    ", url='" + Url + '\'' +
                    '}';
+        }
+    }
+
+    public class ExecuteScriptDeserializer : JsonConverter
+    {
+        public override bool CanWrite => false;
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
+        {
+            var jsonNode = JObject.Load(reader);
+
+            switch (jsonNode.Type)
+            {
+                case JTokenType.Object:
+                    return HandleObject_(jsonNode);
+                case JTokenType.Array:
+                    return HandleArray_(jsonNode);
+                case JTokenType.Boolean:
+                    return jsonNode.Value<bool>();
+                case JTokenType.Null:
+                    return null;
+            }
+
+            throw new EyesException("Unsupported type to deserialize!");
+        }
+
+        private object HandleObject_(JObject jsonObject)
+        {
+            if (jsonObject.TryGetValue(Applitools.Universal.Refer.APPLITOOLS_REF_ID, out JToken refId) && refId.Type == JTokenType.String)
+            {
+                if (jsonObject.TryGetValue("type", out JToken typeNode) && typeNode.Type == JTokenType.String)
+                {
+                    string type = typeNode.Value<string>();
+
+                    switch (type)
+                    {
+                        case "element":
+                            return jsonObject.ToObject<Element>();
+                        case "selector":
+                            return jsonObject.ToObject<Selector>();
+                        default:
+                            return jsonObject.ToObject<Reference>();
+                    }
+                }
+            }
+            else
+            {
+                Dictionary<object, object> obj = new Dictionary<object, object>();
+                foreach (var subNode in jsonObject)
+                {
+                    switch (subNode.Value?.Type)
+                    {
+                        case JTokenType.Object:
+                            obj.Add(subNode.Key, HandleObject_((JObject)subNode.Value));
+                            break;
+                        case JTokenType.Array:
+                            obj.Add(subNode.Key, HandleArray_((JObject)subNode.Value));
+                            break;
+                        case JTokenType.Boolean:
+                            obj.Add(subNode.Key, subNode.Value.Value<bool>());
+                            break;
+                        case JTokenType.Integer:
+                            obj.Add(subNode.Key, subNode.Value.Value<int>());
+                            break;
+                        case JTokenType.Float:
+                            obj.Add(subNode.Key, subNode.Value.Value<float>());
+                            break;
+                        case JTokenType.Null:
+                            obj.Add(subNode.Key, null);
+                            break;
+                        default:
+                            obj.Add(subNode.Key,subNode.Value?.ToString());
+                            break;
+                    }
+                }
+
+                return obj;
+            }
+
+            throw new JsonSerializationException($"failed to deserialize {jsonObject}");
+        }
+
+        private object HandleArray_(JObject jsonObject)
+        {
+            List<object> array = new List<object>();
+            foreach (var subNode in jsonObject)
+            {
+                switch (subNode.Value?.Type)
+                {
+                    case JTokenType.Object:
+                        array.Add(HandleObject_((JObject)subNode.Value));
+                        break;
+                    case JTokenType.Array:
+                        array.Add( HandleArray_((JObject)subNode.Value));
+                        break;
+                    case JTokenType.Boolean:
+                        array.Add( subNode.Value.Value<bool>());
+                        break;
+                    case JTokenType.Integer:
+                        array.Add( subNode.Value.Value<int>());
+                        break;
+                    case JTokenType.Float:
+                        array.Add( subNode.Value.Value<float>());
+                        break;
+                    case JTokenType.Null:
+                        array.Add( null);
+                        break;
+                    default:
+                        array.Add(subNode.Value?.ToString());
+                        break;
+                }
+            }
+            return array;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return true;
         }
     }
 }

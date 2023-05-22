@@ -10,6 +10,7 @@ using Applitools.Universal;
 using Applitools.Universal.Driver;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
+using Newtonsoft.Json.Linq;
 
 namespace Applitools.Playwright.Universal.Driver
 {
@@ -355,26 +356,22 @@ namespace Applitools.Playwright.Universal.Driver
 
             var derefArg = new List<object>();
 
-            if (arg is IDictionary argsDict)
+            if (arg is JObject argsDict)
             {
                 var map = new Dictionary<object, object>();
-                var enumerator = argsDict.GetEnumerator();
-                while (enumerator.MoveNext())
+                foreach (var item in argsDict)
                 {
-                    if (enumerator.Key != null)
-                    {
-                        map.Add(enumerator.Key, refer_.Deref(enumerator.Value));
-                    }
+                    map.Add(item.Key, refer_.Deref(item.Value));
                 }
 
                 return map;
             }
 
-            if (arg is IEnumerable argsList)
+            if (arg is JArray argsList)
             {
-                foreach (object argument in argsList)
+                foreach (JToken argument in argsList)
                 {
-                    if (argument is IEnumerable)
+                    if (argument.Type == JTokenType.Array)
                     {
                         derefArg.Add(DerefArgsUtil(argument));
                     }

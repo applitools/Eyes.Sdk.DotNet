@@ -881,46 +881,12 @@ namespace Applitools.Selenium
             return request;
         }
         
-        private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
+        protected override UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            var settings = new UniversalCheckSettings
-            {
-                Hooks = new Hooks
-                {
-                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
-                },
-                LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
-                MatchLevel = checkSettingsInternal.GetMatchLevel(),
-                Name = checkSettingsInternal.GetName(),
-                Region = GetUniversalRegion(checkSettingsInternal),
-                Fully = checkSettingsInternal.GetStitchContent(),
-                UserCommandId = checkSettingsInternal.GetVariationGroupId(),
-                IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
-                SendDom = checkSettingsInternal.GetSendDom(),
-                UseDom = checkSettingsInternal.GetUseDom(),
-                EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
-                Frames = GetFrames(checkSettingsInternal),
-                ScrollRootElement = GetScrollRootElement(checkSettingsInternal),
-                IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
-                StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
-                LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
-                ContentRegions = checkSettingsInternal.GetContentRegions().Select(i => i.ToRegion()).ToArray(),
-                FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
-                AccessibilityRegions = checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
-                LazyLoad = checkSettingsInternal.GetLazyLoad()
-            };
-            
+            var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
+            settings.Frames = GetFrames(checkSettingsInternal);
+            settings.ScrollRootElement = GetScrollRootElement(checkSettingsInternal);
             return settings;
-        }
-
-        private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
-        {
-            if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
-            {
-                return settings.GetLayoutBreakpoints();
-            }
-
-            return settings.GetLayoutBreakpointsEnabled();
         }
 
         private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)
@@ -944,11 +910,6 @@ namespace Applitools.Selenium
             }
 
             return null;
-        }
-
-        private IList<CodedRegionReference> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
-        {
-            return checkSettings.GetIgnoreRegions().Select(i => i.ToRegion()).ToList();
         }
 
         private IList<IFrame> GetFrames(ICheckSettingsInternal checkSettings)

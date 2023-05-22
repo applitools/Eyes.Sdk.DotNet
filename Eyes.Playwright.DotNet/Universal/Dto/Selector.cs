@@ -11,6 +11,7 @@ namespace Applitools.Playwright.Universal.Dto
         [JsonIgnore]
         public ILocator Locator { get; set; }
 
+        [JsonProperty("selector")]
         public string SelectorPath { get; set; }
 
         public Padding Padding { get; set; }
