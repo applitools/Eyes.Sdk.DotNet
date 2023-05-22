@@ -24,6 +24,7 @@ namespace Applitools
         RequestFailed,
         CloseBatch,
         TestResults,
+        MessageReceived,
         Timeout,
         Complete,
         Failed,

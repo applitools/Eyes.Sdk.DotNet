@@ -1,5 +1,6 @@
 using System;
 using Applitools.Commands;
+using Applitools.Commands.Responses;
 using Applitools.Playwright.Universal.Driver.Dto;
 using Applitools.Universal;
 using Applitools.Utils;
@@ -27,7 +28,7 @@ namespace Applitools.Playwright.Universal.Driver
                     $"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
             }
 
-            CommandResponse commandResponse = new CommandResponse { Key = response.Key, Name = response.Name };
+            ResponseDto commandResponse = new ResponseDto { Key = response.Key, Name = response.Name };
             var payload = response.Payload;
             TraceLevel level = TraceLevel.Info;
             try
@@ -38,62 +39,62 @@ namespace Applitools.Playwright.Universal.Driver
                 {
                     case "Driver.getDriverInfo":
                         var driverInfo = (DriverInfoDto)driver_.GetDriverInfo(payload.Driver);
-                        commandResponse.Payload = driverInfo;
+                        commandResponse.Payload.Result = driverInfo;
                         break;
                     case "Driver.executeScript":
                         object executionResponse = driver_.ExecuteScript(
                             payload.Context,
                             payload.Script,
                             payload.Arg);
-                        commandResponse.Payload = executionResponse;
+                        commandResponse.Payload.Result = executionResponse;
                         break;
                     case "Driver.getViewportSize":
                         var viewportSize = driver_.GetViewportSize(payload.Driver);
-                        commandResponse.Payload = viewportSize;
+                        commandResponse.Payload.Result = viewportSize;
                         break;
                     case "Driver.setViewportSize":
                         driver_.SetViewportSize(payload.Driver, payload.Size);
-                        commandResponse.Payload = "complete";
+                        commandResponse.Payload.Result = "complete";
                         break;
                     case "Driver.findElement":
                         var el = driver_.FindElement(payload.Context, payload.Selector, payload.Parent);
-                        commandResponse.Payload = el;
+                        commandResponse.Payload.Result = el;
                         break;
                     case "Driver.findElements":
                         var els = driver_.FindElements(payload.Context, payload.Selector, payload.Parent);
-                        commandResponse.Payload = els;
+                        commandResponse.Payload.Result = els;
                         break;
                     case "Driver.takeScreenshot":
                         byte[] screenshot = driver_.TakeScreenshot(payload.Context);
-                        commandResponse.Payload = Convert.ToBase64String(screenshot);
+                        commandResponse.Payload.Result = Convert.ToBase64String(screenshot);
                         break;
                     case "Driver.getTitle":
                         string title = driver_.GetTitle(payload.Driver);
-                        commandResponse.Payload = title;
+                        commandResponse.Payload.Result = title;
                         break;
                     case "Driver.getUrl":
                         string url = driver_.GetUrl(payload.Driver);
-                        commandResponse.Payload = url;
+                        commandResponse.Payload.Result = url;
                         break;
                     case "Driver.visit":
                         driver_.Visit(payload.Driver, payload.Url);
-                        commandResponse.Payload = "complete";
+                        commandResponse.Payload.Result = "complete";
                         break;
                     case "Driver.getCookies":
                         var cookies = driver_.GetCookies(payload.Driver, payload.Context);
-                        commandResponse.Payload = cookies;
+                        commandResponse.Payload.Result = cookies;
                         break;
                     case "Driver.childContext":
                         var childContext = driver_.ChildContext(payload.Context, payload.Element);
-                        commandResponse.Payload = childContext;
+                        commandResponse.Payload.Result = childContext;
                         break;
                     case "Driver.mainContext":
                         var mainContext = driver_.MainContext(payload.Context);
-                        commandResponse.Payload = mainContext;
+                        commandResponse.Payload.Result = mainContext;
                         break;
                     case "Driver.parentContext":
                         var parentContext = driver_.ParentContext(payload.Context);
-                        commandResponse.Payload = parentContext;
+                        commandResponse.Payload.Result = parentContext;
                         break;
 
                     case "Core.makeManager":
@@ -132,7 +133,7 @@ namespace Applitools.Playwright.Universal.Driver
             }
             catch (Exception e)
             {
-                commandResponse.Payload = new Error { Message = e.Message, Stack = e.StackTrace };
+                commandResponse.Payload.Error = new ResponsePayloadError { Message = e.Message, Stack = e.StackTrace };
                 level = TraceLevel.Error;
             }
 

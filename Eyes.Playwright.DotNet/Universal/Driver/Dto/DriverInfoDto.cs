@@ -1,12 +1,15 @@
+using Newtonsoft.Json;
+
 namespace Applitools.Playwright.Universal.Driver.Dto
 {
     public class DriverInfoDto
     {
-        private readonly DriverInfoFeaturesDto features_;
+        [JsonProperty("features")]
+        public DriverInfoFeaturesDto Features { get; set; }
 
         public DriverInfoDto()
         {
-            features_ = new DriverInfoFeaturesDto();
+            Features = new DriverInfoFeaturesDto();
         }
 
         public override bool Equals(object o)
@@ -21,18 +24,18 @@ namespace Applitools.Playwright.Universal.Driver.Dto
                 return false;
             }
 
-            return features_.Equals(other.features_);
+            return Features.Equals(other.Features);
         }
 
         public override int GetHashCode()
         {
-            return features_?.GetHashCode() ?? 0;
+            return Features?.GetHashCode() ?? 0;
         }
 
         public override string ToString()
         {
             return "DriverInfoDto{" +
-                   "features=" + features_ +
+                   "features=" + Features +
                    '}';
         }
     }

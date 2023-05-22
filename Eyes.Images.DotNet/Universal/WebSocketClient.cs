@@ -141,10 +141,13 @@ namespace Applitools
             {
                 var textMessage = ReceiveMessage();
 
+                Logger.Log(TraceLevel.Debug, Stage.SpecDriver, StageType.MessageReceived,
+                    new { Message = textMessage });
                 var response = JsonConvert.DeserializeObject<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
-                    if (requestKeys_.Contains(response.Key) && !messages_.TryAdd(response.Key, new WsMessage(textMessage)))
+                    if (requestKeys_.Contains(response.Key) &&
+                        !messages_.TryAdd(response.Key, new WsMessage(textMessage)))
                     {
                         throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
                     }

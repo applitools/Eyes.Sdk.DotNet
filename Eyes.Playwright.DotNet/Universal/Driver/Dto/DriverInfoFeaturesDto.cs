@@ -1,8 +1,13 @@
+using Newtonsoft.Json;
+
 namespace Applitools.Playwright.Universal.Driver.Dto
 {
     public class DriverInfoFeaturesDto
     {
+        [JsonProperty("allCookies")]
         public bool AllCookies { get; set; }
+        
+        [JsonProperty("canExecuteOnlyFunctionScripts")]
         public bool CanExecuteOnlyFunctionScripts { get; set; }
 
         public DriverInfoFeaturesDto()

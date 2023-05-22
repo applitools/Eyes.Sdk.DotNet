@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Applitools.Fluent;
 using Applitools.Universal;
 using Microsoft.Playwright;
@@ -7,11 +8,16 @@ namespace Applitools.Playwright.Universal.Dto
 {
     public class Element : Reference
     {
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public IElementHandle ElementHandle { get; set; }
 
+        [JsonProperty("type")]
         public string Type { get; set; }
+        
+        [JsonProperty("padding")]
         public Padding Padding { get; set; }
+        
+        [JsonProperty("regionId")]
         public string RegionId { get; set; }
 
         public Element()
