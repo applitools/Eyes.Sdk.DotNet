@@ -10,12 +10,13 @@ namespace Applitools.Universal
     {
         private ConcurrentDictionary<string, WsMessage> messages_;
         protected Logger Logger { get; }
+        protected static JsonSerializer Serializer { get; } = JsonUtils.CreateSerializer();
 
         public SpecDriverMessageListener(Logger logger)
         {
             Logger = logger;
         }
-        
+
         public virtual void HandleMessage(string message)
         {
             HandleResponse_(message);
@@ -27,12 +28,12 @@ namespace Applitools.Universal
         {
             messages_ = messages;
         }
-        
+
         protected void HandleResponse_(string message)
         {
             try
             {
-                var response = JsonConvert.DeserializeObject<CommandResponse>(message);
+                var response = Serializer.Deserialize<CommandResponse>(message);
                 if (messages_.TryGetValue(response.Key, out WsMessage wsMessage))
                 {
                     wsMessage.IsHandled = true;

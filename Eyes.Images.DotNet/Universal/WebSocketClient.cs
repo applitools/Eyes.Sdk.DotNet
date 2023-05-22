@@ -28,7 +28,8 @@ namespace Applitools
         private readonly HashSet<string> requestKeys_ = new HashSet<string>();
         private readonly object lock_ = new object();
         private static readonly TimeSpan timeout_ = TimeSpan.FromMinutes(9);
-
+        private static readonly JsonSerializer serializer_ = JsonUtils.CreateSerializer();
+        
         private readonly ISpecDriverMessageListener messageListener_;
 
         private Logger Logger { get; } = new Logger();
@@ -87,7 +88,7 @@ namespace Applitools
                 throw new Exception($"Server did not respond for {data.Name}");
             }
 
-            var result = JsonConvert.DeserializeObject<TResponse>(message);
+            var result = serializer_.Deserialize<TResponse>(message);
             return result;
         }
 
@@ -143,7 +144,7 @@ namespace Applitools
 
                 Logger.Log(TraceLevel.Debug, Stage.SpecDriver, StageType.MessageReceived,
                     new { Message = textMessage });
-                var response = JsonConvert.DeserializeObject<ResponseMessage>(textMessage);
+                var response = serializer_.Deserialize<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
                     if (requestKeys_.Contains(response.Key) &&
@@ -190,7 +191,7 @@ namespace Applitools
                 webSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter()
                     .GetResult();
 
-                Logger.Log($"Request sent to Server: {Environment.NewLine} {data}");
+                Logger.Log($"Message sent to Server: {Environment.NewLine} {data}");
             }
         }
     }

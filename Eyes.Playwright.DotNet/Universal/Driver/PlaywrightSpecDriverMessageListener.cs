@@ -20,7 +20,7 @@ namespace Applitools.Playwright.Universal.Driver
 
         public override void HandleMessage(string message)
         {
-            var response = JsonConvert.DeserializeObject<DriverCommand>(message);
+            var response = Serializer.Deserialize<DriverCommand>(message);
             if (response.Payload.Error != null)
             {
                 Logger.Log(TraceLevel.Error, Stage.SpecDriver, response);
@@ -140,7 +140,7 @@ namespace Applitools.Playwright.Universal.Driver
             Logger.Log(level, Stage.SpecDriver,
                 $"Responding to {response.Name} with {commandResponse.Payload}");
 
-            string json = JsonConvert.SerializeObject(commandResponse);
+            string json = Serializer.Serialize(commandResponse);
             WebSocket.SendData(json);
             //
             // var result = JsonConvert.DeserializeObject<TResponse>(message);
