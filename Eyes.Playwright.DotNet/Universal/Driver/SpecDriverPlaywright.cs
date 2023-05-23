@@ -46,7 +46,6 @@ namespace Applitools.Playwright.Universal.Driver
         public bool IsEqualElements()
         {
             throw new NotSupportedException("IsEqualElements is not supported");
-
         }
 
         public Reference MainContext(Reference context)
@@ -300,7 +299,7 @@ namespace Applitools.Playwright.Universal.Driver
                 };
                 return element;
             }
-            
+
             string type = "";
             Regex jsHandlePattern = new Regex("(?:.+@)?(\\w*)(?:\\(\\d+\\))?",
                 RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -356,28 +355,28 @@ namespace Applitools.Playwright.Universal.Driver
 
             var derefArg = new List<object>();
 
-            if (arg is JObject argsDict)
+            if (arg is Dictionary<object, object> argsDict)
             {
                 var map = new Dictionary<object, object>();
                 foreach (var item in argsDict)
                 {
-                    map.Add(item.Key, refer_.Deref(item.Value));
+                    map.Add(item.Key, DerefArgsUtil(item.Value));
                 }
 
                 return map;
             }
 
-            if (arg is JArray argsList)
+            if (arg is IList argsList)
             {
-                foreach (JToken argument in argsList)
+                foreach (object argument in argsList)
                 {
-                    if (argument.Type == JTokenType.Array)
+                    if (argument is Reference)
                     {
-                        derefArg.Add(DerefArgsUtil(argument));
+                        derefArg.Add(refer_.Deref(argument));
                     }
                     else
                     {
-                        derefArg.Add(refer_.Deref(argument));
+                        derefArg.Add(DerefArgsUtil(argument));
                     }
                 }
 

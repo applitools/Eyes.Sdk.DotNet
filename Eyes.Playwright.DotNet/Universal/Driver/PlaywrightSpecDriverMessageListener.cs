@@ -65,7 +65,7 @@ namespace Applitools.Playwright.Universal.Driver
                         commandResponse.Payload.Result = els;
                         break;
                     case "Driver.takeScreenshot":
-                        byte[] screenshot = driver_.TakeScreenshot(payload.Context);
+                        byte[] screenshot = driver_.TakeScreenshot(payload.Driver);
                         commandResponse.Payload.Result = Convert.ToBase64String(screenshot);
                         break;
                     case "Driver.getTitle":
@@ -142,15 +142,6 @@ namespace Applitools.Playwright.Universal.Driver
 
             string json = Serializer.Serialize(commandResponse);
             WebSocket.SendData(json);
-            //
-            // var result = JsonConvert.DeserializeObject<TResponse>(message);
-
-            // TODO - if not webdriver invoke specdriver to change result
-            //      - will invoke specdriver command that will send its result to universal
-            // while (response.GetType() != typeof(TResponse)) {
-            //    response = invoke specdriver command
-            //    Response = sendResponseToUniversal(response);
-            // }
         }
     }
 }
