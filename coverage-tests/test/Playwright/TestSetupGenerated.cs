@@ -38,7 +38,7 @@ namespace Applitools.Generated.Playwright.Tests
             Safari12
         }
 
-        protected void InitEyes(bool isVisualGrid, StitchModes stitching, string branchName)
+        protected void InitEyes(bool isVisualGrid, StitchModes? stitching, string branchName)
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
