@@ -3,9 +3,12 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Applitools.Metadata;
 using Applitools.VisualGrid;
 using Applitools.Playwright;
+using Applitools.Utils;
 using Microsoft.Playwright;
+using NUnit.Framework;
 
 namespace Applitools.Generated.Playwright.Tests
 {
@@ -86,6 +89,48 @@ namespace Applitools.Generated.Playwright.Tests
         protected IList<JToken> GetNodesByAttribute(JObject dom, string attributeName)
         {
             return dom.SelectTokens($"$..[?(@.attributes['{attributeName}'])]").ToList();
+        }
+
+        protected void SetBrowsersInfo(params IRenderBrowserInfo[] browsersInfo)
+        {
+            var config = Eyes.GetConfiguration();
+            config.AddBrowsers(browsersInfo);
+            Eyes.SetConfiguration(config);
+        }
+
+        protected SessionResults GetTestInfo(TestResults results)
+        {
+            SessionResults sessionResults = null;
+            try
+            {
+                sessionResults = TestUtils.GetSessionResults(Eyes.ApiKey, results);
+            }
+            catch (Exception e)
+            {
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.TestFramework, StageType.TestResults, e);
+                Assert.Fail("Exception appeared while getting session results");
+            }
+
+            ArgumentGuard.NotNull(sessionResults, nameof(sessionResults));
+            return sessionResults;
+        }
+
+        protected void SetBatch(string name, Dictionary<string, string>[] properties)
+        {
+            BatchInfo batch = new BatchInfo(name);
+            foreach (var item in properties)
+            {
+                batch.AddProperty(item["name"], item["value"]);
+            }
+
+            Eyes.Batch = batch;
+        }
+
+        protected void SetLayoutBreakpoints(params int[] breakpoints)
+        {
+            var config = Eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(breakpoints);
+            Eyes.SetConfiguration(config);
         }
     }
 }

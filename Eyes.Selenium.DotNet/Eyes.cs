@@ -54,7 +54,7 @@ namespace Applitools.Selenium
 
         #endregion
 
-        public Applitools.Configuration GetConfiguration()
+        public Configuration GetConfiguration()
         {
             return Config;
         }

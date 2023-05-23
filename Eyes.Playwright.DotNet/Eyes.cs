@@ -80,6 +80,11 @@ namespace Applitools.Playwright
         }
 
         #endregion
+        
+        public Configuration GetConfiguration()
+        {
+            return Config;
+        }
 
         /// <summary>
         /// Starts a test.
