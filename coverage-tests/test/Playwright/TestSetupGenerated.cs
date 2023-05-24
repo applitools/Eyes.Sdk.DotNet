@@ -139,5 +139,43 @@ namespace Applitools.Generated.Playwright.Tests
             config.SetLayoutBreakpoints(enabled);
             Eyes.SetConfiguration(config);
         }
+
+        protected void SetEnablePatterns(bool enable)
+        {
+            var config = Eyes.GetConfiguration();
+            config.SetEnablePatterns(enable);
+            Eyes.SetConfiguration(config);
+        }
+
+        protected void SetAccessibilitySettings(AccessibilitySettings accessibilitySettings)
+        {
+            var config = Eyes.GetConfiguration();
+            config.SetAccessibilityValidation(accessibilitySettings);
+            Eyes.SetConfiguration(config);
+        }
+        
+        protected List<JObject> GetNodesByAttributes(JObject dom, string attribute)
+        {
+            var nodes = new List<JObject>();
+            if (dom.TryGetValue("attributes", out JToken attrs) && 
+                attrs.Type == JTokenType.Object && 
+                ((JObject)attrs).ContainsKey(attribute)) {
+                nodes.Add(dom);
+            }
+            
+            if (!dom.TryGetValue("childNodes", out JToken children)) {
+                return nodes;
+            }
+
+            foreach (var child in children)
+            {
+                if (child.Type == JTokenType.Object)
+                {
+                    nodes.AddRange(GetNodesByAttributes((JObject)child, attribute));
+                }
+            }
+
+            return nodes;
+        }
     }
 }
