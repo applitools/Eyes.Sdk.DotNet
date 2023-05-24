@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Applitools.Commands;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Fluent;
 using Applitools.Utils;
 using AutoMapper;
+using Region = Applitools.Utils.Geometry.Region;
 
 // ReSharper disable InconsistentNaming
 
@@ -32,6 +36,7 @@ namespace Applitools
         protected readonly string API_KEY = Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY");
         protected PropertiesCollection properties_;
         protected readonly string serverUrlFieldName_;
+        protected EyesRef eyes_;
 
         public override bool IsDisabled
         {
@@ -77,10 +82,6 @@ namespace Applitools
         {
             Abort();
         }
-
-        public abstract TestResults Abort();
-        public abstract TestResults Close(bool throwEx = true);
-        public abstract TestResults GetResults(bool throwEx = true);
 
         protected Config ToConfig(Configuration configuration)
         {
@@ -237,6 +238,285 @@ namespace Applitools
             }
 
             return region;
+        }
+
+        public IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
+        {
+            Logger.Log("Locate");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, IList<Region>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var eyesLocateRequest = new EyesLocateRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new EyesLocateRequestPayload
+                {
+                    Config = eyesConfig,
+                    Target = new ImageTarget
+                    {
+                        Image = settings.GetImage()
+                    },
+                    Settings = ToLocateSettings(Config, settings.GetNames())
+                }
+            };
+
+            var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(eyesLocateRequest);
+
+            return response.Payload.Result;
+        }
+
+        public ICollection<string> ExtractText(params OcrRegion[] regions)
+        {
+            return ExtractText(regions.ToList());
+        }
+
+        public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
+        {
+            if (IsDisabled)
+            {
+                return new List<string>();
+            }
+
+            var firstRegion = regions.FirstOrDefault();
+            if (firstRegion == null)
+            {
+                throw new Exception("At least one region is required");
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var eyesExtractTextRequest = new EyesExtractTextRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRequestPayload
+                {
+                    Target = new ImageTarget
+                    {
+                        Image = firstRegion.GetImage()
+                    },
+                    Config = eyesConfig,
+                    Settings = regions.Select(r => new ExtractTextSettings
+                    {
+                        Hint = r.GetHint(),
+                        MinMatch = r.GetMinMatch(),
+                        Language = r.GetLanguage(),
+                        Region = GetRegion(r)
+                    }).ToList()
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
+
+            return response.Payload.Result;
+        }
+
+        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        {
+            Logger.Log("ExtractTextRegions");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, ICollection<TextRegion>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRegionsRequestPayload
+                {
+                    Target = new ImageTarget
+                    {
+                        Image = textRegionSettings.Image
+                    },
+                    Config = eyesConfig,
+                    Settings = textRegionSettings
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
+
+            return response.Payload.Result;
+        }
+
+        public virtual TestResults GetResults(bool throwEx = true)
+        {
+            Logger.Log("GetResults");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            var request = CreateEyesGetResultsRequest(throwEx, Runner.RemoveDuplicateTests);
+
+            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
+
+            var error = response.Payload.Error;
+            if (error != null)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
+
+            var testResults = response.Payload.Result;
+
+            foreach (var testResult in testResults)
+            {
+                testResult.Runner = Runner;
+                if (testResult.IsPassed == false && throwEx)
+                {
+                    IsOpen = false;
+                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
+                }
+            }
+
+            IsOpen = false;
+            return testResults.First();
+        }
+
+        public virtual TestResults Abort()
+        {
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            Logger.Verbose("enter. Abort");
+
+            if (IsOpen == false)
+            {
+                return new TestResults
+                {
+                    Runner = Runner
+                };
+            }
+
+            var request = CreateEyesAbortRequest();
+
+            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
+            
+            if (payload.Error != null)
+            {
+                IsOpen = false;
+                throw new EyesException(payload.Error.ToString());
+            }
+
+            return GetResults();
+        }
+
+        public virtual TestResults Close(bool throwEx = true)
+        {
+            Logger.Log("Close");
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new TestResults();
+            }
+
+            var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
+
+            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
+
+            var error = response.Payload.Error;
+            if (error != null && throwEx)
+            {
+                IsOpen = false;
+                throw new TestFailedException(error.ToString());
+            }
+
+            return GetResults(throwEx);
+        }
+
+        private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)
+        {
+            var eyesCloseRequest = new EyesCloseRequest
+            {
+                Payload = new CloseResponsePayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToCloseSettings(Config, throwEx, Runner.RemoveDuplicateTests)
+                }
+            };
+            return eyesCloseRequest;
+        }
+
+        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false, bool? removeDuplicateTests = null)
+        {
+            var eyesCloseRequest = new EyesGetResultsRequest
+            {
+                Payload = new EyesGetResultsRequestPayload
+                {
+                    Eyes = eyes_,
+                    Settings = ToResultsSettings(Config, throwEx, removeDuplicateTests)
+                }
+            };
+
+            return eyesCloseRequest;
+        }
+
+        private EyesAbortRequest CreateEyesAbortRequest()
+        {
+            var request = new EyesAbortRequest
+            {
+                Payload = new AbortPayload
+                {
+                    Eyes = eyes_
+                }
+            };
+            return request;
+        }
+
+        private RegionRectangle GetRegion(OcrRegion ocrRegion)
+        {
+            var region = ocrRegion.GetRegion();
+            if (region == null)
+            {
+                return null;
+            }
+
+            return new RegionRectangle
+            {
+                Width = region.Value.Width,
+                Height = region.Value.Height,
+                X = region.Value.Left,
+                Y = region.Value.Top,
+            };
+        }
+
+        public void Log(string msg, params object[] args)
+        {
+            Logger.Log(TraceLevel.Notice, TestName, Stage.General, new { message = string.Format(msg, args) });
+        }
+
+        public void AddProperty(string name, string value)
+        {
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.General, StageType.Disabled);
+                return;
+            }
+
+            properties_.Add(name, value);
+        }
+
+        public void ClearProperties()
+        {
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.General, StageType.Disabled);
+                return;
+            }
+
+            properties_.Clear();
         }
     }
 }

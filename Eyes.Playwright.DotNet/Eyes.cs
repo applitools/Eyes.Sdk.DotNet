@@ -8,7 +8,6 @@ using Applitools.Fluent;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Playwright.Universal.Mapper;
-using Applitools.Universal.Dto;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
@@ -18,7 +17,7 @@ namespace Applitools.Playwright
 {
     public class Eyes : EyesBase
     {
-        private PlaywrightEyesRunner runner_;
+        private readonly PlaywrightEyesRunner runner_;
 
         /// <summary>
         /// The command executor to execute the commands.
@@ -26,18 +25,9 @@ namespace Applitools.Playwright
         private readonly CommandExecutor commandExecutor_;
 
         /// <summary>
-        /// Is eyes closed, used to check abort after close.
-        /// </summary>
-        private bool isClosed_;
-
-        /// <summary>
         /// The driver reference associated with the test.
         /// </summary>
         private Driver driver_;
-
-        private EyesRef eyes_;
-
-        private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
         #region ctors
 
@@ -64,7 +54,6 @@ namespace Applitools.Playwright
             ILogHandler logHandler = null)
             : base(runner, serverUrlFieldName: serverUrlFieldName, logHandler: logHandler)
         {
-            ocrRegionTransformer_ = new OcrRegionTransformer();
         }
 
         /// <summary>
@@ -182,241 +171,33 @@ namespace Applitools.Playwright
             ArgumentGuard.NotOfType(checkSettings, typeof(IPlaywrightCheckSettings), nameof(checkSettings));
             IPlaywrightCheckSettings playwrightCheckSettings = (IPlaywrightCheckSettings)checkSettings;
 
-            // CheckSettingsDto checkSettingsDto = PlaywrightCheckSettingsMapper.ToCheckSettingsDto(
-            //     playwrightCheckSettings,
-            //     Config, GetRefer_(), driver_.Root);
-
             CheckImpl_(playwrightCheckSettings);
         }
 
-        public ICollection<string> ExtractText(ICollection<OcrRegion> ocrRegions)
+        public override TestResults Close(bool throwEx = true)
         {
-            Logger.Log("ExtractText");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new List<string>();
-            }
-
-            return new List<string>();
-            //
-            // var eyesConfig = ToConfig(Config);
-            // eyesConfig.Open.Properties = properties_;
-            // var serverUrl = GetServerUrl(CommandExecutor);
-            // var eyesExtractTextRequest = new EyesExtractTextRequest
-            // {
-            //     Payload = new ExtractTextRequestPayload
-            //     {
-            //         Config = eyesConfig,
-            //         Target = new DriverTarget
-            //         {
-            //             ServerUrl = serverUrl,
-            //             Capabilities = GetCapabilities(remoteWebDriver),
-            //             SessionId = remoteWebDriver.SessionId.ToString(),
-            //             Proxy = Config.Proxy
-            //         },
-            //         Settings = ToExtractTextSettings(regions)
-            //     }
-            // };
-
-            // var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
-
-            // return response.Payload.Result;
-        }
-
-        private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegion> regions)
-        {
-            var extractTextSettings = new List<ExtractTextSettings>();
-            foreach (var region in regions)
-            {
-                var ocrRegion = ocrRegionTransformer_.GetRegion(region);
-                var extractTextSetting = new ExtractTextSettings
-                {
-                    Region = ocrRegion,
-                    Hint = region.GetHint(),
-                    Language = region.GetLanguage(),
-                    MinMatch = region.GetMinMatch()
-                };
-                extractTextSettings.Add(extractTextSetting);
-            }
-
-            return extractTextSettings;
-        }
-
-        /// <summary>Locate</summary>
-        /// <param name="visualLocatorSettings">The locator settings.</param>
-        /// <returns>Mapping of the region locations.</returns>
-        public Dictionary<string, List<Region>> Locate(VisualLocatorSettings visualLocatorSettings)
-        {
-            ArgumentGuard.NotNull(visualLocatorSettings, nameof(visualLocatorSettings));
-
+            var result = base.Close(throwEx);
+            
             if (!IsOpen)
             {
-                Abort();
-                throw new EyesException("Eyes not open");
-            }
-
-            //
-            // VisualLocatorSettingsDto visualLocatorSettingsDto = VisualLocatorSettingsMapper
-            //     .toVisualLocatorSettingsDto(visualLocatorSettings);
-            //
-            // ConfigurationDto configurationDto = ConfigurationMapper
-            //     .toConfigurationDto(Configure(), false);
-            //
-            // return LocateDto_(driver_, visualLocatorSettingsDto, configurationDto);
-            return new Dictionary<string, List<Region>>();
-        }
-
-        /// <summary>
-        /// Close test results.
-        /// </summary>
-        /// <param name="shouldThrowException">Throw exception if a diff is found</param>
-        /// <returns>The test results</returns>
-        public override TestResults Close(bool shouldThrowException = true)
-        {
-            if (IsDisabled)
-            {
-                return null;
-            }
-
-            if (!IsOpen)
-            {
-                throw new EyesException("Eyes not open");
-            }
-
-            // ConfigurationDto configurationDto = ConfigurationMapper
-            //     .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
-            // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-            //
-            // commandExecutor_.Close(eyesRef_, settings, configurationDto);
-            // GetResultsSettings getResultsSettings = new GetResultsSettings(shouldThrowException);
-            // List<CommandEyesGetResultsResponseDto> getResultsResponse =
-            //     commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
-            //
-            // eyesRef_ = null;
-            // isClosed_ = true;
-            // IsOpen = false;
-            // GetRefer_().Destroy(driver_.Root);
-            // driver_ = null;
-            //
-            // List<TestResults> testResults =
-            //     TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
-            // if (testResults == null)
-            //     return null;
-            // testResults.forEach(
-            //     testResults1->runner.logSessionResultsAndThrowException(shouldThrowException, testResults1));
-            // return testResults.get(0);
-            return null;
-        }
-
-        public override TestResults GetResults(bool throwEx = true)
-        {
-            Logger.Log("GetResults");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var request = new EyesGetResultsRequest
-            {
-                Payload = new EyesGetResultsRequestPayload
-                {
-                    Eyes = eyes_,
-                    Settings = ToResultsSettings(Config, throwEx, Runner.RemoveDuplicateTests)
-                }
-            };
-
-            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
-
-            var error = response.Payload.Error;
-            if (error != null)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    IsOpen = false;
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            IsOpen = false;
-            return testResults.First();
-        }
-
-        public void CloseAsync()
-        {
-            if (IsDisabled)
-            {
-                return;
-            }
-
-            if (!IsOpen)
-            {
-                throw new EyesException("Eyes not open");
-            }
-
-            // ConfigurationDto configurationDto = ConfigurationMapper
-            //     .toConfigurationDto(configuration_, Runner.isDontCloseBatches());
-            // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-            //
-            // commandExecutor_.Close(eyesRef_, settings, configurationDto);
-            // eyesRef_ = null;
-            isClosed_ = true;
-            IsOpen = false;
-            GetRefer_().Destroy(driver_.Root);
-            driver_ = null;
-        }
-
-        public override void AbortAsync()
-        {
-            if (!isClosed_ && IsOpen)
-            {
-                // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-                // commandExecutor_.Abort(eyesRef_, settings);
-                //
-                // eyesRef_ = null;
-                IsOpen = false;
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
             }
+            
+            return result;
         }
 
         public override TestResults Abort()
         {
-            if (!isClosed_ && IsOpen)
+            var result = base.Abort();
+            
+            if (!IsOpen)
             {
-                // CloseSettingsDto settings = SettingsMapper.toCloseSettingsDto(getConfiguration());
-                // commandExecutor_.Abort(eyesRef_, settings);
-                //
-                // GetResultsSettings getResultsSettings = new GetResultsSettings(false);
-                // List<CommandEyesGetResultsResponseDto> getResultsResponse =
-                //     commandExecutor_.EyesGetResults(eyesRef_, getResultsSettings);
-                //
-                // eyesRef_ = null;
-                IsOpen = false;
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
-
-                // List<TestResults> testResults =
-                //     TestResultsMapper.toTestResultsList(getResultsResponse, getApiKey(), getServerUrl(), getProxy());
-                // if (testResults != null)
-                // {
-                //     return testResults.FirstOrDefault();
-                // }
             }
 
-            return null;
+            return result;
         }
 
         private void CheckImpl_(ICheckSettings checkSettings)
@@ -511,50 +292,6 @@ namespace Applitools.Playwright
 
             return frames;
         }
-
-        // private RegionSelector GetRegionSelector_(Selector frameSelector)
-        // {
-        //     RegionSelector result = null;
-        //
-        //     if (frameSelector != null)
-        //     {
-        //         if (frameSelector.Locator != null)
-        //         {
-        //             ILocator locator = frameSelector.Locator;
-        //             frameSelector.ApplitoolsRefId = GetRefer_().Ref(locator, driver_.Root);
-        //         }
-        //
-        //         result.Selector = frameSelector.ApplitoolsRefId;
-        //         result.Type
-        //         contextReferenceDto.Frame = frameSelector;
-        //     }
-        //
-        //     RegionSelector result = new RegionSelector
-        //     {
-        //         Selector = selector.ApplitoolsRefId,
-        //         Type = selector.Type
-        //     };
-        //     return result;
-        // }
-
-        // private List<string> ExtractTextDto_(Driver target, List<OCRExtractSettingsDto> settings,
-        //     ConfigurationDto config)
-        // {
-        //     return commandExecutor_.ExtractText(target, settings, config);
-        // }
-
-        // private Dictionary<string, List<TextRegion>> LocateTextDto_(Driver target, OCRSearchSettingsDto settings,
-        //     ConfigurationDto config)
-        // {
-        //     return commandExecutor_.LocateText(target, settings, config);
-        // }
-
-        // private Dictionary<string, List<Region>> LocateDto_(Driver target, VisualLocatorSettingsDto settings,
-        //     ConfigurationDto config)
-        // {
-        //     Dictionary<string, List<RegionDto>> response = commandExecutor_.Locate(target, settings, config);
-        //     return LocateMapper.toLocateFromDto(response);
-        // }
 
         private Refer GetRefer_()
         {
