@@ -270,19 +270,19 @@ namespace Applitools
             return response.Payload.Result;
         }
 
-        public ICollection<string> ExtractText(params OcrRegion[] regions)
+        public ICollection<string> ExtractText(params OcrRegionBase[] regions)
         {
             return ExtractText(regions.ToList());
         }
 
-        public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
+        public virtual ICollection<string> ExtractText(ICollection<OcrRegionBase> regions)
         {
             if (IsDisabled)
             {
                 return new List<string>();
             }
 
-            var firstRegion = regions.FirstOrDefault();
+            var firstRegion = regions.FirstOrDefault() as OcrRegion;
             if (firstRegion == null)
             {
                 throw new Exception("At least one region is required");
@@ -475,7 +475,7 @@ namespace Applitools
             return request;
         }
 
-        private RegionRectangle GetRegion(OcrRegion ocrRegion)
+        private RegionRectangle GetRegion(OcrRegionBase ocrRegion)
         {
             var region = ocrRegion.GetRegion();
             if (region == null)

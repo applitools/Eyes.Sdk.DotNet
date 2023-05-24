@@ -29,7 +29,13 @@ namespace Applitools.Selenium
                 };
             }
 
-            var region = ocrRegion.GetRegion();
+            var reg = ocrRegion.GetRegion();
+            if (reg == null)
+            {
+                throw new EyesException("can't handle uninitialized region.");
+            }
+            
+            var region = reg.Value;
             return new RegionRectangle
             {
                 X = region.Left,

@@ -8,28 +8,23 @@ namespace Applitools
     {
         private readonly string image_;
         private readonly Bitmap bitmapImage_;
-        private readonly Region? region_;
-			
+        public Region? Region { get; set; }
+
         public OcrRegion(Bitmap image, Region? region = null)
         {
 	        bitmapImage_ = image;
-	        region_ = region;
+	        Region = region;
         }
         
 		public OcrRegion(string image, Region? region = null)
 		{
 			image_ = image;
-			region_ = region;
+			Region = region;
 		}
 
 		public string GetImage()
         {
 	        return bitmapImage_ != null ? bitmapImage_.ToBase64() : image_;
-        }
-
-		public Region? GetRegion()
-        {
-	        return region_;
         }
     }
 }
