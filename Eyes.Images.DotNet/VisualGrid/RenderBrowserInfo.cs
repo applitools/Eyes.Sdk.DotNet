@@ -22,7 +22,7 @@ namespace Applitools.VisualGrid
             BrowserType = BrowserType.SAFARI;
         }
 
-        public RenderBrowserInfo(EmulationBaseInfo chromeEmulationInfo, string baselineEnvName = null)
+        public RenderBrowserInfo(ChromeEmulationInfo chromeEmulationInfo, string baselineEnvName = null)
         {
             ChromeEmulationInfo = chromeEmulationInfo;
             BaselineEnvName = baselineEnvName;
@@ -44,6 +44,14 @@ namespace Applitools.VisualGrid
                    Size.Empty;
         }
 
+        public string GetDeviceName()
+        {
+            return ChromeEmulationInfo?.DeviceName.ToString() ??
+                   IosDeviceInfo?.DeviceName.ToString() ??
+                   AndroidDeviceInfo?.DeviceName.ToString() ??
+                   string.Empty;
+        }
+        
         public void SetEmulationDeviceSize(DeviceSize size)
         {
             if (size != null && ChromeEmulationInfo != null)
@@ -76,7 +84,7 @@ namespace Applitools.VisualGrid
 
         [JsonIgnore]
         public DesktopBrowserInfo DesktopBrowserInfo { get; }
-        public EmulationBaseInfo ChromeEmulationInfo { get; }
+        public ChromeEmulationInfo ChromeEmulationInfo { get; }
         public IosDeviceInfo IosDeviceInfo { get; }
         public AndroidDeviceInfo AndroidDeviceInfo { get; }
 

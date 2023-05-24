@@ -19,6 +19,7 @@ namespace Applitools
         protected List<IGetFloatingRegion> floatingRegions_ = new List<IGetFloatingRegion>();
         protected List<IGetAccessibilityRegion> accessibilityRegions_ = new List<IGetAccessibilityRegion>();
         private int timeout_ = -1;
+        private int waitBeforeCapture_;
         private bool? stitchContent_;
         private LazyLoadOptions lazyLoad_;
         private Rectangle? targetRegion_;
@@ -69,6 +70,11 @@ namespace Applitools
         int Fluent.ICheckSettingsInternal.GetTimeout()
         {
             return timeout_;
+        }
+
+        int Fluent.ICheckSettingsInternal.GetWaitBeforeCapture()
+        {
+            return waitBeforeCapture_;
         }
 
         bool? Fluent.ICheckSettingsInternal.GetStitchContent()
@@ -553,11 +559,7 @@ namespace Applitools
             return clone;
         }
 
-        /// <summary>
-        /// Defines the timeout to use when acquiring and comparing screenshots.
-        /// </summary>
-        /// <param name="timeout">The timeout to use.</param>
-        /// <returns>An updated clone of this settings object.</returns>
+        /// <inheritdoc />
         public ICheckSettings Timeout(TimeSpan timeout)
         {
             var clone = Clone();
@@ -566,11 +568,16 @@ namespace Applitools
             return clone;
         }
 
-        /// <summary>
-        /// Defines if to detect and ignore a blinking caret in the screenshot. Defaults to <c>true</c>.
-        /// </summary>
-        /// <param name="ignoreCaret">Whether or not to detect and ignore a blinking caret in the screenshot.</param>
-        /// <returns>An updated clone of this settings object.</returns>
+        /// <inheritdoc />
+        public ICheckSettings WaitBeforeCapture(TimeSpan waitTime)
+        {
+            var clone = Clone();
+            clone.waitBeforeCapture_ = (int)waitTime.TotalMilliseconds;
+            clone.fluentCode_.Append($".{nameof(WaitBeforeCapture)}({waitTime.TotalMilliseconds})");
+            return clone;
+        }
+
+        /// <inheritdoc />
         public ICheckSettings IgnoreCaret(bool ignoreCaret = true)
         {
             var clone = Clone();
@@ -823,6 +830,7 @@ namespace Applitools
                 { "Fully", stitchContent_ },
                 { "MatchLevel", matchLevel_ },
                 { "Timeout", timeout_ },
+                { "WaitBeforeCapture", waitBeforeCapture_ },
                 { "IgnoreCaret", ignoreCaret_ },
                 { "SendDom", sendDom_ },
                 { "Name", name_ },

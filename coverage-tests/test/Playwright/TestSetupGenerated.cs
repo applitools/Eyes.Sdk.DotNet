@@ -154,6 +154,13 @@ namespace Applitools.Generated.Playwright.Tests
             Eyes.SetConfiguration(config);
         }
         
+        protected void WaitBeforeCapture(int waitTimeMs)
+        {
+            var config = Eyes.GetConfiguration();
+            config.SetWaitBeforeScreenshots(waitTimeMs);
+            Eyes.SetConfiguration(config);
+        }
+        
         protected List<JObject> GetNodesByAttributes(JObject dom, string attribute)
         {
             var nodes = new List<JObject>();

@@ -159,6 +159,13 @@ namespace Applitools
         ICheckSettings Timeout(TimeSpan timeout);
 
         /// <summary>
+        /// Defines how much time to wait before capturing a screenshot and/or the DOM.
+        /// </summary>
+        /// <param name="waitTime">The time to wait.</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings WaitBeforeCapture(TimeSpan waitTime);
+
+        /// <summary>
         /// Shortcut to set the match level to <see cref="MatchLevel.Layout"/>.
         /// </summary>
         /// <returns>An updated clone of this settings object.</returns>
@@ -242,7 +249,7 @@ namespace Applitools
         ICheckSettings LazyLoad();
 
         ICheckSettings DensityMetrics(int xDpi, int yDpi, double? scaleRatio = null);
-
+        
         ICheckSettings Clone();
     }
 }

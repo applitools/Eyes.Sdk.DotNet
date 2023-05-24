@@ -404,37 +404,16 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a layout region with {@link Padding}.
-     *
-     * @param selector  the css or xpath selector to match using the layout algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Layout(string selector, Padding padding)
         {
             return Layout(new Selector(selector), padding);
         }
 
-        /**
-     * Adds a layout region with {@link Padding}.
-     *
-     * @param locator   the locator to match using the layout algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Layout(ILocator locator, Padding padding)
         {
             return Layout(new Selector(locator), padding);
         }
 
-        /**
-     * Adds a layout region with {@link Padding}.
-     *
-     * @param element   the element to match using the layout algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Layout(IElementHandle element, Padding padding)
         {
             return Layout(new Element(element), padding);
@@ -467,7 +446,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-
         public PlaywrightCheckSettings Layout(Region region, params Region[] regions)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -485,35 +463,17 @@ namespace Applitools.Playwright.Fluent
             SimpleRegionByRectangle simpleRegionByRectangle = new SimpleRegionByRectangle(region.Rectangle);
             this.layoutRegions_.Add(simpleRegionByRectangle);
         }
-
-        /**
-     * Adds a strict region.
-     *
-     * @param selector  the css or xpath selector to match using the strict algorithm
-     * @return an updated instance of this settings object
-     */
+        
         public PlaywrightCheckSettings Strict(string selector)
         {
             return Strict(new Selector(selector));
         }
 
-        /**
-     * Adds a strict region.
-     *
-     * @param locator  the locator to match using the strict algorithm
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Strict(ILocator locator)
         {
             return Strict(new Selector(locator));
         }
 
-        /**
-     * Adds a strict region.
-     *
-     * @param element  the element to match using the strict algorithm
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Strict(IElementHandle element)
         {
             return Strict(new Element(element));
@@ -532,38 +492,17 @@ namespace Applitools.Playwright.Fluent
             clone.strictRegions_.Add(element);
             return clone;
         }
-
-        /**
-     * Adds a strict region with a region ID.
-     *
-     * @param selector  the css or xpath selector to match using the strict algorithm
-     * @param regionId  the region ID
-     * @return an updated instance of this settings object
-     */
+        
         public PlaywrightCheckSettings Strict(string selector, string regionId)
         {
             return Strict(new Selector(selector), regionId);
         }
-
-        /**
-     * Adds a strict region with a region ID.
-     *
-     * @param locator   the locator to match using the strict algorithm
-     * @param regionId  the region ID
-     * @return an updated instance of this settings object
-     */
+        
         public PlaywrightCheckSettings Strict(ILocator locator, string regionId)
         {
             return Strict(new Selector(locator), regionId);
         }
 
-        /**
-     * Adds a strict region with a region ID.
-     *
-     * @param element   the element to match using the strict algorithm
-     * @param regionId  the region ID
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Strict(IElementHandle element, string regionId)
         {
             return Strict(new Element(element), regionId);
@@ -586,37 +525,16 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a strict region with {@link Padding}.
-     *
-     * @param selector   the css or xpath selector to match using the strict algorithm
-     * @param padding    the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings Strict(string selector, Padding padding)
         {
             return Strict(new Selector(selector), padding);
         }
-
-        /**
-     * Adds a strict region with {@link Padding}.
-     *
-     * @param locator   the locator to match using the strict algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
+        
         public PlaywrightCheckSettings Strict(ILocator locator, Padding padding)
         {
             return Strict(new Selector(locator), padding);
         }
-
-        /**
-     * Adds a strict region with {@link Padding}.
-     *
-     * @param element   the element to match using the strict algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
+        
         public PlaywrightCheckSettings Strict(IElementHandle element, Padding padding)
         {
             return Strict(new Element(element), padding);
@@ -668,43 +586,21 @@ namespace Applitools.Playwright.Fluent
             strictRegions_.Add(simpleRegionByRectangle);
         }
 
-        /**
-     * Shortcut to set the match level to {@code MatchLevel.CONTENT}.
-     * @return An updated clone of this settings object.
-     */
         public new PlaywrightCheckSettings IgnoreColors()
         {
             return (PlaywrightCheckSettings)base.IgnoreColors();
         }
 
-        /**
-     * Adds an ignore colors region.
-     *
-     * @param selector  the css or xpath selector to match using the ignore colors algorithm
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(string selector)
         {
             return IgnoreColors(new Selector(selector));
         }
-
-        /**
-     * Adds an ignore colors region.
-     *
-     * @param locator  the locator to match using the ignore colors algorithm
-     * @return an updated instance of this settings object
-     */
+        
         public PlaywrightCheckSettings IgnoreColors(ILocator locator)
         {
             return IgnoreColors(new Selector(locator));
         }
 
-        /**
-     * Adds an ignore colors region.
-     *
-     * @param element  the element to match using the ignore colors algorithm
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(IElementHandle element)
         {
             return IgnoreColors(new Element(element));
@@ -726,37 +622,16 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds an ignore colors region with a region ID.
-     *
-     * @param selector  the css or xpath to match using the ignore colors algorithm
-     * @param regionId  the region ID
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(string selector, string regionId)
         {
             return IgnoreColors(new Selector(selector), regionId);
         }
 
-        /**
-     * Adds an ignore colors region with a region ID.
-     *
-     * @param locator   the locator to match using the ignore colors algorithm
-     * @param regionId  the region ID
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(ILocator locator, string regionId)
         {
             return IgnoreColors(new Selector(locator), regionId);
         }
 
-        /**
-     * Adds an ignore colors region with a region ID.
-     *
-     * @param element   the element to match using the ignore colors algorithm
-     * @param regionId  the region ID
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(IElementHandle element, string regionId)
         {
             return IgnoreColors(new Element(element), regionId);
@@ -780,37 +655,16 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds an ignore colors region with {@link Padding}.
-     *
-     * @param selector  the css or xpath selector to match using the ignore colors algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(string selector, Padding padding)
         {
             return IgnoreColors(new Selector(selector), padding);
         }
 
-        /**
-     * Adds an ignore colors region with {@link Padding}.
-     *
-     * @param locator   the locator to match using the ignore colors algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(ILocator locator, Padding padding)
         {
             return IgnoreColors(new Selector(locator), padding);
         }
 
-        /**
-     * Adds an ignore colors region with {@link Padding}.
-     *
-     * @param element   the element to match using the ignore colors algorithm
-     * @param padding   the padding
-     * @return an updated instance of this settings object
-     */
         public PlaywrightCheckSettings IgnoreColors(IElementHandle element, Padding padding)
         {
             return IgnoreColors(new Element(element), padding);
@@ -832,12 +686,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds one or more ignore colors regions.
-     *
-     * @param regions An array of regions to match using the ignore colors method.
-     * @return An updated clone of this settings object.
-     */
         public PlaywrightCheckSettings IgnoreColors(Region[] regions)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -849,13 +697,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds one or more ignore colors regions.
-     *
-     * @param region A region to match using the Content method.
-     * @param regions Optional extra regions to match using the Content method.
-     * @return An updated clone of this settings object.
-     */
         public PlaywrightCheckSettings IgnoreColors(Region region, params Region[] regions)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -874,17 +715,6 @@ namespace Applitools.Playwright.Fluent
             contentRegions_.Add(simpleRegionByRectangle);
         }
 
-        /**
-     * Adds a floating region.
-     * A floating region is a region that can be placed within the boundaries of a bigger region.
-     *
-     * @param selector          the css or xpath selector
-     * @param maxUpOffset       how much the content can move up
-     * @param maxDownOffset     how much the content can move down
-     * @param maxLeftOffset     how much the content can move to the left
-     * @param maxRightOffset    how much the content can move to the right
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Floating(string selector, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
@@ -894,17 +724,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a floating region.
-     * A floating region is a region that can be placed within the boundaries of a bigger region.
-     *
-     * @param locator           the locator
-     * @param maxUpOffset       how much the content can move up
-     * @param maxDownOffset     how much the content can move down
-     * @param maxLeftOffset     how much the content can move to the left
-     * @param maxRightOffset    how much the content can move to the right
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Floating(ILocator locator, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
@@ -914,17 +733,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a floating region.
-     * A floating region is a region that can be placed within the boundaries of a bigger region.
-     *
-     * @param element           the element
-     * @param maxUpOffset       how much the content can move up
-     * @param maxDownOffset     how much the content can move down
-     * @param maxLeftOffset     how much the content can move to the left
-     * @param maxRightOffset    how much the content can move to the right
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Floating(IElementHandle element, int maxUpOffset, int maxDownOffset,
             int maxLeftOffset, int maxRightOffset)
         {
@@ -934,14 +742,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a floating region.
-     * A floating region is a region that can be placed within the boundaries of a bigger region.
-     *
-     * @param maxOffset    how much the content can move in all directions
-     * @param selector     the css or xpath selector
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Floating(int maxOffset, string selector)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -949,14 +749,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a floating region.
-     * A floating region is a region that can be placed within the boundaries of a bigger region.
-     *
-     * @param maxOffset     how much the content can move in all directions
-     * @param locator       the locator
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Floating(int maxOffset, ILocator locator)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -964,21 +756,12 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Adds a floating region.
-     * A floating region is a region that can be placed within the boundaries of a bigger region.
-     *
-     * @param maxOffset     how much the content can move in all directions
-     * @param element       the element
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Floating(int maxOffset, IElementHandle element)
         {
             PlaywrightCheckSettings clone = Clone_();
             clone.floatingRegions_.Add(new FloatingRegionElement(element, maxOffset));
             return clone;
         }
-
 
         public PlaywrightCheckSettings Floating(int maxOffset, params Region[] regions)
         {
@@ -1011,13 +794,6 @@ namespace Applitools.Playwright.Fluent
                 maxRightOffset));
         }
 
-        /**
-     * Adds an accessibility region with a {@link AccessibilityRegionType}.
-     *
-     * @param selector      the css or xpath selector
-     * @param type          the accessibility region type
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings Accessibility(string selector, AccessibilityRegionType type)
         {
             return Accessibility(new AccessibilityRegionBySelector(selector, type));
@@ -1059,34 +835,16 @@ namespace Applitools.Playwright.Fluent
             accessibilityRegions_.Add(new AccessibilityRegionByRectangle(rect.Rectangle, regionType));
         }
 
-        /**
-     * Specify the scroll root element for the current target.
-     *
-     * @param selector  the css or xpath selector
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings ScrollRootElement(string selector)
         {
             return ScrollRootElement(new Selector(selector));
         }
 
-        /**
-     * Specify the scroll root element for the current target.
-     *
-     * @param locator  the locator
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings ScrollRootElement(ILocator locator)
         {
             return ScrollRootElement(new Selector(locator));
         }
 
-        /**
-     * Specify the scroll root element for the current target.
-     *
-     * @param element  the element
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings ScrollRootElement(IElementHandle element)
         {
             return ScrollRootElement(new Element(element));
@@ -1124,12 +882,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /**
-     * Enable and set the layout breakpoints for the current target.
-     *
-     * @param breakpoints  one or more viewport widths explicitly
-     * @return an updated clone of this settings object
-     */
         public PlaywrightCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -1193,11 +945,16 @@ namespace Applitools.Playwright.Fluent
             return (PlaywrightCheckSettings)base.BeforeRenderScreenshotHook(hook);
         }
 
-        public new PlaywrightCheckSettings Timeout(TimeSpan timeSpan)
+        public new PlaywrightCheckSettings Timeout(TimeSpan timeout)
         {
-            return (PlaywrightCheckSettings)base.Timeout(timeSpan);
+            return (PlaywrightCheckSettings)base.Timeout(timeout);
         }
 
+        public new PlaywrightCheckSettings WaitBeforeCapture(TimeSpan waitTime)
+        {
+            return (PlaywrightCheckSettings)base.WaitBeforeCapture(waitTime);
+        }
+        
         public new PlaywrightCheckSettings UseDom(bool useDom)
         {
             return (PlaywrightCheckSettings)base.UseDom(useDom);
@@ -1276,15 +1033,13 @@ namespace Applitools.Playwright.Fluent
             clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             return clone;
         }
-
-        /** see {@link #ignoreColors()} */
+        
         [Obsolete]
         public new PlaywrightCheckSettings Content()
         {
             return IgnoreColors();
         }
-
-        /** see {@link #ignoreColors(String)} */
+        
         [Obsolete]
         public PlaywrightCheckSettings Content(string selector)
         {
