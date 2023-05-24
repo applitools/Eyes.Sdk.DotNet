@@ -1150,7 +1150,7 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        public PlaywrightCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
+        public PlaywrightCheckSettings LayoutBreakpoints(bool shouldSet)
         {
             PlaywrightCheckSettings clone = Clone_();
             clone.layoutBreakpointsEnabled_ = shouldSet;

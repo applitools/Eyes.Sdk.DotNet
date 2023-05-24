@@ -161,6 +161,6 @@ namespace Applitools.Playwright.Fluent
 
         PlaywrightCheckSettings LayoutBreakpoints(params int[] breakpoints);
 
-        PlaywrightCheckSettings LayoutBreakpointsEnabled(bool shouldSet);
+        PlaywrightCheckSettings LayoutBreakpoints(bool shouldSet);
     }
 }

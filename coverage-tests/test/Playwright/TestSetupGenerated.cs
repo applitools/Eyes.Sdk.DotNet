@@ -132,5 +132,12 @@ namespace Applitools.Generated.Playwright.Tests
             config.SetLayoutBreakpoints(breakpoints);
             Eyes.SetConfiguration(config);
         }
+        
+        protected void SetLayoutBreakpoints(bool enabled)
+        {
+            var config = Eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(enabled);
+            Eyes.SetConfiguration(config);
+        }
     }
 }
