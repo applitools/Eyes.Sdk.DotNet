@@ -8,5 +8,5 @@ module.exports = {
   tests: "/home/itaibh/devel/sdk.coverage.tests/coverage-tests.js",
   ext: ".cs",
   outPath: './test/Playwright/coverage/generic',
-  //emitOnly: ["check window with css stitching", "check window with vg"],
+  // emitOnly: ["check window with layout breakpoints"],
 };
