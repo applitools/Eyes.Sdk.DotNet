@@ -21,12 +21,6 @@ namespace Applitools.Playwright.Universal.Driver
         public override void HandleMessage(string message)
         {
             var response = Serializer.Deserialize<DriverCommand>(message);
-            if (response.Payload.Error != null)
-            {
-                Logger.Log(TraceLevel.Error, Stage.SpecDriver, response);
-                throw new EyesException(
-                    $"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
-            }
 
             ResponseDto commandResponse = new ResponseDto { Key = response.Key, Name = response.Name };
             var payload = response.Payload;
@@ -112,6 +106,7 @@ namespace Applitools.Playwright.Universal.Driver
                     case "EyesManager.getResults":
                     case "Debug.getHistory":
                         HandleResponse_(message);
+                        HandleError(response);
                         return;
 
                     case "Logger.log":
@@ -136,12 +131,24 @@ namespace Applitools.Playwright.Universal.Driver
                 commandResponse.Payload.Error = new ResponsePayloadError { Message = e.Message, Stack = e.StackTrace };
                 level = TraceLevel.Error;
             }
+            
+            HandleError(response);
 
             Logger.Log(level, Stage.SpecDriver,
                 $"Responding to {response.Name} with {commandResponse.Payload}");
 
             string json = Serializer.Serialize(commandResponse);
             WebSocket.SendData(json);
+        }
+
+        private void HandleError(DriverCommand response)
+        {
+            if (response.Payload.Error != null)
+            {
+                Logger.Log(TraceLevel.Error, Stage.SpecDriver, response);
+                throw new EyesException(
+                    $"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
+            }
         }
     }
 }

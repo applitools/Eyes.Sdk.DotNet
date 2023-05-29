@@ -15,6 +15,7 @@ namespace Applitools.Generated.Utils
             HashSet<Region> expectedRegions = new HashSet<Region> { expectedRegion };
             TestUtils.CompareSimpleRegionsList_(actualRegions, expectedRegions, "Region");
         }
+
         public static void compareProcedure(Location actualLocation, Location expectedLocation, string type = null)
         {
             Assert.AreEqual(expectedLocation, actualLocation, type);

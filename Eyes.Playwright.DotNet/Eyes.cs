@@ -191,7 +191,7 @@ namespace Applitools.Playwright
         {
             var result = base.Abort();
             
-            if (!IsOpen)
+            if (!IsOpen && driver_ != null)
             {
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
