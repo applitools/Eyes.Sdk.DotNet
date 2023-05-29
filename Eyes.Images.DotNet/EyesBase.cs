@@ -221,7 +221,7 @@ namespace Applitools
             return region;
         }
 
-        private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
+        protected TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
         {
             TRegion region = null;
 

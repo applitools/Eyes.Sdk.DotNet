@@ -8,6 +8,7 @@ using Applitools.Fluent;
 using Applitools.Playwright.Fluent;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Playwright.Universal.Mapper;
+using Applitools.Universal;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
@@ -69,7 +70,7 @@ namespace Applitools.Playwright
         }
 
         #endregion
-        
+
         public Configuration GetConfiguration()
         {
             return Config;
@@ -177,20 +178,20 @@ namespace Applitools.Playwright
         public override TestResults Close(bool throwEx = true)
         {
             var result = base.Close(throwEx);
-            
+
             if (!IsOpen)
             {
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
             }
-            
+
             return result;
         }
 
         public override TestResults Abort()
         {
             var result = base.Abort();
-            
+
             if (!IsOpen && driver_ != null)
             {
                 GetRefer_().Destroy(driver_.Root);
@@ -247,14 +248,44 @@ namespace Applitools.Playwright
                 throw new EyesException($"Unexpected match result for {matchResult}");
             }
         }
-  
-        protected override UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
+
+        protected override UniversalCheckSettings CreateUniversalCheckSettings(
+            ICheckSettingsInternal checkSettingsInternal)
         {
             var playwrightCheckSettings = (IPlaywrightCheckTarget)checkSettingsInternal;
             var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
             //settings.Frames = TFramesMapper.ToTFramesFromCheckSettings(playwrightCheckSettings.GetFrameChain(), GetRefer_(), driver_.Root);
-            settings.ScrollRootElement = TRegionMapper.ToTRegionDtoFromSRE(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(), driver_.Root);
+            settings.ScrollRootElement =
+                TRegionMapper.ToTRegionDtoFromSRE(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(),
+                    driver_.Root);
             return settings;
+        }
+
+        protected override TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
+        {
+            TRegion region = null;
+            if (checkSettings is ICheckSettingsInternal checkSettingsInternal)
+            {
+                region = CreateCheckSettingsTargetRegion(checkSettingsInternal);
+            }
+
+            if (region == null &&
+                checkSettings is IPlaywrightCheckTarget playwrightCheckTarget)
+            {
+                Reference targetElement = playwrightCheckTarget.GetTargetElement();
+                if (targetElement is Element element)
+                {
+                    targetElement.ApplitoolsRefId = GetRefer_().Ref(element.ElementHandle, driver_.Root);
+                }
+                else if (targetElement is Selector selector && selector.Locator != null)
+                {
+                    targetElement.ApplitoolsRefId = GetRefer_().Ref(selector.Locator, driver_.Root);
+                }
+
+                return targetElement;
+            }
+
+            return region;
         }
 
         private IList<Commands.IFrame> GetFrames(ICheckSettingsInternal checkSettings)

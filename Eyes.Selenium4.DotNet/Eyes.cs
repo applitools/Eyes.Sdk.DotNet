@@ -916,25 +916,6 @@ namespace Applitools.Selenium
             return regionSelector;
         }
 
-        private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
-        {
-            TRegion region = null;
-
-            var rectangle = settings.GetTargetRegion();
-            if (rectangle.HasValue)
-            {
-                region = new RegionRectangle
-                {
-                    X = rectangle.Value.X,
-                    Y = rectangle.Value.Y,
-                    Width = rectangle.Value.Width,
-                    Height = rectangle.Value.Height
-                };
-            }
-
-            return region;
-        }
-
         private EyesManagerOpenEyes CreateEyesManagerOpenEyes(
             string applitoolsRefId,
             IWebDriver webDriver)

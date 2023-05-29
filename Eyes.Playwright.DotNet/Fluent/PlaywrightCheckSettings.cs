@@ -1115,5 +1115,10 @@ namespace Applitools.Playwright.Fluent
         {
             return scrollRootElement_;
         }
+        
+        Reference IPlaywrightCheckTarget.GetTargetElement()
+        {
+            return targetElement_;
+        }
     }
 }

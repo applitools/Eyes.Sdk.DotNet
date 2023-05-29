@@ -8,5 +8,5 @@ module.exports = {
   tests: "/home/itaibh/devel/sdk.coverage.tests/coverage-tests.js",
   ext: ".cs",
   outPath: './test/Playwright/coverage/generic',
-  // emitOnly: ["check window with layout breakpoints"],
+  //emitOnly: ["check window with layout breakpoints", "should extract text regions from image"],
 };
