@@ -24,7 +24,7 @@ namespace Applitools.Selenium.Fluent
             return new SelectorAccessibilityRegion
             {
                 Type = regionType_,
-                Region = selectorTransformer_.GetRegionSelector(selector_.ToString())
+                Region = selectorTransformer_.GetRegionSelector(selector_)
             };
         }
 

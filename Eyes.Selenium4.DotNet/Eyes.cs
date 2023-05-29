@@ -19,7 +19,7 @@ namespace Applitools.Selenium
     {
         private IWebDriver driver_;
 
-        private readonly SelectorTransformer selectorTransformer_;
+        private readonly ISelectorTransformer selectorTransformer_;
         private readonly IOcrRegionTransformer ocrRegionTransformer_;
 
         /// <summary>
@@ -470,9 +470,9 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        public override IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
-            Logger.Log("ExtractTextRegions");
+            Logger.Log(nameof(ExtractTextRegions));
 
             if (IsDisabled)
             {
@@ -500,9 +500,7 @@ namespace Applitools.Selenium
                 }
             };
 
-            var response =
-                Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(
-                    extractTextRegionsRequest);
+            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
 
             return response.Payload.Result;
         }
@@ -804,60 +802,23 @@ namespace Applitools.Selenium
             };
             return request;
         }
-
-        private UniversalCheckSettings CreateUniversalCheckSettings(SeleniumCheckSettings checkSettings)
+        
+        protected override UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
         {
-            var checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
-            var settings = new UniversalCheckSettings
-            {
-                Hooks = new Hooks
-                {
-                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks()
-                        .FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
-                },
-                LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
-                MatchLevel = checkSettingsInternal.GetMatchLevel(),
-                Name = checkSettingsInternal.GetName(),
-                Region = GetUniversalRegion(checkSettings),
-                Fully = checkSettingsInternal.GetStitchContent(),
-                UserCommandId = checkSettingsInternal.GetVariationGroupId(),
-                IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
-                SendDom = checkSettingsInternal.GetSendDom(),
-                UseDom = checkSettingsInternal.GetUseDom(),
-                EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
-                Frames = GetFrames(checkSettings),
-                ScrollRootElement = GetScrollRootElement(checkSettings),
-                IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
-                StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
-                LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
-                ContentRegions = checkSettingsInternal.GetContentRegions().Select(i => i.ToRegion()).ToArray(),
-                FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
-                AccessibilityRegions =
-                    checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
-                LazyLoad = checkSettingsInternal.GetLazyLoad()
-            };
-
+            var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
+            settings.Frames = GetFrames(checkSettingsInternal);
+            settings.ScrollRootElement = GetScrollRootElement(checkSettingsInternal);
             return settings;
         }
 
-        private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
-        {
-            if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
-            {
-                return settings.GetLayoutBreakpoints();
-            }
-
-            return settings.GetLayoutBreakpointsEnabled();
-        }
-
-        private TRegion GetScrollRootElement(CheckSettings checkSettings)
+        private TRegion GetScrollRootElement(ICheckSettingsInternal checkSettings)
         {
             if (checkSettings is IScrollRootElementContainer container)
             {
                 var selector = container.GetScrollRootSelector();
                 if (selector != null)
                 {
-                    return selectorTransformer_.GetRegionSelector(selector.ToString());
+                    return selectorTransformer_.GetRegionSelector(selector);
                 }
 
                 var element = container.GetScrollRootElement();
@@ -865,7 +826,7 @@ namespace Applitools.Selenium
                 {
                     return new RegionElement
                     {
-                        ElementId = element.GetPrivateFieldValue<string>("elementId")
+                        ElementId = element.GetElementId()
                     };
                 }
             }
@@ -873,44 +834,44 @@ namespace Applitools.Selenium
             return null;
         }
 
-        private IList<CodedRegionReference> GetIgnoreRegions(ICheckSettingsInternal checkSettings)
-        {
-            return checkSettings.GetIgnoreRegions().Select(i => i.ToRegion()).ToList();
-        }
-
-        private IList<IFrame> GetFrames(SeleniumCheckSettings checkSettings)
+        private IList<IFrame> GetFrames(ICheckSettingsInternal checkSettings)
         {
             var frames = new List<IFrame>();
-            var frameChain = ((ISeleniumCheckTarget)checkSettings).GetFrameChain();
-
-            foreach (var item in frameChain)
+            if (checkSettings is ISeleniumCheckTarget seleniumCheckTarget)
             {
-                if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
+                foreach (var item in seleniumCheckTarget.GetFrameChain())
                 {
-                    frames.Add(new FrameNameOrId
+                    if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
                     {
-                        Frame = item.FrameNameOrId
-                    });
-                }
+                        frames.Add(new FrameNameOrId
+                        {
+                            Frame = item.FrameNameOrId
+                        });
+                    }
 
-                if (item.FrameSelector != null)
-                {
-                    frames.Add(selectorTransformer_.GetRegionSelector(item.FrameSelector.ToString()));
-                }
-
-                if (item.FrameReference != null)
-                {
-                    frames.Add(new FrameElement
+                    if (item.FrameSelector != null)
                     {
-                        ElementId = item.FrameReference.GetPrivateFieldValue<string>("elementId")
-                    });
+                        frames.Add(new FrameSelector
+                        {
+                            Frame = selectorTransformer_.GetRegionSelector(item.FrameSelector)
+                        });
+                    }
+
+                    if (item.FrameReference != null)
+                    {
+                        frames.Add(new FrameElement
+                        {
+                            ElementId = item.FrameReference.GetElementId()
+                        });
+                    }
                 }
             }
 
             return frames;
         }
 
-        private TRegion GetUniversalRegion(ICheckSettings checkSettings)
+
+        protected override TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
         {
             TRegion region = null;
             if (checkSettings is ICheckSettingsInternal checkSettingsInternal)
@@ -949,7 +910,7 @@ namespace Applitools.Selenium
             var targetSelector = settings.GetTargetSelector();
             if (targetSelector != null)
             {
-                regionSelector = new SelectorTransformer().GetRegionSelector(targetSelector.ToString());
+                regionSelector = new SelectorTransformer().GetRegionSelector(targetSelector);
             }
 
             return regionSelector;

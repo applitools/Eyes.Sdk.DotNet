@@ -434,9 +434,9 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        public override IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
-            Logger.Log("ExtractTextRegions");
+            Logger.Log(nameof(ExtractTextRegions));
 
             if (IsDisabled)
             {
@@ -836,7 +836,7 @@ namespace Applitools.Selenium
             return frames;
         }
 
-        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
+        protected override TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
         {
             TRegion region = null;
             if (checkSettings is ICheckSettingsInternal checkSettingsInternal)

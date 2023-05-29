@@ -210,7 +210,7 @@ namespace Applitools
             return settings.GetLayoutBreakpointsEnabled();
         }
 
-        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
+        protected virtual TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
         {
             TRegion region = null;
             if (checkSettings != null)
@@ -314,9 +314,9 @@ namespace Applitools
             return response.Payload.Result;
         }
 
-        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        public virtual IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
-            Logger.Log("ExtractTextRegions");
+            Logger.Log(nameof(ExtractTextRegions));
 
             if (IsDisabled)
             {
@@ -325,6 +325,7 @@ namespace Applitools
             }
 
             var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = properties_;
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
             {
                 Key = Guid.NewGuid().ToString(),

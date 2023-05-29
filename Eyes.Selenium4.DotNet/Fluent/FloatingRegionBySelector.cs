@@ -36,7 +36,7 @@ namespace Applitools.Selenium.Fluent
         {
             return new RegionFloatingRegion
             {
-                Region = selectorTransformer_.GetRegionSelector(selector_.ToString()),
+                Region = selectorTransformer_.GetRegionSelector(selector_),
                 Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)
             };
         }
