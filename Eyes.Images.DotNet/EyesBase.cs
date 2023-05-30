@@ -223,9 +223,13 @@ namespace Applitools
 
         protected TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
         {
-            TRegion region = null;
+            Rectangle? rectangle = settings.GetTargetRegion();
+            return CheckSettingsTargetRegion(rectangle);
+        }
 
-            var rectangle = settings.GetTargetRegion();
+        protected static TRegion CheckSettingsTargetRegion(Rectangle? rectangle)
+        {
+            TRegion region = null;
             if (rectangle.HasValue)
             {
                 region = new RegionRectangle

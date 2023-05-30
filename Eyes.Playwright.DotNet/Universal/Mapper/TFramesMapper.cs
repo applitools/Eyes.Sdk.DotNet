@@ -6,7 +6,7 @@ using Microsoft.Playwright;
 
 namespace Applitools.Playwright.Universal.Mapper
 {
-    public class TFramesMapper
+    public static class TFramesMapper
     {
         public static ContextReferenceDto ToContextReferenceDto(FrameLocator frame, Refer refer, Reference root)
         {

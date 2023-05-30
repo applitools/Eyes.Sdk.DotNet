@@ -393,13 +393,8 @@ namespace Applitools.Selenium
         {
             return driver_;
         }
-
-        public ICollection<string> ExtractText(params OcrRegionBase[] regions)
-        {
-            return ExtractText(regions.ToList());
-        }
-
-        public ICollection<string> ExtractText(ICollection<OcrRegionBase> regions)
+      
+        public override ICollection<string> ExtractText(ICollection<OcrRegionBase> regions)
         {
             Logger.Log("ExtractText");
 

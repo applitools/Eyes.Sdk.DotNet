@@ -6,7 +6,7 @@ namespace Applitools.Playwright.Universal.Dto
         public int? FrameIndex { get; set; }
         public Element FrameElement { get; set; }
         public Selector FrameSelector { get; set; }
-        public Selector ScrollRootSelector { get; set; }
         public Element ScrollRootElement { get; set; }
+        public Selector ScrollRootSelector { get; set; }
     }
 }

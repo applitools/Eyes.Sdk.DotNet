@@ -8,18 +8,17 @@ namespace Applitools
     {
         private readonly string image_;
         private readonly Bitmap bitmapImage_;
-        public Region? Region { get; set; }
 
         public OcrRegion(Bitmap image, Region? region = null)
         {
 	        bitmapImage_ = image;
-	        Region = region;
+	        Region(region);
         }
         
 		public OcrRegion(string image, Region? region = null)
 		{
 			image_ = image;
-			Region = region;
+			Region(region);
 		}
 
 		public string GetImage()

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Fluent;
@@ -12,6 +11,7 @@ using Applitools.Universal;
 using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
+using IFrame = Applitools.Commands.IFrame;
 using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright
@@ -254,7 +254,7 @@ namespace Applitools.Playwright
         {
             var playwrightCheckSettings = (IPlaywrightCheckTarget)checkSettingsInternal;
             var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
-            //settings.Frames = TFramesMapper.ToTFramesFromCheckSettings(playwrightCheckSettings.GetFrameChain(), GetRefer_(), driver_.Root);
+            settings.Frames = GetFrames(checkSettingsInternal);
             settings.ScrollRootElement =
                 TRegionMapper.ToTRegionDtoFromSRE(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(),
                     driver_.Root);
@@ -288,38 +288,16 @@ namespace Applitools.Playwright
             return region;
         }
 
-        private IList<Commands.IFrame> GetFrames(ICheckSettingsInternal checkSettings)
+        private IList<IFrame> GetFrames(ICheckSettingsInternal checkSettings)
         {
-            var frames = new List<Commands.IFrame>();
-            if (checkSettings is IPlaywrightCheckTarget playwrightCheckSettings)
+            var frames = new List<IFrame>();
+            if (!(checkSettings is IPlaywrightCheckTarget playwrightCheckSettings))
             {
-                foreach (var item in playwrightCheckSettings.GetFrameChain())
-                {
-                    if (string.IsNullOrEmpty(item.FrameNameOrId) == false)
-                    {
-                        frames.Add(new FrameNameOrId
-                        {
-                            Frame = item.FrameNameOrId
-                        });
-                    }
-
-                    if (item.FrameSelector != null)
-                    {
-                        frames.Add(new FrameSelector
-                        {
-                            //Frame = GetRegionSelector_(item.FrameSelector)
-                        });
-                    }
-
-                    if (item.FrameElement != null)
-                    {
-                        frames.Add(new FrameElement
-                        {
-                            ElementId = item.FrameElement.ApplitoolsRefId
-                        });
-                    }
-                }
+                return frames;
             }
+
+            frames = playwrightCheckSettings.GetFrameChain().Select(
+                frame => (IFrame)TFramesMapper.ToContextReferenceDto(frame, GetRefer_(), driver_.Root)).ToList();
 
             return frames;
         }

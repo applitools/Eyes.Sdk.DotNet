@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Applitools.Commands;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
@@ -19,7 +18,9 @@ namespace Applitools.Playwright.Universal.Driver.Dto
 
         [JsonProperty("parent")] public Reference Parent { get; set; }
 
-        [JsonProperty("selector")] public Selector Selector { get; set; }
+        [JsonProperty("selector")] 
+        [JsonConverter(typeof(SelectorDeserializer))]
+        public Selector Selector { get; set; }
 
         [JsonProperty("script")] public string Script { get; set; }
 
@@ -53,7 +54,7 @@ namespace Applitools.Playwright.Universal.Driver.Dto
         }
     }
 
-    public class ExecuteScriptDeserializer : JsonConverter
+    public class SelectorDeserializer : JsonConverter
     {
         public override bool CanWrite => false;
 
@@ -61,119 +62,27 @@ namespace Applitools.Playwright.Universal.Driver.Dto
         {
             throw new NotImplementedException();
         }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            JsonSerializer serializer)
+        
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var jsonNode = JToken.Load(reader);
 
-            switch (jsonNode.Type)
+            if (jsonNode.Type == JTokenType.String)
             {
-                case JTokenType.Object:
-                    return HandleObject_((JObject)jsonNode);
-                case JTokenType.Array:
-                    return HandleArray_((JArray)jsonNode);
-                case JTokenType.Boolean:
-                    return jsonNode.Value<bool>();
-                case JTokenType.Null:
-                    return null;
+                return new Selector(jsonNode.ToString());
             }
 
-            throw new EyesException("Unsupported type to deserialize!");
-        }
-
-        private object HandleObject_(JObject jsonObject)
-        {
-            if (jsonObject.TryGetValue(Applitools.Universal.Refer.APPLITOOLS_REF_ID, out JToken refId) && refId.Type == JTokenType.String)
+            if (jsonNode.Type == JTokenType.Object)
             {
-                if (jsonObject.TryGetValue("type", out JToken typeNode) && typeNode.Type == JTokenType.String)
-                {
-                    string type = typeNode.Value<string>();
-
-                    switch (type)
-                    {
-                        case "element":
-                            return jsonObject.ToObject<Element>();
-                        case "selector":
-                            return jsonObject.ToObject<Selector>();
-                        default:
-                            return jsonObject.ToObject<Reference>();
-                    }
-                }
+                return jsonNode.ToObject<Selector>();
             }
-            else
-            {
-                Dictionary<object, object> obj = new Dictionary<object, object>();
-                foreach (var subNode in jsonObject)
-                {
-                    switch (subNode.Value?.Type)
-                    {
-                        case JTokenType.Object:
-                            obj.Add(subNode.Key, HandleObject_((JObject)subNode.Value));
-                            break;
-                        case JTokenType.Array:
-                            obj.Add(subNode.Key, HandleArray_((JArray)subNode.Value));
-                            break;
-                        case JTokenType.Boolean:
-                            obj.Add(subNode.Key, subNode.Value.Value<bool>());
-                            break;
-                        case JTokenType.Integer:
-                            obj.Add(subNode.Key, subNode.Value.Value<int>());
-                            break;
-                        case JTokenType.Float:
-                            obj.Add(subNode.Key, subNode.Value.Value<float>());
-                            break;
-                        case JTokenType.Null:
-                            obj.Add(subNode.Key, null);
-                            break;
-                        default:
-                            obj.Add(subNode.Key,subNode.Value?.ToString());
-                            break;
-                    }
-                }
-
-                return obj;
-            }
-
-            throw new JsonSerializationException($"failed to deserialize {jsonObject}");
-        }
-
-        private object HandleArray_(JArray jsonArray)
-        {
-            List<object> array = new List<object>();
-            foreach (var subNode in jsonArray)
-            {
-                switch (subNode.Type)
-                {
-                    case JTokenType.Object:
-                        array.Add(HandleObject_((JObject)subNode));
-                        break;
-                    case JTokenType.Array:
-                        array.Add( HandleArray_((JArray)subNode));
-                        break;
-                    case JTokenType.Boolean:
-                        array.Add( subNode.Value<bool>());
-                        break;
-                    case JTokenType.Integer:
-                        array.Add( subNode.Value<int>());
-                        break;
-                    case JTokenType.Float:
-                        array.Add( subNode.Value<float>());
-                        break;
-                    case JTokenType.Null:
-                        array.Add( null);
-                        break;
-                    default:
-                        array.Add(subNode.ToString());
-                        break;
-                }
-            }
-            return array;
+            
+            throw new JsonSerializationException($"failed to deserialize {jsonNode} to type Selector");
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return true;
+            return objectType == typeof(Selector) || objectType == typeof(string);
         }
     }
 }

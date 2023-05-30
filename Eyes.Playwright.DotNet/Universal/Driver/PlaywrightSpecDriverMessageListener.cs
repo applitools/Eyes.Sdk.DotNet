@@ -4,7 +4,7 @@ using Applitools.Commands.Responses;
 using Applitools.Playwright.Universal.Driver.Dto;
 using Applitools.Universal;
 using Applitools.Utils;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Applitools.Playwright.Universal.Driver
 {
@@ -20,13 +20,15 @@ namespace Applitools.Playwright.Universal.Driver
 
         public override void HandleMessage(string message)
         {
-            var response = Serializer.Deserialize<DriverCommand>(message);
-
-            ResponseDto commandResponse = new ResponseDto { Key = response.Key, Name = response.Name };
-            var payload = response.Payload;
             TraceLevel level = TraceLevel.Info;
+
+            var response = Serializer.Deserialize<CommandResponse>(message);
+            var commandResponse = new ResponseDto { Key = response.Key, Name = response.Name };
+            
             try
             {
+                var payload = ((JToken)response.Payload).ToObject<DriverCommandDto>();
+                var command = new DriverCommand { Key = response.Key, Name = response.Name, Payload = payload };
                 Logger.Log(TraceLevel.Info, Stage.SpecDriver,
                     $"Executing {response.Name} with target: {payload}");
                 switch (response.Name)
@@ -106,7 +108,7 @@ namespace Applitools.Playwright.Universal.Driver
                     case "EyesManager.getResults":
                     case "Debug.getHistory":
                         HandleResponse_(message);
-                        HandleError(response);
+                        HandleError(command);
                         return;
 
                     case "Logger.log":
@@ -125,14 +127,13 @@ namespace Applitools.Playwright.Universal.Driver
                     default:
                         throw new EyesException("Unknown server command " + response.Name);
                 }
+                HandleError(command);
             }
             catch (Exception e)
             {
                 commandResponse.Payload.Error = new ResponsePayloadError { Message = e.Message, Stack = e.StackTrace };
                 level = TraceLevel.Error;
             }
-            
-            HandleError(response);
 
             Logger.Log(level, Stage.SpecDriver,
                 $"Responding to {response.Name} with {commandResponse.Payload}");
