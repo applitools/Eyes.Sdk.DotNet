@@ -61,20 +61,5 @@ namespace Applitools.Playwright
                 Type = "classic"
             };
         }
-
-        private static PlaywrightSpecDriverMessageListener messageListener_;
-
-        protected override ISpecDriverMessageListener SpecDriverMessageListener
-        {
-            get
-            {
-                if (messageListener_ == null)
-                {
-                    messageListener_ = new PlaywrightSpecDriverMessageListener(Logger);
-                }
-
-                return messageListener_;
-            }
-        }
     }
 }

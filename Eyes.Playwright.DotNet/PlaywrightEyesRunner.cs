@@ -1,6 +1,8 @@
 using System;
 using Applitools.Commands.Requests;
-using Applitools.Playwright.Universal;
+using Applitools.Playwright.Universal.Driver;
+using Applitools.Universal;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright
 {
@@ -35,7 +37,9 @@ namespace Applitools.Playwright
             "executeScript",
             "visit"
         };
-
+       
+        protected override ISpecDriverMessageListener SpecDriverMessageListener => Singleton<PlaywrightSpecDriverMessageListener>.GetInstance(Logger);
+        
         public Refer Refer { get; protected set; }
 
         protected PlaywrightEyesRunner(ILogHandler logHandler, string agentId) : base(logHandler, agentId)

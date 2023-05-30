@@ -92,20 +92,5 @@ namespace Applitools.VisualGrid
                 Legacy = false
             };
         }
-
-        private static PlaywrightSpecDriverMessageListener messageListener_ = null;
-
-        protected override ISpecDriverMessageListener SpecDriverMessageListener
-        {
-            get
-            {
-                if (messageListener_ == null)
-                {
-                    messageListener_ = new PlaywrightSpecDriverMessageListener(Logger);
-                }
-
-                return messageListener_;
-            }
-        }
     }
 }

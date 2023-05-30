@@ -6,12 +6,41 @@ using Newtonsoft.Json;
 
 namespace Applitools.Universal
 {
+    static class LockerClass
+    {
+        public static readonly object Locker = new object();
+    }
+    public static class Singleton<T>
+    {
+        private static T instance_;
+
+        public static T GetInstance(Logger logger)
+        {
+            if (instance_ == null)
+            {
+                lock (LockerClass.Locker)
+                {
+                    if (instance_ == null)
+                    {
+                        instance_ = (T)Activator.CreateInstance(typeof(T), logger);
+                    }
+                }
+            }
+
+            return instance_;
+        }
+    }
     public class SpecDriverMessageListener : ISpecDriverMessageListener
     {
         private ConcurrentDictionary<string, WsMessage> messages_;
         protected Logger Logger { get; }
         protected static JsonSerializer Serializer { get; } = JsonUtils.CreateSerializer();
 
+        public SpecDriverMessageListener()
+        {
+            Logger = new Logger();
+        }
+        
         public SpecDriverMessageListener(Logger logger)
         {
             Logger = logger;

@@ -14,6 +14,11 @@ namespace Applitools.Playwright.Universal.Driver
         protected internal Refer Refer { get; } = new Refer();
         private readonly SpecDriverPlaywright driver_;
 
+        public PlaywrightSpecDriverMessageListener()
+        {
+            driver_ = new SpecDriverPlaywright(Refer);
+        }
+
         public PlaywrightSpecDriverMessageListener(Logger logger) : base(logger)
         {
             driver_ = new SpecDriverPlaywright(Refer);
@@ -35,24 +40,36 @@ namespace Applitools.Playwright.Universal.Driver
                 switch (response.Name)
                 {
                     case "Driver.getDriverInfo":
-                        var driverInfo = (DriverInfoDto)driver_.GetDriverInfo(payload.Driver);
+                    {
+                        var driver = payload.Driver;
+                        var driverInfo = (DriverInfoDto)driver_.GetDriverInfo(driver);
                         commandResponse.Payload.Result = driverInfo;
                         break;
+                    }
                     case "Driver.executeScript":
+                    {
                         object executionResponse = driver_.ExecuteScript(
                             payload.Context,
                             payload.Script,
                             payload.Arg);
                         commandResponse.Payload.Result = executionResponse;
                         break;
+                    }
                     case "Driver.getViewportSize":
-                        var viewportSize = driver_.GetViewportSize(payload.Driver);
+                    {
+                        var driver = payload.Driver;
+                        var viewportSize = driver_.GetViewportSize(driver);
                         commandResponse.Payload.Result = viewportSize;
                         break;
+                    }
                     case "Driver.setViewportSize":
-                        driver_.SetViewportSize(payload.Driver, payload.Size);
+                    {
+                        var driver = payload.Driver;
+                        var size = payload.Size;
+                        driver_.SetViewportSize(driver, size);
                         commandResponse.Payload.Result = "complete";
                         break;
+                    }
                     case "Driver.findElement":
                         var el = driver_.FindElement(payload.Context, payload.Selector, payload.Parent);
                         commandResponse.Payload.Result = el;
