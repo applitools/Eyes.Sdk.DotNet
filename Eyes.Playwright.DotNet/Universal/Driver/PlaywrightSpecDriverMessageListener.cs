@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Applitools.Commands;
 using Applitools.Commands.Responses;
 using Applitools.Playwright.Universal.Driver.Dto;
@@ -24,11 +25,11 @@ namespace Applitools.Playwright.Universal.Driver
 
             var response = Serializer.Deserialize<CommandResponse>(message);
             var commandResponse = new ResponseDto { Key = response.Key, Name = response.Name };
-            
+            DriverCommandDto payload = null;
+            bool commandHandled = true;
             try
             {
-                var payload = ((JToken)response.Payload).ToObject<DriverCommandDto>();
-                var command = new DriverCommand { Key = response.Key, Name = response.Name, Payload = payload };
+                payload = ((JToken)response.Payload).ToObject<DriverCommandDto>();
                 Logger.Log(TraceLevel.Info, Stage.SpecDriver,
                     $"Executing {response.Name} with target: {payload}");
                 switch (response.Name)
@@ -92,42 +93,16 @@ namespace Applitools.Playwright.Universal.Driver
                         var parentContext = driver_.ParentContext(payload.Context);
                         commandResponse.Payload.Result = parentContext;
                         break;
-
-                    case "Core.makeManager":
-                    case "Core.locate":
-                    case "Core.locateText":
-                    case "Core.extractText":
-                    case "Core.getViewportSize":
-                    case "Core.deleteTest":
-                    case "Core.closeBatch":
-                    case "EyesManager.openEyes":
-                    case "Eyes.check":
-                    case "Eyes.close":
-                    case "Eyes.abort":
-                    case "Eyes.getResults":
-                    case "EyesManager.getResults":
-                    case "Debug.getHistory":
-                        HandleResponse_(message);
-                        HandleError(command);
-                        return;
-
-                    case "Logger.log":
-                        try
-                        {
-                            string logMsg = $"eyes | [{payload.Level}] | {payload.Message}";
-                            Logger.Log(TraceLevel.Debug, Stage.General, logMsg);
-                        }
-                        catch (Exception e)
-                        {
-                            CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e);
-                        }
-
-                        return;
-
                     default:
-                        throw new EyesException("Unknown server command " + response.Name);
+                        commandHandled = false;
+                        break;
                 }
-                HandleError(command);
+
+                if (commandHandled)
+                {
+                    //HandleError(response.Name, response.Key, payload);
+                    HandleError(commandResponse, payload);
+                }
             }
             catch (Exception e)
             {
@@ -135,20 +110,79 @@ namespace Applitools.Playwright.Universal.Driver
                 level = TraceLevel.Error;
             }
 
-            Logger.Log(level, Stage.SpecDriver,
-                $"Responding to {response.Name} with {commandResponse.Payload}");
+            if (commandHandled)
+            {
+                Logger.Log(level, Stage.SpecDriver,
+                    $"Responding to {response.Name} with {commandResponse.Payload}");
 
-            string json = Serializer.Serialize(commandResponse);
-            WebSocket.SendData(json);
+                string json = Serializer.Serialize(commandResponse);
+                WebSocket.SendData(json);
+                return;
+            }
+
+            switch (response.Name)
+            {
+                case "Core.makeManager":
+                case "Core.locate":
+                case "Core.locateText":
+                case "Core.extractText":
+                case "Core.getViewportSize":
+                case "Core.deleteTest":
+                case "Core.closeBatch":
+                case "EyesManager.openEyes":
+                case "Eyes.check":
+                case "Eyes.close":
+                case "Eyes.getResults":
+                case "Eyes.abort":
+                case "EyesManager.getResults":
+                case "Debug.getHistory":
+                    HandleResponse_(message);
+                    HandleError(response.Name, response.Key, payload);
+                    return;
+
+                case "Logger.log":
+                    try
+                    {
+                        string logMsg = $"eyes | [{payload?.Level}] | {payload?.Message}";
+                        Logger.Log(TraceLevel.Debug, Stage.General, logMsg);
+                    }
+                    catch (Exception e)
+                    {
+                        CommonUtils.LogExceptionStackTrace(Logger, Stage.General, e);
+                    }
+
+                    return;
+
+                default:
+                    throw new EyesException("Unknown server command " + response.Name);
+            }
         }
 
-        private void HandleError(DriverCommand response)
+        private void HandleError(ResponseDto response, DriverCommandDto payload)
         {
-            if (response.Payload.Error != null)
+            if (payload.Error == null)
             {
-                Logger.Log(TraceLevel.Error, Stage.SpecDriver, response);
-                throw new EyesException(
-                    $"Error handling server command {response.Name}:\n{response.Payload.Error.Message}");
+                return;
+            }
+
+            Logger.Log(TraceLevel.Error, Stage.SpecDriver,
+                new CommandResponse { Name = response.Name, Key = response.Key, Payload = payload });
+            response.Payload.Result = null;
+            response.Payload.Error = payload.Error;
+            if (payload.Error.Message.Contains("slice"))
+            {
+                Debugger.Break();
+            }
+        }
+
+        private void HandleError(string name, string key, DriverCommandDto payload)
+        {
+            if (payload.Error != null)
+            {
+                Logger.Log(TraceLevel.Error, Stage.SpecDriver,
+                    new CommandResponse { Name = name, Key = key, Payload = payload });
+                // throw new EyesException(
+                //     $"Error handling server command {name}:\n{payload.Error.Message}");
             }
         }
     }

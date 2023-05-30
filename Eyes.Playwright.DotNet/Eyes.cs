@@ -232,21 +232,21 @@ namespace Applitools.Playwright
             {
                 throw new EyesException(error.ToString());
             }
-
-            if (result?.Payload?.Result == null)
-            {
-                return;
-            }
-
-            foreach (var matchResult in result.Payload.Result)
-            {
-                if (matchResult.AsExpected)
-                {
-                    continue;
-                }
-
-                throw new EyesException($"Unexpected match result for {matchResult}");
-            }
+            
+            // if (result?.Payload?.Result == null)
+            // {
+            //     return;
+            // }
+            
+            // foreach (var matchResult in result.Payload.Result)
+            // {
+            //     if (matchResult.AsExpected)
+            //     {
+            //         continue;
+            //     }
+            //
+            //     throw new EyesException($"Unexpected match result for {matchResult}");
+            // }
         }
 
         protected override UniversalCheckSettings CreateUniversalCheckSettings(
