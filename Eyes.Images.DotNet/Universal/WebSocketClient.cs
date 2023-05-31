@@ -29,7 +29,7 @@ namespace Applitools
         private readonly object lock_ = new object();
         private static readonly TimeSpan timeout_ = TimeSpan.FromMinutes(9);
         private static readonly JsonSerializer serializer_ = JsonUtils.CreateSerializer();
-
+        
         private readonly ISpecDriverMessageListener messageListener_;
 
         private Logger Logger { get; } = new Logger();

@@ -45,7 +45,7 @@ namespace Applitools.Playwright
             : base(logHandler, baseAgentId)
         {
             ManagerApplitoolsRefId = GetCoreMakeManager();
-            Refer = ((PlaywrightSpecDriverMessageListener)SpecDriverMessageListener).Refer;
+            Refer = PlaywrightSpecDriverMessageListener.Instance.Value.Refer;
             driver_ = new SpecDriverPlaywright(Refer);
         }
 

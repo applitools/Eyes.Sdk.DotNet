@@ -54,7 +54,7 @@ namespace Applitools.VisualGrid
             }
 
             ManagerApplitoolsRefId = GetCoreMakeManager();
-            Refer = ((PlaywrightSpecDriverMessageListener)SpecDriverMessageListener).Refer;
+            Refer = PlaywrightSpecDriverMessageListener.Instance.Value.Refer;
             driver_ = new SpecDriverPlaywright(Refer);
         }
 
@@ -67,7 +67,7 @@ namespace Applitools.VisualGrid
             {
                 Logger.SetLogHandler(logHandler);
             }
-            Refer = ((PlaywrightSpecDriverMessageListener)SpecDriverMessageListener).Refer;
+            Refer = PlaywrightSpecDriverMessageListener.Instance.Value.Refer;
             driver_ = new SpecDriverPlaywright(Refer);
             ManagerApplitoolsRefId = GetCoreMakeManager();
         }

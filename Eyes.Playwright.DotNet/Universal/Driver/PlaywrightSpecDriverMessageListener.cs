@@ -11,15 +11,19 @@ namespace Applitools.Playwright.Universal.Driver
 {
     public class PlaywrightSpecDriverMessageListener : SpecDriverMessageListener
     {
-        protected internal Refer Refer { get; } = new Refer();
+        internal Refer Refer { get; } = new Refer();
         private readonly SpecDriverPlaywright driver_;
+        public override string Protocol => "Playwright";
 
-        public PlaywrightSpecDriverMessageListener()
+        internal new static Lazy<PlaywrightSpecDriverMessageListener> Instance { get; }
+            = new Lazy<PlaywrightSpecDriverMessageListener>(() => new PlaywrightSpecDriverMessageListener());
+
+        protected PlaywrightSpecDriverMessageListener()
         {
             driver_ = new SpecDriverPlaywright(Refer);
         }
 
-        public PlaywrightSpecDriverMessageListener(Logger logger) : base(logger)
+        protected PlaywrightSpecDriverMessageListener(Logger logger) : base(logger)
         {
             driver_ = new SpecDriverPlaywright(Refer);
         }

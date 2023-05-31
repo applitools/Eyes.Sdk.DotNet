@@ -43,21 +43,19 @@ namespace Applitools
 
         public bool? RemoveDuplicateTests { get; private set; }
 
-        protected EyesRunner(ILogHandler logHandler, string agentId)
+        protected EyesRunner(ILogHandler logHandler, string agentId, ISpecDriverMessageListener listener)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
+                listener.Logger.SetLogHandler(logHandler);
             }
 
             eyesConfigs_ = new List<EyesBaseConfig>();
             ActualAssembly = GetActualAssembly();
-            var sdkEvent = CreateCoreSdk(agentId);
             // ReSharper disable once VirtualMemberCallInConstructor
-            CommandExecutor = CommandExecutor.GetInstance(SpecDriverMessageListener, logHandler, sdkEvent);
+            CommandExecutor = CommandExecutor.GetInstance(CreateCoreMakeSdk(agentId), listener, logHandler);
         }
-
-        protected virtual ISpecDriverMessageListener SpecDriverMessageListener => Singleton<SpecDriverMessageListener>.GetInstance(Logger);
 
         public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
         {

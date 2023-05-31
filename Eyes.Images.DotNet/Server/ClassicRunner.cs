@@ -1,4 +1,5 @@
 ﻿using Applitools.Commands.Requests;
+using Applitools.Universal;
 
 namespace Applitools.Images
 {
@@ -13,7 +14,7 @@ namespace Applitools.Images
         }
 
         internal ClassicRunner(ILogHandler logHandler, IServerConnectorFactory serverConnectorFactory)
-            : base(logHandler, "Eyes.Images.DotNet")
+            : base(logHandler, "Eyes.Images.DotNet", SpecDriverMessageListener.Instance.Value)
         {
             ManagerApplitoolsRefId = GetCoreMakeManager();
         }

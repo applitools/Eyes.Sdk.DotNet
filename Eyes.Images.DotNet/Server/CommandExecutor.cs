@@ -1,4 +1,6 @@
-﻿using Applitools.Commands;
+﻿using System;
+using Applitools.Commands;
+using Applitools.Commands.Requests;
 using Applitools.Universal;
 
 namespace Applitools
@@ -10,10 +12,11 @@ namespace Applitools
 
         private Logger Logger { get; } = new Logger();
 
-        public static CommandExecutor GetInstance(ISpecDriverMessageListener specDriverMessageListener,
+        public static CommandExecutor GetInstance(CoreMakeSdkRequest coreSdkRequest, 
+            ISpecDriverMessageListener specDriverMessageListener,
             ILogHandler logHandler = null, string initMessage = null)
         {
-            return instance_ ?? (instance_ = new CommandExecutor(specDriverMessageListener, logHandler, initMessage));
+            return instance_ ?? (instance_ = new CommandExecutor(coreSdkRequest, specDriverMessageListener, logHandler, initMessage));
         }
 
         public void SendData<TRequest>(TRequest data) where TRequest : CommandBase
@@ -33,20 +36,34 @@ namespace Applitools
             webSocket_.SetLogHandler(logHandler);
         }
 
-        private CommandExecutor(ISpecDriverMessageListener specDriverMessageListener, ILogHandler logHandler = null, string initMessage = null)
+        private CommandExecutor(CoreMakeSdkRequest coreSdkRequest, 
+            ISpecDriverMessageListener specDriverMessageListener, 
+            ILogHandler logHandler = null, string initMessage = null)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
             }
-
+            
             StartServer(specDriverMessageListener);
+            webSocket_.SendData(coreSdkRequest);
 
             if (string.IsNullOrEmpty(initMessage) == false)
             {
                 webSocket_.SendData(initMessage);
             }
-            //webSocket_.MessageReceived+=
+        }
+        
+        private void MakeCoreSdk_(string agentId, string spec)
+        {
+            var result = new CoreMakeSdkRequest{
+                Payload = new MakeCorePayload
+                {
+                    AgentId = $"{agentId}",
+                    Cwd = Environment.CurrentDirectory,
+                    Protocol = spec
+                }
+            };
         }
 
         private void StartServer(ISpecDriverMessageListener specDriverMessageListener)
