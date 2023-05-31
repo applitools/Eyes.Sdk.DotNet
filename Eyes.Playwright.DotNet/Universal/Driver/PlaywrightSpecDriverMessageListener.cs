@@ -30,8 +30,6 @@ namespace Applitools.Playwright.Universal.Driver
 
         public override void HandleMessage(string message)
         {
-            TraceLevel level = TraceLevel.Info;
-
             var response = Serializer.Deserialize<CommandResponse>(message);
             var commandResponse = new ResponseDto { Key = response.Key, Name = response.Name };
             DriverCommandDto payload = null;
@@ -39,8 +37,8 @@ namespace Applitools.Playwright.Universal.Driver
             try
             {
                 payload = ((JToken)response.Payload).ToObject<DriverCommandDto>();
-                Logger.Log(TraceLevel.Info, Stage.SpecDriver,
-                    $"Executing {response.Name} with target: {payload}");
+                // Logger.Log(TraceLevel.Info, Stage.SpecDriver,
+                //     $"Executing {response.Name} with target: {payload}");
                 switch (response.Name)
                 {
                     case "Driver.getDriverInfo":
@@ -121,21 +119,18 @@ namespace Applitools.Playwright.Universal.Driver
 
                 if (commandHandled)
                 {
-                    //HandleError(response.Name, response.Key, payload);
                     HandleError(commandResponse, payload);
                 }
             }
             catch (Exception e)
             {
                 commandResponse.Payload.Error = new ResponsePayloadError { Message = e.Message, Stack = e.StackTrace };
-                level = TraceLevel.Error;
+                Logger.Log(TraceLevel.Error, Stage.SpecDriver,
+                    $"Responding to {response.Name} with {commandResponse.Payload}");
             }
 
             if (commandHandled)
             {
-                Logger.Log(level, Stage.SpecDriver,
-                    $"Responding to {response.Name} with {commandResponse.Payload}");
-
                 string json = Serializer.Serialize(commandResponse);
                 WebSocket.SendData(json);
                 return;
