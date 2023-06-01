@@ -8,7 +8,7 @@ namespace Applitools.Commands.Responses
 
     public class ExtractTextRegionsResponsePayload //: Dictionary<string, Region>
     {
-        public IDictionary<string, ICollection<TextRegion>> Result { get; set; }
+        public IDictionary<string, IList<TextRegion>> Result { get; set; }
     }
 
     public class EyesExtractTextRegionsResponse : CommandBase

@@ -8,10 +8,10 @@ namespace Applitools.Selenium.Fluent
     internal class FloatingRegionBySelector : IGetFloatingRegion, IGetSeleniumRegion, IGetFloatingRegionOffsets
     {
         private readonly SeleniumSelectorTransformer selectorTransformer_;
-        private int maxDownOffset_;
-        private int maxLeftOffset_;
-        private int maxRightOffset_;
-        private int maxUpOffset_;
+        private readonly int maxDownOffset_;
+        private readonly int maxLeftOffset_;
+        private readonly int maxRightOffset_;
+        private readonly int maxUpOffset_;
 
         private readonly By selector_;
 
@@ -35,7 +35,7 @@ namespace Applitools.Selenium.Fluent
         
         public TFloatingRegion ToRegion()
         {
-            return new RegionFloatingRegion
+            return new SelectorFloatingRegion
             {
                 Region = selectorTransformer_.GetRegionSelector(selector_),
                 Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)

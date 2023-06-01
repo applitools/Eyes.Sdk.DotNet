@@ -1,10 +1,11 @@
+using Applitools.Fluent;
 using Applitools.Universal;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
 
 namespace Applitools.Playwright.Universal.Dto
 {
-    public class Selector : Reference
+    public class Selector : Reference, IPlaywrightReference<CodedRegionReference>
     {
         public string Type { get; set; }
         
@@ -31,6 +32,38 @@ namespace Applitools.Playwright.Universal.Dto
         {
             Type = "selector";
             Locator = locator;
+        }
+
+        CodedRegionReference IPlaywrightReference<CodedRegionReference>.ToRegion(Reference root, Refer refer)
+        {
+            return new CodedRegionReference
+            {
+                Region = GetRegionSelector(root, refer),
+                Padding = null,
+                RegionId = ApplitoolsRefId
+            };
+        }
+
+        protected RegionSelector GetRegionSelector(Reference root, Refer refer)
+        {
+            RegionSelector regSel;
+            if (Locator != null)
+            {
+                regSel = new RegionSelector
+                {
+                    Type = "locator",
+                    Selector = refer.Ref(Locator, root)
+                };
+            }
+            else
+            {
+                regSel = new RegionSelector
+                {
+                    Selector = SelectorPath
+                };
+            }
+
+            return regSel;
         }
     }
 }

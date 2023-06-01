@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
 using Applitools.Fluent;
@@ -201,6 +202,77 @@ namespace Applitools.Playwright
             return result;
         }
 
+        public override ICollection<string> ExtractText(ICollection<OcrRegionBase> regions)
+        {
+            return ExtractTextImpl(target: driver_, regions);
+        }
+        
+        public override IDictionary<string, IList<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        {
+            Logger.Log(nameof(ExtractTextRegions));
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
+                return new Dictionary<string, IList<TextRegion>>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            eyesConfig.Open.Properties = properties_;
+            var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRegionsRequestPayload
+                {
+                    Target = driver_,
+                    Config = eyesConfig,
+                    Settings = textRegionSettings
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
+
+            return response.Payload.Result;
+        }
+        
+        protected override TRegion GetOcrRegion(OcrRegionBase ocrRegion)
+        {
+            if (!(ocrRegion is OcrRegion pwOcrRegion))
+            {
+                return null;
+            }
+            
+            var selector = pwOcrRegion.GetSelector();
+            if (selector != null)
+            {
+                return new Selector(selector);
+            }
+
+            var element = pwOcrRegion.GetElement();
+            if (element != null)
+            {
+                return new Element(element)
+                {
+                    ApplitoolsRefId = GetRefer_().Ref(element, driver_)
+                };
+            }
+
+            var reg = pwOcrRegion.GetRegion();
+            if (reg == null)
+            {
+                throw new EyesException("can't handle uninitialized region.");
+            }
+            
+            var region = reg.Value;
+            return new RegionRectangle
+            {
+                X = region.Left,
+                Y = region.Top,
+                Height = region.Height,
+                Width = region.Width
+            };
+        }
+        
         private void CheckImpl_(ICheckSettings checkSettings)
         {
             Logger.Log("CheckImpl");
@@ -232,21 +304,6 @@ namespace Applitools.Playwright
             {
                 throw new EyesException(error.ToString());
             }
-            
-            // if (result?.Payload?.Result == null)
-            // {
-            //     return;
-            // }
-            
-            // foreach (var matchResult in result.Payload.Result)
-            // {
-            //     if (matchResult.AsExpected)
-            //     {
-            //         continue;
-            //     }
-            //
-            //     throw new EyesException($"Unexpected match result for {matchResult}");
-            // }
         }
 
         protected override UniversalCheckSettings CreateUniversalCheckSettings(
@@ -259,6 +316,21 @@ namespace Applitools.Playwright
                 TRegionMapper.ToTRegionDtoFromSRE(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(),
                     driver_.Root);
             return settings;
+        }
+
+        protected override ICollection<CodedRegionReference> CollectRegions(IGetRegions[] regions)
+        {
+            return regions.Select(r => ((IPlaywrightReference<CodedRegionReference>)r).ToRegion(driver_, GetRefer_())).ToArray();
+        }
+
+        protected override ICollection<TFloatingRegion> CollectRegions(IGetFloatingRegion[] regions)
+        {
+            return regions.Select(r => ((IPlaywrightReference<TFloatingRegion>)r).ToRegion(driver_, GetRefer_())).ToArray();
+        }
+
+        protected override ICollection<TAccessibilityRegion> CollectRegions(IGetAccessibilityRegion[] regions)
+        {
+            return regions.Select(r => ((IPlaywrightReference<TAccessibilityRegion>)r).ToRegion(driver_, GetRefer_())).ToArray();
         }
 
         protected override TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)

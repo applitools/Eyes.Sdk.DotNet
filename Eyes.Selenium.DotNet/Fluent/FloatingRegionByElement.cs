@@ -1,19 +1,21 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
+using Applitools.Fluent;
 using Applitools.Utils;
 
 namespace Applitools.Selenium.Fluent
 {
     internal class FloatingRegionByElement : IGetFloatingRegion, IGetSeleniumRegion, IGetFloatingRegionOffsets
     {
-        private int maxDownOffset_;
-        private int maxLeftOffset_;
-        private int maxRightOffset_;
-        private int maxUpOffset_;
+        private readonly int maxDownOffset_;
+        private readonly int maxLeftOffset_;
+        private readonly int maxRightOffset_;
+        private readonly int maxUpOffset_;
 
-        private IWebElement element_;
+        private readonly IWebElement element_;
 
-        public FloatingRegionByElement(IWebElement element, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
+        public FloatingRegionByElement(IWebElement element, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
+            int maxRightOffset)
         {
             element_ = element;
 
@@ -30,12 +32,15 @@ namespace Applitools.Selenium.Fluent
         int IGetFloatingRegionOffsets.MaxRightOffset => maxRightOffset_;
 
         int IGetFloatingRegionOffsets.MaxDownOffset => maxDownOffset_;
-        
+
         public TFloatingRegion ToRegion()
         {
             return new ElementFloatingRegion
             {
-                ElementId = element_.GetElementId()
+                Region = new RegionElement
+                {
+                    ElementId = element_.GetElementId()
+                }
             };
         }
 

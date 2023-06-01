@@ -1,13 +1,15 @@
 using Applitools.Fluent;
 using Applitools.Playwright.Universal.Dto;
+using Applitools.Universal;
 using Microsoft.Playwright;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright.Fluent
 {
     /// <summary>
     /// Used internally to represent a ref of an accessibility element
     /// </summary>
-    public class AccessibilityRegionBySelector : Selector, IGetAccessibilityRegion, IGetAccessibilityRegionType
+    public class AccessibilityRegionBySelector : Selector, IGetAccessibilityRegion, IGetAccessibilityRegionType, IPlaywrightReference<TAccessibilityRegion>
     {
         public AccessibilityRegionType AccessibilityRegionType { get; }
 
@@ -22,15 +24,24 @@ namespace Applitools.Playwright.Fluent
             AccessibilityRegionType = type;
         }
 
-        public new TAccessibilityRegion ToRegion()
+        TAccessibilityRegion IGetAccessibilityRegion.ToRegion()
         {
-            return new ElementAccessibilityRegion
+            return new SelectorAccessibilityRegion()
             {
                 Type = AccessibilityRegionType,
-                Region = new RegionElement
+                Region = new RegionSelector
                 {
                     //ElementId = base.ElementHandle
                 }
+            };
+        }
+
+        TAccessibilityRegion IPlaywrightReference<TAccessibilityRegion>.ToRegion(Reference root, Refer refer)
+        {
+            return new SelectorAccessibilityRegion()
+            {
+                Type = AccessibilityRegionType,
+                Region = GetRegionSelector(root, refer)
             };
         }
     }

@@ -1,11 +1,14 @@
 using System;
 using Applitools.Commands;
+using Applitools.Fluent;
 using Applitools.Playwright.Universal.Dto;
+using Applitools.Universal;
 using Microsoft.Playwright;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright.Fluent
 {
-    public class FloatingRegionElement : Element, IGetFloatingRegionOffsets, IGetFloatingRegion
+    public class FloatingRegionElement : Element, IGetFloatingRegionOffsets, IGetFloatingRegion, IPlaywrightReference<TFloatingRegion>
     {
         public FloatingRegionElement(IElementHandle element, 
             int maxUpOffset, 
@@ -45,6 +48,18 @@ namespace Applitools.Playwright.Fluent
                     Y = (int)Math.Round(bbox.Y),
                     Width = (int)Math.Round(bbox.Width),
                     Height = (int)Math.Round(bbox.Height)
+                },
+                Offset = new Padding(MaxLeftOffset, MaxUpOffset, MaxRightOffset, MaxDownOffset)
+            };
+        }
+        
+        TFloatingRegion IPlaywrightReference<TFloatingRegion>.ToRegion(Reference root, Refer refer)
+        {
+            return new ElementFloatingRegion
+            {
+                Region = new RegionElement
+                {
+                    ElementId = refer.Ref(ElementHandle, root),
                 },
                 Offset = new Padding(MaxLeftOffset, MaxUpOffset, MaxRightOffset, MaxDownOffset)
             };

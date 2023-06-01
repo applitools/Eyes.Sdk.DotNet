@@ -93,37 +93,6 @@ namespace Applitools.Selenium
             return response.Payload.Result.Url;
         }
 
-        public override TestResults Abort()
-        {
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            Logger.Verbose("enter. Abort");
-
-            if (IsOpen == false)
-            {
-                return new TestResults
-                {
-                    Runner = Runner
-                };
-            }
-
-            var request = CreateEyesAbortRequest();
-
-            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
-
-            if (payload.Error != null)
-            {
-                IsOpen = false;
-                throw new EyesException(payload.Error.ToString());
-            }
-
-            return GetResults(false);
-        }
-
         #region selenium specific properties
 
         public ICutProvider CutProvider { get; set; }
@@ -470,14 +439,14 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-        public override IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        public override IDictionary<string, IList<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
             Logger.Log(nameof(ExtractTextRegions));
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, ICollection<TextRegion>>();
+                return new Dictionary<string, IList<TextRegion>>();
             }
 
             var eyesConfig = ToConfig(Config);
@@ -581,37 +550,11 @@ namespace Applitools.Selenium
             IsOpen = false;
             return testResults.First();
         }
-
-        /// <summary>
-        /// Ends the test and returns its results.
-        /// </summary>
-        public override TestResults Close(bool throwEx = true)
-        {
-            Logger.Log("Close");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
-
-            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
-
-            var error = response.Payload.Error;
-            if (error != null)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            return GetResults(throwEx);
-        }
-
+        
         /// <summary>
         /// Ends the test asynchronously.
         /// </summary>
+        [Obsolete]
         public virtual void CloseAsync()
         {
             Logger.Log("CloseAsync");

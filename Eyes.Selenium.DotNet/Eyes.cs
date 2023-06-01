@@ -429,14 +429,14 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-        public override IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        public override IDictionary<string, IList<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
             Logger.Log(nameof(ExtractTextRegions));
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, ICollection<TextRegion>>();
+                return new Dictionary<string, IList<TextRegion>>();
             }
 
             var eyesConfig = ToConfig(Config);
@@ -504,75 +504,10 @@ namespace Applitools.Selenium
             return response.Payload.Result;
         }
 
-
-        public override TestResults GetResults(bool throwEx = true)
-        {
-            Logger.Log("GetResults");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var request = CreateEyesGetResultsRequest(throwEx, Runner.RemoveDuplicateTests);
-
-            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
-
-            var error = response.Payload.Error;
-            if (error != null)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    IsOpen = false;
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            IsOpen = false;
-            return testResults.First();
-        }
-
-
-        /// <summary>
-        /// Ends the test and returns its results.
-        /// </summary>
-        public override TestResults Close(bool throwEx = true)
-        {
-            Logger.Log("Close");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
-
-            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
-
-            var error = response.Payload.Error;
-            if (error != null)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            return GetResults(throwEx);
-        }
-
         /// <summary>
         /// Ends the test asynchronously.
         /// </summary>
+        [Obsolete]
         public virtual void CloseAsync()
         {
             Logger.Log("CloseAsync");
@@ -929,7 +864,7 @@ namespace Applitools.Selenium
             return webDriver.Capabilities.GetPrivateFieldValue<IDictionary<string, object>>("capabilities");
         }
 
-        private ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegionBase> regions)
+        protected override ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegionBase> regions)
         {
 	        var extractTextSettings = new List<ExtractTextSettings>();
 	        foreach (var region in regions)

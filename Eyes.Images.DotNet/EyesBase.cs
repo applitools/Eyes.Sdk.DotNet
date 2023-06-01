@@ -137,6 +137,8 @@ namespace Applitools
             var settings = mapper.Map<CloseSettings>(configuration);
             settings.ThrowErr = throwEx;
             settings.RemoveDuplicateTests = removeDuplicateTests;
+            settings.UpdateBaselineIfNew = configuration.SaveNewTests;
+            settings.UpdateBaselineIfDifferent = configuration.SaveFailedTests;
 
             return settings;
         }
@@ -188,18 +190,33 @@ namespace Applitools
                 UseDom = checkSettingsInternal.GetUseDom(),
                 EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
                 //Frames = GetFrames(checkSettingsInternal),
-                IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
-                StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
-                LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
-                ContentRegions = checkSettingsInternal.GetContentRegions().Select(i => i.ToRegion()).ToArray(),
-                FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
-                AccessibilityRegions = checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
+                IgnoreRegions = CollectRegions(checkSettingsInternal.GetIgnoreRegions()),
+                StrictRegions = CollectRegions(checkSettingsInternal.GetStrictRegions()),
+                LayoutRegions = CollectRegions(checkSettingsInternal.GetLayoutRegions()),
+                ContentRegions = CollectRegions(checkSettingsInternal.GetContentRegions()),
+                FloatingRegions = CollectRegions(checkSettingsInternal.GetFloatingRegions()),
+                AccessibilityRegions = CollectRegions(checkSettingsInternal.GetAccessibilityRegions()),
                 LazyLoad = checkSettingsInternal.GetLazyLoad()
             };
 
             return settings;
         }
         
+        protected virtual ICollection<CodedRegionReference> CollectRegions(IGetRegions[] regions)
+        {
+            return regions.Select(r => r.ToRegion()).ToArray();
+        }
+
+        protected virtual ICollection<TFloatingRegion> CollectRegions(IGetFloatingRegion[] regions)
+        {
+            return regions.Select(r => r.ToRegion()).ToArray();
+        }
+                
+        protected virtual ICollection<TAccessibilityRegion> CollectRegions(IGetAccessibilityRegion[] regions)
+        {
+            return regions.Select(r => r.ToRegion()).ToArray();
+        }
+
         private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
         {
             if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
@@ -286,46 +303,50 @@ namespace Applitools
                 return new List<string>();
             }
 
-            var firstRegion = regions.FirstOrDefault() as OcrRegion;
-            if (firstRegion == null)
+            if (!(regions.FirstOrDefault() is OcrRegion firstRegion))
             {
                 throw new Exception("At least one region is required");
             }
-
-            var eyesConfig = ToConfig(Config);
-            var eyesExtractTextRequest = new EyesExtractTextRequest
+            
+            return ExtractTextImpl(new ImageTarget
             {
-                Key = Guid.NewGuid().ToString(),
-                Payload = new ExtractTextRequestPayload
-                {
-                    Target = new ImageTarget
-                    {
-                        Image = firstRegion.GetImage()
-                    },
-                    Config = eyesConfig,
-                    Settings = regions.Select(r => new ExtractTextSettings
-                    {
-                        Hint = r.GetHint(),
-                        MinMatch = r.GetMinMatch(),
-                        Language = r.GetLanguage(),
-                        Region = GetRegion(r)
-                    }).ToList()
-                }
-            };
-
-            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
-
-            return response.Payload.Result;
+                Image = firstRegion.GetImage()
+            }, regions);
         }
 
-        public virtual IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
+        protected virtual ICollection<ExtractTextSettings> ToExtractTextSettings(ICollection<OcrRegionBase> regions)
+        {
+            IList<ExtractTextSettings> result = new List<ExtractTextSettings>(regions.Count);
+            foreach (var regionBase in regions)
+            {
+                var region = GetOcrRegion(regionBase);
+                if (region == null)
+                {
+                    continue;
+                }
+
+                ExtractTextSettings settings = new ExtractTextSettings
+                {
+                    Hint = regionBase.GetHint(),
+                    MinMatch = regionBase.GetMinMatch(),
+                    Language = regionBase.GetLanguage(),
+                    Region = region
+                };
+                
+                result.Add(settings);
+            }
+
+            return result;
+        }
+
+        public virtual IDictionary<string, IList<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
         {
             Logger.Log(nameof(ExtractTextRegions));
 
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, ICollection<TextRegion>>();
+                return new Dictionary<string, IList<TextRegion>>();
             }
 
             var eyesConfig = ToConfig(Config);
@@ -383,11 +404,16 @@ namespace Applitools
             }
 
             IsOpen = false;
-            return testResults.First();
+            return testResults.Any() ? testResults.First() : null;
         }
 
         public virtual TestResults Abort()
         {
+            if (!IsOpen)
+            {
+                return null;
+            }
+
             if (IsDisabled)
             {
                 Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
@@ -395,14 +421,6 @@ namespace Applitools
             }
 
             Logger.Verbose("enter. Abort");
-
-            if (IsOpen == false)
-            {
-                return new TestResults
-                {
-                    Runner = Runner
-                };
-            }
 
             var request = CreateEyesAbortRequest();
 
@@ -414,7 +432,7 @@ namespace Applitools
                 throw new EyesException(payload.Error.ToString());
             }
 
-            return GetResults();
+            return GetResults(false);
         }
 
         public virtual TestResults Close(bool throwEx = true)
@@ -470,17 +488,19 @@ namespace Applitools
 
         private EyesAbortRequest CreateEyesAbortRequest()
         {
+            CloseSettings settings = ToCloseSettings(Config, throwEx:false, removeDuplicateTests:null);
             var request = new EyesAbortRequest
             {
                 Payload = new AbortPayload
                 {
-                    Eyes = eyes_
+                    Eyes = eyes_,
+                    Settings = settings
                 }
             };
             return request;
         }
 
-        private RegionRectangle GetRegion(OcrRegionBase ocrRegion)
+        protected virtual TRegion GetOcrRegion(OcrRegionBase ocrRegion)
         {
             var region = ocrRegion.GetRegion();
             if (region == null)
@@ -522,6 +542,30 @@ namespace Applitools
             }
 
             properties_.Clear();
+        }
+
+        protected ICollection<string> ExtractTextImpl(ITarget target, ICollection<OcrRegionBase> regions)
+        {
+            if (IsDisabled)
+            {
+                return new List<string>();
+            }
+
+            var eyesConfig = ToConfig(Config);
+            var eyesExtractTextRequest = new EyesExtractTextRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new ExtractTextRequestPayload
+                {
+                    Target = target,
+                    Config = eyesConfig,
+                    Settings = ToExtractTextSettings(regions)
+                }
+            };
+
+            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
+
+            return response.Payload.Result;
         }
     }
 }

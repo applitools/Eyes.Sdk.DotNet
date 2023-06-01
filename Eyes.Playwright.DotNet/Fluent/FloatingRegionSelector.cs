@@ -1,19 +1,23 @@
+using Applitools.Fluent;
 using Applitools.Playwright.Universal.Dto;
+using Applitools.Universal;
 using Microsoft.Playwright;
+using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright.Fluent
 {
     /// <summary>
     /// Used internally to represent a ref of an accessibility element
     /// </summary>
-    public class FloatingRegionSelector : Selector, IGetFloatingRegionOffsets, IGetFloatingRegion
+    public class FloatingRegionSelector : Selector, IGetFloatingRegionOffsets, IGetFloatingRegion,
+        IPlaywrightReference<TFloatingRegion>
     {
         public int MaxUpOffset { get; }
         public int MaxDownOffset { get; }
         public int MaxLeftOffset { get; }
         public int MaxRightOffset { get; }
 
-        public FloatingRegionSelector(string selector, 
+        public FloatingRegionSelector(string selector,
             int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
             : base(selector)
         {
@@ -33,7 +37,7 @@ namespace Applitools.Playwright.Fluent
         }
 
         public FloatingRegionSelector(ILocator locator,
-            int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset) 
+            int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
             : base(locator)
         {
             MaxUpOffset = maxUpOffset;
@@ -51,9 +55,18 @@ namespace Applitools.Playwright.Fluent
             MaxRightOffset = maxOffset;
         }
 
-        public new TFloatingRegion ToRegion()
+        TFloatingRegion IGetFloatingRegion.ToRegion()
         {
             throw new System.NotImplementedException();
+        }
+
+        TFloatingRegion IPlaywrightReference<TFloatingRegion>.ToRegion(Reference root, Refer refer)
+        {
+            return new SelectorFloatingRegion
+            {
+                Region = GetRegionSelector(root, refer),
+                Offset = new Padding(MaxLeftOffset, MaxUpOffset, MaxRightOffset, MaxDownOffset)
+            };
         }
     }
 }

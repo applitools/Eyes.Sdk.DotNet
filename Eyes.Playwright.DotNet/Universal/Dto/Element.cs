@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Applitools.Fluent;
 using Applitools.Universal;
 using Microsoft.Playwright;
@@ -6,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace Applitools.Playwright.Universal.Dto
 {
-    public class Element : Reference
+    public class Element : Reference, IPlaywrightReference<CodedRegionReference>
     {
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public IElementHandle ElementHandle { get; set; }
 
         [JsonProperty("type")]
@@ -30,13 +29,14 @@ namespace Applitools.Playwright.Universal.Dto
             ElementHandle = element;
         }
         
-        public override CodedRegionReference ToRegion()
+        CodedRegionReference IPlaywrightReference<CodedRegionReference>.ToRegion(Reference root, Refer refer)
         {
+            ApplitoolsRefId = refer.Ref(ElementHandle, root);
             return new CodedRegionReference
             {
-                Region = new RegionElement
+                Region = new Element
                 {
-                    ElementId = ApplitoolsRefId
+                    ApplitoolsRefId = ApplitoolsRefId
                 },
                 Padding = Padding,
                 RegionId = ApplitoolsRefId

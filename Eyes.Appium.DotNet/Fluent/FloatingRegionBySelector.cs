@@ -36,7 +36,7 @@ namespace Applitools.Appium
         
         public TFloatingRegion ToRegion()
         {
-            return new RegionFloatingRegion
+            return new SelectorFloatingRegion
             {
                 Region = selectorTransformer_.GetRegionSelector(selector_),
                 Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)
