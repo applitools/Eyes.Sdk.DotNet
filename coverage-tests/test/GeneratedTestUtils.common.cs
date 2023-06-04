@@ -54,6 +54,15 @@ namespace Applitools.Generated.Utils
         {
             CollectionAssert.AreEquivalent(expected, actual, type);
         }
+        
+        public static void compareProcedure(PropertyData actual, Dictionary<string, string> expected)
+        {
+            CollectionAssert.AreEquivalent(expected, actual.ToDictionary());
+        }
+        public static void compareProcedure(Dictionary<string, IList<Region>> actual, Dictionary<string, IList<Region>> expected)
+        {
+            CollectionAssert.AreEquivalent(expected, actual);
+        }
 
         public static void compareProcedure(AccessibilityRegionByRectangle actualRegion, AccessibilityRegionByRectangle expectedRegion, string type = "")
         {

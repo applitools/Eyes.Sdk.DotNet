@@ -299,8 +299,7 @@ namespace Applitools.Playwright.Fluent
 
         private void Ignore_(Region region)
         {
-            SimpleRegionByRectangle simpleRegionByRectangle = new SimpleRegionByRectangle(region.Rectangle);
-            ignoreRegions_.Add(simpleRegionByRectangle);
+            ignoreRegions_.Add(new Applitools.Playwright.Universal.Dto.SimpleRegionByRectangle(region.Rectangle));
         }
 
         /**
@@ -783,11 +782,10 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /** internal */
         private void Floating_(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset,
             int maxRightOffset)
         {
-            floatingRegions_.Add(new FloatingRegionByRectangle(region.Rectangle,
+            floatingRegions_.Add(new Applitools.Playwright.Universal.Dto.FloatingRegionByRectangle(region.Rectangle,
                 maxUpOffset,
                 maxDownOffset,
                 maxLeftOffset,

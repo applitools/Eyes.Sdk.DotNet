@@ -1,35 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using Applitools.Commands;
-using Applitools.Fluent;
 
 namespace Applitools
 {
     public class FloatingRegionByRectangle : IGetFloatingRegion
     {
-        private readonly int _maxDownOffset;
-        private readonly int _maxLeftOffset;
-        private readonly int _maxRightOffset;
-        private readonly int _maxUpOffset;
+        private readonly int maxDownOffset_;
+        private readonly int maxLeftOffset_;
+        private readonly int maxRightOffset_;
+        private readonly int maxUpOffset_;
 
         private Rectangle rect_;
 
         public FloatingRegionByRectangle(Rectangle rect, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
         {
             rect_ = rect;
-            _maxUpOffset = maxUpOffset;
-            _maxDownOffset = maxDownOffset;
-            _maxLeftOffset = maxLeftOffset;
-            _maxRightOffset = maxRightOffset;
+            maxUpOffset_ = maxUpOffset;
+            maxDownOffset_ = maxDownOffset;
+            maxLeftOffset_ = maxLeftOffset;
+            maxRightOffset_ = maxRightOffset;
         }
 
         public FloatingRegionByRectangle(Point location, Size size, int maxUpOffset = 0, int maxDownOffset = 0, int maxLeftOffset = 0, int maxRightOffset = 0)
         {
             rect_ = new Rectangle(location, size);
-            _maxDownOffset = maxDownOffset;
-            _maxUpOffset = maxUpOffset;
-            _maxLeftOffset = maxLeftOffset;
-            _maxRightOffset = maxRightOffset;
+            maxDownOffset_ = maxDownOffset;
+            maxUpOffset_ = maxUpOffset;
+            maxLeftOffset_ = maxLeftOffset;
+            maxRightOffset_ = maxRightOffset;
         }
 
         public IList<FloatingMatchSettings> GetRegions(IEyesBase eyesBase, IEyesScreenshot screenshot)
@@ -40,10 +39,10 @@ namespace Applitools
                     Top = rect_.Top,
                     Width = rect_.Width,
                     Height = rect_.Height,
-                    MaxLeftOffset = _maxLeftOffset,
-                    MaxUpOffset = _maxUpOffset,
-                    MaxRightOffset= _maxRightOffset,
-                    MaxDownOffset = _maxDownOffset
+                    MaxLeftOffset = maxLeftOffset_,
+                    MaxUpOffset = maxUpOffset_,
+                    MaxRightOffset= maxRightOffset_,
+                    MaxDownOffset = maxDownOffset_
                 }
             };
         }
@@ -59,7 +58,7 @@ namespace Applitools
                     Width = rect_.Width,
                     Height = rect_.Height
                 },
-                Offset = new Padding(_maxLeftOffset, _maxUpOffset, _maxRightOffset, _maxDownOffset)
+                Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)
             };
         }
     }

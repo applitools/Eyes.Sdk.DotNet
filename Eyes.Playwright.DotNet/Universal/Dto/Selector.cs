@@ -39,7 +39,7 @@ namespace Applitools.Playwright.Universal.Dto
             return new CodedRegionReference
             {
                 Region = GetRegionSelector(root, refer),
-                Padding = null,
+                Padding = Padding,
                 RegionId = ApplitoolsRefId
             };
         }

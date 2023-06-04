@@ -98,7 +98,12 @@ namespace Applitools.Playwright
             {
                 return page;
             }
-
+            
+            if (string.IsNullOrEmpty(ApiKey))
+            {
+                ApiKey = API_KEY;
+            }
+            
             driver_ = new Driver(page);
             Refer refer = GetRefer_();
             driver_.ApplitoolsRefId = refer.Ref(page, driver_.Root);
@@ -180,7 +185,7 @@ namespace Applitools.Playwright
         {
             var result = base.Close(throwEx);
 
-            if (!IsOpen)
+            if (!IsOpen && driver_ != null)
             {
                 GetRefer_().Destroy(driver_.Root);
                 driver_ = null;
@@ -234,7 +239,12 @@ namespace Applitools.Playwright
 
             return response.Payload.Result;
         }
-        
+
+        public override IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
+        {
+            return LocateImpl(driver_, settings);
+        }
+
         protected override TRegion GetOcrRegion(OcrRegionBase ocrRegion)
         {
             if (!(ocrRegion is OcrRegion pwOcrRegion))

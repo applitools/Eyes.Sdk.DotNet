@@ -261,7 +261,15 @@ namespace Applitools
             return region;
         }
 
-        public IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
+        public virtual IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
+        {
+            return LocateImpl(new ImageTarget
+            {
+                Image = settings.GetImage()
+            }, settings);
+        }
+
+        protected IDictionary<string, IList<Region>> LocateImpl(ITarget target, VisualLocatorSettings settings)
         {
             Logger.Log("Locate");
 
@@ -278,10 +286,7 @@ namespace Applitools
                 Payload = new EyesLocateRequestPayload
                 {
                     Config = eyesConfig,
-                    Target = new ImageTarget
-                    {
-                        Image = settings.GetImage()
-                    },
+                    Target = target,
                     Settings = ToLocateSettings(Config, settings.GetNames())
                 }
             };
