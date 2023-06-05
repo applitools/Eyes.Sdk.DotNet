@@ -375,6 +375,7 @@ namespace Eyes.Images.E2ETests
         {
             var image = EXTRACT_TEXT_IMAGE;
             eyes.Open("Eyes Images SDK", "Locate", new RectangleSize(image.Width, image.Height));
+            eyes.Check(Target.Image(image));
 
             var result = eyes.Locate(new VisualLocatorSettings().Name("the").Image(image));
             var regions = result["the"];
