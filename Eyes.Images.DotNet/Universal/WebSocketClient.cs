@@ -179,7 +179,7 @@ namespace Applitools
 
             var text = Encoding.UTF8.GetString(allBytes.ToArray(), 0, allBytes.Count);
 
-            Logger.Log($"In message: {Environment.NewLine} {text}");
+            //Logger.Log($"In message: {Environment.NewLine} {text}");
             return text;
         }
 
@@ -192,7 +192,7 @@ namespace Applitools
                 webSocket_.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken).GetAwaiter()
                     .GetResult();
 
-                Logger.Log($"Message sent to Server: {Environment.NewLine} {data}");
+                //Logger.Log($"Message sent to Server: {Environment.NewLine} {data}");
             }
         }
     }
