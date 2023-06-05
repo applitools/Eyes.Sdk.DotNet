@@ -25,7 +25,7 @@ namespace Applitools
         private readonly ClientWebSocket webSocket_;
         private CancellationTokenSource cancellationTokenSource_;
         private readonly ConcurrentDictionary<string, WsMessage> messages_;
-        private readonly HashSet<string> requestKeys_ = new HashSet<string>();
+        private readonly ConcurrentDictionary<string, object> requestKeys_ = new ConcurrentDictionary<string, object>();
         private readonly object lock_ = new object();
         private static readonly TimeSpan timeout_ = TimeSpan.FromMinutes(9);
         private static readonly JsonSerializer serializer_ = JsonUtils.CreateSerializer();
@@ -96,7 +96,7 @@ namespace Applitools
         public void SendData<TRequest>(TRequest data)
             where TRequest : CommandBase
         {
-            requestKeys_.Add(data.Key);
+            requestKeys_.TryAdd(data.Key, null);
             var json = data.ToJson();
 
             SendData(json);
@@ -127,7 +127,7 @@ namespace Applitools
                 if (messages_.TryGetValue(key, out WsMessage message) && message.IsHandled)
                 {
                     messages_.TryRemove(key, out _);
-                    requestKeys_.Remove(key);
+                    requestKeys_.TryRemove(key, out _);
                     return message.Message;
                 }
 
@@ -148,7 +148,7 @@ namespace Applitools
                 var response = serializer_.Deserialize<ResponseMessage>(textMessage);
                 if (response.Key != null)
                 {
-                    if (requestKeys_.Contains(response.Key) &&
+                    if (requestKeys_.ContainsKey(response.Key) &&
                         !messages_.TryAdd(response.Key, new WsMessage(textMessage)))
                     {
                         throw new Exception($"Cannot add key {response.Key} with message {textMessage}");
