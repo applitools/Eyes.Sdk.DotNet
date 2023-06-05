@@ -9,6 +9,11 @@ namespace Applitools.Selenium
         private readonly IWebElement element_;
         private readonly By selector_;
 
+        public OcrRegion(Region? region)
+        {
+            Region(region);
+        }
+        
         public OcrRegion(By selector)
         {
             selector_ = selector;

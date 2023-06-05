@@ -1,4 +1,4 @@
-using Applitools;
+using Applitools.Selenium;
 using Applitools.VisualGrid;
 using NUnit.Framework;
 

@@ -30,7 +30,12 @@ namespace Applitools.Selenium
 
         #region ctors
 
-        public Eyes(ILogHandler logHandler = null)
+        public Eyes()
+            : this(new ClassicRunner(), logHandler: null)
+        {
+        }
+
+        public Eyes(ILogHandler logHandler)
             : this(new ClassicRunner(), logHandler: logHandler)
         {
         }

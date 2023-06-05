@@ -13,16 +13,16 @@ namespace Eyes.Selenium.E2ETests
 {
     public class MultithreadsTests
     {
-        private EyesRunner runner;
+        private SeleniumEyesRunner runner_;
 
-        public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        public static readonly string DriverPath = Environment.GetEnvironmentVariable("DRIVER_PATH");
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Multithreads Test");
 
         [SetUp]
         public void Setup()
         {
           //  Trace.Listeners.Add(new ConsoleTraceListener());
-            runner = new ClassicRunner();
+            runner_ = new ClassicRunner();
         }
 
         [Test]
@@ -42,9 +42,9 @@ namespace Eyes.Selenium.E2ETests
 
         public void SimpleTest(int i)
         {
-            var eyes = new Applitools.Selenium.Eyes(runner);
+            var eyes = new Applitools.Selenium.Eyes(runner_);
             // Use Chrome browser
-            var CI = Environment.GetEnvironmentVariable("CI");
+            var ci = Environment.GetEnvironmentVariable("CI");
             var options = new ChromeOptions();
             //  if (CI != null)
             {
@@ -53,7 +53,7 @@ namespace Eyes.Selenium.E2ETests
             }
             //Initialize the Runner for your test with concurrency of 5.
             // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
-            IWebDriver driver = new ChromeDriver(DRIVER_PATH, options);
+            IWebDriver driver = new ChromeDriver(DriverPath, options);
             try
             {
                 eyes.Batch = BatchInfo;
