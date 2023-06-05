@@ -139,6 +139,17 @@ jobs:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - dotnet test ./Tests/Eyes.Appium.E2ETests/Eyes.Appium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
 
+    - name: E2E Tests Playwright
+      mono: none
+      dotnet: 6.0.408
+      addons:
+        chrome: stable
+        firefox: latest
+      script:
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - dotnet test ./Tests/Eyes.Appium.E2ETests/Eyes.Appium.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
+    
     - name: E2E Tests Images
       mono: none
       dotnet: 3.1.407
