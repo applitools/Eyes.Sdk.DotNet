@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
 RESULT=0
-MESSAGE=""
 
 echo "generating tests"
 pushd coverage-tests
 # export UFG_ON_EG=true
 npm run generate:playwright
 if [ $? -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'npm run dotnet:generate:playwright have failed'
-    echo $MESSAGE
+    RESULT=1
+    echo "npm run dotnet:generate:playwright have failed"
+    exit 1
 fi
 
 # start eg client and save process id
@@ -29,9 +28,8 @@ if [ $result -ne 0 ]; then
     echo "Not all tests passed... Retrying."
     npm run run:parallel:playwright
 	if [ $? -ne 0 ]; then
-      ((RESULT+=1))
-      MESSAGE+=$'npm run dotnet:run:parallel:playwright have failed'
-      echo $MESSAGE
+      RESULT=1
+      echo "npm run dotnet:run:parallel:playwright have failed"
     fi
 fi
 
@@ -39,24 +37,7 @@ fi
 echo $EG_PID
 kill $EG_PID
 
-echo "merge reports"
-npm run report:merge
-if [ $? -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'npm run dotnet:report:merge have failed'
-    echo $MESSAGE
-fi
-
-echo "tests reporting"
-npm run report
-if [ $? -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'npm run dotnet:report have failed'
-    echo $MESSAGE
-fi
-
 echo "RESULT = ${RESULT}"
-echo $MESSAGE
 if [ $RESULT -eq 0 ]; then
     exit 0
 else
