@@ -325,11 +325,6 @@ namespace Applitools
             foreach (var regionBase in regions)
             {
                 var region = GetOcrRegion(regionBase);
-                if (region == null)
-                {
-                    continue;
-                }
-
                 ExtractTextSettings settings = new ExtractTextSettings
                 {
                     Hint = regionBase.GetHint(),
