@@ -1029,6 +1029,7 @@ namespace Applitools.Playwright.Fluent
             clone.frameChain_.AddRange(frameChain_);
             clone.isDefaultLayoutBreakpointsSet_ = isDefaultLayoutBreakpointsSet_;
             clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
+            clone.pageId_ = pageId_;
             return clone;
         }
         
@@ -1117,6 +1118,11 @@ namespace Applitools.Playwright.Fluent
         Reference IPlaywrightCheckTarget.GetTargetElement()
         {
             return targetElement_;
+        }
+
+        string IPlaywrightCheckTarget.GetPageId()
+        {
+            return pageId_;
         }
     }
 }

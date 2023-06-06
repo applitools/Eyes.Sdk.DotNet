@@ -33,7 +33,6 @@ namespace Applitools
         public TestResults Result { get; set; }
         public string UserTestId { get; set; }
         public Error Error { get; set; }
-        [JsonProperty]
         public Renderer Renderer { get; set; }
     }
 

@@ -146,7 +146,6 @@ namespace Applitools.Playwright.Universal.Driver
                 case "Core.deleteTest":
                 case "Core.closeBatch":
                 case "EyesManager.openEyes":
-                case "Eyes.check":
                 case "Eyes.close":
                 case "Eyes.getResults":
                 case "Eyes.abort":
@@ -155,7 +154,10 @@ namespace Applitools.Playwright.Universal.Driver
                     HandleResponse_(message);
                     HandleError(response.Name, response.Key, payload);
                     return;
-
+                case "Eyes.check":
+                    HandleResponse_(message);
+                    HandleError(response.Name, response.Key, payload);
+                    return;
                 case "Logger.log":
                     try
                     {

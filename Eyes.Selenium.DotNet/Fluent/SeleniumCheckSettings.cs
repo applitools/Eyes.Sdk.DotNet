@@ -847,21 +847,5 @@ namespace Applitools.Selenium.Fluent
             clone.useCookies_ = useCookies_;
             return clone;
         }
-
-        public override Dictionary<string, object> ToSerializableDictionary()
-        {
-            Dictionary<string, object> dict = base.ToSerializableDictionary();
-            dict.Add("TargetElement", targetElement_?.ToString());
-            dict.Add("TargetSelector", targetSelector_?.ToString());
-            dict.Add("FrameChain", StringUtils.Concat(frameChain_, " --> "));
-            dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
-            dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
-            dict.Add("VGTargetSelector", vgTargetSelector_);
-            dict.Add("LayoutBreakpointsEnabled", layoutBreakpointsEnabled_);
-            dict.Add("LayoutBreakpoints", layoutBreakpoints_);
-            dict.Add("UseCookies", useCookies_);
-
-            return dict;
-        }
     }
 }
