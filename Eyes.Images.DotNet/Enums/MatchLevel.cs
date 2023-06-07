@@ -31,7 +31,13 @@ namespace Applitools
         /// Images have the same content.
         /// </summary>
         [Obsolete("Use IgnoreColors")]
-        Content,
+        Content = 4,
+
+        /// <summary>
+        /// Images have the same  outline.
+        /// Formerly known as Content.
+        /// </summary>
+        IgnoreColors = 4,
 
         /// <summary>
         /// Images are nearly identical.
@@ -41,12 +47,6 @@ namespace Applitools
         /// <summary>
         /// Images are identical.
         /// </summary>
-        Exact,
-
-        /// <summary>
-        /// Images have the same  outline.
-        /// Formerly known as Content.
-        /// </summary>
-        IgnoreColors
+        Exact
     }
 }

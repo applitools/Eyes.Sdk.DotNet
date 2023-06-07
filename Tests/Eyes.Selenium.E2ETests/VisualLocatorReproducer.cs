@@ -17,7 +17,7 @@ namespace Eyes.Selenium.E2ETests
     {
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
         // Test control inputs to read once and share for all tests
-        private static string? ApplitoolsApiKey;
+        private static string ApplitoolsApiKey;
         private static bool Headless;
 
         // Applitools objects to share for all tests

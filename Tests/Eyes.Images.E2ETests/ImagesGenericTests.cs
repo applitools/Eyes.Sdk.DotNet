@@ -153,6 +153,19 @@ namespace Eyes.Images.E2ETests
 
             Assert.AreEqual(MatchLevel.Content, matchLevel);
         }
+        
+        [Test]
+        public void MatchLevelIgnoreColorsFluentTest()
+        {
+            eyes.Open(GetApplicationName(), "TestMatchLevelIgnoreColorsFluent", new RectangleSize(TEST_IMAGE.Width, TEST_IMAGE.Height));
+            eyes.Check(Target.Image(TEST_IMAGE).MatchLevel(MatchLevel.IgnoreColors));
+
+            TestResults result = eyes.Close(false);
+            var info = TestUtils.GetSessionResults(eyes.ApiKey, result);
+            MatchLevel matchLevel = info.ActualAppOutput[0].ImageMatchSettings.MatchLevel;
+
+            Assert.AreEqual(MatchLevel.IgnoreColors, matchLevel);
+        }
 
         [Test]
         public void MatchLevelStrictFluentTest()
@@ -209,7 +222,22 @@ namespace Eyes.Images.E2ETests
 
             Assert.AreEqual(MatchLevel.Content, matchLevel);
         }
+        
+        [Test]
+        public void MatchLevelIgnoreColorsNonFluentTest()
+        {
+            eyes.SetConfiguration(eyes.GetConfiguration().SetMatchLevel(MatchLevel.IgnoreColors));
 
+            eyes.Open(GetApplicationName(), "TestMatchLevelIgnoreColorsNonFluent", new RectangleSize(TEST_IMAGE.Width, TEST_IMAGE.Height));
+            eyes.Check(Target.Image(TEST_IMAGE));
+
+            TestResults result = eyes.Close(false);
+            var info = TestUtils.GetSessionResults(eyes.ApiKey, result);
+            MatchLevel matchLevel = info.ActualAppOutput[0].ImageMatchSettings.MatchLevel;
+
+            Assert.AreEqual(MatchLevel.IgnoreColors, matchLevel);
+        }
+        
         [Test]
         public void MatchLevelStrictNonFluentTest()
         {

@@ -196,12 +196,28 @@ namespace Applitools
                 ContentRegions = CollectRegions(checkSettingsInternal.GetContentRegions()),
                 FloatingRegions = CollectRegions(checkSettingsInternal.GetFloatingRegions()),
                 AccessibilityRegions = CollectRegions(checkSettingsInternal.GetAccessibilityRegions()),
-                LazyLoad = checkSettingsInternal.GetLazyLoad()
+                LazyLoad = checkSettingsInternal.GetLazyLoad(),
+                UfgOptions = GetUniversalUfgOptions(checkSettingsInternal)
             };
 
             return settings;
         }
-        
+
+        private IDictionary<string,object> GetUniversalUfgOptions(ICheckSettingsInternal checkSettingsInternal)
+        {
+            var vgOptions = checkSettingsInternal.GetVisualGridOptions();
+            if (vgOptions == null)
+            {
+                return null;
+            }
+            var ufgOptions = new Dictionary<string, object>();
+            foreach (var option in vgOptions)
+            {
+                ufgOptions[option.Key] = option.Value;
+            }
+            return ufgOptions;
+        }
+
         protected virtual ICollection<CodedRegionReference> CollectRegions(IGetRegions[] regions)
         {
             return regions.Select(r => r.ToRegion()).ToArray();

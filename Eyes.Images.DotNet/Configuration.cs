@@ -44,7 +44,7 @@ namespace Applitools
             ViewportSize = configuration.ViewportSize;
             AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
             IsForceFullPageScreenshot = configuration.IsForceFullPageScreenshot;
-            WaitBeforeScreenshots = configuration.WaitBeforeScreenshots;
+            WaitBeforeCapture = configuration.WaitBeforeScreenshots;
             StitchMode = configuration.StitchMode;
             HideCaret = configuration.HideCaret;
             UseCookies = configuration.UseCookies;
@@ -67,7 +67,14 @@ namespace Applitools
 
         public bool? IsForceFullPageScreenshot { get; set; }
 
-        public int? WaitBeforeScreenshots { get; set; }
+        public int? WaitBeforeCapture { get; set; }
+        
+        [Obsolete("Use WaitBeforeCapture")]
+        public int? WaitBeforeScreenshots
+        {
+            get => WaitBeforeCapture;
+            set => WaitBeforeCapture = value;
+        }
 
         public StitchModes? StitchMode { get; set; }
 
@@ -440,9 +447,16 @@ namespace Applitools
             return this;
         }
 
+        [Obsolete("Use SetWaitBeforeCapture(int? value)")]
         public IConfiguration SetWaitBeforeScreenshots(int? value)
         {
-            WaitBeforeScreenshots = value;
+            WaitBeforeCapture = value;
+            return this;
+        }
+
+        public IConfiguration SetWaitBeforeCapture(int? value)
+        {
+            WaitBeforeCapture = value;
             return this;
         }
 

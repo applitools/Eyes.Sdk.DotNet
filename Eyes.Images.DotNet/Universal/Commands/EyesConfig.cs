@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
@@ -67,7 +68,10 @@ namespace Applitools.Commands
         public bool? ForceFullPageScreenshot { get; set; }
         
         public IImageCrop Cut { get; set; }
+        
+        [Obsolete("Use WaitBeforeCapture")]
         public int? WaitBeforeScreenshots { get; set; }
+        public int? WaitBeforeCapture { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public StitchModes? StitchMode { get; set; }
@@ -121,7 +125,7 @@ namespace Applitools.Commands
             HideCaret = config.HideCaret;
             EnvironmentName = config.EnvironmentName;
             StitchMode = config.StitchMode;
-            WaitBeforeScreenshots = config.WaitBeforeScreenshots;
+            WaitBeforeCapture = config.WaitBeforeCapture;
             SendDom = config.SendDom;
             Cut = config.Cut;
             DontCloseBatches = config.DontCloseBatches;

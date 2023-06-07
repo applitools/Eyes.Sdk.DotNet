@@ -157,7 +157,7 @@ namespace Applitools.Generated.Playwright.Tests
         protected void WaitBeforeCapture(int waitTimeMs)
         {
             var config = Eyes.GetConfiguration();
-            config.SetWaitBeforeScreenshots(waitTimeMs);
+            config.SetWaitBeforeCapture(waitTimeMs);
             Eyes.SetConfiguration(config);
         }
         

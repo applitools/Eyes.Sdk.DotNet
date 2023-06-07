@@ -67,10 +67,17 @@ namespace Applitools
             set => Config.SetStitchMode(value);
         }
 
+        [Obsolete("Use WaitBeforeCapture")]
         public int? WaitBeforeScreenshots
         {
-            get => Config.WaitBeforeScreenshots;
-            set => Config.SetWaitBeforeScreenshots(value);
+            get => Config.WaitBeforeCapture;
+            set => Config.SetWaitBeforeCapture(value);
+        }
+
+        public int? WaitBeforeCapture
+        {
+            get => Config.WaitBeforeCapture;
+            set => Config.SetWaitBeforeCapture(value);
         }
 
         public bool? ForceFullPageScreenshot
