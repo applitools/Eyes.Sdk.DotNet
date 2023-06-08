@@ -3,7 +3,7 @@
 RESULT=0
 
 echo "installing powershell"
-wget https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/powershell_7.3.4-1.deb_amd64.deb
+wget --no-verbose https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/powershell_7.3.4-1.deb_amd64.deb
 sudo dpkg -i powershell_7.3.4-1.deb_amd64.deb
 sudo apt-get install -f
 
@@ -27,7 +27,7 @@ echo $EXECUTION_GRID_URL
 echo "building playwright tests"
 
 dotnet build ./test/Playwright
-pwsh ./bin/Debug/net6.0/playwright.ps1 install
+pwsh ./test/Playwright/bin/Debug/net6.0/playwright.ps1 install
 
 echo "running tests playwright"
 npm run run:parallel:playwright
