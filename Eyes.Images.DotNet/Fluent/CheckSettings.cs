@@ -707,6 +707,7 @@ namespace Applitools
             clone.replaceLast_ = replaceLast_;
             clone.enablePatterns_ = enablePatterns_;
             clone.ignoreDisplacements_ = ignoreDisplacements_;
+            clone.waitBeforeCapture_ = waitBeforeCapture_;
 
             clone.ignoreRegions_.AddRange(ignoreRegions_);
             clone.contentRegions_.AddRange(contentRegions_);

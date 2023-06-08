@@ -179,7 +179,6 @@ namespace Applitools
                 SendDom = checkSettingsInternal.GetSendDom(),
                 UseDom = checkSettingsInternal.GetUseDom(),
                 EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
-                //Frames = GetFrames(checkSettingsInternal),
                 IgnoreRegions = CollectRegions(checkSettingsInternal.GetIgnoreRegions()),
                 StrictRegions = CollectRegions(checkSettingsInternal.GetStrictRegions()),
                 LayoutRegions = CollectRegions(checkSettingsInternal.GetLayoutRegions()),
@@ -187,7 +186,8 @@ namespace Applitools
                 FloatingRegions = CollectRegions(checkSettingsInternal.GetFloatingRegions()),
                 AccessibilityRegions = CollectRegions(checkSettingsInternal.GetAccessibilityRegions()),
                 LazyLoad = checkSettingsInternal.GetLazyLoad(),
-                UfgOptions = GetUniversalUfgOptions(checkSettingsInternal)
+                UfgOptions = GetUniversalUfgOptions(checkSettingsInternal),
+                WaitBeforeCapture = checkSettingsInternal.GetWaitBeforeCapture()
             };
 
             return settings;
