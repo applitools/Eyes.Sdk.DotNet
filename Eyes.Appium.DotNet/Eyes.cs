@@ -64,23 +64,19 @@ namespace Applitools.Appium
 
         #endregion
 
-        public static void SetNmgCapabilities(AppiumOptions caps)
+        [Obsolete("Use SetNmgCapabilities")]
+        public static void SetNMGCapabilities(AppiumOptions caps, 
+            string apiKey = null,
+            string eyesServerUrl = null,
+            ProxySettings proxySettings = null)
         {
-            SetNmgCapabilities(caps, null, null, null);
+            SetNmgCapabilities(caps, apiKey, eyesServerUrl, proxySettings);
         }
 
-        public static void SetNmgCapabilities(AppiumOptions caps, string apiKey)
-        {
-            SetNmgCapabilities(caps, apiKey, null, null);
-        }
-
-        public static void SetNmgCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl)
-        {
-            SetNmgCapabilities(caps, apiKey, eyesServerUrl, null);
-        }
-
-        public static void SetNmgCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl,
-            ProxySettings proxySettings)
+        public static void SetNmgCapabilities(AppiumOptions caps,
+            string apiKey = null,
+            string eyesServerUrl = null,
+            ProxySettings proxySettings = null)
         {
             var iosCapsKey = "processArguments";
             var iosCapValue = "{\"args\": [], \"env\":"
