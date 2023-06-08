@@ -4,7 +4,7 @@ RESULT=0
 
 echo "installing powershell"
 wget https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/powershell_7.3.4-1.deb_amd64.deb
-sudo dpkg -i powershell-lts_7.3.4-1.deb_amd64.deb
+sudo dpkg -i powershell_7.3.4-1.deb_amd64.deb
 sudo apt-get install -f
 
 echo "generating tests"
