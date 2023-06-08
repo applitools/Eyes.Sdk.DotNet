@@ -228,6 +228,7 @@ namespace Applitools
         /// Shortcut to set the match level to <see cref="MatchLevel.Content"/>.
         /// </summary>
         /// <returns>An updated clone of this settings object.</returns>
+        [Obsolete("Use IgnoreColors()")]
         public ICheckSettings Content()
         {
             var clone = Clone();
@@ -238,10 +239,15 @@ namespace Applitools
             return clone;
         }
 
+        /// <summary>
+        /// Shortcut to set the match level to <see cref="MatchLevel.IgnoreColors"/>.
+        /// </summary>
+        /// <returns>An updated clone of this settings object.</returns>
         public ICheckSettings IgnoreColors()
         {
             CheckSettings clone = Clone();
             clone.matchLevel_ = Applitools.MatchLevel.IgnoreColors;
+            clone.fluentCode_.Append($".{nameof(IgnoreColors)}()");
             return clone;
         }
 

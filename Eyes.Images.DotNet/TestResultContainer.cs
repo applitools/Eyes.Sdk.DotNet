@@ -43,7 +43,6 @@ namespace Applitools
             {
                 return null;
             }
-            // TODO
             var chromeEmulationInfo = renderer.ChromeEmulationInfo;
             if (chromeEmulationInfo != null)
             {
