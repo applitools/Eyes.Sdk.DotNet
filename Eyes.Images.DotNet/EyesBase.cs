@@ -73,16 +73,6 @@ namespace Applitools
             throw new EyesException(message);
         }
 
-        public TestResults AbortIfNotClosed()
-        {
-            return Abort();
-        }
-
-        public virtual void AbortAsync()
-        {
-            Abort();
-        }
-
         protected Config ToConfig(Configuration configuration)
         {
             var config = new MapperConfiguration(cfg =>
@@ -425,6 +415,21 @@ namespace Applitools
 
         public virtual TestResults Abort()
         {
+            return AbortImpl(true);
+        }
+        
+        public TestResults AbortIfNotClosed()
+        {
+            return Abort();
+        }
+
+        public virtual void AbortAsync()
+        {
+            AbortImpl(false);
+        }
+
+        protected virtual TestResults AbortImpl(bool callGetResults)
+        {
             if (!IsOpen)
             {
                 return null;
@@ -448,10 +453,20 @@ namespace Applitools
                 throw new EyesException(payload.Error.ToString());
             }
 
-            return GetResults(false);
+            return callGetResults ? GetResults(false) : null;
         }
 
         public virtual TestResults Close(bool throwEx = true)
+        {
+            return CloseImpl(throwEx, true);
+        }
+
+        public virtual void CloseAsync(bool throwEx = true)
+        {
+            CloseImpl(throwEx, false);
+        }
+        
+        protected virtual TestResults CloseImpl(bool throwEx, bool callGetResults)
         {
             Logger.Log("Close");
 
@@ -472,7 +487,7 @@ namespace Applitools
                 throw new TestFailedException(error.ToString());
             }
 
-            return GetResults(throwEx);
+            return callGetResults ? GetResults(throwEx) : null;
         }
 
         private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)

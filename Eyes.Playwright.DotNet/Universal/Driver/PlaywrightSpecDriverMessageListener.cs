@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Applitools.Commands;
 using Applitools.Commands.Responses;
 using Applitools.Playwright.Universal.Driver.Dto;
@@ -119,7 +118,7 @@ namespace Applitools.Playwright.Universal.Driver
 
                 if (commandHandled)
                 {
-                    HandleError(commandResponse, payload);
+                    HandleErrorIfExists(commandResponse, payload);
                 }
             }
             catch (Exception e)
@@ -146,17 +145,14 @@ namespace Applitools.Playwright.Universal.Driver
                 case "Core.deleteTest":
                 case "Core.closeBatch":
                 case "EyesManager.openEyes":
+                case "Eyes.check":
                 case "Eyes.close":
                 case "Eyes.getResults":
                 case "Eyes.abort":
                 case "EyesManager.getResults":
                 case "Debug.getHistory":
                     HandleResponse_(message);
-                    HandleError(response.Name, response.Key, payload);
-                    return;
-                case "Eyes.check":
-                    HandleResponse_(message);
-                    HandleError(response.Name, response.Key, payload);
+                    LogErrorIfExists(response.Name, response.Key, payload);
                     return;
                 case "Logger.log":
                     try
@@ -176,7 +172,7 @@ namespace Applitools.Playwright.Universal.Driver
             }
         }
 
-        private void HandleError(ResponseDto response, DriverCommandDto payload)
+        private void HandleErrorIfExists(ResponseDto response, DriverCommandDto payload)
         {
             if (payload.Error == null)
             {
@@ -187,20 +183,14 @@ namespace Applitools.Playwright.Universal.Driver
                 new CommandResponse { Name = response.Name, Key = response.Key, Payload = payload });
             response.Payload.Result = null;
             response.Payload.Error = payload.Error;
-            if (payload.Error.Message.Contains("slice"))
-            {
-                Debugger.Break();
-            }
         }
 
-        private void HandleError(string name, string key, DriverCommandDto payload)
+        private void LogErrorIfExists(string name, string key, DriverCommandDto payload)
         {
             if (payload.Error != null)
             {
                 Logger.Log(TraceLevel.Error, Stage.SpecDriver,
                     new CommandResponse { Name = name, Key = key, Payload = payload });
-                // throw new EyesException(
-                //     $"Error handling server command {name}:\n{payload.Error.Message}");
             }
         }
     }

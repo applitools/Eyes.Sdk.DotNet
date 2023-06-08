@@ -8,9 +8,9 @@ using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.Playwright.Fluent
 {
-    public class FloatingRegionElement : Element, IGetFloatingRegionOffsets, IGetFloatingRegion, IPlaywrightReference<TFloatingRegion>
+    public class FloatingRegionByElement : Element, IGetFloatingRegionOffsets, IGetFloatingRegion, IPlaywrightReference<TFloatingRegion>
     {
-        public FloatingRegionElement(IElementHandle element, 
+        public FloatingRegionByElement(IElementHandle element, 
             int maxUpOffset, 
             int maxDownOffset, 
             int maxLeftOffset,
@@ -23,7 +23,7 @@ namespace Applitools.Playwright.Fluent
             MaxRightOffset = maxRightOffset;
         }
 
-        public FloatingRegionElement(IElementHandle element, int maxOffset)
+        public FloatingRegionByElement(IElementHandle element, int maxOffset)
         {
             ElementHandle = element;
             MaxUpOffset = maxOffset;

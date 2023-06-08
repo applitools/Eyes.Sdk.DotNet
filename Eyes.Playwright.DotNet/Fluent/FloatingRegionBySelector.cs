@@ -9,7 +9,7 @@ namespace Applitools.Playwright.Fluent
     /// <summary>
     /// Used internally to represent a ref of an accessibility element
     /// </summary>
-    public class FloatingRegionSelector : Selector, IGetFloatingRegionOffsets, IGetFloatingRegion,
+    public class FloatingRegionBySelector : Selector, IGetFloatingRegionOffsets, IGetFloatingRegion,
         IPlaywrightReference<TFloatingRegion>
     {
         public int MaxUpOffset { get; }
@@ -17,7 +17,7 @@ namespace Applitools.Playwright.Fluent
         public int MaxLeftOffset { get; }
         public int MaxRightOffset { get; }
 
-        public FloatingRegionSelector(string selector,
+        public FloatingRegionBySelector(string selector,
             int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
             : base(selector)
         {
@@ -27,7 +27,7 @@ namespace Applitools.Playwright.Fluent
             MaxRightOffset = maxRightOffset;
         }
 
-        public FloatingRegionSelector(string selector, int maxOffset)
+        public FloatingRegionBySelector(string selector, int maxOffset)
             : base(selector)
         {
             MaxUpOffset = maxOffset;
@@ -36,7 +36,7 @@ namespace Applitools.Playwright.Fluent
             MaxRightOffset = maxOffset;
         }
 
-        public FloatingRegionSelector(ILocator locator,
+        public FloatingRegionBySelector(ILocator locator,
             int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
             : base(locator)
         {
@@ -46,7 +46,7 @@ namespace Applitools.Playwright.Fluent
             MaxRightOffset = maxRightOffset;
         }
 
-        public FloatingRegionSelector(ILocator locator, int maxOffset)
+        public FloatingRegionBySelector(ILocator locator, int maxOffset)
             : base(locator)
         {
             MaxUpOffset = maxOffset;

@@ -7,26 +7,19 @@ namespace Applitools
 {
     using System.Runtime.InteropServices;
 
-    public abstract class UniversalSdkNativeLoader
+    public static class UniversalSdkNativeLoader
     {
         private static int port_;
         private static Process nativeProc_;
         private static readonly object lockObject_ = new object();
 
-        private static readonly string UNIVERSAL_DEBUG =
+        private static readonly string universalDebug_ =
             "true" == Environment.GetEnvironmentVariable("APPLITOOLS_UNIVERSAL_DEBUG")?.ToLower() ? "--debug" : "";
 
         public static int Start()
         {
             return TryStartProcess_();
         }
-
-        public void Stop()
-        {
-            TryStopProcess_();
-        }
-
-        public bool IsRunning => nativeProc_ != null && !nativeProc_.HasExited;
 
         private static int TryStartProcess_()
         {
@@ -98,20 +91,12 @@ namespace Applitools
             return Path.Combine(Path.GetDirectoryName(basePath), "runtimes", os, "native", "core-" + suffix);
         }
 
-        private void TryStopProcess_()
-        {
-            if (nativeProc_ != null && !nativeProc_.HasExited)
-            {
-                nativeProc_.Kill();
-            }
-        }
-
         private static Process StartProcess(string path)
         {
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo(path,
-                    $"universal --no-singleton --shutdown-mode stdin {UNIVERSAL_DEBUG}")
+                    $"universal --no-singleton --shutdown-mode stdin {universalDebug_}")
                 {
                     UseShellExecute = false,
                     RedirectStandardInput = true,
@@ -139,14 +124,12 @@ namespace Applitools
                     $"Unable to read Universal Server StandardOutput. Process HasExited: {process.HasExited}", e);
             }
 
-            try
+            if (int.TryParse(portStr, out int port))
             {
-                return int.Parse(portStr);
+                return port;
             }
-            catch (Exception e)
-            {
-                throw new Exception($"'{portStr}' is not valid port number", e);
-            }
+
+            throw new Exception($"'{portStr}' is not valid port number");
         }
 
         private static void CopyCorePackageFolder(string basePath)

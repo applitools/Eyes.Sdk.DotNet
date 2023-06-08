@@ -181,9 +181,9 @@ namespace Applitools.Playwright
             CheckImpl_(playwrightCheckSettings);
         }
 
-        public override TestResults Close(bool throwEx = true)
+        protected override TestResults CloseImpl(bool throwEx, bool callGetResults)
         {
-            var result = base.Close(throwEx);
+            var result = base.CloseImpl(throwEx, callGetResults);
 
             if (!IsOpen && driver_ != null)
             {
@@ -194,9 +194,9 @@ namespace Applitools.Playwright
             return result;
         }
 
-        public override TestResults Abort()
+        protected override TestResults AbortImpl(bool callGetResults)
         {
-            var result = base.Abort();
+            var result = base.AbortImpl(callGetResults);
 
             if (!IsOpen && driver_ != null)
             {

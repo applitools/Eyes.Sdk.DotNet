@@ -718,7 +718,7 @@ namespace Applitools.Playwright.Fluent
             int maxRightOffset)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.floatingRegions_.Add(new FloatingRegionSelector(selector, maxUpOffset, maxDownOffset, maxLeftOffset,
+            clone.floatingRegions_.Add(new FloatingRegionBySelector(selector, maxUpOffset, maxDownOffset, maxLeftOffset,
                 maxRightOffset));
             return clone;
         }
@@ -727,7 +727,7 @@ namespace Applitools.Playwright.Fluent
             int maxRightOffset)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.floatingRegions_.Add(new FloatingRegionSelector(locator, maxUpOffset, maxDownOffset, maxLeftOffset,
+            clone.floatingRegions_.Add(new FloatingRegionBySelector(locator, maxUpOffset, maxDownOffset, maxLeftOffset,
                 maxRightOffset));
             return clone;
         }
@@ -736,7 +736,7 @@ namespace Applitools.Playwright.Fluent
             int maxLeftOffset, int maxRightOffset)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.floatingRegions_.Add(new FloatingRegionElement(element, maxUpOffset, maxDownOffset, maxLeftOffset,
+            clone.floatingRegions_.Add(new FloatingRegionByElement(element, maxUpOffset, maxDownOffset, maxLeftOffset,
                 maxRightOffset));
             return clone;
         }
@@ -744,21 +744,21 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings Floating(int maxOffset, string selector)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.floatingRegions_.Add(new FloatingRegionSelector(selector, maxOffset));
+            clone.floatingRegions_.Add(new FloatingRegionBySelector(selector, maxOffset));
             return clone;
         }
 
         public PlaywrightCheckSettings Floating(int maxOffset, ILocator locator)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.floatingRegions_.Add(new FloatingRegionSelector(locator, maxOffset));
+            clone.floatingRegions_.Add(new FloatingRegionBySelector(locator, maxOffset));
             return clone;
         }
 
         public PlaywrightCheckSettings Floating(int maxOffset, IElementHandle element)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.floatingRegions_.Add(new FloatingRegionElement(element, maxOffset));
+            clone.floatingRegions_.Add(new FloatingRegionByElement(element, maxOffset));
             return clone;
         }
 
