@@ -63,8 +63,14 @@ namespace Applitools.Selenium
             Config = config;
         }
 
+        [Obsolete("Use GetExecutionCloudUrl")]
         public static string GetExecutionCloudURL(string apiKey = null, Uri serverUrl = null,
             ProxySettings proxySettings = null)
+        {
+            return GetExecutionCloudUrl(apiKey, serverUrl, proxySettings);
+        }
+        
+        public static string GetExecutionCloudUrl(string apiKey = null, Uri serverUrl = null, ProxySettings proxySettings = null)
         {
             var runner = new ClassicRunner();
             var request = new CoreMakeECClientRequest
