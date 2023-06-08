@@ -2,6 +2,11 @@
 
 RESULT=0
 
+echo "installing powershell"
+wget https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/powershell_7.3.4-1.deb_amd64.deb
+sudo dpkg -i powershell-lts_7.3.4-1.deb_amd64.deb
+sudo apt-get install -f
+
 echo "generating tests"
 pushd coverage-tests
 # export UFG_ON_EG=true
@@ -19,6 +24,10 @@ yarn universal:eg &
 EG_PID="$!"
 export EXECUTION_GRID_URL=http://localhost:8080
 echo $EXECUTION_GRID_URL
+echo "building playwright tests"
+
+dotnet build ./test/Playwright
+pwsh ./bin/Debug/net6.0/playwright.ps1 install
 
 echo "running tests playwright"
 npm run run:parallel:playwright
