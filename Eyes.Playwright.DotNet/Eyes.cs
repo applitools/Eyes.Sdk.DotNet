@@ -107,7 +107,10 @@ namespace Applitools.Playwright
             driver_ = new Driver(page);
             Refer refer = GetRefer_();
             driver_.ApplitoolsRefId = refer.Ref(page, driver_.Root);
-            driver_.SetWebDriverProxy(Config.Proxy);
+            driver_.Proxy = Proxy;
+            Runner.ApiKey = ApiKey;
+            Runner.ServerUrl = ServerUrl;
+            Runner.Proxy = Proxy;
 
             Config.SetAppName(appName).SetTestName(testName);
             if (viewportSize != null && !viewportSize.IsEmpty())
@@ -323,7 +326,7 @@ namespace Applitools.Playwright
             var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
             settings.Frames = GetFrames(checkSettingsInternal);
             settings.ScrollRootElement =
-                TRegionMapper.ToTRegionDtoFromSRE(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(),
+                TRegionMapper.ToTRegionDtoFromSre(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(),
                     driver_.Root);
             settings.PageId = playwrightCheckSettings.GetPageId();
             return settings;

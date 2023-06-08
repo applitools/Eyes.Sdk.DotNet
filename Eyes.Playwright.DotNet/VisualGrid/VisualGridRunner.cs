@@ -1,10 +1,7 @@
-using System;
 using Applitools.Commands.Requests;
 using Applitools.Playwright;
 using Applitools.Playwright.Universal;
 using Applitools.Playwright.Universal.Driver;
-using Applitools.Universal;
-using Refer = Applitools.Playwright.Universal.Refer;
 
 namespace Applitools.VisualGrid
 {
@@ -18,10 +15,8 @@ namespace Applitools.VisualGrid
         /// </summary>
         private static readonly string BASE_AGENT_ID = "Eyes.Playwright.DotNet.VisualGrid";
         
-        //private static readonly PSdkListener listener = PSdkListener.Instance;
-        
-        internal const int CONCURRENCY_FACTOR = 5;
-        static readonly int DEFAULT_CONCURRENCY = 5;
+        internal const int CONCURRENCY_FACTOR = 1;
+        static readonly int DEFAULT_CONCURRENCY = 1;
 
         private readonly RunnerOptions runnerOptions_;
         private readonly SpecDriverPlaywright driver_;

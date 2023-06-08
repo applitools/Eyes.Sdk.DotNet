@@ -13,6 +13,7 @@ namespace Applitools.Playwright.Universal.Dto
 
         [JsonIgnore]
         public Reference Root { get; }
+        public ProxySettings Proxy { get; set; }
 
         public Driver()
         {
@@ -28,19 +29,6 @@ namespace Applitools.Playwright.Universal.Dto
 
             Root = new Driver();
             Root.ApplitoolsRefId = Guid.NewGuid().ToString();
-        }
-
-        public void SetWebDriverProxy(ProxySettings proxySettings)
-        {
-            if (proxySettings == null)
-            {
-                return;
-            }
-            
-            // this.proxy = new ProxyDto();
-            // setUrl(webDriverProxy.getUrl());
-            // setUsername(webDriverProxy.getUsername());
-            // setPassword(webDriverProxy.getPassword());
         }
     }
 }
