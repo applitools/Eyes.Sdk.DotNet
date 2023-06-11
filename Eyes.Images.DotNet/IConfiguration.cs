@@ -66,6 +66,8 @@ namespace Applitools
 
         IList<int> LayoutBreakpoints { get; set; }
 
+        LayoutBreakpointsOptions LayoutBreakpointsOptions { get; set; }
+        
         ProxySettings Proxy { get; set; }
         bool? IsForceFullPageScreenshot { get; set; }
 
@@ -150,7 +152,7 @@ namespace Applitools
         IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet);
         IConfiguration SetLayoutBreakpoints(params int[] breakpoints);
         IConfiguration SetLayoutBreakpoints(bool layoutBreakpointsEnabled);
-
+        IConfiguration SetLayoutBreakpoints(LayoutBreakpointsOptions options);
         IConfiguration SetVisualGridOptions(params VisualGridOption[] options);
 
         IConfiguration SetUseCookies(bool? useCookies);

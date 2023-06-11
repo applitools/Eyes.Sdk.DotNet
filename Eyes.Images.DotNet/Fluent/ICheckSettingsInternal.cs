@@ -36,10 +36,8 @@ namespace Applitools.Fluent
         string GetFluentCommandString();
         string GetVariationGroupId();
 
-        bool? GetLayoutBreakpointsEnabled();
-
-        IList<int> GetLayoutBreakpoints();
         LazyLoadOptions GetLazyLoad();
         DensityMetrics GetDensityMetrics();
+        LayoutBreakpointsOptions GetLayoutBreakpointsOptions();
     }
 }

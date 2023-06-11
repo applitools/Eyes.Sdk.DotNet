@@ -35,8 +35,7 @@ namespace Applitools
         private VisualGridOption[] visualGridOptions_;
         private string variationGroupId_;
 
-        protected bool? layoutBreakpointsEnabled_;
-        protected readonly List<int> layoutBreakpoints_ = new List<int>();
+        protected LayoutBreakpointsOptions layoutBreakpointsOptions_;
 
         public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
@@ -132,6 +131,11 @@ namespace Applitools
             return variationGroupId_;
         }
 
+        LayoutBreakpointsOptions ICheckSettingsInternal.GetLayoutBreakpointsOptions()
+        {
+            return layoutBreakpointsOptions_;
+        }
+
         #endregion
 
         protected void Floating_(IGetFloatingRegion floatingRegionProvider)
@@ -177,16 +181,6 @@ namespace Applitools
 
         protected StringBuilder fluentCode_ = new StringBuilder();
         private DensityMetrics densityMetrics_;
-
-        public bool? GetLayoutBreakpointsEnabled()
-        {
-            return layoutBreakpointsEnabled_;
-        }
-
-        public IList<int> GetLayoutBreakpoints()
-        {
-            return layoutBreakpoints_;
-        }
 
         /// <summary>
         /// Shortcut to set the match level to <see cref="MatchLevel.Exact"/>.
@@ -718,8 +712,8 @@ namespace Applitools
             clone.accessibilityRegions_.AddRange(accessibilityRegions_);
 
             clone.visualGridOptions_ = (VisualGridOption[])visualGridOptions_?.Clone();
-
-            foreach (KeyValuePair<string, string> kvp in scriptHooks_)
+            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions(layoutBreakpointsOptions_);
+            foreach (var kvp in scriptHooks_)
             {
                 clone.scriptHooks_.Add(kvp.Key, kvp.Value);
             }

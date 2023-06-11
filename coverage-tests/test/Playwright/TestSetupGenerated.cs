@@ -126,6 +126,13 @@ namespace Applitools.Generated.Playwright.Tests
             Eyes.Batch = batch;
         }
 
+        protected void SetLayoutBreakpoints(LayoutBreakpointsOptions breakpointsOptions)
+        {
+            var config = Eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(breakpointsOptions);
+            Eyes.SetConfiguration(config);   
+        }
+        
         protected void SetLayoutBreakpoints(params int[] breakpoints)
         {
             var config = Eyes.GetConfiguration();

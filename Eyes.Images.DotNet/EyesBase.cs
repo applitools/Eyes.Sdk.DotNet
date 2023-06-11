@@ -169,7 +169,7 @@ namespace Applitools
                 {
                     BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
                 },
-                LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
+                LayoutBreakpoints = checkSettingsInternal.GetLayoutBreakpointsOptions(),
                 MatchLevel = checkSettingsInternal.GetMatchLevel(),
                 Name = checkSettingsInternal.GetName(),
                 Region = GetUniversalRegion(checkSettingsInternal),
@@ -221,16 +221,6 @@ namespace Applitools
         protected virtual ICollection<TAccessibilityRegion> CollectRegions(IGetAccessibilityRegion[] regions)
         {
             return regions.Select(r => r.ToRegion()).ToArray();
-        }
-
-        private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
-        {
-            if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
-            {
-                return settings.GetLayoutBreakpoints();
-            }
-
-            return settings.GetLayoutBreakpointsEnabled();
         }
 
         protected virtual TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)

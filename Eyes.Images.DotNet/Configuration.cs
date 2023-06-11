@@ -9,7 +9,6 @@ namespace Applitools
 {
     public class Configuration : IConfiguration
     {
-        private readonly IList<int> layoutBreakpoints_ = new List<int>();
         private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
 
         public Configuration()
@@ -50,9 +49,7 @@ namespace Applitools
             UseCookies = configuration.UseCookies;
             HideScrollbars = configuration.HideScrollbars;
             DisableBrowserFetching = configuration.DisableBrowserFetching;
-            LayoutBreakpointsEnabled = configuration.LayoutBreakpointsEnabled;
-            layoutBreakpoints_ = new List<int>(configuration.LayoutBreakpoints);
-
+            LayoutBreakpointsOptions = configuration.LayoutBreakpointsOptions;
             VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
 
 
@@ -61,6 +58,7 @@ namespace Applitools
                 browsersInfo_.AddRange(config.browsersInfo_);
             }
         }
+
         public string Type { get; set; }
         public int? Concurrency { get; set; }
         public bool? Legacy { get; set; }
@@ -68,7 +66,7 @@ namespace Applitools
         public bool? IsForceFullPageScreenshot { get; set; }
 
         public int? WaitBeforeCapture { get; set; }
-        
+
         [Obsolete("Use WaitBeforeCapture")]
         public int? WaitBeforeScreenshots
         {
@@ -260,6 +258,7 @@ namespace Applitools
         }
 
         public string TestName { get; set; }
+
         public IConfiguration SetTestName(string value)
         {
             TestName = value;
@@ -379,7 +378,7 @@ namespace Applitools
             DefaultMatchSettings.MatchLevel = value;
             return this;
         }
-        
+
         public string ServerUrl { get; set; }
 
         public IConfiguration SetServerUrl(string value)
@@ -398,6 +397,7 @@ namespace Applitools
         }
 
         public bool? HideScrollbars { get; set; }
+
         public IConfiguration SetHideScrollbars(bool? value)
         {
             HideScrollbars = value;
@@ -405,6 +405,7 @@ namespace Applitools
         }
 
         public bool? DisableBrowserFetching { get; set; }
+
         public IConfiguration SetDisableBrowserFetching(bool? value)
         {
             DisableBrowserFetching = value;
@@ -412,6 +413,7 @@ namespace Applitools
         }
 
         public ProxySettings Proxy { get; set; }
+
         public IConfiguration SetProxy(ProxySettings proxy)
         {
             Proxy = proxy;
@@ -471,7 +473,7 @@ namespace Applitools
             HideCaret = value;
             return this;
         }
-        
+
         public bool? EnablePatterns
         {
             get => DefaultMatchSettings.EnablePatterns;
@@ -483,7 +485,7 @@ namespace Applitools
             DefaultMatchSettings.EnablePatterns = value;
             return this;
         }
-        
+
         public AccessibilitySettings AccessibilityValidation
         {
             get => DefaultMatchSettings.AccessibilitySettings;
@@ -501,6 +503,15 @@ namespace Applitools
         /// </summary>
         public int? AbortIdleTestTimeout { get; set; }
 
+        
+        public LayoutBreakpointsOptions LayoutBreakpointsOptions { get; set; } = new LayoutBreakpointsOptions();
+
+        public bool? LayoutBreakpointsEnabled
+        {
+            get => LayoutBreakpointsOptions.IsLayoutBreakpoints();
+            set => LayoutBreakpointsOptions.Breakpoints(value);
+        }
+
         /// <summary>
         /// Set optional server timeout in seconds for handling test.
         /// </summary>
@@ -512,14 +523,18 @@ namespace Applitools
             return this;
         }
 
+        public IConfiguration SetLayoutBreakpoints(LayoutBreakpointsOptions options)
+        {
+            LayoutBreakpointsOptions = options;
+            return this;
+        }
+
         public IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet)
         {
             LayoutBreakpointsEnabled = shouldSet;
             LayoutBreakpoints.Clear();
             return this;
         }
-
-        public bool? LayoutBreakpointsEnabled { get; set; }
 
         public IConfiguration SetLayoutBreakpoints(bool layoutBreakpointsEnabled)
         {
@@ -552,7 +567,7 @@ namespace Applitools
 
         public IList<int> LayoutBreakpoints
         {
-            get => layoutBreakpoints_;
+            get => LayoutBreakpointsOptions.GetLayoutBreakpoints();
             set => SetLayoutBreakpoints_(value);
         }
 
@@ -560,7 +575,7 @@ namespace Applitools
         {
             return browsersInfo_;
         }
-        
+
         public IConfiguration AddBrowsers(params IRenderBrowserInfo[] browsersInfo)
         {
             foreach (IRenderBrowserInfo browserInfo in browsersInfo)
@@ -582,6 +597,7 @@ namespace Applitools
                     AddBrowser(androidDeviceInfo);
                 }
             }
+
             return this;
         }
 
@@ -609,7 +625,7 @@ namespace Applitools
 
             return this;
         }
-        
+
         public Configuration AddMobileDevice(AndroidDeviceInfo androidDeviceInfo)
         {
             RenderBrowserInfo renderBrowserInfo = new RenderBrowserInfo(androidDeviceInfo);
@@ -623,6 +639,7 @@ namespace Applitools
             browsersInfo_.Add(browserInfo);
             return this;
         }
+
         public IConfiguration AddBrowser(ChromeEmulationInfo emulationInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(emulationInfo);

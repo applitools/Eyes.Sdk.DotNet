@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Applitools.Playwright.Universal.Dto;
 using Applitools.Universal;
-using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using Microsoft.Playwright;
@@ -12,20 +11,23 @@ namespace Applitools.Playwright.Fluent
 {
     public class PlaywrightCheckSettings : CheckSettings, IPlaywrightCheckSettings, IPlaywrightCheckTarget
     {
-        /** The target region. */
+        /// <summary>
+        /// The target region.
+        /// </summary>
         private Reference targetElement_;
 
-        /** the scroll root element. */
+        /// <summary>
+        /// The scroll root element.
+        /// </summary>
         private Reference scrollRootElement_;
 
-        /** The frame chain. */
+        /// <summary>
+        /// The frame chain.
+        /// </summary>
         private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
 
-        /** Used to determine if using default layout breakpoints. */
-        private bool isDefaultLayoutBreakpointsSet_;
-
         private string pageId_;
-        
+
         /// <summary>Specify the target as a region.</summary>
         /// <param name="region">the region</param>
         /// <returns>an updated instance of this settings object</returns>
@@ -302,40 +304,30 @@ namespace Applitools.Playwright.Fluent
             ignoreRegions_.Add(new Applitools.Playwright.Universal.Dto.SimpleRegionByRectangle(region.Rectangle));
         }
 
-        /**
-     * Adds a layout region.
-     *
-     * @param selector  the css or xpath selector to match using the layout algorithm
-     * @return an updated instance of this settings object
-     */
+        /// <summary>Adds a layout region.</summary>
+        /// <param name="selector">The css or xpath selector to match using the layout algorithm.</param>
+        /// <returns>An updated instance of this settings object</returns>
         public PlaywrightCheckSettings Layout(string selector)
         {
             return Layout(new Selector(selector));
         }
 
-        /**
-     * Adds a layout region.
-     *
-     * @param locator  the locator to match using the layout algorithm
-     * @return an updated instance of this settings object
-     */
+        /// <summary>Adds a layout region.</summary>
+        /// <param name="locator">The locator to match using the layout algorithm.</param>
+        /// <returns>An updated instance of this settings object</returns>
         public PlaywrightCheckSettings Layout(ILocator locator)
         {
             return Layout(new Selector(locator));
         }
 
-        /**
-     * Adds a layout region.
-     *
-     * @param element  the css or xpath selector to match using the layout algorithm
-     * @return an updated instance of this settings object
-     */
+        /// <summary>Adds a layout region.</summary>
+        /// <param name="element">The element to match using the layout algorithm.</param>
+        /// <returns>An updated instance of this settings object</returns>
         public PlaywrightCheckSettings Layout(IElementHandle element)
         {
             return Layout(new Element(element));
         }
 
-        /** internal */
         private PlaywrightCheckSettings Layout(Selector selector)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -343,7 +335,6 @@ namespace Applitools.Playwright.Fluent
             return clone;
         }
 
-        /** internal */
         private PlaywrightCheckSettings Layout(Element element)
         {
             PlaywrightCheckSettings clone = Clone_();
@@ -462,7 +453,7 @@ namespace Applitools.Playwright.Fluent
             SimpleRegionByRectangle simpleRegionByRectangle = new SimpleRegionByRectangle(region.Rectangle);
             this.layoutRegions_.Add(simpleRegionByRectangle);
         }
-        
+
         public PlaywrightCheckSettings Strict(string selector)
         {
             return Strict(new Selector(selector));
@@ -491,12 +482,12 @@ namespace Applitools.Playwright.Fluent
             clone.strictRegions_.Add(element);
             return clone;
         }
-        
+
         public PlaywrightCheckSettings Strict(string selector, string regionId)
         {
             return Strict(new Selector(selector), regionId);
         }
-        
+
         public PlaywrightCheckSettings Strict(ILocator locator, string regionId)
         {
             return Strict(new Selector(locator), regionId);
@@ -528,12 +519,12 @@ namespace Applitools.Playwright.Fluent
         {
             return Strict(new Selector(selector), padding);
         }
-        
+
         public PlaywrightCheckSettings Strict(ILocator locator, Padding padding)
         {
             return Strict(new Selector(locator), padding);
         }
-        
+
         public PlaywrightCheckSettings Strict(IElementHandle element, Padding padding)
         {
             return Strict(new Element(element), padding);
@@ -594,7 +585,7 @@ namespace Applitools.Playwright.Fluent
         {
             return IgnoreColors(new Selector(selector));
         }
-        
+
         public PlaywrightCheckSettings IgnoreColors(ILocator locator)
         {
             return IgnoreColors(new Selector(locator));
@@ -883,31 +874,24 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = false;
-            clone.layoutBreakpoints_.Clear();
-            if (breakpoints == null || breakpoints.Length == 0)
-            {
-                return clone;
-            }
-
-            foreach (int breakpoint in breakpoints)
-            {
-                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
-                clone.layoutBreakpoints_.Add(breakpoint);
-            }
-
-            clone.layoutBreakpoints_.Sort();
+            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return clone;
         }
 
         public PlaywrightCheckSettings LayoutBreakpoints(bool shouldSet)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = shouldSet;
-            clone.layoutBreakpoints_.Clear();
+            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
-
+        
+        public PlaywrightCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
+        {
+            PlaywrightCheckSettings clone = Clone_();
+            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions(options);
+            return clone;
+        }
+        
         public new PlaywrightCheckSettings Fully()
         {
             return (PlaywrightCheckSettings)base.Fully();
@@ -917,17 +901,17 @@ namespace Applitools.Playwright.Fluent
         {
             return (PlaywrightCheckSettings)base.Fully(fully);
         }
-        
+
         public new PlaywrightCheckSettings WithName(string name)
         {
             return (PlaywrightCheckSettings)base.WithName(name);
         }
-        
+
         public new PlaywrightCheckSettings IgnoreCaret(bool ignoreCaret)
         {
             return (PlaywrightCheckSettings)base.IgnoreCaret(ignoreCaret);
         }
-        
+
         public new PlaywrightCheckSettings SendDom(bool sendDom = true)
         {
             return (PlaywrightCheckSettings)base.SendDom(sendDom);
@@ -952,7 +936,7 @@ namespace Applitools.Playwright.Fluent
         {
             return (PlaywrightCheckSettings)base.WaitBeforeCapture(waitTime);
         }
-        
+
         public new PlaywrightCheckSettings UseDom(bool useDom)
         {
             return (PlaywrightCheckSettings)base.UseDom(useDom);
@@ -1027,18 +1011,16 @@ namespace Applitools.Playwright.Fluent
             clone.targetElement_ = targetElement_;
             clone.scrollRootElement_ = scrollRootElement_;
             clone.frameChain_.AddRange(frameChain_);
-            clone.isDefaultLayoutBreakpointsSet_ = isDefaultLayoutBreakpointsSet_;
-            clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             clone.pageId_ = pageId_;
             return clone;
         }
-        
+
         [Obsolete]
         public new PlaywrightCheckSettings Content()
         {
             return IgnoreColors();
         }
-        
+
         [Obsolete]
         public PlaywrightCheckSettings Content(string selector)
         {
@@ -1114,7 +1096,7 @@ namespace Applitools.Playwright.Fluent
         {
             return scrollRootElement_;
         }
-        
+
         Reference IPlaywrightCheckTarget.GetTargetElement()
         {
             return targetElement_;
