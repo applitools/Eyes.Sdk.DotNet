@@ -52,7 +52,8 @@ namespace Applitools.Generated.Selenium.Tests
                     {
                         var chromeOptions = new ChromeOptions();
                         if (headless) chromeOptions.AddArgument("headless");
-                        driver = new RemoteWebDriver(new Uri(EG_SELENIUM_URL), chromeOptions);
+                        string egUrl = EG_SELENIUM_URL ?? Eyes.GetExecutionCloudUrl();
+                        driver = new RemoteWebDriver(new Uri(egUrl), chromeOptions);
                     }
                     else
                     {

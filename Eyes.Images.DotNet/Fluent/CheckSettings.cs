@@ -35,7 +35,7 @@ namespace Applitools
         private VisualGridOption[] visualGridOptions_;
         private string variationGroupId_;
 
-        protected LayoutBreakpointsOptions layoutBreakpointsOptions_;
+        protected LayoutBreakpointsOptions LayoutBreakpointsOptions { get; set; }
 
         public static readonly string BEFORE_CAPTURE_SCREENSHOT = "beforeCaptureScreenshot";
 
@@ -133,7 +133,7 @@ namespace Applitools
 
         LayoutBreakpointsOptions ICheckSettingsInternal.GetLayoutBreakpointsOptions()
         {
-            return layoutBreakpointsOptions_;
+            return LayoutBreakpointsOptions;
         }
 
         #endregion
@@ -712,7 +712,11 @@ namespace Applitools
             clone.accessibilityRegions_.AddRange(accessibilityRegions_);
 
             clone.visualGridOptions_ = (VisualGridOption[])visualGridOptions_?.Clone();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions(layoutBreakpointsOptions_);
+            if (LayoutBreakpointsOptions != null)
+            {
+                clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(LayoutBreakpointsOptions);
+            }
+
             foreach (var kvp in scriptHooks_)
             {
                 clone.scriptHooks_.Add(kvp.Key, kvp.Value);

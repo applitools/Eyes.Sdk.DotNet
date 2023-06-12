@@ -596,28 +596,28 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
 
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return clone;
         }
 
         public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
         
         public SeleniumCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions(options);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(options);
             return clone;
         }
 

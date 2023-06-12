@@ -36,7 +36,7 @@ namespace Applitools.Commands
         public int? ConnectionTimeout { get; set; }
         public bool? RemoveSession { get; set; }
         public RemoteEvents RemoteEvents { get; set; }
-        
+
         public string AppName { get; set; }
         public string TestName { get; set; }
         public string DisplayName { get; set; }
@@ -62,30 +62,31 @@ namespace Applitools.Commands
         public bool? SaveNewTests { get; set; }
         public bool? SaveDiffs { get; set; }
         public bool? DontCloseBatches { get; set; }
-        
+
         public bool? SendDom { get; set; }
         public int? MatchTimeout { get; set; }
         public bool? ForceFullPageScreenshot { get; set; }
-        
+
         public IImageCrop Cut { get; set; }
-        
+
         [Obsolete("Use WaitBeforeCapture")]
         public int? WaitBeforeScreenshots { get; set; }
         public int? WaitBeforeCapture { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public StitchModes? StitchMode { get; set; }
+
         public bool? HideScrollbars { get; set; }
         public bool? HideCaret { get; set; }
         public int? StitchOverlap { get; set; }
 
         public object ScrollRootElement { get; set; }
-        
+
         public int? ScaleRatio { get; set; }
-        
+
         public int? ConcurrentSessions { get; set; }
         public IDictionary<string, object> VisualGridOptions { get; set; }
-        
+
         public IRenderBrowserInfo[] BrowsersInfo { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public object LayoutBreakpoints { get; set; }
@@ -96,7 +97,7 @@ namespace Applitools.Commands
             VisualGridOptions = new Dictionary<string, object>();
         }
 
-        public EyesConfig(Applitools.Configuration config) 
+        public EyesConfig(Applitools.Configuration config)
             : this()
         {
             AgentId = config.AgentId;
@@ -146,6 +147,7 @@ namespace Applitools.Commands
                 {
                     browsers.Add(browserInfo.DesktopBrowserInfo);
                 }
+
                 if (browserInfo.IosDeviceInfo != null)
                 {
                     browsers.Add(new IosDevice
@@ -153,6 +155,7 @@ namespace Applitools.Commands
                         IosDeviceInfo = browserInfo.IosDeviceInfo
                     });
                 }
+
                 if (browserInfo.ChromeEmulationInfo != null)
                 {
                     browsers.Add(new ChromeEmulation
@@ -160,6 +163,7 @@ namespace Applitools.Commands
                         ChromeEmulationInfo = (ChromeEmulationInfo)browserInfo.ChromeEmulationInfo
                     });
                 }
+
                 if (browserInfo.AndroidDeviceInfo != null)
                 {
                     browsers.Add(new AndroidDevice
@@ -177,14 +181,7 @@ namespace Applitools.Commands
 
         private void SetLayoutBreakpoints(Applitools.Configuration config)
         {
-            if (config.LayoutBreakpoints != null && config.LayoutBreakpoints.Any())
-            {
-                LayoutBreakpoints = config.LayoutBreakpoints;
-            }
-            else if (config.LayoutBreakpointsEnabled.HasValue)
-            {
-                LayoutBreakpoints = config.LayoutBreakpointsEnabled;
-            }
+            LayoutBreakpoints = config.LayoutBreakpoints;
         }
     }
 

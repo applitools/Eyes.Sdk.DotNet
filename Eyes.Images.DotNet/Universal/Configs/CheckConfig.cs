@@ -25,7 +25,7 @@ namespace Applitools
         bool? EnablePatterns { get; set; }
         bool? IgnoreCaret { get; set; }
         IDictionary<string, object> UfgOptions { get; }
-        ICollection<int> LayoutBreakpoints { get; set; }
+        LayoutBreakpointsOptions LayoutBreakpoints { get; set; }
         bool? DisableBrowserFetching { get; set; }
         AutProxy AutProxy { get; set; }
         ICollection<RenderBrowserInfo> Renderers { get; }
@@ -56,7 +56,7 @@ namespace Applitools
         public bool? EnablePatterns { get; set; }
         public bool? IgnoreCaret { get; set; }
         public IDictionary<string, object> UfgOptions { get; set; }
-        public ICollection<int> LayoutBreakpoints { get; set; }
+        public LayoutBreakpointsOptions LayoutBreakpoints { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public AutProxy AutProxy { get; set; }
         public ICollection<RenderBrowserInfo> Renderers { get; set; }
@@ -72,7 +72,7 @@ namespace Applitools
             FloatingRegions = new List<TFloatingRegion>();
             AccessibilityRegions = new List<TFloatingRegion>();
             UfgOptions = new Dictionary<string, object>();
-            LayoutBreakpoints = new List<int>();
+            LayoutBreakpoints = new LayoutBreakpointsOptions();
             Renderers = new List<RenderBrowserInfo>();
         }
     }

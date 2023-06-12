@@ -63,10 +63,8 @@ namespace Applitools
         int? AbortIdleTestTimeout { get; set; }
 
         bool? LayoutBreakpointsEnabled { get; set; }
-
-        IList<int> LayoutBreakpoints { get; set; }
-
-        LayoutBreakpointsOptions LayoutBreakpointsOptions { get; set; }
+        
+        LayoutBreakpointsOptions LayoutBreakpoints { get; set; }
         
         ProxySettings Proxy { get; set; }
         bool? IsForceFullPageScreenshot { get; set; }

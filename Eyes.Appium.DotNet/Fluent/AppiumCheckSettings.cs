@@ -585,28 +585,28 @@ namespace Applitools.Appium
         public AppiumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
 
         public AppiumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return clone;
         }
 
         public AppiumCheckSettings LayoutBreakpoints(bool shouldSet)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
         
         public AppiumCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions(options);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(options);
             return clone;
         }
 

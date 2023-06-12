@@ -49,7 +49,7 @@ namespace Applitools
             UseCookies = configuration.UseCookies;
             HideScrollbars = configuration.HideScrollbars;
             DisableBrowserFetching = configuration.DisableBrowserFetching;
-            LayoutBreakpointsOptions = configuration.LayoutBreakpointsOptions;
+            LayoutBreakpoints = configuration.LayoutBreakpoints;
             VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
 
 
@@ -504,12 +504,12 @@ namespace Applitools
         public int? AbortIdleTestTimeout { get; set; }
 
         
-        public LayoutBreakpointsOptions LayoutBreakpointsOptions { get; set; } = new LayoutBreakpointsOptions();
+        public LayoutBreakpointsOptions LayoutBreakpoints { get; set; } = new LayoutBreakpointsOptions();
 
         public bool? LayoutBreakpointsEnabled
         {
-            get => LayoutBreakpointsOptions.IsLayoutBreakpoints();
-            set => LayoutBreakpointsOptions.Breakpoints(value);
+            get => LayoutBreakpoints.IsLayoutBreakpoints();
+            set => LayoutBreakpoints.Breakpoints(value);
         }
 
         /// <summary>
@@ -525,14 +525,13 @@ namespace Applitools
 
         public IConfiguration SetLayoutBreakpoints(LayoutBreakpointsOptions options)
         {
-            LayoutBreakpointsOptions = options;
+            LayoutBreakpoints = options;
             return this;
         }
 
         public IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet)
         {
             LayoutBreakpointsEnabled = shouldSet;
-            LayoutBreakpoints.Clear();
             return this;
         }
 
@@ -543,32 +542,8 @@ namespace Applitools
 
         public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
         {
-            return SetLayoutBreakpoints_(breakpoints);
-        }
-
-        private IConfiguration SetLayoutBreakpoints_(IList<int> breakpoints)
-        {
-            LayoutBreakpointsEnabled = false;
-            LayoutBreakpoints.Clear();
-            if (breakpoints == null || breakpoints.Count == 0)
-            {
-                return this;
-            }
-
-            foreach (int breakpoint in breakpoints)
-            {
-                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
-                LayoutBreakpoints.Add(breakpoint);
-            }
-
-            ((List<int>)LayoutBreakpoints).Sort();
+            LayoutBreakpoints = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return this;
-        }
-
-        public IList<int> LayoutBreakpoints
-        {
-            get => LayoutBreakpointsOptions.GetLayoutBreakpoints();
-            set => SetLayoutBreakpoints_(value);
         }
 
         public List<RenderBrowserInfo> GetBrowsersInfo()

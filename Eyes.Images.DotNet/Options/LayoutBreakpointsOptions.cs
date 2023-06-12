@@ -37,7 +37,7 @@ namespace Applitools
         /// reload after layout breakpoints
         /// </summary>
         [JsonProperty("reload")]
-        private bool reload_;
+        private bool? reload_;
 
         public LayoutBreakpointsOptions Breakpoints()
         {
@@ -85,7 +85,7 @@ namespace Applitools
             return this;
         }
 
-        public bool GetReload()
+        public bool? GetReload()
         {
             return reload_;
         }

@@ -874,21 +874,21 @@ namespace Applitools.Playwright.Fluent
         public PlaywrightCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return clone;
         }
 
         public PlaywrightCheckSettings LayoutBreakpoints(bool shouldSet)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
         
         public PlaywrightCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
         {
             PlaywrightCheckSettings clone = Clone_();
-            clone.layoutBreakpointsOptions_ = new LayoutBreakpointsOptions(options);
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(options);
             return clone;
         }
         
