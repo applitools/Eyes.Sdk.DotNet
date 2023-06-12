@@ -19,7 +19,7 @@ namespace Applitools
         protected List<IGetFloatingRegion> floatingRegions_ = new List<IGetFloatingRegion>();
         protected List<IGetAccessibilityRegion> accessibilityRegions_ = new List<IGetAccessibilityRegion>();
         private int timeout_ = -1;
-        private int waitBeforeCapture_;
+        private int? waitBeforeCapture_;
         private bool? stitchContent_;
         private LazyLoadOptions lazyLoad_;
         private Rectangle? targetRegion_;
@@ -71,7 +71,7 @@ namespace Applitools
             return timeout_;
         }
 
-        int Fluent.ICheckSettingsInternal.GetWaitBeforeCapture()
+        int? Fluent.ICheckSettingsInternal.GetWaitBeforeCapture()
         {
             return waitBeforeCapture_;
         }

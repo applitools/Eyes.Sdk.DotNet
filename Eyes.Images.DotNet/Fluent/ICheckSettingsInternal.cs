@@ -8,7 +8,7 @@ namespace Applitools.Fluent
     {
         Rectangle? GetTargetRegion();
         int GetTimeout();
-        int GetWaitBeforeCapture();
+        int? GetWaitBeforeCapture();
         bool? GetStitchContent();
         MatchLevel? GetMatchLevel();
 
