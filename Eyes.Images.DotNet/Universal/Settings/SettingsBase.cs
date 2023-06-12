@@ -18,7 +18,6 @@ namespace Applitools
         public bool? HideScrollbars { get; set; }
         public bool? HideCaret { get; set; }
         public Overlap Overlap { get; set; }
-        public int? WaitBeforeCapture { get; set; }
         public LazyLoadOptions LazyLoad { get; set; }
         public Normalization Normalization { get; set; }
         public DebugImages DebugImages { get; set; }

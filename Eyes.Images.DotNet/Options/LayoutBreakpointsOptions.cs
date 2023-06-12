@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace Applitools
 {
+    [JsonConverter(typeof(LayoutBreakpointsConverter))]
     public class LayoutBreakpointsOptions
     {
         public LayoutBreakpointsOptions()

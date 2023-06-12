@@ -187,7 +187,6 @@ namespace Applitools
                 AccessibilityRegions = CollectRegions(checkSettingsInternal.GetAccessibilityRegions()),
                 LazyLoad = checkSettingsInternal.GetLazyLoad(),
                 UfgOptions = GetUniversalUfgOptions(checkSettingsInternal),
-                WaitBeforeCapture = checkSettingsInternal.GetWaitBeforeCapture()
             };
 
             return settings;
