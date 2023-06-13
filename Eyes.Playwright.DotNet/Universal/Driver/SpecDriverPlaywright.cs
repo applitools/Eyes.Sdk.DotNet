@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Applitools.Playwright.Universal.Driver.Dto;
 using Applitools.Playwright.Universal.Dto;
@@ -10,7 +9,6 @@ using Applitools.Universal;
 using Applitools.Universal.Driver;
 using Applitools.Utils.Geometry;
 using Microsoft.Playwright;
-using Newtonsoft.Json.Linq;
 
 namespace Applitools.Playwright.Universal.Driver
 {
@@ -283,7 +281,13 @@ namespace Applitools.Playwright.Universal.Driver
             IPage context = (IPage)refer_.Deref(driver);
             return context.ScreenshotAsync().GetAwaiter().GetResult();
         }
+        
+        private static readonly Regex jsHandlePattern_ = new Regex("(?:.+@)?(\\w*)(?:\\(\\d+\\))?",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        private static readonly Regex arrayPattern_ = new Regex("array\\(\\d+\\)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        
         private object HandlerToObjectUtil(IJSHandle jsHandle, Reference context)
         {
             if (jsHandle == null)
@@ -301,16 +305,14 @@ namespace Applitools.Playwright.Universal.Driver
             }
 
             string type = "";
-            Regex jsHandlePattern = new Regex("(?:.+@)?(\\w*)(?:\\(\\d+\\))?",
-                RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            Match jsHandleMatcher = jsHandlePattern.Match(jsHandle.ToString());
+
+            Match jsHandleMatcher = jsHandlePattern_.Match(jsHandle.ToString());
             if (jsHandleMatcher.Success)
             {
                 type = jsHandleMatcher.Groups[0].Value.ToLower();
             }
 
-            Regex arrayPattern = new Regex("array\\(\\d+\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            if (arrayPattern.Match(type).Success)
+            if (arrayPattern_.Match(type).Success)
             {
                 var map = jsHandle.GetPropertiesAsync().GetAwaiter().GetResult();
                 var arrayValues = new List<object>();
@@ -333,15 +335,6 @@ namespace Applitools.Playwright.Universal.Driver
 
                 return resultMap;
             }
-            //
-            // if (type.Equals("jshandle@node"))
-            // {
-            //     Element element = new Element
-            //     {
-            //         ApplitoolsRefId = refer_.Ref(jsHandle.AsElement(), context)
-            //     };
-            //     return element;
-            // }
 
             return jsHandle.JsonValueAsync<object>().GetAwaiter().GetResult();
         }

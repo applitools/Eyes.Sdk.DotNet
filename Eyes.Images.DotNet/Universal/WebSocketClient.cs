@@ -130,17 +130,17 @@ namespace Applitools
                     return message.Message;
                 }
 
-                Thread.Sleep(50);
+                Thread.Sleep(33);
             }
 
             return null;
         }
 
-        private void ReadMessage()
+        private async void ReadMessage()
         {
             while (true)
             {
-                var textMessage = ReceiveMessage();
+                var textMessage = await ReceiveMessageAsync();
 
                 Logger.Log(TraceLevel.Debug, Stage.SpecDriver, StageType.MessageReceived,
                     new { Message = textMessage });
@@ -158,7 +158,7 @@ namespace Applitools
             }
         }
 
-        private string ReceiveMessage()
+        private async Task<string> ReceiveMessageAsync()
         {
             var buffer = new ArraySegment<byte>(new byte[1024]);
             WebSocketReceiveResult result;
@@ -166,7 +166,7 @@ namespace Applitools
 
             do
             {
-                result = webSocket_.ReceiveAsync(buffer, CancellationToken.None).GetAwaiter().GetResult();
+                result = await webSocket_.ReceiveAsync(buffer, CancellationToken.None);
                 for (int i = 0; i < result.Count; i++)
                 {
                     // ReSharper disable once PossibleNullReferenceException
