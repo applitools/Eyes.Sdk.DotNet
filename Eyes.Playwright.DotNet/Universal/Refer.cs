@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Applitools.Universal;
 
@@ -6,14 +7,10 @@ namespace Applitools.Playwright.Universal
 {
     public class Refer : Applitools.Universal.Refer
     {
-        private readonly Dictionary<string, object> references_ = new Dictionary<string, object>();
+        private readonly ConcurrentDictionary<string, object> references_ = new ConcurrentDictionary<string, object>();
 
-        private readonly Dictionary<string, HashSet<Reference>> relations_ =
-            new Dictionary<string, HashSet<Reference>>();
-
-        public Refer()
-        {
-        }
+        private readonly ConcurrentDictionary<string, HashSet<Reference>> relations_ =
+            new ConcurrentDictionary<string, HashSet<Reference>>();
 
         ///<summary>store the driver's ref.</summary>
         ///<returns>the ref GUID</returns>
@@ -25,7 +22,7 @@ namespace Applitools.Playwright.Universal
             }
 
             string refId = Guid.NewGuid().ToString();
-            references_.Add(refId, value);
+            references_.TryAdd(refId, value);
 
             if (root != null)
             {
@@ -39,7 +36,7 @@ namespace Applitools.Playwright.Universal
 
             return refId;
         }
-        
+
         ///<summary>get a ref from store</summary>
         ///<param name="ref">the ref</param>
         /// <returns>the ref</returns>
@@ -70,10 +67,10 @@ namespace Applitools.Playwright.Universal
                     Destroy(childRef);
                 }
 
-                relations_.Remove(root.ApplitoolsRefId);
+                relations_.TryRemove(root.ApplitoolsRefId, out _);
             }
 
-            references_.Remove(root.ApplitoolsRefId);
+            references_.TryRemove(root.ApplitoolsRefId, out _);
         }
 
         private static bool IsRef(object @ref)
