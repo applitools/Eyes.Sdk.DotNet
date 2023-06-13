@@ -5,7 +5,7 @@ node_js:
   - "18"
 
 os: linux
-dist: jammy
+dist: focal
 
 services:
   - docker
