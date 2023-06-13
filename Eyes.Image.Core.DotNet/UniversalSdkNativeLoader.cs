@@ -55,6 +55,11 @@ namespace Applitools
                             os = "linux-alpine";
                             suffix = "alpine";
                         }
+                        else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                        {
+                            os = "linux-arm64";
+                            suffix = "linux-arm64";
+                        }
                         else
                         {
                             os = "linux-x64";
