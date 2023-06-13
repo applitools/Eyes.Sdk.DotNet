@@ -72,8 +72,7 @@ namespace Applitools
                     throw new Exception("Connection is not opened.");
                 }
 
-                Task task = Task.Factory.StartNew(ReadMessage, TaskCreationOptions.LongRunning);
-                //task.ConfigureAwait(false).GetAwaiter().GetResult();
+                Task.Factory.StartNew(ReadMessage, TaskCreationOptions.LongRunning);
             }
         }
 
@@ -131,7 +130,7 @@ namespace Applitools
                     return message.Message;
                 }
 
-                Thread.Sleep(20);
+                Thread.Sleep(50);
             }
 
             return null;
@@ -156,8 +155,6 @@ namespace Applitools
                 }
 
                 messageListener_.HandleMessage(textMessage);
-
-                Thread.Sleep(10);
             }
         }
 
