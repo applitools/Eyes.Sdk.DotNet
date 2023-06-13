@@ -1,6 +1,5 @@
 import xml.etree.ElementTree as ET
 import os
-import sys
 import re
 import datetime
 import json
