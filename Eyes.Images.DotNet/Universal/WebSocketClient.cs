@@ -131,7 +131,7 @@ namespace Applitools
                     return message.Message;
                 }
 
-                Thread.Sleep(200);
+                Thread.Sleep(20);
             }
 
             return null;
@@ -157,7 +157,7 @@ namespace Applitools
 
                 messageListener_.HandleMessage(textMessage);
 
-                Thread.Sleep(100);
+                Thread.Sleep(10);
             }
         }
 
