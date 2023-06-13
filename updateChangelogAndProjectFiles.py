@@ -28,7 +28,7 @@ def upSemanticVersion(currentVersion, part):
 def getDependentPackages(packageName, packageNextVersions, versionPart):
     packageDependencies = {
         "Eyes.Image.Core": ["Eyes.Images"],
-        "Eyes.Images": ["Eyes.Selenium", "Eyes.Selenium4"],
+        "Eyes.Images": ["Eyes.Selenium", "Eyes.Selenium4", "Eyes.Playwright"],
         "Eyes.Selenium": ["Eyes.Appium"],
     }
     dependencyDefaultChangelogStr="### Updated\n- Match to latest {}\n"
