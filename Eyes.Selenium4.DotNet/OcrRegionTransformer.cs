@@ -5,11 +5,11 @@ namespace Applitools.Selenium
 {
     public class OcrRegionTransformer : IOcrRegionTransformer
     {
-        private readonly SelectorTransformer _selectorTransformer;
+        private readonly ISelectorTransformer selectorTransformer_;
 
-        public OcrRegionTransformer(SelectorTransformer selectorTransformer)
+        public OcrRegionTransformer(ISelectorTransformer selectorTransformer)
         {
-            _selectorTransformer = selectorTransformer;
+            selectorTransformer_ = selectorTransformer;
         }
 
         public TRegion GetRegion(OcrRegion ocrRegion)
@@ -17,7 +17,7 @@ namespace Applitools.Selenium
             var selector = ocrRegion.GetSelector();
             if (selector != null)
             {
-                return _selectorTransformer.GetRegionSelector(selector.ToString());
+                return selectorTransformer_.GetRegionSelector(selector);
             }
 
             var element = ocrRegion.GetWebElement();

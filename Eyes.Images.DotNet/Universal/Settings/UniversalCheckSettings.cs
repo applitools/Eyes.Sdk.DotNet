@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Applitools.Fluent;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -24,7 +23,7 @@ namespace Applitools
         public bool? EnablePatterns { get; set; }
         public bool? IgnoreCaret { get; set; }
         public IDictionary<string, object> UfgOptions { get; set; }
-        public object LayoutBreakpoints { get; set; }
+        public LayoutBreakpointsOptions LayoutBreakpoints { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public int? RetryTimeout { get; set; }
         public ICollection<Renderer> Renders { get; set; } 

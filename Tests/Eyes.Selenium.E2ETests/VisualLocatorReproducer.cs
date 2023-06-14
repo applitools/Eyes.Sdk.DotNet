@@ -17,7 +17,7 @@ namespace Eyes.Selenium.E2ETests
     {
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
         // Test control inputs to read once and share for all tests
-        private static string? ApplitoolsApiKey;
+        private static string ApplitoolsApiKey;
         private static bool Headless;
 
         // Applitools objects to share for all tests
@@ -33,7 +33,7 @@ namespace Eyes.Selenium.E2ETests
         /// Sets up the configuration for running visual tests in the Ultrafast Grid.
         /// The configuration is shared by all tests in a test suite, so it belongs in a `OneTimeSetUp` method.
         /// If you have more than one test class, then you should abstract this configuration to avoid duplication.
-        /// <summary>
+        /// </summary>
         [OneTimeSetUp]
         public static void SetUpConfigAndRunner()
         {
@@ -80,7 +80,7 @@ namespace Eyes.Selenium.E2ETests
 
         /// <summary>
         /// Sets up each test with its own ChromeDriver and Applitools Eyes objects.
-        /// <summary>
+        /// </summary>
         [SetUp]
         public void OpenBrowserAndEyes()
         {
@@ -118,7 +118,7 @@ namespace Eyes.Selenium.E2ETests
         /// but the verifications use one-line snapshot calls with Applitools Eyes.
         /// If the page ever changes, then Applitools will detect the changes and highlight them in the dashboard.
         /// Traditional assertions that scrape the page for text values are not needed here.
-        /// <summary>
+        /// </summary>
         [Test]
         public void LogIntoBankAccount()
         {
@@ -150,7 +150,7 @@ namespace Eyes.Selenium.E2ETests
 
         /// <summary>
         /// Concludes the test by quitting the browser and closing Eyes.
-        /// <summary>
+        /// </summary>
         [TearDown]
         public void CleanUpTest()
         {
@@ -170,7 +170,7 @@ namespace Eyes.Selenium.E2ETests
 
         /// <summary>
         /// Prints the final summary report for the test suite.
-        /// <summary>
+        /// </summary>
         [OneTimeTearDown]
         public static void PrintResults()
         {

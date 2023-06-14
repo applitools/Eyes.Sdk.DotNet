@@ -6,6 +6,7 @@ using System.Reflection;
 using Applitools.Commands;
 using Applitools.Commands.Requests;
 using Applitools.Commands.Responses;
+using Applitools.Universal;
 using Applitools.Utils;
 
 namespace Applitools
@@ -13,10 +14,10 @@ namespace Applitools
     public abstract class EyesRunner
     {
         private MakeManagerRequestPayload config_;
-        private readonly Assembly actualAssembly_;
+        protected readonly Assembly ActualAssembly;
         private readonly IList<EyesBaseConfig> eyesConfigs_;
 
-        protected CommandExecutor CommandExecutor { get; private set; }
+        public CommandExecutor CommandExecutor { get; private set; }
 
         public MakeManagerRequestPayload Config
         {
@@ -42,18 +43,18 @@ namespace Applitools
 
         public bool? RemoveDuplicateTests { get; private set; }
 
-        protected EyesRunner(ILogHandler logHandler, string agentId)
+        protected EyesRunner(ILogHandler logHandler, string agentId, ISpecDriverMessageListener listener)
         {
             if (logHandler != null)
             {
                 Logger.SetLogHandler(logHandler);
+                listener.Logger.SetLogHandler(logHandler);
             }
 
             eyesConfigs_ = new List<EyesBaseConfig>();
-            actualAssembly_ = GetActualAssembly();
-
-            var sdkEvent = CreateCoreSdk(agentId);
-            CommandExecutor = CommandExecutor.GetInstance(logHandler, sdkEvent);
+            ActualAssembly = GetActualAssembly();
+            // ReSharper disable once VirtualMemberCallInConstructor
+            CommandExecutor = CommandExecutor.GetInstance(CreateCoreMakeSdk(agentId), listener, logHandler);
         }
 
         public void SetRemoveDuplicateTests(bool? removeDuplicateTests)
@@ -109,7 +110,7 @@ namespace Applitools
             eyesConfigs_.Add(eyesBase);
         }
 
-        public string GetCoreMakeManager()
+        protected string GetCoreMakeManager()
         {
             Logger.Log("CoreMakeManager");
 
@@ -215,12 +216,16 @@ namespace Applitools
             return closeAllEyes;
         }
 
-        private CoreMakeSdkRequest CreateCoreMakeSdk(string name)
+        protected virtual CoreMakeSdkRequest CreateCoreMakeSdk(string name)
         {
-            var result = new CoreMakeSdkRequest();
-            result.AddOrUpdatePayload("agentId", $"{name}:{actualAssembly_.GetName().Version}");
-            result.AddOrUpdatePayload("spec", "webdriver");
-            result.AddOrUpdatePayload("cwd", Environment.CurrentDirectory);
+            var result = new CoreMakeSdkRequest{
+                Payload = new MakeCorePayload
+                {
+                    AgentId = $"{name}:{ActualAssembly.GetName().Version}",
+                    Cwd = Environment.CurrentDirectory,
+                    Protocol = "webdriver"
+                }
+            };
 
             return result;
         }

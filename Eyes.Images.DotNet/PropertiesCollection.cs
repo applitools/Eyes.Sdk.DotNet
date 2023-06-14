@@ -16,6 +16,8 @@ namespace Applitools
             properties_.Add(pd);
         }
 
+        public PropertyData this[int index] => properties_[index];
+
         public void Clear()
         {
             properties_.Clear();

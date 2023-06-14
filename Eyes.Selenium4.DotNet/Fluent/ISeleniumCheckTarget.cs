@@ -8,10 +8,6 @@ namespace Applitools.Selenium.Fluent
 
         CheckState State { get; set; }
 
-        List<int> GetLayoutBreakpoints();
-
-        bool? GetLayoutBreakpointsEnabled();
-
         bool? GetUseCookies();
     }
 }

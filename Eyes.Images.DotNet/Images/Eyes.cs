@@ -27,7 +27,6 @@ namespace Applitools.Images
 
         private string title_;
         private readonly Uri serverUrl_;
-        private EyesRef eyes_;
 
         #endregion
 
@@ -203,7 +202,7 @@ namespace Applitools.Images
 
             ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
             checkSettings = checkSettings.Timeout(TimeSpan.Zero); // no need for automatic retry when dealing with images.
-            IImagesCheckTarget imagesCheckTarget = checkSettings as IImagesCheckTarget;
+            IImagesCheckTarget imagesCheckTarget = (IImagesCheckTarget)checkSettings;
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
             //eyesConfig.Open.Properties = _properties;
@@ -247,110 +246,6 @@ namespace Applitools.Images
             return new AppImage(asExpected);
         }
 
-        public ICollection<string> ExtractText(params OcrRegion[] regions)
-        {
-            return ExtractText(regions.ToList());
-        }
-
-        public ICollection<string> ExtractText(ICollection<OcrRegion> regions)
-        {
-            if (IsDisabled)
-            {
-                return new List<string>();
-            }
-
-            var firstRegion = regions.FirstOrDefault();
-            if (firstRegion == null)
-            {
-                throw new Exception("At least one region is required");
-            }
-
-            var eyesConfig = ToConfig(Config);
-            var eyesExtractTextRequest = new EyesExtractTextRequest
-            {
-                Key = Guid.NewGuid().ToString(),
-                Payload = new ExtractTextRequestPayload
-                {
-                    Target = new ImageTarget
-                    {
-                        Image = firstRegion.GetImage()
-                    },
-                    Config = eyesConfig,
-                    Settings = regions.Select(r => new ExtractTextSettings
-                    {
-                        Hint = r.GetHint(),
-                        MinMatch = r.GetMinMatch(),
-                        Language = r.GetLanguage(),
-                        Region = GetRegion(r)
-                    }).ToList()
-                }
-            };
-
-            var response = Runner.SendRequest<EyesExtractTextRequest, EyesExtractTextResponse>(eyesExtractTextRequest);
-
-            return response.Payload.Result;
-        }
-
-        public IDictionary<string, ICollection<TextRegion>> ExtractTextRegions(TextRegionSettings textRegionSettings)
-        {
-            Logger.Log("ExtractTextRegions");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, ICollection<TextRegion>>();
-            }
-
-            var eyesConfig = ToConfig(Config);
-            var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
-            {
-                Key = Guid.NewGuid().ToString(),
-                Payload = new ExtractTextRegionsRequestPayload
-                {
-                    Target = new ImageTarget
-                    {
-                        Image = textRegionSettings.Image
-                    },
-                    Config = eyesConfig,
-                    Settings = textRegionSettings
-                }
-            };
-
-            var response = Runner.SendRequest<EyesExtractTextRegionsRequest, EyesExtractTextRegionsResponse>(extractTextRegionsRequest);
-
-            return response.Payload.Result;
-        }
-        
-        public IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
-        {
-            Logger.Log("Locate");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new Dictionary<string, IList<Region>>();
-            }
-
-            var eyesConfig = ToConfig(Config);
-            var eyesLocateRequest = new EyesLocateRequest
-            {
-                Key = Guid.NewGuid().ToString(),
-                Payload = new EyesLocateRequestPayload
-                {
-                    Config = eyesConfig,
-                    Target = new ImageTarget
-                    {
-                        Image = settings.GetImage()
-                    },
-                    Settings = ToLocateSettings(Config, settings.GetNames())
-                }
-            };
-
-            var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(eyesLocateRequest);
-
-            return response.Payload.Result;
-        }
-
         public void SetTitle(string title)
         {
             title_ = title;
@@ -359,98 +254,6 @@ namespace Applitools.Images
         #endregion
 
         #endregion
-
-        public override TestResults GetResults(bool throwEx = true)
-        {
-            Logger.Log("GetResults");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var request = CreateEyesGetResultsRequest(throwEx, Runner.RemoveDuplicateTests);
-
-            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
-
-            var error = response.Payload.Error;
-            if (error != null)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    IsOpen = false;
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            IsOpen = false;
-            return testResults.First();
-        }
-
-        public override TestResults Abort()
-        {
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            Logger.Verbose("enter. Abort");
-
-            if (IsOpen == false)
-            {
-                return new TestResults
-                {
-                    Runner = Runner
-                };
-            }
-
-            var request = CreateEyesAbortRequest();
-
-            var payload = Runner.SendRequest<EyesAbortRequest, EyesCloseAbortResponse>(request).Payload;
-            
-            if (payload.Error != null)
-            {
-                IsOpen = false;
-                throw new EyesException(payload.Error.ToString());
-            }
-
-            return GetResults();
-        }
-
-        public override TestResults Close(bool throwEx = true)
-        {
-            Logger.Log("Close");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var eyesCloseRequest = CreateEyesCloseRequest(throwEx);
-
-            var response = Runner.SendRequest<EyesCloseRequest, EyesCloseAbortResponse>(eyesCloseRequest);
-
-            var error = response.Payload.Error;
-            if (error != null && throwEx)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            return GetResults(throwEx);
-        }
 
         private void OpenEyes(string appName = null, string testName = null, Size? viewportSize = null)
         {
@@ -513,132 +316,6 @@ namespace Applitools.Images
             };
             //result.Payload.Config.Open.Properties = properties_;
             return result;
-        }
-
-        private EyesCloseRequest CreateEyesCloseRequest(bool throwEx = false)
-        {
-            var eyesCloseRequest = new EyesCloseRequest
-            {
-                Payload = new CloseResponsePayload
-                {
-                    Eyes = eyes_,
-                    Settings = ToCloseSettings(Config, throwEx, Runner.RemoveDuplicateTests)
-                }
-            };
-            return eyesCloseRequest;
-        }
-
-        private EyesGetResultsRequest CreateEyesGetResultsRequest(bool throwEx = false, bool? removeDuplicateTests = null)
-        {
-            var eyesCloseRequest = new EyesGetResultsRequest
-            {
-                Payload = new EyesGetResultsRequestPayload
-                {
-                    Eyes = eyes_,
-                    Settings = ToResultsSettings(Config, throwEx, removeDuplicateTests)
-                }
-            };
-
-            return eyesCloseRequest;
-        }
-
-        private EyesAbortRequest CreateEyesAbortRequest()
-        {
-            var request = new EyesAbortRequest
-            {
-                Payload = new AbortPayload
-                {
-                    Eyes = eyes_
-                }
-            };
-            return request;
-        }
-
-        private RegionRectangle GetRegion(OcrRegion ocrRegion)
-        {
-            var region = ocrRegion.GetRegion();
-            if (region == null)
-            {
-                return null;
-            }
-
-            return new RegionRectangle
-            {
-                Width = region.Value.Width,
-                Height = region.Value.Height,
-                X = region.Value.Left,
-                Y = region.Value.Top,
-            };
-        }
-
-        private UniversalCheckSettings CreateUniversalCheckSettings(ICheckSettingsInternal checkSettingsInternal)
-        {
-            var settings = new UniversalCheckSettings
-            {
-                Hooks = new Hooks
-                {
-                    BeforeCaptureScreenshot = checkSettingsInternal.GetScriptHooks().FirstOrDefault(i => i.Key == CheckSettings.BEFORE_CAPTURE_SCREENSHOT).Value
-                },
-                LayoutBreakpoints = GetLayoutBreakpoints(checkSettingsInternal),
-                MatchLevel = checkSettingsInternal.GetMatchLevel(),
-                Name = checkSettingsInternal.GetName(),
-                Region = GetUniversalRegion(checkSettingsInternal),
-                Fully = checkSettingsInternal.GetStitchContent(),
-                UserCommandId = checkSettingsInternal.GetVariationGroupId(),
-                IgnoreDisplacements = checkSettingsInternal.GetIgnoreDisplacements(),
-                SendDom = checkSettingsInternal.GetSendDom(),
-                UseDom = checkSettingsInternal.GetUseDom(),
-                EnablePatterns = checkSettingsInternal.GetEnablePatterns(),
-                //Frames = GetFrames(checkSettingsInternal),
-                IgnoreRegions = checkSettingsInternal.GetIgnoreRegions().Select(i => i.ToRegion()).ToArray(),
-                StrictRegions = checkSettingsInternal.GetStrictRegions().Select(i => i.ToRegion()).ToArray(),
-                LayoutRegions = checkSettingsInternal.GetLayoutRegions().Select(i => i.ToRegion()).ToArray(),
-                ContentRegions = checkSettingsInternal.GetContentRegions().Select(i => i.ToRegion()).ToArray(),
-                FloatingRegions = checkSettingsInternal.GetFloatingRegions().Select(i => i.ToRegion()).ToArray(),
-                AccessibilityRegions = checkSettingsInternal.GetAccessibilityRegions().Select(i => i.ToRegion()).ToArray(),
-                LazyLoad = checkSettingsInternal.GetLazyLoad()
-            };
-
-            return settings;
-        }
-        private object GetLayoutBreakpoints(ICheckSettingsInternal settings)
-        {
-            if (settings.GetLayoutBreakpoints() != null && settings.GetLayoutBreakpoints().Any())
-            {
-                return settings.GetLayoutBreakpoints();
-            }
-
-            return settings.GetLayoutBreakpointsEnabled();
-        }
-
-        private TRegion GetUniversalRegion(ICheckSettingsInternal checkSettings)
-        {
-            TRegion region = null;
-            if (checkSettings is ICheckSettingsInternal checkSettingsInternal)
-            {
-                region = CreateCheckSettingsTargetRegion(checkSettingsInternal);
-            }
-            
-            return region;
-        }
-
-        private TRegion CreateCheckSettingsTargetRegion(ICheckSettingsInternal settings)
-        {
-            TRegion region = null;
-
-            var rectangle = settings.GetTargetRegion();
-            if (rectangle.HasValue)
-            {
-                region = new RegionRectangle
-                {
-                    X = rectangle.Value.X,
-                    Y = rectangle.Value.Y,
-                    Width = rectangle.Value.Width,
-                    Height = rectangle.Value.Height
-                };
-            }
-
-            return region;
         }
     }
 }

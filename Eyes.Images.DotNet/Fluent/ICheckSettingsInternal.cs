@@ -8,6 +8,7 @@ namespace Applitools.Fluent
     {
         Rectangle? GetTargetRegion();
         int GetTimeout();
+        int? GetWaitBeforeCapture();
         bool? GetStitchContent();
         MatchLevel? GetMatchLevel();
 
@@ -31,14 +32,12 @@ namespace Applitools.Fluent
         SizeMode GetSizeMode();
         VisualGridSelector GetTargetSelector();
         VisualGridOption[] GetVisualGridOptions();
-        Dictionary<string, object> ToSerializableDictionary();
 
         string GetFluentCommandString();
         string GetVariationGroupId();
 
-        bool? GetLayoutBreakpointsEnabled();
-
-        IList<int> GetLayoutBreakpoints();
         LazyLoadOptions GetLazyLoad();
+        DensityMetrics GetDensityMetrics();
+        LayoutBreakpointsOptions GetLayoutBreakpointsOptions();
     }
 }

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Eyes.Selenium.DotNet")]
 [assembly: InternalsVisibleTo("Eyes.Selenium4.DotNet")]
 [assembly: InternalsVisibleTo("Eyes.Appium.DotNet")]
+[assembly: InternalsVisibleTo("Eyes.Playwright.DotNet")]
 [assembly: InternalsVisibleTo("Eyes.Sdk.Core.S3.DotNet")]
 [assembly: InternalsVisibleTo("Test.Eyes.Selenium.DotNet")]
 [assembly: InternalsVisibleTo("Test.Eyes.Sdk.Core.DotNet")]

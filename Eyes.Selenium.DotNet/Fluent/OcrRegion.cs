@@ -6,39 +6,32 @@ namespace Applitools.Selenium
 {
 	public class OcrRegion : OcrRegionBase
 	{
-        private readonly Region _region;
-        private readonly IWebElement _element;
-        private readonly By _selector;
-        public TRegion Region { get; set; }
+        private readonly IWebElement element_;
+        private readonly By selector_;
 
+        public OcrRegion(Region? region)
+        {
+            Region(region);
+        }
+        
         public OcrRegion(By selector)
         {
-            _selector = selector;
+            selector_ = selector;
         }
 
         public OcrRegion(IWebElement element)
         {
-            _element = element;
-        }
-
-        public OcrRegion(Region region)
-        {
-            _region = region;
+            element_ = element;
         }
 
         internal By GetSelector()
         {
-            return _selector;
+            return selector_;
         }
 
         internal IWebElement GetWebElement()
         {
-            return _element;
-        }
-
-        internal Region GetRegion()
-        {
-            return _region;
+            return element_;
         }
     }
 }

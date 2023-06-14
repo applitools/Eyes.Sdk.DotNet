@@ -20,14 +20,14 @@ namespace Applitools.Generated.Selenium.Tests
     {
         protected IWebDriver driver;
         protected IWebDriver webDriver;
-        protected EyesRunner runner;
+        protected SeleniumEyesRunner runner;
         protected Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
-        public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
+        public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests - Selenium");
         public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
         public static readonly string SAUCE_USERNAME = Environment.GetEnvironmentVariable("SAUCE_USERNAME");
         public static readonly string SAUCE_ACCESS_KEY = Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY");
-        public static readonly string SAUCE_SELENIUM_URL = "https://ondemand.saucelabs.com:443/wd/hub";
+        public static readonly string SAUCE_SELENIUM_URL = "https://ondemand.us-west-1.saucelabs.com:443/wd/hub";
         public static readonly string EG_SELENIUM_URL = Environment.GetEnvironmentVariable("EXECUTION_GRID_URL");
         public static readonly string LOCAL_SELENIUM_URL = "http://localhost:4444/wd/hub";
         public static readonly string LOCAL_FIREFOX_SELENIUM_URL = "http://localhost:4445/wd/hub";
@@ -52,7 +52,8 @@ namespace Applitools.Generated.Selenium.Tests
                     {
                         var chromeOptions = new ChromeOptions();
                         if (headless) chromeOptions.AddArgument("headless");
-                        driver = new RemoteWebDriver(new Uri(EG_SELENIUM_URL), chromeOptions);
+                        string egUrl = EG_SELENIUM_URL ?? Eyes.GetExecutionCloudUrl();
+                        driver = new RemoteWebDriver(new Uri(egUrl), chromeOptions);
                     }
                     else
                     {
@@ -93,7 +94,7 @@ namespace Applitools.Generated.Selenium.Tests
                     break;
                 case browserType.Safari12:
                     var browserOptionsSafari12 = new SafariOptions();
-                    SetDriverOptions_(ref browserOptionsSafari12, "macOS 10.13", "12.1");
+                    SetDriverOptions_(ref browserOptionsSafari12, "macOS 10.13", "12");
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsSafari12.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 default:
@@ -174,7 +175,7 @@ namespace Applitools.Generated.Selenium.Tests
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
-            runner = isVisualGrid ? (EyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
+            runner = isVisualGrid ? (SeleniumEyesRunner)(new VisualGridRunner(10, logHandler)) : new ClassicRunner(logHandler);
             eyes = new Applitools.Selenium.Eyes(runner);
             initEyesSettings(isVisualGrid, isCSSMode);
         }

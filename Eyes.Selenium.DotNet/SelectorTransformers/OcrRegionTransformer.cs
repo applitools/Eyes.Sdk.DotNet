@@ -5,11 +5,11 @@ namespace Applitools.Selenium
 {
     public class OcrRegionTransformer : IOcrRegionTransformer
     {
-        private readonly ISelectorTransformer _selectorTransformer;
+        private readonly ISelectorTransformer selectorTransformer_;
 
         public OcrRegionTransformer(ISelectorTransformer selectorTransformer)
         {
-            _selectorTransformer = selectorTransformer;
+            selectorTransformer_ = selectorTransformer;
         }
 
         public TRegion GetRegion(OcrRegion ocrRegion)
@@ -17,7 +17,7 @@ namespace Applitools.Selenium
             var selector = ocrRegion.GetSelector();
             if (selector != null)
             {
-                return _selectorTransformer.GetRegionSelector(selector);
+                return selectorTransformer_.GetRegionSelector(selector);
             }
 
             var element = ocrRegion.GetWebElement();
@@ -29,7 +29,13 @@ namespace Applitools.Selenium
                 };
             }
 
-            var region = ocrRegion.GetRegion();
+            var reg = ocrRegion.GetRegion();
+            if (reg == null)
+            {
+                throw new EyesException("can't handle uninitialized region.");
+            }
+            
+            var region = reg.Value;
             return new RegionRectangle
             {
                 X = region.Left,

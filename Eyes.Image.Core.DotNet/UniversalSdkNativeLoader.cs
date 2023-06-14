@@ -7,27 +7,23 @@ namespace Applitools
 {
     using System.Runtime.InteropServices;
 
-    public class UniversalSdkNativeLoader
+    public static class UniversalSdkNativeLoader
     {
         private static int port_;
         private static Process nativeProc_;
-        private static object _lockObject = new object();
+        private static readonly object lockObject_ = new object();
+
+        private static readonly string universalDebug_ =
+            "true" == Environment.GetEnvironmentVariable("APPLITOOLS_UNIVERSAL_DEBUG")?.ToLower() ? "--debug" : "";
 
         public static int Start()
         {
             return TryStartProcess_();
         }
 
-        public void Stop()
-        {
-            TryStopProcess_();
-        }
-
-        public bool IsRunning => nativeProc_ != null && !nativeProc_.HasExited;
-
         private static int TryStartProcess_()
         {
-            lock (_lockObject)
+            lock (lockObject_)
             {
                 if (nativeProc_ == null || nativeProc_.HasExited)
                 {
@@ -59,17 +55,24 @@ namespace Applitools
                             os = "linux-alpine";
                             suffix = "alpine";
                         }
+                        else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                        {
+                            os = "linux-arm64";
+                            suffix = "linux-arm64";
+                        }
                         else
                         {
                             os = "linux-x64";
                             suffix = "linux";
                         }
+
                         path = GetServerFilePath(basePath, os, suffix);
                         CommandExecutor.ExecCommand($"chmod 755 {path}");
                     }
                     else
                     {
-                        throw new NotSupportedException($"The operation system is not supported: {RuntimeInformation.OSDescription}");
+                        throw new NotSupportedException(
+                            $"The operation system is not supported: {RuntimeInformation.OSDescription}");
                     }
 
                     if (File.Exists(path) == false)
@@ -93,19 +96,12 @@ namespace Applitools
             return Path.Combine(Path.GetDirectoryName(basePath), "runtimes", os, "native", "core-" + suffix);
         }
 
-        private void TryStopProcess_()
-        {
-            if (nativeProc_ != null && !nativeProc_.HasExited)
-            {
-                nativeProc_.Kill();
-            }
-        }
-
         private static Process StartProcess(string path)
         {
             var process = new Process
             {
-                StartInfo = new ProcessStartInfo(path, "universal --no-singleton --shutdown-mode stdin")
+                StartInfo = new ProcessStartInfo(path,
+                    $"universal --no-singleton --shutdown-mode stdin {universalDebug_}")
                 {
                     UseShellExecute = false,
                     RedirectStandardInput = true,
@@ -129,17 +125,16 @@ namespace Applitools
             }
             catch (Exception e)
             {
-                throw new Exception($"Unable to read Universal Server StandardOutput. Process HasExited: {process.HasExited}", e);
+                throw new Exception(
+                    $"Unable to read Universal Server StandardOutput. Process HasExited: {process.HasExited}", e);
             }
 
-            try
+            if (int.TryParse(portStr, out int port))
             {
-                return int.Parse(portStr);
+                return port;
             }
-            catch (Exception e)
-            {
-                throw new Exception($"'{portStr}' is not valid port number", e);
-            }
+
+            throw new Exception($"'{portStr}' is not valid port number");
         }
 
         private static void CopyCorePackageFolder(string basePath)
@@ -149,7 +144,8 @@ namespace Applitools
             var nugetFolder = Environment.ExpandEnvironmentVariables(packageFolderPathEnv);
             var packageFolderPath = Path.Combine(nugetFolder, packageName);
             var directoryInfo = new DirectoryInfo(packageFolderPath);
-            var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i).FirstOrDefault();
+            var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i)
+                .FirstOrDefault();
 
             if (string.IsNullOrEmpty(latestPackageName) == false)
             {

@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using System;
 using OpenQA.Selenium.Chrome;
-using Applitools.Selenium;
 using System.Collections.Generic;
 using Applitools.Tests.Utils;
 

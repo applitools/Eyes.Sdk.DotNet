@@ -25,7 +25,7 @@ namespace Applitools
         bool? EnablePatterns { get; set; }
         bool? IgnoreCaret { get; set; }
         IDictionary<string, object> UfgOptions { get; }
-        ICollection<int> LayoutBreakpoints { get; set; }
+        LayoutBreakpointsOptions LayoutBreakpoints { get; set; }
         bool? DisableBrowserFetching { get; set; }
         AutProxy AutProxy { get; set; }
         ICollection<RenderBrowserInfo> Renderers { get; }
@@ -44,15 +44,19 @@ namespace Applitools
         public ICollection<TFloatingRegion> FloatingRegions { get; set; }
         public ICollection<TFloatingRegion> AccessibilityRegions { get; set; }
         public AccessibilitySettings AccessibilitySettings { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public MatchLevel? MatchLevel { get; set; }
+
+        [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan? RetryTimeout { get; set; }
+
         public bool? SendDom { get; set; }
         public bool? UseDom { get; set; }
         public bool? EnablePatterns { get; set; }
         public bool? IgnoreCaret { get; set; }
         public IDictionary<string, object> UfgOptions { get; set; }
-        public ICollection<int> LayoutBreakpoints { get; set; }
+        public LayoutBreakpointsOptions LayoutBreakpoints { get; set; }
         public bool? DisableBrowserFetching { get; set; }
         public AutProxy AutProxy { get; set; }
         public ICollection<RenderBrowserInfo> Renderers { get; set; }
@@ -68,8 +72,53 @@ namespace Applitools
             FloatingRegions = new List<TFloatingRegion>();
             AccessibilityRegions = new List<TFloatingRegion>();
             UfgOptions = new Dictionary<string, object>();
-            LayoutBreakpoints = new List<int>();
+            LayoutBreakpoints = new LayoutBreakpointsOptions();
             Renderers = new List<RenderBrowserInfo>();
+        }
+    }
+
+    public class TimeSpanConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (value == null)
+            {
+                writer.WriteNull();
+                return;
+            }
+
+            if (value is TimeSpan timeSpan)
+            {
+                writer.WriteValue(timeSpan.Milliseconds);
+                return;
+            }
+
+            throw new JsonSerializationException($"can't serialize {value} to TimeSpan");
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+
+            if (reader.TokenType == JsonToken.String)
+            {
+                return TimeSpan.Parse(reader.Value?.ToString());
+            }
+
+            if (reader.TokenType == JsonToken.Integer)
+            {
+                return TimeSpan.FromMilliseconds((int)reader.Value); 
+            }
+
+            throw new JsonSerializationException($"can't deserialize TimeSpan from {reader.Value}");
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(int) || objectType == typeof(int?);
         }
     }
 }

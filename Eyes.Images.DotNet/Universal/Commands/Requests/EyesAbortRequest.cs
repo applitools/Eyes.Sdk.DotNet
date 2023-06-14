@@ -3,6 +3,7 @@
     public class AbortPayload
     {
         public EyesRef Eyes { get; set; }
+        public CloseSettings Settings { get; set; }
     }
 
     public class EyesAbortRequest : CommandBase

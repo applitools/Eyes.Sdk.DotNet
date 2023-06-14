@@ -6,15 +6,15 @@ namespace Applitools
 {
     public class SimpleRegionByRectangle : IGetRegions
     {
-        private readonly Padding _padding;
-        private readonly string _regionId;
-        private readonly IMutableRegion _region;
+        private readonly Padding padding_;
+        private readonly string regionId_;
+        private readonly IMutableRegion region_;
 
         public SimpleRegionByRectangle(Rectangle region, Padding padding = null, string regionId = null)
         {
-            _padding = padding;
-            _regionId = regionId;
-            _region = new MutableRegion(region);
+            padding_ = padding;
+            regionId_ = regionId;
+            region_ = new MutableRegion(region);
         }
 
         public SimpleRegionByRectangle(Point location, Size size) : this(new Rectangle(location, size)) { }
@@ -25,13 +25,13 @@ namespace Applitools
             {
                 Region = new RegionRectangle
                 {
-                    X = _region.Left,
-                    Y = _region.Top,
-                    Width = _region.Width,
-                    Height = _region.Height
+                    X = region_.Left,
+                    Y = region_.Top,
+                    Width = region_.Width,
+                    Height = region_.Height
                 },
-                Padding = _padding,
-                RegionId = _regionId
+                Padding = padding_,
+                RegionId = regionId_
             };
         }
     }

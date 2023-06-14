@@ -70,14 +70,23 @@ namespace Applitools.Utils
         public static JsonSerializerSettings CreateSerializerSettings(
             bool ids = false, bool types = false, bool nulls = false, bool indent = false)
         {
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy
+                {
+                    ProcessDictionaryKeys = false
+                }
+            };
             var settings = new JsonSerializerSettings()
             {
+                ContractResolver = contractResolver,
                 DateParseHandling = DateParseHandling.DateTimeOffset,
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
                 Formatting = indent ? Formatting.Indented : Formatting.None,
                 NullValueHandling = nulls ? NullValueHandling.Include : NullValueHandling.Ignore,
                 PreserveReferencesHandling = ids ? PreserveReferencesHandling.Objects : PreserveReferencesHandling.None,
+                
             };
 
             if (types)

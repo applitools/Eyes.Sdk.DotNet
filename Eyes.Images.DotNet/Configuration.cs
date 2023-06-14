@@ -9,8 +9,7 @@ namespace Applitools
 {
     public class Configuration : IConfiguration
     {
-        private readonly IList<int> _layoutBreakpoints = new List<int>();
-        private readonly List<RenderBrowserInfo> _browsersInfo = new List<RenderBrowserInfo>();
+        private readonly List<RenderBrowserInfo> browsersInfo_ = new List<RenderBrowserInfo>();
 
         public Configuration()
         {
@@ -44,30 +43,36 @@ namespace Applitools
             ViewportSize = configuration.ViewportSize;
             AbortIdleTestTimeout = configuration.AbortIdleTestTimeout;
             IsForceFullPageScreenshot = configuration.IsForceFullPageScreenshot;
-            WaitBeforeScreenshots = configuration.WaitBeforeScreenshots;
+            WaitBeforeCapture = configuration.WaitBeforeScreenshots;
             StitchMode = configuration.StitchMode;
             HideCaret = configuration.HideCaret;
             UseCookies = configuration.UseCookies;
             HideScrollbars = configuration.HideScrollbars;
             DisableBrowserFetching = configuration.DisableBrowserFetching;
-            LayoutBreakpointsEnabled = configuration.LayoutBreakpointsEnabled;
-            _layoutBreakpoints = new List<int>(configuration.LayoutBreakpoints);
-
+            LayoutBreakpoints = configuration.LayoutBreakpoints;
             VisualGridOptions = (VisualGridOption[])configuration.VisualGridOptions?.Clone();
 
 
             if (configuration is Configuration config)
             {
-                _browsersInfo.AddRange(config._browsersInfo);
+                browsersInfo_.AddRange(config.browsersInfo_);
             }
         }
+
         public string Type { get; set; }
         public int? Concurrency { get; set; }
         public bool? Legacy { get; set; }
 
         public bool? IsForceFullPageScreenshot { get; set; }
 
-        public int? WaitBeforeScreenshots { get; set; }
+        public int? WaitBeforeCapture { get; set; }
+
+        [Obsolete("Use WaitBeforeCapture")]
+        public int? WaitBeforeScreenshots
+        {
+            get => WaitBeforeCapture;
+            set => WaitBeforeCapture = value;
+        }
 
         public StitchModes? StitchMode { get; set; }
 
@@ -253,6 +258,7 @@ namespace Applitools
         }
 
         public string TestName { get; set; }
+
         public IConfiguration SetTestName(string value)
         {
             TestName = value;
@@ -372,7 +378,7 @@ namespace Applitools
             DefaultMatchSettings.MatchLevel = value;
             return this;
         }
-        
+
         public string ServerUrl { get; set; }
 
         public IConfiguration SetServerUrl(string value)
@@ -391,6 +397,7 @@ namespace Applitools
         }
 
         public bool? HideScrollbars { get; set; }
+
         public IConfiguration SetHideScrollbars(bool? value)
         {
             HideScrollbars = value;
@@ -398,6 +405,7 @@ namespace Applitools
         }
 
         public bool? DisableBrowserFetching { get; set; }
+
         public IConfiguration SetDisableBrowserFetching(bool? value)
         {
             DisableBrowserFetching = value;
@@ -405,6 +413,7 @@ namespace Applitools
         }
 
         public ProxySettings Proxy { get; set; }
+
         public IConfiguration SetProxy(ProxySettings proxy)
         {
             Proxy = proxy;
@@ -440,9 +449,16 @@ namespace Applitools
             return this;
         }
 
+        [Obsolete("Use SetWaitBeforeCapture(int? value)")]
         public IConfiguration SetWaitBeforeScreenshots(int? value)
         {
-            WaitBeforeScreenshots = value;
+            WaitBeforeCapture = value;
+            return this;
+        }
+
+        public IConfiguration SetWaitBeforeCapture(int? value)
+        {
+            WaitBeforeCapture = value;
             return this;
         }
 
@@ -457,7 +473,7 @@ namespace Applitools
             HideCaret = value;
             return this;
         }
-        
+
         public bool? EnablePatterns
         {
             get => DefaultMatchSettings.EnablePatterns;
@@ -469,7 +485,7 @@ namespace Applitools
             DefaultMatchSettings.EnablePatterns = value;
             return this;
         }
-        
+
         public AccessibilitySettings AccessibilityValidation
         {
             get => DefaultMatchSettings.AccessibilitySettings;
@@ -487,6 +503,15 @@ namespace Applitools
         /// </summary>
         public int? AbortIdleTestTimeout { get; set; }
 
+        
+        public LayoutBreakpointsOptions LayoutBreakpoints { get; set; } = new LayoutBreakpointsOptions();
+
+        public bool? LayoutBreakpointsEnabled
+        {
+            get => LayoutBreakpoints.IsLayoutBreakpoints();
+            set => LayoutBreakpoints.Breakpoints(value);
+        }
+
         /// <summary>
         /// Set optional server timeout in seconds for handling test.
         /// </summary>
@@ -498,14 +523,17 @@ namespace Applitools
             return this;
         }
 
-        public IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet)
+        public IConfiguration SetLayoutBreakpoints(LayoutBreakpointsOptions options)
         {
-            LayoutBreakpointsEnabled = shouldSet;
-            LayoutBreakpoints.Clear();
+            LayoutBreakpoints = options;
             return this;
         }
 
-        public bool? LayoutBreakpointsEnabled { get; set; }
+        public IConfiguration SetLayoutBreakpointsEnabled(bool? shouldSet)
+        {
+            LayoutBreakpointsEnabled = shouldSet;
+            return this;
+        }
 
         public IConfiguration SetLayoutBreakpoints(bool layoutBreakpointsEnabled)
         {
@@ -514,39 +542,15 @@ namespace Applitools
 
         public IConfiguration SetLayoutBreakpoints(params int[] breakpoints)
         {
-            return SetLayoutBreakpoints_(breakpoints);
-        }
-
-        private IConfiguration SetLayoutBreakpoints_(IList<int> breakpoints)
-        {
-            LayoutBreakpointsEnabled = false;
-            LayoutBreakpoints.Clear();
-            if (breakpoints == null || breakpoints.Count == 0)
-            {
-                return this;
-            }
-
-            foreach (int breakpoint in breakpoints)
-            {
-                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
-                LayoutBreakpoints.Add(breakpoint);
-            }
-
-            ((List<int>)LayoutBreakpoints).Sort();
+            LayoutBreakpoints = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return this;
-        }
-
-        public IList<int> LayoutBreakpoints
-        {
-            get => _layoutBreakpoints;
-            set => SetLayoutBreakpoints_(value);
         }
 
         public List<RenderBrowserInfo> GetBrowsersInfo()
         {
-            return _browsersInfo;
+            return browsersInfo_;
         }
-        
+
         public IConfiguration AddBrowsers(params IRenderBrowserInfo[] browsersInfo)
         {
             foreach (IRenderBrowserInfo browserInfo in browsersInfo)
@@ -568,6 +572,7 @@ namespace Applitools
                     AddBrowser(androidDeviceInfo);
                 }
             }
+
             return this;
         }
 
@@ -595,38 +600,39 @@ namespace Applitools
 
             return this;
         }
-        
+
         public Configuration AddMobileDevice(AndroidDeviceInfo androidDeviceInfo)
         {
             RenderBrowserInfo renderBrowserInfo = new RenderBrowserInfo(androidDeviceInfo);
-            _browsersInfo.Add(renderBrowserInfo);
+            browsersInfo_.Add(renderBrowserInfo);
             return this;
         }
 
         public IConfiguration AddBrowser(DesktopBrowserInfo desktopBrowserInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(desktopBrowserInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
+
         public IConfiguration AddBrowser(ChromeEmulationInfo emulationInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(emulationInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
 
         public IConfiguration AddBrowser(IosDeviceInfo deviceInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
 
         public IConfiguration AddBrowser(AndroidDeviceInfo deviceInfo)
         {
             RenderBrowserInfo browserInfo = new RenderBrowserInfo(deviceInfo);
-            _browsersInfo.Add(browserInfo);
+            browsersInfo_.Add(browserInfo);
             return this;
         }
 

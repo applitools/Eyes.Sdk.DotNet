@@ -8,7 +8,7 @@ namespace Applitools.Images
     {
         private Bitmap image_;
         private Uri imageUri_;
-        private string _base64;
+        private string base64_;
 
         public ImagesCheckSettings(Bitmap image)
         {
@@ -17,7 +17,7 @@ namespace Applitools.Images
 
         public ImagesCheckSettings(string base64)
         {
-            _base64 = base64;
+            base64_ = base64;
         }
 
         public ImagesCheckSettings(Uri imageUri)
@@ -50,7 +50,7 @@ namespace Applitools.Images
                 return imageUri_.ToString();
             }
 
-            return _base64;
+            return base64_;
         }
 
         private ImagesCheckSettings Clone_()
@@ -64,7 +64,7 @@ namespace Applitools.Images
             base.PopulateClone_(clone);
             clone.image_ = this.image_;
             clone.imageUri_ = this.imageUri_;
-            clone._base64 = this._base64;
+            clone.base64_ = this.base64_;
             return clone;
         }
     }

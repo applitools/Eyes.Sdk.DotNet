@@ -14,4 +14,9 @@ namespace Applitools.Commands
             Key = Guid.NewGuid().ToString();
         }
     }
+
+    public class CommandResponse : CommandBase
+    {
+        public object Payload { get; set; }
+    }
 }

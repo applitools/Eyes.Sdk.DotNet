@@ -26,7 +26,7 @@ namespace Applitools.Utils
         public static string ToBase64(this Bitmap image)
         {
             var ms = new MemoryStream();
-            image.Save(ms, ImageFormat.Jpeg);
+            image.Save(ms, ImageFormat.Png);
             byte[] byteImage = ms.ToArray();
             var base64 = Convert.ToBase64String(byteImage);
 

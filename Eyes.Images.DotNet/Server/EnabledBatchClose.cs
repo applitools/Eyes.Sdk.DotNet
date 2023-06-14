@@ -9,15 +9,15 @@ namespace Applitools
 {
     public class EnabledBatchClose : BatchClose
     {
-        private readonly ClassicRunner _runner;
-        private IEnumerable<string> _batchIds;
+        private readonly Images.ClassicRunner runner_;
+        private IEnumerable<string> batchIds_;
 
         public EnabledBatchClose(Logger logger, Uri serverUrl, IEnumerable<string> batchIds) : base(logger)
         {
             ServerUrl = serverUrl;
-            _batchIds = batchIds;
-            _runner = new ClassicRunner();
-            _runner.CreateCoreSdk("netImagesBatchClose");
+            batchIds_ = batchIds;
+            runner_ = new Images.ClassicRunner();
+            runner_.CreateCoreSdk("netImagesBatchClose");
         }
 
         public new EnabledBatchClose SetUrl(string url)
@@ -34,15 +34,15 @@ namespace Applitools
         public new EnabledBatchClose SetBatchId(IEnumerable<string> batchIds)
         {
             ArgumentGuard.NotContainsNull(batchIds, nameof(batchIds));
-            _batchIds = batchIds;
+            batchIds_ = batchIds;
             return this;
         }
 
         public void Close()
         {
-            var batchIds = _batchIds.Any() ? _batchIds : new List<string> {CommonUtils.GetEnvVar("APPLITOOLS_BATCH_ID")};
+            var batchIds = batchIds_.Any() ? batchIds_ : new List<string> {CommonUtils.GetEnvVar("APPLITOOLS_BATCH_ID")};
 
-            logger_.Log(TraceLevel.Notice, Stage.Close, StageType.CloseBatch, new {batches = _batchIds});
+            logger_.Log(TraceLevel.Notice, Stage.Close, StageType.CloseBatch, new {batches = batchIds_});
             var request = new CoreCloseBatchesRequest
             {
                 Key = Guid.NewGuid().ToString(),
@@ -59,7 +59,7 @@ namespace Applitools
                 }
             };
 
-            _runner.SendRequest(request);
+            runner_.SendRequest(request);
         }
     }
 }

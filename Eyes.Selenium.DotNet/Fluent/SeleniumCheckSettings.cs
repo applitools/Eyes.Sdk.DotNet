@@ -1,5 +1,4 @@
-﻿using Applitools.Utils;
-using Applitools.VisualGrid;
+﻿using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -597,44 +596,29 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = shouldSet;
-            clone.layoutBreakpoints_.Clear();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
-        }
-
-        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
-        {
-            return LayoutBreakpointsEnabled(shouldSet);
         }
 
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = false;
-            clone.layoutBreakpoints_.Clear();
-            if (breakpoints == null || breakpoints.Length == 0)
-            {
-                return clone;
-            }
-
-            foreach (int breakpoint in breakpoints)
-            {
-                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
-                clone.layoutBreakpoints_.Add(breakpoint);
-            }
-
-            clone.layoutBreakpoints_.Sort();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return clone;
         }
 
-        List<int> ISeleniumCheckTarget.GetLayoutBreakpoints()
+        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
         {
-            return layoutBreakpoints_;
+            SeleniumCheckSettings clone = Clone_();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            return clone;
         }
-
-        bool? ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
+        
+        public SeleniumCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
         {
-            return layoutBreakpointsEnabled_;
+            SeleniumCheckSettings clone = Clone_();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(options);
+            return clone;
         }
 
         public SeleniumCheckSettings UseCookies(bool useCookies)
@@ -842,26 +826,8 @@ namespace Applitools.Selenium.Fluent
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
-            clone.layoutBreakpointsEnabled_ = layoutBreakpointsEnabled_;
-            clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             clone.useCookies_ = useCookies_;
             return clone;
-        }
-
-        public override Dictionary<string, object> ToSerializableDictionary()
-        {
-            Dictionary<string, object> dict = base.ToSerializableDictionary();
-            dict.Add("TargetElement", targetElement_?.ToString());
-            dict.Add("TargetSelector", targetSelector_?.ToString());
-            dict.Add("FrameChain", StringUtils.Concat(frameChain_, " --> "));
-            dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
-            dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
-            dict.Add("VGTargetSelector", vgTargetSelector_);
-            dict.Add("LayoutBreakpointsEnabled", layoutBreakpointsEnabled_);
-            dict.Add("LayoutBreakpoints", layoutBreakpoints_);
-            dict.Add("UseCookies", useCookies_);
-
-            return dict;
         }
     }
 }

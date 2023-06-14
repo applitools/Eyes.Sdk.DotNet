@@ -18,7 +18,7 @@ namespace Applitools.Generated.Appium.Tests
 		protected EyesRunner runner;
 		protected Applitools.Appium.Eyes eyes;
 		protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
-		public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests");
+		public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests - Appium");
 		public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
 
 

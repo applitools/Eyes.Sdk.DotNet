@@ -2,7 +2,7 @@ language: csharp
 solution: Eyes.Sdk.DotNet_Travis.sln
 
 node_js:
-  - "14"
+  - "18"
 
 os: linux
 dist: focal
@@ -26,8 +26,8 @@ git:
 before_install:
   - echo -e "\n\nmachine github.com\n  login $GITHUB_TOKEN\n" >~/.netrc
   - git submodule update --init --recursive
-  - nvm install 14
-  - nvm use 14
+  - nvm install 18
+  - nvm use 18
 
 before_script:
   - export DRIVER_PATH=/home/travis/build/
@@ -47,18 +47,6 @@ before_script:
     fi
   - echo "TEST_REPORT_SANDBOX = $TEST_REPORT_SANDBOX"
 
-# after_script:
-#   - pkill mitmdump
-#   - sleep 5
-#   - ls -la network*
-#   - gzip network.dump
-#   - sudo chmod +x ./upload_to_azure.sh && ./upload_to_azure.sh ${AZ_SAS_SIG}
-
-# env variables
-# $RELEASE_BRANCH
-# $GITHUB_TOKEN
-# $ALLOWED_RELEASE_COMMITERS
-# $SDK
 jobs:
   include:
     - stage: Test
@@ -75,15 +63,26 @@ jobs:
 
     - name: Generic Tests Selenium 4
       mono: none
-      dotnet: 3.1.407
+      dotnet: 6.0.408
       addons:
         chrome: stable
         firefox: latest
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh    
-        
+        - chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh
+
+    - name: Generic Tests Playwright
+      mono: none
+      dotnet: 6.0.408
+      addons:
+        chrome: stable
+        firefox: latest
+      script:
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - chmod +x ./genericTests_playwright.sh && ./genericTests_playwright.sh
+    
     - name: E2E Tests Selenium
       mono: none
       dotnet: 3.1.407
@@ -160,37 +159,6 @@ jobs:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - dotnet test ./Tests/Eyes.Images.Core.E2ETests/Eyes.Images.Core.E2ETests.csproj -- NUnit.NumberOfTestWorkers=15
-
-    # Skipped TODO fix specific tests
-    # - name: Images
-    #   mono: latest
-    #   install:
-    #     - nuget restore Eyes.Sdk.DotNet_Travis.sln
-    #     - nuget install NUnit.Console -Version 3.9.0 -OutputDirectory testrunner
-    #   script:
-    #     - msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.6.1 ./Tests/Test.Eyes.Images.DotNet/Test.Eyes.Images.DotNet.csproj
-    #     - mono ./testrunner/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe ./Tests/Test.Eyes.Images.DotNet/bin/Release/net461/Test.Eyes.Images.DotNet.dll
-
-    # - name: Core
-    #   mono: none
-    #   dotnet: 3.1.407
-    #   script:
-    #     - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Sdk.Core.DotNet/*.csproj
-
-    # - name: Selenium
-    #   mono: none
-    #   dotnet: 3.1.407
-    #   addons:
-    #     chrome: stable
-    #   script:
-    #     - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-    #     - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Selenium.DotNet/*.csproj
-    
-    # - name: Appium
-    #   mono: none
-    #   dotnet: 3.1.407
-    #   script:
-    #     - chmod +x ./buildProjects.sh && ./buildProjects.sh Tests/Test.Eyes.Appium.DotNet/*.csproj
 
     - stage: Full Regression Mail
       if: type = cron AND branch = master

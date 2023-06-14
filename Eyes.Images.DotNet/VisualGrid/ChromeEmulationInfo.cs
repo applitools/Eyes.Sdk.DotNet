@@ -1,20 +1,19 @@
-﻿using Applitools.Utils;
-using System;
-using System.Runtime.Serialization;
+﻿using System;
 
 namespace Applitools.VisualGrid
 {
     public class ChromeEmulationInfo : EmulationBaseInfo, IRenderBrowserInfo, IEquatable<ChromeEmulationInfo>
     {
         public DeviceName DeviceName { get; set; }
-        public string SerializedDeviceName
-        {
-            get
-            {
-                try { return DeviceName.GetAttribute<EnumMemberAttribute>().Value; }
-                catch (Exception) { return DeviceName.ToString(); }
-            }
-        }
+    
+        // public string SerializedDeviceName
+        // {
+        //     get
+        //     {
+        //         try { return DeviceName.GetAttribute<EnumMemberAttribute>().Value; }
+        //         catch (Exception) { return DeviceName.ToString(); }
+        //     }
+        // }
 
         public ChromeEmulationInfo(DeviceName deviceName, 
             ScreenOrientation screenOrientation = ScreenOrientation.Portrait) : base(screenOrientation)

@@ -34,22 +34,17 @@ namespace Applitools.Appium
         {
         }
 
-        public Eyes(EyesRunner runner, Uri serverUri, ILogHandler logHandler = null)
+        public Eyes(AppiumEyesRunner runner, Uri serverUri, ILogHandler logHandler = null)
             : this(runner, serverUri.AbsoluteUri, logHandler: logHandler)
         {
         }
 
-        public Eyes(EyesRunner runner, string serverUri, ILogHandler logHandler = null)
+        public Eyes(AppiumEyesRunner runner, string serverUri, ILogHandler logHandler = null)
             : base(runner, logHandler: logHandler)
         {
             var selectorTransformer = new AppiumSelectorTransformer();
-            seleniumEyes_ = new Selenium.Eyes(Runner, "URL", logHandler, selectorTransformer);
+            seleniumEyes_ = new Selenium.Eyes((AppiumEyesRunner)Runner, "URL", logHandler, selectorTransformer);
             ServerUrl = serverUri;
-            Init_();
-        }
-
-        private void Init_()
-        {
         }
 
         #endregion
@@ -69,23 +64,19 @@ namespace Applitools.Appium
 
         #endregion
 
-        public static void SetNMGCapabilities(AppiumOptions caps)
+        [Obsolete("Use SetNmgCapabilities")]
+        public static void SetNMGCapabilities(AppiumOptions caps, 
+            string apiKey = null,
+            string eyesServerUrl = null,
+            ProxySettings proxySettings = null)
         {
-            SetNMGCapabilities(caps, null, null, null);
+            SetNmgCapabilities(caps, apiKey, eyesServerUrl, proxySettings);
         }
 
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey)
-        {
-            SetNMGCapabilities(caps, apiKey, null, null);
-        }
-
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl)
-        {
-            SetNMGCapabilities(caps, apiKey, eyesServerUrl, null);
-        }
-
-        public static void SetNMGCapabilities(AppiumOptions caps, string apiKey, string eyesServerUrl,
-            ProxySettings proxySettings)
+        public static void SetNmgCapabilities(AppiumOptions caps,
+            string apiKey = null,
+            string eyesServerUrl = null,
+            ProxySettings proxySettings = null)
         {
             var iosCapsKey = "processArguments";
             var iosCapValue = "{\"args\": [], \"env\":"

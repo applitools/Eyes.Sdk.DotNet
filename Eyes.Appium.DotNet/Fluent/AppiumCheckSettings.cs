@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Applitools.Utils;
 using Applitools.VisualGrid;
 using OpenQA.Selenium;
 
@@ -14,7 +13,7 @@ namespace Applitools.Appium
         private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
         private By scrollRootSelector_;
         private IWebElement scrollRootElement_;
-        private VisualGridSelector vgTargetSelector_ = null;
+        private VisualGridSelector vgTargetSelector_;
         private bool? useCookies_;
 
         internal AppiumCheckSettings()
@@ -135,7 +134,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing regions to ignore when validating the screenshot.</param>
+        /// <param name="selectors">An enumerable of selectors representing regions to ignore when validating the screenshot.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -181,7 +180,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements to ignore when validating the screenshot.</param>
+        /// <param name="elements">An enumerable of elements to ignore when validating the screenshot.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -227,7 +226,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more layout regions.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing layout regions.</param>
+        /// <param name="selectors">An enumerable of selectors representing layout regions.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -273,7 +272,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more layout regions.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a layout region.</param>
+        /// <param name="elements">An enumerable of elements, each representing a layout region.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -319,7 +318,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing strict regions.</param>
+        /// <param name="selectors">An enumerable of selectors representing strict regions.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -365,7 +364,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a strict region.</param>
+        /// <param name="elements">An enumerable of elements, each representing a strict region.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -411,7 +410,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more content regions.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing content regions.</param>
+        /// <param name="selectors">An enumerable of selectors representing content regions.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -457,7 +456,7 @@ namespace Applitools.Appium
         /// <summary>
         /// Adds one or more content regions.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a content region.</param>
+        /// <param name="elements">An enumerable of elements, each representing a content region.</param>
         /// <param name="padding">The padding</param>
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
@@ -582,34 +581,35 @@ namespace Applitools.Appium
             return clone;
         }
 
+        
         public AppiumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = shouldSet;
-            clone.layoutBreakpoints_.Clear();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
 
         public AppiumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             AppiumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = false;
-            clone.layoutBreakpoints_.Clear();
-            if (breakpoints == null || breakpoints.Length == 0)
-            {
-                return clone;
-            }
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
+            return clone;
+        }
 
-            foreach (int breakpoint in breakpoints)
-            {
-                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
-                clone.layoutBreakpoints_.Add(breakpoint);
-            }
-
-            clone.layoutBreakpoints_.Sort();
+        public AppiumCheckSettings LayoutBreakpoints(bool shouldSet)
+        {
+            AppiumCheckSettings clone = Clone_();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
         }
         
+        public AppiumCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
+        {
+            AppiumCheckSettings clone = Clone_();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(options);
+            return clone;
+        }
+
         public AppiumCheckSettings UseCookies(bool useCookies)
         {
             AppiumCheckSettings clone = Clone_();
@@ -694,7 +694,9 @@ namespace Applitools.Appium
 
         public new AppiumCheckSettings Content()
         {
+#pragma warning disable CS0618
             return (AppiumCheckSettings)base.Content();
+#pragma warning restore CS0618
         }
 
         public new AppiumCheckSettings MatchLevel(MatchLevel matchLevel)
@@ -792,33 +794,15 @@ namespace Applitools.Appium
         protected override CheckSettings Clone()
         {
             AppiumCheckSettings clone = new AppiumCheckSettings();
-            base.PopulateClone_(clone);
+            PopulateClone_(clone);
             clone.targetElement_ = targetElement_;
             clone.targetSelector_ = targetSelector_;
             clone.frameChain_.AddRange(frameChain_);
             clone.scrollRootElement_ = scrollRootElement_;
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
-            clone.layoutBreakpointsEnabled_ = layoutBreakpointsEnabled_;
-            clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             clone.useCookies_ = useCookies_;
             return clone;
-        }
-
-        public override Dictionary<string, object> ToSerializableDictionary()
-        {
-            Dictionary<string, object> dict = base.ToSerializableDictionary();
-            dict.Add("TargetElement", targetElement_?.ToString());
-            dict.Add("TargetSelector", targetSelector_?.ToString());
-            dict.Add("FrameChain", StringUtils.Concat(frameChain_, " --> "));
-            dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
-            dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
-            dict.Add("VGTargetSelector", vgTargetSelector_);
-            dict.Add("LayoutBreakpointsEnabled", layoutBreakpointsEnabled_);
-            dict.Add("LayoutBreakpoints", layoutBreakpoints_);
-            dict.Add("UseCookies", useCookies_);
-
-            return dict;
         }
     }
 }
