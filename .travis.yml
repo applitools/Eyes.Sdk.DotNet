@@ -26,8 +26,8 @@ git:
 before_install:
   - echo -e "\n\nmachine github.com\n  login $GITHUB_TOKEN\n" >~/.netrc
   - git submodule update --init --recursive
-  - nvm install 14
-  - nvm use 14
+  - nvm install 18
+  - nvm use 18
 
 before_script:
   - export DRIVER_PATH=/home/travis/build/
