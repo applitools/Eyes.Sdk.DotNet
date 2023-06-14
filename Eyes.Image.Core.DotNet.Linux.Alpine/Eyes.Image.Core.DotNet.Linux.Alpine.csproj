@@ -10,7 +10,7 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>2.6</Version>
+		<Version>3.2.1</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
@@ -26,14 +26,9 @@
 		<PackageOutputPath>..\PackagesOutput</PackageOutputPath>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	<PropertyGroup>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<DocumentationFile>bin\Debug\$(TargetFramework)\Eyes.Image.Core.DotNet.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<DocumentationFile>bin\Release\$(TargetFramework)\Eyes.Image.Core.DotNet.xml</DocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eyes.Image.Core.DotNet.Linux.Alpine.xml</DocumentationFile>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -45,11 +40,6 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<Pack>True</Pack>
-		</None>
-
-		<None Include="Eyes.Image.Core.targets">
-			<PackagePath>build\</PackagePath>
-			<Pack>true</Pack>
 		</None>
 	</ItemGroup>
 

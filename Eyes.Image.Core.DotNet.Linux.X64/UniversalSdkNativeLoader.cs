@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace Applitools
 {
-    using System.Runtime.InteropServices;
-
     public static class UniversalSdkNativeLoader
     {
         private static int port_;
@@ -28,52 +25,12 @@ namespace Applitools
                 if (nativeProc_ == null || nativeProc_.HasExited)
                 {
                     string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    string path;
-                    string os, suffix;
-                    if (OperatingSystemChecker.IsWindows())
-                    {
-                        os = "win-x64";
-                        suffix = "win.exe";
-                        path = GetServerFilePath(basePath, os, suffix);
 
-                        if (File.Exists(path) == false)
-                        {
-                            CopyCorePackageFolder(basePath);
-                        }
-                    }
-                    else if (OperatingSystemChecker.IsMacOs())
-                    {
-                        os = "osx-x64";
-                        suffix = "macos";
-                        path = GetServerFilePath(basePath, os, suffix);
-                        CommandExecutor.ExecCommand($"chmod 755 {path}");
-                    }
-                    else if (OperatingSystemChecker.IsLinux())
-                    {
-                        if (File.Exists("/etc/alpine-release"))
-                        {
-                            os = "linux-alpine";
-                            suffix = "alpine";
-                        }
-                        else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                        {
-                            os = "linux-arm64";
-                            suffix = "linux-arm64";
-                        }
-                        else
-                        {
-                            os = "linux-x64";
-                            suffix = "linux";
-                        }
+                    const string os = "linux-x64";
+                    const string suffix = "linux";
 
-                        path = GetServerFilePath(basePath, os, suffix);
-                        CommandExecutor.ExecCommand($"chmod 755 {path}");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(
-                            $"The operation system is not supported: {RuntimeInformation.OSDescription}");
-                    }
+                    var path = GetServerFilePath(basePath, os, suffix);
+                    CommandExecutor.ExecCommand($"chmod 755 {path}");
 
                     if (File.Exists(path) == false)
                     {
@@ -135,41 +92,6 @@ namespace Applitools
             }
 
             throw new Exception($"'{portStr}' is not valid port number");
-        }
-
-        private static void CopyCorePackageFolder(string basePath)
-        {
-            var packageName = "eyes.image.core";
-            var packageFolderPathEnv = @"%userprofile%\.nuget\packages";
-            var nugetFolder = Environment.ExpandEnvironmentVariables(packageFolderPathEnv);
-            var packageFolderPath = Path.Combine(nugetFolder, packageName);
-            var directoryInfo = new DirectoryInfo(packageFolderPath);
-            var latestPackageName = directoryInfo.GetDirectories().Select(d => d.Name).OrderByDescending(i => i)
-                .FirstOrDefault();
-
-            if (string.IsNullOrEmpty(latestPackageName) == false)
-            {
-                var latestPackagePath = Path.Combine(packageFolderPath, latestPackageName);
-
-                var targetRootFolder = Path.GetDirectoryName(basePath);
-
-                CopyFilesRecursively(latestPackagePath, targetRootFolder);
-            }
-        }
-
-        private static void CopyFilesRecursively(string sourcePath, string targetPath)
-        {
-            //Now Create all of the directories
-            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
-            {
-                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
-            }
-
-            //Copy all the files & Replaces any files with the same name
-            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
-            {
-                File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
-            }
         }
     }
 }

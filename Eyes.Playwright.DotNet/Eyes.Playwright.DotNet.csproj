@@ -51,7 +51,6 @@ To learn more, visit https://applitools.com/ .</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Image.Core.DotNet\Eyes.Image.Core.DotNet.csproj" />
     <ProjectReference Include="..\Eyes.Images.DotNet\Eyes.Images.DotNet.csproj" />
   </ItemGroup>
 </Project>

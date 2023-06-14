@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eyes.Image.Core.DotNet\Eyes.Image.Core.DotNet.csproj" />
     <ProjectReference Include="..\..\Eyes.Selenium.DotNet\Eyes.Selenium.DotNet.csproj" />
   </ItemGroup>
 

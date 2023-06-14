@@ -11,9 +11,16 @@ using NUnit.Framework;
 
 namespace Eyes.Selenium.UnitTests
 {
+    public static class OperatingSystemChecker
+    {
+        public static bool IsWindows() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        public static bool IsMacOs() => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        public static bool IsLinux() => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+    }
+    
     public class UniversalServerProcessTests
     {
-        private Process _toolProcess;
+        private Process toolProcess_;
 
         //[Test]
         public void UniversalServerProcess_NormalToolProcessExit_UniversalServerProcessExited()
@@ -23,7 +30,7 @@ namespace Eyes.Selenium.UnitTests
             var processName = "UniversalServerRunner";
             var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
             var processFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processFileName);
-            _toolProcess = StartToolProcess(processFilePath);
+            toolProcess_ = StartToolProcess(processFilePath);
             Thread.Sleep(2000);
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
@@ -47,7 +54,7 @@ namespace Eyes.Selenium.UnitTests
             var processName = "UniversalServerRunner";
             var processFileName = OperatingSystemChecker.IsWindows() ? $"{processName}.exe" : processName;
             var processFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processFileName);
-            _toolProcess = StartToolProcess(processFilePath);
+            toolProcess_ = StartToolProcess(processFilePath);
             Thread.Sleep(2000);
             var universalServerRunnerProcess = currentProcess.GetChildProcesses().FirstOrDefault(p => p.ProcessName == processName);
             Assert.NotNull(universalServerRunnerProcess, $"{processName} Process should Exist");
@@ -56,8 +63,8 @@ namespace Eyes.Selenium.UnitTests
             var universalServerProcess = GetUniversalServerProcess(universalServerRunnerProcess, universalServerProcessName);
             Assert.NotNull(universalServerProcess, $"{universalServerProcessName} Process should Exist");
 
-            _toolProcess.Kill();
-            _toolProcess.WaitForExit();
+            toolProcess_.Kill();
+            toolProcess_.WaitForExit();
             Thread.Sleep(2000);
 
             universalServerProcess = GetUniversalServerProcess(universalServerRunnerProcess, universalServerProcessName);
@@ -67,8 +74,8 @@ namespace Eyes.Selenium.UnitTests
         [TearDown]
         public void TearDown()
         {
-            _toolProcess?.Kill();
-            _toolProcess?.WaitForExit();
+            toolProcess_?.Kill();
+            toolProcess_?.WaitForExit();
         }
 
         private static Process GetUniversalServerProcess(Process universalServerRunnerProcess, string universalServerProcessName)

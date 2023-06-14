@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace Applitools
 {
-    using System.Runtime.InteropServices;
-
     public static class UniversalSdkNativeLoader
     {
         private static int port_;
@@ -28,51 +26,13 @@ namespace Applitools
                 if (nativeProc_ == null || nativeProc_.HasExited)
                 {
                     string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    string path;
-                    string os, suffix;
-                    if (OperatingSystemChecker.IsWindows())
-                    {
-                        os = "win-x64";
-                        suffix = "win.exe";
-                        path = GetServerFilePath(basePath, os, suffix);
+                    const string os = "win-x64";
+                    const string suffix = "win.exe";
+                    var path = GetServerFilePath(basePath, os, suffix);
 
-                        if (File.Exists(path) == false)
-                        {
-                            CopyCorePackageFolder(basePath);
-                        }
-                    }
-                    else if (OperatingSystemChecker.IsMacOs())
+                    if (File.Exists(path) == false)
                     {
-                        os = "osx-x64";
-                        suffix = "macos";
-                        path = GetServerFilePath(basePath, os, suffix);
-                        CommandExecutor.ExecCommand($"chmod 755 {path}");
-                    }
-                    else if (OperatingSystemChecker.IsLinux())
-                    {
-                        if (File.Exists("/etc/alpine-release"))
-                        {
-                            os = "linux-alpine";
-                            suffix = "alpine";
-                        }
-                        else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                        {
-                            os = "linux-arm64";
-                            suffix = "linux-arm64";
-                        }
-                        else
-                        {
-                            os = "linux-x64";
-                            suffix = "linux";
-                        }
-
-                        path = GetServerFilePath(basePath, os, suffix);
-                        CommandExecutor.ExecCommand($"chmod 755 {path}");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(
-                            $"The operation system is not supported: {RuntimeInformation.OSDescription}");
+                        CopyCorePackageFolder(basePath);
                     }
 
                     if (File.Exists(path) == false)
