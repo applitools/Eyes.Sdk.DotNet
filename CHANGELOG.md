@@ -1,27 +1,27 @@
-## [Eyes.Image.Core 2.7] - 2023-06-14
-### Updated
-- Server Core to 3.2.1
-
-## [Eyes.Images 3.24] - 2023-06-14
-### Updated
-- Server Core to 3.2.1
-
-## [Eyes.Selenium 3.52] - 2023-06-14
-### Updated
-- Server Core to 3.2.1
-
-## [Eyes.Appium 5.48] - 2023-06-14
-### Updated
-- Server Core to 3.2.1
-
-## [Eyes.Selenium4 3.52] - 2023-06-14
-### Updated
-- Server Core to 3.2.1
-
-## [Eyes.Playwright 1.0] - 2023-06-14 - NEW
+## [Eyes.Playwright 1.0] - NEW
 ### Added
 - DotNet Playwright support.
 - Server Core version 3.2.1.
+
+## [Eyes.Image.Core vNext]
+### Updated
+- Server Core to 3.2.1
+
+## [Eyes.Images vNext]
+### Updated
+- Server Core to 3.2.1
+
+## [Eyes.Selenium vNext]
+### Updated
+- Server Core to 3.2.1
+
+## [Eyes.Selenium4 vNext]
+### Updated
+- Server Core to 3.2.1
+
+## [Eyes.Appium vNext]
+### Updated
+- Server Core to 3.2.1
 
 ## [Eyes.Image.Core 2.6] - 2023-05-15
 ### Updated
