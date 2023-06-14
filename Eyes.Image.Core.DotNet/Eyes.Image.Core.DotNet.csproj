@@ -10,13 +10,13 @@
 		</Description>
 		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
 		<Copyright>Applitools 2013</Copyright>
-		<Version>2.6</Version>
+		<Version>2.7</Version>
 		<Authors>Applitools</Authors>
 		<Company>Applitools</Company>
 		<Product>Eyes SDK</Product>
 		<PackageTags>applitools eyes</PackageTags>
 		<PackageReleaseNotes>### Updated
-- Server Core to 3.0.1
+- Server Core to 3.2.1
 </PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageId>Eyes.Image.Core</PackageId>
@@ -27,7 +27,15 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageOutputPath>..\PackagesOutput</PackageOutputPath>
 	</PropertyGroup>
-
+	
+	<PropertyGroup>
+		<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+		<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+		<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+		<IsAlpine Condition="Exists('/etc/alpine-release')">true</IsAlpine>
+		<Arch>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture)</Arch>
+	</PropertyGroup>
+	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DocumentationFile>bin\Debug\$(TargetFramework)\Eyes.Image.Core.DotNet.xml</DocumentationFile>
@@ -92,4 +100,8 @@
 	<ItemGroup>
 	  <Folder Include="runtimes\linux-alpine\native\" />
 	</ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="echo IsWindows: $(IsWindows), IsLinux: $(IsLinux), IsOSX: $(IsOSX), IsAlpine: $(IsAlpine) $(Arch)" />
+	</Target>
 </Project>
