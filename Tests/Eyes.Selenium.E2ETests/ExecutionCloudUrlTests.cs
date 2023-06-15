@@ -18,7 +18,7 @@ namespace Eyes.Selenium.E2ETests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            egUrl_ = Applitools.Selenium.Eyes.GetExecutionCloudURL();
+            egUrl_ = Applitools.Selenium.Eyes.GetExecutionCloudUrl();
         }
 
         [SetUp]
