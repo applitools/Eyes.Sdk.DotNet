@@ -76,7 +76,7 @@ namespace Applitools.Generated.Selenium.Tests
                     var browserOptionsIe = new InternetExplorerOptions();
                     browserOptionsIe.PlatformName = "Windows 10";
                     browserOptionsIe.BrowserVersion = "11.285";
-                    browserOptionsIe.AddAdditionalInternetExplorerOption("sauce:options", sauceOptions);
+                    browserOptionsIe.AddAdditionalOption("sauce:options", sauceOptions);
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsIe.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Edge:
