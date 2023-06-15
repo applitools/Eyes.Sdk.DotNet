@@ -41,7 +41,7 @@ namespace Applitools.Selenium
         }
 
         public Eyes(
-            EyesRunner runner,
+            SeleniumEyesRunner runner,
             string serverUrlFieldName = "remoteServerUri",
             ILogHandler logHandler = null,
             SelectorTransformer selectorTransformer = null)

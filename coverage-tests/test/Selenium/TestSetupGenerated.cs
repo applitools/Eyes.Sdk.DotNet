@@ -1,4 +1,6 @@
-﻿using Applitools.Tests.Utils;
+﻿using Applitools.Selenium;
+using Applitools.Tests.Utils;
+using Applitools.VisualGrid;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -9,10 +11,9 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Safari;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using Applitools.Selenium;
-using Applitools.VisualGrid;
 
 namespace Applitools.Generated.Selenium.Tests
 {
@@ -42,6 +43,7 @@ namespace Applitools.Generated.Selenium.Tests
         }
         protected DriverOptions options_;
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo")]
         protected void SetUpDriver(browserType browser = browserType.Chrome,
             bool legacy = false, bool headless = false, bool executionGrid = false)
         {
@@ -71,11 +73,11 @@ namespace Applitools.Generated.Selenium.Tests
                     var sauceOptions = new Dictionary<string, object>();
                     sauceOptions.Add("username", SAUCE_USERNAME);
                     sauceOptions.Add("accesskey", SAUCE_ACCESS_KEY);
-                    var browserOptionsIE = new InternetExplorerOptions();
-                    browserOptionsIE.PlatformName = "Windows 10";
-                    browserOptionsIE.BrowserVersion = "11.285";
-                    browserOptionsIE.AddAdditionalCapability("sauce:options", sauceOptions, true);
-                    driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsIE.ToCapabilities(), TimeSpan.FromMinutes(4));
+                    var browserOptionsIe = new InternetExplorerOptions();
+                    browserOptionsIe.PlatformName = "Windows 10";
+                    browserOptionsIe.BrowserVersion = "11.285";
+                    browserOptionsIe.AddAdditionalInternetExplorerOption("sauce:options", sauceOptions);
+                    driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsIe.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Edge:
                     var sauceOptionsEdge = new Dictionary<string, object>();
@@ -84,7 +86,7 @@ namespace Applitools.Generated.Selenium.Tests
                     var browserOptionsEdge = new EdgeOptions();
                     browserOptionsEdge.PlatformName = "Windows 10";
                     browserOptionsEdge.BrowserVersion = "18.17763";
-                    browserOptionsEdge.AddAdditionalCapability("sauce:options", sauceOptionsEdge);
+                    browserOptionsEdge.AddAdditionalEdgeOption("sauce:options", sauceOptionsEdge);
                     driver = new RemoteWebDriver(new Uri(SAUCE_SELENIUM_URL), browserOptionsEdge.ToCapabilities(), TimeSpan.FromMinutes(4));
                     break;
                 case browserType.Safari11:
@@ -102,24 +104,24 @@ namespace Applitools.Generated.Selenium.Tests
             }
         }
 
-        private void SetDriverOptions_(ref SafariOptions driverOptions, string PlatformName, string BrowserVersion)
+        [SuppressMessage("ReSharper", "StringLiteralTypo")]
+        private void SetDriverOptions_(ref SafariOptions driverOptions, string platformName, string browserVersion)
         {
-            var sauceOptions = new Dictionary<string, object>();
-            sauceOptions.Add("username", SAUCE_USERNAME);
-            sauceOptions.Add("accesskey", SAUCE_ACCESS_KEY);
-            driverOptions.PlatformName = PlatformName;
-            driverOptions.BrowserVersion = BrowserVersion;
-            driverOptions.AddAdditionalCapability("sauce:options", sauceOptions);
+            var sauceOptions = new Dictionary<string, object>
+            {
+                { "username", SAUCE_USERNAME },
+                { "accesskey", SAUCE_ACCESS_KEY }
+            };
+            driverOptions.PlatformName = platformName;
+            driverOptions.BrowserVersion = browserVersion;
+            driverOptions.AddAdditionalOption("sauce:options", sauceOptions);
         }
 
         protected static ChromeDriver CreateChromeDriver(ChromeOptions options = null, bool headless = false)
         {
             ChromeDriver webDriver = RetryCreateWebDriver(() =>
             {
-                if (options == null)
-                {
-                    options = new ChromeOptions();
-                }
+                options ??= new ChromeOptions();
                 if (headless) options.AddArgument("--headless");
 
                 ChromeDriver webDriverRet = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options, TimeSpan.FromMinutes(4)) : new ChromeDriver(options);
@@ -131,10 +133,7 @@ namespace Applitools.Generated.Selenium.Tests
         {
             RemoteWebDriver webDriver = RetryCreateWebDriver(() =>
             {
-                if (options == null)
-                {
-                    options = new ChromeOptions();
-                }
+                options ??= new ChromeOptions();
                 if (headless) options.AddArgument("--headless");
 
                 var driver1 = new RemoteWebDriver(new Uri(LOCAL_SELENIUM_URL), options);

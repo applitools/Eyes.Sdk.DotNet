@@ -708,9 +708,15 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Strict();
         }
 
+        [Obsolete("Use IgnoreColors()")]
         public new SeleniumCheckSettings Content()
         {
             return (SeleniumCheckSettings)base.Content();
+        }
+
+        public new SeleniumCheckSettings IgnoreColors()
+        {
+            return (SeleniumCheckSettings)base.IgnoreColors();
         }
 
         public new SeleniumCheckSettings MatchLevel(MatchLevel matchLevel)
