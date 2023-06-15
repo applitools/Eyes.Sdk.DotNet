@@ -1,18 +1,13 @@
-﻿using OpenQA.Selenium;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Applitools.Selenium.Fluent
 {
-    interface ISeleniumCheckTarget : IScrollRootElementContainer
+    interface ISeleniumCheckTarget : ITargetContainer, IScrollRootElementContainer
     {
-        By GetTargetSelector();
-
-        IWebElement GetTargetElement();
-
         IList<FrameLocator> GetFrameChain();
 
         CheckState State { get; set; }
-        
+
         bool? GetUseCookies();
     }
 }

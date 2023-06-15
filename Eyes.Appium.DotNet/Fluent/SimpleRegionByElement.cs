@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
 using Applitools.Fluent;
-using Applitools.Utils;
+using Applitools.Appium.Utils;
 using OpenQA.Selenium;
 
 namespace Applitools.Appium
 {
     internal class SimpleRegionByElement : IGetRegions, IGetAppiumRegion
     {
-        private IWebElement element_;
+        private readonly IWebElement element_;
+        private readonly Padding padding_;
+        private readonly string regionId_;
 
-        public SimpleRegionByElement(IWebElement element)
+        public SimpleRegionByElement(IWebElement element, Padding padding = null, string regionId = null)
         {
             element_ = element;
+            padding_ = padding;
+            regionId_ = regionId;
         }
 
         IList<IWebElement> IGetAppiumRegion.GetElements(IWebDriver driver)
@@ -19,14 +23,19 @@ namespace Applitools.Appium
             return new List<IWebElement> { element_ };
         }
         
-        public TRegion ToRegion()
+        public CodedRegionReference ToRegion()
         {
-            var elementId = element_.GetPrivateFieldValue<string>("elementId");
+            var elementId = element_.GetElementId();
 
-            return new RegionElement
+            return new CodedRegionReference
             {
-                ElementId = elementId
+                Region = new RegionElement
+                {
+                    ElementId = elementId
+                },
+                Padding = padding_,
+                RegionId = regionId_
             };
-        }
+        } 
     }
 }

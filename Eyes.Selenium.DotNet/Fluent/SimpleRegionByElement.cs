@@ -8,25 +8,34 @@ namespace Applitools.Selenium.Fluent
 
     internal class SimpleRegionByElement : IGetRegions, IGetSeleniumRegion
     {
-        private IWebElement element_;
+        private readonly IWebElement _element;
+        private readonly Padding _padding;
+        private readonly string _regionId;
 
-        public SimpleRegionByElement(IWebElement element)
+        public SimpleRegionByElement(IWebElement element, Padding padding = null, string regionId = null)
         {
-            element_ = element;
+            _element = element;
+            _padding = padding;
+            _regionId = regionId;
         }
 
         IList<IWebElement> IGetSeleniumRegion.GetElements(IWebDriver driver)
         {
-            return new List<IWebElement>() { element_ };
+            return new List<IWebElement> { _element };
         }
         
-        public TRegion ToRegion()
+        public CodedRegionReference ToRegion()
         {
-            var elementId = element_.GetPrivateFieldValue<string>("elementId");
+            var elementId = _element.GetElementId();
 
-            return new RegionElement
+            return new CodedRegionReference
             {
-                ElementId = elementId
+                Region = new RegionElement
+                {
+                    ElementId = elementId
+                },
+                Padding = _padding,
+                RegionId = _regionId
             };
         }
     }

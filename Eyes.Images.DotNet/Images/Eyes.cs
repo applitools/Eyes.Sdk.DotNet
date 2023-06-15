@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Applitools.Fluent;
+using Applitools.Commands;
+using Applitools.Commands.Requests;
+using Applitools.Commands.Responses;
 using Applitools.Utils;
-using Applitools.Utils.Geometry;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools.Images
 {
@@ -21,8 +26,7 @@ namespace Applitools.Images
         #region Fields
 
         private string title_;
-        private EyesScreenshot screenshot_;
-        private string screenshotUrl_;
+        private readonly Uri serverUrl_;
 
         #endregion
 
@@ -33,59 +37,53 @@ namespace Applitools.Images
         /// specified url.
         /// </summary>
         /// <param name="serverUrl">The Eyes server URL.</param>
-        public Eyes(Uri serverUrl) : base(serverUrl)
+        /// <param name="logHandler">Optional log handler</param>
+        public Eyes(Uri serverUrl, ILogHandler logHandler = null)
+            : this(new ClassicRunner(), serverUrl, logHandler)
         {
-            // No need to retry since we are providing the image to match.
-            MatchTimeout = TimeSpan.Zero;
         }
+
+        ///// <summary>
+        ///// Creates a new Eyes instance that interacts with the Eyes cloud service.
+        ///// </summary>
+        ///// <param name="logger">The logger to use.</param>
+        //public Eyes(Logger logger) : this(new ClassicRunner(), null, new )
+        //{
+        //    // No need to retry since we are providing the image to match.
+        //    MatchTimeout = TimeSpan.Zero;
+        //}
 
         /// <summary>
         /// Creates a new Eyes instance that interacts with the Eyes cloud service.
         /// </summary>
-        /// <param name="logger">The logger to use.</param>
-        public Eyes(Logger logger) : base(logger)
+        public Eyes()
         {
             // No need to retry since we are providing the image to match.
             MatchTimeout = TimeSpan.Zero;
         }
+
+        public Eyes(EyesRunner runner, Uri serverUrl = null, ILogHandler logHandler = null)
+            : base(runner, logHandler: logHandler)
+        {
+            serverUrl_ = serverUrl;
+        }
+
+        #endregion
 
         /// <summary>
-        /// Creates a new Eyes instance that interacts with the Eyes cloud service.
+        /// Specifies how detected mismatches are reported.
         /// </summary>
-        public Eyes() : base()
-        {
-            // No need to retry since we are providing the image to match.
-            MatchTimeout = TimeSpan.Zero;
-        }
-
-        #endregion
-
-        #region Configuration
-
-        private Configuration configuration_ = new Configuration();
-
-        protected override Configuration Configuration { get => configuration_; }
-
-        public Configuration GetConfiguration()
-        {
-            return new Configuration(configuration_);
-        }
-
-        protected override void SetConfigImpl(IConfiguration configuration)
-        {
-            configuration_ = new Configuration(configuration);
-        }
-
-        #endregion
-
-        #region Properties
-
-        protected override bool ViewportSizeRequired => false;
-        #endregion
+        [Obsolete]
+        public FailureReports FailureReports { get; set; } = FailureReports.OnClose;
 
         #region Methods
 
         #region Public
+
+        public Configuration GetConfiguration()
+        {
+            return Config;
+        }
 
         /// <summary>
         /// Starts a test.
@@ -99,10 +97,7 @@ namespace Applitools.Images
             string testName,
             Size viewportSize)
         {
-            Configuration.SetAppName(appName);
-            Configuration.SetTestName(testName);
-            Configuration.SetViewportSize(viewportSize);
-            OpenBase();
+            OpenEyes(appName, testName, viewportSize);
         }
 
         /// <summary>
@@ -110,50 +105,7 @@ namespace Applitools.Images
         /// </summary>
         public void Open(string appName, string testName)
         {
-            Open(appName, testName, Size.Empty);
-        }
-
-        public AppImage Check(string name, ICheckSettings checkSettings)
-        {
-            ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
-            return this.Check(checkSettings.WithName(name));
-        }
-
-        public AppImage Check(ICheckSettings checkSettings)
-        {
-            if (IsDisabled)
-            {
-                return new AppImage(false);
-            }
-
-            ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
-            checkSettings = checkSettings.Timeout(TimeSpan.Zero); // no need for automatic retry when dealing with images.
-            IImagesCheckTarget imagesCheckTarget = checkSettings as IImagesCheckTarget;
-            ICheckSettingsInternal checkSettingsInternal = checkSettings as ICheckSettingsInternal;
-            Rectangle? targetRegion = checkSettingsInternal.GetTargetRegion();
-            Bitmap image = imagesCheckTarget.Image;
-            Uri imageUri = imagesCheckTarget.ImageUri;
-            if (image != null)
-            {
-                if (Configuration.ViewportSize.IsEmpty())
-                {
-                    Configuration.ViewportSize = image.Size;
-                }
-
-                EyesImagesScreenshot screenshot = new EyesImagesScreenshot(image);
-                Logger.Verbose("checking image. Image Size: {0}", image.Size);
-                screenshot_ = screenshot;
-                screenshotUrl_ = null;
-            }
-            else if (imageUri != null)
-            {
-                screenshotUrl_ = imageUri.AbsoluteUri;
-                Logger.Verbose("checking image by URI: {0}", screenshotUrl_);
-                screenshot_ = null;
-            }
-
-            MatchResult mr = CheckWindowBase(targetRegion, checkSettings);
-            return new AppImage(mr.AsExpected);
+            OpenEyes(appName, testName);
         }
 
         /// <summary>
@@ -162,7 +114,14 @@ namespace Applitools.Images
         public AppImage CheckImage(Bitmap image, string tag = null, bool replaceLast = false)
         {
             ArgumentGuard.NotNull(image, nameof(image));
-            return Check(tag, Target.Image(image).ReplaceLast(replaceLast));
+            //return Check(tag, Target.Image(image).ReplaceLast(replaceLast));
+            return Check(tag, Target.Image(image));
+        }
+
+        public AppImage Check(string name, ICheckSettings checkSettings)
+        {
+            ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
+            return Check(checkSettings.WithName(name));
         }
 
         /// <summary>
@@ -197,6 +156,7 @@ namespace Applitools.Images
             using (Stream s = new MemoryStream(image))
             {
                 Bitmap bmp = new Bitmap(s);
+
                 return CheckImage(bmp, tag, replaceLast);
             }
         }
@@ -223,11 +183,67 @@ namespace Applitools.Images
         }
 
         /// <summary>
-        /// Specifies a region of the current application window.
+        /// Perform visual validation for the current image.
         /// </summary>
-        public InRegionBase InRegion(Rectangle region)
+        /// <param name="image">The image to perform visual validation for.</param>
+        /// <param name="region">The region to validate within the image.</param>
+        public AppImage CheckRegion(Bitmap image, Rectangle region)
         {
-            return InRegionBase(() => region);
+            ArgumentGuard.NotNull(image, nameof(image));
+            return Check(Target.Image(image).Region(region));
+        }
+
+        public AppImage Check(ICheckSettings checkSettings)
+        {
+            if (IsDisabled)
+            {
+                return new AppImage(false);
+            }
+
+            ArgumentGuard.NotNull(checkSettings, nameof(checkSettings));
+            checkSettings = checkSettings.Timeout(TimeSpan.Zero); // no need for automatic retry when dealing with images.
+            IImagesCheckTarget imagesCheckTarget = (IImagesCheckTarget)checkSettings;
+            ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
+            var eyesConfig = ToConfig(Config);
+            //eyesConfig.Open.Properties = _properties;
+            var request = new EyesCheckRequest
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new CheckRequestPayload
+                {
+                    Eyes = eyes_,
+                    Target = new ImageTarget
+                    {
+                        Image = imagesCheckTarget.ToImage()
+                    },
+                    Config = eyesConfig,
+                    Settings = CreateUniversalCheckSettings(checkSettingsInternal)
+                }
+            };
+
+            var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request);
+            var error = result.Payload.Error;
+            if (error != null)
+            {
+                throw new EyesException(error.ToString());
+            }
+
+            var asExpected = true;
+            foreach (var matchResult in result.Payload.Result)
+            {
+                if (matchResult.AsExpected == false)
+                {
+                    asExpected = false;
+#pragma warning disable CS0612
+                    if (FailureReports == FailureReports.Immediate)
+                    {
+                        throw new EyesException($"Unexpected match result for {matchResult}");
+                    }
+#pragma warning restore CS0612
+                }
+            }
+            
+            return new AppImage(asExpected);
         }
 
         public void SetTitle(string title)
@@ -237,44 +253,69 @@ namespace Applitools.Images
 
         #endregion
 
-        #region Protected
+        #endregion
 
-        protected override Size GetViewportSize()
+        private void OpenEyes(string appName = null, string testName = null, Size? viewportSize = null)
         {
-            return Configuration.ViewportSize.ToSize();
-        }
+            Logger.Log("OpenEyes");
 
-        protected override void SetViewportSize(RectangleSize size)
-        {
-            Configuration.SetViewportSize(size);
-        }
-
-        protected override string GetInferredEnvironment()
-        {
-            return string.Empty;
-        }
-
-        protected override EyesScreenshot GetScreenshot(Rectangle? targetRegion, ICheckSettingsInternal checkSettingsInternal)
-        {
-            if (targetRegion.HasValue && !targetRegion.Value.IsEmpty)
+            if (string.IsNullOrEmpty(ApiKey))
             {
-                return screenshot_.GetSubScreenshot(targetRegion.Value, true);
+                ApiKey = API_KEY;
             }
-            return screenshot_;
+            if (string.IsNullOrEmpty(appName) == false)
+            {
+                AppName = appName;
+            }
+            if (string.IsNullOrEmpty(testName) == false)
+            {
+                TestName = testName;
+            }
+            if (viewportSize != null)
+            {
+                ViewportSize = viewportSize;
+            }
+
+            Runner.ApiKey = ApiKey;
+            Runner.ServerUrl = ServerUrl;
+            Runner.Proxy = Proxy;
+
+            if (IsDisabled)
+            {
+                Logger.Log(TraceLevel.Warn, testName, Stage.Open, StageType.Disabled);
+                return;
+            }
+            
+            var eyesManagerOpenEyes = CreateEyesManagerOpenEyes(Runner.ManagerApplitoolsRefId);
+
+            var openEyesResponsePayload = Runner.SendRequest<EyesManagerOpenEyes, EyesManagerOpenEyesResponse>(eyesManagerOpenEyes).Payload;
+            eyes_ = openEyesResponsePayload.Result;
+
+            var error = openEyesResponsePayload.Error;
+            if (error != null)
+            {
+                throw new EyesException(error.ToString());
+            }
+
+            IsOpen = true;
         }
 
-        protected override string GetScreenshotUrl()
+        private EyesManagerOpenEyes CreateEyesManagerOpenEyes(string applitoolsRefId)
         {
-            return screenshotUrl_;
+            var result = new EyesManagerOpenEyes
+            {
+                Key = Guid.NewGuid().ToString(),
+                Payload = new OpenEyesRequestPayload
+                {
+                    Manager = new ManagerRef
+                    {
+                        ApplitoolsRefId = applitoolsRefId
+                    },
+                    Config = ToConfig(Config)
+                }
+            };
+            //result.Payload.Config.Open.Properties = properties_;
+            return result;
         }
-
-        protected override string GetTitle()
-        {
-            return title_;
-        }
-
-        #endregion
-
-        #endregion
     }
 }

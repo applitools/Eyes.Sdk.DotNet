@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Applitools.Selenium.Commands.Requests;
+﻿using Applitools.Commands.Requests;
 
 namespace Applitools.VisualGrid
 {
-    public class VisualGridRunner : EyesRunner//, IVisualGridRunner
+    public class VisualGridRunner : Selenium.SeleniumEyesRunner//, IVisualGridRunner
     {
         internal const int CONCURRENCY_FACTOR = 5;
         internal const int DEFAULT_CONCURRENCY = 5;
@@ -35,7 +33,7 @@ namespace Applitools.VisualGrid
         }
 
         internal readonly TestConcurrency testConcurrency_;
-        
+
         public VisualGridRunner(string suiteName = null, ILogHandler logHandler = null)
             : this(new RunnerOptions().TestConcurrency(DEFAULT_CONCURRENCY), suiteName, logHandler)
         {
@@ -56,40 +54,24 @@ namespace Applitools.VisualGrid
             : this(runnerOptions, null, logHandler)
         { }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null) : base(logHandler)
+        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName, ILogHandler logHandler = null)
+            : base(logHandler, "netSelenium3")
         {
             runnerOptions_ = runnerOptions;
             testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
             if (logHandler != null) Logger.SetLogHandler(logHandler);
+
+            ManagerApplitoolsRefId = GetCoreMakeManager();
         }
 
-        public VisualGridRunner(RunnerOptions runnerOptions, string suiteName,
-            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null) : base(logHandler)
+        protected override MakeManagerRequestPayload InitConfig()
         {
-            runnerOptions_ = runnerOptions;
-            testConcurrency_ = new TestConcurrency(((IRunnerOptionsInternal)runnerOptions).GetConcurrency(), false);
-            if (logHandler != null) Logger.SetLogHandler(logHandler);
-        }
-
-        internal VisualGridRunner(int concurrentOpenSessions, string suiteName, 
-            IServerConnectorFactory serverConnectorFactory, ILogHandler logHandler = null)
-            : this(new RunnerOptions(concurrentOpenSessions), suiteName, serverConnectorFactory, logHandler)
-        {
-        }
-
-        protected override ManagerConfig InitConfig()
-        {
-            return new ManagerConfig
+            return new MakeManagerRequestPayload
             {
-                Type = "vg",
+                Type = "ufg",
                 Concurrency = testConcurrency_.UserConcurrency,
                 Legacy = testConcurrency_.IsLegacy
             };
-        }
-
-        protected override IEnumerable<IEyesBase> GetAllEyes()
-        {
-            throw new NotImplementedException();
         }
     }
 }

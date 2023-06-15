@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Description>
+			Applitools Eyes adds automated visual validation to your automated tests.
+			With Applitools Eyes, you can automatically validate the correctness of your application's UI layout, content and appearance.
+			To learn more, visit https://applitools.com/ .
+		</Description>
+		<PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
+		<Copyright>Applitools 2013</Copyright>
+		<Version>3.2.1</Version>
+		<Authors>Applitools</Authors>
+		<Company>Applitools</Company>
+		<Product>Eyes SDK</Product>
+		<PackageTags>applitools eyes</PackageTags>
+		<PackageReleaseNotes>Server Core 3.2.1 native binaries for Linux (arm64)
+</PackageReleaseNotes>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageId>Eyes.Image.Core.Linux.Arm64</PackageId>
+		<PackageLicenseExpression />
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageIcon>applitools_nuget_icon.png</PackageIcon>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageOutputPath>..\PackagesOutput</PackageOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eyes.Image.Core.DotNet.Linux.Arm64.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<NoWarn>1701;1702;1705;CS1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="runtimes\**" Pack="true" PackagePath="runtimes">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
+		<PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="!$(TargetFramework.Contains('.'))">
+		<PackageReference Include="DotNetZip.Reduced" Version="1.9.1.8" />
+	</ItemGroup>
+
+	<ItemGroup Condition="!$(TargetFramework.Contains('.'))">
+		<Reference Include="System.Management" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('.'))">
+		<PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetMyPackageFiles</TargetsForTfmSpecificBuildOutput>
+	</PropertyGroup>
+
+	<Target Name="GetMyPackageFiles">
+		<ItemGroup>
+		</ItemGroup>
+	</Target>
+
+	<ItemGroup>
+		<None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+		<None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+</Project>

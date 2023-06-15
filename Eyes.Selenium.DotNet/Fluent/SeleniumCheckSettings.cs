@@ -1,5 +1,4 @@
-﻿using Applitools.Utils;
-using Applitools.VisualGrid;
+﻿using Applitools.VisualGrid;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -98,22 +97,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append($".Frame({frameReference})");
             return clone;
         }
-
-        internal void SanitizeSettings(Logger logger, IWebDriver driver, CheckState state)
-        {
-            bool isFully = state.StitchContent;
-            if (frameChain_.Count > 0 && targetElement_ == null && targetSelector_ == null && !isFully/* &&
-                ((Applitools.Fluent.ICheckSettingsInternal)this).GetTargetRegion() == null*/)
-            {
-                FrameLocator lastFrame = frameChain_[frameChain_.Count - 1];
-                frameChain_.RemoveAt(frameChain_.Count - 1);
-                //targetElement_ = EyesSeleniumUtils.FindFrameByFrameCheckTarget(lastFrame, driver);
-                state.FrameToSwitchTo = targetElement_;
-                logger.Log(TraceLevel.Notice, Stage.Check,
-                    new { message = "Using Target.Frame() for the purpose of Target.Region()" });
-            }
-        }
-
+        
         public SeleniumCheckSettings Region(Rectangle rect)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -139,6 +123,19 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="selector">A selector representing a region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Ignore(By selector, Padding padding = null, string regionId = null)
+        {
+            var list = new List<By> { selector };
+            return Ignore(list, padding, regionId);
+        }
+
+        /// <summary>
         /// Adds one or more ignore regions.
         /// </summary>
         /// <param name="selector">A selector representing a region to ignore when validating the screenshot.</param>
@@ -146,12 +143,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Ignore(By selector, params By[] selectors)
         {
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="selectors">An enumerbale of selectors representing regions to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Ignore(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
+        {
             SeleniumCheckSettings clone = Clone_();
-            clone.Ignore_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Ignore)}({selector}");
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (By sel in selectors)
             {
-                clone.Ignore_(new SimpleRegionBySelector(sel));
+                clone.Ignore_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
@@ -159,21 +169,16 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
-        /// Adds one or more ignore regions.
+        /// Adds one ignore region.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing regions to ignore when validating the screenshot.</param>
+        /// <param name="element">An element to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Ignore(IEnumerable<By> selectors)
+        public SeleniumCheckSettings Ignore(IWebElement element, Padding padding = null, string regionId = null)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Ignore)}(");
-            foreach (By sel in selectors)
-            {
-                clone.Ignore_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            return Ignore(list, padding, regionId);
         }
 
         /// <summary>
@@ -184,12 +189,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Ignore(IWebElement element, params IWebElement[] elements)
         {
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="elements">An enumerbale of elements to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Ignore(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
+        {
             SeleniumCheckSettings clone = Clone_();
-            clone.Ignore_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Ignore)}({element}");
+            clone.fluentCode_.Append($".{nameof(Ignore)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Ignore_(new SimpleRegionByElement(elem));
+                clone.Ignore_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -197,21 +215,16 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
-        /// Adds one or more ignore regions.
+        /// Adds one layout region.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements to ignore when validating the screenshot.</param>
+        /// <param name="selector">A selector representing a layout region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Ignore(IEnumerable<IWebElement> elements)
+        public SeleniumCheckSettings Layout(By selector, Padding padding = null, string regionId = null)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Ignore)}(");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Ignore_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            return Layout(list, padding, regionId);
         }
 
         /// <summary>
@@ -222,12 +235,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Layout(By selector, params By[] selectors)
         {
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Layout(list);
+        }
+
+        /// <summary>
+        /// Adds one or more layout regions.
+        /// </summary>
+        /// <param name="selectors">An enumerbale of selectors representing layout regions.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Layout(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
+        {
             SeleniumCheckSettings clone = Clone_();
-            clone.Layout_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Layout)}({selector}");
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (By sel in selectors)
             {
-                clone.Layout_(new SimpleRegionBySelector(sel));
+                clone.Layout_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
@@ -235,21 +261,16 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
-        /// Adds one or more layout regions.
+        /// Adds one layout region.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing layout regions.</param>
+        /// <param name="element">An element representing a layout region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Layout(IEnumerable<By> selectors)
+        public SeleniumCheckSettings Layout(IWebElement element, Padding padding = null, string regionId = null)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Layout)}(");
-            foreach (By sel in selectors)
-            {
-                clone.Layout_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            return Layout(list, padding, regionId);
         }
 
         /// <summary>
@@ -260,12 +281,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Layout(IWebElement element, params IWebElement[] elements)
         {
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Layout(list);
+        }
+
+        /// <summary>
+        /// Adds one or more layout regions.
+        /// </summary>
+        /// <param name="elements">An enumerbale of elements, each representing a layout region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Layout(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
+        {
             SeleniumCheckSettings clone = Clone_();
-            clone.Layout_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Layout)}({element}");
+            clone.fluentCode_.Append($".{nameof(Layout)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Layout_(new SimpleRegionByElement(elem));
+                clone.Layout_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -273,21 +307,16 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
-        /// Adds one or more layout regions.
+        /// Adds one strict region.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a layout region.</param>
+        /// <param name="selector">A selector representing a strict region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Layout(IEnumerable<IWebElement> elements)
+        public SeleniumCheckSettings Strict(By selector, Padding padding = null, string regionId = null)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Layout)}(");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Layout_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            return Strict(list, padding, regionId);
         }
 
         /// <summary>
@@ -298,33 +327,42 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Strict(By selector, params By[] selectors)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.Strict_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Strict)}({selector}");
-            foreach (By sel in selectors)
-            {
-                clone.Strict_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Strict(list);
         }
+
         /// <summary>
         /// Adds one or more strict regions.
         /// </summary>
         /// <param name="selectors">An enumerbale of selectors representing strict regions.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Strict(IEnumerable<By> selectors)
+        public SeleniumCheckSettings Strict(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
         {
             SeleniumCheckSettings clone = Clone_();
             clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (By sel in selectors)
             {
-                clone.Strict_(new SimpleRegionBySelector(sel));
+                clone.Strict_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
             return clone;
+        }
+
+        /// <summary>
+        /// Adds one strict region.
+        /// </summary>
+        /// <param name="element">An element representing a strict region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Strict(IWebElement element, Padding padding = null, string regionId = null)
+        {
+            var list = new List<IWebElement> { element };
+            return Strict(list, padding, regionId);
         }
 
         /// <summary>
@@ -335,12 +373,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Strict(IWebElement element, params IWebElement[] elements)
         {
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Strict(list);
+        }
+
+        /// <summary>
+        /// Adds one or more strict regions.
+        /// </summary>
+        /// <param name="elements">An enumerbale of elements, each representing a strict region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Strict(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
+        {
             SeleniumCheckSettings clone = Clone_();
-            clone.Strict_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Strict)}({element}");
+            clone.fluentCode_.Append($".{nameof(Strict)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Strict_(new SimpleRegionByElement(elem));
+                clone.Strict_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -348,21 +399,16 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
-        /// Adds one or more strict regions.
+        /// Adds one content region.
         /// </summary>
-        /// <param name="elements">An enumerbale of elements, each representing a strict region.</param>
+        /// <param name="selector">A selector representing a content region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Strict(IEnumerable<IWebElement> elements)
+        public SeleniumCheckSettings Content(By selector, Padding padding = null, string regionId = null)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Strict)}(");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Strict_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<By> { selector };
+            return Content(list, padding, regionId);
         }
 
         /// <summary>
@@ -373,12 +419,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Content(By selector, params By[] selectors)
         {
+            var list = new List<By> { selector };
+            list.AddRange(selectors);
+            return Content(list);
+        }
+
+        /// <summary>
+        /// Adds one or more content regions.
+        /// </summary>
+        /// <param name="selectors">An enumerbale of selectors representing content regions.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public SeleniumCheckSettings Content(IEnumerable<By> selectors, Padding padding = null, string regionId = null)
+        {
             SeleniumCheckSettings clone = Clone_();
-            clone.Content_(new SimpleRegionBySelector(selector));
-            clone.fluentCode_.Append($".{nameof(Content)}({selector}");
+            clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (By sel in selectors)
             {
-                clone.Content_(new SimpleRegionBySelector(sel));
+                clone.Content_(new SimpleRegionBySelector(sel, padding, regionId));
                 clone.fluentCode_.Append($", {sel}");
             }
             clone.fluentCode_.Append(")");
@@ -386,21 +445,16 @@ namespace Applitools.Selenium.Fluent
         }
 
         /// <summary>
-        /// Adds one or more content regions.
+        /// Adds one content region.
         /// </summary>
-        /// <param name="selectors">An enumerbale of selectors representing content regions.</param>
+        /// <param name="element">An element representing a content region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Content(IEnumerable<By> selectors)
+        public SeleniumCheckSettings Content(IWebElement element, Padding padding = null, string regionId = null)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.fluentCode_.Append($".{nameof(Content)}(");
-            foreach (By sel in selectors)
-            {
-                clone.Content_(new SimpleRegionBySelector(sel));
-                clone.fluentCode_.Append($", {sel}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            return Content(list, padding, regionId);
         }
 
         /// <summary>
@@ -411,30 +465,25 @@ namespace Applitools.Selenium.Fluent
         /// <returns>An updated clone of this settings object.</returns>
         public SeleniumCheckSettings Content(IWebElement element, params IWebElement[] elements)
         {
-            SeleniumCheckSettings clone = Clone_();
-            clone.Content_(new SimpleRegionByElement(element));
-            clone.fluentCode_.Append($".{nameof(Content)}({element}");
-            foreach (IWebElement elem in elements)
-            {
-                clone.Content_(new SimpleRegionByElement(elem));
-                clone.fluentCode_.Append($", {elem}");
-            }
-            clone.fluentCode_.Append(")");
-            return clone;
+            var list = new List<IWebElement> { element };
+            list.AddRange(elements);
+            return Content(list);
         }
 
         /// <summary>
         /// Adds one or more content regions.
         /// </summary>
         /// <param name="elements">An enumerbale of elements, each representing a content region.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
-        public SeleniumCheckSettings Content(IEnumerable<IWebElement> elements)
+        public SeleniumCheckSettings Content(IEnumerable<IWebElement> elements, Padding padding = null, string regionId = null)
         {
             SeleniumCheckSettings clone = Clone_();
             clone.fluentCode_.Append($".{nameof(Content)}(");
             foreach (IWebElement elem in elements)
             {
-                clone.Content_(new SimpleRegionByElement(elem));
+                clone.Content_(new SimpleRegionByElement(elem, padding, regionId));
                 clone.fluentCode_.Append($", {elem}");
             }
             clone.fluentCode_.Append(")");
@@ -485,9 +534,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append(")");
             return clone;
         }
-
-
-
+        
         public SeleniumCheckSettings Accessibility(By regionSelector, AccessibilityRegionType regionType)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -495,8 +542,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append($".{nameof(Accessibility)}({regionSelector},{nameof(AccessibilityRegionType)}.{regionType})");
             return clone;
         }
-
-
+        
         public SeleniumCheckSettings Accessibility(IWebElement element, AccessibilityRegionType regionType)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -517,9 +563,7 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append(")");
             return clone;
         }
-
-
-
+        
         public SeleniumCheckSettings ScrollRootElement(By selector)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -552,46 +596,30 @@ namespace Applitools.Selenium.Fluent
         public SeleniumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = shouldSet;
-            clone.layoutBreakpoints_.Clear();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
             return clone;
-        }
-
-        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
-        {
-            return LayoutBreakpointsEnabled(shouldSet);
         }
 
         public SeleniumCheckSettings LayoutBreakpoints(params int[] breakpoints)
         {
             SeleniumCheckSettings clone = Clone_();
-            clone.layoutBreakpointsEnabled_ = false;
-            clone.layoutBreakpoints_.Clear();
-            if (breakpoints == null || breakpoints.Length == 0)
-            {
-                return clone;
-            }
-
-            foreach (int breakpoint in breakpoints)
-            {
-                ArgumentGuard.GreaterThan(breakpoint, 0, nameof(breakpoint));
-                clone.layoutBreakpoints_.Add(breakpoint);
-            }
-
-            clone.layoutBreakpoints_.Sort();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(breakpoints);
             return clone;
         }
 
-        List<int> ISeleniumCheckTarget.GetLayoutBreakpoints()
+        public SeleniumCheckSettings LayoutBreakpoints(bool shouldSet)
         {
-            return layoutBreakpoints_;
+            SeleniumCheckSettings clone = Clone_();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions().Breakpoints(shouldSet);
+            return clone;
         }
-
-        bool? ISeleniumCheckTarget.GetLayoutBreakpointsEnabled()
+        
+        public SeleniumCheckSettings LayoutBreakpoints(LayoutBreakpointsOptions options)
         {
-            return layoutBreakpointsEnabled_;
+            SeleniumCheckSettings clone = Clone_();
+            clone.LayoutBreakpointsOptions = new LayoutBreakpointsOptions(options);
+            return clone;
         }
-
 
         public SeleniumCheckSettings UseCookies(bool useCookies)
         {
@@ -620,7 +648,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Ignore(region, regions);
         }
 
-        public new SeleniumCheckSettings Ignore(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Ignore(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Ignore(regions);
         }
@@ -630,7 +658,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Content(region, regions);
         }
 
-        public new SeleniumCheckSettings Content(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Content(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Content(regions);
         }
@@ -640,7 +668,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Layout(region, regions);
         }
 
-        public new SeleniumCheckSettings Layout(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Layout(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Layout(regions);
         }
@@ -650,7 +678,7 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Strict(region, regions);
         }
 
-        public new SeleniumCheckSettings Strict(IEnumerable<Rectangle> regions)
+        public SeleniumCheckSettings Strict(IEnumerable<Rectangle> regions)
         {
             return (SeleniumCheckSettings)base.Strict(regions);
         }
@@ -680,9 +708,15 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Strict();
         }
 
+        [Obsolete("Use IgnoreColors()")]
         public new SeleniumCheckSettings Content()
         {
             return (SeleniumCheckSettings)base.Content();
+        }
+
+        public new SeleniumCheckSettings IgnoreColors()
+        {
+            return (SeleniumCheckSettings)base.IgnoreColors();
         }
 
         public new SeleniumCheckSettings MatchLevel(MatchLevel matchLevel)
@@ -698,6 +732,16 @@ namespace Applitools.Selenium.Fluent
         public new SeleniumCheckSettings Fully(bool fully)
         {
             return (SeleniumCheckSettings)base.Fully(fully);
+        }
+
+        public new SeleniumCheckSettings LazyLoad()
+        {
+            return (SeleniumCheckSettings)base.LazyLoad();
+        }
+
+        public new SeleniumCheckSettings LazyLoad(LazyLoadOptions lazyLoad)
+        {
+            return (SeleniumCheckSettings)base.LazyLoad(lazyLoad);
         }
 
         public new SeleniumCheckSettings Timeout(TimeSpan timeout)
@@ -788,26 +832,8 @@ namespace Applitools.Selenium.Fluent
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
             ((ISeleniumCheckTarget)clone).State = ((ISeleniumCheckTarget)this).State;
-            clone.layoutBreakpointsEnabled_ = layoutBreakpointsEnabled_;
-            clone.layoutBreakpoints_.AddRange(layoutBreakpoints_);
             clone.useCookies_ = useCookies_;
             return clone;
-        }
-
-        public override Dictionary<string, object> ToSerializableDictionary()
-        {
-            Dictionary<string, object> dict = base.ToSerializableDictionary();
-            dict.Add("TargetElement", targetElement_?.ToString());
-            dict.Add("TargetSelector", targetSelector_?.ToString());
-            dict.Add("FrameChain", StringUtils.Concat(frameChain_, " --> "));
-            dict.Add("ScrollRootElement", scrollRootElement_?.ToString());
-            dict.Add("ScrollRootSelector", scrollRootSelector_?.ToString());
-            dict.Add("VGTargetSelector", vgTargetSelector_);
-            dict.Add("LayoutBreakpointsEnabled", layoutBreakpointsEnabled_);
-            dict.Add("LayoutBreakpoints", layoutBreakpoints_);
-            dict.Add("UseCookies", useCookies_);
-
-            return dict;
         }
     }
 }

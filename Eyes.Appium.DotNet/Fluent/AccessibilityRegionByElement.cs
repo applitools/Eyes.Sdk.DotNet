@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Applitools.Appium.Utils;
 using Applitools.Fluent;
-using Applitools.Utils;
 using OpenQA.Selenium;
 
 namespace Applitools.Appium
@@ -25,7 +25,7 @@ namespace Applitools.Appium
                 Type = regionType_,
                 Region = new RegionElement
                 {
-                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                    //ElementId = element_.GetElementId() // ?
                 }
             };
         }

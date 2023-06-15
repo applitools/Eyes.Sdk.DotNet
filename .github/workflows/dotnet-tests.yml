@@ -1,0 +1,42 @@
+name: Test on all platforms
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  dotnet-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "6.0"
+      - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
+      - run: pip install pytest psutil
+      - run: pytest -vv Tests/test_usdk_terminates.py
+
+  dotnet-tests-alpine:
+    runs-on: ubuntu-latest
+    container: "alpine:latest"
+    steps:
+      - uses: actions/checkout@v3
+      - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib curl
+      - run: apk add chromium chromium-chromedriver xvfb xvfb-run
+      - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
+      - run: ./dotnet-install.sh -c 3.1 --install-dir /usr/share/dotnet
+      - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
+      - run: xvfb-run dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
+        env:
+          DRIVER_PATH: /usr/bin
+          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}

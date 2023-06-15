@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Tests\NunitLogHandler.common.cs" Link="Utils\NunitLogHandler.common.cs" />
+    <Compile Include="..\..\..\Tests\ReportingTestSuite.common.cs" Link="Utils\ReportingTestSuite.common.cs" />
+    <Compile Include="..\..\..\Tests\SkipAttribute.common.cs" Link="Utils\SkipAttribute.common.cs" />
+    <Compile Include="..\..\..\Tests\TestResult.common.cs" Link="Utils\TestResult.common.cs" />
+    <Compile Include="..\..\..\Tests\TestResultReportSummary.common.cs" Link="Utils\TestResultReportSummary.common.cs" />
+	<Compile Include="..\..\..\Tests\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
+	<Compile Include="..\GeneratedTestUtils.common.cs" Link="Utils\GeneratedTestUtils.common.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JUnitTestLogger" Version="1.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="NUnit" Version="3.13.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="coverage\generic\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Eyes.Playwright.DotNet\Eyes.Playwright.DotNet.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
+    <OutputPath>bin\$(Configuration)/Selenium4/</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,11 +15,12 @@
 	<Compile Include="..\..\..\Tests\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
 	<Compile Include="..\GeneratedTestUtils.common.cs" Link="Utils\GeneratedTestUtils.common.cs" />
     <Compile Include="..\TestSetupGeneratedMobileEmulationS4.cs" Link="TestSetupGeneratedMobileEmulationS4.cs" />
+    <Compile Remove="TestSetupGeneratedS3.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="JUnitTestLogger" Version="1.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
       <PrivateAssets>all</PrivateAssets>
@@ -27,8 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Eyes.Sdk.Core.DotNet\Eyes.Sdk.Core.DotNet.csproj" />
     <ProjectReference Include="..\..\..\Eyes.Selenium4.DotNet\Eyes.Selenium4.DotNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="coverage\generic\" />
+  </ItemGroup>
+  
 </Project>

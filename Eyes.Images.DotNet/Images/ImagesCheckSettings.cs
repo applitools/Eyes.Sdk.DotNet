@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Applitools.Utils;
 
 namespace Applitools.Images
 {
@@ -7,27 +8,49 @@ namespace Applitools.Images
     {
         private Bitmap image_;
         private Uri imageUri_;
+        private string base64_;
 
         public ImagesCheckSettings(Bitmap image)
         {
-            this.image_ = image;
+            image_ = image;
         }
+
+        public ImagesCheckSettings(string base64)
+        {
+            base64_ = base64;
+        }
+
         public ImagesCheckSettings(Uri imageUri)
         {
-            this.imageUri_ = imageUri;
+            imageUri_ = imageUri;
         }
 
         private ImagesCheckSettings() { }
 
-        Bitmap IImagesCheckTarget.Image => this.image_;
+        Bitmap IImagesCheckTarget.Image => image_;
 
-        Uri IImagesCheckTarget.ImageUri => this.imageUri_;
+        Uri IImagesCheckTarget.ImageUri => imageUri_;
 
         public ImagesCheckSettings Region(Rectangle region)
         {
             ImagesCheckSettings clone = Clone_();
             clone.UpdateTargetRegion(region);
             return clone;
+        }
+
+        public string ToImage()
+        {
+            if (image_ != null)
+            {
+                return image_.ToBase64();
+            }
+
+            if (imageUri_ != null)
+            {
+                return imageUri_.ToString();
+            }
+
+            return base64_;
         }
 
         private ImagesCheckSettings Clone_()
@@ -41,6 +64,7 @@ namespace Applitools.Images
             base.PopulateClone_(clone);
             clone.image_ = this.image_;
             clone.imageUri_ = this.imageUri_;
+            clone.base64_ = this.base64_;
             return clone;
         }
     }

@@ -8,7 +8,7 @@ namespace Applitools.Selenium.Fluent
     internal class AccessibilityRegionByElement : IGetAccessibilityRegion, IGetSeleniumRegion, IGetAccessibilityRegionType
     {
         private readonly AccessibilityRegionType regionType_;
-        private IWebElement element_;
+        private readonly IWebElement element_;
 
         public AccessibilityRegionByElement(IWebElement element, AccessibilityRegionType regionType)
         {
@@ -25,7 +25,7 @@ namespace Applitools.Selenium.Fluent
                 Type = regionType_,
                 Region = new RegionElement
                 {
-                    ElementId = element_.GetPrivateFieldValue<string>("elementId")
+                    ElementId = element_.GetElementId()
                 }
             };
         }

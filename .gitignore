@@ -22,3 +22,5 @@ TestResult.xml
 /coverage-tests/node_modules/
 /coverage-tests/coverage-tests-metadata.json
 */Properties/NodeResources/node_modules/
+build
+/coverage-tests/**/coverage/generic

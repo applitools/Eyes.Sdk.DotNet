@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Applitools.Fluent;
 using Applitools.Selenium;
 using OpenQA.Selenium;
 
@@ -37,11 +38,8 @@ namespace Applitools.Appium
         {
             return new SelectorFloatingRegion
             {
-                MaxDownOffset = maxDownOffset_,
-                MaxUpOffset = maxUpOffset_,
-                MaxLeftOffset = maxLeftOffset_,
-                MaxRightOffset = maxRightOffset_,
-                Region = selectorTransformer_.GetRegionSelector(selector_)
+                Region = selectorTransformer_.GetRegionSelector(selector_),
+                Offset = new Padding(maxLeftOffset_, maxUpOffset_, maxRightOffset_, maxDownOffset_)
             };
         }
 

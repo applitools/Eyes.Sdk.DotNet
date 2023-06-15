@@ -63,7 +63,7 @@ namespace Applitools.Tests.Utils
             }
         }
 
-        public static SessionResults GetSessionResults(string apiKey, TestResults testResults)
+        public static SessionResults GetSessionResults(string apiKey, Applitools.TestResults testResults)
         {
             string apiSessionUrl = testResults?.ApiUrls?.Session;
             if (string.IsNullOrWhiteSpace(apiSessionUrl)) return null;
@@ -89,7 +89,7 @@ namespace Applitools.Tests.Utils
             return sessionResults;
         }
 
-        public static string GetDom(string apiKey, TestResults testResults, string domId)
+        public static string GetDom(string apiKey, Applitools.TestResults testResults, string domId)
         {
             string apiSessionUrl = testResults?.AppUrls?.Session;
             if (string.IsNullOrWhiteSpace(apiSessionUrl)) return null;
@@ -120,6 +120,31 @@ namespace Applitools.Tests.Utils
             {
                 BatchInfo batchInfo = batchInfoResponse.DeserializeBody<BatchInfo>(false);
                 return batchInfo;
+            }
+        }
+
+        public static void compareProcedure(Region actualRegion, Region expectedRegion, string type = null)
+        {
+            Region[] actualRegions = new Region[] { actualRegion };
+            HashSet<Region> expectedRegions = new HashSet<Region> { expectedRegion };
+            TestUtils.CompareSimpleRegionsList_(actualRegions, expectedRegions, "Region");
+        }
+
+        public static void compareProcedure(FloatingMatchSettings actualRegion, FloatingMatchSettings expectedRegion, string type = "Floating")
+        {
+            FloatingMatchSettings[] actualRegions = new FloatingMatchSettings[] { actualRegion };
+            HashSet<FloatingMatchSettings> expectedRegions = new HashSet<FloatingMatchSettings> { expectedRegion };
+            HashSet<FloatingMatchSettings> expectedRegionsClone = new HashSet<FloatingMatchSettings>(expectedRegions);
+            if (expectedRegions.Count > 0)
+            {
+                foreach (FloatingMatchSettings region in actualRegions)
+                {
+                    if (!expectedRegionsClone.Remove(region))
+                    {
+                        Assert.Fail("actual {0} region {1} not found in expected regions list", type, region);
+                    }
+                }
+                Assert.IsEmpty(expectedRegionsClone, "not all expected regions found in actual regions list.", type);
             }
         }
 

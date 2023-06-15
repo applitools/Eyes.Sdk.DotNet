@@ -1,4 +1,0 @@
-[submodule "Eyes.Ufg.DotNet"]
-	path = Eyes.Ufg.DotNet
-	url = https://github.com/applitools/Eyes.Ufg.DotNet.git
-	branch = develop

@@ -1,10 +1,17 @@
 ﻿using OpenQA.Selenium;
 
-namespace Applitools.Selenium.Fluent
+namespace Applitools
 {
-    interface IScrollRootElementContainer
+    internal interface IScrollRootElementContainer
     {
         IWebElement GetScrollRootElement();
         By GetScrollRootSelector();
+    }
+
+    internal interface ITargetContainer
+    {
+        By GetTargetSelector();
+
+        IWebElement GetTargetElement();
     }
 }

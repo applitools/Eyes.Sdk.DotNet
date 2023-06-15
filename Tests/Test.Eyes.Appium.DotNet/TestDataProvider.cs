@@ -1,4 +1,6 @@
 ﻿using System;
+// ReSharper disable InconsistentNaming
+// ReSharper disable ConvertToConstant.Global
 
 namespace Applitools.Appium.Tests
 {
