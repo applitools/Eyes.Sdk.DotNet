@@ -558,16 +558,6 @@ namespace Applitools.Selenium
         }
         
         /// <summary>
-        /// Ends the test asynchronously.
-        /// </summary>
-        [Obsolete]
-        public virtual void CloseAsync()
-        {
-            Logger.Log("CloseAsync");
-            Close();
-        }
-
-        /// <summary>
         /// Sets the OS (e.g., Windows) and application (e.g., Chrome) 
         /// that host the application under test.
         /// </summary>
