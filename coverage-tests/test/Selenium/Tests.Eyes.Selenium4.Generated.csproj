@@ -15,6 +15,7 @@
 	<Compile Include="..\..\..\Tests\TestUtils.common.cs" Link="Utils\TestUtils.common.cs" />
 	<Compile Include="..\GeneratedTestUtils.common.cs" Link="Utils\GeneratedTestUtils.common.cs" />
     <Compile Include="..\TestSetupGeneratedMobileEmulationS4.cs" Link="TestSetupGeneratedMobileEmulationS4.cs" />
+    <Compile Remove="TestSetupGeneratedS3.cs" />
   </ItemGroup>
 
   <ItemGroup>

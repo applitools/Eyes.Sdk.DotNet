@@ -17,6 +17,7 @@
 	<None Include="..\TestSetupGeneratedMobileEmulationS3.cs">
 	  <Link>TestSetupGeneratedMobileEmulationS3.cs</Link>
 	</None>
+	<Compile Remove="TestSetupGeneratedS4.cs" />
   </ItemGroup>
 
   <ItemGroup>
