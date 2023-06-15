@@ -1,3 +1,45 @@
+## [Eyes.Images.Core.Windows 3.2.1] - 2023-06-15 - NEW
+### Added
+- Server Core v3.2.1 for Windows
+
+## [Eyes.Images.Core.OSX 3.2.1] - 2023-06-15 - NEW
+### Added
+- Server Core v3.2.1 for OSX
+
+## [Eyes.Images.Core.Linux.X64 3.2.1] - 2023-06-15 - NEW
+### Added
+- Server Core v3.2.1 for Linux x64
+
+## [Eyes.Images.Core.Linux.Arm64 3.2.1] - 2023-06-15 - NEW
+### Added
+- Server Core v3.2.1 for Linux arm64
+
+## [Eyes.Images.Core.Linux.Alpine 3.2.1] - 2023-06-15 - NEW
+### Added
+- Server Core v3.2.1 for Alpine Linux
+
+## [Eyes.Images 3.25]
+### Updated
+- Core project is now selected automatically by operating system.
+
+## [Eyes.Selenium 3.53]
+### Updated
+- Match to latest Eyes.Images
+
+## [Eyes.Selenium4 3.53]
+### Updated
+- Match to latest Eyes.Images
+
+## [Eyes.Appium 5.49]
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Playwright 1.2]
+### Updated
+- Match to latest Eyes.Images
+
+---
+
 ## [Eyes.Image.Core 2.7] - 2023-06-14
 ### Updated
 - Server Core to 3.2.1
