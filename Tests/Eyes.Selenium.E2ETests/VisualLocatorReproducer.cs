@@ -89,7 +89,7 @@ namespace Eyes.Selenium.E2ETests
             // Even though this test will run visual checkpoints on different browsers in the Ultrafast Grid,
             // it still needs to run the test one time locally to capture snapshots.
             ChromeOptions options = new ChromeOptions();
-            if (Headless) options.AddArgument("headless");
+            options.AddArgument("headless");
             Driver = DRIVER_PATH != null ? new ChromeDriver(DRIVER_PATH, options, TimeSpan.FromMinutes(4)) : new ChromeDriver(options);
 
             // Set an implicit wait of 10 seconds.
