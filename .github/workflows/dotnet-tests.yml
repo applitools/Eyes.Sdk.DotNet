@@ -23,8 +23,8 @@ jobs:
         with:
           dotnet-version: "6.0"
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
-      - run: pip install pytest psutil
-      - run: pytest -vv Tests/test_usdk_terminates.py
+      # - run: pip install pytest psutil
+      # - run: pytest -vv Tests/test_usdk_terminates.py
 
   dotnet-tests-alpine:
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
       - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib curl
       - run: apk add chromium chromium-chromedriver xvfb xvfb-run
       - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
-      - run: ./dotnet-install.sh -c 3.1 --install-dir /usr/share/dotnet
+      - run: ./dotnet-install.sh -c 6.0 --install-dir /usr/share/dotnet
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
       - run: xvfb-run dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
         env:

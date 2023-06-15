@@ -26,3 +26,4 @@ build
 /coverage-tests/**/coverage/generic
 build
 /coverage-tests/**/coverage/generic
+SEND_MAIL.json
