@@ -43,7 +43,8 @@ namespace Eyes.Selenium.E2ETests
             // Read the headless mode setting from an environment variable.
             // Use headless mode for Continuous Integration (CI) execution.
             // Use headed mode for local development.
-            Headless = Environment.GetEnvironmentVariable("HEADLESS")?.ToLower() == "true";
+            Headless = Environment.GetEnvironmentVariable("CI") == "true" || 
+                       Environment.GetEnvironmentVariable("HEADLESS")?.ToLower() == "true";
 
             // Create the runner for the Ultrafast Grid.
             // Concurrency refers to the number of visual checkpoints Applitools will perform in parallel.
