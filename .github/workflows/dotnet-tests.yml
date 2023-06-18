@@ -26,11 +26,10 @@ jobs:
       - name: "Selenium Unit Tests"
         env:
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-          DRIVER_PATH: ${{env.CHROMEWEBDRIVER}}
+          DRIVER_PATH: ${{ env.CHROMEWEBDRIVER }}
         run: |
           echo $CHROMEWEBDRIVER
-          echo "${{ env.CHROMEWEBDRIVER }}"
-          echo "${{ env.DRIVER_PATH }}"
+          echo $DRIVER_PATH
           dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
 #      - name: "Selenium E2E Tests"
 #        env:
