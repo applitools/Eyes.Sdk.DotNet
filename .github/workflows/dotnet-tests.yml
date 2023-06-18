@@ -22,6 +22,7 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: "6.0"
+      - uses: nanasess/setup-chromedriver@v2
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
       - run: dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
         env:
@@ -35,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib curl
-      - run: apk add chromium chromium-chromedriver xvfb xvfb-run
+      - run: apk add chromium chromium-chromedriver
       - run: mkdir -p /usr/share/dotnet && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet 
       - run: ./dotnet-install.sh -c 6.0 --install-dir /usr/share/dotnet
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
