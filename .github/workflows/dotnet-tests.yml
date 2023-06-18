@@ -30,6 +30,8 @@ jobs:
         run: |
           echo "${{ env.CHROMEWEBDRIVER }}"
           echo "${{ env.DRIVER_PATH }}"
+          env | grep CRHOME
+          env | grep DRIVER
           dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
 #      - name: "Selenium E2E Tests"
 #        env:
