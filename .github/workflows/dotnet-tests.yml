@@ -28,6 +28,7 @@ jobs:
       - run: dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
         env:
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+          DRIVER_PATH: ${{ env.CHROMEWEBDRIVER }}
       # - run: pip install pytest psutil
       # - run: pytest -vv Tests/test_usdk_terminates.py
 

@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Applitools;
 using Applitools.Selenium;
-using Applitools.Utils;
 using Applitools.Utils.Geometry;
 using Applitools.VisualGrid;
 using NUnit.Framework;
@@ -17,22 +15,12 @@ namespace Eyes.Selenium.E2ETests
     {
         private SeleniumEyesRunner runner_;
 
+        private static readonly string driverPath_ = Environment.GetEnvironmentVariable("DRIVER_PATH");
         private static readonly BatchInfo batchInfo_ = new BatchInfo("DotNet Multithreads Test");
 
         [SetUp]
         public void Setup()
         {
-            var vars = Environment.GetEnvironmentVariables();
-            SortedDictionary<string, string> sorted = new SortedDictionary<string, string>();
-            foreach (var envVar in vars)
-            {
-                sorted.Add((string)((DictionaryEntry)envVar).Key, (string)((DictionaryEntry)envVar).Value);
-            }
-
-            foreach (var envVar in sorted)
-            {
-                TestContext.Out.WriteLine(envVar.ToString());
-            }
             //  Trace.Listeners.Add(new ConsoleTraceListener());
             runner_ = new ClassicRunner();
         }
@@ -59,7 +47,7 @@ namespace Eyes.Selenium.E2ETests
             var options = new ChromeOptions();
             options.AddArguments("--headless");
             options.AddArguments("--no-sandbox");
-            IWebDriver driver = new ChromeDriver(options);
+            IWebDriver driver = new ChromeDriver(driverPath_, options);
             try
             {
                 eyes.Batch = batchInfo_;
