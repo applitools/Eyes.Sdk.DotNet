@@ -23,18 +23,20 @@ jobs:
         with:
           dotnet-version: "6.0"
       - uses: nanasess/setup-chromedriver@v2
-      - run: |
-          env | sort
-          dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
-        env:
-          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-          DRIVER_PATH: ${CHROMEWEBDRIVER}  
-      - run: |
-          env | sort
-          dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
+      - name: "Selenium Unit Tests"
         env:
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
           DRIVER_PATH: ${{ env.CHROMEWEBDRIVER }}
+        run: |
+          env | sort
+          dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
+      - name: "Selenium E2E Tests"
+        env:
+          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+          DRIVER_PATH: ${{ env.CHROMEWEBDRIVER }}
+        run: |
+          env | sort
+          dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
       # - run: pip install pytest psutil
       # - run: pytest -vv Tests/test_usdk_terminates.py
 
