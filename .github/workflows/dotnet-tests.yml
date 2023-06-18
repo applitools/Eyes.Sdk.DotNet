@@ -23,6 +23,7 @@ jobs:
         with:
           dotnet-version: "6.0"
       - uses: nanasess/setup-chromedriver@v2
+      - run: env | sort
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
       - run: dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
         env:
