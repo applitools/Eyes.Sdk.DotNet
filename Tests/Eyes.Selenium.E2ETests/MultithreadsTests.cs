@@ -21,7 +21,7 @@ namespace Eyes.Selenium.E2ETests
         [SetUp]
         public void Setup()
         {
-          //  Trace.Listeners.Add(new ConsoleTraceListener());
+            //  Trace.Listeners.Add(new ConsoleTraceListener());
             runner_ = new ClassicRunner();
         }
 
@@ -44,13 +44,9 @@ namespace Eyes.Selenium.E2ETests
         {
             var eyes = new Applitools.Selenium.Eyes(runner_);
             // Use Chrome browser
-            var ci = Environment.GetEnvironmentVariable("CI");
             var options = new ChromeOptions();
-            //  if (CI != null)
-            {
-                options.AddArguments("headless");
-                options.AddArguments("no-sandbox");
-            }
+            options.AddArguments("--headless");
+            options.AddArguments("--no-sandbox");
             //Initialize the Runner for your test with concurrency of 5.
             // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
             IWebDriver driver = new ChromeDriver(DriverPath, options);
@@ -67,7 +63,8 @@ namespace Eyes.Selenium.E2ETests
                 eyes.SetConfiguration(config);
 
                 driver.Navigate().GoToUrl("http://applitools.github.io/demo/TestPages/fixed-position");
-                driver = eyes.Open(driver, "Eyes Selenium SDK - Multithreading", $"SimpleTest - {i}", new RectangleSize(width: 700, height: 460));
+                driver = eyes.Open(driver, "Eyes Selenium SDK - Multithreading", $"SimpleTest - {i}",
+                    new RectangleSize(width: 700, height: 460));
                 eyes.Check(Target.Region(By.CssSelector("#fixed")).Fully());
                 eyes.Close(true);
                 var a = eyes.GetResults(false);
