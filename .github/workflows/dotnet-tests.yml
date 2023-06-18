@@ -23,6 +23,7 @@ jobs:
         with:
           dotnet-version: "6.0"
       - run: dotnet test Tests/Eyes.Selenium.UnitTests/Eyes.Selenium.UnitTests.csproj
+      - run: dotnet test Tests/Eyes.Selenium.E2ETests/Eyes.Selenium.E2ETests.csproj
       # - run: pip install pytest psutil
       # - run: pytest -vv Tests/test_usdk_terminates.py
 
