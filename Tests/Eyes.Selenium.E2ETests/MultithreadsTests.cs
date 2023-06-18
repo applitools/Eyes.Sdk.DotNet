@@ -15,8 +15,7 @@ namespace Eyes.Selenium.E2ETests
     {
         private SeleniumEyesRunner runner_;
 
-        public static readonly string DriverPath = Environment.GetEnvironmentVariable("DRIVER_PATH");
-        public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Multithreads Test");
+        private static readonly BatchInfo batchInfo_ = new BatchInfo("DotNet Multithreads Test");
 
         [SetUp]
         public void Setup()
@@ -47,12 +46,10 @@ namespace Eyes.Selenium.E2ETests
             var options = new ChromeOptions();
             options.AddArguments("--headless");
             options.AddArguments("--no-sandbox");
-            //Initialize the Runner for your test with concurrency of 5.
-            // Create Eyes object with the runner, meaning it'll be a Visual Grid eyes.
-            IWebDriver driver = new ChromeDriver(DriverPath, options);
+            IWebDriver driver = new ChromeDriver(options);
             try
             {
-                eyes.Batch = BatchInfo;
+                eyes.Batch = batchInfo_;
                 eyes.SaveNewTests = false;
                 eyes.BranchName = "master";
                 eyes.ParentBranchName = "master";
