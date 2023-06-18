@@ -13,7 +13,7 @@ namespace Eyes.Selenium.E2ETests
     {
         private SeleniumEyesRunner runner_;
 
-        public static readonly string DriverPath = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        public static readonly string DriverPath = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Multithreads Test");
 
         [SetUp]

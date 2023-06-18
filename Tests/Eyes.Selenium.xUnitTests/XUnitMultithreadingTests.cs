@@ -16,7 +16,7 @@ namespace Eyes.Selenium.xUnitTests
         private Applitools.Selenium.Eyes eyes_;
         private IWebDriver driver_;
 
-        public static readonly string DriverPath = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        public static readonly string DriverPath = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
 
         public XUnitMultithreadingTests()
         {

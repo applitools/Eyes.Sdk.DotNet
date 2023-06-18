@@ -14,7 +14,7 @@ namespace Eyes.Selenium.E2ETests
     {
         private SeleniumEyesRunner runner_;
 
-        private static readonly string driverPath_ = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        private static readonly string driverPath_ = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
 
         // ReSharper disable once StringLiteralTypo
         private static readonly BatchInfo batchInfo_ = new BatchInfo("DotNet Multithreads Test");

@@ -25,7 +25,7 @@ namespace Applitools.Generated.Selenium.Tests
         protected Eyes eyes;
         protected string testedPageUrl = "https://applitools.github.io/demo/TestPages/FramesTestPage/";
         public static readonly BatchInfo BatchInfo = new BatchInfo("DotNet Generated Tests - Selenium");
-        public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        public static readonly string DRIVER_PATH = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
         public static readonly string SAUCE_USERNAME = Environment.GetEnvironmentVariable("SAUCE_USERNAME");
         public static readonly string SAUCE_ACCESS_KEY = Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY");
         public static readonly string SAUCE_SELENIUM_URL = "https://ondemand.us-west-1.saucelabs.com:443/wd/hub";

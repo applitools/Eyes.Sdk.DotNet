@@ -14,7 +14,7 @@ namespace Eyes.Selenium.E2ETests
         private Applitools.Selenium.Eyes eyes_;
         private IWebDriver driver_;
 
-        public static readonly string DriverPath = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        public static readonly string DriverPath = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
 
         [SetUp]
         public void Setup()

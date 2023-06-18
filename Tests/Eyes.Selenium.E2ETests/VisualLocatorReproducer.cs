@@ -15,7 +15,7 @@ namespace Eyes.Selenium.E2ETests
     /// </summary>
     public class VisualLocatorReproducer
     {
-        private static readonly string driverPath_ = Environment.GetEnvironmentVariable("DRIVER_PATH");
+        private static readonly string driverPath_ = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
         // Test control inputs to read once and share for all tests
         private static string applitoolsApiKey_;
 
