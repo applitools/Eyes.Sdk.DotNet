@@ -15,6 +15,8 @@ namespace Applitools.Appium
         private IWebElement scrollRootElement_;
         private VisualGridSelector vgTargetSelector_;
         private bool? useCookies_;
+        private bool? isDefaultWebview_;
+        private string webview_;
 
         internal AppiumCheckSettings()
         {
@@ -47,6 +49,20 @@ namespace Applitools.Appium
         IWebElement ITargetContainer.GetTargetElement()
         {
             return targetElement_;
+        }
+
+        public AppiumCheckSettings Webview(bool? isDefaultWebview = true)
+        {
+            AppiumCheckSettings clone = Clone_();
+            clone.isDefaultWebview_ = isDefaultWebview;
+            return clone;
+        }
+        
+        public AppiumCheckSettings Webview(string webview)
+        {
+            AppiumCheckSettings clone = Clone_();
+            clone.webview_ = webview;
+            return clone;
         }
         
         public AppiumCheckSettings Frame(By by)
@@ -580,7 +596,6 @@ namespace Applitools.Appium
             clone.fluentCode_.Append($".{nameof(ScrollRootElement)}({element})");
             return clone;
         }
-
         
         public AppiumCheckSettings LayoutBreakpointsEnabled(bool shouldSet)
         {
@@ -802,7 +817,19 @@ namespace Applitools.Appium
             clone.scrollRootSelector_ = scrollRootSelector_;
             clone.vgTargetSelector_ = vgTargetSelector_;
             clone.useCookies_ = useCookies_;
+            clone.isDefaultWebview_ = isDefaultWebview_;
+            clone.webview_ = webview_;
             return clone;
+        }
+
+        bool? IAppiumCheckTarget.IsDefaultWebview()
+        {
+            return isDefaultWebview_;
+        }
+
+        string IAppiumCheckTarget.GetWebview()
+        {
+            return webview_;
         }
     }
 }

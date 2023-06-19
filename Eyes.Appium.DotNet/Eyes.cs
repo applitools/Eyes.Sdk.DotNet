@@ -1,7 +1,9 @@
-﻿using Applitools.Utils;
-using OpenQA.Selenium.Remote;
-using System;
+﻿using System;
+using System.Globalization;
+using Applitools.Fluent;
+using Applitools.Utils;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Remote;
 
 namespace Applitools.Appium
 {
@@ -65,7 +67,7 @@ namespace Applitools.Appium
         #endregion
 
         [Obsolete("Use SetNmgCapabilities")]
-        public static void SetNMGCapabilities(AppiumOptions caps, 
+        public static void SetNMGCapabilities(AppiumOptions caps,
             string apiKey = null,
             string eyesServerUrl = null,
             ProxySettings proxySettings = null)
@@ -228,6 +230,16 @@ namespace Applitools.Appium
         public override TestResults Close(bool throwEx = true)
         {
             return seleniumEyes_.Close(throwEx);
+        }
+
+        protected override UniversalCheckSettings CreateUniversalCheckSettings(
+            ICheckSettingsInternal checkSettingsInternal)
+        {
+            IAppiumCheckTarget appiumCheckTarget = (IAppiumCheckTarget)checkSettingsInternal;
+            var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
+            settings.Webview = appiumCheckTarget.GetWebview() ??
+                               appiumCheckTarget.IsDefaultWebview()?.ToString(CultureInfo.InvariantCulture).ToLower();
+            return settings;
         }
     }
 }
