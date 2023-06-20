@@ -1,20 +1,20 @@
-## [Eyes.Images vNext+1]
+## [Eyes.Images vNext minor+2]
 ### Updated
 - Webview support for Appium on Server Core
 
-## [Eyes.Selenium vNext+1]
+## [Eyes.Selenium vNext minor+2]
 ### Updated
 - Internal changes to support Appium
 
-## [Eyes.Selenium4 vNext+1]
+## [Eyes.Selenium4 vNext minor+2]
 ### Updated
 - Version number bump
 
-## [Eyes.Appium vNext+1]
+## [Eyes.Appium vNext minor+2]
 ### Added
 - Webview support
 
-## [Eyes.Playwright vNext+1]
+## [Eyes.Playwright vNext minor+2]
 ### Updated
 - Version number bump
 

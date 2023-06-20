@@ -16,7 +16,7 @@ def upSemanticVersion(currentVersion, part):
         else:
             vPatch = 0
         vNext = "{}.{}"
-        partPattern = r"(?P<partName>.*)(\+(?P<increase>[0-9]+))?"
+        partPattern = r"(?P<partName>[a-z]+)(\+(?P<increase>[0-9]+))?"
         matches = re.match(partPattern, part)
         if matches:
             vPart = matches.group('partName')
@@ -25,9 +25,9 @@ def upSemanticVersion(currentVersion, part):
                 vIncrease = int(vIncreaseStr)
             else:
                 vIncrease = 1
-            if (part == "major"):
+            if (vPart == "major"):
                 vNext = vNext.format(vMajor + vIncrease, 0)
-            elif (part == "minor"):
+            elif (vPart == "minor"):
                 vNext = vNext.format(vMajor, vMinor + vIncrease)
             else:
                 vNext = (vNext+".{}").format(vMajor, vMinor, vPatch + 1)
