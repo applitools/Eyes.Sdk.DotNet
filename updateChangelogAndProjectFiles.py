@@ -16,12 +16,21 @@ def upSemanticVersion(currentVersion, part):
         else:
             vPatch = 0
         vNext = "{}.{}"
-        if (part == "major"):
-            vNext = vNext.format(vMajor + 1, 0)
-        elif (part == "minor"):
-            vNext = vNext.format(vMajor, vMinor + 1)
-        else:
-            vNext = (vNext+".{}").format(vMajor, vMinor, vPatch + 1)
+        partPattern = r"(?P<partName>.*)(\+(?P<increase>[0-9]+))?"
+        matches = re.match(partPattern, part)
+        if matches:
+            vPart = matches.group('partName')
+            vIncreaseStr = matches.group('increase')
+            if vIncreaseStr:
+                vIncrease = int(vIncreaseStr)
+            else:
+                vIncrease = 1
+            if (part == "major"):
+                vNext = vNext.format(vMajor + vIncrease, 0)
+            elif (part == "minor"):
+                vNext = vNext.format(vMajor, vMinor + vIncrease)
+            else:
+                vNext = (vNext+".{}").format(vMajor, vMinor, vPatch + 1)
     return vNext
 
 def getDependentPackages(packageName, packageNextVersions, versionPart):

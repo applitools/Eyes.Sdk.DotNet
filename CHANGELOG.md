@@ -1,3 +1,23 @@
+## [Eyes.Images vNext+1]
+### Updated
+- Webview support for Appium on Server Core
+
+## [Eyes.Selenium vNext+1]
+### Updated
+- Internal changes to support Appium
+
+## [Eyes.Selenium4 vNext+1]
+### Updated
+- Version number bump
+
+## [Eyes.Appium vNext+1]
+### Added
+- Webview support
+
+## [Eyes.Playwright vNext+1]
+### Updated
+- Version number bump
+
 ## [Eyes.Image.Core 2.7] - 2023-06-14
 ### Updated
 - Server Core to 3.2.1
