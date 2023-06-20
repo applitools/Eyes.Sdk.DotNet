@@ -1,7 +1,9 @@
-﻿using Applitools.Utils;
-using OpenQA.Selenium.Remote;
-using System;
+﻿using System;
+using System.Globalization;
+using Applitools.Fluent;
+using Applitools.Utils;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Remote;
 
 namespace Applitools.Appium
 {
@@ -65,7 +67,7 @@ namespace Applitools.Appium
         #endregion
 
         [Obsolete("Use SetNmgCapabilities")]
-        public static void SetNMGCapabilities(AppiumOptions caps, 
+        public static void SetNMGCapabilities(AppiumOptions caps,
             string apiKey = null,
             string eyesServerUrl = null,
             ProxySettings proxySettings = null)
@@ -185,8 +187,11 @@ namespace Applitools.Appium
                 Logger.Verbose("Ignored");
                 return;
             }
-
-            seleniumEyes_.Check(checkSettings);
+            IAppiumCheckTarget appiumCheckTarget = (IAppiumCheckTarget)checkSettings;
+            var request = seleniumEyes_.CreateCheckRequest(checkSettings);
+            request.Payload.Settings.Webview = (object) appiumCheckTarget.GetWebview() ??
+                                              appiumCheckTarget.IsDefaultWebview();
+            seleniumEyes_.SendCheckRequest(request);
         }
 
         public void Check(string name, ICheckSettings checkSettings)

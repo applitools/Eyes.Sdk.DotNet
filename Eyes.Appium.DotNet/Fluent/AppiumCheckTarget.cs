@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using OpenQA.Selenium;
 
 namespace Applitools.Appium
@@ -23,6 +24,16 @@ namespace Applitools.Appium
         public static AppiumCheckSettings Region(By by)
         {
             return new AppiumCheckSettings(by);
+        }
+
+        public static AppiumCheckSettings Webview(bool isDefaultWebview = true)
+        {
+            return new AppiumCheckSettings().Webview(isDefaultWebview);
+        }
+
+        public static AppiumCheckSettings Webview(string webView)
+        {
+            return new AppiumCheckSettings().Webview(webView);
         }
     }
 }

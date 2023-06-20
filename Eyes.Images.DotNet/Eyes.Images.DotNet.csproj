@@ -26,13 +26,13 @@ To learn more, visit https://applitools.com/ .</Description>
     <PackageOutputPath>..\PackagesOutput</PackageOutputPath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
-    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
-    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
-    <IsAlpine Condition="Exists('/etc/alpine-release')">true</IsAlpine>
-    <Arch>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture)</Arch>
-  </PropertyGroup>
+<!--  <PropertyGroup>-->
+<!--    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>-->
+<!--    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>-->
+<!--    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>-->
+<!--    <IsAlpine Condition="Exists('/etc/alpine-release')">true</IsAlpine>-->
+<!--    <Arch>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture)</Arch>-->
+<!--  </PropertyGroup>-->
 
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' == 'net45'" Include="AutoMapper" Version="7.0.1" />
@@ -56,14 +56,17 @@ To learn more, visit https://applitools.com/ .</Description>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\applitools_nuget_icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Windows\Eyes.Image.Core.DotNet.Windows.csproj" Condition="'$(IsWindows)'=='true'" />
-    <ProjectReference Include="..\Eyes.Image.Core.DotNet.OSX\Eyes.Image.Core.DotNet.OSX.csproj" Condition="'$(IsOSX)'=='true'" />
-    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Linux.X64\Eyes.Image.Core.DotNet.Linux.X64.csproj"
-                      Condition="'$(IsLinux)'=='true' AND '$(IsAlpine)'!='true' AND '$(Arch)'=='X64'" />
-    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Linux.Arm64\Eyes.Image.Core.DotNet.Linux.Arm64.csproj"
-                      Condition="'$(IsLinux)'=='true' AND '$(IsAlpine)'!='true' AND '$(Arch)'=='Arm64'" />
-    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Linux.Alpine\Eyes.Image.Core.DotNet.Linux.Alpine.csproj"
-                      Condition="'$(IsLinux)'=='true' AND '$(IsAlpine)'=='true'" /> </ItemGroup>
+    <ProjectReference Include="..\Eyes.Image.Core.DotNet\Eyes.Image.Core.DotNet.csproj" />
+  </ItemGroup>
+<!--  <ItemGroup>-->
+<!--    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Windows\Eyes.Image.Core.DotNet.Windows.csproj" Condition="'$(IsWindows)'=='true'" />-->
+<!--    <ProjectReference Include="..\Eyes.Image.Core.DotNet.OSX\Eyes.Image.Core.DotNet.OSX.csproj" Condition="'$(IsOSX)'=='true'" />-->
+<!--    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Linux.X64\Eyes.Image.Core.DotNet.Linux.X64.csproj"-->
+<!--                      Condition="'$(IsLinux)'=='true' AND '$(IsAlpine)'!='true' AND '$(Arch)'=='X64'" />-->
+<!--    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Linux.Arm64\Eyes.Image.Core.DotNet.Linux.Arm64.csproj"-->
+<!--                      Condition="'$(IsLinux)'=='true' AND '$(IsAlpine)'!='true' AND '$(Arch)'=='Arm64'" />-->
+<!--    <ProjectReference Include="..\Eyes.Image.Core.DotNet.Linux.Alpine\Eyes.Image.Core.DotNet.Linux.Alpine.csproj"-->
+<!--                      Condition="'$(IsLinux)'=='true' AND '$(IsAlpine)'=='true'" /> </ItemGroup>-->
 </Project>
