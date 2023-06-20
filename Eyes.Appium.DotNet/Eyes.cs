@@ -187,8 +187,11 @@ namespace Applitools.Appium
                 Logger.Verbose("Ignored");
                 return;
             }
-
-            seleniumEyes_.Check(checkSettings);
+            IAppiumCheckTarget appiumCheckTarget = (IAppiumCheckTarget)checkSettings;
+            var request = seleniumEyes_.CreateCheckRequest(checkSettings);
+            request.Payload.Settings.Webview = (object) appiumCheckTarget.GetWebview() ??
+                                              appiumCheckTarget.IsDefaultWebview();
+            seleniumEyes_.SendCheckRequest(request);
         }
 
         public void Check(string name, ICheckSettings checkSettings)
@@ -230,16 +233,6 @@ namespace Applitools.Appium
         public override TestResults Close(bool throwEx = true)
         {
             return seleniumEyes_.Close(throwEx);
-        }
-
-        protected override UniversalCheckSettings CreateUniversalCheckSettings(
-            ICheckSettingsInternal checkSettingsInternal)
-        {
-            IAppiumCheckTarget appiumCheckTarget = (IAppiumCheckTarget)checkSettingsInternal;
-            var settings = base.CreateUniversalCheckSettings(checkSettingsInternal);
-            settings.Webview = appiumCheckTarget.GetWebview() ??
-                               appiumCheckTarget.IsDefaultWebview()?.ToString(CultureInfo.InvariantCulture).ToLower();
-            return settings;
         }
     }
 }
