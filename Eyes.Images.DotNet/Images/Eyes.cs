@@ -205,7 +205,6 @@ namespace Applitools.Images
             IImagesCheckTarget imagesCheckTarget = (IImagesCheckTarget)checkSettings;
             ICheckSettingsInternal checkSettingsInternal = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
-            //eyesConfig.Open.Properties = _properties;
             var request = new EyesCheckRequest
             {
                 Key = Guid.NewGuid().ToString(),

@@ -417,7 +417,6 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver) driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var extractTextRequest = new EyesExtractTextRequest
@@ -452,7 +451,6 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver) driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
@@ -492,7 +490,6 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var locateRequest = new EyesLocateRequest
@@ -585,7 +582,6 @@ namespace Applitools.Selenium
         {
             var seleniumCheckSettings = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var request = new EyesCheckRequest
@@ -863,7 +859,6 @@ namespace Applitools.Selenium
                     Settings = ToOpenSettings(Config)
                 }
             };
-            result.Payload.Config.Open.Properties = properties_; // ?
             return result;
         }
         

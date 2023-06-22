@@ -226,7 +226,6 @@ namespace Applitools.Playwright
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
             {
                 Key = Guid.NewGuid().ToString(),
@@ -298,7 +297,6 @@ namespace Applitools.Playwright
 
             var playwrightCheckSettings = (IPlaywrightCheckTarget)checkSettings;
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var request = new EyesCheckRequest
             {
                 Key = Guid.NewGuid().ToString(),

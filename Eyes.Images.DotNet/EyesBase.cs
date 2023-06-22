@@ -82,6 +82,7 @@ namespace Applitools
             var mapper = config.CreateMapper();
 
             var openConfig = mapper.Map<OpenConfig>(configuration);
+            openConfig.Properties = properties_;
             var screenshotConfig = mapper.Map<ScreenshotConfig>(configuration);
             var checkConfig = mapper.Map<CheckConfig>(configuration);
             var closeConfig = mapper.Map<CloseConfig>(configuration);
@@ -346,7 +347,6 @@ namespace Applitools
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
             {
                 Key = Guid.NewGuid().ToString(),
