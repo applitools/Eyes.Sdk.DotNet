@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 
-RESULT=0
+$RESULT=0
 
 echo "generating tests"
 pushd coverage-tests
