@@ -54,8 +54,8 @@ jobs:
       - run: |
           cd coverage-tests
           npm install
-          npm run generate:eg
-          npm run run:parallel:selenium:eg
+          npm run generate
+          npm run run:parallel:selenium
   
   dotnet-test-selenium4-generated:
     runs-on: ubuntu-latest

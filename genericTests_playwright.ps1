@@ -5,11 +5,10 @@ RESULT=0
 echo "generating tests"
 pushd coverage-tests
 npm run generate:playwright
-if [ $? -ne 0 ]; then
-    RESULT=1
+if ($? -eq $False) {
     echo "npm run dotnet:generate:playwright have failed"
     exit 1
-fi
+}
 
 # start eg client and save process id
 # commented out if need eg client logs
@@ -27,22 +26,22 @@ echo "running tests playwright"
 npm run run:parallel:playwright
 result=$?
 echo $result
-if [ $result -ne 0 ]; then
+if ($result -eq $False) {
     echo "Not all tests passed... Retrying."
     npm run run:parallel:playwright
-	if [ $? -ne 0 ]; then
-      RESULT=1
+	if ($? -eq $False) {
+      $RESULT=1
       echo "npm run dotnet:run:parallel:playwright have failed"
-    fi
-fi
+    }
+}
 
 # Kill eg client by the process id
 echo $EG_PID
 kill $EG_PID
 
-echo "RESULT = ${RESULT}"
-if [ $RESULT -eq 0 ]; then
+echo "RESULT = $RESULT"
+if ($RESULT -eq 0) {
     exit 0
-else
+} else {
     exit 1
-fi
+}
