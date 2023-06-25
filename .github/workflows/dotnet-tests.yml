@@ -45,7 +45,8 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: "6.0"
-      - run: |
+      - name: Run Selenium coverage tests
+        run: |
           cd coverage-tests
           npm install
           npm run generate
@@ -64,7 +65,8 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: "6.0"
-      - run: |
+      - name: Run Selenium4 coverage tests
+        run: |
           cd coverage-tests
           npm install
           npm run generate
@@ -102,7 +104,8 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: "6.0"
-      - shell: pwsh
+      - name: Run Playwright coverage tests
+        shell: pwsh
         run: |
           ./genericTests_playwright.ps1
         env:
