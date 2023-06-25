@@ -14,7 +14,7 @@ if ($? -eq $False) {
 # commented out if need eg client logs
 $APPLITOOLS_SHOW_LOGS="true"
 yarn universal:eg &
-EG_PID="$!"
+$EG_PID="$!"
 $EXECUTION_GRID_URL="http://localhost:8080"
 echo $EXECUTION_GRID_URL
 echo "building playwright tests"
@@ -24,9 +24,9 @@ dotnet build ./test/Playwright
 
 echo "running tests playwright"
 npm run run:parallel:playwright
-result=$?
-echo $result
-if ($result -eq $False) {
+$runResult=$?
+echo $runResult
+if ($runResult -eq $False) {
     echo "Not all tests passed... Retrying."
     npm run run:parallel:playwright
 	if ($? -eq $False) {
