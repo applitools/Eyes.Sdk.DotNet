@@ -81,7 +81,8 @@ jobs:
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./genericTests_playwright.sh && ./genericTests_playwright.sh
+        - chmod +x ./install_pwsh.sh && ./install_pwsh.sh
+        - chmod +x ./genericTests_playwright.sh && pwsh ./genericTests_playwright.ps1
     
     - name: E2E Tests Selenium
       mono: none

@@ -99,8 +99,8 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: "6.0"
-      - run: |
-          cd coverage-tests
-          npm install
-          npm run generate:playwright
-          npm run run:parallel:playwright
+      - shell: pwsh
+        run: |
+          ./genericTests_playwright.ps1
+
+          
