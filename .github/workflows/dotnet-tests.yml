@@ -47,7 +47,6 @@ jobs:
           dotnet-version: "6.0"
       - name: Run Selenium coverage tests
         run: |
-          cd coverage-tests
           chmod +x ./genericTests.sh && ./genericTests.sh
         env:
           DRIVER_PATH: /usr/bin
@@ -65,7 +64,6 @@ jobs:
           dotnet-version: "6.0"
       - name: Run Selenium4 coverage tests
         run: |
-          cd coverage-tests
           chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh
         env:
           DRIVER_PATH: /usr/bin
