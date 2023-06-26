@@ -1,3 +1,8 @@
+## [Eyes.Images vNext]
+### Fixes
+- Custom properties not sent to server on `Eyes.Check`
+- Moved *iPhone 14* enums from `DeviceName` to `IosDeviceName` [Trello 3246](https://trello.com/c/Wo9ayGWr)
+
 ## [Eyes.Images 3.26] - 2023-06-20
 ### Updated
 - Webview support for Appium on Server Core
@@ -131,19 +136,19 @@
 
 ## [Eyes.Images 3.19] - 2023-04-17
 ### Updated
-- Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
+- Added support of Remove Duplicated Tests [Trello 3203](https://trello.com/c/3d56SQGL)
 
 ## [Eyes.Selenium 3.47] - 2023-04-17
 ### Updated
-- Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
+- Added support of Remove Duplicated Tests [Trello 3203](https://trello.com/c/3d56SQGL)
 
 ## [Eyes.Appium 5.43] - 2023-04-17
 ### Updated
-- Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
+- Added support of Remove Duplicated Tests [Trello 3203](https://trello.com/c/3d56SQGL)
 
 ## [Eyes.Selenium4 3.47] - 2023-04-17
 ### Updated
-- Added support of Remove Duplicated Tests [Trello 3203] (https://trello.com/c/3d56SQGL)
+- Added support of Remove Duplicated Tests [Trello 3203](https://trello.com/c/3d56SQGL)
 
 ## [Eyes.Images 3.18] - 2023-04-16
 ### Updated
