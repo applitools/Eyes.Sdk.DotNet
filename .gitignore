@@ -24,3 +24,5 @@ TestResult.xml
 */Properties/NodeResources/node_modules/
 build
 /coverage-tests/**/coverage/generic
+Packages/
+PackagesOutput/

@@ -23,6 +23,8 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "iPhone 12 Pro Max")] iPhone_12_Pro_Max,
         [EnumMember(Value = "iPhone 12 Pro")] iPhone_12_Pro,
         [EnumMember(Value = "iPhone 12")] iPhone_12,
-        [EnumMember(Value = "iPhone 12 mini")] iPhone_12_mini
+        [EnumMember(Value = "iPhone 12 mini")] iPhone_12_mini,
+        [EnumMember(Value = "iPhone 14")] iPhone_14,
+        [EnumMember(Value = "iPhone 14 Pro Max")] iPhone_14_Pro_Max,
     }
 }

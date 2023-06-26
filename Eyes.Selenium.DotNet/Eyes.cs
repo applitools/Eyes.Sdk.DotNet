@@ -417,7 +417,6 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver) driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var extractTextRequest = new EyesExtractTextRequest
@@ -452,7 +451,6 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver) driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var extractTextRegionsRequest = new EyesExtractTextRegionsRequest
@@ -492,7 +490,6 @@ namespace Applitools.Selenium
             }
 
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var locateRequest = new EyesLocateRequest
@@ -576,9 +573,15 @@ namespace Applitools.Selenium
                 return;
             }
 
+            var request = CreateCheckRequest(checkSettings);
+
+            SendCheckRequest(request);
+        }
+
+        internal EyesCheckRequest CreateCheckRequest(ICheckSettings checkSettings)
+        {
             var seleniumCheckSettings = (ICheckSettingsInternal)checkSettings;
             var eyesConfig = ToConfig(Config);
-            eyesConfig.Open.Properties = properties_;
             var remoteWebDriver = (RemoteWebDriver)driver_;
             var serverUrl = GetServerUrl(remoteWebDriver);
             var request = new EyesCheckRequest
@@ -598,7 +601,11 @@ namespace Applitools.Selenium
                     Settings = CreateUniversalCheckSettings(seleniumCheckSettings)
                 }
             };
+            return request;
+        }
 
+        internal void SendCheckRequest(EyesCheckRequest request)
+        {
             var result = Runner.SendRequest<EyesCheckRequest, EyesCheckResponse>(request);
             var error = result?.Payload?.Error;
             if (error != null)
@@ -610,14 +617,14 @@ namespace Applitools.Selenium
             {
                 return;
             }
-            
+
             foreach (var matchResult in result.Payload.Result)
             {
                 if (matchResult.AsExpected)
                 {
                     continue;
                 }
-                
+
 #pragma warning disable CS0612
                 if (FailureReports == FailureReports.Immediate)
                 {
@@ -852,7 +859,6 @@ namespace Applitools.Selenium
                     Settings = ToOpenSettings(Config)
                 }
             };
-            result.Payload.Config.Open.Properties = properties_; // ?
             return result;
         }
         

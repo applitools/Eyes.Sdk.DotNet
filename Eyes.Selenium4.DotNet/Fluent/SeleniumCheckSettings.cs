@@ -711,7 +711,9 @@ namespace Applitools.Selenium.Fluent
         [Obsolete("Use IgnoreColors()")]
         public new SeleniumCheckSettings Content()
         {
+#pragma warning disable CS0618
             return (SeleniumCheckSettings)base.Content();
+#pragma warning restore CS0618
         }
 
         public new SeleniumCheckSettings IgnoreColors()

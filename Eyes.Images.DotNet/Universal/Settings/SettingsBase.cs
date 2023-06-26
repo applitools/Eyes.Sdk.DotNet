@@ -10,7 +10,7 @@ namespace Applitools
     {
         public TRegion Region { get; set; }
         public ICollection<IFrame> Frames { get; set; }
-        public string Webview { get; set; }
+        public object Webview { get; set; }
         public bool? Fully { get; set; }
         public TRegion ScrollRootElement { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]

@@ -1,44 +1,22 @@
-## [Eyes.Images.Core.Windows 3.2.1] - 2023-06-15 - NEW
-### Added
-- Server Core v3.2.1 for Windows
-
-## [Eyes.Images.Core.OSX 3.2.1] - 2023-06-15 - NEW
-### Added
-- Server Core v3.2.1 for OSX
-
-## [Eyes.Images.Core.Linux.X64 3.2.1] - 2023-06-15 - NEW
-### Added
-- Server Core v3.2.1 for Linux x64
-
-## [Eyes.Images.Core.Linux.Arm64 3.2.1] - 2023-06-15 - NEW
-### Added
-- Server Core v3.2.1 for Linux arm64
-
-## [Eyes.Images.Core.Linux.Alpine 3.2.1] - 2023-06-15 - NEW
-### Added
-- Server Core v3.2.1 for Alpine Linux
-
-## [Eyes.Images 3.25]
+## [Eyes.Images 3.26] - 2023-06-20
 ### Updated
-- Core project is now selected automatically by operating system.
+- Webview support for Appium on Server Core
 
-## [Eyes.Selenium 3.53]
+## [Eyes.Selenium 3.54] - 2023-06-20
 ### Updated
-- Match to latest Eyes.Images
+- Internal changes to support Appium
 
-## [Eyes.Selenium4 3.53]
+## [Eyes.Appium 5.50] - 2023-06-20
+### Added
+- Webview support
+
+## [Eyes.Selenium4 3.54] - 2023-06-20
 ### Updated
-- Match to latest Eyes.Images
+- Version number bump
 
-## [Eyes.Appium 5.49]
+## [Eyes.Playwright 1.3] - 2023-06-20
 ### Updated
-- Match to latest Eyes.Selenium
-
-## [Eyes.Playwright 1.2]
-### Updated
-- Match to latest Eyes.Images
-
----
+- Version number bump
 
 ## [Eyes.Image.Core 2.7] - 2023-06-14
 ### Updated

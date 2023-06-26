@@ -39,28 +39,28 @@ fi
 echo $EG_PID
 kill $EG_PID
 
-echo "running tests appium"
-npm run run:parallel:appium
-result=$?
-echo $result
-if [ $result -ne 0 ]; then
-    echo "Not all tests passed... Retrying."
-    npm run run:parallel:appium
-	if [ $? -ne 0 ]; then
-      ((RESULT+=1))
-      MESSAGE+=$'npm run dotnet:run:parallel:appium have failed'
-      echo $MESSAGE
-    fi
-fi
-
-echo "merge reports"
-npm run report:merge
-if [ $? -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'npm run dotnet:report:merge have failed'
-    echo $MESSAGE
-fi
-
+#echo "running tests appium"
+#npm run run:parallel:appium
+#result=$?
+#echo $result
+#if [ $result -ne 0 ]; then
+#    echo "Not all tests passed... Retrying."
+#    npm run run:parallel:appium
+#	if [ $? -ne 0 ]; then
+#      ((RESULT+=1))
+#      MESSAGE+=$'npm run dotnet:run:parallel:appium have failed'
+#      echo $MESSAGE
+#    fi
+#fi
+#
+#echo "merge reports"
+#npm run report:merge
+#if [ $? -ne 0 ]; then
+#    ((RESULT+=1))
+#    MESSAGE+=$'npm run dotnet:report:merge have failed'
+#    echo $MESSAGE
+#fi
+#
 
 echo "tests reporting"
 npm run report

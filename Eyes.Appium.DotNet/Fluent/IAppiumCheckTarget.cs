@@ -1,8 +1,8 @@
-﻿using OpenQA.Selenium;
-
-namespace Applitools.Appium
+﻿namespace Applitools.Appium
 {
     interface IAppiumCheckTarget : ITargetContainer //: IScrollRootElementContainer
     {
+        bool? IsDefaultWebview();
+        string GetWebview();
     }
 }
