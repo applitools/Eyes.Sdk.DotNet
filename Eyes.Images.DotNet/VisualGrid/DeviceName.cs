@@ -18,8 +18,6 @@ namespace Applitools.VisualGrid
         [EnumMember(Value = "iPhone 11")] iPhone_11,
         [EnumMember(Value = "iPhone 11 Pro")] iPhone_11_Pro,
         [EnumMember(Value = "iPhone 11 Pro Max")] iPhone_11_Pro_Max,
-        [EnumMember(Value = "iPhone 14")] iPhone_14,
-        [EnumMember(Value = "iPhone 14 Pro Max")] iPhone_14_Pro_Max,
 
         [EnumMember(Value = "iPad")] iPad,
         [EnumMember(Value = "iPad Mini")] iPad_Mini,
