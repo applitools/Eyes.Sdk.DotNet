@@ -210,7 +210,7 @@ namespace Applitools.Generated.Selenium.Tests
             return JObject.Parse(dom);
         }
 
-        protected IList<JToken> GetNodesByAttributes(JObject dom, string attributeName)
+        protected IList<JToken> GetNodesByAttributes(JToken dom, string attributeName)
         {
             return dom.SelectTokens($"$..[?(@.attributes['{attributeName}'])]").ToList();
         }

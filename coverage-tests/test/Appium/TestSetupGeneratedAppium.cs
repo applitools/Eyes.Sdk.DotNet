@@ -203,7 +203,34 @@ namespace Applitools.Generated.Appium.Tests
 					{ "sauce", true },
 					{ "name", "iOS Native Demo" }
 				}
-			}
+			},
+			{"Pixel 3a XL", new Dictionary<string, object>
+				{
+					{ "deviceName", "Google Pixel 3a XL" },
+					{ "platformName", "Android" },
+					{ "platformVersion", "11" },
+					{ "automationName", "UiAutomator2" },
+					{ "username", Environment.GetEnvironmentVariable("SAUCE_USERNAME")},
+					{ "access_key", Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY")},
+					{ "url", SAUCE_SERVER_URL },
+					{ "sauce", true },
+					{ "name", "Android Native Demo" }
+					
+				}
+			},
+			{ "iPhone 12", new Dictionary<string, object>
+				{
+					{ "deviceName", "iPhone 12" },
+					{ "platformName", "iOS" },
+					{ "platformVersion", "12" },
+					{ "automationName", "XCUITest" },
+					{ "username", Environment.GetEnvironmentVariable("SAUCE_USERNAME")},
+					{ "access_key", Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY")},
+					{ "url", SAUCE_SERVER_URL },
+					{ "sauce", true },
+					{ "name", "iOS Native Demo" }
+				}
+			},
 		};
 
 		const string SAUCE_SERVER_URL = "https://ondemand.saucelabs.com:443/wd/hub";
