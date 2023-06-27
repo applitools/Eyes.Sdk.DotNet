@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Applitools.Metadata;
+using Applitools.Utils;
+using NUnit.Framework;
 
 namespace Applitools.Generated.Selenium.Tests
 {
@@ -201,15 +204,53 @@ namespace Applitools.Generated.Selenium.Tests
             return TestUtils.GetDom(Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY_READ"), results, domId);
         }
 
-        protected JObject getDom(TestResults results, string domId)
+        protected JObject GetDom(TestResults results, string domId)
         {
             string dom = getDomString(results, domId);
             return JObject.Parse(dom);
         }
 
-        protected IList<JToken> getNodesByAttribute(JObject dom, string attributeName)
+        protected IList<JToken> GetNodesByAttributes(JObject dom, string attributeName)
         {
             return dom.SelectTokens($"$..[?(@.attributes['{attributeName}'])]").ToList();
+        }
+     
+        protected void SetLayoutBreakpoints(LayoutBreakpointsOptions breakpointsOptions)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(breakpointsOptions);
+            eyes.SetConfiguration(config);   
+        }
+
+        protected void SetLayoutBreakpoints(params int[] breakpoints)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(breakpoints);
+            eyes.SetConfiguration(config);
+        }
+         
+        protected void SetLayoutBreakpoints(bool enabled)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(enabled);
+            eyes.SetConfiguration(config);
+        }
+
+        protected SessionResults GetTestInfo(TestResults results)
+        {
+            SessionResults sessionResults = null;
+            try
+            {
+                sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
+            }
+            catch (Exception e)
+            {
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.TestFramework, StageType.TestResults, e);
+                Assert.Fail("Exception appeared while getting session results");
+            }
+
+            ArgumentGuard.NotNull(sessionResults, nameof(sessionResults));
+            return sessionResults;
         }
 
         public static T RetryCreateWebDriver<T>(Func<T> func, int times = 3) where T : class, IWebDriver

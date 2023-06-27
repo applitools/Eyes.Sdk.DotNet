@@ -3,7 +3,9 @@ using Applitools.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
+using Region = Applitools.Utils.Geometry.Region;
 
 namespace Applitools
 {
@@ -34,6 +36,7 @@ namespace Applitools
         private Dictionary<string, string> scriptHooks_ = new Dictionary<string, string>();
         private VisualGridOption[] visualGridOptions_;
         private string variationGroupId_;
+        private string pageId_;
 
         protected LayoutBreakpointsOptions LayoutBreakpointsOptions { get; set; }
 
@@ -371,6 +374,18 @@ namespace Applitools
             return clone;
         }
 
+        public ICheckSettings PageId(string pageId)
+        {
+            var clone = Clone();
+            clone.pageId_ = pageId;
+            return clone;
+        }
+
+        string ICheckSettingsInternal.GetPageId()
+        {
+            return pageId_;
+        }
+
         /// <summary>
         /// Adds one ignore region.
         /// </summary>
@@ -381,6 +396,26 @@ namespace Applitools
         public ICheckSettings Ignore(Rectangle region, Padding padding = null, string regionId = null)
         {
             var list = new List<Rectangle> { region };
+            return Ignore(list, padding, regionId);
+        }
+
+        public ICheckSettings Ignore(Region region, params Region[] regions)
+        {
+            var list = new List<Rectangle> { region.ToRectangle() };
+            list.AddRange(regions.Select(r => r.ToRectangle()));
+            return Ignore(list);
+        }
+
+        /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        public ICheckSettings Ignore(Region region, Padding padding = null, string regionId = null)
+        {
+            var list = new List<Rectangle> { region.ToRectangle() };
             return Ignore(list, padding, regionId);
         }
 
@@ -724,6 +759,7 @@ namespace Applitools
 
             clone.fluentCode_ = fluentCode_;
             clone.variationGroupId_ = variationGroupId_;
+            clone.pageId_ = pageId_;
         }
 
         protected virtual CheckSettings Clone()

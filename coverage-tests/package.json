@@ -14,9 +14,9 @@
     "url": "git+https://github.com/applitools/sdk.coverage.tests.git"
   },
   "scripts": {
-    "generate": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
-    "generate:eg": "npm install && coverage-tests generate ./configuration/eg_configuration.js --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
-    "generate:local": "coverage-tests generate ./configuration/local.js --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Appium/coverage/generic",
+    "generate": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Selenium/coverage/generic/*Webview*.cs ./test/Appium/coverage/generic",
+    "generate:eg": "npm install && coverage-tests generate ./configuration/eg_configuration.js --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Selenium/coverage/generic/*Webview*.cs ./test/Appium/coverage/generic",
+    "generate:local": "coverage-tests generate ./configuration/local.js --pascalizeTests --strict && mv ./test/Selenium/coverage/generic/Appium*.cs ./test/Selenium/coverage/generic/*Webview*.cs ./test/Appium/coverage/generic",
     "generate:playwright": "npm install && coverage-tests generate ./configuration/playwright.js --pascalizeTests --strict",
     "generate:playwright:local": "coverage-tests generate ./configuration/playwright.local.js --pascalizeTests --strict",
     "generate:win": "npm install && coverage-tests generate ./configuration --pascalizeTests --strict && move /Y .\\test\\Selenium\\coverage\\generic\\Appium*.cs .\\test\\Appium\\coverage\\generic",

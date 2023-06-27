@@ -1,14 +1,22 @@
-﻿namespace Applitools.Selenium
+﻿using System.Drawing;
+using OpenQA.Selenium;
+using Applitools.Selenium.Fluent;
+
+using Region = Applitools.Utils.Geometry.Region;
+
+namespace Applitools.Selenium
 {
-    using System.Drawing;
-    using OpenQA.Selenium;
-    using Fluent;
 
     public static class Target
     {
         public static SeleniumCheckSettings Window()
         {
             return new SeleniumCheckSettings();
+        }
+
+        public static SeleniumCheckSettings Region(Region region)
+        {
+            return new SeleniumCheckSettings(region.ToRectangle());
         }
 
         public static SeleniumCheckSettings Region(Rectangle rect)

@@ -26,8 +26,6 @@ namespace Applitools.Playwright.Fluent
         /// </summary>
         private readonly List<FrameLocator> frameChain_ = new List<FrameLocator>();
 
-        private string pageId_;
-
         /// <summary>Specify the target as a region.</summary>
         /// <param name="region">the region</param>
         /// <returns>an updated instance of this settings object</returns>
@@ -952,11 +950,9 @@ namespace Applitools.Playwright.Fluent
             return (PlaywrightCheckSettings)base.VisualGridOptions(options);
         }
 
-        public PlaywrightCheckSettings PageId(string pageId)
+        public new PlaywrightCheckSettings PageId(string pageId)
         {
-            PlaywrightCheckSettings clone = Clone_();
-            clone.pageId_ = pageId;
-            return clone;
+            return (PlaywrightCheckSettings)base.PageId(pageId);
         }
 
         public new PlaywrightCheckSettings IgnoreDisplacements(bool ignoreDisplacements = true)
@@ -1011,7 +1007,6 @@ namespace Applitools.Playwright.Fluent
             clone.targetElement_ = targetElement_;
             clone.scrollRootElement_ = scrollRootElement_;
             clone.frameChain_.AddRange(frameChain_);
-            clone.pageId_ = pageId_;
             return clone;
         }
 
@@ -1102,9 +1097,5 @@ namespace Applitools.Playwright.Fluent
             return targetElement_;
         }
 
-        string IPlaywrightCheckTarget.GetPageId()
-        {
-            return pageId_;
-        }
     }
 }
