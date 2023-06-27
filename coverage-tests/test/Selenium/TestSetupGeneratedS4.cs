@@ -193,12 +193,33 @@ namespace Applitools.Generated.Selenium.Tests
             //eyes.AddProperty("Agent ID", eyes.FullAgentId);
             eyes.HideScrollbars = true;
         }
+        
+        protected void SetBrowsersInfo(params IRenderBrowserInfo[] browsersInfo)
+        {
+            var config = eyes.GetConfiguration();
+            config.AddBrowsers(browsersInfo);
+            eyes.SetConfiguration(config);
+        }
+        
+        protected void SetAccessibilitySettings(AccessibilitySettings accessibilitySettings)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetAccessibilityValidation(accessibilitySettings);
+            eyes.SetConfiguration(config);
+        }
 
+        protected void WaitBeforeCapture(int waitTimeMs)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetWaitBeforeCapture(waitTimeMs);
+            eyes.SetConfiguration(config);
+        }
+        
         protected bool isStaleElementError(Exception errorObj)
         {
             return (errorObj is StaleElementReferenceException);
         }
-
+        
         protected string getDomString(TestResults results, string domId)
         {
             return TestUtils.GetDom(Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY_READ"), results, domId);
