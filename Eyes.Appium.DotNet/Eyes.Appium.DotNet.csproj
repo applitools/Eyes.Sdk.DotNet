@@ -8,13 +8,13 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>5.50</Version>
+    <Version>5.51</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes appium</PackageTags>
-    <PackageReleaseNotes>### Added
-- Webview support
+    <PackageReleaseNotes>### Updated
+- Match to latest Eyes.Selenium
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Appium</PackageId>

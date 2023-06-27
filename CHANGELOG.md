@@ -1,8 +1,24 @@
-## [Eyes.Images vNext]
+## [Eyes.Images 3.27] - 2023-06-27
 ### Fixes
 - Custom properties not sent to server on `Eyes.Check`
 - Moved *iPhone 14* enums from `DeviceName` to `IosDeviceName` [Trello 3246](https://trello.com/c/Wo9ayGWr)
 - Moved `PageId` property to `Eyes.Images` so page coverage works everywhere.
+
+## [Eyes.Selenium 3.55] - 2023-06-27
+### Updated
+- Match to latest Eyes.Images
+
+## [Eyes.Appium 5.51] - 2023-06-27
+### Updated
+- Match to latest Eyes.Selenium
+
+## [Eyes.Selenium4 3.55] - 2023-06-27
+### Updated
+- Match to latest Eyes.Images
+
+## [Eyes.Playwright 1.4] - 2023-06-27
+### Updated
+- Match to latest Eyes.Images
 
 ## [Eyes.Images 3.26] - 2023-06-20
 ### Updated

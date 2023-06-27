@@ -8,13 +8,15 @@ With Applitools Eyes, you can automatically validate the correctness of your app
 To learn more, visit https://applitools.com/ .</Description>
     <PackageProjectUrl>https://applitools.com/</PackageProjectUrl>
     <Copyright>Applitools 2013</Copyright>
-    <Version>3.26</Version>
+    <Version>3.27</Version>
     <Authors>Applitools</Authors>
     <Company>Applitools</Company>
     <Product>Eyes SDK</Product>
     <PackageTags>applitools eyes appium</PackageTags>
-    <PackageReleaseNotes>### Updated
-- Webview support for Appium on Server Core
+    <PackageReleaseNotes>### Fixes
+- Custom properties not sent to server on `Eyes.Check`
+- Moved *iPhone 14* enums from `DeviceName` to `IosDeviceName` [Trello 3246](https://trello.com/c/Wo9ayGWr)
+- Moved `PageId` property to `Eyes.Images` so page coverage works everywhere.
 </PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageId>Eyes.Images</PackageId>
