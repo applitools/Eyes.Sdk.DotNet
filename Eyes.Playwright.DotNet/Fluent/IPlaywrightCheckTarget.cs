@@ -10,6 +10,5 @@ namespace Applitools.Playwright.Fluent
         IList<FrameLocator> GetFrameChain();
         Reference GetScrollRootElement();
         Reference GetTargetElement();
-        string GetPageId();
     }
 }

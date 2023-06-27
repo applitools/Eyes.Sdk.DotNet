@@ -39,5 +39,7 @@ namespace Applitools.Fluent
         LazyLoadOptions GetLazyLoad();
         DensityMetrics GetDensityMetrics();
         LayoutBreakpointsOptions GetLayoutBreakpointsOptions();
+
+        string GetPageId();
     }
 }

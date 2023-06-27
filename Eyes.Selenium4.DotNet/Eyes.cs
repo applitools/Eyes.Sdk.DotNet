@@ -482,7 +482,20 @@ namespace Applitools.Selenium
         {
             return Locate(locatorNames.ToList());
         }
-
+        
+        public override IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
+        {
+            var remoteWebDriver = (WebDriver)driver_;
+            var serverUrl = GetServerUrl(remoteWebDriver.CommandExecutor);
+            return LocateImpl(new DriverTarget
+            {
+                ServerUrl = serverUrl,
+                Capabilities = GetCapabilities(remoteWebDriver),
+                SessionId = remoteWebDriver.SessionId.ToString(),
+                Proxy = Config.Proxy
+            }, settings);
+        }
+        
         public IDictionary<string, IList<Region>> Locate(ICollection<string> locatorNames)
         {
             Logger.Log("Locate");
@@ -515,53 +528,6 @@ namespace Applitools.Selenium
             var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(locateRequest);
 
             return response.Payload.Result;
-        }
-
-        public override TestResults GetResults(bool throwEx = true)
-        {
-            Logger.Log("Close");
-
-            if (IsDisabled)
-            {
-                Logger.Log(TraceLevel.Warn, TestName, Stage.Close, StageType.Disabled);
-                return new TestResults();
-            }
-
-            var request = CreateEyesGetResultsRequest(throwEx, Runner.RemoveDuplicateTests);
-
-            var response = Runner.SendRequest<EyesGetResultsRequest, EyesGetResultsResponse>(request);
-
-            var error = response.Payload.Error;
-            if (error != null)
-            {
-                IsOpen = false;
-                throw new TestFailedException(error.ToString());
-            }
-
-            var testResults = response.Payload.Result;
-
-            foreach (var testResult in testResults)
-            {
-                testResult.Runner = Runner;
-                if (testResult.IsPassed == false && throwEx)
-                {
-                    IsOpen = false;
-                    throw new TestFailedException(testResult, $"{testResult.Url}{Environment.NewLine}");
-                }
-            }
-
-            IsOpen = false;
-            return testResults.First();
-        }
-        
-        /// <summary>
-        /// Ends the test asynchronously.
-        /// </summary>
-        [Obsolete]
-        public virtual void CloseAsync()
-        {
-            Logger.Log("CloseAsync");
-            Close();
         }
 
         /// <summary>

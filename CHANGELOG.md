@@ -2,6 +2,7 @@
 ### Fixes
 - Custom properties not sent to server on `Eyes.Check`
 - Moved *iPhone 14* enums from `DeviceName` to `IosDeviceName` [Trello 3246](https://trello.com/c/Wo9ayGWr)
+- Moved `PageId` property to `Eyes.Images` so page coverage works everywhere.
 
 ## [Eyes.Images 3.26] - 2023-06-20
 ### Updated

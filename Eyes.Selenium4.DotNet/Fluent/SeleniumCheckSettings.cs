@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Region = Applitools.Utils.Geometry.Region;
+
 namespace Applitools.Selenium.Fluent
 {
     public class SeleniumCheckSettings : CheckSettings, ISeleniumCheckTarget
@@ -105,7 +107,16 @@ namespace Applitools.Selenium.Fluent
             clone.fluentCode_.Append($".Region(new Rectangle({rect.X},{rect.Y},{rect.Width},{rect.Height}))");
             return clone;
         }
-
+        
+        public SeleniumCheckSettings Region(Applitools.Utils.Geometry.Region region)
+        {
+            SeleniumCheckSettings clone = Clone_();
+            Rectangle rect = region.ToRectangle();
+            clone.UpdateTargetRegion(rect);
+            clone.fluentCode_.Append($".Region(new Rectangle({rect.X},{rect.Y},{rect.Width},{rect.Height}))");
+            return clone;
+        }
+        
         public SeleniumCheckSettings Region(By by)
         {
             SeleniumCheckSettings clone = Clone_();
@@ -693,6 +704,11 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.Floating(region, maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
         }
 
+        public new SeleniumCheckSettings Floating(Region region, int maxUpOffset, int maxDownOffset, int maxLeftOffset, int maxRightOffset)
+        {
+            return (SeleniumCheckSettings)base.Floating(region.ToRectangle(), maxUpOffset, maxDownOffset, maxLeftOffset, maxRightOffset);
+        }
+
         public new SeleniumCheckSettings Exact()
         {
             return (SeleniumCheckSettings)base.Exact();
@@ -797,6 +813,11 @@ namespace Applitools.Selenium.Fluent
             return (SeleniumCheckSettings)base.ScriptHook(hook);
         }
 
+        public new SeleniumCheckSettings PageId(string pageId)
+        {
+            return (SeleniumCheckSettings)base.PageId(pageId);
+        }
+        
         public new SeleniumCheckSettings VisualGridOptions(params VisualGridOption[] options)
         {
             return (SeleniumCheckSettings)base.VisualGridOptions(options);

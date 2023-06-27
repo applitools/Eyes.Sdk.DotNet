@@ -16,6 +16,11 @@
             return new SeleniumCheckSettings(rect);
         }
 
+        public static SeleniumCheckSettings Region(Applitools.Utils.Geometry.Region region)
+        {
+            return new SeleniumCheckSettings(region.ToRectangle());
+        }
+
         public static SeleniumCheckSettings Region(IWebElement element)
         {
             return new SeleniumCheckSettings(element);

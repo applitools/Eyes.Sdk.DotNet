@@ -3,7 +3,10 @@ using System;
 using OpenQA.Selenium.Chrome;
 using Applitools.Selenium;
 using System.Collections.Generic;
+using Applitools.Metadata;
 using Applitools.Tests.Utils;
+using Applitools.Utils;
+using NUnit.Framework;
 using OpenQA.Selenium.Chromium;
 
 namespace Applitools.Generated.Selenium.Tests
@@ -350,5 +353,21 @@ namespace Applitools.Generated.Selenium.Tests
             #endregion
         }
 
+        protected SessionResults GetTestInfo(TestResults results)
+        {
+            SessionResults sessionResults = null;
+            try
+            {
+                sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
+            }
+            catch (Exception e)
+            {
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.TestFramework, StageType.TestResults, e);
+                Assert.Fail("Exception appeared while getting session results");
+            }
+
+            ArgumentGuard.NotNull(sessionResults, nameof(sessionResults));
+            return sessionResults;
+        }
     }
 }

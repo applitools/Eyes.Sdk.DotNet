@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Applitools.Metadata;
+using Applitools.Utils;
+using NUnit.Framework;
 
 namespace Applitools.Generated.Selenium.Tests
 {
@@ -170,7 +173,7 @@ namespace Applitools.Generated.Selenium.Tests
             });
             return webDriver;
         }
-        protected void initEyes(bool isVisualGrid, bool isCSSMode)
+        protected void InitEyes(bool isVisualGrid, bool isCSSMode)
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
@@ -190,7 +193,28 @@ namespace Applitools.Generated.Selenium.Tests
             //eyes.AddProperty("Agent ID", eyes.FullAgentId);
             eyes.HideScrollbars = true;
         }
-
+        
+        protected void SetBrowsersInfo(params IRenderBrowserInfo[] browsersInfo)
+        {
+            var config = eyes.GetConfiguration();
+            config.AddBrowsers(browsersInfo);
+            eyes.SetConfiguration(config);
+        }
+                
+        protected void SetAccessibilitySettings(AccessibilitySettings accessibilitySettings)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetAccessibilityValidation(accessibilitySettings);
+            eyes.SetConfiguration(config);
+        }
+        
+        protected void WaitBeforeCapture(int waitTimeMs)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetWaitBeforeCapture(waitTimeMs);
+            eyes.SetConfiguration(config);
+        }
+        
         protected bool isStaleElementError(Exception errorObj)
         {
             return (errorObj is StaleElementReferenceException);
@@ -201,15 +225,60 @@ namespace Applitools.Generated.Selenium.Tests
             return TestUtils.GetDom(Environment.GetEnvironmentVariable("APPLITOOLS_API_KEY_READ"), results, domId);
         }
 
-        protected JObject getDom(TestResults results, string domId)
+        protected JObject GetDom(TestResults results, string domId)
         {
             string dom = getDomString(results, domId);
             return JObject.Parse(dom);
         }
 
-        protected IList<JToken> getNodesByAttribute(JObject dom, string attributeName)
+        protected IList<JToken> GetNodesByAttributes(JToken dom, string attributeName)
         {
             return dom.SelectTokens($"$..[?(@.attributes['{attributeName}'])]").ToList();
+        }
+        
+        protected void SetLayoutBreakpoints(LayoutBreakpointsOptions breakpointsOptions)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(breakpointsOptions);
+            eyes.SetConfiguration(config);   
+        }
+
+        protected void SetLayoutBreakpoints(params int[] breakpoints)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(breakpoints);
+            eyes.SetConfiguration(config);
+        }
+         
+        protected void SetLayoutBreakpoints(bool enabled)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetLayoutBreakpoints(enabled);
+            eyes.SetConfiguration(config);
+        }
+
+        protected void SetEnablePatterns(bool enable)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetEnablePatterns(enable);
+            eyes.SetConfiguration(config);
+        }
+
+        protected SessionResults GetTestInfo(TestResults results)
+        {
+            SessionResults sessionResults = null;
+            try
+            {
+                sessionResults = TestUtils.GetSessionResults(eyes.ApiKey, results);
+            }
+            catch (Exception e)
+            {
+                CommonUtils.LogExceptionStackTrace(logger_, Stage.TestFramework, StageType.TestResults, e);
+                Assert.Fail("Exception appeared while getting session results");
+            }
+
+            ArgumentGuard.NotNull(sessionResults, nameof(sessionResults));
+            return sessionResults;
         }
 
         public static T RetryCreateWebDriver<T>(Func<T> func, int times = 3) where T : class, IWebDriver

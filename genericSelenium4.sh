@@ -20,7 +20,7 @@ EG_PID="$!"
 export EXECUTION_GRID_URL=http://localhost:8080
 echo $EXECUTION_GRID_URL
 
-echo "running tests selenium"
+echo "running tests selenium4"
 npm run run:parallel:selenium4
 result=$?
 echo $result
@@ -29,7 +29,7 @@ if [ $result -ne 0 ]; then
     npm run run:parallel:selenium4
 	if [ $? -ne 0 ]; then
       RESULT=1
-      echo "npm run dotnet:run:parallel:selenium have failed"
+      echo "npm run dotnet:run:parallel:selenium4 have failed"
     fi
 fi
 

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+using Region = Applitools.Utils.Geometry.Region;
+
 namespace Applitools
 {
     /// <summary>
@@ -26,6 +28,23 @@ namespace Applitools
         /// <param name="regionId">The regionId</param>
         /// <returns>An updated clone of this settings object.</returns>
         ICheckSettings Ignore(Rectangle region, Padding padding = null, string regionId = null);
+
+        /// <summary>
+        /// Adds one or more ignore regions.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="regions">Optional extra regions to ignore when validating the screenshot.</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings Ignore(Region region, params Region[] regions);
+
+        /// <summary>
+        /// Adds one ignore region.
+        /// </summary>
+        /// <param name="region">A region to ignore when validating the screenshot.</param>
+        /// <param name="padding">The padding</param>
+        /// <param name="regionId">The regionId</param>
+        /// <returns>An updated clone of this settings object.</returns>
+        ICheckSettings Ignore(Region region, Padding padding = null, string regionId = null);
 
         /// <summary>
         /// Adds one or more ignore regions.

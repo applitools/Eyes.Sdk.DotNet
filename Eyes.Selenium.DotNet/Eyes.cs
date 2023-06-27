@@ -479,6 +479,19 @@ namespace Applitools.Selenium
             return Locate(locatorNames.ToList());
         }
 
+        public override IDictionary<string, IList<Region>> Locate(VisualLocatorSettings settings)
+        {
+            var remoteWebDriver = (RemoteWebDriver)driver_;
+            var serverUrl = GetServerUrl(remoteWebDriver);
+            return LocateImpl(new DriverTarget
+            {
+                ServerUrl = serverUrl,
+                Capabilities = GetCapabilities(remoteWebDriver),
+                SessionId = remoteWebDriver.SessionId.ToString(),
+                Proxy = Config.Proxy
+            }, settings);
+        }
+        
         public IDictionary<string, IList<Region>> Locate(ICollection<string> locatorNames)
         {
             Logger.Log("Locate");
@@ -511,16 +524,6 @@ namespace Applitools.Selenium
             var response = Runner.SendRequest<EyesLocateRequest, EyesLocateResponse>(locateRequest);
 
             return response.Payload.Result;
-        }
-
-        /// <summary>
-        /// Ends the test asynchronously.
-        /// </summary>
-        [Obsolete]
-        public virtual void CloseAsync()
-        {
-            Logger.Log("CloseAsync");
-            Close();
         }
 
         /// <summary>
