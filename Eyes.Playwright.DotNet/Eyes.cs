@@ -326,7 +326,6 @@ namespace Applitools.Playwright
             settings.ScrollRootElement =
                 TRegionMapper.ToTRegionDtoFromSre(playwrightCheckSettings.GetScrollRootElement(), GetRefer_(),
                     driver_.Root);
-            settings.PageId = playwrightCheckSettings.GetPageId();
             return settings;
         }
 

@@ -108,7 +108,7 @@ namespace Applitools.Generated.Appium.Tests
             }
         }
 
-		protected void initEyes(bool isVisualGrid, bool isCSSMode)
+		protected void InitEyes(bool isVisualGrid, bool isCSSMode)
 		{
 			eyes = new Applitools.Appium.Eyes();
 			eyes.MatchTimeout = TimeSpan.FromSeconds(10);
@@ -120,7 +120,7 @@ namespace Applitools.Generated.Appium.Tests
 			//eyes.SetLogHandler(logHandler);
 		}
 
-		protected void initDriver(string device, string app)
+		protected void InitDriver(string device, string app)
 		{
 			AppiumOptions options = new AppiumOptions();
 			options.AddAdditionalCapability(MobileCapabilityType.AppiumVersion, "1.17.1");

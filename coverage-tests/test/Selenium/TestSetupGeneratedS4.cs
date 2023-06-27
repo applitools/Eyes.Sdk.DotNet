@@ -173,7 +173,7 @@ namespace Applitools.Generated.Selenium.Tests
             });
             return webDriver;
         }
-        protected void initEyes(bool isVisualGrid, bool isCSSMode)
+        protected void InitEyes(bool isVisualGrid, bool isCSSMode)
         {
             string testName = NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
             ILogHandler logHandler = TestUtils.InitLogHandler(testName);
@@ -233,6 +233,13 @@ namespace Applitools.Generated.Selenium.Tests
         {
             var config = eyes.GetConfiguration();
             config.SetLayoutBreakpoints(enabled);
+            eyes.SetConfiguration(config);
+        }
+
+        protected void SetEnablePatterns(bool enable)
+        {
+            var config = eyes.GetConfiguration();
+            config.SetEnablePatterns(enable);
             eyes.SetConfiguration(config);
         }
 
