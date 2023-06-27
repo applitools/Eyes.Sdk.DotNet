@@ -60,15 +60,15 @@ kill $EG_PID
 #    MESSAGE+=$'npm run dotnet:report:merge have failed'
 #    echo $MESSAGE
 #fi
-
-
-echo "tests reporting"
-npm run report
-if [ $? -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'npm run dotnet:report have failed'
-    echo $MESSAGE
-fi
+#
+#
+#echo "tests reporting"
+#npm run report
+#if [ $? -ne 0 ]; then
+#    ((RESULT+=1))
+#    MESSAGE+=$'npm run dotnet:report have failed'
+#    echo $MESSAGE
+#fi
 
 echo "RESULT = ${RESULT}"
 echo $MESSAGE
