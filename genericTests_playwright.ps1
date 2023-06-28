@@ -2,7 +2,7 @@
 
 $RESULT=0
 
-echo "generating tests"
+echo "generating tests - playwright"
 pushd coverage-tests
 npm run generate:playwright
 if ($? -eq $False) {

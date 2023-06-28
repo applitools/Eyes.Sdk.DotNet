@@ -3,7 +3,7 @@
 RESULT=0
 MESSAGE=""
 
-echo "generating tests"
+echo "generating tests - selenium 3"
 pushd coverage-tests
 # export UFG_ON_EG=true
 npm run generate
@@ -21,7 +21,7 @@ EG_PID="$!"
 export EXECUTION_GRID_URL=http://localhost:8080
 echo $EXECUTION_GRID_URL
 
-echo "running tests selenium"
+echo "running tests - selenium 3"
 npm run run:parallel:selenium
 result=$?
 echo $result
@@ -38,37 +38,6 @@ fi
 # Kill eg client by the process id
 echo $EG_PID
 kill $EG_PID
-
-#echo "running tests appium"
-#npm run run:parallel:appium
-#result=$?
-#echo $result
-#if [ $result -ne 0 ]; then
-#    echo "Not all tests passed... Retrying."
-#    npm run run:parallel:appium
-#	if [ $? -ne 0 ]; then
-#      ((RESULT+=1))
-#      MESSAGE+=$'npm run dotnet:run:parallel:appium have failed'
-#      echo $MESSAGE
-#    fi
-#fi
-#
-#echo "merge reports"
-#npm run report:merge
-#if [ $? -ne 0 ]; then
-#    ((RESULT+=1))
-#    MESSAGE+=$'npm run dotnet:report:merge have failed'
-#    echo $MESSAGE
-#fi
-#
-#
-#echo "tests reporting"
-#npm run report
-#if [ $? -ne 0 ]; then
-#    ((RESULT+=1))
-#    MESSAGE+=$'npm run dotnet:report have failed'
-#    echo $MESSAGE
-#fi
 
 echo "RESULT = ${RESULT}"
 echo $MESSAGE

@@ -2,7 +2,7 @@
 
 RESULT=0
 
-echo "generating tests"
+echo "generating tests - selenium4"
 pushd coverage-tests
 # export UFG_ON_EG=true
 npm run generate
@@ -20,7 +20,7 @@ EG_PID="$!"
 export EXECUTION_GRID_URL=http://localhost:8080
 echo $EXECUTION_GRID_URL
 
-echo "running tests selenium4"
+echo "running tests - selenium 4"
 npm run run:parallel:selenium4
 result=$?
 echo $result

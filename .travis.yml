@@ -50,7 +50,7 @@ before_script:
 jobs:
   include:
     - stage: Test
-      name: Generic Tests Selenium 3
+      name: Generic Tests Appium
       mono: none
       dotnet: 6.0.408
       addons:
@@ -59,7 +59,18 @@ jobs:
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./genericTests.sh && ./genericTests.sh
+        - chmod +x ./genericTests_appium.sh && ./genericTests_appium.sh
+
+    - name: Generic Tests Selenium 3
+      mono: none
+      dotnet: 6.0.408
+      addons:
+        chrome: stable
+        firefox: latest
+      script:
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - chmod +x ./genericTests_selenium3.sh && ./genericTests_selenium3.sh
 
     - name: Generic Tests Selenium 4
       mono: none
@@ -70,7 +81,7 @@ jobs:
       script:
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./genericSelenium4.sh && ./genericSelenium4.sh
+        - chmod +x ./genericTests_selenium4.sh && ./genericTests_selenium4.sh
 
     - name: Generic Tests Playwright
       mono: none
