@@ -123,7 +123,7 @@ namespace Applitools.Generated.Appium.Tests
 		protected void InitDriver(string device, string app)
 		{
 			AppiumOptions options = new AppiumOptions();
-			options.AddAdditionalCapability(MobileCapabilityType.AppiumVersion, "1.17.1");
+			//options.AddAdditionalCapability(MobileCapabilityType.AppiumVersion, "1.17.1");
 			options.AddAdditionalCapability(MobileCapabilityType.PlatformName, DEVICES[device]["platformName"]);
 			options.AddAdditionalCapability(MobileCapabilityType.PlatformVersion, DEVICES[device]["platformVersion"]);
 			options.AddAdditionalCapability(MobileCapabilityType.DeviceName, DEVICES[device]["deviceName"]);
@@ -144,11 +144,13 @@ namespace Applitools.Generated.Appium.Tests
 				options.AddAdditionalCapability("accesskey", CREDENTIALS["sauce"]["access_key"]);
 				url = SAUCE_SERVER_URL;
 			}
-			options.AddAdditionalCapability("name", "Android Demo");
+
+			string platformName = (string)DEVICES[device]["platformName"];
+			options.AddAdditionalCapability("name", $"{platformName} Demo");
 
 			options.AddAdditionalCapability("idleTimeout", 300);
 
-			switch (DEVICES[device]["platformName"])
+			switch (platformName)
 			{
                 case "Android":
                     driver = new AndroidDriver<AppiumWebElement>(
@@ -188,7 +190,6 @@ namespace Applitools.Generated.Appium.Tests
 					{ "url", SAUCE_SERVER_URL },
 					{ "sauce", true },
 					{ "name", "Android Demo" }
-
 				}
 			},
 			{ "iPhone XS", new Dictionary<string, object>
@@ -204,9 +205,23 @@ namespace Applitools.Generated.Appium.Tests
 					{ "name", "iOS Native Demo" }
 				}
 			},
+			{"Pixel 3 XL", new Dictionary<string, object>
+				{
+					{ "browserName", ""},
+					{ "deviceName", "Google Pixel 3 XL GoogleAPI Emulator" },
+					{ "platformName", "Android" },
+					{ "platformVersion", "11" },
+					{ "automationName", "UiAutomator2" },
+					{ "username", Environment.GetEnvironmentVariable("SAUCE_USERNAME")},
+					{ "access_key", Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY")},
+					{ "url", SAUCE_SERVER_URL },
+					{ "sauce", true },
+					{ "name", "Android Native Demo" }
+				}
+			},
 			{"Pixel 3a XL", new Dictionary<string, object>
 				{
-					{ "deviceName", "Google Pixel 3a XL" },
+					{ "deviceName", "Google Pixel 3a XL GoogleAPI Emulator" },
 					{ "platformName", "Android" },
 					{ "platformVersion", "11" },
 					{ "automationName", "UiAutomator2" },
@@ -220,9 +235,9 @@ namespace Applitools.Generated.Appium.Tests
 			},
 			{ "iPhone 12", new Dictionary<string, object>
 				{
-					{ "deviceName", "iPhone 12" },
+					{ "deviceName", "iPhone 12 Simulator" },
 					{ "platformName", "iOS" },
-					{ "platformVersion", "12" },
+					{ "platformVersion", "15" },
 					{ "automationName", "XCUITest" },
 					{ "username", Environment.GetEnvironmentVariable("SAUCE_USERNAME")},
 					{ "access_key", Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY")},
